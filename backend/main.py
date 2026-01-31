@@ -1,7 +1,11 @@
 import os
+import logging
 from dotenv import load_dotenv
 
 load_dotenv()
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -15,7 +19,9 @@ from routes_support import router as support_router
 REQUIRED_ENV = ["SUPABASE_URL", "SUPABASE_ANON_KEY", "STRIPE_SECRET_KEY", "STRIPE_WEBHOOK_SECRET"]
 missing = [v for v in REQUIRED_ENV if not os.environ.get(v)]
 if missing:
-    raise RuntimeError(f"Missing required environment variables: {', '.join(missing)}")
+    logger.warning(f"Missing environment variables: {', '.join(missing)} — some features will not work")
+
+logger.info(f"PORT env var = {os.environ.get('PORT', 'not set')}")
 
 app = FastAPI(title="MigRent AI", version="0.1.0")
 
