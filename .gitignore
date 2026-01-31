@@ -1,0 +1,10 @@
+# n8n workflows contain hardcoded API keys - do not commit
+n8n-workflows/
+
+# Environment files
+.env
+.env.*
+*.env
+
+# OS files
+.DS_Store
