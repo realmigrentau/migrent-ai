@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { useMemo } from "react";
 import { motion, type Variants } from "framer-motion";
 
 const fadeUp: Variants = {
@@ -9,6 +10,15 @@ const fadeUp: Variants = {
     transition: { delay: i * 0.15, duration: 0.6, ease: "easeOut" as const },
   }),
 };
+
+const FEATURED_LISTINGS = [
+  { id: "1", title: "Bright Room in Surry Hills", suburb: "Sydney", postcode: "2010", price: 250, img: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=600&h=260&fit=crop&crop=center" },
+  { id: "2", title: "Cozy Share in Redfern", suburb: "Sydney", postcode: "2016", price: 220, img: "https://images.unsplash.com/photo-1598928506311-c55ece637a745?w=600&h=260&fit=crop&crop=center" },
+  { id: "3", title: "Modern Room in Waterloo", suburb: "Sydney", postcode: "2017", price: 280, img: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=600&h=260&fit=crop&crop=center" },
+  { id: "4", title: "Budget Room in Kensington", suburb: "Sydney", postcode: "2033", price: 200, img: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600&h=260&fit=crop&crop=center" },
+  { id: "5", title: "Furnished Room in Glebe", suburb: "Sydney", postcode: "2037", price: 310, img: "https://images.unsplash.com/photo-1540518614846-7eded433c457?w=600&h=260&fit=crop&crop=center" },
+  { id: "6", title: "Affordable Room in Homebush", suburb: "Sydney", postcode: "2140", price: 190, img: "https://images.unsplash.com/photo-1560185007-cde436f6a4d0?w=600&h=260&fit=crop&crop=center" },
+];
 
 const steps = {
   seekers: [
@@ -26,6 +36,12 @@ const steps = {
 };
 
 export default function Home() {
+  const featured = useMemo(() => {
+    const idx = Math.floor(Math.random() * FEATURED_LISTINGS.length);
+    const match = Math.floor(Math.random() * 16) + 82; // 82-97%
+    return { ...FEATURED_LISTINGS[idx], match };
+  }, []);
+
   return (
     <div className="space-y-24">
       {/* Hero */}
@@ -90,30 +106,30 @@ export default function Home() {
             <div className="absolute -top-3 left-4 right-4 h-40 card rounded-2xl opacity-30 -rotate-2" />
             <div className="absolute -top-1.5 left-2 right-2 h-40 card rounded-2xl opacity-50 rotate-1" />
             {/* Front card */}
-            <Link href="/seeker/room/1">
-              <div className="relative card rounded-2xl overflow-hidden cursor-pointer hover:shadow-lg transition-shadow">
+            <Link href={`/seeker/room/${featured.id}`}>
+              <div className="relative card rounded-2xl overflow-hidden cursor-pointer hover:shadow-lg transition-shadow text-left">
                 <img
-                  src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=600&h=260&fit=crop&crop=center"
-                  alt="Furnished room in Newtown"
+                  src={featured.img}
+                  alt={featured.title}
                   className="w-full h-32 object-cover"
                 />
-                <div className="px-4 py-2">
+                <div className="p-3">
                   <div className="flex items-center justify-between gap-2">
-                    <div className="space-y-0">
-                      <span className="text-[10px] uppercase tracking-wider text-rose-500 dark:text-rose-400 font-semibold leading-none block">Featured Listing</span>
-                      <h3 className="text-slate-900 dark:text-white font-bold text-sm leading-none mt-0.5">Furnished Room in Newtown</h3>
-                      <p className="text-slate-500 dark:text-slate-400 text-xs leading-none mt-0.5">Sydney, 2042</p>
+                    <div>
+                      <span className="text-[10px] uppercase tracking-wider text-rose-500 dark:text-rose-400 font-semibold">Featured Listing</span>
+                      <h3 className="text-slate-900 dark:text-white font-bold text-sm leading-snug">{featured.title}</h3>
+                      <p className="text-slate-500 dark:text-slate-400 text-xs leading-snug">{featured.suburb}, {featured.postcode}</p>
                     </div>
                     <div className="px-2.5 py-1 rounded-lg bg-rose-50 dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/20 shrink-0">
-                      <span className="text-rose-600 dark:text-rose-400 font-bold text-sm">$265</span>
+                      <span className="text-rose-600 dark:text-rose-400 font-bold text-sm">${featured.price}</span>
                       <span className="text-rose-400 dark:text-rose-500 text-xs">/wk</span>
                     </div>
                   </div>
-                  <div className="mt-1.5 flex items-center gap-3">
+                  <div className="mt-2 flex items-center gap-3">
                     <div className="flex-1 h-1.5 rounded-full bg-slate-100 dark:bg-white/10 overflow-hidden">
-                      <div className="w-[94%] h-full rounded-full bg-gradient-to-r from-emerald-400 to-emerald-500" />
+                      <div className="h-full rounded-full bg-gradient-to-r from-emerald-400 to-emerald-500" style={{ width: `${featured.match}%` }} />
                     </div>
-                    <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400">94% match</span>
+                    <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400">{featured.match}% match</span>
                   </div>
                 </div>
               </div>
