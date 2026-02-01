@@ -32,7 +32,7 @@ export default function Home() {
       <section className="relative text-center py-20 overflow-hidden">
         {/* Floating shapes */}
         <div className="absolute top-10 left-10 w-72 h-72 bg-rose-500/10 dark:bg-rose-500/5 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-10 right-10 w-96 h-96 bg-orange-500/10 dark:bg-orange-500/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "1s" }} />
+        <div className="absolute bottom-10 right-10 w-96 h-96 bg-blue-500/10 dark:bg-blue-500/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "1s" }} />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-rose-400/5 dark:bg-rose-600/5 rounded-full blur-3xl" />
 
         <motion.div
@@ -96,19 +96,19 @@ export default function Home() {
                 alt="Furnished room in Newtown"
                 className="w-full h-32 object-cover"
               />
-              <div className="p-5">
-                <div className="flex items-start justify-between">
+              <div className="px-4 py-3">
+                <div className="flex items-center justify-between gap-2">
                   <div>
-                    <div className="text-xs text-rose-500 dark:text-rose-400 font-semibold mb-1">FEATURED LISTING</div>
-                    <h3 className="text-slate-900 dark:text-white font-bold">Furnished Room in Newtown</h3>
-                    <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Sydney, 2042</p>
+                    <span className="text-[10px] uppercase tracking-wider text-rose-500 dark:text-rose-400 font-semibold">Featured Listing</span>
+                    <h3 className="text-slate-900 dark:text-white font-bold text-sm leading-tight">Furnished Room in Newtown</h3>
+                    <p className="text-slate-500 dark:text-slate-400 text-xs">Sydney, 2042</p>
                   </div>
-                  <div className="px-3 py-1.5 rounded-lg bg-rose-50 dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/20">
+                  <div className="px-2.5 py-1 rounded-lg bg-rose-50 dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/20 shrink-0">
                     <span className="text-rose-600 dark:text-rose-400 font-bold text-sm">$265</span>
                     <span className="text-rose-400 dark:text-rose-500 text-xs">/wk</span>
                   </div>
                 </div>
-                <div className="mt-4 flex items-center gap-3">
+                <div className="mt-2 flex items-center gap-3">
                   <div className="flex-1 h-1.5 rounded-full bg-slate-100 dark:bg-white/10 overflow-hidden">
                     <div className="w-[94%] h-full rounded-full bg-gradient-to-r from-emerald-400 to-emerald-500" />
                   </div>
@@ -178,8 +178,8 @@ export default function Home() {
             viewport={{ once: true, margin: "-50px" }}
             className="card p-6 rounded-2xl"
           >
-            <h3 className="text-lg font-bold text-orange-500 mb-6 flex items-center gap-2">
-              <span className="w-8 h-8 rounded-lg bg-orange-50 dark:bg-orange-500/10 flex items-center justify-center text-sm">
+            <h3 className="text-lg font-bold text-blue-500 mb-6 flex items-center gap-2">
+              <span className="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-500/10 flex items-center justify-center text-sm">
                 O
               </span>
               For Owners
@@ -192,7 +192,7 @@ export default function Home() {
                   variants={fadeUp}
                   className="flex gap-4 items-start group"
                 >
-                  <span className="text-xs font-bold text-orange-300 dark:text-orange-500/50 group-hover:text-orange-500 dark:group-hover:text-orange-400 transition-colors mt-0.5 shrink-0">
+                  <span className="text-xs font-bold text-blue-300 dark:text-blue-500/50 group-hover:text-blue-500 dark:group-hover:text-blue-400 transition-colors mt-0.5 shrink-0">
                     {step.num}
                   </span>
                   <div>
@@ -299,7 +299,7 @@ export default function Home() {
               whileHover={{ y: -4 }}
               className="card-subtle p-5 rounded-xl group hover:shadow-md dark:hover:bg-white/[0.06] transition-all"
             >
-              <div className="w-10 h-10 rounded-xl bg-orange-50 dark:bg-orange-500/10 border border-orange-100 dark:border-orange-500/20 flex items-center justify-center text-orange-500 dark:text-orange-400 font-bold text-sm mb-3 group-hover:border-orange-300 dark:group-hover:border-orange-400/40 transition-colors">
+              <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-500/10 border border-blue-100 dark:border-blue-500/20 flex items-center justify-center text-blue-500 dark:text-blue-400 font-bold text-sm mb-3 group-hover:border-blue-300 dark:group-hover:border-blue-400/40 transition-colors">
                 {item.icon}
               </div>
               <h3 className="text-slate-900 dark:text-white font-semibold text-sm">{item.title}</h3>
@@ -312,9 +312,9 @@ export default function Home() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="mt-6 card p-5 rounded-2xl border-l-2 border-l-orange-500"
+          className="mt-6 card p-5 rounded-2xl border-l-2 border-l-blue-500"
         >
-          <h4 className="font-bold text-orange-500 dark:text-orange-400 text-sm mb-1">Why MigRent for owners</h4>
+          <h4 className="font-bold text-blue-500 dark:text-blue-400 text-sm mb-1">Why MigRent for owners</h4>
           <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
             MigRent brings more serious, better-fit enquiries through simple
             profiles and optional verification. It uses AI-assisted matching so

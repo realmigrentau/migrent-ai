@@ -94,7 +94,7 @@ export default function OwnerProfilePage() {
       >
         <h2 className="text-lg font-bold text-slate-900 dark:text-white">Profile information</h2>
         <div className="flex items-center gap-4">
-          <div className="w-16 h-16 rounded-full bg-gradient-to-br from-orange-400 to-rose-500 flex items-center justify-center text-white font-bold text-2xl shrink-0">
+          <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-400 to-rose-500 flex items-center justify-center text-white font-bold text-2xl shrink-0">
             {profile.name ? profile.name[0].toUpperCase() : "O"}
           </div>
           <div className="flex-1">

@@ -167,7 +167,7 @@ export default function ListingDetail() {
               >
                 <div className="flex items-start gap-4">
                   {/* Avatar */}
-                  <div className="w-12 h-12 shrink-0 rounded-full bg-gradient-to-br from-rose-400 to-orange-400 flex items-center justify-center text-white font-bold text-lg">
+                  <div className="w-12 h-12 shrink-0 rounded-full bg-gradient-to-br from-rose-400 to-blue-400 flex items-center justify-center text-white font-bold text-lg">
                     {applicant.name[0]}
                   </div>
 

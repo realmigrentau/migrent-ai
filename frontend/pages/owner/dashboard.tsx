@@ -211,7 +211,7 @@ export default function OwnerDashboard() {
               transition={{ duration: 0.15 }}
               className="card p-5 rounded-2xl hover:shadow-md dark:hover:shadow-2xl group cursor-pointer block"
             >
-              <svg className="w-8 h-8 text-orange-500 mb-3 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <svg className="w-8 h-8 text-blue-500 mb-3 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d={card.icon} />
               </svg>
               <h3 className="font-bold text-slate-900 dark:text-white text-sm">{card.label}</h3>
@@ -252,7 +252,7 @@ export default function OwnerDashboard() {
               transition={{ delay: i * 0.05 }}
               className="flex gap-2 items-start text-sm text-slate-600 dark:text-slate-300"
             >
-              <span className="text-orange-500 mt-0.5 shrink-0">&#x2713;</span>
+              <span className="text-blue-500 mt-0.5 shrink-0">&#x2713;</span>
               {text}
             </motion.div>
           ))}

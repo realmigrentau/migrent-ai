@@ -44,7 +44,7 @@ export default function SignIn() {
     <div className="min-h-[70vh] flex items-center justify-center px-4">
       {/* Floating shapes */}
       <div className="fixed top-20 left-20 w-96 h-96 bg-rose-500/10 dark:bg-rose-500/5 rounded-full blur-3xl" />
-      <div className="fixed bottom-20 right-20 w-96 h-96 bg-orange-500/10 dark:bg-orange-500/5 rounded-full blur-3xl" />
+      <div className="fixed bottom-20 right-20 w-96 h-96 bg-blue-500/10 dark:bg-blue-500/5 rounded-full blur-3xl" />
 
       <motion.div
         initial={{ opacity: 0, y: 30, scale: 0.96 }}
