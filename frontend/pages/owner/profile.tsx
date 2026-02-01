@@ -85,6 +85,49 @@ export default function OwnerProfilePage() {
         </div>
       </motion.section>
 
+      {/* Owner Badges */}
+      <motion.section
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.08 }}
+        className="card p-6 rounded-2xl space-y-4"
+      >
+        <h2 className="text-lg font-bold text-slate-900 dark:text-white">Badges</h2>
+        <p className="text-sm text-slate-500 dark:text-slate-400">Earn badges as you host on MigRent. They show on your listings.</p>
+        <div className="grid grid-cols-2 gap-3">
+          {[
+            { id: "property_mogul", label: "Property Mogul", desc: "Own more than 3 properties", icon: "🏘️", earned: false },
+            { id: "superhost", label: "Superhost", desc: "You have hosted for more than 1 month", icon: "⭐", earned: false },
+          ].map((badge) => (
+            <div
+              key={badge.id}
+              className={`relative p-4 rounded-xl border text-center transition-all ${
+                badge.earned
+                  ? "bg-blue-50 dark:bg-blue-500/10 border-blue-200 dark:border-blue-500/20"
+                  : "bg-slate-50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 opacity-50"
+              }`}
+            >
+              <div className="text-2xl mb-1.5">{badge.icon}</div>
+              <h4 className={`text-sm font-bold ${badge.earned ? "text-blue-600 dark:text-blue-400" : "text-slate-400 dark:text-slate-500"}`}>
+                {badge.label}
+              </h4>
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">{badge.desc}</p>
+              {badge.earned ? (
+                <div className="absolute top-2 right-2">
+                  <span className="text-emerald-500 text-xs font-bold">✓</span>
+                </div>
+              ) : (
+                <div className="absolute top-2 right-2">
+                  <svg className="w-3.5 h-3.5 text-slate-300 dark:text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  </svg>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </motion.section>
+
       {/* Profile photo + name */}
       <motion.section
         initial={{ opacity: 0, y: 20 }}
