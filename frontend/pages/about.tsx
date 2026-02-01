@@ -32,10 +32,10 @@ export default function About() {
             <span className="text-xs font-medium uppercase tracking-wider text-slate-400 dark:text-slate-500">Email</span>
             <p>
               <a
-                href="mailto:stonegold84@gmail.com"
+                href="mailto:migrentau@gmail.com"
                 className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors"
               >
-                stonegold84@gmail.com
+                migrentau@gmail.com
               </a>
             </p>
           </div>
