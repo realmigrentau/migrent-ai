@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Link from "next/link";
 import { supabase } from "../../lib/supabase";
 import { useAuth } from "../../hooks/useAuth";
 import SignInButton from "../../components/SignInButton";
@@ -159,9 +160,42 @@ export default function SeekerDashboard() {
           <span className="text-sm text-slate-600 dark:text-slate-300">
             Signed in as <strong className="text-slate-900 dark:text-white">{user?.email}</strong>
           </span>
-          <button onClick={signOut} className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 text-sm underline underline-offset-2 ml-auto transition-colors">
+          <Link href="/account/settings" className="text-slate-500 hover:text-rose-500 text-sm transition-colors ml-auto">
+            Settings
+          </Link>
+          <button onClick={signOut} className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 text-sm underline underline-offset-2 transition-colors">
             Sign out
           </button>
+        </motion.section>
+      )}
+
+      {/* Quick nav cards */}
+      {session && (
+        <motion.section
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15 }}
+          className="grid sm:grid-cols-3 gap-4"
+        >
+          {[
+            { href: "/seeker/search", label: "Search rooms", desc: "Find your next room", icon: "M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" },
+            { href: "/seeker/profile", label: "My profile", desc: "Edit your tenant profile", icon: "M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" },
+            { href: "/seeker/saved", label: "Saved & apps", desc: "Saved rooms & applications", icon: "M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" },
+          ].map((card, i) => (
+            <motion.a
+              key={card.href}
+              href={card.href}
+              whileHover={{ y: -3, scale: 1.01 }}
+              transition={{ duration: 0.15 }}
+              className="card p-5 rounded-2xl hover:shadow-md dark:hover:shadow-2xl group cursor-pointer block"
+            >
+              <svg className="w-8 h-8 text-rose-500 mb-3 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d={card.icon} />
+              </svg>
+              <h3 className="font-bold text-slate-900 dark:text-white text-sm">{card.label}</h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{card.desc}</p>
+            </motion.a>
+          ))}
         </motion.section>
       )}
 
@@ -250,8 +284,7 @@ export default function SeekerDashboard() {
                     matchScore={m.match_score ?? m.matchScore}
                   />
                 );
-              }
-              ))}
+              })}
             </div>
           )}
         </motion.section>

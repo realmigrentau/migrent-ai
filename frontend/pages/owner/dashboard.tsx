@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { supabase } from "../../lib/supabase";
 import { useAuth } from "../../hooks/useAuth";
 import SignInButton from "../../components/SignInButton";
@@ -181,9 +182,42 @@ export default function OwnerDashboard() {
           <span className="text-sm text-slate-600 dark:text-slate-300">
             Signed in as <strong className="text-slate-900 dark:text-white">{user?.email}</strong>
           </span>
-          <button onClick={signOut} className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 text-sm underline underline-offset-2 ml-auto transition-colors">
+          <Link href="/account/settings" className="text-slate-500 hover:text-rose-500 text-sm transition-colors ml-auto">
+            Settings
+          </Link>
+          <button onClick={signOut} className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 text-sm underline underline-offset-2 transition-colors">
             Sign out
           </button>
+        </motion.section>
+      )}
+
+      {/* Quick nav cards */}
+      {session && (
+        <motion.section
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15 }}
+          className="grid sm:grid-cols-3 gap-4"
+        >
+          {[
+            { href: "/owner/listings/new", label: "Post a room", desc: "Create a new listing", icon: "M12 4v16m8-8H4" },
+            { href: "/owner/listings", label: "My listings", desc: "Manage your listings", icon: "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" },
+            { href: "/owner/profile", label: "My profile", desc: "Edit your owner profile", icon: "M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" },
+          ].map((card) => (
+            <motion.a
+              key={card.href}
+              href={card.href}
+              whileHover={{ y: -3, scale: 1.01 }}
+              transition={{ duration: 0.15 }}
+              className="card p-5 rounded-2xl hover:shadow-md dark:hover:shadow-2xl group cursor-pointer block"
+            >
+              <svg className="w-8 h-8 text-orange-500 mb-3 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d={card.icon} />
+              </svg>
+              <h3 className="font-bold text-slate-900 dark:text-white text-sm">{card.label}</h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{card.desc}</p>
+            </motion.a>
+          ))}
         </motion.section>
       )}
 
