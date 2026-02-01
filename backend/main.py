@@ -35,7 +35,10 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 # ── CORS ────────────────────────────────────────────────────
 FRONTEND_URL = os.environ.get("FRONTEND_URL", "")
-allowed_origins = ["http://localhost:3000"]
+allowed_origins = [
+    "http://localhost:3000",
+    "https://migrent-ai.vercel.app",
+]
 if FRONTEND_URL:
     allowed_origins.append(FRONTEND_URL)
 
