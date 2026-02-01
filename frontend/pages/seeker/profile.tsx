@@ -17,8 +17,6 @@ interface SeekerProfile {
   uselessSkill: string;
   interests: string[];
   profilePhoto: string | null;
-  roomsOwned: number;
-  propertiesOwned: number;
 }
 
 const LIFESTYLE_OPTIONS = [
@@ -67,8 +65,6 @@ export default function SeekerProfilePage() {
   const { session, user, loading, signOut } = useAuth();
   const [saved, setSaved] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [roomsOpen, setRoomsOpen] = useState(false);
-  const [propsOpen, setPropsOpen] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const [profile, setProfile] = useState<SeekerProfile>({
@@ -85,8 +81,6 @@ export default function SeekerProfilePage() {
     uselessSkill: "",
     interests: ["Travel", "Coffee"],
     profilePhoto: null,
-    roomsOwned: 0,
-    propertiesOwned: 0,
   });
 
   useEffect(() => {
@@ -327,123 +321,6 @@ export default function SeekerProfilePage() {
               </div>
             );
           })}
-        </div>
-      </motion.section>
-
-      {/* My Properties / Rooms counter */}
-      <motion.section
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.14 }}
-        className="card p-6 rounded-2xl space-y-4"
-      >
-        <h2 className="text-lg font-bold text-slate-900 dark:text-white">My Properties</h2>
-        <p className="text-sm text-slate-500 dark:text-slate-400">Track how many properties and rooms you own or manage.</p>
-
-        {/* Rooms */}
-        <div className="rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
-          <button
-            onClick={() => setRoomsOpen(!roomsOpen)}
-            className="w-full flex items-center justify-between p-4 text-left hover:bg-slate-50 dark:hover:bg-white/5 transition-colors"
-          >
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-rose-50 dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/20 flex items-center justify-center">
-                <svg className="w-5 h-5 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                </svg>
-              </div>
-              <div>
-                <span className="text-sm font-semibold text-slate-900 dark:text-white">Rooms</span>
-                <span className="ml-2 text-xs text-slate-400 dark:text-slate-500">({profile.roomsOwned})</span>
-              </div>
-            </div>
-            <svg className={`w-4 h-4 text-slate-400 transition-transform ${roomsOpen ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-            </svg>
-          </button>
-          <AnimatePresence>
-            {roomsOpen && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: "auto", opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.2 }}
-                className="overflow-hidden"
-              >
-                <div className="px-4 pb-4 flex items-center gap-4">
-                  <p className="text-sm text-slate-500 dark:text-slate-400 flex-1">How many rooms do you have?</p>
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => update("roomsOwned", Math.max(0, profile.roomsOwned - 1))}
-                      className="w-8 h-8 rounded-lg border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-lg font-medium"
-                    >
-                      −
-                    </button>
-                    <span className="w-10 text-center text-lg font-bold text-slate-900 dark:text-white">{profile.roomsOwned}</span>
-                    <button
-                      onClick={() => update("roomsOwned", profile.roomsOwned + 1)}
-                      className="w-8 h-8 rounded-lg border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-lg font-medium"
-                    >
-                      +
-                    </button>
-                  </div>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-
-        {/* Properties */}
-        <div className="rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
-          <button
-            onClick={() => setPropsOpen(!propsOpen)}
-            className="w-full flex items-center justify-between p-4 text-left hover:bg-slate-50 dark:hover:bg-white/5 transition-colors"
-          >
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-500/10 border border-blue-100 dark:border-blue-500/20 flex items-center justify-center">
-                <svg className="w-5 h-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                </svg>
-              </div>
-              <div>
-                <span className="text-sm font-semibold text-slate-900 dark:text-white">Properties</span>
-                <span className="ml-2 text-xs text-slate-400 dark:text-slate-500">({profile.propertiesOwned})</span>
-              </div>
-            </div>
-            <svg className={`w-4 h-4 text-slate-400 transition-transform ${propsOpen ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-            </svg>
-          </button>
-          <AnimatePresence>
-            {propsOpen && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: "auto", opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.2 }}
-                className="overflow-hidden"
-              >
-                <div className="px-4 pb-4 flex items-center gap-4">
-                  <p className="text-sm text-slate-500 dark:text-slate-400 flex-1">How many properties do you own?</p>
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => update("propertiesOwned", Math.max(0, profile.propertiesOwned - 1))}
-                      className="w-8 h-8 rounded-lg border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-lg font-medium"
-                    >
-                      −
-                    </button>
-                    <span className="w-10 text-center text-lg font-bold text-slate-900 dark:text-white">{profile.propertiesOwned}</span>
-                    <button
-                      onClick={() => update("propertiesOwned", profile.propertiesOwned + 1)}
-                      className="w-8 h-8 rounded-lg border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-lg font-medium"
-                    >
-                      +
-                    </button>
-                  </div>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
         </div>
       </motion.section>
 
