@@ -63,8 +63,8 @@ export default function Home() {
           </div>
 
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight leading-tight max-w-4xl mx-auto">
-            <span className="gradient-text">Verified rooms</span>{" "}
-            <span className="text-slate-900 dark:text-white">for new arrivals</span>
+            <span className="gradient-text">Find your room,</span>{" "}
+            <span className="text-slate-900 dark:text-white">feel at home</span>
           </h1>
 
           <p className="mt-6 text-lg md:text-xl text-slate-500 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed font-medium">
