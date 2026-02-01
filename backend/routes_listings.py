@@ -36,7 +36,9 @@ def create_listing(
 ):
     user = get_current_user(authorization)
     user_meta = user.user_metadata or {}
-    if user_meta.get("user_type") != "owner":
+    user_type = user_meta.get("user_type") or user_meta.get("type")
+    # Allow owner type OR users without a type set (e.g. Google OAuth users)
+    if user_type and user_type != "owner":
         raise HTTPException(status_code=403, detail="Only owners can create listings")
 
     city = listing.city or derive_city(listing.postcode)

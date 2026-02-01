@@ -87,7 +87,12 @@ export async function createListing(
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(payload),
+      body: JSON.stringify({
+        address: payload.address,
+        postcode: Number(payload.postcode),
+        weekly_price: payload.weeklyPrice,
+        description: payload.description,
+      }),
     });
     if (!res.ok) throw new Error(`createListing failed: ${res.status}`);
     return await res.json();
