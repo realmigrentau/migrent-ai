@@ -237,16 +237,20 @@ export default function SeekerDashboard() {
           </div>
           {matches.length > 0 && (
             <div className="grid sm:grid-cols-2 gap-4 mt-6">
-              {matches.map((m: any, i: number) => (
-                <ListingCard
-                  key={i}
-                  address={m.address}
-                  city={m.city}
-                  postcode={m.postcode}
-                  weeklyPrice={m.weeklyPrice ?? m.weekly_price}
-                  description={m.description}
-                  matchScore={m.matchScore ?? m.match_score}
-                />
+              {matches.map((m: any, i: number) => {
+                const l = m.listing || m;
+                return (
+                  <ListingCard
+                    key={i}
+                    address={l.address}
+                    city={l.city}
+                    postcode={l.postcode}
+                    weeklyPrice={l.weekly_price ?? l.weeklyPrice}
+                    description={l.description}
+                    matchScore={m.match_score ?? m.matchScore}
+                  />
+                );
+              }
               ))}
             </div>
           )}
