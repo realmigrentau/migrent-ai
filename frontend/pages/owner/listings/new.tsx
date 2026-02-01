@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -7,10 +7,16 @@ import ListingForm, { ListingFormData } from "../../../components/ListingForm";
 import { createListing } from "../../../lib/api";
 
 export default function NewListing() {
-  const { session, loading } = useAuth();
+  const { session, user, loading } = useAuth();
   const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (!loading && session && user?.user_metadata?.owner_account !== true) {
+      router.replace("/owner/setup");
+    }
+  }, [loading, session, user, router]);
 
   const handleSubmit = async (data: ListingFormData) => {
     if (!session) return;

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -69,7 +69,14 @@ const APPLICANT_STATUS_STYLES: Record<string, string> = {
 export default function ListingDetail() {
   const router = useRouter();
   const { id } = router.query;
-  const { session, loading } = useAuth();
+  const { session, user, loading } = useAuth();
+
+  useEffect(() => {
+    if (!loading && session && user?.user_metadata?.owner_account !== true) {
+      router.replace("/owner/setup");
+    }
+  }, [loading, session, user, router]);
+
   const [applicantStatuses, setApplicantStatuses] = useState<Record<string, string>>(
     Object.fromEntries(MOCK_APPLICANTS.map((a) => [a.id, a.status]))
   );

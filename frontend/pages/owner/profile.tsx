@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "../../hooks/useAuth";
 
@@ -14,6 +15,14 @@ const OWNER_BADGES = [
 
 export default function OwnerProfilePage() {
   const { session, user, loading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading && session && user?.user_metadata?.owner_account !== true) {
+      router.replace("/owner/setup");
+    }
+  }, [loading, session, user, router]);
+
   const [saved, setSaved] = useState(false);
   const [saving, setSaving] = useState(false);
   const [roomsOpen, setRoomsOpen] = useState(false);

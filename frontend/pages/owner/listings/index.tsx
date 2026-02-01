@@ -30,11 +30,17 @@ const MOCK_LISTINGS: Listing[] = [
 ];
 
 export default function OwnerListings() {
-  const { session, loading } = useAuth();
+  const { session, user, loading } = useAuth();
   const router = useRouter();
   const [listings, setListings] = useState<Listing[]>(MOCK_LISTINGS);
   const [fetching, setFetching] = useState(false);
   const justCreated = router.query.created === "1";
+
+  useEffect(() => {
+    if (!loading && session && user?.user_metadata?.owner_account !== true) {
+      router.replace("/owner/setup");
+    }
+  }, [loading, session, user, router]);
 
   useEffect(() => {
     if (session) {

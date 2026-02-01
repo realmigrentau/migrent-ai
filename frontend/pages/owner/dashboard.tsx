@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { supabase } from "../../lib/supabase";
 import { useAuth } from "../../hooks/useAuth";
 import SignInButton from "../../components/SignInButton";
@@ -9,6 +10,13 @@ import { motion } from "framer-motion";
 
 export default function OwnerDashboard() {
   const { session, user, loading, signOut } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading && session && user?.user_metadata?.owner_account !== true) {
+      router.replace("/owner/setup");
+    }
+  }, [loading, session, user, router]);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
