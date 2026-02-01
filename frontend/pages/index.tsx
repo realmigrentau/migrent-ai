@@ -90,23 +90,30 @@ export default function Home() {
             <div className="absolute -top-3 left-4 right-4 h-40 card rounded-2xl opacity-30 -rotate-2" />
             <div className="absolute -top-1.5 left-2 right-2 h-40 card rounded-2xl opacity-50 rotate-1" />
             {/* Front card */}
-            <div className="relative card p-6 rounded-2xl">
-              <div className="flex items-start justify-between">
-                <div>
-                  <div className="text-xs text-rose-500 dark:text-rose-400 font-semibold mb-1">FEATURED LISTING</div>
-                  <h3 className="text-slate-900 dark:text-white font-bold">Sunny Room in Surry Hills</h3>
-                  <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Sydney, 2010</p>
+            <div className="relative card rounded-2xl overflow-hidden">
+              <img
+                src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=600&h=260&fit=crop&crop=center"
+                alt="Furnished room in Newtown"
+                className="w-full h-32 object-cover"
+              />
+              <div className="p-5">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <div className="text-xs text-rose-500 dark:text-rose-400 font-semibold mb-1">FEATURED LISTING</div>
+                    <h3 className="text-slate-900 dark:text-white font-bold">Furnished Room in Newtown</h3>
+                    <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Sydney, 2042</p>
+                  </div>
+                  <div className="px-3 py-1.5 rounded-lg bg-rose-50 dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/20">
+                    <span className="text-rose-600 dark:text-rose-400 font-bold text-sm">$265</span>
+                    <span className="text-rose-400 dark:text-rose-500 text-xs">/wk</span>
+                  </div>
                 </div>
-                <div className="px-3 py-1.5 rounded-lg bg-rose-50 dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/20">
-                  <span className="text-rose-600 dark:text-rose-400 font-bold text-sm">$280</span>
-                  <span className="text-rose-400 dark:text-rose-500 text-xs">/wk</span>
+                <div className="mt-4 flex items-center gap-3">
+                  <div className="flex-1 h-1.5 rounded-full bg-slate-100 dark:bg-white/10 overflow-hidden">
+                    <div className="w-[94%] h-full rounded-full bg-gradient-to-r from-emerald-400 to-emerald-500" />
+                  </div>
+                  <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400">94% match</span>
                 </div>
-              </div>
-              <div className="mt-4 flex items-center gap-3">
-                <div className="flex-1 h-1.5 rounded-full bg-slate-100 dark:bg-white/10 overflow-hidden">
-                  <div className="w-[92%] h-full rounded-full bg-gradient-to-r from-emerald-400 to-emerald-500" />
-                </div>
-                <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400">92% match</span>
               </div>
             </div>
           </div>

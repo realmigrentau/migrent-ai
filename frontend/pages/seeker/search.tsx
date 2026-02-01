@@ -15,7 +15,10 @@ const PLACEHOLDER_LISTINGS = [
     furnished: true,
     billsIncluded: true,
     verified: true,
-    photo: null,
+    photos: [
+      "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=400&h=300&fit=crop",
+      "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&h=300&fit=crop",
+    ],
     description: "Bright private room in friendly sharehouse near Central Station. 5 min walk to buses and trains.",
   },
   {
@@ -28,7 +31,10 @@ const PLACEHOLDER_LISTINGS = [
     furnished: true,
     billsIncluded: false,
     verified: false,
-    photo: null,
+    photos: [
+      "https://images.unsplash.com/photo-1598928506311-c55ez637a745?w=400&h=300&fit=crop",
+      "https://images.unsplash.com/photo-1631679706909-1844bbd07221?w=400&h=300&fit=crop",
+    ],
     description: "Affordable shared room close to USYD campus. Quiet neighbourhood with parks nearby.",
   },
   {
@@ -41,7 +47,10 @@ const PLACEHOLDER_LISTINGS = [
     furnished: true,
     billsIncluded: true,
     verified: true,
-    photo: null,
+    photos: [
+      "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=400&h=300&fit=crop",
+      "https://images.unsplash.com/photo-1540518614846-7eded433c457?w=400&h=300&fit=crop",
+    ],
     description: "Ensuite room with own bathroom in modern apartment. Green Square station 3 min walk.",
   },
   {
@@ -54,7 +63,10 @@ const PLACEHOLDER_LISTINGS = [
     furnished: false,
     billsIncluded: false,
     verified: false,
-    photo: null,
+    photos: [
+      "https://images.unsplash.com/photo-1513694203232-719a280e022f?w=400&h=300&fit=crop",
+      "https://images.unsplash.com/photo-1564078516393-cf04bd966897?w=400&h=300&fit=crop",
+    ],
     description: "Unfurnished private room near UNSW. Light rail stop at doorstep. Large backyard.",
   },
   {
@@ -67,7 +79,10 @@ const PLACEHOLDER_LISTINGS = [
     furnished: true,
     billsIncluded: true,
     verified: true,
-    photo: null,
+    photos: [
+      "https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=400&h=300&fit=crop",
+      "https://images.unsplash.com/photo-1536376072261-38c75010e6c9?w=400&h=300&fit=crop",
+    ],
     description: "Self-contained studio with kitchenette. Walking distance to Broadway Shopping Centre.",
   },
   {
@@ -80,7 +95,10 @@ const PLACEHOLDER_LISTINGS = [
     furnished: true,
     billsIncluded: true,
     verified: false,
-    photo: null,
+    photos: [
+      "https://images.unsplash.com/photo-1585412727339-54e4bae3bbf9?w=400&h=300&fit=crop",
+      "https://images.unsplash.com/photo-1560185007-cde436f6a4d0?w=400&h=300&fit=crop",
+    ],
     description: "Budget-friendly shared room near Olympic Park. Inclusive of all bills and WiFi.",
   },
 ];
@@ -199,11 +217,14 @@ export default function SeekerSearch() {
                 className="card p-5 rounded-2xl group"
               >
                 <div className="flex gap-4">
-                  {/* Photo placeholder */}
-                  <div className="w-28 h-20 sm:w-36 sm:h-24 shrink-0 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center overflow-hidden">
-                    <svg className="w-8 h-8 text-slate-300 dark:text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
+                  {/* Photo */}
+                  <div className="w-28 h-20 sm:w-36 sm:h-24 shrink-0 rounded-xl bg-slate-100 dark:bg-slate-800 overflow-hidden">
+                    <img
+                      src={listing.photos[0]}
+                      alt={listing.address}
+                      className="w-full h-full object-cover"
+                      loading="lazy"
+                    />
                   </div>
 
                   <div className="flex-1 min-w-0">

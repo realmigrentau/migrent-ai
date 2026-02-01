@@ -12,6 +12,7 @@ const MOCK_SAVED = [
     weeklyPrice: 250,
     roomType: "Private room",
     savedAt: "2 days ago",
+    photo: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=200&h=200&fit=crop",
   },
   {
     id: "3",
@@ -21,6 +22,7 @@ const MOCK_SAVED = [
     weeklyPrice: 280,
     roomType: "Ensuite",
     savedAt: "5 days ago",
+    photo: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=200&h=200&fit=crop",
   },
 ];
 
@@ -138,10 +140,8 @@ export default function SeekerSaved() {
                 transition={{ delay: i * 0.05 }}
                 className="card p-5 rounded-2xl flex items-center gap-4"
               >
-                <div className="w-16 h-16 shrink-0 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
-                  <svg className="w-6 h-6 text-slate-300 dark:text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
+                <div className="w-16 h-16 shrink-0 rounded-xl bg-slate-100 dark:bg-slate-800 overflow-hidden">
+                  <img src={item.photo} alt={item.address} className="w-full h-full object-cover" loading="lazy" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <h3 className="font-bold text-slate-900 dark:text-white text-sm truncate">{item.address}</h3>
