@@ -20,9 +20,7 @@ def get_matches(postcode: int, authorization: str = Header(...)):
     res = query.execute()
     results = []
     for listing in res.data:
-        results.append({
-            "listing": listing,
-            "match_score": random.randint(0, 100),
-        })
+        flat = {**listing, "match_score": random.randint(0, 100)}
+        results.append(flat)
     results.sort(key=lambda x: x["match_score"], reverse=True)
     return results
