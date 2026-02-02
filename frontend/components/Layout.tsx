@@ -26,6 +26,7 @@ export default function Layout({ children }: { children: ReactNode }) {
   const accountRef = useRef<HTMLDivElement>(null);
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
   const isAdminRoute = router.pathname.startsWith("/admin");
+  const isSignIn = router.pathname === "/signin";
 
   // Check if user is superadmin
   useEffect(() => {
@@ -85,11 +86,11 @@ export default function Layout({ children }: { children: ReactNode }) {
       >
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 group">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-rose-500 to-rose-600 flex items-center justify-center text-white font-black text-sm group-hover:scale-110 transition-transform">
+            <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${isSignIn ? "from-blue-500 to-blue-600" : "from-rose-500 to-rose-600"} flex items-center justify-center text-white font-black text-sm group-hover:scale-110 transition-transform`}>
               M
             </div>
             <span className="text-xl font-black tracking-tight text-slate-900 dark:text-white">
-              Mig<span className="text-rose-500">Rent</span>
+              Mig<span className={isSignIn ? "text-blue-500" : "text-rose-500"}>Rent</span>
             </span>
           </Link>
 
@@ -219,7 +220,7 @@ export default function Layout({ children }: { children: ReactNode }) {
               ) : (
                 <Link
                   href="/signup"
-                  className="ml-2 px-4 py-2 rounded-full text-sm font-semibold bg-gradient-to-r from-rose-500 to-rose-600 text-white hover:scale-105 transition-transform inline-block"
+                  className={`ml-2 px-4 py-2 rounded-full text-sm font-semibold bg-gradient-to-r ${isSignIn ? "from-blue-500 to-blue-600" : "from-rose-500 to-rose-600"} text-white hover:scale-105 transition-transform inline-block`}
                 >
                   Sign Up
                 </Link>
@@ -339,7 +340,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                 ) : (
                   <Link
                     href="/signup"
-                    className="block mt-2 px-4 py-2.5 rounded-full text-sm font-semibold text-center bg-gradient-to-r from-rose-500 to-rose-600 text-white"
+                    className={`block mt-2 px-4 py-2.5 rounded-full text-sm font-semibold text-center bg-gradient-to-r ${isSignIn ? "from-blue-500 to-blue-600" : "from-rose-500 to-rose-600"} text-white`}
                   >
                     Sign Up
                   </Link>
@@ -363,7 +364,7 @@ export default function Layout({ children }: { children: ReactNode }) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2">
-              <div className="w-6 h-6 rounded-md bg-gradient-to-br from-rose-500 to-rose-600 flex items-center justify-center text-white text-xs font-black">
+              <div className={`w-6 h-6 rounded-md bg-gradient-to-br ${isSignIn ? "from-blue-500 to-blue-600" : "from-rose-500 to-rose-600"} flex items-center justify-center text-white text-xs font-black`}>
                 M
               </div>
               <span className="text-sm font-semibold text-slate-500 dark:text-slate-400">MigRent</span>
@@ -377,7 +378,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="text-xs text-slate-400 dark:text-slate-500 hover:text-rose-500 transition-colors"
+                  className={`text-xs text-slate-400 dark:text-slate-500 ${isSignIn ? "hover:text-blue-500" : "hover:text-rose-500"} transition-colors`}
                 >
                   {link.label}
                 </Link>
