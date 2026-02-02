@@ -71,7 +71,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
       return;
     }
 
-    // Check user_metadata first, then fetch from profiles table
+    // Check user_metadata first
     const metaRole = user.user_metadata?.role ?? user.app_metadata?.role;
     if (metaRole === "superadmin") {
       setAuthorized(true);
@@ -80,19 +80,31 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
     }
 
     // Fallback: check Supabase profiles table
-    supabase
-      .from("profiles")
-      .select("role")
-      .eq("id", user.id)
-      .single()
-      .then(({ data, error }) => {
+    // Use the authenticated client (session is already set from useAuth)
+    const checkProfile = async () => {
+      try {
+        const { data, error, status } = await supabase
+          .from("profiles")
+          .select("role")
+          .eq("id", user.id)
+          .single();
+
+        console.log("[AdminLayout] profile check:", { data, error, status, userId: user.id });
+
         if (!error && data?.role === "superadmin") {
           setAuthorized(true);
         } else {
+          console.log("[AdminLayout] not superadmin, redirecting. error:", error, "data:", data);
           router.replace("/");
         }
-        setChecking(false);
-      });
+      } catch (err) {
+        console.log("[AdminLayout] profile query exception:", err);
+        router.replace("/");
+      }
+      setChecking(false);
+    };
+
+    checkProfile();
   }, [loading, session, user, router]);
 
   // Close sidebar on route change (mobile)
