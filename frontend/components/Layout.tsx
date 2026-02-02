@@ -218,10 +218,10 @@ export default function Layout({ children }: { children: ReactNode }) {
                 </div>
               ) : (
                 <Link
-                  href="/signin"
+                  href="/signup"
                   className="ml-2 px-4 py-2 rounded-full text-sm font-semibold bg-gradient-to-r from-rose-500 to-rose-600 text-white hover:scale-105 transition-transform inline-block"
                 >
-                  Sign In
+                  Sign Up
                 </Link>
               )}
             </li>
@@ -338,10 +338,10 @@ export default function Layout({ children }: { children: ReactNode }) {
                   </>
                 ) : (
                   <Link
-                    href="/signin"
+                    href="/signup"
                     className="block mt-2 px-4 py-2.5 rounded-full text-sm font-semibold text-center bg-gradient-to-r from-rose-500 to-rose-600 text-white"
                   >
-                    Sign In
+                    Sign Up
                   </Link>
                 )}
               </div>

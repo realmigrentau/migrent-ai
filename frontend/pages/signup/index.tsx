@@ -6,7 +6,7 @@ import { useAuth } from "../../hooks/useAuth";
 import SignInButton from "../../components/SignInButton";
 import { motion } from "framer-motion";
 
-export default function SignIn() {
+export default function SignUp() {
   const router = useRouter();
   const { session } = useAuth();
   const [email, setEmail] = useState("");
@@ -19,12 +19,24 @@ export default function SignIn() {
     return null;
   }
 
-  const handleLogin = async () => {
+  const handleSignUp = async () => {
     setMsg("");
+    if (!email || !password) {
+      setMsg("Please enter your email and password.");
+      return;
+    }
+    if (password.length < 6) {
+      setMsg("Password must be at least 6 characters.");
+      return;
+    }
     setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: { data: { type: "seeker" } },
+    });
     if (error) setMsg(error.message);
-    else router.push("/");
+    else setMsg("Check your email to confirm your account.");
     setLoading(false);
   };
 
@@ -62,9 +74,9 @@ export default function SignIn() {
               M
             </div>
             <h1 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">
-              Sign in to <span className="gradient-text">MigRent</span>
+              Sign up to <span className="gradient-text">MigRent</span>
             </h1>
-            <p className="text-slate-500 dark:text-slate-400 text-sm mt-2">Welcome back! Enter your details below.</p>
+            <p className="text-slate-500 dark:text-slate-400 text-sm mt-2">Create your account to get started.</p>
           </div>
 
           <div className="space-y-4">
@@ -84,31 +96,31 @@ export default function SignIn() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="input-field"
-                onKeyDown={(e) => e.key === "Enter" && handleLogin()}
+                onKeyDown={(e) => e.key === "Enter" && handleSignUp()}
               />
             </div>
 
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              onClick={handleLogin}
+              onClick={handleSignUp}
               disabled={loading}
               className="w-full btn-primary py-3 rounded-xl text-sm disabled:opacity-50"
             >
               {loading ? (
                 <span className="flex items-center justify-center gap-2">
                   <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  Signing in...
+                  Creating account...
                 </span>
               ) : (
-                "Sign in"
+                "Sign up"
               )}
             </motion.button>
 
             <p className="text-center text-sm text-slate-500 dark:text-slate-400">
-              Don&apos;t have an account?{" "}
-              <Link href="/signup" className="text-rose-500 hover:text-rose-600 font-semibold transition-colors">
-                Sign up
+              Already have an account?{" "}
+              <Link href="/signin" className="text-rose-500 hover:text-rose-600 font-semibold transition-colors">
+                Sign in
               </Link>
             </p>
 
