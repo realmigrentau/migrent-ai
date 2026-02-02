@@ -44,8 +44,8 @@ export default function SignIn() {
   return (
     <div className="min-h-[70vh] flex items-center justify-center px-4">
       {/* Floating shapes */}
-      <div className="fixed top-20 left-20 w-96 h-96 bg-rose-500/10 dark:bg-rose-500/5 rounded-full blur-3xl" />
-      <div className="fixed bottom-20 right-20 w-96 h-96 bg-blue-500/10 dark:bg-blue-500/5 rounded-full blur-3xl" />
+      <div className="fixed top-20 left-20 w-96 h-96 bg-blue-500/10 dark:bg-blue-500/5 rounded-full blur-3xl" />
+      <div className="fixed bottom-20 right-20 w-96 h-96 bg-indigo-500/10 dark:bg-indigo-500/5 rounded-full blur-3xl" />
 
       <motion.div
         initial={{ opacity: 0, y: 30, scale: 0.96 }}
@@ -55,14 +55,14 @@ export default function SignIn() {
       >
         <div className="card p-8 rounded-2xl">
           {/* Top accent */}
-          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-rose-400/50 to-transparent rounded-t-2xl" />
+          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-400/50 to-transparent rounded-t-2xl" />
 
           <div className="text-center mb-8">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-rose-500 to-rose-600 flex items-center justify-center text-white font-black text-lg mx-auto mb-4">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-black text-lg mx-auto mb-4">
               M
             </div>
             <h1 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">
-              Sign in to <span className="gradient-text">MigRent</span>
+              Sign in to <span className="gradient-text-accent">MigRent</span>
             </h1>
             <p className="text-slate-500 dark:text-slate-400 text-sm mt-2">Welcome back! Enter your details below.</p>
           </div>
@@ -74,7 +74,7 @@ export default function SignIn() {
                 placeholder="Email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="input-field"
+                className="input-field focus:!border-blue-500 focus:!shadow-[0_0_0_3px_rgba(59,130,246,0.1)]"
               />
             </div>
             <div>
@@ -83,7 +83,7 @@ export default function SignIn() {
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="input-field"
+                className="input-field focus:!border-blue-500 focus:!shadow-[0_0_0_3px_rgba(59,130,246,0.1)]"
                 onKeyDown={(e) => e.key === "Enter" && handleLogin()}
               />
             </div>
@@ -93,7 +93,8 @@ export default function SignIn() {
               whileTap={{ scale: 0.98 }}
               onClick={handleLogin}
               disabled={loading}
-              className="w-full btn-primary py-3 rounded-xl text-sm disabled:opacity-50"
+              className="w-full py-3 rounded-xl text-sm font-semibold text-white disabled:opacity-50"
+              style={{ background: "linear-gradient(135deg, #3b82f6, #2563eb)" }}
             >
               {loading ? (
                 <span className="flex items-center justify-center gap-2">
@@ -107,7 +108,7 @@ export default function SignIn() {
 
             <p className="text-center text-sm text-slate-500 dark:text-slate-400">
               Don&apos;t have an account?{" "}
-              <Link href="/signup" className="text-rose-500 hover:text-rose-600 font-semibold transition-colors">
+              <Link href="/signup" className="text-blue-500 hover:text-blue-600 font-semibold transition-colors">
                 Sign up
               </Link>
             </p>
