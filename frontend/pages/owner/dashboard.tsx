@@ -29,6 +29,8 @@ export default function OwnerDashboard() {
   const [formMsg, setFormMsg] = useState("");
 
   const [listings, setListings] = useState<any[]>([]);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     if (session) fetchListings();
@@ -88,6 +90,23 @@ export default function OwnerDashboard() {
       fetchListings();
     } else {
       setFormMsg("Failed to create listing.");
+    }
+  };
+
+  const handleDeleteOwnerAccount = async () => {
+    setDeleting(true);
+    try {
+      const { error } = await supabase.auth.updateUser({
+        data: { owner_account: false },
+      });
+      if (!error) {
+        router.replace("/");
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setDeleting(false);
+      setShowDeleteConfirm(false);
     }
   };
 
@@ -377,6 +396,68 @@ export default function OwnerDashboard() {
           of your account.
         </p>
       </motion.section>
+
+      {/* Delete Owner Account */}
+      {session && (
+        <motion.section
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="border border-red-200 dark:border-red-500/20 rounded-2xl p-6 space-y-4"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-red-50 dark:bg-red-500/10 flex items-center justify-center">
+              <svg className="w-5 h-5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+              </svg>
+            </div>
+            <div>
+              <h3 className="font-bold text-slate-900 dark:text-white text-sm">Delete Owner Account</h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400">Remove your owner status and all associated data</p>
+            </div>
+          </div>
+
+          {!showDeleteConfirm ? (
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => setShowDeleteConfirm(true)}
+              className="px-5 py-2.5 rounded-xl text-sm font-semibold text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 hover:bg-red-100 dark:hover:bg-red-500/20 transition-colors"
+            >
+              Delete Owner Account
+            </motion.button>
+          ) : (
+            <motion.div
+              initial={{ opacity: 0, y: -5 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 rounded-xl p-4 space-y-3"
+            >
+              <p className="text-sm text-red-700 dark:text-red-300 font-medium">
+                Are you sure? This will remove your owner account and you will lose access to all owner features.
+              </p>
+              <div className="flex gap-3">
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={handleDeleteOwnerAccount}
+                  disabled={deleting}
+                  className="px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-red-500 hover:bg-red-600 transition-colors disabled:opacity-50"
+                >
+                  {deleting ? "Deleting..." : "Yes, delete my owner account"}
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => setShowDeleteConfirm(false)}
+                  className="px-5 py-2.5 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
+                >
+                  Cancel
+                </motion.button>
+              </div>
+            </motion.div>
+          )}
+        </motion.section>
+      )}
     </div>
   );
 }
