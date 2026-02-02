@@ -4,6 +4,17 @@ import Layout from "../components/Layout";
 import "../styles/globals.css";
 
 export default function App({ Component, pageProps, router }: AppProps) {
+  const isAdmin = router.pathname.startsWith("/admin");
+
+  // Admin pages use their own AdminLayout with sidebar — skip the main Layout wrapper
+  if (isAdmin) {
+    return (
+      <Layout>
+        <Component {...pageProps} />
+      </Layout>
+    );
+  }
+
   return (
     <Layout>
       <AnimatePresence mode="wait">
