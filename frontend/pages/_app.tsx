@@ -1,21 +1,18 @@
 import type { AppProps } from "next/app";
 import { AnimatePresence, motion } from "framer-motion";
+import { HCaptchaProvider } from "@hcaptcha/react-hcaptcha/hooks";
 import Layout from "../components/Layout";
+import { HCAPTCHA_SITE_KEY } from "../lib/recaptcha";
 import "../styles/globals.css";
 
 export default function App({ Component, pageProps, router }: AppProps) {
   const isAdmin = router.pathname.startsWith("/mazda.asgt22779412.sara-admin");
 
-  // Admin pages use their own AdminLayout with sidebar — skip the main Layout wrapper
-  if (isAdmin) {
-    return (
-      <Layout>
-        <Component {...pageProps} />
-      </Layout>
-    );
-  }
-
-  return (
+  const inner = isAdmin ? (
+    <Layout>
+      <Component {...pageProps} />
+    </Layout>
+  ) : (
     <Layout>
       <AnimatePresence mode="wait">
         <motion.div
@@ -29,5 +26,15 @@ export default function App({ Component, pageProps, router }: AppProps) {
         </motion.div>
       </AnimatePresence>
     </Layout>
+  );
+
+  if (!HCAPTCHA_SITE_KEY) {
+    return inner;
+  }
+
+  return (
+    <HCaptchaProvider sitekey={HCAPTCHA_SITE_KEY}>
+      {inner}
+    </HCaptchaProvider>
   );
 }

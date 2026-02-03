@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "../hooks/useAuth";
 import { useTheme } from "../hooks/useTheme";
 import { supabase } from "../lib/supabase";
+import AdminGate from "./AdminGate";
 
 const sidebarLinks = [
   {
@@ -141,6 +142,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   }
 
   return (
+    <AdminGate>
     <div className="flex min-h-[calc(100vh-4rem)]">
       {/* Mobile sidebar toggle */}
       <button
@@ -253,5 +255,6 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
         </div>
       </main>
     </div>
+    </AdminGate>
   );
 }
