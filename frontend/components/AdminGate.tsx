@@ -1,11 +1,11 @@
-import { useState, useEffect, ReactNode } from "react";
+import { useState, useEffect, useRef, useCallback, ReactNode } from "react";
 import { motion } from "framer-motion";
 
 const ADMIN_USERNAME = "7ADAM15";
 const ADMIN_PASSWORD = "craver_rules";
 const LOCKOUT_PASSWORD = "westxlopez";
 const MAX_ATTEMPTS = 3;
-const SESSION_KEY = "admin_gate_auth";
+const INACTIVITY_TIMEOUT = 20_000; // 20 seconds
 
 export default function AdminGate({ children }: { children: ReactNode }) {
   const [authenticated, setAuthenticated] = useState(false);
@@ -17,19 +17,47 @@ export default function AdminGate({ children }: { children: ReactNode }) {
   const [error, setError] = useState("");
   const [lockoutError, setLockoutError] = useState("");
   const [mounted, setMounted] = useState(false);
+  const inactivityTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  const lockOut = useCallback(() => {
+    setAuthenticated(false);
+    setLocked(true);
+    setLockoutPassword("");
+    setLockoutError("");
+  }, []);
+
+  const resetInactivityTimer = useCallback(() => {
+    if (inactivityTimer.current) clearTimeout(inactivityTimer.current);
+    inactivityTimer.current = setTimeout(lockOut, INACTIVITY_TIMEOUT);
+  }, [lockOut]);
+
+  // On mount — no sessionStorage restore (refresh = locked out)
   useEffect(() => {
     setMounted(true);
-    const stored = sessionStorage.getItem(SESSION_KEY);
-    if (stored === "true") {
-      setAuthenticated(true);
-    }
   }, []);
+
+  // Inactivity tracking when authenticated
+  useEffect(() => {
+    if (!authenticated) {
+      if (inactivityTimer.current) clearTimeout(inactivityTimer.current);
+      return;
+    }
+
+    const events = ["mousemove", "mousedown", "keydown", "touchstart", "scroll"];
+    const handler = () => resetInactivityTimer();
+
+    events.forEach((e) => window.addEventListener(e, handler));
+    resetInactivityTimer();
+
+    return () => {
+      events.forEach((e) => window.removeEventListener(e, handler));
+      if (inactivityTimer.current) clearTimeout(inactivityTimer.current);
+    };
+  }, [authenticated, resetInactivityTimer]);
 
   const handleLogin = () => {
     setError("");
     if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
-      sessionStorage.setItem(SESSION_KEY, "true");
       setAuthenticated(true);
       return;
     }
