@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "../hooks/useAuth";
 import { useTheme } from "../hooks/useTheme";
 import { supabase } from "../lib/supabase";
-import AdminGate from "./AdminGate";
+import AdminGate, { useAdminGate } from "./AdminGate";
 
 const sidebarLinks = [
   {
@@ -54,6 +54,21 @@ const sidebarLinks = [
     ),
   },
 ];
+
+function LockButton() {
+  const { lock } = useAdminGate();
+  return (
+    <button
+      onClick={lock}
+      className="flex items-center gap-3 w-full px-3 py-2 rounded-xl text-sm font-medium text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
+    >
+      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+      </svg>
+      Lock Admin
+    </button>
+  );
+}
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
   const router = useRouter();
@@ -239,6 +254,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
               {theme === "dark" ? "Light mode" : "Dark mode"}
             </button>
           )}
+          <LockButton />
           <div className="flex items-center gap-2 px-3 py-2">
             <div className="pulse-dot" />
             <span className="text-xs text-slate-400 dark:text-slate-500 truncate">

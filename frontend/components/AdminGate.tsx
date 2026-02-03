@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback, ReactNode } from "react";
+import { useState, useEffect, useRef, useCallback, useContext, createContext, ReactNode } from "react";
 import { motion } from "framer-motion";
 
 const ADMIN_USERNAME = "CRAVER_RULES";
@@ -9,8 +9,17 @@ const INACTIVITY_TIMEOUT = 20_000; // 20 seconds
 
 type LockReason = "attempts" | "inactivity";
 
+// Module-level flag: survives client-side navigation, resets on page refresh
+let moduleAuth = false;
+
+const AdminGateContext = createContext<{ lock: () => void }>({ lock: () => {} });
+
+export function useAdminGate() {
+  return useContext(AdminGateContext);
+}
+
 export default function AdminGate({ children }: { children: ReactNode }) {
-  const [authenticated, setAuthenticated] = useState(false);
+  const [authenticated, setAuthenticated] = useState(() => moduleAuth);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [attempts, setAttempts] = useState(0);
@@ -22,12 +31,26 @@ export default function AdminGate({ children }: { children: ReactNode }) {
   const [mounted, setMounted] = useState(false);
   const inactivityTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // Keep module flag in sync
+  useEffect(() => {
+    moduleAuth = authenticated;
+  }, [authenticated]);
+
   const lockOut = useCallback(() => {
     setAuthenticated(false);
     setLocked(true);
     setLockReason("inactivity");
     setLockoutPassword("");
     setLockoutError("");
+  }, []);
+
+  const manualLock = useCallback(() => {
+    setAuthenticated(false);
+    setLocked(false);
+    setUsername("");
+    setPassword("");
+    setAttempts(0);
+    setError("");
   }, []);
 
   const resetInactivityTimer = useCallback(() => {
@@ -83,10 +106,8 @@ export default function AdminGate({ children }: { children: ReactNode }) {
       setLockoutPassword("");
 
       if (lockReason === "inactivity") {
-        // Skip admin login, go straight back in
         setAuthenticated(true);
       } else {
-        // Failed attempts — reset and show login again
         setAttempts(0);
         setUsername("");
         setPassword("");
@@ -99,7 +120,11 @@ export default function AdminGate({ children }: { children: ReactNode }) {
   if (!mounted) return null;
 
   if (authenticated) {
-    return <>{children}</>;
+    return (
+      <AdminGateContext.Provider value={{ lock: manualLock }}>
+        {children}
+      </AdminGateContext.Provider>
+    );
   }
 
   // Lockout screen with flashing red/blue
