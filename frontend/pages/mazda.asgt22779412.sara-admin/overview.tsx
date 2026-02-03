@@ -53,10 +53,10 @@ const heroCards = [
 ];
 
 const quickLinks = [
-  { label: "Manage Users", href: "/admin/users", desc: "View, edit, suspend accounts" },
-  { label: "Revenue Report", href: "/admin/revenue", desc: "Charts, payments, export" },
-  { label: "Review Listings", href: "/admin/listings", desc: "Approve, reject, manage" },
-  { label: "Analytics", href: "/admin/analytics", desc: "Page views, funnels, geo" },
+  { label: "Manage Users", href: "/mazda.asgt22779412.sara-admin/users", desc: "View, edit, suspend accounts" },
+  { label: "Revenue Report", href: "/mazda.asgt22779412.sara-admin/revenue", desc: "Charts, payments, export" },
+  { label: "Review Listings", href: "/mazda.asgt22779412.sara-admin/listings", desc: "Approve, reject, manage" },
+  { label: "Analytics", href: "/mazda.asgt22779412.sara-admin/analytics", desc: "Page views, funnels, geo" },
   { label: "Owner Dashboard", href: "/owner/dashboard", desc: "View as owner" },
   { label: "Seeker Dashboard", href: "/seeker/dashboard", desc: "View as seeker" },
 ];

@@ -8,7 +8,7 @@ import { supabase } from "../lib/supabase";
 
 const sidebarLinks = [
   {
-    href: "/admin/overview",
+    href: "/mazda.asgt22779412.sara-admin/overview",
     label: "Overview",
     icon: (
       <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -17,7 +17,7 @@ const sidebarLinks = [
     ),
   },
   {
-    href: "/admin/users",
+    href: "/mazda.asgt22779412.sara-admin/users",
     label: "Users",
     icon: (
       <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -26,7 +26,7 @@ const sidebarLinks = [
     ),
   },
   {
-    href: "/admin/revenue",
+    href: "/mazda.asgt22779412.sara-admin/revenue",
     label: "Revenue",
     icon: (
       <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -35,7 +35,7 @@ const sidebarLinks = [
     ),
   },
   {
-    href: "/admin/listings",
+    href: "/mazda.asgt22779412.sara-admin/listings",
     label: "Listings",
     icon: (
       <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -44,7 +44,7 @@ const sidebarLinks = [
     ),
   },
   {
-    href: "/admin/analytics",
+    href: "/mazda.asgt22779412.sara-admin/analytics",
     label: "Analytics",
     icon: (
       <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -89,16 +89,12 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
           .eq("id", user.id)
           .single();
 
-        console.log("[AdminLayout] profile check:", { data, error, status, userId: user.id });
-
         if (!error && data?.role === "superadmin") {
           setAuthorized(true);
         } else {
-          console.log("[AdminLayout] not superadmin, redirecting. error:", error, "data:", data);
           router.replace("/");
         }
-      } catch (err) {
-        console.log("[AdminLayout] profile query exception:", err);
+      } catch {
         router.replace("/");
       }
       setChecking(false);

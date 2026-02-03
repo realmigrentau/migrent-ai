@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import { Turnstile, type TurnstileInstance } from "@marsidev/react-turnstile";
 import { supabase } from "../../lib/supabase";
 import { useAuth } from "../../hooks/useAuth";
+import { TURNSTILE_SITE_KEY } from "../../lib/recaptcha";
 import SignInButton from "../../components/SignInButton";
 import { motion } from "framer-motion";
 
@@ -13,6 +15,8 @@ export default function SignIn() {
   const [password, setPassword] = useState("");
   const [msg, setMsg] = useState("");
   const [loading, setLoading] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const turnstileRef = useRef<TurnstileInstance | null>(null);
 
   if (session) {
     router.push("/");
@@ -21,11 +25,35 @@ export default function SignIn() {
 
   const handleLogin = async () => {
     setMsg("");
+
+    if (TURNSTILE_SITE_KEY && !captchaToken) {
+      setMsg("Please wait for the CAPTCHA to complete.");
+      return;
+    }
+
     setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) setMsg(error.message);
-    else router.push("/");
-    setLoading(false);
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+        options: captchaToken ? { captchaToken } : undefined,
+      });
+
+      if (error) {
+        setMsg(error.message);
+        // Reset Turnstile so user gets a fresh token on retry
+        turnstileRef.current?.reset();
+        setCaptchaToken(null);
+      } else {
+        router.push("/");
+      }
+    } catch {
+      setMsg("Something went wrong. Please try again.");
+      turnstileRef.current?.reset();
+      setCaptchaToken(null);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleMagicLink = async () => {
@@ -87,6 +115,22 @@ export default function SignIn() {
                 onKeyDown={(e) => e.key === "Enter" && handleLogin()}
               />
             </div>
+
+            {TURNSTILE_SITE_KEY && (
+              <div className="flex justify-center">
+                <Turnstile
+                  ref={turnstileRef}
+                  siteKey={TURNSTILE_SITE_KEY}
+                  onSuccess={(token) => setCaptchaToken(token)}
+                  onError={() => {
+                    setCaptchaToken(null);
+                    setMsg("CAPTCHA failed. Please try again.");
+                  }}
+                  onExpire={() => setCaptchaToken(null)}
+                  options={{ size: "compact", theme: "auto" }}
+                />
+              </div>
+            )}
 
             <motion.button
               whileHover={{ scale: 1.02 }}

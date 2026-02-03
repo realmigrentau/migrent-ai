@@ -4,7 +4,6 @@ import { ReactNode, useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "../hooks/useTheme";
 import { useAuth } from "../hooks/useAuth";
-import { supabase } from "../lib/supabase";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -24,31 +23,8 @@ export default function Layout({ children }: { children: ReactNode }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
   const accountRef = useRef<HTMLDivElement>(null);
-  const [isSuperAdmin, setIsSuperAdmin] = useState(false);
-  const isAdminRoute = router.pathname.startsWith("/admin");
+  const isAdminRoute = router.pathname.startsWith("/mazda.asgt22779412.sara-admin");
   const isSignIn = router.pathname === "/signin";
-
-  // Check if user is superadmin
-  useEffect(() => {
-    if (!user) {
-      setIsSuperAdmin(false);
-      return;
-    }
-    const metaRole = user.user_metadata?.role ?? user.app_metadata?.role;
-    if (metaRole === "superadmin") {
-      setIsSuperAdmin(true);
-      return;
-    }
-    // Fallback: check profiles table
-    supabase
-      .from("profiles")
-      .select("role")
-      .eq("id", user.id)
-      .single()
-      .then(({ data, error }) => {
-        setIsSuperAdmin(!error && data?.role === "superadmin");
-      });
-  }, [user]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -200,18 +176,6 @@ export default function Layout({ children }: { children: ReactNode }) {
                             </svg>
                             Settings
                           </Link>
-                          {isSuperAdmin && (
-                            <Link
-                              href="/admin/overview"
-                              onClick={() => setAccountOpen(false)}
-                              className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-colors"
-                            >
-                              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
-                              </svg>
-                              Admin
-                            </Link>
-                          )}
                         </div>
                       </motion.div>
                     )}
@@ -325,17 +289,6 @@ export default function Layout({ children }: { children: ReactNode }) {
                       </svg>
                       Settings
                     </Link>
-                    {isSuperAdmin && (
-                      <Link
-                        href="/admin/overview"
-                        className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-colors"
-                      >
-                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
-                        </svg>
-                        Admin
-                      </Link>
-                    )}
                   </>
                 ) : (
                   <Link

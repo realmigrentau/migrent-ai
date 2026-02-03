@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@marsidev/react-turnstile": "^1.4.1",
     "@supabase/supabase-js": "^2.93.2",
     "framer-motion": "^12.29.2",
     "lucide-react": "^0.563.0",

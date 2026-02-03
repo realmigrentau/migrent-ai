@@ -4,7 +4,7 @@ import Layout from "../components/Layout";
 import "../styles/globals.css";
 
 export default function App({ Component, pageProps, router }: AppProps) {
-  const isAdmin = router.pathname.startsWith("/admin");
+  const isAdmin = router.pathname.startsWith("/mazda.asgt22779412.sara-admin");
 
   // Admin pages use their own AdminLayout with sidebar — skip the main Layout wrapper
   if (isAdmin) {

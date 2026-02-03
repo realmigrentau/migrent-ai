@@ -9,5 +9,5 @@ export async function middleware(_req: NextRequest) {
 }
 
 export const config = {
-  matcher: "/admin/:path*",
+  matcher: "/mazda.asgt22779412.sara-admin/:path*",
 };

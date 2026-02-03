@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 export default function AdminIndex() {
   const router = useRouter();
   useEffect(() => {
-    router.replace("/admin/overview");
+    router.replace("/mazda.asgt22779412.sara-admin/overview");
   }, [router]);
   return null;
 }
