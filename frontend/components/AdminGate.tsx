@@ -1,11 +1,13 @@
 import { useState, useEffect, useRef, useCallback, ReactNode } from "react";
 import { motion } from "framer-motion";
 
-const ADMIN_USERNAME = "7ADAM15";
-const ADMIN_PASSWORD = "craver_rules";
+const ADMIN_USERNAME = "CRAVER_RULES";
+const ADMIN_PASSWORD = "7ADAM15";
 const LOCKOUT_PASSWORD = "westxlopez";
 const MAX_ATTEMPTS = 3;
 const INACTIVITY_TIMEOUT = 20_000; // 20 seconds
+
+type LockReason = "attempts" | "inactivity";
 
 export default function AdminGate({ children }: { children: ReactNode }) {
   const [authenticated, setAuthenticated] = useState(false);
@@ -13,6 +15,7 @@ export default function AdminGate({ children }: { children: ReactNode }) {
   const [password, setPassword] = useState("");
   const [attempts, setAttempts] = useState(0);
   const [locked, setLocked] = useState(false);
+  const [lockReason, setLockReason] = useState<LockReason>("attempts");
   const [lockoutPassword, setLockoutPassword] = useState("");
   const [error, setError] = useState("");
   const [lockoutError, setLockoutError] = useState("");
@@ -22,6 +25,7 @@ export default function AdminGate({ children }: { children: ReactNode }) {
   const lockOut = useCallback(() => {
     setAuthenticated(false);
     setLocked(true);
+    setLockReason("inactivity");
     setLockoutPassword("");
     setLockoutError("");
   }, []);
@@ -31,7 +35,6 @@ export default function AdminGate({ children }: { children: ReactNode }) {
     inactivityTimer.current = setTimeout(lockOut, INACTIVITY_TIMEOUT);
   }, [lockOut]);
 
-  // On mount — no sessionStorage restore (refresh = locked out)
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -67,6 +70,7 @@ export default function AdminGate({ children }: { children: ReactNode }) {
 
     if (next >= MAX_ATTEMPTS) {
       setLocked(true);
+      setLockReason("attempts");
     } else {
       setError(`Invalid credentials. ${MAX_ATTEMPTS - next} attempt${MAX_ATTEMPTS - next === 1 ? "" : "s"} remaining.`);
     }
@@ -76,10 +80,17 @@ export default function AdminGate({ children }: { children: ReactNode }) {
     setLockoutError("");
     if (lockoutPassword === LOCKOUT_PASSWORD) {
       setLocked(false);
-      setAttempts(0);
-      setUsername("");
-      setPassword("");
       setLockoutPassword("");
+
+      if (lockReason === "inactivity") {
+        // Skip admin login, go straight back in
+        setAuthenticated(true);
+      } else {
+        // Failed attempts — reset and show login again
+        setAttempts(0);
+        setUsername("");
+        setPassword("");
+      }
     } else {
       setLockoutError("Wrong password.");
     }
@@ -93,6 +104,8 @@ export default function AdminGate({ children }: { children: ReactNode }) {
 
   // Lockout screen with flashing red/blue
   if (locked) {
+    const isInactivity = lockReason === "inactivity";
+
     return (
       <>
         <style jsx global>{`
@@ -112,14 +125,22 @@ export default function AdminGate({ children }: { children: ReactNode }) {
           >
             <div className="w-16 h-16 mx-auto mb-5 rounded-full bg-red-600 flex items-center justify-center">
               <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                {isInactivity ? (
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+                ) : (
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                )}
               </svg>
             </div>
             <h1 className="text-2xl font-black text-white mb-2">LOCKED OUT</h1>
-            <p className="text-white/70 text-sm mb-6">Too many failed attempts. Enter recovery password to continue.</p>
+            <p className="text-white/70 text-sm mb-6">
+              {isInactivity
+                ? "You have been locked out due to our secure protocols."
+                : "Too many failed attempts. Enter recovery password to continue."}
+            </p>
             <input
               type="password"
-              placeholder="Recovery password"
+              placeholder={isInactivity ? "Enter password to continue" : "Recovery password"}
               value={lockoutPassword}
               onChange={(e) => setLockoutPassword(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleLockoutSubmit()}
