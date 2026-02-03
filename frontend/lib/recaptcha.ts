@@ -1,9 +1,9 @@
 /**
- * Cloudflare Turnstile configuration.
+ * hCaptcha configuration for Supabase Auth.
  *
- * Supabase Auth accepts the token via `options.captchaToken`
+ * Supabase accepts the token via `options.captchaToken`
  * on signUp / signInWithPassword calls.
  */
 
-export const TURNSTILE_SITE_KEY =
-  process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "";
+export const HCAPTCHA_SITE_KEY =
+  process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY ?? "";
