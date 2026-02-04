@@ -234,6 +234,93 @@ export async function submitSupportRequest(data: {
   }
 }
 
+// ── Profile endpoints ────────────────────────────────────────
+
+/**
+ * Get the current user's profile.
+ * GET /profiles/me
+ */
+export async function getMyProfile(token: string) {
+  try {
+    const res = await fetch(`${BASE_URL}/profiles/me`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if (!res.ok) throw new Error(`getMyProfile failed: ${res.status}`);
+    return await res.json();
+  } catch (err) {
+    console.error("getMyProfile error:", err);
+    return null;
+  }
+}
+
+/**
+ * Update the current user's profile.
+ * PATCH /profiles/me
+ */
+export async function updateMyProfile(
+  token: string,
+  data: Record<string, any>
+) {
+  try {
+    const res = await fetch(`${BASE_URL}/profiles/me`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) throw new Error(`updateMyProfile failed: ${res.status}`);
+    return await res.json();
+  } catch (err) {
+    console.error("updateMyProfile error:", err);
+    return null;
+  }
+}
+
+/**
+ * Get a public profile by user ID.
+ * GET /profiles/:user_id
+ */
+export async function getPublicProfile(userId: string) {
+  try {
+    const res = await fetch(`${BASE_URL}/profiles/${userId}`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    });
+    if (!res.ok) throw new Error(`getPublicProfile failed: ${res.status}`);
+    return await res.json();
+  } catch (err) {
+    console.error("getPublicProfile error:", err);
+    return null;
+  }
+}
+
+/**
+ * Refresh/recalculate badges for the current user.
+ * POST /profiles/badges/refresh
+ */
+export async function refreshBadges(token: string) {
+  try {
+    const res = await fetch(`${BASE_URL}/profiles/badges/refresh`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if (!res.ok) throw new Error(`refreshBadges failed: ${res.status}`);
+    return await res.json();
+  } catch (err) {
+    console.error("refreshBadges error:", err);
+    return null;
+  }
+}
+
 /**
  * Submit a report for a listing or profile.
  * POST /reports

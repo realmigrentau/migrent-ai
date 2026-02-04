@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "../../hooks/useAuth";
+import { getMyProfile, updateMyProfile, refreshBadges } from "../../lib/api";
 import Link from "next/link";
 
 interface SeekerProfile {
@@ -17,6 +18,7 @@ interface SeekerProfile {
   uselessSkill: string;
   interests: string[];
   profilePhoto: string | null;
+  badges: string[];
 }
 
 const LIFESTYLE_OPTIONS = [
@@ -54,17 +56,18 @@ const INTEREST_OPTIONS = [
 ];
 
 const SEEKER_BADGES = [
-  { id: "first_place", label: "Nest Egg", desc: "Your first place", icon: "🏠", threshold: 1 },
-  { id: "fifth_place", label: "Frequent Flyer", desc: "Your 5th place", icon: "✈️", threshold: 5 },
-  { id: "five_destinations", label: "Wanderlust", desc: "Stayed at over 5 destinations", icon: "🌍", threshold: 5 },
-  { id: "ten_destinations", label: "Globe Trotter", desc: "Stayed at over 10 destinations", icon: "🗺️", threshold: 10 },
-  { id: "long_stay", label: "Home Bird", desc: "Stayed at a place for 14+ days", icon: "🐦", threshold: 14 },
+  { id: "first_place", label: "Nest Egg", desc: "Your first place", icon: "🏠", key: "Purchased 1+ homes" },
+  { id: "fifth_place", label: "Frequent Flyer", desc: "Your 5th place", icon: "✈️", key: "frequent_flyer" },
+  { id: "five_destinations", label: "Wanderlust", desc: "Stayed at over 5 destinations", icon: "🌍", key: "wanderlust" },
+  { id: "ten_destinations", label: "Globe Trotter", desc: "Stayed at over 10 destinations", icon: "🗺️", key: "globe_trotter" },
+  { id: "long_stay", label: "Home Bird", desc: "Stayed at a place for 14+ days", icon: "🐦", key: "home_bird" },
 ];
 
 export default function SeekerProfilePage() {
   const { session, user, loading, signOut } = useAuth();
   const [saved, setSaved] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [loadingProfile, setLoadingProfile] = useState(true);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const [profile, setProfile] = useState<SeekerProfile>({
@@ -81,10 +84,52 @@ export default function SeekerProfilePage() {
     uselessSkill: "",
     interests: ["Travel", "Coffee"],
     profilePhoto: null,
+    badges: [],
   });
 
+  // Load profile from backend
   useEffect(() => {
-    if (user) {
+    if (session?.access_token) {
+      (async () => {
+        try {
+          const data = await getMyProfile(session.access_token);
+          if (data) {
+            setProfile((prev) => ({
+              ...prev,
+              name: data.name || user?.user_metadata?.full_name || user?.email?.split("@")[0] || "",
+              age: data.age?.toString() || "",
+              occupation: data.occupation || "",
+              visaType: data.visa_type || "",
+              budgetMin: data.budget_min?.toString() || "150",
+              budgetMax: data.budget_max?.toString() || "350",
+              preferredSuburbs: data.preferred_suburbs || "",
+              moveInDate: data.move_in_date || "",
+              lifestyle: data.lifestyle || ["Quiet", "Non-smoker"],
+              bio: data.about_me || data.bio || "",
+              uselessSkill: data.most_useless_skill || "",
+              interests: data.interests || ["Travel", "Coffee"],
+              profilePhoto: data.custom_pfp || null,
+              badges: data.badges || [],
+            }));
+          }
+          // Also refresh badges
+          const badgeData = await refreshBadges(session.access_token);
+          if (badgeData?.badges) {
+            setProfile((prev) => ({ ...prev, badges: badgeData.badges }));
+          }
+        } catch (err) {
+          console.error("Failed to load profile:", err);
+        } finally {
+          setLoadingProfile(false);
+        }
+      })();
+    } else if (!loading) {
+      setLoadingProfile(false);
+    }
+  }, [session, user, loading]);
+
+  useEffect(() => {
+    if (user && !profile.name) {
       setProfile((prev) => ({
         ...prev,
         name: user.user_metadata?.full_name || user.email?.split("@")[0] || "",
@@ -108,12 +153,12 @@ export default function SeekerProfilePage() {
   };
 
   const toggleInterest = (item: string) => {
-    setProfile((prev) => ({
-      ...prev,
-      interests: prev.interests.includes(item)
-        ? prev.interests.filter((i) => i !== item)
-        : [...prev.interests, item],
-    }));
+    setProfile((prev) => {
+      const has = prev.interests.includes(item);
+      if (has) return { ...prev, interests: prev.interests.filter((i) => i !== item) };
+      if (prev.interests.length >= 5) return prev;
+      return { ...prev, interests: [...prev.interests, item] };
+    });
     setSaved(false);
   };
 
@@ -126,27 +171,35 @@ export default function SeekerProfilePage() {
   };
 
   const handleSave = async () => {
+    if (!session?.access_token) return;
     setSaving(true);
-    await new Promise((r) => setTimeout(r, 800));
-    setSaving(false);
-    setSaved(true);
+    try {
+      await updateMyProfile(session.access_token, {
+        name: profile.name,
+        about_me: profile.bio,
+        most_useless_skill: profile.uselessSkill,
+        interests: profile.interests,
+        occupation: profile.occupation,
+        age: profile.age ? Number(profile.age) : null,
+        visa_type: profile.visaType || null,
+        budget_min: profile.budgetMin ? Number(profile.budgetMin) : null,
+        budget_max: profile.budgetMax ? Number(profile.budgetMax) : null,
+        preferred_suburbs: profile.preferredSuburbs || null,
+        move_in_date: profile.moveInDate || null,
+        lifestyle: profile.lifestyle,
+        custom_pfp: profile.profilePhoto || null,
+      });
+      setSaved(true);
+    } catch (err) {
+      console.error("Save failed:", err);
+    } finally {
+      setSaving(false);
+    }
   };
 
-  // Mock data for badges — in production this comes from backend
-  const destinations = 3;
-  const placesStayed = 1;
-  const longestStay = 21;
+  const earnedBadgeKeys = profile.badges || [];
 
-  const earnedBadges = SEEKER_BADGES.filter((b) => {
-    if (b.id === "first_place") return placesStayed >= 1;
-    if (b.id === "fifth_place") return placesStayed >= 5;
-    if (b.id === "five_destinations") return destinations >= 5;
-    if (b.id === "ten_destinations") return destinations >= 10;
-    if (b.id === "long_stay") return longestStay >= 14;
-    return false;
-  });
-
-  if (loading)
+  if (loading || loadingProfile)
     return (
       <div className="flex items-center justify-center py-20">
         <div className="w-8 h-8 border-2 border-rose-300 dark:border-rose-500/30 border-t-rose-500 rounded-full animate-spin" />
@@ -177,7 +230,7 @@ export default function SeekerProfilePage() {
         </p>
       </motion.div>
 
-      {/* Profile photo + name header */}
+      {/* Profile photo + name header + badges */}
       <motion.section
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -216,6 +269,25 @@ export default function SeekerProfilePage() {
           <div className="flex-1">
             <h2 className="text-xl font-bold text-slate-900 dark:text-white">{profile.name || "Your Name"}</h2>
             <p className="text-sm text-slate-500 dark:text-slate-400">{profile.occupation || "Add your occupation"}</p>
+            {/* Badges as pills */}
+            {earnedBadgeKeys.length > 0 && (
+              <div className="flex flex-wrap gap-1.5 mt-2">
+                {earnedBadgeKeys.map((badge) => (
+                  <span
+                    key={badge}
+                    className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-500/20"
+                  >
+                    {badge}
+                  </span>
+                ))}
+              </div>
+            )}
+            {/* Useless skill fun badge */}
+            {profile.uselessSkill && (
+              <span className="inline-block mt-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-200 dark:border-purple-500/20">
+                {profile.uselessSkill}
+              </span>
+            )}
             <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">Click photo to change</p>
           </div>
         </div>
@@ -231,11 +303,13 @@ export default function SeekerProfilePage() {
         <h2 className="text-lg font-bold text-slate-900 dark:text-white">About me</h2>
         <textarea
           value={profile.bio}
-          onChange={(e) => update("bio", e.target.value)}
+          onChange={(e) => update("bio", e.target.value.slice(0, 200))}
           placeholder="Tell owners about yourself — what brings you to Australia, your hobbies, what you're like to live with..."
           rows={4}
           className="input-field text-sm"
+          maxLength={200}
         />
+        <p className="text-xs text-slate-400 dark:text-slate-500">{profile.bio.length}/200</p>
         <div>
           <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
             My most useless skill
@@ -259,7 +333,7 @@ export default function SeekerProfilePage() {
         className="card p-6 rounded-2xl space-y-4"
       >
         <h2 className="text-lg font-bold text-slate-900 dark:text-white">Interests</h2>
-        <p className="text-sm text-slate-500 dark:text-slate-400">Pick what you enjoy — helps find like-minded housemates.</p>
+        <p className="text-sm text-slate-500 dark:text-slate-400">Pick what you enjoy (max 5) — helps find like-minded housemates.</p>
         <div className="flex flex-wrap gap-2">
           {INTEREST_OPTIONS.map((item) => {
             const active = profile.interests.includes(item);
@@ -267,9 +341,12 @@ export default function SeekerProfilePage() {
               <button
                 key={item}
                 onClick={() => toggleInterest(item)}
+                disabled={!active && profile.interests.length >= 5}
                 className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
                   active
                     ? "bg-rose-500 text-white shadow-sm"
+                    : profile.interests.length >= 5
+                    ? "bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 border border-slate-200 dark:border-slate-700 cursor-not-allowed"
                     : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-rose-300 dark:hover:border-rose-500/30"
                 }`}
               >
@@ -278,6 +355,7 @@ export default function SeekerProfilePage() {
             );
           })}
         </div>
+        <p className="text-xs text-slate-400">{profile.interests.length}/5 selected</p>
       </motion.section>
 
       {/* Badges */}
@@ -291,7 +369,7 @@ export default function SeekerProfilePage() {
         <p className="text-sm text-slate-500 dark:text-slate-400">Earn badges as you use MigRent. They show on your profile to owners.</p>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           {SEEKER_BADGES.map((badge) => {
-            const earned = earnedBadges.some((b) => b.id === badge.id);
+            const earned = earnedBadgeKeys.includes(badge.key);
             return (
               <div
                 key={badge.id}

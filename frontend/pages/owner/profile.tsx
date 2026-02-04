@@ -1,21 +1,23 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "../../hooks/useAuth";
+import { getMyProfile, updateMyProfile, refreshBadges } from "../../lib/api";
 
 const OWNER_BADGES = [
-  { id: "first_sale", label: "First Keys", desc: "Your first official rent to a person of a room/property", icon: "🔑" },
-  { id: "property_mogul", label: "Property Mogul", desc: "Own more than 3 properties", icon: "🏘️" },
-  { id: "superhost", label: "Superhost", desc: "You have hosted for more than 1 month", icon: "⭐" },
-  { id: "mega_host", label: "Mega Host", desc: "You have hosted for over a year", icon: "🏆" },
-  { id: "the_trusted", label: "The Trusted", desc: "You have a 4.9-5 rating in reviews", icon: "🛡️" },
-  { id: "the_friendly", label: "The Friendly One", desc: "You offer discounts to users who have completed a requirement", icon: "🤝" },
+  { id: "first_sale", label: "First Keys", desc: "Your first official rent to a person of a room/property", icon: "🔑", key: "Verified host" },
+  { id: "property_mogul", label: "Property Mogul", desc: "Own more than 3 properties", icon: "🏘️", key: "property_mogul" },
+  { id: "superhost", label: "Superhost", desc: "3+ published listings", icon: "⭐", key: "Superhost" },
+  { id: "mega_host", label: "Mega Host", desc: "You have hosted for over a year", icon: "🏆", key: "mega_host" },
+  { id: "the_trusted", label: "The Trusted", desc: "You have a 4.9-5 rating in reviews", icon: "🛡️", key: "the_trusted" },
+  { id: "the_friendly", label: "The Friendly One", desc: "You offer discounts to users who have completed a requirement", icon: "🤝", key: "the_friendly" },
 ];
 
 export default function OwnerProfilePage() {
   const { session, user, loading } = useAuth();
   const router = useRouter();
+  const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!loading && session && user?.user_metadata?.owner_account !== true) {
@@ -25,6 +27,7 @@ export default function OwnerProfilePage() {
 
   const [saved, setSaved] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [loadingProfile, setLoadingProfile] = useState(true);
   const [roomsOpen, setRoomsOpen] = useState(false);
   const [propsOpen, setPropsOpen] = useState(false);
 
@@ -32,14 +35,58 @@ export default function OwnerProfilePage() {
     name: "",
     bio: "",
     phone: "",
+    uselessSkill: "",
+    aboutMe: "",
+    interests: [] as string[],
+    profilePhoto: null as string | null,
     notifyEmail: true,
     notifySms: false,
     roomsOwned: 0,
     propertiesOwned: 0,
+    badges: [] as string[],
   });
 
+  // Load profile from backend
   useEffect(() => {
-    if (user) {
+    if (session?.access_token) {
+      (async () => {
+        try {
+          const data = await getMyProfile(session.access_token);
+          if (data) {
+            setProfile((prev) => ({
+              ...prev,
+              name: data.name || user?.user_metadata?.full_name || user?.email?.split("@")[0] || "",
+              bio: data.bio || data.about_me || "",
+              phone: data.phone || "",
+              uselessSkill: data.most_useless_skill || "",
+              aboutMe: data.about_me || "",
+              interests: data.interests || [],
+              profilePhoto: data.custom_pfp || null,
+              notifyEmail: data.notify_email ?? true,
+              notifySms: data.notify_sms ?? false,
+              roomsOwned: data.rooms_owned || 0,
+              propertiesOwned: data.properties_owned || 0,
+              badges: data.badges || [],
+            }));
+          }
+          // Refresh badges
+          const badgeData = await refreshBadges(session.access_token);
+          if (badgeData?.badges) {
+            setProfile((prev) => ({ ...prev, badges: badgeData.badges }));
+          }
+        } catch (err) {
+          console.error("Failed to load profile:", err);
+        } finally {
+          setLoadingProfile(false);
+        }
+      })();
+    } else if (!loading) {
+      setLoadingProfile(false);
+    }
+  }, [session, user, loading]);
+
+  useEffect(() => {
+    if (user && !profile.name) {
       setProfile((prev) => ({
         ...prev,
         name: user.user_metadata?.full_name || user.email?.split("@")[0] || "",
@@ -52,33 +99,41 @@ export default function OwnerProfilePage() {
     setSaved(false);
   };
 
+  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const url = URL.createObjectURL(file);
+      update("profilePhoto", url);
+    }
+  };
+
   const handleSave = async () => {
+    if (!session?.access_token) return;
     setSaving(true);
-    await new Promise((r) => setTimeout(r, 800));
-    setSaving(false);
-    setSaved(true);
+    try {
+      await updateMyProfile(session.access_token, {
+        name: profile.name,
+        about_me: profile.aboutMe || profile.bio,
+        most_useless_skill: profile.uselessSkill || null,
+        interests: profile.interests,
+        phone: profile.phone || null,
+        rooms_owned: profile.roomsOwned,
+        properties_owned: profile.propertiesOwned,
+        notify_email: profile.notifyEmail,
+        notify_sms: profile.notifySms,
+        custom_pfp: profile.profilePhoto || null,
+      });
+      setSaved(true);
+    } catch (err) {
+      console.error("Save failed:", err);
+    } finally {
+      setSaving(false);
+    }
   };
 
-  // Mock stats — in production these come from the backend
-  const stats = {
-    totalRentals: 0,       // completed rentals
-    propertiesOwned: profile.propertiesOwned,
-    hostingDays: 0,        // total days hosting
-    avgRating: 0,          // average review rating (0 = no reviews)
-    offersDiscounts: false, // whether they offer requirement-based discounts
-  };
+  const earnedBadgeKeys = profile.badges || [];
 
-  const earnedBadges = OWNER_BADGES.filter((b) => {
-    if (b.id === "first_sale") return stats.totalRentals >= 1;
-    if (b.id === "property_mogul") return stats.propertiesOwned > 3;
-    if (b.id === "superhost") return stats.hostingDays >= 30;
-    if (b.id === "mega_host") return stats.hostingDays >= 365;
-    if (b.id === "the_trusted") return stats.avgRating >= 4.9 && stats.avgRating <= 5;
-    if (b.id === "the_friendly") return stats.offersDiscounts;
-    return false;
-  });
-
-  if (loading)
+  if (loading || loadingProfile)
     return (
       <div className="flex items-center justify-center py-20">
         <div className="w-8 h-8 border-2 border-rose-300 dark:border-rose-500/30 border-t-rose-500 rounded-full animate-spin" />
@@ -105,11 +160,74 @@ export default function OwnerProfilePage() {
         </p>
       </motion.div>
 
-      {/* Verification status */}
+      {/* Profile photo + name + badges header */}
       <motion.section
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.05 }}
+        className="card p-6 rounded-2xl"
+      >
+        <div className="flex items-center gap-5">
+          <div className="relative group">
+            <div
+              onClick={() => fileRef.current?.click()}
+              className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-400 to-rose-500 flex items-center justify-center text-white font-bold text-3xl shrink-0 cursor-pointer overflow-hidden ring-2 ring-white dark:ring-slate-800 shadow-lg"
+            >
+              {profile.profilePhoto ? (
+                <img src={profile.profilePhoto} alt="Profile" className="w-full h-full object-cover" />
+              ) : (
+                profile.name ? profile.name[0].toUpperCase() : "O"
+              )}
+            </div>
+            <div
+              onClick={() => fileRef.current?.click()}
+              className="absolute inset-0 rounded-full bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+            >
+              <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+            </div>
+            <input
+              ref={fileRef}
+              type="file"
+              accept="image/*"
+              onChange={handlePhotoUpload}
+              className="hidden"
+            />
+          </div>
+          <div className="flex-1">
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white">{profile.name || "Your Name"}</h2>
+            <p className="text-sm text-slate-500 dark:text-slate-400">Property owner</p>
+            {/* Badges as pills */}
+            {earnedBadgeKeys.length > 0 && (
+              <div className="flex flex-wrap gap-1.5 mt-2">
+                {earnedBadgeKeys.map((badge) => (
+                  <span
+                    key={badge}
+                    className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-500/20"
+                  >
+                    {badge}
+                  </span>
+                ))}
+              </div>
+            )}
+            {/* Useless skill fun badge */}
+            {profile.uselessSkill && (
+              <span className="inline-block mt-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-200 dark:border-purple-500/20">
+                {profile.uselessSkill}
+              </span>
+            )}
+            <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">Click photo to change</p>
+          </div>
+        </div>
+      </motion.section>
+
+      {/* Verification status */}
+      <motion.section
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.07 }}
         className="card-subtle p-4 rounded-xl"
       >
         <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">Verification badges</h3>
@@ -137,7 +255,7 @@ export default function OwnerProfilePage() {
         <p className="text-sm text-slate-500 dark:text-slate-400">Earn badges as you host on MigRent. Complete the requirements to unlock them.</p>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           {OWNER_BADGES.map((badge) => {
-            const earned = earnedBadges.some((b) => b.id === badge.id);
+            const earned = earnedBadgeKeys.includes(badge.key);
             return (
               <div
                 key={badge.id}
@@ -166,6 +284,38 @@ export default function OwnerProfilePage() {
               </div>
             );
           })}
+        </div>
+      </motion.section>
+
+      {/* About & useless skill */}
+      <motion.section
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.09 }}
+        className="card p-6 rounded-2xl space-y-4"
+      >
+        <h2 className="text-lg font-bold text-slate-900 dark:text-white">About me</h2>
+        <textarea
+          value={profile.aboutMe}
+          onChange={(e) => update("aboutMe", e.target.value.slice(0, 200))}
+          placeholder="Tell seekers about yourself as a host..."
+          rows={3}
+          className="input-field text-sm"
+          maxLength={200}
+        />
+        <p className="text-xs text-slate-400">{profile.aboutMe.length}/200</p>
+        <div>
+          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
+            My most useless skill
+          </label>
+          <input
+            type="text"
+            value={profile.uselessSkill}
+            onChange={(e) => update("uselessSkill", e.target.value)}
+            placeholder='e.g. "Can juggle 3 oranges"'
+            className="input-field text-sm"
+          />
+          <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-1">A fun ice-breaker shown on your profile</p>
         </div>
       </motion.section>
 
@@ -286,7 +436,7 @@ export default function OwnerProfilePage() {
         </div>
       </motion.section>
 
-      {/* Profile photo + name */}
+      {/* Profile information */}
       <motion.section
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -294,15 +444,6 @@ export default function OwnerProfilePage() {
         className="card p-6 rounded-2xl space-y-4"
       >
         <h2 className="text-lg font-bold text-slate-900 dark:text-white">Profile information</h2>
-        <div className="flex items-center gap-4">
-          <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-400 to-rose-500 flex items-center justify-center text-white font-bold text-2xl shrink-0">
-            {profile.name ? profile.name[0].toUpperCase() : "O"}
-          </div>
-          <div className="flex-1">
-            <p className="text-sm text-slate-500 dark:text-slate-400">Profile photo (coming soon)</p>
-            <button disabled className="text-xs text-rose-500 opacity-50 mt-1 cursor-not-allowed">Upload photo</button>
-          </div>
-        </div>
         <div>
           <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Display name</label>
           <input

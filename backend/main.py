@@ -15,6 +15,7 @@ from routes_matches import router as matches_router
 from routes_deals import router as deals_router, webhook_router
 from routes_support import router as support_router
 from routes_reports import router as reports_router
+from routes_profiles import router as profiles_router
 
 # ── Startup validation ──────────────────────────────────────
 REQUIRED_ENV = ["SUPABASE_URL", "SUPABASE_ANON_KEY", "STRIPE_SECRET_KEY", "STRIPE_WEBHOOK_SECRET"]
@@ -57,6 +58,7 @@ app.include_router(matches_router)
 app.include_router(deals_router)
 app.include_router(support_router)
 app.include_router(reports_router)
+app.include_router(profiles_router)
 app.include_router(webhook_router)
 
 # Note: each router defines its own prefix (/auth, /listings, /matches, /deals)

@@ -48,6 +48,16 @@ def create_deal(
         "owner_fee_amount": 99.00,
         "seeker_fee_amount": 19.00,
     }
+
+    # Add deal customization fields if provided
+    if body.start_date:
+        deal_row["start_date"] = body.start_date
+    if body.end_date:
+        deal_row["end_date"] = body.end_date
+    if body.special_requests:
+        deal_row["special_requests"] = body.special_requests
+    if body.total_guests is not None:
+        deal_row["total_guests"] = body.total_guests
     try:
         res = sb.table("deals").insert(deal_row).execute()
     except Exception as e:

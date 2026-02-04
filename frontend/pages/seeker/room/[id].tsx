@@ -245,6 +245,12 @@ export default function RoomDetail() {
   const [message, setMessage] = useState("");
   const [reportOpen, setReportOpen] = useState(false);
 
+  // Deal customization state
+  const [dealStartDate, setDealStartDate] = useState("");
+  const [dealEndDate, setDealEndDate] = useState("");
+  const [dealGuests, setDealGuests] = useState(1);
+  const [dealSpecialRequests, setDealSpecialRequests] = useState("");
+
   const room = ROOMS[id as string] || ROOMS["1"];
 
   const handleInterest = () => {
@@ -535,6 +541,64 @@ export default function RoomDetail() {
                 </p>
               </div>
 
+              {/* Deal customization section */}
+              {session && !interestSent && (
+                <div className="space-y-3 pt-2 border-t border-slate-100 dark:border-slate-700/50">
+                  <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300">Customise your deal</h3>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <label className="block text-[11px] font-medium text-slate-500 dark:text-slate-400 mb-1">Start date</label>
+                      <input
+                        type="date"
+                        value={dealStartDate}
+                        onChange={(e) => setDealStartDate(e.target.value)}
+                        className="input-field text-xs py-2"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[11px] font-medium text-slate-500 dark:text-slate-400 mb-1">End date</label>
+                      <input
+                        type="date"
+                        value={dealEndDate}
+                        onChange={(e) => setDealEndDate(e.target.value)}
+                        className="input-field text-xs py-2"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-medium text-slate-500 dark:text-slate-400 mb-1">Total guests</label>
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setDealGuests(Math.max(1, dealGuests - 1))}
+                        className="w-7 h-7 rounded-lg border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-500 hover:border-rose-400 text-sm"
+                      >
+                        -
+                      </button>
+                      <span className="w-8 text-center text-sm font-bold text-slate-900 dark:text-white">{dealGuests}</span>
+                      <button
+                        type="button"
+                        onClick={() => setDealGuests(Math.min(room.maxGuests || 20, dealGuests + 1))}
+                        className="w-7 h-7 rounded-lg border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-500 hover:border-rose-400 text-sm"
+                      >
+                        +
+                      </button>
+                      <span className="text-[11px] text-slate-400 ml-1">max {room.maxGuests}</span>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-medium text-slate-500 dark:text-slate-400 mb-1">Special requests (optional)</label>
+                    <textarea
+                      placeholder="e.g. Early check-in, extra keys..."
+                      value={dealSpecialRequests}
+                      onChange={(e) => setDealSpecialRequests(e.target.value)}
+                      rows={2}
+                      className="input-field text-xs"
+                    />
+                  </div>
+                </div>
+              )}
+
               {!session ? (
                 <div className="text-center space-y-3">
                   <p className="text-sm text-slate-500 dark:text-slate-400">
@@ -562,6 +626,11 @@ export default function RoomDetail() {
                   <p className="text-xs text-emerald-500 dark:text-emerald-400/70 mt-1">
                     The owner will review your profile.
                   </p>
+                  {dealStartDate && (
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">
+                      {dealStartDate}{dealEndDate ? ` — ${dealEndDate}` : ""} &middot; {dealGuests} guest{dealGuests !== 1 ? "s" : ""}
+                    </p>
+                  )}
                 </motion.div>
               ) : (
                 <>

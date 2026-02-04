@@ -53,6 +53,39 @@ def create_listing(
         "images": listing.images,
         "owner_id": user.id,
     }
+
+    # Add all extended fields if provided
+    extended_fields = {
+        "title": listing.title,
+        "property_type": listing.property_type,
+        "place_type": listing.place_type,
+        "max_guests": listing.max_guests,
+        "bedrooms": listing.bedrooms,
+        "beds": listing.beds,
+        "bathrooms": listing.bathrooms,
+        "bathroom_type": listing.bathroom_type,
+        "who_else_lives_here": listing.who_else_lives_here,
+        "total_other_people": listing.total_other_people,
+        "furnished": listing.furnished,
+        "bills_included": listing.bills_included,
+        "parking": listing.parking,
+        "highlights": listing.highlights,
+        "weekly_discount": listing.weekly_discount,
+        "monthly_discount": listing.monthly_discount,
+        "bond": listing.bond,
+        "no_smoking": listing.no_smoking,
+        "quiet_hours": listing.quiet_hours,
+        "tenant_prefs": listing.tenant_prefs,
+        "min_stay": listing.min_stay,
+        "security_cameras": listing.security_cameras,
+        "security_cameras_location": listing.security_cameras_location,
+        "weapons_on_property": listing.weapons_on_property,
+        "weapons_explanation": listing.weapons_explanation,
+        "other_safety_details": listing.other_safety_details,
+    }
+    for key, value in extended_fields.items():
+        if value is not None:
+            row[key] = value
     try:
         res = sb.table("listings").insert(row).execute()
     except Exception as e:
