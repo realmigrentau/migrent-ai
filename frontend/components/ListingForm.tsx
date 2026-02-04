@@ -4,49 +4,97 @@ import { motion, AnimatePresence } from "framer-motion";
 interface ListingFormProps {
   onSubmit: (data: ListingFormData) => void;
   loading?: boolean;
+  initialData?: Partial<ListingFormData>;
 }
 
 export interface ListingFormData {
+  // Basics
   suburb: string;
   postcode: string;
-  roomType: string;
+  propertyType: string;
+  placeType: string;
   weeklyPrice: number;
   bond: string;
+  // Basics – capacity
+  maxGuests: number;
+  bedrooms: number;
+  beds: number;
+  bathrooms: number;
+  bathroomType: "private" | "shared";
+  // Who else
+  whoElseLivesHere: string;
+  totalOtherPeople: string;
+  // Details
   furnished: boolean;
   billsIncluded: boolean;
-  privateBathroom: boolean;
   parking: boolean;
+  // Title & description
+  title: string;
   description: string;
+  // Highlights
+  highlights: string[];
+  // Discounts
+  weeklyDiscount: string;
+  monthlyDiscount: string;
+  // Photos
   photos: File[];
+  // Rules
   noSmoking: boolean;
   quietHours: string;
   tenantPrefs: string;
   minStay: string;
+  // Safety
+  securityCameras: boolean;
+  securityCamerasLocation: string;
+  weaponsOnProperty: boolean;
+  weaponsExplanation: string;
+  otherSafetyDetails: string;
 }
 
-const STEPS = ["Basics", "Details", "Photos", "Rules"];
+const STEPS = ["Basics", "Details", "Photos", "Rules", "Safety"];
 
-export default function ListingForm({ onSubmit, loading }: ListingFormProps) {
+const PROPERTY_TYPES = ["House", "Apartment", "Townhouse", "Studio", "Other"];
+const PLACE_TYPES = ["Entire place", "Private room", "Shared room", "Multiple rooms"];
+
+export default function ListingForm({ onSubmit, loading, initialData }: ListingFormProps) {
   const [step, setStep] = useState(0);
   const fileRef = useRef<HTMLInputElement>(null);
   const [photoPreviews, setPhotoPreviews] = useState<string[]>([]);
+  const [highlightInput, setHighlightInput] = useState("");
 
   const [form, setForm] = useState<ListingFormData>({
     suburb: "",
     postcode: "",
-    roomType: "private",
+    propertyType: "Apartment",
+    placeType: "Private room",
     weeklyPrice: 250,
     bond: "",
+    maxGuests: 1,
+    bedrooms: 1,
+    beds: 1,
+    bathrooms: 1,
+    bathroomType: "shared",
+    whoElseLivesHere: "",
+    totalOtherPeople: "",
     furnished: true,
     billsIncluded: true,
-    privateBathroom: false,
     parking: false,
+    title: "",
     description: "",
+    highlights: [],
+    weeklyDiscount: "",
+    monthlyDiscount: "",
     photos: [],
     noSmoking: true,
     quietHours: "10pm-7am",
     tenantPrefs: "",
     minStay: "3 months",
+    securityCameras: false,
+    securityCamerasLocation: "",
+    weaponsOnProperty: false,
+    weaponsExplanation: "",
+    otherSafetyDetails: "",
+    ...initialData,
   });
 
   const update = (key: keyof ListingFormData, value: any) => {
@@ -65,8 +113,21 @@ export default function ListingForm({ onSubmit, loading }: ListingFormProps) {
     update("photos", form.photos.filter((_: File, i: number) => i !== idx));
   };
 
+  const addHighlight = () => {
+    const trimmed = highlightInput.trim();
+    if (trimmed && form.highlights.length < 5) {
+      update("highlights", [...form.highlights, trimmed]);
+      setHighlightInput("");
+    }
+  };
+
+  const removeHighlight = (idx: number) => {
+    update("highlights", form.highlights.filter((_, i) => i !== idx));
+  };
+
   const canProceed = () => {
     if (step === 0) return form.suburb && form.postcode && form.weeklyPrice > 0;
+    if (step === 1) return form.title.trim().length > 0 && form.description.trim().length > 0;
     return true;
   };
 
@@ -74,12 +135,38 @@ export default function ListingForm({ onSubmit, loading }: ListingFormProps) {
     onSubmit(form);
   };
 
+  const showWhoElse = form.placeType !== "Entire place";
+
+  // Counter input helper
+  const CounterInput = ({ label, value, onChange, min = 0 }: { label: string; value: number; onChange: (v: number) => void; min?: number }) => (
+    <div className="flex items-center justify-between p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50">
+      <span className="text-sm font-medium text-slate-700 dark:text-slate-300">{label}</span>
+      <div className="flex items-center gap-3">
+        <button
+          type="button"
+          onClick={() => onChange(Math.max(min, value - 1))}
+          className="w-8 h-8 rounded-full border border-slate-300 dark:border-slate-600 flex items-center justify-center text-slate-500 hover:border-rose-400 hover:text-rose-500 transition-colors"
+        >
+          -
+        </button>
+        <span className="w-6 text-center text-sm font-bold text-slate-900 dark:text-white">{value}</span>
+        <button
+          type="button"
+          onClick={() => onChange(value + 1)}
+          className="w-8 h-8 rounded-full border border-slate-300 dark:border-slate-600 flex items-center justify-center text-slate-500 hover:border-rose-400 hover:text-rose-500 transition-colors"
+        >
+          +
+        </button>
+      </div>
+    </div>
+  );
+
   return (
     <div className="grid lg:grid-cols-5 gap-8">
       {/* Main form */}
       <div className="lg:col-span-3 space-y-6">
         {/* Step indicator */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           {STEPS.map((label, i) => (
             <div key={label} className="flex items-center gap-2">
               <button
@@ -116,11 +203,14 @@ export default function ListingForm({ onSubmit, loading }: ListingFormProps) {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
             transition={{ duration: 0.2 }}
-            className="card p-6 rounded-2xl space-y-4"
+            className="card p-6 rounded-2xl space-y-5"
           >
+            {/* ── Step 0: Basics ── */}
             {step === 0 && (
               <>
                 <h3 className="text-lg font-bold text-slate-900 dark:text-white">Basics</h3>
+
+                {/* Location */}
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Suburb</label>
@@ -143,19 +233,100 @@ export default function ListingForm({ onSubmit, loading }: ListingFormProps) {
                     />
                   </div>
                 </div>
+
+                {/* Property type */}
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Room type</label>
-                  <select
-                    value={form.roomType}
-                    onChange={(e) => update("roomType", e.target.value)}
-                    className="input-field"
-                  >
-                    <option value="private">Private room</option>
-                    <option value="shared">Shared room</option>
-                    <option value="studio">Studio</option>
-                    <option value="ensuite">Ensuite</option>
-                  </select>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Property type</label>
+                  <div className="flex flex-wrap gap-2">
+                    {PROPERTY_TYPES.map((pt) => (
+                      <button
+                        key={pt}
+                        type="button"
+                        onClick={() => update("propertyType", pt)}
+                        className={`px-4 py-2 rounded-xl text-sm font-medium border transition-all ${
+                          form.propertyType === pt
+                            ? "border-rose-400 dark:border-rose-500/40 bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400"
+                            : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 text-slate-600 dark:text-slate-300 hover:border-slate-300"
+                        }`}
+                      >
+                        {pt}
+                      </button>
+                    ))}
+                  </div>
                 </div>
+
+                {/* Place type */}
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Place type</label>
+                  <div className="flex flex-wrap gap-2">
+                    {PLACE_TYPES.map((pt) => (
+                      <button
+                        key={pt}
+                        type="button"
+                        onClick={() => update("placeType", pt)}
+                        className={`px-4 py-2 rounded-xl text-sm font-medium border transition-all ${
+                          form.placeType === pt
+                            ? "border-rose-400 dark:border-rose-500/40 bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400"
+                            : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 text-slate-600 dark:text-slate-300 hover:border-slate-300"
+                        }`}
+                      >
+                        {pt}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Capacity counters */}
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Capacity &amp; layout</label>
+                  <CounterInput label="Max guests" value={form.maxGuests} onChange={(v) => update("maxGuests", v)} min={1} />
+                  <CounterInput label="Bedrooms" value={form.bedrooms} onChange={(v) => update("bedrooms", v)} min={1} />
+                  <CounterInput label="Beds" value={form.beds} onChange={(v) => update("beds", v)} min={1} />
+                </div>
+
+                {/* Bathrooms */}
+                <div className="space-y-2">
+                  <CounterInput label="Bathrooms" value={form.bathrooms} onChange={(v) => update("bathrooms", v)} min={1} />
+                  <div className="flex gap-3">
+                    {(["private", "shared"] as const).map((bt) => (
+                      <button
+                        key={bt}
+                        type="button"
+                        onClick={() => update("bathroomType", bt)}
+                        className={`flex-1 py-2.5 rounded-xl text-sm font-medium border transition-all capitalize ${
+                          form.bathroomType === bt
+                            ? "border-rose-400 dark:border-rose-500/40 bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400"
+                            : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 text-slate-600 dark:text-slate-300"
+                        }`}
+                      >
+                        {bt} bathroom
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Who else might be there */}
+                {showWhoElse && (
+                  <div className="space-y-3 p-4 rounded-xl border border-amber-200 dark:border-amber-500/20 bg-amber-50/50 dark:bg-amber-500/5">
+                    <label className="block text-sm font-semibold text-amber-700 dark:text-amber-400">Who else might be there?</label>
+                    <input
+                      type="text"
+                      placeholder='e.g. "I live here", "Family", "Other tenants"'
+                      value={form.whoElseLivesHere}
+                      onChange={(e) => update("whoElseLivesHere", e.target.value)}
+                      className="input-field"
+                    />
+                    <input
+                      type="text"
+                      placeholder="Total number of other people (optional)"
+                      value={form.totalOtherPeople}
+                      onChange={(e) => update("totalOtherPeople", e.target.value)}
+                      className="input-field"
+                    />
+                  </div>
+                )}
+
+                {/* Price & bond */}
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Weekly price (AUD)</label>
@@ -181,14 +352,42 @@ export default function ListingForm({ onSubmit, loading }: ListingFormProps) {
               </>
             )}
 
+            {/* ── Step 1: Details ── */}
             {step === 1 && (
               <>
                 <h3 className="text-lg font-bold text-slate-900 dark:text-white">Details</h3>
-                <div className="grid sm:grid-cols-2 gap-4">
+
+                {/* Title */}
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Listing title *</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Bright room near Central Station"
+                    value={form.title}
+                    onChange={(e) => update("title", e.target.value)}
+                    maxLength={80}
+                    className="input-field"
+                  />
+                  <p className="text-xs text-slate-400 mt-1">{form.title.length}/80</p>
+                </div>
+
+                {/* Description */}
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Quick description *</label>
+                  <textarea
+                    placeholder="Describe the room, location highlights, nearby transport..."
+                    value={form.description}
+                    onChange={(e) => update("description", e.target.value)}
+                    rows={4}
+                    className="input-field"
+                  />
+                </div>
+
+                {/* Amenity toggles */}
+                <div className="grid sm:grid-cols-2 gap-3">
                   {[
                     { key: "furnished" as const, label: "Furnished" },
                     { key: "billsIncluded" as const, label: "Bills included" },
-                    { key: "privateBathroom" as const, label: "Private bathroom" },
                     { key: "parking" as const, label: "Parking available" },
                   ].map(({ key, label }) => (
                     <label
@@ -209,19 +408,83 @@ export default function ListingForm({ onSubmit, loading }: ListingFormProps) {
                     </label>
                   ))}
                 </div>
+
+                {/* Highlights */}
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Description</label>
-                  <textarea
-                    placeholder="Describe the room, location highlights, nearby transport..."
-                    value={form.description}
-                    onChange={(e) => update("description", e.target.value)}
-                    rows={4}
-                    className="input-field"
-                  />
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
+                    Highlights (3-5 best things about your place)
+                  </label>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      placeholder="e.g. Walk to station"
+                      value={highlightInput}
+                      onChange={(e) => setHighlightInput(e.target.value)}
+                      onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addHighlight())}
+                      maxLength={60}
+                      className="input-field flex-1"
+                    />
+                    <button
+                      type="button"
+                      onClick={addHighlight}
+                      disabled={form.highlights.length >= 5 || !highlightInput.trim()}
+                      className="btn-primary py-2.5 px-4 rounded-xl text-sm disabled:opacity-40"
+                    >
+                      Add
+                    </button>
+                  </div>
+                  {form.highlights.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mt-3">
+                      {form.highlights.map((h, i) => (
+                        <span
+                          key={i}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-500/20"
+                        >
+                          {h}
+                          <button type="button" onClick={() => removeHighlight(i)} className="hover:text-rose-800 dark:hover:text-rose-300 transition-colors">
+                            &times;
+                          </button>
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                  <p className="text-xs text-slate-400 mt-1">{form.highlights.length}/5 added{form.highlights.length < 3 ? " (minimum 3)" : ""}</p>
+                </div>
+
+                {/* Discounts */}
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Discounts (optional)</label>
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs text-slate-500 dark:text-slate-400 mb-1">Weekly discount (%)</label>
+                      <input
+                        type="number"
+                        placeholder="e.g. 5"
+                        value={form.weeklyDiscount}
+                        onChange={(e) => update("weeklyDiscount", e.target.value)}
+                        min={0}
+                        max={50}
+                        className="input-field"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-500 dark:text-slate-400 mb-1">Monthly discount (%)</label>
+                      <input
+                        type="number"
+                        placeholder="e.g. 10"
+                        value={form.monthlyDiscount}
+                        onChange={(e) => update("monthlyDiscount", e.target.value)}
+                        min={0}
+                        max={50}
+                        className="input-field"
+                      />
+                    </div>
+                  </div>
                 </div>
               </>
             )}
 
+            {/* ── Step 2: Photos ── */}
             {step === 2 && (
               <>
                 <h3 className="text-lg font-bold text-slate-900 dark:text-white">Photos</h3>
@@ -255,7 +518,7 @@ export default function ListingForm({ onSubmit, loading }: ListingFormProps) {
                           onClick={() => removePhoto(i)}
                           className="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-black/60 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-xs"
                         >
-                          ×
+                          &times;
                         </button>
                       </div>
                     ))}
@@ -264,6 +527,7 @@ export default function ListingForm({ onSubmit, loading }: ListingFormProps) {
               </>
             )}
 
+            {/* ── Step 3: Rules ── */}
             {step === 3 && (
               <>
                 <h3 className="text-lg font-bold text-slate-900 dark:text-white">House rules</h3>
@@ -311,6 +575,72 @@ export default function ListingForm({ onSubmit, loading }: ListingFormProps) {
                 </div>
               </>
             )}
+
+            {/* ── Step 4: Safety ── */}
+            {step === 4 && (
+              <>
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white">Safety details</h3>
+                <p className="text-sm text-slate-500 dark:text-slate-400">
+                  Be transparent about safety-related aspects of the property. This builds trust with seekers.
+                </p>
+
+                {/* Security cameras */}
+                <div className="space-y-3">
+                  <label className="flex items-center gap-3 p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={form.securityCameras}
+                      onChange={(e) => update("securityCameras", e.target.checked)}
+                      className="w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-rose-500 focus:ring-rose-500"
+                    />
+                    <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Security cameras on property</span>
+                  </label>
+                  {form.securityCameras && (
+                    <input
+                      type="text"
+                      placeholder="Where are cameras located? (e.g. Front door, driveway)"
+                      value={form.securityCamerasLocation}
+                      onChange={(e) => update("securityCamerasLocation", e.target.value)}
+                      className="input-field"
+                    />
+                  )}
+                </div>
+
+                {/* Weapons */}
+                <div className="space-y-3">
+                  <label className="flex items-center gap-3 p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={form.weaponsOnProperty}
+                      onChange={(e) => update("weaponsOnProperty", e.target.checked)}
+                      className="w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-rose-500 focus:ring-rose-500"
+                    />
+                    <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Weapons stored on property</span>
+                  </label>
+                  {form.weaponsOnProperty && (
+                    <textarea
+                      placeholder="Please explain (e.g. Locked gun safe in garage)"
+                      value={form.weaponsExplanation}
+                      onChange={(e) => update("weaponsExplanation", e.target.value)}
+                      rows={2}
+                      className="input-field"
+                    />
+                  )}
+                </div>
+
+                {/* Other safety */}
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Other safety details</label>
+                  <textarea
+                    placeholder="Any other safety info seekers should know about? (optional)"
+                    value={form.otherSafetyDetails}
+                    onChange={(e) => update("otherSafetyDetails", e.target.value)}
+                    rows={3}
+                    className="input-field"
+                  />
+                </div>
+              </>
+            )}
           </motion.div>
         </AnimatePresence>
 
@@ -347,7 +677,7 @@ export default function ListingForm({ onSubmit, loading }: ListingFormProps) {
                   Publishing...
                 </span>
               ) : (
-                "Pay AUD 99 & Publish"
+                "Pay AUD $99 & Publish"
               )}
             </motion.button>
           )}
@@ -375,13 +705,18 @@ export default function ListingForm({ onSubmit, loading }: ListingFormProps) {
               <div className="flex items-start justify-between">
                 <div>
                   <h4 className="font-bold text-slate-900 dark:text-white">
-                    {form.suburb || "Suburb"}, {form.postcode || "0000"}
+                    {form.title || `${form.suburb || "Suburb"}, ${form.postcode || "0000"}`}
                   </h4>
-                  <p className="text-sm text-slate-500 dark:text-slate-400 capitalize">{form.roomType} room</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">
+                    {form.propertyType} &middot; {form.placeType}
+                  </p>
+                  <p className="text-xs text-slate-400 dark:text-slate-500">
+                    {form.bedrooms} bed{form.bedrooms !== 1 ? "s" : ""} &middot; {form.bathrooms} bath &middot; {form.maxGuests} guest{form.maxGuests !== 1 ? "s" : ""}
+                  </p>
                 </div>
                 <div className="px-3 py-1.5 rounded-lg bg-rose-50 dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/20">
                   <span className="text-rose-600 dark:text-rose-400 font-bold text-sm">
-                    ${form.weeklyPrice || 0}
+                    AUD ${form.weeklyPrice || 0}
                   </span>
                   <span className="text-rose-400 dark:text-rose-500 text-xs">/wk</span>
                 </div>
@@ -393,7 +728,7 @@ export default function ListingForm({ onSubmit, loading }: ListingFormProps) {
                 {form.billsIncluded && (
                   <span className="px-2 py-0.5 rounded-full text-xs bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Bills incl.</span>
                 )}
-                {form.privateBathroom && (
+                {form.bathroomType === "private" && (
                   <span className="px-2 py-0.5 rounded-full text-xs bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Private bath</span>
                 )}
                 {form.parking && (
@@ -403,8 +738,31 @@ export default function ListingForm({ onSubmit, loading }: ListingFormProps) {
                   <span className="px-2 py-0.5 rounded-full text-xs bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">No smoking</span>
                 )}
               </div>
+              {form.highlights.length > 0 && (
+                <div className="flex flex-wrap gap-1.5">
+                  {form.highlights.map((h, i) => (
+                    <span key={i} className="px-2 py-0.5 rounded-full text-xs bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-100 dark:border-rose-500/20">
+                      {h}
+                    </span>
+                  ))}
+                </div>
+              )}
               {form.description && (
                 <p className="text-sm text-slate-600 dark:text-slate-300 line-clamp-3">{form.description}</p>
+              )}
+              {(form.weeklyDiscount || form.monthlyDiscount) && (
+                <div className="flex gap-2">
+                  {form.weeklyDiscount && (
+                    <span className="px-2 py-0.5 rounded-full text-xs bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-500/20">
+                      {form.weeklyDiscount}% weekly discount
+                    </span>
+                  )}
+                  {form.monthlyDiscount && (
+                    <span className="px-2 py-0.5 rounded-full text-xs bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-500/20">
+                      {form.monthlyDiscount}% monthly discount
+                    </span>
+                  )}
+                </div>
               )}
               {form.minStay && (
                 <p className="text-xs text-slate-400 dark:text-slate-500">Min stay: {form.minStay}</p>

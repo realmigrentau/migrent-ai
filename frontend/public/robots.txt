@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /mazda.asgt22779412.sara-admin/
+Disallow: /account/
+Disallow: /owner/
+Disallow: /signin/
+Disallow: /signup/
+Disallow: /payment-success
+Disallow: /payment-cancelled
+
+Sitemap: https://migrent-ai.vercel.app/sitemap.xml

@@ -28,6 +28,32 @@ export default function NewListing() {
       postcode: data.postcode,
       weeklyPrice: data.weeklyPrice,
       description: data.description,
+      title: data.title,
+      propertyType: data.propertyType,
+      placeType: data.placeType,
+      maxGuests: data.maxGuests,
+      bedrooms: data.bedrooms,
+      beds: data.beds,
+      bathrooms: data.bathrooms,
+      bathroomType: data.bathroomType,
+      whoElseLivesHere: data.whoElseLivesHere,
+      totalOtherPeople: data.totalOtherPeople,
+      furnished: data.furnished,
+      billsIncluded: data.billsIncluded,
+      parking: data.parking,
+      highlights: data.highlights,
+      weeklyDiscount: data.weeklyDiscount ? parseFloat(data.weeklyDiscount) : undefined,
+      monthlyDiscount: data.monthlyDiscount ? parseFloat(data.monthlyDiscount) : undefined,
+      bond: data.bond,
+      noSmoking: data.noSmoking,
+      quietHours: data.quietHours,
+      tenantPrefs: data.tenantPrefs,
+      minStay: data.minStay,
+      securityCameras: data.securityCameras,
+      securityCamerasLocation: data.securityCamerasLocation,
+      weaponsOnProperty: data.weaponsOnProperty,
+      weaponsExplanation: data.weaponsExplanation,
+      otherSafetyDetails: data.otherSafetyDetails,
     });
 
     if (result) {
@@ -72,7 +98,7 @@ export default function NewListing() {
           Post a <span className="gradient-text-accent">Room</span>
         </h1>
         <p className="text-sm text-slate-500 dark:text-slate-400 mt-2">
-          Complete the steps below. A one-time AUD 99 fee applies on publish.
+          Complete the steps below. A one-time AUD $99 fee applies on publish.
         </p>
       </motion.div>
 

@@ -93,6 +93,22 @@ export default function Support() {
             q="When is the owner fee charged?"
             a="The one-time AUD 99 platform fee is charged to owners when a successful match is confirmed through MigRent."
           />
+          <FAQItem
+            q="How do fees work?"
+            a="Owners pay a one-time AUD $99 platform fee per listing. Seekers may pay an optional AUD $19 fee."
+          />
+          <FAQItem
+            q="Is MigRent AI a real estate agent?"
+            a="No. MigRent AI is a matching platform only. We do not hold bond or rent, and are not a party to any tenancy agreement."
+          />
+          <FAQItem
+            q="How do I report a problem?"
+            a="Use the Report button on any listing or profile, or contact us at stonegold84@gmail.com"
+          />
+          <FAQItem
+            q="Refunds & disputes"
+            a="MigRent AI fees are non-refundable once confirmed. For exceptional cases, contact stonegold84@gmail.com. Stripe receipts are sent to your email on payment."
+          />
         </div>
       </section>
 
@@ -162,10 +178,10 @@ export default function Support() {
         <p className="text-sm text-slate-500 dark:text-slate-400">
           You can also reach us at{" "}
           <a
-            href="mailto:migrentau@gmail.com"
+            href="mailto:stonegold84@gmail.com"
             className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors"
           >
-            migrentau@gmail.com
+            stonegold84@gmail.com
           </a>
           .
         </p>

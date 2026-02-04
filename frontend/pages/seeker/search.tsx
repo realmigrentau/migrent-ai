@@ -239,7 +239,7 @@ export default function SeekerSearch() {
                       </div>
                       <div className="shrink-0 px-2.5 py-1 rounded-lg bg-rose-50 dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/20">
                         <span className="text-rose-600 dark:text-rose-400 font-bold text-sm">
-                          ${listing.weeklyPrice}
+                          AUD ${listing.weeklyPrice}
                         </span>
                         <span className="text-rose-400 dark:text-rose-500 text-xs">/wk</span>
                       </div>
@@ -336,6 +336,36 @@ export default function SeekerSearch() {
           </div>
         </div>
       </div>
+
+      {/* SEO-friendly info section */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.3 }}
+        className="card p-6 rounded-2xl mt-6"
+      >
+        <div className="flex items-start gap-3">
+          <svg className="w-5 h-5 text-rose-400 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <div>
+            <h2 className="text-sm font-bold text-slate-900 dark:text-white mb-2">
+              Finding rooms for rent in Sydney &amp; beyond
+            </h2>
+            <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+              MigRent AI helps new migrants, international students, and working holiday makers
+              find affordable rooms for rent across Sydney, Adelaide, and other Australian cities.
+              Whether you&apos;re looking for short-term rooms, shared accommodation, private rooms near
+              universities, or furnished rooms for new arrivals &mdash; our AI-powered matching
+              connects verified seekers with trusted room owners. Browse private rooms, shared
+              rooms, studios, and entire places with transparent pricing in AUD.
+            </p>
+            <p className="text-xs text-slate-400 dark:text-slate-500 mt-2 italic">
+              Helpful info &middot; MigRent AI is a matching platform, not a real estate agent
+            </p>
+          </div>
+        </div>
+      </motion.div>
     </div>
   );
 }

@@ -1,7 +1,10 @@
 import type { AppProps } from "next/app";
 import { AnimatePresence, motion } from "framer-motion";
 import { HCaptchaProvider } from "@hcaptcha/react-hcaptcha/hooks";
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import Layout from "../components/Layout";
+import SEOHead from "../components/SEOHead";
 import { HCAPTCHA_SITE_KEY } from "../lib/recaptcha";
 import "../styles/globals.css";
 
@@ -28,13 +31,22 @@ export default function App({ Component, pageProps, router }: AppProps) {
     </Layout>
   );
 
+  const wrapped = (
+    <>
+      <SEOHead />
+      {inner}
+      <Analytics />
+      <SpeedInsights />
+    </>
+  );
+
   if (!HCAPTCHA_SITE_KEY) {
-    return inner;
+    return wrapped;
   }
 
   return (
     <HCaptchaProvider sitekey={HCAPTCHA_SITE_KEY}>
-      {inner}
+      {wrapped}
     </HCaptchaProvider>
   );
 }

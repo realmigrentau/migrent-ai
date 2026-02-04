@@ -100,6 +100,35 @@ export default function Terms() {
         </ul>
       </CollapsibleSection>
 
+      <CollapsibleSection title="Refund policy">
+        <p>
+          MigRent AI fees are non-refundable once a deal is confirmed and
+          payment is processed. In exceptional circumstances, manual refunds
+          may be considered at the sole discretion of MigRent AI. Contact{" "}
+          <a href="mailto:stonegold84@gmail.com" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">
+            stonegold84@gmail.com
+          </a>{" "}
+          for refund inquiries.
+        </p>
+      </CollapsibleSection>
+
+      <CollapsibleSection title="Platform role">
+        <p>
+          MigRent AI is a platform only and is not a real estate agent or
+          property manager. All rental agreements and payments between owners
+          and seekers are between those parties directly.
+        </p>
+      </CollapsibleSection>
+
+      <CollapsibleSection title="Regulatory compliance">
+        <p>
+          Hosts are responsible for complying with any local regulations
+          (e.g. STRA registration in NSW if relevant). MigRent AI does not
+          provide legal advice and is not responsible for users&apos;
+          regulatory compliance.
+        </p>
+      </CollapsibleSection>
+
       <CollapsibleSection title="No guarantees">
         <ul className="list-disc list-inside space-y-2">
           <li>
@@ -129,7 +158,7 @@ export default function Terms() {
       <div className="mt-12 pt-8 border-t border-slate-200 dark:border-slate-800 text-xs text-slate-500 dark:text-slate-400 space-y-1">
         <p className="font-medium text-slate-600 dark:text-slate-300">MigRent AI</p>
         <p>ABN: 22 669 566 941</p>
-        <p>Sole Trader | migrentau@gmail.com</p>
+        <p>Sole Trader | stonegold84@gmail.com</p>
         <p>Virtual business</p>
       </div>
     </div>

@@ -89,6 +89,26 @@ export default function Safety() {
         </ul>
       </CollapsibleSection>
 
+      <CollapsibleSection title="Reporting" defaultOpen>
+        <p>
+          If you encounter an unsafe, misleading, or suspicious listing or
+          profile, please report it using the Report button on the listing or
+          profile page, or contact us at{" "}
+          <a href="mailto:stonegold84@gmail.com" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">
+            stonegold84@gmail.com
+          </a>
+          . We take all reports seriously and will investigate promptly.
+        </p>
+      </CollapsibleSection>
+
+      <CollapsibleSection title="Regulatory compliance">
+        <p>
+          MigRent AI is not responsible for users&apos; regulatory
+          compliance. Hosts should ensure they comply with any applicable
+          local regulations (e.g. STRA registration in NSW if relevant).
+        </p>
+      </CollapsibleSection>
+
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}

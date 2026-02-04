@@ -111,6 +111,16 @@ export default function Rules() {
         </ul>
       </CollapsibleSection>
 
+      <CollapsibleSection title="Regulatory compliance" defaultOpen>
+        <p>
+          Owners are responsible for complying with any local regulations
+          that may apply to their listing. For example, short-term rental
+          accommodation (STRA) in NSW may require registration with the NSW
+          Government. MigRent AI does not provide legal advice and is not
+          responsible for users&apos; regulatory compliance.
+        </p>
+      </CollapsibleSection>
+
       <CollapsibleSection title="Enforcement" defaultOpen>
         <p>
           MigRent may suspend or terminate accounts that breach these rules,

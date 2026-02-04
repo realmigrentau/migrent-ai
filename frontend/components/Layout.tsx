@@ -345,7 +345,7 @@ export default function Layout({ children }: { children: ReactNode }) {
       <div className="border-t border-slate-200/50 dark:border-slate-800/50 py-8">
         <div className="max-w-7xl mx-auto px-6 text-xs text-slate-500 dark:text-slate-400 text-center space-y-1">
           <div>&copy; 2026 MigRent AI | ABN: 22 669 566 941</div>
-          <div>migrentau@gmail.com</div>
+          <div>stonegold84@gmail.com</div>
         </div>
       </div>
     </div>
