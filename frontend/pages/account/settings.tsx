@@ -231,7 +231,7 @@ export default function SettingsPage() {
 
   const tabs: Array<{ id: TabType; label: string; icon: string }> = [
     { id: "personal", label: "Personal info", icon: "👤" },
-    { id: "security", label: "Login & security", icon: "🔒" },
+    { id: "security", label: "Security", icon: "🔒" },
     { id: "payments", label: "Payments", icon: "💳" },
     { id: "languages", label: "Languages & currency", icon: "🌐" },
   ];
