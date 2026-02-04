@@ -94,8 +94,8 @@ export default function Safety() {
           If you encounter an unsafe, misleading, or suspicious listing or
           profile, please report it using the Report button on the listing or
           profile page, or contact us at{" "}
-          <a href="mailto:stonegold84@gmail.com" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">
-            stonegold84@gmail.com
+          <a href="mailto:migrentau@gmail.com" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">
+            migrentau@gmail.com
           </a>
           . We take all reports seriously and will investigate promptly.
         </p>
