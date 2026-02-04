@@ -80,6 +80,10 @@ export default function SettingsPage() {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showDeleteOwnerConfirm, setShowDeleteOwnerConfirm] = useState(false);
+  const [showDisableConfirm, setShowDisableConfirm] = useState(false);
+  const [disablePassword, setDisablePassword] = useState("");
+  const [disablePasswordConfirm, setDisablePasswordConfirm] = useState("");
 
   useEffect(() => {
     if (session && user?.id) {
@@ -180,7 +184,7 @@ export default function SettingsPage() {
   const handleDeleteAccount = async () => {
     setSaving(true);
     try {
-      // Call backend to soft delete user data
+      // Call backend to hard delete user data
       const res = await fetch("/api/account/delete", {
         method: "DELETE",
         headers: {
@@ -197,6 +201,76 @@ export default function SettingsPage() {
     } catch (err) {
       console.error("Failed to delete account:", err);
       setMessage("Failed to delete account");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleDeleteOwnerProfile = async () => {
+    setSaving(true);
+    try {
+      // Call backend to delete owner profile (listings, deals, etc.)
+      const res = await fetch("/api/account/delete-owner-profile", {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${session?.access_token}`,
+        },
+      });
+
+      if (res.ok) {
+        setMessage("Owner profile deleted successfully");
+        setShowDeleteOwnerConfirm(false);
+        // Optionally reload profile
+        await fetchProfile();
+      } else {
+        setMessage("Failed to delete owner profile");
+      }
+    } catch (err) {
+      console.error("Failed to delete owner profile:", err);
+      setMessage("Failed to delete owner profile");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleDisableAccount = async () => {
+    if (disablePassword !== disablePasswordConfirm) {
+      setMessage("Passwords do not match");
+      return;
+    }
+    if (disablePassword.length < 6) {
+      setMessage("Password must be at least 6 characters");
+      return;
+    }
+
+    setSaving(true);
+    try {
+      // Call backend to disable account with recovery password
+      const res = await fetch("/api/account/disable", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session?.access_token}`,
+        },
+        body: JSON.stringify({ recovery_password: disablePassword }),
+      });
+
+      if (res.ok) {
+        setMessage("Account disabled. You can re-enable it with your recovery password.");
+        setShowDisableConfirm(false);
+        setDisablePassword("");
+        setDisablePasswordConfirm("");
+        // Sign out after disabling
+        setTimeout(async () => {
+          await supabase.auth.signOut();
+          window.location.href = "/";
+        }, 2000);
+      } else {
+        setMessage("Failed to disable account");
+      }
+    } catch (err) {
+      console.error("Failed to disable account:", err);
+      setMessage("Failed to disable account");
     } finally {
       setSaving(false);
     }
@@ -552,36 +626,145 @@ export default function SettingsPage() {
                 <h2 className="text-lg font-bold text-red-600 dark:text-red-400 flex items-center gap-2">
                   <span>⚠️</span> Danger Zone
                 </h2>
-                {!showDeleteConfirm ? (
-                  <button
-                    onClick={() => setShowDeleteConfirm(true)}
-                    className="px-4 py-2.5 rounded-xl text-sm font-semibold text-red-600 dark:text-red-400 border border-red-200 dark:border-red-500/20 hover:bg-red-50 dark:hover:bg-red-500/5 transition-colors"
-                  >
-                    Delete account
-                  </button>
-                ) : (
-                  <div className="p-4 rounded-xl bg-red-50 dark:bg-red-500/5 border border-red-200 dark:border-red-500/20 space-y-3">
-                    <p className="text-sm text-red-600 dark:text-red-400">
-                      Are you sure? This will permanently delete your account,
-                      all listings, and data. This action cannot be undone.
-                    </p>
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => setShowDeleteConfirm(false)}
-                        className="btn-secondary py-2 px-4 rounded-lg text-sm"
-                      >
-                        Cancel
-                      </button>
-                      <button
-                        onClick={handleDeleteAccount}
-                        disabled={saving}
-                        className="px-4 py-2 rounded-lg text-sm font-semibold bg-red-500 text-white hover:bg-red-600 transition-colors disabled:opacity-50"
-                      >
-                        {saving ? "Deleting..." : "Confirm delete"}
-                      </button>
+
+                <div className="space-y-4">
+                  {/* Disable Account */}
+                  <div className="p-4 rounded-xl border border-amber-200 dark:border-amber-500/20 bg-amber-50 dark:bg-amber-500/5">
+                    <div className="flex items-start justify-between gap-3 mb-3">
+                      <div>
+                        <h3 className="font-bold text-slate-900 dark:text-white text-sm">Disable Account</h3>
+                        <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">Temporarily disable your account. You can re-enable it anytime with your recovery password.</p>
+                      </div>
+                      {!showDisableConfirm && (
+                        <button
+                          onClick={() => setShowDisableConfirm(true)}
+                          className="px-4 py-2 rounded-lg text-xs font-semibold text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-500/20 hover:bg-amber-100 dark:hover:bg-amber-500/10 transition-colors shrink-0"
+                        >
+                          Disable
+                        </button>
+                      )}
                     </div>
+                    {showDisableConfirm && (
+                      <div className="space-y-3 mt-3 pt-3 border-t border-amber-200 dark:border-amber-500/20">
+                        <p className="text-xs text-amber-700 dark:text-amber-300">Set a recovery password to re-enable your account:</p>
+                        <input
+                          type="password"
+                          placeholder="Recovery password"
+                          value={disablePassword}
+                          onChange={(e) => setDisablePassword(e.target.value)}
+                          className="input-field text-sm"
+                        />
+                        <input
+                          type="password"
+                          placeholder="Confirm recovery password"
+                          value={disablePasswordConfirm}
+                          onChange={(e) => setDisablePasswordConfirm(e.target.value)}
+                          className="input-field text-sm"
+                        />
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => {
+                              setShowDisableConfirm(false);
+                              setDisablePassword("");
+                              setDisablePasswordConfirm("");
+                            }}
+                            className="btn-secondary py-2 px-4 rounded-lg text-sm flex-1"
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            onClick={handleDisableAccount}
+                            disabled={saving}
+                            className="px-4 py-2 rounded-lg text-sm font-semibold bg-amber-500 text-white hover:bg-amber-600 transition-colors disabled:opacity-50 flex-1"
+                          >
+                            {saving ? "Disabling..." : "Disable account"}
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </div>
-                )}
+
+                  {/* Delete Owner Profile */}
+                  <div className="p-4 rounded-xl border border-orange-200 dark:border-orange-500/20 bg-orange-50 dark:bg-orange-500/5">
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <h3 className="font-bold text-slate-900 dark:text-white text-sm">Delete Owner Profile</h3>
+                        <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">Delete all your listings, deals, and owner data. Your seeker profile will remain.</p>
+                      </div>
+                      {!showDeleteOwnerConfirm && (
+                        <button
+                          onClick={() => setShowDeleteOwnerConfirm(true)}
+                          className="px-4 py-2 rounded-lg text-xs font-semibold text-orange-600 dark:text-orange-400 border border-orange-200 dark:border-orange-500/20 hover:bg-orange-100 dark:hover:bg-orange-500/10 transition-colors shrink-0"
+                        >
+                          Delete
+                        </button>
+                      )}
+                    </div>
+                    {showDeleteOwnerConfirm && (
+                      <div className="space-y-3 mt-3 pt-3 border-t border-orange-200 dark:border-orange-500/20">
+                        <p className="text-xs text-orange-700 dark:text-orange-300">Are you sure? This will delete all your listings and deals. This action cannot be undone.</p>
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => setShowDeleteOwnerConfirm(false)}
+                            className="btn-secondary py-2 px-4 rounded-lg text-sm flex-1"
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            onClick={handleDeleteOwnerProfile}
+                            disabled={saving}
+                            className="px-4 py-2 rounded-lg text-sm font-semibold bg-orange-500 text-white hover:bg-orange-600 transition-colors disabled:opacity-50 flex-1"
+                          >
+                            {saving ? "Deleting..." : "Delete owner profile"}
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Delete Account */}
+                  <div className="p-4 rounded-xl border border-red-200 dark:border-red-500/20 bg-red-50 dark:bg-red-500/5">
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <h3 className="font-bold text-slate-900 dark:text-white text-sm">Delete Account</h3>
+                        <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">Permanently delete your account and all data. This action cannot be undone.</p>
+                      </div>
+                      {!showDeleteConfirm && (
+                        <button
+                          onClick={() => setShowDeleteConfirm(true)}
+                          className="px-4 py-2 rounded-lg text-xs font-semibold text-red-600 dark:text-red-400 border border-red-200 dark:border-red-500/20 hover:bg-red-100 dark:hover:bg-red-500/10 transition-colors shrink-0"
+                        >
+                          Delete
+                        </button>
+                      )}
+                    </div>
+                    {showDeleteConfirm && (
+                      <div className="space-y-3 mt-3 pt-3 border-t border-red-200 dark:border-red-500/20">
+                        <p className="text-xs text-red-700 dark:text-red-300">This will permanently delete your account, all listings, and data. Type your email to confirm:</p>
+                        <input
+                          type="email"
+                          placeholder={user?.email}
+                          className="input-field text-sm"
+                        />
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => setShowDeleteConfirm(false)}
+                            className="btn-secondary py-2 px-4 rounded-lg text-sm flex-1"
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            onClick={handleDeleteAccount}
+                            disabled={saving}
+                            className="px-4 py-2 rounded-lg text-sm font-semibold bg-red-500 text-white hover:bg-red-600 transition-colors disabled:opacity-50 flex-1"
+                          >
+                            {saving ? "Deleting..." : "Delete account"}
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
           )}
