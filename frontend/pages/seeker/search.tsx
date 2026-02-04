@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { useAuth } from "../../hooks/useAuth";
-import SearchFilters, { FilterState } from "../../components/SearchFilters";
+import { updateMyProfile } from "../../lib/api";
 
 const PLACEHOLDER_LISTINGS = [
   {
@@ -17,9 +17,9 @@ const PLACEHOLDER_LISTINGS = [
     verified: true,
     photos: [
       "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=400&h=300&fit=crop",
-      "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&h=300&fit=crop",
     ],
-    description: "Bright private room in friendly sharehouse near Central Station. 5 min walk to buses and trains.",
+    description:
+      "Bright private room in friendly sharehouse near Central Station. 5 min walk to buses and trains.",
   },
   {
     id: "2",
@@ -33,9 +33,9 @@ const PLACEHOLDER_LISTINGS = [
     verified: false,
     photos: [
       "https://images.unsplash.com/photo-1598928506311-c55ez637a745?w=400&h=300&fit=crop",
-      "https://images.unsplash.com/photo-1631679706909-1844bbd07221?w=400&h=300&fit=crop",
     ],
-    description: "Affordable shared room close to USYD campus. Quiet neighbourhood with parks nearby.",
+    description:
+      "Affordable shared room close to USYD campus. Quiet neighbourhood with parks nearby.",
   },
   {
     id: "3",
@@ -49,112 +49,116 @@ const PLACEHOLDER_LISTINGS = [
     verified: true,
     photos: [
       "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=400&h=300&fit=crop",
-      "https://images.unsplash.com/photo-1540518614846-7eded433c457?w=400&h=300&fit=crop",
     ],
-    description: "Ensuite room with own bathroom in modern apartment. Green Square station 3 min walk.",
-  },
-  {
-    id: "4",
-    address: "77 Anzac Pde",
-    suburb: "Kensington",
-    postcode: "2033",
-    weeklyPrice: 200,
-    roomType: "private",
-    furnished: false,
-    billsIncluded: false,
-    verified: false,
-    photos: [
-      "https://images.unsplash.com/photo-1513694203232-719a280e022f?w=400&h=300&fit=crop",
-      "https://images.unsplash.com/photo-1564078516393-cf04bd966897?w=400&h=300&fit=crop",
-    ],
-    description: "Unfurnished private room near UNSW. Light rail stop at doorstep. Large backyard.",
-  },
-  {
-    id: "5",
-    address: "3/15 Glebe Point Rd",
-    suburb: "Glebe",
-    postcode: "2037",
-    weeklyPrice: 310,
-    roomType: "studio",
-    furnished: true,
-    billsIncluded: true,
-    verified: true,
-    photos: [
-      "https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=400&h=300&fit=crop",
-      "https://images.unsplash.com/photo-1536376072261-38c75010e6c9?w=400&h=300&fit=crop",
-    ],
-    description: "Self-contained studio with kitchenette. Walking distance to Broadway Shopping Centre.",
-  },
-  {
-    id: "6",
-    address: "22 Parramatta Rd",
-    suburb: "Homebush",
-    postcode: "2140",
-    weeklyPrice: 190,
-    roomType: "shared",
-    furnished: true,
-    billsIncluded: true,
-    verified: false,
-    photos: [
-      "https://images.unsplash.com/photo-1585412727339-54e4bae3bbf9?w=400&h=300&fit=crop",
-      "https://images.unsplash.com/photo-1560185007-cde436f6a4d0?w=400&h=300&fit=crop",
-    ],
-    description: "Budget-friendly shared room near Olympic Park. Inclusive of all bills and WiFi.",
+    description:
+      "Ensuite room with own bathroom in modern apartment. Green Square station 3 min walk.",
   },
 ];
 
-export default function SeekerSearch() {
-  const { session } = useAuth();
+const AUSTRALIAN_DESTINATIONS = [
+  { label: "Sydney CBD", region: "Sydney" },
+  { label: "Surry Hills", region: "Sydney" },
+  { label: "Parramatta", region: "Sydney" },
+  { label: "Penrith", region: "Sydney" },
+  { label: "Newcastle", region: "Newcastle" },
+  { label: "Melbourne CBD", region: "Melbourne" },
+  { label: "St Kilda", region: "Melbourne" },
+  { label: "Box Hill", region: "Melbourne" },
+  { label: "Geelong", region: "Geelong" },
+  { label: "Brisbane CBD", region: "Brisbane" },
+  { label: "South Bank", region: "Brisbane" },
+  { label: "Gold Coast", region: "Gold Coast" },
+  { label: "Adelaide CBD", region: "Adelaide" },
+  { label: "Rundle Mall", region: "Adelaide" },
+  { label: "Canberra CBD", region: "Canberra" },
+  { label: "Perth CBD", region: "Perth" },
+  { label: "Hobart CBD", region: "Hobart" },
+];
+
+export default function SeekerSearchExtended() {
+  const { session, user } = useAuth();
   const [results, setResults] = useState(PLACEHOLDER_LISTINGS);
   const [searching, setSearching] = useState(false);
   const [searched, setSearched] = useState(false);
   const [saved, setSaved] = useState<Set<string>>(new Set());
+  const [showUseLocation, setShowUseLocation] = useState(false);
 
-  const handleSearch = async (filters: FilterState) => {
+  // Filter states
+  const [selectedDestinations, setSelectedDestinations] = useState<string[]>([]);
+  const [checkInDate, setCheckInDate] = useState("");
+  const [checkOutDate, setCheckOutDate] = useState("");
+  const [adults, setAdults] = useState(1);
+  const [children, setChildren] = useState(0);
+  const [infants, setInfants] = useState(0);
+  const [pets, setPets] = useState(0);
+  const [maxPrice, setMaxPrice] = useState(500);
+
+  // Load wishlist from localStorage on mount
+  useEffect(() => {
+    const saved_listings = localStorage.getItem("wishlist");
+    if (saved_listings) {
+      try {
+        setSaved(new Set(JSON.parse(saved_listings)));
+      } catch (err) {
+        console.error("Failed to load wishlist:", err);
+      }
+    }
+  }, []);
+
+  const handleSearch = async () => {
     setSearching(true);
     setSearched(true);
-    // Simulate network delay for placeholder
     await new Promise((r) => setTimeout(r, 600));
 
     let filtered = [...PLACEHOLDER_LISTINGS];
 
-    if (filters.query) {
-      const q = filters.query.toLowerCase();
-      filtered = filtered.filter(
-        (l) =>
-          l.suburb.toLowerCase().includes(q) ||
-          l.postcode.includes(q) ||
-          l.address.toLowerCase().includes(q)
-      );
-    }
-    if (filters.roomType) {
-      filtered = filtered.filter((l) => l.roomType === filters.roomType);
-    }
-    if (filters.furnished === "furnished") {
-      filtered = filtered.filter((l) => l.furnished);
-    } else if (filters.furnished === "unfurnished") {
-      filtered = filtered.filter((l) => !l.furnished);
-    }
-    if (filters.billsIncluded === "included") {
-      filtered = filtered.filter((l) => l.billsIncluded);
-    } else if (filters.billsIncluded === "excluded") {
-      filtered = filtered.filter((l) => !l.billsIncluded);
-    }
-    if (filters.maxPrice) {
-      filtered = filtered.filter((l) => l.weeklyPrice <= Number(filters.maxPrice));
-    }
+    // Filter by price
+    filtered = filtered.filter((l) => l.weeklyPrice <= maxPrice);
+
+    // Filter by adults/children (mock - would check availability)
+    const totalGuests = adults + children;
+    filtered = filtered.filter((l) => {
+      // Mock: filter by room type capacity
+      return totalGuests <= 4;
+    });
 
     setResults(filtered);
     setSearching(false);
   };
 
   const toggleSave = (id: string) => {
-    setSaved((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
+    const newSaved = new Set(saved);
+    if (newSaved.has(id)) {
+      newSaved.delete(id);
+    } else {
+      newSaved.add(id);
+    }
+    setSaved(newSaved);
+    localStorage.setItem("wishlist", JSON.stringify(Array.from(newSaved)));
+
+    // Sync to backend if logged in
+    if (session && user?.id) {
+      updateMyProfile(session.access_token, {
+        wishlist: Array.from(newSaved),
+      });
+    }
+  };
+
+  const handleUseLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          console.log("Location:", latitude, longitude);
+          // Would filter listings by distance
+          setShowUseLocation(false);
+        },
+        (error) => {
+          console.error("Geolocation error:", error);
+          alert("Unable to get your location");
+        }
+      );
+    }
   };
 
   return (
@@ -164,20 +168,174 @@ export default function SeekerSearch() {
           Find a <span className="gradient-text">Room</span>
         </h1>
         <p className="text-sm text-slate-500 dark:text-slate-400 mt-2">
-          Search by suburb, postcode, or budget. Filter to find exactly what you need.
+          Search by destination, dates, and group size.
         </p>
       </motion.div>
 
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-        <SearchFilters onSearch={handleSearch} loading={searching} />
+      {/* Search filters */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+        className="card rounded-2xl p-6 space-y-4"
+      >
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* Destinations */}
+          <div>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+              Where to?
+            </label>
+            <select
+              multiple
+              value={selectedDestinations}
+              onChange={(e) =>
+                setSelectedDestinations(
+                  Array.from(e.target.selectedOptions, (o) => o.value)
+                )
+              }
+              className="input-field"
+            >
+              {AUSTRALIAN_DESTINATIONS.map((dest) => (
+                <option key={dest.label} value={dest.label}>
+                  {dest.label}
+                </option>
+              ))}
+            </select>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+              Hold Ctrl/Cmd to select multiple
+            </p>
+          </div>
+
+          {/* Check-in */}
+          <div>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+              Check-in
+            </label>
+            <input
+              type="date"
+              value={checkInDate}
+              onChange={(e) => setCheckInDate(e.target.value)}
+              className="input-field"
+            />
+          </div>
+
+          {/* Check-out */}
+          <div>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+              Check-out
+            </label>
+            <input
+              type="date"
+              value={checkOutDate}
+              onChange={(e) => setCheckOutDate(e.target.value)}
+              className="input-field"
+            />
+          </div>
+
+          {/* Guests */}
+          <div>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+              Guests
+            </label>
+            <select className="input-field">
+              <option>{adults + children + infants} guests</option>
+            </select>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+              {adults} adults, {children} children, {infants} infants
+            </p>
+          </div>
+        </div>
+
+        <div className="grid sm:grid-cols-3 gap-4">
+          {/* Price */}
+          <div>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+              Max price: AUD ${maxPrice}/week
+            </label>
+            <input
+              type="range"
+              min="50"
+              max="1000"
+              step="10"
+              value={maxPrice}
+              onChange={(e) => setMaxPrice(Number(e.target.value))}
+              className="w-full"
+            />
+          </div>
+
+          {/* Adults */}
+          <div>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+              Adults (18+)
+            </label>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setAdults(Math.max(0, adults - 1))}
+                className="btn-secondary px-3 py-2 rounded-lg"
+              >
+                −
+              </button>
+              <span className="text-sm font-semibold w-8 text-center">{adults}</span>
+              <button
+                onClick={() => setAdults(adults + 1)}
+                className="btn-secondary px-3 py-2 rounded-lg"
+              >
+                +
+              </button>
+            </div>
+          </div>
+
+          {/* Children */}
+          <div>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+              Children (2-17)
+            </label>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setChildren(Math.max(0, children - 1))}
+                className="btn-secondary px-3 py-2 rounded-lg"
+              >
+                −
+              </button>
+              <span className="text-sm font-semibold w-8 text-center">
+                {children}
+              </span>
+              <button
+                onClick={() => setChildren(children + 1)}
+                className="btn-secondary px-3 py-2 rounded-lg"
+              >
+                +
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex gap-3 flex-wrap">
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={handleSearch}
+            disabled={searching}
+            className="btn-primary px-6 py-2.5 rounded-xl text-sm"
+          >
+            {searching ? "Searching..." : "Search"}
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => setShowUseLocation(!showUseLocation)}
+            className="btn-secondary px-6 py-2.5 rounded-xl text-sm"
+          >
+            📍 Near me
+          </motion.button>
+        </div>
       </motion.div>
 
-      {/* Results + Map layout */}
+      {/* Results */}
       <div className="grid lg:grid-cols-5 gap-6">
         {/* Listing cards */}
         <div className="lg:col-span-3 space-y-4">
           {searching ? (
-            // Skeleton loading
             <div className="space-y-4">
               {[1, 2, 3].map((i) => (
                 <div key={i} className="card p-5 rounded-2xl space-y-3">
@@ -198,10 +356,22 @@ export default function SeekerSearch() {
               animate={{ opacity: 1 }}
               className="card p-8 rounded-2xl text-center"
             >
-              <svg className="w-12 h-12 mx-auto text-slate-300 dark:text-slate-600 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              <svg
+                className="w-12 h-12 mx-auto text-slate-300 dark:text-slate-600 mb-3"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={1.5}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
               </svg>
-              <h3 className="font-bold text-slate-900 dark:text-white mb-1">No rooms found</h3>
+              <h3 className="font-bold text-slate-900 dark:text-white mb-1">
+                No rooms found
+              </h3>
               <p className="text-sm text-slate-500 dark:text-slate-400">
                 Try adjusting your filters or searching a different area.
               </p>
@@ -217,7 +387,6 @@ export default function SeekerSearch() {
                 className="card p-5 rounded-2xl group"
               >
                 <div className="flex gap-4">
-                  {/* Photo */}
                   <div className="w-28 h-20 sm:w-36 sm:h-24 shrink-0 rounded-xl bg-slate-100 dark:bg-slate-800 overflow-hidden">
                     <img
                       src={listing.photos[0]}
@@ -241,7 +410,9 @@ export default function SeekerSearch() {
                         <span className="text-rose-600 dark:text-rose-400 font-bold text-sm">
                           AUD ${listing.weeklyPrice}
                         </span>
-                        <span className="text-rose-400 dark:text-rose-500 text-xs">/wk</span>
+                        <span className="text-rose-400 dark:text-rose-500 text-xs">
+                          /wk
+                        </span>
                       </div>
                     </div>
 
@@ -272,7 +443,6 @@ export default function SeekerSearch() {
                   </div>
                 </div>
 
-                {/* Action buttons */}
                 <div className="flex gap-2 mt-3 pt-3 border-t border-slate-100 dark:border-slate-800">
                   <Link
                     href={`/seeker/room/${listing.id}`}
@@ -290,14 +460,6 @@ export default function SeekerSearch() {
                   >
                     {saved.has(listing.id) ? "♥ Saved" : "Save"}
                   </button>
-                  {session && (
-                    <Link
-                      href={`/seeker/room/${listing.id}#interest`}
-                      className="btn-secondary py-2 px-4 rounded-lg text-xs text-center hidden sm:block"
-                    >
-                      Express interest
-                    </Link>
-                  )}
                 </div>
               </motion.div>
             ))
@@ -309,63 +471,56 @@ export default function SeekerSearch() {
           )}
         </div>
 
-        {/* Map placeholder */}
+        {/* Wishlist sidebar */}
         <div className="lg:col-span-2 hidden lg:block">
-          <div className="sticky top-24">
+          <div className="sticky top-24 space-y-4">
+            {/* Map placeholder */}
             <div className="card rounded-2xl overflow-hidden aspect-[4/5] flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-800/50">
-              <svg className="w-16 h-16 text-slate-300 dark:text-slate-600 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+              <svg
+                className="w-16 h-16 text-slate-300 dark:text-slate-600 mb-3"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={1}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                />
               </svg>
-              <p className="text-sm font-medium text-slate-400 dark:text-slate-500">Map view</p>
-              <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">Coming soon</p>
-              {/* Pin indicators */}
-              {results.length > 0 && (
-                <div className="mt-4 flex flex-wrap gap-1 justify-center px-4">
-                  {results.map((l) => (
-                    <span
-                      key={l.id}
-                      className="px-2 py-0.5 rounded-full text-xs bg-rose-100 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400"
-                    >
-                      {l.postcode}
-                    </span>
-                  ))}
-                </div>
-              )}
+              <p className="text-sm font-medium text-slate-400 dark:text-slate-500">
+                Map view
+              </p>
+              <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
+                Coming soon
+              </p>
             </div>
+
+            {/* Wishlist */}
+            {saved.size > 0 && (
+              <Link href="/seeker/wishlist" className="card p-4 rounded-2xl block">
+                <p className="text-sm font-bold text-slate-900 dark:text-white">
+                  Wishlist
+                </p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">
+                  {saved.size} saved items
+                </p>
+                <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800">
+                  <button className="text-xs text-rose-500 hover:text-rose-600 font-semibold">
+                    View all →
+                  </button>
+                </div>
+              </Link>
+            )}
           </div>
         </div>
       </div>
-
-      {/* SEO-friendly info section */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.3 }}
-        className="card p-6 rounded-2xl mt-6"
-      >
-        <div className="flex items-start gap-3">
-          <svg className="w-5 h-5 text-rose-400 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          <div>
-            <h2 className="text-sm font-bold text-slate-900 dark:text-white mb-2">
-              Finding rooms for rent in Sydney &amp; beyond
-            </h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-              MigRent AI helps new migrants, international students, and working holiday makers
-              find affordable rooms for rent across Sydney, Adelaide, and other Australian cities.
-              Whether you&apos;re looking for short-term rooms, shared accommodation, private rooms near
-              universities, or furnished rooms for new arrivals &mdash; our AI-powered matching
-              connects verified seekers with trusted room owners. Browse private rooms, shared
-              rooms, studios, and entire places with transparent pricing in AUD.
-            </p>
-            <p className="text-xs text-slate-400 dark:text-slate-500 mt-2 italic">
-              Helpful info &middot; MigRent AI is a matching platform, not a real estate agent
-            </p>
-          </div>
-        </div>
-      </motion.div>
     </div>
   );
 }

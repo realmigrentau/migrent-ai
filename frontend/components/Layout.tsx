@@ -166,6 +166,16 @@ export default function Layout({ children }: { children: ReactNode }) {
                         </Link>
                         <div className="border-t border-slate-100 dark:border-slate-800">
                           <Link
+                            href="/account/messages"
+                            onClick={() => setAccountOpen(false)}
+                            className="flex items-center gap-3 px-4 py-3 text-sm text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors"
+                          >
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                            </svg>
+                            Messages
+                          </Link>
+                          <Link
                             href="/account/settings"
                             onClick={() => setAccountOpen(false)}
                             className="flex items-center gap-3 px-4 py-3 text-sm text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors"
