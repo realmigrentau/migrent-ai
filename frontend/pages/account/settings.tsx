@@ -307,7 +307,7 @@ export default function SettingsPage() {
     { id: "personal", label: "Personal info", icon: "👤" },
     { id: "security", label: "Security", icon: "🔒" },
     { id: "payments", label: "Payments", icon: "💳" },
-    { id: "languages", label: "Languages & currency", icon: "🌐" },
+    { id: "languages", label: "Essentials", icon: "🌐" },
   ];
 
   return (
@@ -806,7 +806,7 @@ export default function SettingsPage() {
             <div className="space-y-6">
               <div className="card p-6 rounded-2xl space-y-4">
                 <h2 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                  <span>🌐</span> Language & Location
+                  <span>🌐</span> Essentials
                 </h2>
 
                 <div className="space-y-4">
