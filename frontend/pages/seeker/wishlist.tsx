@@ -62,17 +62,32 @@ export default function WishlistPage() {
 
   useEffect(() => {
     loadWishlist();
-  }, []);
+  }, [session, user?.id]);
 
   const loadWishlist = async () => {
     setLoading(true);
+    let ids: string[] = [];
 
     // Try to load from backend if logged in
     if (session && user?.id) {
       try {
         const profile = await getMyProfile(session.access_token);
-        if (profile?.wishlist) {
-          setWishlistIds(profile.wishlist);
+        if (profile?.wishlist && profile.wishlist.length > 0) {
+          ids = profile.wishlist;
+        } else {
+          // If backend is empty but localStorage has data, sync it
+          const saved = localStorage.getItem("wishlist");
+          if (saved) {
+            try {
+              ids = JSON.parse(saved);
+              // Sync to backend
+              await updateMyProfile(session.access_token, {
+                wishlist: ids,
+              });
+            } catch (e) {
+              console.error("Failed to parse wishlist:", e);
+            }
+          }
         }
       } catch (err) {
         console.error("Failed to load wishlist from backend:", err);
@@ -80,7 +95,7 @@ export default function WishlistPage() {
         const saved = localStorage.getItem("wishlist");
         if (saved) {
           try {
-            setWishlistIds(JSON.parse(saved));
+            ids = JSON.parse(saved);
           } catch (e) {
             console.error("Failed to parse wishlist:", e);
           }
@@ -91,15 +106,17 @@ export default function WishlistPage() {
       const saved = localStorage.getItem("wishlist");
       if (saved) {
         try {
-          setWishlistIds(JSON.parse(saved));
+          ids = JSON.parse(saved);
         } catch (e) {
           console.error("Failed to parse wishlist:", e);
         }
       }
     }
 
+    setWishlistIds(ids);
+
     // Fetch listing details (mock)
-    const items = wishlistIds
+    const items = ids
       .map((id) => PLACEHOLDER_LISTINGS[id])
       .filter((l) => l);
     setListings(items);
