@@ -350,3 +350,107 @@ export async function submitReport(
     return null;
   }
 }
+
+// ── Messaging endpoints ──────────────────────────────────────
+
+/**
+ * Send a message between seeker and owner.
+ * POST /messages/send
+ */
+export async function sendMessage(
+  token: string,
+  data: {
+    sender_id: string;
+    receiver_id: string;
+    listing_id: string;
+    deal_id?: string;
+    message_text: string;
+  }
+) {
+  try {
+    const res = await fetch(`${BASE_URL}/messages/send`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) throw new Error(`sendMessage failed: ${res.status}`);
+    return await res.json();
+  } catch (err) {
+    console.error("sendMessage error:", err);
+    return null;
+  }
+}
+
+/**
+ * Get all message threads for the current user.
+ * GET /messages/threads
+ */
+export async function getMessageThreads(token: string) {
+  try {
+    const res = await fetch(`${BASE_URL}/messages/threads`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if (!res.ok) throw new Error(`getMessageThreads failed: ${res.status}`);
+    return await res.json();
+  } catch (err) {
+    console.error("getMessageThreads error:", err);
+    return null;
+  }
+}
+
+/**
+ * Get messages in a specific thread.
+ * GET /messages/thread/:listing_id/:other_user_id
+ */
+export async function getThreadMessages(
+  token: string,
+  listingId: string,
+  otherUserId: string,
+  limit: number = 50
+) {
+  try {
+    const res = await fetch(
+      `${BASE_URL}/messages/thread/${listingId}/${otherUserId}?limit=${limit}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    if (!res.ok) throw new Error(`getThreadMessages failed: ${res.status}`);
+    return await res.json();
+  } catch (err) {
+    console.error("getThreadMessages error:", err);
+    return null;
+  }
+}
+
+/**
+ * Mark a message as read.
+ * PATCH /messages/:message_id/read
+ */
+export async function markMessageRead(token: string, messageId: string) {
+  try {
+    const res = await fetch(`${BASE_URL}/messages/${messageId}/read`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if (!res.ok) throw new Error(`markMessageRead failed: ${res.status}`);
+    return await res.json();
+  } catch (err) {
+    console.error("markMessageRead error:", err);
+    return null;
+  }
+}

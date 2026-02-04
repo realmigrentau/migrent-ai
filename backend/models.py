@@ -102,6 +102,18 @@ class ProfileUpdate(BaseModel):
     properties_owned: Optional[int] = Field(None, ge=0)
     notify_email: Optional[bool] = None
     notify_sms: Optional[bool] = None
+    # Extended fields
+    legal_name: Optional[str] = Field(None, max_length=150)
+    preferred_name: Optional[str] = Field(None, max_length=100)
+    phones: Optional[list[str]] = None
+    residential_address: Optional[dict] = None
+    emergency_contact: Optional[dict] = None
+    preferred_language: Optional[str] = Field(None, max_length=20)
+    preferred_currency: Optional[str] = Field(None, max_length=5)
+    timezone: Optional[str] = Field(None, max_length=50)
+    wishlist: Optional[list[str]] = None
+    identity_verified: Optional[bool] = None
+    identity_verification_url: Optional[str] = None
 
 
 # ── Deal models ──────────────────────────────────────────────
@@ -147,3 +159,26 @@ class DealOut(BaseModel):
 
 class SeekerFeeRequest(BaseModel):
     deal_id: str
+
+
+# ── Message models ──────────────────────────────────────────
+
+
+class MessageCreate(BaseModel):
+    sender_id: str
+    receiver_id: str
+    listing_id: str
+    deal_id: Optional[str] = None
+    message_text: str = Field(..., min_length=1, max_length=2000)
+
+
+class MessageOut(BaseModel):
+    id: str
+    sender_id: str
+    receiver_id: str
+    listing_id: str
+    deal_id: Optional[str] = None
+    message_text: str
+    read_at: Optional[str] = None
+    created_at: str
+    updated_at: str
