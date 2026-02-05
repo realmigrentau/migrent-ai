@@ -16,8 +16,11 @@ export default function SignIn() {
   const [loading, setLoading] = useState(false);
   const { executeInstance, resetInstance } = useHCaptcha() ?? {};
 
+  // Get redirect URL from query params (e.g., /signin?redirect=/dashboard)
+  const redirectUrl = typeof router.query.redirect === "string" ? router.query.redirect : "/dashboard";
+
   if (session) {
-    router.push("/");
+    router.push(redirectUrl);
     return null;
   }
 
@@ -42,7 +45,7 @@ export default function SignIn() {
       if (error) {
         setMsg(error.message);
       } else {
-        router.push("/");
+        router.push(redirectUrl);
       }
     } catch {
       setMsg("Verification failed. Please try again.");

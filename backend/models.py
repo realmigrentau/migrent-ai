@@ -114,6 +114,8 @@ class ProfileUpdate(BaseModel):
     wishlist: Optional[list[str]] = None
     identity_verified: Optional[bool] = None
     identity_verification_url: Optional[str] = None
+    # Dashboard role (seeker or owner)
+    role: Optional[Literal["seeker", "owner"]] = None
 
 
 # ── Deal models ──────────────────────────────────────────────
