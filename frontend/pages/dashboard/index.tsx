@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { motion } from "framer-motion";
 import DashboardLayout from "../../components/DashboardLayout";
 import { useDashboard } from "../../hooks/useDashboard";
@@ -12,6 +13,7 @@ import { useDashboard } from "../../hooks/useDashboard";
  * - If they have a role, show role-specific shortcuts and quick links
  */
 export default function DashboardHome() {
+  const router = useRouter();
   const {
     role,
     displayName,
@@ -34,9 +36,16 @@ export default function DashboardHome() {
     const success = await setRole(selectedRole);
     if (!success) {
       setError("Failed to save your choice. Please try again.");
+      setSettingRole(false);
+      return;
     }
-    // Don't redirect - stay on dashboard and show role-specific content
-    setSettingRole(false);
+
+    // Redirect to the appropriate profile page
+    if (selectedRole === "seeker") {
+      router.push("/dashboard/seeker-profile");
+    } else {
+      router.push("/dashboard/owner-profile");
+    }
   };
 
   // Quick links for seekers
