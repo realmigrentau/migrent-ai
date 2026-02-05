@@ -61,7 +61,7 @@ export default function Layout({ children }: { children: ReactNode }) {
         }`}
       >
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 group">
+          <Link href={session ? "/dashboard" : "/"} className="flex items-center gap-2 group">
             <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${isSignIn ? "from-blue-500 to-blue-600" : "from-rose-500 to-rose-600"} flex items-center justify-center text-white font-black text-sm group-hover:scale-110 transition-transform`}>
               M
             </div>

@@ -24,16 +24,18 @@ export default function DashboardHome() {
   const [settingRole, setSettingRole] = useState(false);
   const [error, setError] = useState("");
 
+  // Don't auto-redirect - let users stay on the main dashboard
+  // They can click through to seeker/owner hubs if they want
+
   const handleSelectRole = async (selectedRole: "seeker" | "owner") => {
     setSettingRole(true);
     setError("");
 
     const success = await setRole(selectedRole);
-    if (success) {
-      goToRoleDashboard(selectedRole);
-    } else {
+    if (!success) {
       setError("Failed to save your choice. Please try again.");
     }
+    // Don't redirect - stay on dashboard and show role-specific content
     setSettingRole(false);
   };
 
