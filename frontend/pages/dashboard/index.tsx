@@ -49,7 +49,7 @@ export default function DashboardHome() {
       color: "rose",
     },
     {
-      href: "/seeker/profile",
+      href: "/dashboard/seeker-profile",
       label: "Edit Profile",
       desc: "Update your tenant profile",
       icon: "M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z",
@@ -102,7 +102,7 @@ export default function DashboardHome() {
       color: "blue",
     },
     {
-      href: "/owner/profile",
+      href: "/dashboard/owner-profile",
       label: "Edit Profile",
       desc: "Update your owner profile",
       icon: "M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z",
@@ -428,7 +428,7 @@ export default function DashboardHome() {
                     ? [
                         {
                           label: "Complete your profile",
-                          href: "/seeker/profile",
+                          href: "/dashboard/seeker-profile",
                           done: false,
                         },
                         {
@@ -450,7 +450,7 @@ export default function DashboardHome() {
                     : [
                         {
                           label: "Complete your profile",
-                          href: "/owner/profile",
+                          href: "/dashboard/owner-profile",
                           done: false,
                         },
                         {
