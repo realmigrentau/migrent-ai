@@ -10,15 +10,15 @@ router = APIRouter(prefix="/profiles", tags=["profiles"])
 def get_my_profile(authorization: str = Header(...)):
     """Get the current user's profile."""
     user = get_current_user(authorization)
-    sb = get_supabase()
+    sb_admin = get_supabase_admin()
 
     try:
-        res = sb.table("profiles").select("*").eq("id", user.id).execute()
+        res = sb_admin.table("profiles").select("*").eq("id", user.id).execute()
         if not res.data:
             # Auto-create a profile row if it doesn't exist
             row = {"id": user.id, "role": "user"}
             try:
-                sb.table("profiles").insert(row).execute()
+                sb_admin.table("profiles").insert(row).execute()
             except Exception as e:
                 print(f"Error creating profile: {e}")
             return row
