@@ -36,7 +36,9 @@ ALTER TABLE profiles
   ADD COLUMN IF NOT EXISTS timezone TEXT DEFAULT 'Australia/Sydney',
   ADD COLUMN IF NOT EXISTS wishlist TEXT[] DEFAULT '{}',
   ADD COLUMN IF NOT EXISTS identity_verified BOOLEAN DEFAULT FALSE,
-  ADD COLUMN IF NOT EXISTS identity_verification_url TEXT;
+  ADD COLUMN IF NOT EXISTS identity_verification_url TEXT,
+  ADD COLUMN IF NOT EXISTS disabled_at TIMESTAMPTZ DEFAULT NULL,
+  ADD COLUMN IF NOT EXISTS recovery_password_hash TEXT DEFAULT NULL;
 
 -- 3. Extend listings table with geolocation
 ALTER TABLE listings
