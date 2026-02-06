@@ -21,13 +21,22 @@ def get_my_profile(authorization: str = Header(...)):
                 sb_admin.table("profiles").insert(row).execute()
             except Exception as e:
                 print(f"Error creating profile: {e}")
+            print(f"Created new profile row for user {user.id}")
             return row
 
         profile = res.data[0]
-        print(f"Profile fetched for user {user.id}: legal_name={profile.get('legal_name')}, residential_address={profile.get('residential_address')}")
+        print(f"=== PROFILE FETCH DEBUG ===")
+        print(f"User ID: {user.id}")
+        print(f"Full profile object: {profile}")
+        print(f"legal_name: {profile.get('legal_name')}")
+        print(f"preferred_name: {profile.get('preferred_name')}")
+        print(f"residential_address: {profile.get('residential_address')}")
+        print(f"===========================")
         return profile
     except Exception as e:
         print(f"Error fetching profile: {e}")
+        import traceback
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"Failed to fetch profile: {str(e)}")
 
 
@@ -66,19 +75,31 @@ def update_my_profile(
         res = sb_admin.table("profiles").update(updates).eq("id", user.id).execute()
         print(f"Update result: {res.data}")
 
+        if not res.data or len(res.data) == 0:
+            print(f"WARNING: Update returned empty data for user {user.id}. This may indicate RLS blocking the update.")
+
         # Fetch the full updated profile after update
         fetch_res = sb_admin.table("profiles").select("*").eq("id", user.id).execute()
-        print(f"Fetched updated profile: {fetch_res.data}")
+        print(f"Fetched updated profile after update: {fetch_res.data}")
 
         if fetch_res.data and len(fetch_res.data) > 0:
-            return fetch_res.data[0]
+            profile = fetch_res.data[0]
+            print(f"Profile after update: {profile}")
+            return profile
         elif res.data and len(res.data) > 0:
+            print(f"Using data from update result (fetch returned empty)")
             return res.data[0]
         else:
-            # Fallback: return the updates
+            # Fallback: return the updates that were sent
+            # This ensures frontend sees the data even if database wasn't updated
+            print(f"CRITICAL: Both fetch and update returned empty. Returning fallback data.")
+            print(f"  - This may indicate RLS policies are blocking the operation")
+            print(f"  - Ensure SUPABASE_SERVICE_ROLE_KEY is set or RLS policies allow authenticated users")
             return updates
     except Exception as e:
         print(f"Error updating profile: {e}")
+        import traceback
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"Failed to update profile: {str(e)}")
 
 

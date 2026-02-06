@@ -18,7 +18,13 @@ def get_supabase_admin() -> Client:
     if not SUPABASE_URL:
         raise RuntimeError("SUPABASE_URL must be set")
 
-    # If service role key is available, use it; otherwise fall back to anon key
+    # Service role key is required for proper admin operations
+    # If not available, warn and fall back to anon key (with RLS restrictions)
+    if not SUPABASE_SERVICE_ROLE_KEY:
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.warning("SUPABASE_SERVICE_ROLE_KEY not set. Falling back to ANON_KEY. This may cause RLS issues with updates.")
+
     key = SUPABASE_SERVICE_ROLE_KEY or SUPABASE_ANON_KEY
     if not key:
         raise RuntimeError("SUPABASE_SERVICE_ROLE_KEY or SUPABASE_ANON_KEY must be set")
