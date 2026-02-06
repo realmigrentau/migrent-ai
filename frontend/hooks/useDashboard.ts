@@ -21,6 +21,7 @@ interface CachedProfile {
 
 const CACHE_KEY = "migrent_dashboard_profile";
 const CACHE_TTL = 10 * 60 * 1000; // 10 minutes
+const ROLE_CHANGE_EVENT = "migrent_role_changed";
 
 function getCachedProfile(): CachedProfile | null {
   if (typeof window === "undefined") return null;
@@ -42,6 +43,8 @@ function setCachedProfile(userId: string, role: UserRole, displayName: string | 
   try {
     const data: CachedProfile = { userId, role, displayName, timestamp: Date.now() };
     localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+    // Dispatch event to notify other hook instances
+    window.dispatchEvent(new CustomEvent(ROLE_CHANGE_EVENT, { detail: { role, displayName } }));
   } catch {
     // Ignore
   }
@@ -78,6 +81,22 @@ export function useDashboard() {
     }
     return { role: null, loading: true, profileLoaded: false, displayName: null };
   });
+
+  // Listen for role changes from other hook instances
+  useEffect(() => {
+    const handleRoleChange = (event: CustomEvent<{ role: UserRole; displayName: string | null }>) => {
+      setState(prev => ({
+        ...prev,
+        role: event.detail.role,
+        displayName: event.detail.displayName ?? prev.displayName,
+      }));
+    };
+
+    window.addEventListener(ROLE_CHANGE_EVENT, handleRoleChange as EventListener);
+    return () => {
+      window.removeEventListener(ROLE_CHANGE_EVENT, handleRoleChange as EventListener);
+    };
+  }, []);
 
   useEffect(() => {
     // Skip if already fetched this session
