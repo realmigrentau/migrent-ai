@@ -71,12 +71,12 @@ def update_my_profile(
         print(f"Error checking profile existence: {e}")
 
     try:
+        from db import SUPABASE_SERVICE_ROLE_KEY
+
         print(f"\n=== PROFILE UPDATE START ===")
         print(f"User ID: {user.id}")
         print(f"Updates to apply: {updates}")
         print(f"Using admin client with key: {'SERVICE_ROLE' if SUPABASE_SERVICE_ROLE_KEY else 'ANON'}")
-
-        from db import SUPABASE_SERVICE_ROLE_KEY
 
         res = sb_admin.table("profiles").update(updates).eq("id", user.id).execute()
         print(f"Update response status: {res}")
