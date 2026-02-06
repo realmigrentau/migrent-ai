@@ -8,11 +8,7 @@ import { useAuth } from "../hooks/useAuth";
 const navLinks = [
   { href: "/", label: "Home" },
   { href: "/rules", label: "Rules" },
-  { href: "/safety", label: "Safety" },
-  { href: "/support", label: "Support" },
   { href: "/about", label: "About" },
-  { href: "/terms", label: "Terms" },
-  { href: "/privacy", label: "Privacy" },
 ];
 
 export default function Layout({ children }: { children: ReactNode }) {

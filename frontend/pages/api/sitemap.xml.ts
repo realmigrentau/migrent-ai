@@ -6,11 +6,7 @@ const STATIC_PAGES = [
   { path: "/", priority: "1.0", changefreq: "daily" },
   { path: "/seeker/search", priority: "0.9", changefreq: "daily" },
   { path: "/about", priority: "0.7", changefreq: "monthly" },
-  { path: "/support", priority: "0.6", changefreq: "monthly" },
-  { path: "/terms", priority: "0.4", changefreq: "yearly" },
-  { path: "/privacy", priority: "0.4", changefreq: "yearly" },
   { path: "/rules", priority: "0.4", changefreq: "yearly" },
-  { path: "/safety", priority: "0.5", changefreq: "monthly" },
 ];
 
 export default function handler(_req: NextApiRequest, res: NextApiResponse) {
