@@ -72,6 +72,29 @@ export default function Layout({ children }: { children: ReactNode }) {
 
           {/* Desktop nav */}
           <ul className="hidden md:flex items-center gap-1">
+            {/* Dashboard link - only when signed in, before Home */}
+            {session && (
+              <li>
+                <Link
+                  href="/dashboard"
+                  className={`relative px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                    router.pathname.startsWith("/dashboard")
+                      ? "text-rose-500"
+                      : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5"
+                  }`}
+                >
+                  Dashboard
+                  {router.pathname.startsWith("/dashboard") && (
+                    <motion.div
+                      layoutId="navIndicator"
+                      className="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-0.5 bg-rose-500 rounded-full"
+                      transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                    />
+                  )}
+                </Link>
+              </li>
+            )}
+
             {navLinks.map((link) => {
               const active = router.pathname === link.href;
               return (
@@ -96,29 +119,6 @@ export default function Layout({ children }: { children: ReactNode }) {
                 </li>
               );
             })}
-
-            {/* Dashboard link - only when signed in */}
-            {session && (
-              <li>
-                <Link
-                  href="/dashboard"
-                  className={`relative px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                    router.pathname.startsWith("/dashboard")
-                      ? "text-rose-500"
-                      : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5"
-                  }`}
-                >
-                  Dashboard
-                  {router.pathname.startsWith("/dashboard") && (
-                    <motion.div
-                      layoutId="navIndicator"
-                      className="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-0.5 bg-rose-500 rounded-full"
-                      transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                    />
-                  )}
-                </Link>
-              </li>
-            )}
 
             {/* Theme toggle */}
             {mounted && (
@@ -286,6 +286,19 @@ export default function Layout({ children }: { children: ReactNode }) {
               className="md:hidden overflow-hidden bg-white dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800"
             >
               <div className="px-4 py-3 space-y-1">
+                {/* Dashboard link - only when signed in, before other links */}
+                {session && (
+                  <Link
+                    href="/dashboard"
+                    className={`block px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                      router.pathname.startsWith("/dashboard")
+                        ? "text-rose-500 bg-rose-50 dark:bg-rose-500/10"
+                        : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-white/5"
+                    }`}
+                  >
+                    Dashboard
+                  </Link>
+                )}
                 {navLinks.map((link) => (
                   <Link
                     key={link.href}
@@ -299,19 +312,6 @@ export default function Layout({ children }: { children: ReactNode }) {
                     {link.label}
                   </Link>
                 ))}
-                {/* Dashboard link - only when signed in */}
-                {session && (
-                  <Link
-                    href="/dashboard"
-                    className={`block px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                      router.pathname.startsWith("/dashboard")
-                        ? "text-rose-500 bg-rose-50 dark:bg-rose-500/10"
-                        : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-white/5"
-                    }`}
-                  >
-                    Dashboard
-                  </Link>
-                )}
                 {session ? (
                   <>
                     <p className="px-3 pt-3 pb-1 text-xs font-medium text-slate-400 dark:text-slate-500">
