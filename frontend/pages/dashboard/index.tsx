@@ -25,6 +25,7 @@ export default function DashboardHome() {
 
   const [settingRole, setSettingRole] = useState(false);
   const [error, setError] = useState("");
+  const [showRoleSelection, setShowRoleSelection] = useState(false);
 
   // Don't auto-redirect - let users stay on the main dashboard
   // They can click through to seeker/owner hubs if they want
@@ -40,7 +41,8 @@ export default function DashboardHome() {
       return;
     }
 
-    // Redirect to the appropriate dashboard
+    // Hide role selection and redirect
+    setShowRoleSelection(false);
     if (selectedRole === "seeker") {
       router.push("/dashboard/seeker");
     } else {
@@ -169,23 +171,18 @@ export default function DashboardHome() {
                 {role}
               </span>
               .{" "}
-              <Link
-                href="/dashboard"
-                onClick={(e) => {
-                  e.preventDefault();
-                  // Reset role selection by showing the choice again
-                  // This is handled by setting role to null temporarily
-                }}
+              <button
+                onClick={() => setShowRoleSelection(true)}
                 className="underline underline-offset-2 hover:text-rose-500 transition-colors"
               >
                 Switch role
-              </Link>
+              </button>
             </p>
           )}
         </motion.div>
 
-        {/* Role selection (if no role set) */}
-        {!role && (
+        {/* Role selection (if no role set or switching) */}
+        {(!role || showRoleSelection) && (
           <motion.section
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
