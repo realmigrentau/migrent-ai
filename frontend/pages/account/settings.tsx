@@ -185,7 +185,39 @@ export default function SettingsPage() {
     }
   };
 
-  const handleAddressChange = async (value: string) => {
+  const australianLocations = [
+    "Kellyville NSW 2155",
+    "Baulkham Hills NSW 2153",
+    "Astro NSW 2153",
+    "Goo Goo NSW 2153",
+    "Claude NSW 2153",
+    "Surry Hills NSW 2010",
+    "Bondi NSW 2026",
+    "Manly NSW 2095",
+    "Neutral Bay NSW 2089",
+    "Cremorne NSW 2090",
+    "Willoughby NSW 2068",
+    "Chatswood NSW 2067",
+    "Parramatta NSW 2150",
+    "Penrith NSW 2750",
+    "Wollongong NSW 2500",
+    "Melbourne VIC 3000",
+    "Fitzroy VIC 3065",
+    "Carlton VIC 3053",
+    "Brunswick VIC 3056",
+    "Footscray VIC 3011",
+    "Brisbane QLD 4000",
+    "South Bank QLD 4101",
+    "Fortitude Valley QLD 4006",
+    "New Farm QLD 4005",
+    "Perth WA 6000",
+    "Northbridge WA 6003",
+    "Subiaco WA 6008",
+    "Adelaide SA 5000",
+    "Rundle Mall SA 5000",
+  ];
+
+  const handleAddressChange = (value: string) => {
     setResidentialAddress(value);
 
     if (value.length < 2) {
@@ -194,79 +226,12 @@ export default function SettingsPage() {
       return;
     }
 
-    // Try Google Maps API first if key is available
-    if (process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY) {
-      try {
-        const response = await fetch(
-          `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(value)}&country=AU&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`
-        );
-        const data = await response.json();
+    const filtered = australianLocations.filter((loc) =>
+      loc.toLowerCase().includes(value.toLowerCase())
+    );
 
-        if (data.results && data.results.length > 0) {
-          const suggestions = data.results
-            .map((result: any) => result.formatted_address)
-            .slice(0, 5);
-          setAddressSuggestions(suggestions);
-          setShowAddressSuggestions(true);
-          return;
-        }
-      } catch (err) {
-        console.error("Failed to fetch from Google Maps:", err);
-      }
-    }
-
-    // Fallback: Use local Australian suburbs/postcodes database
-    const australianLocations = [
-      // Sydney
-      "Kellyville NSW 2155",
-      "Baulkham Hills NSW 2153",
-      "Astro NSW 2153",
-      "Goo Goo NSW 2153",
-      "Claude NSW 2153",
-      "Surry Hills NSW 2010",
-      "Bondi NSW 2026",
-      "Manly NSW 2095",
-      "Neutral Bay NSW 2089",
-      "Cremorne NSW 2090",
-      "Willoughby NSW 2068",
-      "Chatswood NSW 2067",
-      "Parramatta NSW 2150",
-      "Penrith NSW 2750",
-      "Wollongong NSW 2500",
-      // Melbourne
-      "Melbourne VIC 3000",
-      "Fitzroy VIC 3065",
-      "Carlton VIC 3053",
-      "Brunswick VIC 3056",
-      "Footscray VIC 3011",
-      // Brisbane
-      "Brisbane QLD 4000",
-      "South Bank QLD 4101",
-      "Fortitude Valley QLD 4006",
-      "New Farm QLD 4005",
-      // Perth
-      "Perth WA 6000",
-      "Northbridge WA 6003",
-      "Subiaco WA 6008",
-      // Adelaide
-      "Adelaide SA 5000",
-      "Rundle Mall SA 5000",
-    ];
-
-    // Filter locations that match the input
-    const suggestions = australianLocations
-      .filter((location) =>
-        location.toLowerCase().includes(value.toLowerCase())
-      )
-      .slice(0, 5);
-
-    if (suggestions.length > 0) {
-      setAddressSuggestions(suggestions);
-      setShowAddressSuggestions(true);
-    } else {
-      setAddressSuggestions([]);
-      setShowAddressSuggestions(false);
-    }
+    setAddressSuggestions(filtered.slice(0, 5));
+    setShowAddressSuggestions(filtered.length > 0);
   };
 
   const handlePhoneChange = (value: string, idx: number) => {
@@ -479,33 +444,32 @@ export default function SettingsPage() {
                     <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                       Residential address
                     </label>
-                    <div className="relative z-20">
+                    <div className="relative">
                       <input
                         type="text"
                         value={residentialAddress}
                         onChange={(e) => handleAddressChange(e.target.value)}
-                        onFocus={() => residentialAddress.length > 0 && setShowAddressSuggestions(true)}
-                        placeholder="Your home address"
+                        placeholder="e.g. Bondi NSW 2026"
                         className="input-field"
                         autoComplete="off"
                       />
                       {showAddressSuggestions && addressSuggestions.length > 0 && (
-                        <div className="absolute top-full left-0 right-0 mt-1 bg-slate-900 border border-rose-500 rounded-xl shadow-2xl z-50 max-h-64 overflow-y-auto">
+                        <ul className="absolute left-0 right-0 top-12 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg shadow-lg z-50 max-h-48 overflow-y-auto">
                           {addressSuggestions.map((suggestion, idx) => (
-                            <button
-                              key={idx}
-                              type="button"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                setResidentialAddress(suggestion);
-                                setShowAddressSuggestions(false);
-                              }}
-                              className="w-full text-left px-4 py-2 hover:bg-slate-800 border-b border-slate-700 last:border-b-0 text-sm text-slate-100 transition-colors"
-                            >
-                              {suggestion}
-                            </button>
+                            <li key={idx}>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setResidentialAddress(suggestion);
+                                  setShowAddressSuggestions(false);
+                                }}
+                                className="w-full text-left px-3 py-2 text-sm text-slate-900 dark:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800"
+                              >
+                                {suggestion}
+                              </button>
+                            </li>
                           ))}
-                        </div>
+                        </ul>
                       )}
                     </div>
                     <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
