@@ -215,6 +215,27 @@ export default function SettingsPage() {
     "Subiaco WA 6008",
     "Adelaide SA 5000",
     "Rundle Mall SA 5000",
+    "Sydney NSW 2000",
+    "Wooloomooloo NSW 2011",
+    "Kings Cross NSW 2011",
+    "Darlinghurst NSW 2010",
+    "Zetland NSW 2017",
+    "Redfern NSW 2016",
+    "Waterloo NSW 2017",
+    "Alexandria NSW 2015",
+    "Camperdown NSW 2050",
+    "Glebe NSW 2037",
+    "Newtown NSW 2042",
+    "Enmore NSW 2042",
+    "Marrickville NSW 2204",
+    "Petersham NSW 2049",
+    "Ashfield NSW 2131",
+    "Hurlstone Park NSW 2193",
+    "Croydon NSW 2132",
+    "Strathfield NSW 2135",
+    "Burwood NSW 2134",
+    "Concord NSW 2137",
+    "Drummoyne NSW 2047",
   ];
 
   const handleAddressChange = (value: string) => {
@@ -226,10 +247,14 @@ export default function SettingsPage() {
       return;
     }
 
-    const filtered = australianLocations.filter((loc) =>
-      loc.toLowerCase().includes(value.toLowerCase())
-    );
+    const lowerValue = value.toLowerCase();
+    const filtered = australianLocations.filter((loc) => {
+      const locLower = loc.toLowerCase();
+      // Match by suburb name OR postcode (works with numbers)
+      return locLower.includes(lowerValue) || loc.includes(value);
+    });
 
+    // Show exactly 5 suggestions (or fewer if not available)
     setAddressSuggestions(filtered.slice(0, 5));
     setShowAddressSuggestions(filtered.length > 0);
   };
