@@ -58,6 +58,17 @@ def create_deal(
         deal_row["special_requests"] = body.special_requests
     if body.total_guests is not None:
         deal_row["total_guests"] = body.total_guests
+    # Extended deal fields
+    if body.move_in_date:
+        deal_row["move_in_date"] = body.move_in_date
+    if body.move_out_date:
+        deal_row["move_out_date"] = body.move_out_date
+    if body.number_of_guests is not None:
+        deal_row["number_of_guests"] = body.number_of_guests
+    if body.guest_names:
+        deal_row["guest_names"] = body.guest_names
+    if body.deal_notes:
+        deal_row["deal_notes"] = body.deal_notes
     try:
         res = sb.table("deals").insert(deal_row).execute()
     except Exception as e:
@@ -254,6 +265,44 @@ async def stripe_webhook(request: Request):
     if event["type"] == "checkout.session.completed":
         session = event["data"]["object"]
         metadata = session.get("metadata", {})
+
+        # ── Verification payment branch ────────────────────────
+        if metadata.get("purpose") == "verification":
+            verification_user_id = metadata.get("user_id")
+            if not verification_user_id:
+                return {"status": "ignored"}
+
+            sb = get_supabase()
+
+            # Ensure profile row exists, then set verified = true
+            existing = sb.table("profiles").select("id").eq("id", verification_user_id).execute()
+            if not existing.data:
+                try:
+                    sb.table("profiles").insert({"id": verification_user_id, "verified": True}).execute()
+                except Exception:
+                    pass
+            else:
+                try:
+                    sb.table("profiles").update({"verified": True}).eq("id", verification_user_id).execute()
+                except Exception as e:
+                    raise HTTPException(status_code=500, detail=str(e))
+
+            # Optional: log to payment_events
+            try:
+                sb.table("payment_events").insert({
+                    "deal_id": None,
+                    "fee_type": "verification",
+                    "stripe_session_id": session["id"],
+                    "amount": session.get("amount_total", 1900),
+                    "currency": "aud",
+                    "event_type": "checkout.session.completed",
+                }).execute()
+            except Exception:
+                pass  # payment_events table may not exist yet
+
+            return {"status": "ok", "verification": True}
+
+        # ── Deal payment branches ──────────────────────────────
         deal_id = metadata.get("deal_id")
         fee_type = metadata.get("fee_type")
 

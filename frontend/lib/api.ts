@@ -100,6 +100,21 @@ export interface CreateListingPayload {
   weaponsOnProperty?: boolean;
   weaponsExplanation?: string;
   otherSafetyDetails?: string;
+  // Hosting / availability fields
+  availableFrom?: string;
+  availableTo?: string;
+  instantBook?: boolean;
+  internetIncluded?: boolean;
+  internetSpeed?: string;
+  petsAllowed?: boolean;
+  petDetails?: string;
+  airConditioning?: boolean;
+  laundry?: string;
+  dishwasher?: boolean;
+  nearestTransport?: string;
+  neighbourhoodVibe?: string;
+  genderPreference?: string;
+  couplesOk?: boolean;
 }
 
 /**
@@ -145,6 +160,21 @@ export async function createListing(
     if (payload.weaponsOnProperty !== undefined) body.weapons_on_property = payload.weaponsOnProperty;
     if (payload.weaponsExplanation) body.weapons_explanation = payload.weaponsExplanation;
     if (payload.otherSafetyDetails) body.other_safety_details = payload.otherSafetyDetails;
+    // Hosting / availability fields
+    if (payload.availableFrom) body.available_from = payload.availableFrom;
+    if (payload.availableTo) body.available_to = payload.availableTo;
+    if (payload.instantBook !== undefined) body.instant_book = payload.instantBook;
+    if (payload.internetIncluded !== undefined) body.internet_included = payload.internetIncluded;
+    if (payload.internetSpeed) body.internet_speed = payload.internetSpeed;
+    if (payload.petsAllowed !== undefined) body.pets_allowed = payload.petsAllowed;
+    if (payload.petDetails) body.pet_details = payload.petDetails;
+    if (payload.airConditioning !== undefined) body.air_conditioning = payload.airConditioning;
+    if (payload.laundry) body.laundry = payload.laundry;
+    if (payload.dishwasher !== undefined) body.dishwasher = payload.dishwasher;
+    if (payload.nearestTransport) body.nearest_transport = payload.nearestTransport;
+    if (payload.neighbourhoodVibe) body.neighbourhood_vibe = payload.neighbourhoodVibe;
+    if (payload.genderPreference) body.gender_preference = payload.genderPreference;
+    if (payload.couplesOk !== undefined) body.couples_ok = payload.couplesOk;
 
     const res = await fetch(`${BASE_URL}/listings`, {
       method: "POST",
@@ -230,6 +260,109 @@ export async function submitSupportRequest(data: {
     return await res.json();
   } catch (err) {
     console.error("submitSupportRequest error:", err);
+    return null;
+  }
+}
+
+// ── Deal endpoints ──────────────────────────────────────────
+
+export interface CreateDealPayload {
+  owner_id: string;
+  seeker_id: string;
+  listing_id: string;
+  start_date?: string;
+  end_date?: string;
+  special_requests?: string;
+  total_guests?: number;
+  move_in_date?: string;
+  move_out_date?: string;
+  number_of_guests?: number;
+  guest_names?: string;
+  deal_notes?: string;
+}
+
+/**
+ * Create a deal (owner initiates, triggers Stripe checkout).
+ * POST /deals/create
+ */
+export async function createDeal(token: string, payload: CreateDealPayload) {
+  try {
+    const res = await fetch(`${BASE_URL}/deals/create`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) throw new Error(`createDeal failed: ${res.status}`);
+    return await res.json();
+  } catch (err) {
+    console.error("createDeal error:", err);
+    return null;
+  }
+}
+
+/**
+ * Get a deal by ID.
+ * GET /deals/:deal_id
+ */
+export async function getDeal(token: string, dealId: string) {
+  try {
+    const res = await fetch(`${BASE_URL}/deals/${dealId}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if (!res.ok) throw new Error(`getDeal failed: ${res.status}`);
+    return await res.json();
+  } catch (err) {
+    console.error("getDeal error:", err);
+    return null;
+  }
+}
+
+/**
+ * Cancel a deal.
+ * PATCH /deals/:deal_id/cancel
+ */
+export async function cancelDeal(token: string, dealId: string) {
+  try {
+    const res = await fetch(`${BASE_URL}/deals/${dealId}/cancel`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if (!res.ok) throw new Error(`cancelDeal failed: ${res.status}`);
+    return await res.json();
+  } catch (err) {
+    console.error("cancelDeal error:", err);
+    return null;
+  }
+}
+
+/**
+ * Create seeker fee session (optional AUD 19 after owner pays).
+ * POST /deals/seeker-fee-session
+ */
+export async function createSeekerFeeSession(token: string, dealId: string) {
+  try {
+    const res = await fetch(`${BASE_URL}/deals/seeker-fee-session`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ deal_id: dealId }),
+    });
+    if (!res.ok) throw new Error(`createSeekerFeeSession failed: ${res.status}`);
+    return await res.json();
+  } catch (err) {
+    console.error("createSeekerFeeSession error:", err);
     return null;
   }
 }

@@ -82,6 +82,20 @@ def create_listing(
         "weapons_on_property": listing.weapons_on_property,
         "weapons_explanation": listing.weapons_explanation,
         "other_safety_details": listing.other_safety_details,
+        "available_from": listing.available_from,
+        "available_to": listing.available_to,
+        "instant_book": listing.instant_book,
+        "internet_included": listing.internet_included,
+        "internet_speed": listing.internet_speed,
+        "pets_allowed": listing.pets_allowed,
+        "pet_details": listing.pet_details,
+        "air_conditioning": listing.air_conditioning,
+        "laundry": listing.laundry,
+        "dishwasher": listing.dishwasher,
+        "nearest_transport": listing.nearest_transport,
+        "neighbourhood_vibe": listing.neighbourhood_vibe,
+        "gender_preference": listing.gender_preference,
+        "couples_ok": listing.couples_ok,
     }
     for key, value in extended_fields.items():
         if value is not None:

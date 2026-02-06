@@ -66,7 +66,7 @@ def get_public_profile(user_id: str):
     sb = get_supabase()
 
     res = sb.table("profiles").select(
-        "id, name, about_me, most_useless_skill, interests, badges, custom_pfp, occupation"
+        "id, name, about_me, most_useless_skill, interests, badges, custom_pfp, occupation, verified"
     ).eq("id", user_id).execute()
 
     if not res.data:

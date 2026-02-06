@@ -61,6 +61,21 @@ class ListingCreate(BaseModel):
     weapons_on_property: Optional[bool] = None
     weapons_explanation: Optional[str] = None
     other_safety_details: Optional[str] = None
+    # Hosting / availability fields
+    available_from: Optional[str] = None
+    available_to: Optional[str] = None
+    instant_book: Optional[bool] = None
+    internet_included: Optional[bool] = None
+    internet_speed: Optional[str] = None
+    pets_allowed: Optional[bool] = None
+    pet_details: Optional[str] = None
+    air_conditioning: Optional[bool] = None
+    laundry: Optional[str] = None
+    dishwasher: Optional[bool] = None
+    nearest_transport: Optional[str] = None
+    neighbourhood_vibe: Optional[str] = None
+    gender_preference: Optional[str] = None
+    couples_ok: Optional[bool] = None
 
 
 class ListingOut(BaseModel):
@@ -139,6 +154,12 @@ class DealCreate(BaseModel):
     end_date: Optional[str] = None
     special_requests: Optional[str] = Field(None, max_length=500)
     total_guests: Optional[int] = Field(None, ge=1, le=20)
+    # Extended deal fields
+    move_in_date: Optional[str] = None
+    move_out_date: Optional[str] = None
+    number_of_guests: Optional[int] = Field(None, ge=1, le=20)
+    guest_names: Optional[str] = Field(None, max_length=500)
+    deal_notes: Optional[str] = Field(None, max_length=1000)
 
 
 class DealOut(BaseModel):
@@ -155,6 +176,11 @@ class DealOut(BaseModel):
     end_date: Optional[str] = None
     special_requests: Optional[str] = None
     total_guests: Optional[int] = None
+    move_in_date: Optional[str] = None
+    move_out_date: Optional[str] = None
+    number_of_guests: Optional[int] = None
+    guest_names: Optional[str] = None
+    deal_notes: Optional[str] = None
     created_at: Optional[str] = None
     updated_at: Optional[str] = None
 
