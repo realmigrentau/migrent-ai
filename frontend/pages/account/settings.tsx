@@ -188,29 +188,84 @@ export default function SettingsPage() {
   const handleAddressChange = async (value: string) => {
     setResidentialAddress(value);
 
-    if (value.length < 3) {
+    if (value.length < 2) {
       setAddressSuggestions([]);
       setShowAddressSuggestions(false);
       return;
     }
 
-    try {
-      // Use Google Maps Geocoding API for address suggestions
-      const response = await fetch(
-        `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(value)}&country=AU&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`
-      );
-      const data = await response.json();
+    // Try Google Maps API first if key is available
+    if (process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY) {
+      try {
+        const response = await fetch(
+          `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(value)}&country=AU&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`
+        );
+        const data = await response.json();
 
-      if (data.results) {
-        const suggestions = data.results
-          .map((result: any) => result.formatted_address)
-          .slice(0, 5);
-        setAddressSuggestions(suggestions);
-        setShowAddressSuggestions(true);
+        if (data.results && data.results.length > 0) {
+          const suggestions = data.results
+            .map((result: any) => result.formatted_address)
+            .slice(0, 5);
+          setAddressSuggestions(suggestions);
+          setShowAddressSuggestions(true);
+          return;
+        }
+      } catch (err) {
+        console.error("Failed to fetch from Google Maps:", err);
       }
-    } catch (err) {
-      console.error("Failed to fetch address suggestions:", err);
+    }
+
+    // Fallback: Use local Australian suburbs/postcodes database
+    const australianLocations = [
+      // Sydney
+      "Kellyville NSW 2155",
+      "Baulkham Hills NSW 2153",
+      "Astro NSW 2153",
+      "Goo Goo NSW 2153",
+      "Claude NSW 2153",
+      "Surry Hills NSW 2010",
+      "Bondi NSW 2026",
+      "Manly NSW 2095",
+      "Neutral Bay NSW 2089",
+      "Cremorne NSW 2090",
+      "Willoughby NSW 2068",
+      "Chatswood NSW 2067",
+      "Parramatta NSW 2150",
+      "Penrith NSW 2750",
+      "Wollongong NSW 2500",
+      // Melbourne
+      "Melbourne VIC 3000",
+      "Fitzroy VIC 3065",
+      "Carlton VIC 3053",
+      "Brunswick VIC 3056",
+      "Footscray VIC 3011",
+      // Brisbane
+      "Brisbane QLD 4000",
+      "South Bank QLD 4101",
+      "Fortitude Valley QLD 4006",
+      "New Farm QLD 4005",
+      // Perth
+      "Perth WA 6000",
+      "Northbridge WA 6003",
+      "Subiaco WA 6008",
+      // Adelaide
+      "Adelaide SA 5000",
+      "Rundle Mall SA 5000",
+    ];
+
+    // Filter locations that match the input
+    const suggestions = australianLocations
+      .filter((location) =>
+        location.toLowerCase().includes(value.toLowerCase())
+      )
+      .slice(0, 5);
+
+    if (suggestions.length > 0) {
+      setAddressSuggestions(suggestions);
+      setShowAddressSuggestions(true);
+    } else {
       setAddressSuggestions([]);
+      setShowAddressSuggestions(false);
     }
   };
 
