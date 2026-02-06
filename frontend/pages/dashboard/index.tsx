@@ -40,11 +40,11 @@ export default function DashboardHome() {
       return;
     }
 
-    // Redirect to the appropriate profile page
+    // Redirect to the appropriate dashboard
     if (selectedRole === "seeker") {
-      router.push("/dashboard/seeker-profile");
+      router.push("/dashboard/seeker");
     } else {
-      router.push("/dashboard/owner-profile");
+      router.push("/dashboard/owner");
     }
   };
 
