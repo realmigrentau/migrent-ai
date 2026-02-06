@@ -15,7 +15,7 @@ interface SEOHeadProps {
   };
 }
 
-const SITE_NAME = "MigRent – Migrant Housing in Australia";
+const SITE_NAME = "Migrent - AU Housing";
 const DEFAULT_DESC =
   "Find safe, verified rooms and accommodation across Australia. Built for migrants, students and working holiday makers.";
 const DEFAULT_OG = "https://migrent-ai.vercel.app/og-default.png";
@@ -28,7 +28,7 @@ export default function SEOHead({
   noIndex = false,
   listing,
 }: SEOHeadProps) {
-  const fullTitle = title ? `${title} | MigRent` : SITE_NAME;
+  const fullTitle = title ? `${title} | Migrent` : SITE_NAME;
 
   const jsonLd = listing
     ? {
@@ -60,7 +60,7 @@ export default function SEOHead({
 
       {/* Open Graph */}
       <meta property="og:type" content="website" />
-      <meta property="og:site_name" content="MigRent" />
+      <meta property="og:site_name" content="Migrent" />
       <meta property="og:title" content={fullTitle} />
       <meta property="og:description" content={description} />
       <meta property="og:image" content={ogImage} />
