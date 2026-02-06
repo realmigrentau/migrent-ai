@@ -110,20 +110,22 @@ export default function SettingsPage() {
       if (data) {
         setProfile(data);
 
-        // Set all fields from the profile
-        if (data.legal_name) setLegalName(data.legal_name);
-        if (data.preferred_name) setPreferredName(data.preferred_name);
-        if (data.phones) setPhones(data.phones);
+        // Set all fields from the profile (with defaults)
+        setLegalName(data.legal_name || "");
+        setPreferredName(data.preferred_name || "");
+        setPhones(Array.isArray(data.phones) ? data.phones : []);
 
+        // Handle residential_address
+        let addressValue = "";
         if (data.residential_address) {
-          const address = typeof data.residential_address === "string"
+          addressValue = typeof data.residential_address === "string"
             ? data.residential_address
             : data.residential_address?.address || "";
-          setResidentialAddress(address);
         }
+        setResidentialAddress(addressValue);
 
-        if (data.preferred_language) setPreferredLanguage(data.preferred_language);
-        if (data.timezone) setTimezone(data.timezone);
+        setPreferredLanguage(data.preferred_language || "en");
+        setTimezone(data.timezone || "Australia/Sydney");
 
         console.log("Profile loaded - legal_name:", data.legal_name, "residential_address:", data.residential_address);
       }
