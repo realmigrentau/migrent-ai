@@ -51,9 +51,12 @@ export function useDashboard() {
           null;
 
         // Get role from profile table first, then fall back to user_metadata.type from signup
+        // Only accept "seeker" or "owner" as valid roles
+        const profileRole = profile?.role;
+        const validProfileRole = profileRole === "seeker" || profileRole === "owner" ? profileRole : null;
         const metadataType = user?.user_metadata?.type;
         const validMetadataRole = metadataType === "seeker" || metadataType === "owner" ? metadataType : null;
-        const role: UserRole = profile?.role || validMetadataRole;
+        const role: UserRole = validProfileRole || validMetadataRole;
 
         setState({
           role,
