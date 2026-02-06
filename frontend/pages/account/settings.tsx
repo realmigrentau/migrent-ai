@@ -479,7 +479,7 @@ export default function SettingsPage() {
                     <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                       Residential address
                     </label>
-                    <div className="relative">
+                    <div className="relative z-20">
                       <input
                         type="text"
                         value={residentialAddress}
@@ -487,17 +487,20 @@ export default function SettingsPage() {
                         onFocus={() => residentialAddress.length > 0 && setShowAddressSuggestions(true)}
                         placeholder="Your home address"
                         className="input-field"
+                        autoComplete="off"
                       />
                       {showAddressSuggestions && addressSuggestions.length > 0 && (
-                        <div className="absolute top-full left-0 right-0 mt-1 bg-slate-900 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-lg z-10 max-h-60 overflow-y-auto">
+                        <div className="absolute top-full left-0 right-0 mt-1 bg-slate-900 border border-rose-500 rounded-xl shadow-2xl z-50 max-h-64 overflow-y-auto">
                           {addressSuggestions.map((suggestion, idx) => (
                             <button
                               key={idx}
-                              onClick={() => {
+                              type="button"
+                              onClick={(e) => {
+                                e.preventDefault();
                                 setResidentialAddress(suggestion);
                                 setShowAddressSuggestions(false);
                               }}
-                              className="w-full text-left px-4 py-3 hover:bg-slate-800 dark:hover:bg-slate-700 border-b border-slate-200 dark:border-slate-700 last:border-b-0 text-sm text-slate-200 dark:text-slate-300"
+                              className="w-full text-left px-4 py-2 hover:bg-slate-800 border-b border-slate-700 last:border-b-0 text-sm text-slate-100 transition-colors"
                             >
                               {suggestion}
                             </button>
