@@ -70,8 +70,8 @@ export default function SettingsPage() {
   const [preferredName, setPreferredName] = useState("");
   const [phones, setPhones] = useState<string[]>([]);
   const [residentialAddress, setResidentialAddress] = useState("");
-  const [emergencyContact, setEmergencyContact] = useState("");
-  const [emergencyPhone, setEmergencyPhone] = useState("");
+  const [addressSuggestions, setAddressSuggestions] = useState<string[]>([]);
+  const [showAddressSuggestions, setShowAddressSuggestions] = useState(false);
   const [preferredLanguage, setPreferredLanguage] = useState("en");
   const [timezone, setTimezone] = useState("Australia/Sydney");
 
@@ -115,8 +115,6 @@ export default function SettingsPage() {
             ? data.residential_address
             : data.residential_address?.address || ""
         );
-        setEmergencyContact(data.emergency_contact?.name || "");
-        setEmergencyPhone(data.emergency_contact?.phone || "");
         setPreferredLanguage(data.preferred_language || "en");
         setTimezone(data.timezone || "Australia/Sydney");
       }
@@ -138,10 +136,6 @@ export default function SettingsPage() {
         preferred_name: preferredName,
         phones: phones.filter((p) => p.trim()),
         residential_address: { address: residentialAddress },
-        emergency_contact: {
-          name: emergencyContact,
-          phone: emergencyPhone,
-        },
         preferred_language: preferredLanguage,
         timezone: timezone,
       };
@@ -189,6 +183,51 @@ export default function SettingsPage() {
     } finally {
       setSaving(false);
     }
+  };
+
+  const handleAddressChange = async (value: string) => {
+    setResidentialAddress(value);
+
+    if (value.length < 3) {
+      setAddressSuggestions([]);
+      setShowAddressSuggestions(false);
+      return;
+    }
+
+    try {
+      // Use Google Maps Geocoding API for address suggestions
+      const response = await fetch(
+        `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(value)}&country=AU&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`
+      );
+      const data = await response.json();
+
+      if (data.results) {
+        const suggestions = data.results
+          .map((result: any) => result.formatted_address)
+          .slice(0, 5);
+        setAddressSuggestions(suggestions);
+        setShowAddressSuggestions(true);
+      }
+    } catch (err) {
+      console.error("Failed to fetch address suggestions:", err);
+      setAddressSuggestions([]);
+    }
+  };
+
+  const handlePhoneChange = (value: string, idx: number) => {
+    let cleanedValue = value.replace(/\D/g, "");
+
+    // Remove leading 0 if user types it
+    if (cleanedValue.startsWith("0")) {
+      cleanedValue = cleanedValue.slice(1);
+    }
+
+    // Add +61 prefix
+    const formattedPhone = cleanedValue.length > 0 ? `+61${cleanedValue}` : "";
+
+    const updated = [...phones];
+    updated[idx] = formattedPhone;
+    setPhones(updated);
   };
 
   const handleDeleteAccount = async () => {
@@ -350,17 +389,18 @@ export default function SettingsPage() {
                     <div className="space-y-2">
                       {phones.map((phone, idx) => (
                         <div key={idx} className="flex gap-2">
-                          <input
-                            type="tel"
-                            value={phone}
-                            onChange={(e) => {
-                              const updated = [...phones];
-                              updated[idx] = e.target.value;
-                              setPhones(updated);
-                            }}
-                            placeholder="Phone number"
-                            className="input-field flex-1"
-                          />
+                          <div className="flex-1 relative">
+                            <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500 dark:text-slate-400 text-sm font-medium pointer-events-none">
+                              +61
+                            </div>
+                            <input
+                              type="tel"
+                              value={phone.replace(/^\+61/, "")}
+                              onChange={(e) => handlePhoneChange(e.target.value, idx)}
+                              placeholder="2 XXXX XXXX"
+                              className="input-field flex-1 pl-12"
+                            />
+                          </div>
                           <button
                             onClick={() =>
                               setPhones(phones.filter((_, i) => i !== idx))
@@ -384,43 +424,35 @@ export default function SettingsPage() {
                     <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                       Residential address
                     </label>
-                    <input
-                      type="text"
-                      value={residentialAddress}
-                      onChange={(e) => setResidentialAddress(e.target.value)}
-                      placeholder="Your home address"
-                      className="input-field"
-                    />
+                    <div className="relative">
+                      <input
+                        type="text"
+                        value={residentialAddress}
+                        onChange={(e) => handleAddressChange(e.target.value)}
+                        onFocus={() => residentialAddress.length > 0 && setShowAddressSuggestions(true)}
+                        placeholder="Your home address"
+                        className="input-field"
+                      />
+                      {showAddressSuggestions && addressSuggestions.length > 0 && (
+                        <div className="absolute top-full left-0 right-0 mt-1 bg-slate-900 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-lg z-10 max-h-60 overflow-y-auto">
+                          {addressSuggestions.map((suggestion, idx) => (
+                            <button
+                              key={idx}
+                              onClick={() => {
+                                setResidentialAddress(suggestion);
+                                setShowAddressSuggestions(false);
+                              }}
+                              className="w-full text-left px-4 py-3 hover:bg-slate-800 dark:hover:bg-slate-700 border-b border-slate-200 dark:border-slate-700 last:border-b-0 text-sm text-slate-200 dark:text-slate-300"
+                            >
+                              {suggestion}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                     <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                       Only visible to verified users
                     </p>
-                  </div>
-
-                  <div className="grid sm:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                        Emergency contact name
-                      </label>
-                      <input
-                        type="text"
-                        value={emergencyContact}
-                        onChange={(e) => setEmergencyContact(e.target.value)}
-                        placeholder="Contact name"
-                        className="input-field"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                        Emergency contact phone
-                      </label>
-                      <input
-                        type="tel"
-                        value={emergencyPhone}
-                        onChange={(e) => setEmergencyPhone(e.target.value)}
-                        placeholder="Phone number"
-                        className="input-field"
-                      />
-                    </div>
                   </div>
 
                   <div>
