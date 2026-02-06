@@ -84,12 +84,25 @@ export default function SettingsPage() {
   const [showDisableConfirm, setShowDisableConfirm] = useState(false);
   const [disablePassword, setDisablePassword] = useState("");
   const [disablePasswordConfirm, setDisablePasswordConfirm] = useState("");
+  const [googleConnected, setGoogleConnected] = useState(false);
 
   useEffect(() => {
     if (session && user?.id) {
       fetchProfile();
+      checkOAuthProviders();
     }
   }, [session, user?.id]);
+
+  const checkOAuthProviders = async () => {
+    try {
+      const { data: { user: authUser } } = await supabase.auth.getUser();
+      if (authUser?.app_metadata?.providers?.includes("google")) {
+        setGoogleConnected(true);
+      }
+    } catch (err) {
+      console.error("Failed to check OAuth providers:", err);
+    }
+  };
 
   const fetchProfile = async () => {
     setLoadingProfile(true);
@@ -276,6 +289,33 @@ export default function SettingsPage() {
       setMessage("Failed to disable account");
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleToggleGoogle = async () => {
+    if (googleConnected) {
+      // Disconnect Google
+      try {
+        // Note: Supabase doesn't have a built-in disconnect method
+        // This would require a custom backend endpoint
+        setMessage("Google disconnection is not yet available. Please contact support.");
+      } catch (err) {
+        console.error("Failed to disconnect Google:", err);
+        setMessage("Failed to disconnect Google account");
+      }
+    } else {
+      // Connect Google
+      try {
+        await supabase.auth.signInWithOAuth({
+          provider: "google",
+          options: {
+            redirectTo: `${window.location.origin}/account/settings`,
+          },
+        });
+      } catch (err) {
+        console.error("Failed to connect Google:", err);
+        setMessage("Failed to connect Google account");
+      }
     }
   };
 
@@ -617,9 +657,23 @@ export default function SettingsPage() {
                         Google
                       </span>
                     </div>
-                    <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400">
-                      Not connected
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${
+                        googleConnected
+                          ? "bg-green-100 dark:bg-green-500/10 text-green-700 dark:text-green-400"
+                          : "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400"
+                      }`}>
+                        {googleConnected ? "Connected" : "Not connected"}
+                      </span>
+                      {/* Placeholder for future disconnect button - disabled for now */}
+                      {/* <button
+                        onClick={handleToggleGoogle}
+                        disabled={saving}
+                        className="px-3 py-1 text-xs font-medium rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors disabled:opacity-50"
+                      >
+                        {googleConnected ? "Disconnect" : "Connect"}
+                      </button> */}
+                    </div>
                   </div>
                 </div>
               </div>
