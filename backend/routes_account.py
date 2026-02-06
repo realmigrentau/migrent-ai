@@ -30,10 +30,11 @@ def disable_account(
         raise HTTPException(status_code=400, detail="Recovery password must be at least 6 characters")
 
     try:
+        from datetime import datetime
         # Update profile with disabled status and recovery password
         result = sb.table("profiles").update(
             {
-                "disabled_at": "now",
+                "disabled_at": datetime.utcnow().isoformat(),
                 "recovery_password_hash": recovery_password,  # In production, hash this!
             }
         ).eq("id", user.id).execute()
@@ -43,9 +44,11 @@ def disable_account(
 
         return {"success": True, "message": "Account disabled. Use your recovery password to re-enable."}
 
+    except HTTPException:
+        raise
     except Exception as err:
         print(f"Error disabling account: {err}")
-        raise HTTPException(status_code=500, detail="Failed to disable account")
+        raise HTTPException(status_code=500, detail=f"Failed to disable account: {str(err)}")
 
 
 # ── POST /account/enable ────────────────────────────────────────
@@ -87,6 +90,8 @@ def enable_account(
 
         return {"success": True, "message": "Account re-enabled successfully"}
 
+    except HTTPException:
+        raise
     except Exception as err:
         print(f"Error enabling account: {err}")
         raise HTTPException(status_code=500, detail="Failed to enable account")
@@ -116,8 +121,7 @@ def delete_owner_profile(
         sb.table("deals").delete().eq("owner_id", user.id).execute()
 
         # Delete all listings
-        for listing in listings.data:
-            sb.table("listings").delete().eq("id", listing["id"]).execute()
+        sb.table("listings").delete().eq("owner_id", user.id).execute()
 
         # Update profile to remove owner status
         sb.table("profiles").update(
@@ -133,7 +137,7 @@ def delete_owner_profile(
         raise
     except Exception as err:
         print(f"Error deleting owner profile: {err}")
-        raise HTTPException(status_code=500, detail="Failed to delete owner profile")
+        raise HTTPException(status_code=500, detail=f"Failed to delete owner profile: {str(err)}")
 
 
 # ── DELETE /account/delete ──────────────────────────────────────
@@ -152,16 +156,18 @@ def delete_account(
 
     try:
         # Delete all deals where user is involved
-        sb.table("deals").delete().or_(f"owner_id.eq.{user.id},seeker_id.eq.{user.id}").execute()
+        sb.table("deals").delete().eq("owner_id", user.id).execute()
+        sb.table("deals").delete().eq("seeker_id", user.id).execute()
 
         # Delete all listings
         sb.table("listings").delete().eq("owner_id", user.id).execute()
 
         # Delete all messages
-        sb.table("messages").delete().or_(f"sender_id.eq.{user.id},receiver_id.eq.{user.id}").execute()
+        sb.table("messages").delete().eq("sender_id", user.id).execute()
+        sb.table("messages").delete().eq("receiver_id", user.id).execute()
 
         # Delete reports
-        sb.table("reports").delete().or_(f"reporter_id.eq.{user.id}").execute()
+        sb.table("reports").delete().eq("reporter_id", user.id).execute()
 
         # Delete profile
         sb.table("profiles").delete().eq("id", user.id).execute()
@@ -174,4 +180,4 @@ def delete_account(
 
     except Exception as err:
         print(f"Error deleting account: {err}")
-        raise HTTPException(status_code=500, detail="Failed to delete account")
+        raise HTTPException(status_code=500, detail=f"Failed to delete account: {str(err)}")

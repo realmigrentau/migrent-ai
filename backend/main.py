@@ -18,6 +18,8 @@ from routes_reports import router as reports_router
 from routes_profiles import router as profiles_router
 from routes_verification import router as verification_router
 from routes_referrals import router as referrals_router
+from routes_account import router as account_router
+from routes_messages import router as messages_router
 
 # ── Startup validation ──────────────────────────────────────
 REQUIRED_ENV = ["SUPABASE_URL", "SUPABASE_ANON_KEY", "STRIPE_SECRET_KEY", "STRIPE_WEBHOOK_SECRET"]
@@ -63,6 +65,8 @@ app.include_router(reports_router)
 app.include_router(profiles_router)
 app.include_router(verification_router)
 app.include_router(referrals_router)
+app.include_router(messages_router)
+app.include_router(account_router)
 app.include_router(webhook_router)
 
 # Note: each router defines its own prefix (/auth, /listings, /matches, /deals)
