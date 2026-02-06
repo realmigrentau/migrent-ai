@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, Header
 from models import ProfileUpdate
-from db import get_supabase
+from db import get_supabase, get_supabase_admin
 from routes_listings import get_current_user
 
 router = APIRouter(prefix="/profiles", tags=["profiles"])
@@ -38,7 +38,7 @@ def update_my_profile(
 ):
     """Update the current user's profile. Only non-null fields are updated."""
     user = get_current_user(authorization)
-    sb = get_supabase()
+    sb_admin = get_supabase_admin()
 
     # Build update dict from non-None fields
     updates = {}
@@ -50,21 +50,24 @@ def update_my_profile(
         raise HTTPException(status_code=400, detail="No fields to update")
 
     # Ensure profile row exists
-    existing = sb.table("profiles").select("id").eq("id", user.id).execute()
-    if not existing.data:
-        # Create the profile first
-        try:
-            sb.table("profiles").insert({"id": user.id, "role": "user"}).execute()
-        except Exception:
-            pass
+    try:
+        existing = sb_admin.table("profiles").select("id").eq("id", user.id).execute()
+        if not existing.data:
+            # Create the profile first
+            try:
+                sb_admin.table("profiles").insert({"id": user.id, "role": "user"}).execute()
+            except Exception as e:
+                print(f"Error creating profile: {e}")
+    except Exception as e:
+        print(f"Error checking profile existence: {e}")
 
     try:
         print(f"Updating profile {user.id} with: {updates}")
-        res = sb.table("profiles").update(updates).eq("id", user.id).execute()
+        res = sb_admin.table("profiles").update(updates).eq("id", user.id).execute()
         print(f"Update result: {res.data}")
 
         # Fetch the full updated profile after update
-        fetch_res = sb.table("profiles").select("*").eq("id", user.id).execute()
+        fetch_res = sb_admin.table("profiles").select("*").eq("id", user.id).execute()
         print(f"Fetched updated profile: {fetch_res.data}")
 
         if fetch_res.data and len(fetch_res.data) > 0:
