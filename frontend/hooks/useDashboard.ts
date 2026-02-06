@@ -22,8 +22,8 @@ interface CachedProfile {
 const CACHE_KEY = "migrent_dashboard_profile";
 const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
-function getCachedProfile(userId: string): CachedProfile | null {
-  if (typeof window === "undefined") return null;
+function getCachedProfile(userId: string | null): CachedProfile | null {
+  if (typeof window === "undefined" || !userId) return null;
   try {
     const cached = localStorage.getItem(CACHE_KEY);
     if (!cached) return null;
@@ -41,7 +41,7 @@ function getCachedProfile(userId: string): CachedProfile | null {
 function setCachedProfile(userId: string, role: UserRole, displayName: string | null) {
   if (typeof window === "undefined") return;
   try {
-    const data: CachedProfile = { userId, role, displayName, timestamp: Date.now() };
+    const data: CachedProfile = { userId: userId, role, displayName, timestamp: Date.now() };
     localStorage.setItem(CACHE_KEY, JSON.stringify(data));
   } catch {
     // Ignore storage errors
@@ -57,6 +57,33 @@ function clearCachedProfile() {
   }
 }
 
+// Try to get initial state from cache (runs once at module load)
+function getInitialState(): DashboardState {
+  if (typeof window === "undefined") {
+    return { role: null, loading: true, profileLoaded: false, displayName: null };
+  }
+
+  try {
+    const cached = localStorage.getItem(CACHE_KEY);
+    if (cached) {
+      const data: CachedProfile = JSON.parse(cached);
+      // If cache exists and isn't too old, use it for initial state
+      if (Date.now() - data.timestamp < CACHE_TTL) {
+        return {
+          role: data.role,
+          loading: false,
+          profileLoaded: true,
+          displayName: data.displayName,
+        };
+      }
+    }
+  } catch {
+    // Ignore
+  }
+
+  return { role: null, loading: true, profileLoaded: false, displayName: null };
+}
+
 /**
  * Hook for managing dashboard role state.
  * Fetches the user's role from their profile and provides methods to update it.
@@ -66,61 +93,55 @@ export function useDashboard() {
   const { session, user, loading: authLoading } = useAuth();
   const router = useRouter();
 
-  const [state, setState] = useState<DashboardState>({
-    role: null,
-    loading: true,
-    profileLoaded: false,
-    displayName: null,
-  });
+  // Initialize from cache for instant render
+  const [state, setState] = useState<DashboardState>(getInitialState);
 
-  // Fetch profile and role when session is available
+  // Verify cache matches current user and fetch fresh data
   useEffect(() => {
     async function fetchProfile() {
       if (!session || !user) {
-        setState((prev) => ({ ...prev, loading: false, profileLoaded: true }));
+        setState({ role: null, loading: false, profileLoaded: true, displayName: null });
         return;
       }
 
       const userId = user.id;
 
-      // Check cache first for instant load
+      // Check if cached data is for current user
       const cached = getCachedProfile(userId);
       if (cached) {
+        // Cache is valid for this user, use it immediately
         setState({
           role: cached.role,
           loading: false,
           profileLoaded: true,
           displayName: cached.displayName,
         });
-        // Still fetch in background to keep cache fresh
+        // Refresh in background
         fetchAndUpdateProfile(userId, false);
-        return;
+      } else {
+        // No valid cache, need to fetch
+        // But first check if we already have state from getInitialState that doesn't match user
+        setState(prev => ({ ...prev, loading: true }));
+        await fetchAndUpdateProfile(userId, true);
       }
-
-      // No cache, fetch and show loading
-      await fetchAndUpdateProfile(userId, true);
     }
 
-    async function fetchAndUpdateProfile(userId: string, showLoading: boolean) {
+    async function fetchAndUpdateProfile(userId: string, updateLoading: boolean) {
       try {
         const profile = await getMyProfile(session!.access_token);
 
-        // Get display name: prefer preferred_name, then name, then email
         const displayName =
           profile?.preferred_name ||
           profile?.name ||
           user?.email?.split("@")[0] ||
           null;
 
-        // Get role from profile table first, then fall back to user_metadata.type from signup
-        // Only accept "seeker" or "owner" as valid roles
         const profileRole = profile?.role;
         const validProfileRole = profileRole === "seeker" || profileRole === "owner" ? profileRole : null;
         const metadataType = user?.user_metadata?.type;
         const validMetadataRole = metadataType === "seeker" || metadataType === "owner" ? metadataType : null;
         const role: UserRole = validProfileRole || validMetadataRole;
 
-        // Update cache
         setCachedProfile(userId, role, displayName);
 
         setState({
@@ -131,8 +152,8 @@ export function useDashboard() {
         });
       } catch (err) {
         console.error("Failed to fetch profile:", err);
-        if (showLoading) {
-          setState((prev) => ({ ...prev, loading: false, profileLoaded: true }));
+        if (updateLoading) {
+          setState(prev => ({ ...prev, loading: false, profileLoaded: true }));
         }
       }
     }
@@ -142,10 +163,6 @@ export function useDashboard() {
     }
   }, [session, user, authLoading]);
 
-  /**
-   * Set the user's role (seeker or owner).
-   * This saves the role to their profile in the database.
-   */
   const setRole = useCallback(
     async (newRole: "seeker" | "owner") => {
       if (!session || !user) return false;
@@ -156,8 +173,7 @@ export function useDashboard() {
         });
 
         if (result) {
-          // Update state and cache immediately
-          setState((prev) => ({ ...prev, role: newRole }));
+          setState(prev => ({ ...prev, role: newRole }));
           setCachedProfile(user.id, newRole, state.displayName);
           return true;
         }
@@ -170,9 +186,6 @@ export function useDashboard() {
     [session, user, state.displayName]
   );
 
-  /**
-   * Navigate to the appropriate dashboard based on role.
-   */
   const goToRoleDashboard = useCallback(
     (role: "seeker" | "owner") => {
       if (role === "seeker") {
@@ -184,9 +197,6 @@ export function useDashboard() {
     [router]
   );
 
-  /**
-   * Clear the profile cache (useful for sign out).
-   */
   const clearCache = useCallback(() => {
     clearCachedProfile();
   }, []);
