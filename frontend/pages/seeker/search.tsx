@@ -494,24 +494,7 @@ export default function SeekerSearchExtended() {
           <div className="sticky top-24 space-y-4">
             {/* Map view */}
             <div className="card rounded-2xl overflow-hidden aspect-[4/5]">
-              {process.env.NEXT_PUBLIC_MAPTILER_KEY ? (
-                <ListingsMap listings={results} isDark={theme === "dark"} />
-              ) : (
-                <div className="w-full h-full flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-800/50">
-                  <svg
-                    className="w-16 h-16 text-slate-300 dark:text-slate-600 mb-3"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={1}
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                  <p className="text-sm font-medium text-slate-400 dark:text-slate-500">Map view</p>
-                  <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">Set NEXT_PUBLIC_MAPTILER_KEY to enable</p>
-                </div>
-              )}
+              <ListingsMap listings={results} isDark={theme === "dark"} />
             </div>
 
             {/* Wishlist */}
