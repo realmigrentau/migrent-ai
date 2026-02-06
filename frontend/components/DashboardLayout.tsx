@@ -16,19 +16,24 @@ interface DashboardLayoutProps {
  * - Auth protection (redirects to login if not signed in)
  * - Loading state while checking auth
  * - Mobile-friendly responsive design
+ * - Blue theme for owners, rose theme for seekers
  */
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const router = useRouter();
   const { signOut } = useAuth();
-  const { role, displayName, isAuthenticated, loading, authLoading, user } =
+  const { role, displayName, isAuthenticated, loading, authLoading } =
     useDashboard();
+
+  // Theme colors based on role
+  const isOwner = role === "owner";
+  const accentColor = isOwner ? "blue" : "rose";
 
   // Show loading spinner while checking auth
   if (authLoading || loading) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
         <div className="text-center space-y-4">
-          <div className="w-10 h-10 border-2 border-rose-300 dark:border-rose-500/30 border-t-rose-500 rounded-full animate-spin mx-auto" />
+          <div className={`w-10 h-10 border-2 ${isOwner ? "border-blue-300 dark:border-blue-500/30 border-t-blue-500" : "border-rose-300 dark:border-rose-500/30 border-t-rose-500"} rounded-full animate-spin mx-auto`} />
           <p className="text-sm text-slate-500 dark:text-slate-400">
             Loading dashboard...
           </p>
@@ -142,7 +147,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         <div className="card-subtle p-4 rounded-xl">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-rose-500 to-rose-600 flex items-center justify-center text-white font-bold text-sm">
+              <div className={`w-10 h-10 rounded-full bg-gradient-to-br ${isOwner ? "from-blue-500 to-blue-600" : "from-rose-500 to-rose-600"} flex items-center justify-center text-white font-bold text-sm`}>
                 {displayName?.charAt(0).toUpperCase() || "U"}
               </div>
               <div>
@@ -160,7 +165,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             </div>
             <button
               onClick={signOut}
-              className="text-xs text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2"
+              className={`text-xs ${isOwner ? "text-blue-500 hover:text-blue-600 dark:hover:text-blue-400" : "text-rose-500 hover:text-rose-600 dark:hover:text-rose-400"} underline underline-offset-2`}
             >
               Sign out
             </button>
@@ -175,7 +180,9 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
               href={item.href}
               className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all ${
                 currentPath === item.href
-                  ? "bg-rose-500 text-white"
+                  ? isOwner
+                    ? "bg-blue-500 text-white"
+                    : "bg-rose-500 text-white"
                   : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"
               }`}
             >
@@ -204,7 +211,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           <div className="card p-6 rounded-2xl sticky top-24">
             {/* User info */}
             <div className="flex items-center gap-3 mb-6 pb-6 border-b border-slate-200 dark:border-slate-700">
-              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-rose-500 to-rose-600 flex items-center justify-center text-white font-bold">
+              <div className={`w-12 h-12 rounded-full bg-gradient-to-br ${isOwner ? "from-blue-500 to-blue-600" : "from-rose-500 to-rose-600"} flex items-center justify-center text-white font-bold`}>
                 {displayName?.charAt(0).toUpperCase() || "U"}
               </div>
               <div className="flex-1 min-w-0">
@@ -238,7 +245,9 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                     href={item.href}
                     className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
                       isActive
-                        ? "bg-rose-500 text-white shadow-md"
+                        ? isOwner
+                          ? "bg-blue-500 text-white shadow-md"
+                          : "bg-rose-500 text-white shadow-md"
                         : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
                     }`}
                   >
