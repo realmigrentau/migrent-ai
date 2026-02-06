@@ -1,8 +1,19 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import { useAuth } from "../../hooks/useAuth";
+import { useTheme } from "../../hooks/useTheme";
 import { updateMyProfile } from "../../lib/api";
+
+const ListingsMap = dynamic(() => import("../../components/ListingsMap"), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-full flex items-center justify-center bg-slate-50 dark:bg-slate-800/50">
+      <div className="w-6 h-6 border-2 border-rose-500 border-t-transparent rounded-full animate-spin" />
+    </div>
+  ),
+});
 
 const PLACEHOLDER_LISTINGS = [
   {
@@ -20,6 +31,8 @@ const PLACEHOLDER_LISTINGS = [
     ],
     description:
       "Bright private room in friendly sharehouse near Central Station. 5 min walk to buses and trains.",
+    lat: -33.883,
+    lng: 151.2115,
   },
   {
     id: "2",
@@ -36,6 +49,8 @@ const PLACEHOLDER_LISTINGS = [
     ],
     description:
       "Affordable shared room close to USYD campus. Quiet neighbourhood with parks nearby.",
+    lat: -33.892,
+    lng: 151.204,
   },
   {
     id: "3",
@@ -52,6 +67,8 @@ const PLACEHOLDER_LISTINGS = [
     ],
     description:
       "Ensuite room with own bathroom in modern apartment. Green Square station 3 min walk.",
+    lat: -33.9005,
+    lng: 151.2025,
   },
 ];
 
@@ -77,6 +94,7 @@ const AUSTRALIAN_DESTINATIONS = [
 
 export default function SeekerSearchExtended() {
   const { session, user } = useAuth();
+  const { theme } = useTheme();
   const [results, setResults] = useState(PLACEHOLDER_LISTINGS);
   const [searching, setSearching] = useState(false);
   const [searched, setSearched] = useState(false);
@@ -474,32 +492,26 @@ export default function SeekerSearchExtended() {
         {/* Wishlist sidebar */}
         <div className="lg:col-span-2 hidden lg:block">
           <div className="sticky top-24 space-y-4">
-            {/* Map placeholder */}
-            <div className="card rounded-2xl overflow-hidden aspect-[4/5] flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-800/50">
-              <svg
-                className="w-16 h-16 text-slate-300 dark:text-slate-600 mb-3"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={1}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                />
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                />
-              </svg>
-              <p className="text-sm font-medium text-slate-400 dark:text-slate-500">
-                Map view
-              </p>
-              <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
-                Coming soon
-              </p>
+            {/* Map view */}
+            <div className="card rounded-2xl overflow-hidden aspect-[4/5]">
+              {process.env.NEXT_PUBLIC_MAPTILER_KEY ? (
+                <ListingsMap listings={results} isDark={theme === "dark"} />
+              ) : (
+                <div className="w-full h-full flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-800/50">
+                  <svg
+                    className="w-16 h-16 text-slate-300 dark:text-slate-600 mb-3"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={1}
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                  <p className="text-sm font-medium text-slate-400 dark:text-slate-500">Map view</p>
+                  <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">Set NEXT_PUBLIC_MAPTILER_KEY to enable</p>
+                </div>
+              )}
             </div>
 
             {/* Wishlist */}
