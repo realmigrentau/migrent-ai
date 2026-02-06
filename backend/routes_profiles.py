@@ -1,64 +1,30 @@
-"""
-Profile management endpoints.
-
-This module handles all user profile operations including retrieval, updates,
-and badge management. All profile updates use proper error handling and
-ensure data persistence.
-"""
-
 from fastapi import APIRouter, HTTPException, Header
 from models import ProfileUpdate
 from db import get_supabase_admin
 from routes_listings import get_current_user
-import logging
-
-logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/profiles", tags=["profiles"])
 
 
 @router.get("/me")
 def get_my_profile(authorization: str = Header(...)):
-    """
-    Retrieve the current authenticated user's complete profile.
+    """Get the current user's profile."""
+    user = get_current_user(authorization)
+    sb = get_supabase_admin()
 
-    If the user doesn't have a profile yet, one is automatically created.
-
-    Returns:
-        dict: Full profile object with all user fields
-    """
     try:
-        user = get_current_user(authorization)
-        sb = get_supabase_admin()
+        res = sb.table("profiles").select("*").eq("id", user.id).execute()
 
-        user_id = str(user.id)
-        logger.info(f"Fetching profile for user {user_id}")
+        if not res.data:
+            # Create if doesn't exist
+            row = {"id": str(user.id), "role": "user"}
+            sb.table("profiles").insert(row).execute()
+            return row
 
-        # Fetch the user's profile
-        result = sb.table("profiles").select("*").eq("id", user_id).execute()
-
-        # If profile doesn't exist, create one
-        if not result.data:
-            logger.info(f"Profile doesn't exist for {user_id}, creating...")
-            new_profile = {
-                "id": user_id,
-                "role": "user"
-            }
-            insert_result = sb.table("profiles").insert(new_profile).execute()
-
-            if insert_result.data:
-                return insert_result.data[0]
-            else:
-                return new_profile
-
-        profile = result.data[0]
-        logger.info(f"Profile retrieved for {user_id}: has_legal_name={bool(profile.get('legal_name'))}")
-
-        return profile
-
+        return res.data[0]
     except Exception as e:
-        logger.error(f"Error fetching profile: {e}", exc_info=True)
-        raise HTTPException(status_code=500, detail=f"Failed to fetch profile: {str(e)}")
+        print(f"Error in get_my_profile: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.patch("/me")
@@ -66,174 +32,87 @@ def update_my_profile(
     body: ProfileUpdate,
     authorization: str = Header(...),
 ):
-    """
-    Update the current user's profile with the provided fields.
+    """Update the current user's profile."""
+    user = get_current_user(authorization)
+    sb = get_supabase_admin()
 
-    Only non-null fields are updated. Returns the complete updated profile.
-
-    Args:
-        body: ProfileUpdate model with fields to update
-        authorization: Bearer token
-
-    Returns:
-        dict: Complete updated profile object
-    """
     try:
-        user = get_current_user(authorization)
-        sb = get_supabase_admin()
-
-        user_id = str(user.id)
-
-        # Build update dict - only include non-None fields
-        updates = {}
-        for field_name, value in body.model_dump().items():
-            if value is not None:
-                updates[field_name] = value
+        # Build updates
+        updates = {k: v for k, v in body.model_dump().items() if v is not None}
 
         if not updates:
             raise HTTPException(status_code=400, detail="No fields to update")
 
-        logger.info(f"Updating profile for {user_id}: fields={list(updates.keys())}")
-
-        # Ensure profile row exists before updating
-        existing = sb.table("profiles").select("id").eq("id", user_id).execute()
+        # Ensure profile exists
+        existing = sb.table("profiles").select("id").eq("id", user.id).execute()
         if not existing.data:
-            logger.info(f"Profile doesn't exist, creating for {user_id}")
-            new_profile = {"id": user_id, "role": "user"}
-            sb.table("profiles").insert(new_profile).execute()
+            sb.table("profiles").insert({"id": str(user.id), "role": "user"}).execute()
 
-        # Perform the update
-        update_response = sb.table("profiles").update(updates).eq("id", user_id).execute()
-        logger.info(f"Update response for {user_id}: data_count={len(update_response.data) if update_response.data else 0}")
+        # Update
+        sb.table("profiles").update(updates).eq("id", user.id).execute()
 
-        # Fetch the complete updated profile
-        fetch_response = sb.table("profiles").select("*").eq("id", user_id).execute()
+        # Fetch back
+        result = sb.table("profiles").select("*").eq("id", user.id).execute()
 
-        if fetch_response.data and len(fetch_response.data) > 0:
-            logger.info(f"Successfully updated profile for {user_id}")
-            return fetch_response.data[0]
+        if result.data:
+            return result.data[0]
 
-        # If fetch returns no data but update seemed to work, return what we updated
-        if update_response.data and len(update_response.data) > 0:
-            logger.warning(f"Update succeeded but fetch returned empty, using update data for {user_id}")
-            return update_response.data[0]
-
-        # Last resort: return the updates we sent (indicates potential issue)
-        logger.warning(f"Both fetch and update returned empty for {user_id}, returning updates as fallback")
         return updates
-
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Error updating profile: {e}", exc_info=True)
-        raise HTTPException(status_code=500, detail=f"Failed to update profile: {str(e)}")
+        print(f"Error in update_my_profile: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.get("/{user_id}")
 def get_public_profile(user_id: str):
-    """
-    Get a user's public profile with limited fields.
+    """Get a public profile."""
+    sb = get_supabase_admin()
 
-    This endpoint returns only fields that should be visible to other users.
-
-    Args:
-        user_id: UUID of the user
-
-    Returns:
-        dict: Public profile fields only
-    """
     try:
-        sb = get_supabase_admin()
+        res = sb.table("profiles").select(
+            "id,name,preferred_name,about_me,most_useless_skill,interests,badges,custom_pfp,occupation,verified"
+        ).eq("id", user_id).execute()
 
-        # Only select public-facing fields
-        public_fields = [
-            "id",
-            "name",
-            "preferred_name",
-            "about_me",
-            "most_useless_skill",
-            "interests",
-            "badges",
-            "custom_pfp",
-            "occupation",
-            "verified"
-        ]
-
-        result = sb.table("profiles").select(",".join(public_fields)).eq("id", user_id).execute()
-
-        if not result.data:
+        if not res.data:
             raise HTTPException(status_code=404, detail="Profile not found")
 
-        return result.data[0]
-
+        return res.data[0]
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Error fetching public profile for {user_id}: {e}", exc_info=True)
-        raise HTTPException(status_code=500, detail=f"Failed to fetch public profile: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.post("/badges/refresh")
 def refresh_badges(authorization: str = Header(...)):
-    """
-    Recalculate and update user badges based on their activity.
+    """Refresh user badges."""
+    user = get_current_user(authorization)
+    sb = get_supabase_admin()
 
-    Badges are awarded for:
-    - Completed deals (seeker)
-    - Published listings (owner)
-    - High ratings/reviews
-
-    Args:
-        authorization: Bearer token
-
-    Returns:
-        dict: Updated badges list
-    """
     try:
-        user = get_current_user(authorization)
-        sb = get_supabase_admin()
-
-        user_id = str(user.id)
         badges = []
 
-        logger.info(f"Refreshing badges for {user_id}")
+        # Seeker badges
+        deals = sb.table("deals").select("id").eq("seeker_id", user.id).eq("status", "completed").execute()
+        deal_count = len(deals.data) if deals.data else 0
+        if deal_count >= 1:
+            badges.append("Purchased 1+ homes")
+        if deal_count >= 5:
+            badges.append("Frequent Flyer")
 
-        # Check for seeker badges (completed deals)
-        try:
-            completed_deals = sb.table("deals").select("id").eq("seeker_id", user_id).eq("status", "completed").execute()
-            deal_count = len(completed_deals.data) if completed_deals.data else 0
+        # Owner badges
+        listings = sb.table("listings").select("id").eq("owner_id", user.id).execute()
+        listing_count = len(listings.data) if listings.data else 0
+        if listing_count >= 1:
+            badges.append("Verified host")
+        if listing_count >= 3:
+            badges.append("Superhost")
 
-            if deal_count >= 1:
-                badges.append("Purchased 1+ homes")
-            if deal_count >= 5:
-                badges.append("Frequent Flyer")
-            if deal_count >= 10:
-                badges.append("Globe Trotter")
-
-        except Exception as e:
-            logger.warning(f"Error calculating seeker badges: {e}")
-
-        # Check for owner badges (published listings)
-        try:
-            listings = sb.table("listings").select("id").eq("owner_id", user_id).execute()
-            listing_count = len(listings.data) if listings.data else 0
-
-            if listing_count >= 1:
-                badges.append("Verified host")
-            if listing_count >= 3:
-                badges.append("Superhost")
-            if listing_count >= 10:
-                badges.append("Mega Host")
-
-        except Exception as e:
-            logger.warning(f"Error calculating owner badges: {e}")
-
-        # Update the profile with new badges
-        update_response = sb.table("profiles").update({"badges": badges}).eq("id", user_id).execute()
-        logger.info(f"Badges updated for {user_id}: {badges}")
+        # Update
+        sb.table("profiles").update({"badges": badges}).eq("id", user.id).execute()
 
         return {"badges": badges}
-
     except Exception as e:
-        logger.error(f"Error refreshing badges: {e}", exc_info=True)
-        raise HTTPException(status_code=500, detail=f"Failed to refresh badges: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
