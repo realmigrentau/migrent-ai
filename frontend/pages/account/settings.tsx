@@ -253,11 +253,11 @@ export default function SettingsPage() {
     );
   }
 
-  const tabs: Array<{ id: TabType; label: string; icon: string }> = [
-    { id: "personal", label: "Personal info", icon: "👤" },
-    { id: "security", label: "Security", icon: "🔐" },
-    { id: "payments", label: "Payments", icon: "💰" },
-    { id: "languages", label: "Essentials", icon: "⚙️" },
+  const tabs: Array<{ id: TabType; label: string }> = [
+    { id: "personal", label: "Personal info" },
+    { id: "security", label: "Security" },
+    { id: "payments", label: "Payments" },
+    { id: "languages", label: "Essentials" },
   ];
 
   return (
@@ -280,13 +280,12 @@ export default function SettingsPage() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`w-full flex gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
+                className={`w-full px-4 py-3 rounded-xl text-sm font-medium transition-all text-left ${
                   activeTab === tab.id
                     ? "bg-rose-100 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400"
                     : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/50"
                 }`}
               >
-                <span className="text-lg">{tab.icon}</span>
                 {tab.label}
               </button>
             ))}
@@ -303,8 +302,8 @@ export default function SettingsPage() {
           {activeTab === "personal" && (
             <div className="space-y-6">
               <div className="card p-6 rounded-2xl space-y-4">
-                <h2 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                  <span>👤</span> Personal Information
+                <h2 className="text-lg font-bold text-slate-900 dark:text-white">
+                  Personal Information
                 </h2>
 
                 <div className="space-y-4">
