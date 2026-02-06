@@ -330,7 +330,7 @@ export default function DashboardHome() {
               >
                 <motion.div
                   whileHover={{ y: -4 }}
-                  className={`card p-6 rounded-2xl bg-gradient-to-br ${
+                  className={`p-6 rounded-2xl bg-gradient-to-br ${
                     role === "seeker"
                       ? "from-rose-500 to-rose-600"
                       : "from-blue-500 to-blue-600"
