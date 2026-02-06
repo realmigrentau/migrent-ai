@@ -105,18 +105,27 @@ export default function SettingsPage() {
     setLoadingProfile(true);
     try {
       const data = await getMyProfile(session?.access_token || "");
+      console.log("Fetched profile data:", data);
+
       if (data) {
         setProfile(data);
-        setLegalName(data.legal_name || "");
-        setPreferredName(data.preferred_name || "");
-        setPhones(data.phones || []);
-        setResidentialAddress(
-          typeof data.residential_address === "string"
+
+        // Set all fields from the profile
+        if (data.legal_name) setLegalName(data.legal_name);
+        if (data.preferred_name) setPreferredName(data.preferred_name);
+        if (data.phones) setPhones(data.phones);
+
+        if (data.residential_address) {
+          const address = typeof data.residential_address === "string"
             ? data.residential_address
-            : data.residential_address?.address || ""
-        );
-        setPreferredLanguage(data.preferred_language || "en");
-        setTimezone(data.timezone || "Australia/Sydney");
+            : data.residential_address?.address || "";
+          setResidentialAddress(address);
+        }
+
+        if (data.preferred_language) setPreferredLanguage(data.preferred_language);
+        if (data.timezone) setTimezone(data.timezone);
+
+        console.log("Profile loaded - legal_name:", data.legal_name, "residential_address:", data.residential_address);
       }
     } catch (err) {
       console.error("Failed to fetch profile:", err);

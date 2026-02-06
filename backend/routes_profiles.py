@@ -12,17 +12,23 @@ def get_my_profile(authorization: str = Header(...)):
     user = get_current_user(authorization)
     sb = get_supabase()
 
-    res = sb.table("profiles").select("*").eq("id", user.id).execute()
-    if not res.data:
-        # Auto-create a profile row if it doesn't exist
-        row = {"id": user.id, "role": "user"}
-        try:
-            sb.table("profiles").insert(row).execute()
-        except Exception:
-            pass
-        return row
+    try:
+        res = sb.table("profiles").select("*").eq("id", user.id).execute()
+        if not res.data:
+            # Auto-create a profile row if it doesn't exist
+            row = {"id": user.id, "role": "user"}
+            try:
+                sb.table("profiles").insert(row).execute()
+            except Exception as e:
+                print(f"Error creating profile: {e}")
+            return row
 
-    return res.data[0]
+        profile = res.data[0]
+        print(f"Profile fetched for user {user.id}: legal_name={profile.get('legal_name')}, residential_address={profile.get('residential_address')}")
+        return profile
+    except Exception as e:
+        print(f"Error fetching profile: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to fetch profile: {str(e)}")
 
 
 @router.patch("/me")
