@@ -36,6 +36,21 @@ export interface ListingFormData {
   // Discounts
   weeklyDiscount: string;
   monthlyDiscount: string;
+  // Hosting fields
+  availableFrom: string;
+  availableTo: string;
+  instantBook: boolean;
+  internetIncluded: boolean;
+  internetSpeed: string;
+  petsAllowed: boolean;
+  petDetails: string;
+  airConditioning: boolean;
+  laundry: string;
+  dishwasher: boolean;
+  nearestTransport: string;
+  neighbourhoodVibe: string;
+  genderPreference: string;
+  couplesOk: boolean;
   // Photos
   photos: File[];
   // Rules
@@ -51,10 +66,12 @@ export interface ListingFormData {
   otherSafetyDetails: string;
 }
 
-const STEPS = ["Basics", "Details", "Photos", "Rules", "Safety"];
+const STEPS = ["Basics", "Details", "Hosting", "Photos", "Rules", "Safety"];
 
 const PROPERTY_TYPES = ["House", "Apartment", "Townhouse", "Studio", "Other"];
 const PLACE_TYPES = ["Entire place", "Private room", "Shared room", "Multiple rooms"];
+const LAUNDRY_OPTIONS = ["In-unit", "Shared", "None"];
+const GENDER_OPTIONS = ["Any", "Female only", "Male only"];
 
 export default function ListingForm({ onSubmit, loading, initialData }: ListingFormProps) {
   const [step, setStep] = useState(0);
@@ -84,6 +101,22 @@ export default function ListingForm({ onSubmit, loading, initialData }: ListingF
     highlights: [],
     weeklyDiscount: "",
     monthlyDiscount: "",
+    // Hosting defaults
+    availableFrom: "",
+    availableTo: "",
+    instantBook: false,
+    internetIncluded: false,
+    internetSpeed: "",
+    petsAllowed: false,
+    petDetails: "",
+    airConditioning: false,
+    laundry: "Shared",
+    dishwasher: false,
+    nearestTransport: "",
+    neighbourhoodVibe: "",
+    genderPreference: "Any",
+    couplesOk: false,
+    // Photos
     photos: [],
     noSmoking: true,
     quietHours: "10pm-7am",
@@ -159,6 +192,25 @@ export default function ListingForm({ onSubmit, loading, initialData }: ListingF
         </button>
       </div>
     </div>
+  );
+
+  // Toggle card helper
+  const ToggleCard = ({ label, checked, onChange }: { label: string; checked: boolean; onChange: (v: boolean) => void }) => (
+    <label
+      className={`flex items-center gap-3 p-4 rounded-xl border cursor-pointer transition-all ${
+        checked
+          ? "border-rose-300 dark:border-rose-500/30 bg-rose-50 dark:bg-rose-500/5"
+          : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50"
+      }`}
+    >
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={(e) => onChange(e.target.checked)}
+        className="w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-rose-500 focus:ring-rose-500"
+      />
+      <span className="text-sm font-medium text-slate-700 dark:text-slate-300">{label}</span>
+    </label>
   );
 
   return (
@@ -390,22 +442,7 @@ export default function ListingForm({ onSubmit, loading, initialData }: ListingF
                     { key: "billsIncluded" as const, label: "Bills included" },
                     { key: "parking" as const, label: "Parking available" },
                   ].map(({ key, label }) => (
-                    <label
-                      key={key}
-                      className={`flex items-center gap-3 p-4 rounded-xl border cursor-pointer transition-all ${
-                        form[key]
-                          ? "border-rose-300 dark:border-rose-500/30 bg-rose-50 dark:bg-rose-500/5"
-                          : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50"
-                      }`}
-                    >
-                      <input
-                        type="checkbox"
-                        checked={form[key] as boolean}
-                        onChange={(e) => update(key, e.target.checked)}
-                        className="w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-rose-500 focus:ring-rose-500"
-                      />
-                      <span className="text-sm font-medium text-slate-700 dark:text-slate-300">{label}</span>
-                    </label>
+                    <ToggleCard key={key} label={label} checked={form[key] as boolean} onChange={(v) => update(key, v)} />
                   ))}
                 </div>
 
@@ -484,8 +521,145 @@ export default function ListingForm({ onSubmit, loading, initialData }: ListingF
               </>
             )}
 
-            {/* ── Step 2: Photos ── */}
+            {/* ── Step 2: Hosting ── */}
             {step === 2 && (
+              <>
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white">Hosting details</h3>
+                <p className="text-sm text-slate-500 dark:text-slate-400">
+                  Help seekers know when your place is available and what amenities are included.
+                </p>
+
+                {/* Availability dates */}
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Available from</label>
+                    <input
+                      type="date"
+                      value={form.availableFrom}
+                      onChange={(e) => update("availableFrom", e.target.value)}
+                      className="input-field"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Available to (optional)</label>
+                    <input
+                      type="date"
+                      value={form.availableTo}
+                      onChange={(e) => update("availableTo", e.target.value)}
+                      className="input-field"
+                    />
+                  </div>
+                </div>
+
+                {/* Instant book */}
+                <ToggleCard label="Instant book (seekers can book without approval)" checked={form.instantBook} onChange={(v) => update("instantBook", v)} />
+
+                {/* Internet */}
+                <div className="space-y-3">
+                  <ToggleCard label="Internet included" checked={form.internetIncluded} onChange={(v) => update("internetIncluded", v)} />
+                  {form.internetIncluded && (
+                    <input
+                      type="text"
+                      placeholder="e.g. 50 Mbps NBN, unlimited data"
+                      value={form.internetSpeed}
+                      onChange={(e) => update("internetSpeed", e.target.value)}
+                      className="input-field"
+                    />
+                  )}
+                </div>
+
+                {/* Pets */}
+                <div className="space-y-3">
+                  <ToggleCard label="Pets allowed" checked={form.petsAllowed} onChange={(v) => update("petsAllowed", v)} />
+                  {form.petsAllowed && (
+                    <input
+                      type="text"
+                      placeholder="e.g. Small dogs OK, cats welcome, no exotic pets"
+                      value={form.petDetails}
+                      onChange={(e) => update("petDetails", e.target.value)}
+                      className="input-field"
+                    />
+                  )}
+                </div>
+
+                {/* Extra amenities */}
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Extra amenities</label>
+                  <div className="grid sm:grid-cols-2 gap-3">
+                    <ToggleCard label="Air conditioning" checked={form.airConditioning} onChange={(v) => update("airConditioning", v)} />
+                    <ToggleCard label="Dishwasher" checked={form.dishwasher} onChange={(v) => update("dishwasher", v)} />
+                    <ToggleCard label="Couples OK" checked={form.couplesOk} onChange={(v) => update("couplesOk", v)} />
+                  </div>
+                </div>
+
+                {/* Laundry */}
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Laundry</label>
+                  <div className="flex flex-wrap gap-2">
+                    {LAUNDRY_OPTIONS.map((opt) => (
+                      <button
+                        key={opt}
+                        type="button"
+                        onClick={() => update("laundry", opt)}
+                        className={`px-4 py-2 rounded-xl text-sm font-medium border transition-all ${
+                          form.laundry === opt
+                            ? "border-rose-400 dark:border-rose-500/40 bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400"
+                            : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 text-slate-600 dark:text-slate-300 hover:border-slate-300"
+                        }`}
+                      >
+                        {opt}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Gender preference */}
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Tenant gender preference</label>
+                  <div className="flex flex-wrap gap-2">
+                    {GENDER_OPTIONS.map((opt) => (
+                      <button
+                        key={opt}
+                        type="button"
+                        onClick={() => update("genderPreference", opt)}
+                        className={`px-4 py-2 rounded-xl text-sm font-medium border transition-all ${
+                          form.genderPreference === opt
+                            ? "border-rose-400 dark:border-rose-500/40 bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400"
+                            : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 text-slate-600 dark:text-slate-300 hover:border-slate-300"
+                        }`}
+                      >
+                        {opt}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Transport & neighbourhood */}
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Nearest transport</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Central Station 5 min walk, Bus 370 at door"
+                    value={form.nearestTransport}
+                    onChange={(e) => update("nearestTransport", e.target.value)}
+                    className="input-field"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Neighbourhood vibe</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Quiet residential, cafes nearby, 10 min to CBD"
+                    value={form.neighbourhoodVibe}
+                    onChange={(e) => update("neighbourhoodVibe", e.target.value)}
+                    className="input-field"
+                  />
+                </div>
+              </>
+            )}
+
+            {/* ── Step 3: Photos ── */}
+            {step === 3 && (
               <>
                 <h3 className="text-lg font-bold text-slate-900 dark:text-white">Photos</h3>
                 <p className="text-sm text-slate-500 dark:text-slate-400">
@@ -527,19 +701,11 @@ export default function ListingForm({ onSubmit, loading, initialData }: ListingF
               </>
             )}
 
-            {/* ── Step 3: Rules ── */}
-            {step === 3 && (
+            {/* ── Step 4: Rules ── */}
+            {step === 4 && (
               <>
                 <h3 className="text-lg font-bold text-slate-900 dark:text-white">House rules</h3>
-                <label className="flex items-center gap-3 p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={form.noSmoking}
-                    onChange={(e) => update("noSmoking", e.target.checked)}
-                    className="w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-rose-500 focus:ring-rose-500"
-                  />
-                  <span className="text-sm font-medium text-slate-700 dark:text-slate-300">No smoking</span>
-                </label>
+                <ToggleCard label="No smoking" checked={form.noSmoking} onChange={(v) => update("noSmoking", v)} />
                 <div>
                   <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Quiet hours</label>
                   <input
@@ -576,8 +742,8 @@ export default function ListingForm({ onSubmit, loading, initialData }: ListingF
               </>
             )}
 
-            {/* ── Step 4: Safety ── */}
-            {step === 4 && (
+            {/* ── Step 5: Safety ── */}
+            {step === 5 && (
               <>
                 <h3 className="text-lg font-bold text-slate-900 dark:text-white">Safety details</h3>
                 <p className="text-sm text-slate-500 dark:text-slate-400">
@@ -586,15 +752,7 @@ export default function ListingForm({ onSubmit, loading, initialData }: ListingF
 
                 {/* Security cameras */}
                 <div className="space-y-3">
-                  <label className="flex items-center gap-3 p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={form.securityCameras}
-                      onChange={(e) => update("securityCameras", e.target.checked)}
-                      className="w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-rose-500 focus:ring-rose-500"
-                    />
-                    <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Security cameras on property</span>
-                  </label>
+                  <ToggleCard label="Security cameras on property" checked={form.securityCameras} onChange={(v) => update("securityCameras", v)} />
                   {form.securityCameras && (
                     <input
                       type="text"
@@ -608,15 +766,7 @@ export default function ListingForm({ onSubmit, loading, initialData }: ListingF
 
                 {/* Weapons */}
                 <div className="space-y-3">
-                  <label className="flex items-center gap-3 p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={form.weaponsOnProperty}
-                      onChange={(e) => update("weaponsOnProperty", e.target.checked)}
-                      className="w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-rose-500 focus:ring-rose-500"
-                    />
-                    <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Weapons stored on property</span>
-                  </label>
+                  <ToggleCard label="Weapons stored on property" checked={form.weaponsOnProperty} onChange={(v) => update("weaponsOnProperty", v)} />
                   {form.weaponsOnProperty && (
                     <textarea
                       placeholder="Please explain (e.g. Locked gun safe in garage)"
@@ -737,6 +887,18 @@ export default function ListingForm({ onSubmit, loading, initialData }: ListingF
                 {form.noSmoking && (
                   <span className="px-2 py-0.5 rounded-full text-xs bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">No smoking</span>
                 )}
+                {form.internetIncluded && (
+                  <span className="px-2 py-0.5 rounded-full text-xs bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400">WiFi</span>
+                )}
+                {form.petsAllowed && (
+                  <span className="px-2 py-0.5 rounded-full text-xs bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400">Pets OK</span>
+                )}
+                {form.airConditioning && (
+                  <span className="px-2 py-0.5 rounded-full text-xs bg-sky-50 dark:bg-sky-500/10 text-sky-600 dark:text-sky-400">A/C</span>
+                )}
+                {form.couplesOk && (
+                  <span className="px-2 py-0.5 rounded-full text-xs bg-pink-50 dark:bg-pink-500/10 text-pink-600 dark:text-pink-400">Couples OK</span>
+                )}
               </div>
               {form.highlights.length > 0 && (
                 <div className="flex flex-wrap gap-1.5">
@@ -749,6 +911,14 @@ export default function ListingForm({ onSubmit, loading, initialData }: ListingF
               )}
               {form.description && (
                 <p className="text-sm text-slate-600 dark:text-slate-300 line-clamp-3">{form.description}</p>
+              )}
+              {form.availableFrom && (
+                <p className="text-xs text-slate-500 dark:text-slate-400">
+                  Available: {form.availableFrom}{form.availableTo ? ` to ${form.availableTo}` : " onwards"}
+                </p>
+              )}
+              {form.nearestTransport && (
+                <p className="text-xs text-slate-500 dark:text-slate-400">Transport: {form.nearestTransport}</p>
               )}
               {(form.weeklyDiscount || form.monthlyDiscount) && (
                 <div className="flex gap-2">

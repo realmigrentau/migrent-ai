@@ -113,6 +113,8 @@ def list_listings(
     city: Optional[str] = None,
     min_price: Optional[float] = None,
     max_price: Optional[float] = None,
+    owner: Optional[bool] = None,
+    authorization: Optional[str] = Header(None),
 ):
     sb = get_supabase()
     query = sb.table("listings").select("*")
@@ -122,6 +124,9 @@ def list_listings(
         query = query.gte("weekly_price", min_price)
     if max_price is not None:
         query = query.lte("weekly_price", max_price)
+    if owner and authorization:
+        user = get_current_user(authorization)
+        query = query.eq("owner_id", user.id)
 
     res = query.execute()
     return res.data

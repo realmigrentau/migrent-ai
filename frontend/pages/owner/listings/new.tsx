@@ -54,6 +54,21 @@ export default function NewListing() {
       weaponsOnProperty: data.weaponsOnProperty,
       weaponsExplanation: data.weaponsExplanation,
       otherSafetyDetails: data.otherSafetyDetails,
+      // Hosting fields
+      availableFrom: data.availableFrom || undefined,
+      availableTo: data.availableTo || undefined,
+      instantBook: data.instantBook,
+      internetIncluded: data.internetIncluded,
+      internetSpeed: data.internetSpeed || undefined,
+      petsAllowed: data.petsAllowed,
+      petDetails: data.petDetails || undefined,
+      airConditioning: data.airConditioning,
+      laundry: data.laundry || undefined,
+      dishwasher: data.dishwasher,
+      nearestTransport: data.nearestTransport || undefined,
+      neighbourhoodVibe: data.neighbourhoodVibe || undefined,
+      genderPreference: data.genderPreference || undefined,
+      couplesOk: data.couplesOk,
     });
 
     if (result) {

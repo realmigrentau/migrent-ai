@@ -232,6 +232,25 @@ def cancel_deal(
     if deal["status"] == DealStatus.cancelled.value:
         raise HTTPException(status_code=400, detail="Deal is already cancelled")
 
+    # Bypass detection: flag if cancelling after owner already paid
+    flagged = False
+    if deal["status"] in (
+        DealStatus.owner_paid.value,
+        DealStatus.awaiting_seeker_optional.value,
+        DealStatus.completed.value,
+    ):
+        flagged = True
+        try:
+            sb.table("bypass_flags").insert({
+                "deal_id": deal_id,
+                "flagged_user_id": user.id,
+                "reason": f"Deal cancelled after status={deal['status']}",
+                "owner_id": deal["owner_id"],
+                "seeker_id": deal["seeker_id"],
+            }).execute()
+        except Exception:
+            pass  # bypass_flags table may not exist yet
+
     try:
         sb.table("deals").update(
             {"status": DealStatus.cancelled.value}
@@ -239,7 +258,7 @@ def cancel_deal(
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-    return {"deal_id": deal_id, "status": DealStatus.cancelled.value}
+    return {"deal_id": deal_id, "status": DealStatus.cancelled.value, "flagged": flagged}
 
 
 # ── POST /webhooks/stripe ────────────────────────────────────

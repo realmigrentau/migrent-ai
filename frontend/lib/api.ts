@@ -484,6 +484,72 @@ export async function submitReport(
   }
 }
 
+// ── Referral endpoints ──────────────────────────────────────
+
+/**
+ * Generate a referral code for the current user.
+ * POST /referrals/generate
+ */
+export async function generateReferralCode(token: string) {
+  try {
+    const res = await fetch(`${BASE_URL}/referrals/generate`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if (!res.ok) throw new Error(`generateReferralCode failed: ${res.status}`);
+    return await res.json();
+  } catch (err) {
+    console.error("generateReferralCode error:", err);
+    return null;
+  }
+}
+
+/**
+ * Apply a referral code.
+ * POST /referrals/use
+ */
+export async function useReferralCode(token: string, referralCode: string) {
+  try {
+    const res = await fetch(`${BASE_URL}/referrals/use`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ referral_code: referralCode }),
+    });
+    if (!res.ok) throw new Error(`useReferralCode failed: ${res.status}`);
+    return await res.json();
+  } catch (err) {
+    console.error("useReferralCode error:", err);
+    return null;
+  }
+}
+
+/**
+ * Get referrals created by the current user.
+ * GET /referrals/my-referrals
+ */
+export async function getMyReferrals(token: string) {
+  try {
+    const res = await fetch(`${BASE_URL}/referrals/my-referrals`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if (!res.ok) throw new Error(`getMyReferrals failed: ${res.status}`);
+    return await res.json();
+  } catch (err) {
+    console.error("getMyReferrals error:", err);
+    return null;
+  }
+}
+
 // ── Messaging endpoints ──────────────────────────────────────
 
 /**

@@ -1,0 +1,19 @@
+{
+  "name": "MigRent AI",
+  "short_name": "MigRent",
+  "description": "Verified short-term rooms in Sydney & Adelaide for migrants, students & IT pros",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#3b82f6",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64",
+      "type": "image/x-icon"
+    }
+  ],
+  "categories": ["lifestyle", "utilities"],
+  "lang": "en-AU"
+}
