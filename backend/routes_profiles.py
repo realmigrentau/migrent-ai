@@ -11,13 +11,14 @@ def get_my_profile(authorization: str = Header(...)):
     """Get the current user's profile."""
     user = get_current_user(authorization)
     sb = get_supabase_admin()
+    user_id = str(user.id)
 
     try:
-        res = sb.table("profiles").select("*").eq("id", user.id).execute()
+        res = sb.table("profiles").select("*").eq("id", user_id).execute()
 
         if not res.data:
             # Create if doesn't exist
-            row = {"id": str(user.id), "role": "user"}
+            row = {"id": user_id, "role": "user"}
             sb.table("profiles").insert(row).execute()
             return row
 
@@ -35,6 +36,7 @@ def update_my_profile(
     """Update the current user's profile."""
     user = get_current_user(authorization)
     sb = get_supabase_admin()
+    user_id = str(user.id)
 
     try:
         # Build updates
@@ -44,15 +46,15 @@ def update_my_profile(
             raise HTTPException(status_code=400, detail="No fields to update")
 
         # Ensure profile exists
-        existing = sb.table("profiles").select("id").eq("id", user.id).execute()
+        existing = sb.table("profiles").select("id").eq("id", user_id).execute()
         if not existing.data:
-            sb.table("profiles").insert({"id": str(user.id), "role": "user"}).execute()
+            sb.table("profiles").insert({"id": user_id, "role": "user"}).execute()
 
         # Update
-        sb.table("profiles").update(updates).eq("id", user.id).execute()
+        sb.table("profiles").update(updates).eq("id", user_id).execute()
 
         # Fetch back
-        result = sb.table("profiles").select("*").eq("id", user.id).execute()
+        result = sb.table("profiles").select("*").eq("id", user_id).execute()
 
         if result.data:
             return result.data[0]
@@ -90,12 +92,13 @@ def refresh_badges(authorization: str = Header(...)):
     """Refresh user badges."""
     user = get_current_user(authorization)
     sb = get_supabase_admin()
+    user_id = str(user.id)
 
     try:
         badges = []
 
         # Seeker badges
-        deals = sb.table("deals").select("id").eq("seeker_id", user.id).eq("status", "completed").execute()
+        deals = sb.table("deals").select("id").eq("seeker_id", user_id).eq("status", "completed").execute()
         deal_count = len(deals.data) if deals.data else 0
         if deal_count >= 1:
             badges.append("Purchased 1+ homes")
@@ -103,7 +106,7 @@ def refresh_badges(authorization: str = Header(...)):
             badges.append("Frequent Flyer")
 
         # Owner badges
-        listings = sb.table("listings").select("id").eq("owner_id", user.id).execute()
+        listings = sb.table("listings").select("id").eq("owner_id", user_id).execute()
         listing_count = len(listings.data) if listings.data else 0
         if listing_count >= 1:
             badges.append("Verified host")
@@ -111,7 +114,7 @@ def refresh_badges(authorization: str = Header(...)):
             badges.append("Superhost")
 
         # Update
-        sb.table("profiles").update({"badges": badges}).eq("id", user.id).execute()
+        sb.table("profiles").update({"badges": badges}).eq("id", user_id).execute()
 
         return {"badges": badges}
     except Exception as e:
