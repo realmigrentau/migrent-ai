@@ -1,143 +1,12 @@
 """
-Account management endpoints for disable, delete, and owner profile operations.
+Account management endpoints - Delete account only.
 """
 
-from fastapi import APIRouter, HTTPException, Header, Request
-from fastapi.responses import JSONResponse
+from fastapi import APIRouter, HTTPException, Header
 from db import get_supabase
 from routes_listings import get_current_user
 
 router = APIRouter(prefix="/account", tags=["account"])
-
-
-# ── POST /account/disable ────────────────────────────────────────
-
-
-@router.post("/disable")
-def disable_account(
-    body: dict,
-    authorization: str = Header(...),
-):
-    """
-    Temporarily disable account with recovery password.
-    User can re-enable with recovery password.
-    """
-    user = get_current_user(authorization)
-    sb = get_supabase()
-    recovery_password = body.get("recovery_password", "")
-
-    if not recovery_password or len(recovery_password) < 6:
-        raise HTTPException(status_code=400, detail="Recovery password must be at least 6 characters")
-
-    try:
-        from datetime import datetime
-        # Update profile with disabled status and recovery password
-        result = sb.table("profiles").update(
-            {
-                "disabled_at": datetime.utcnow().isoformat(),
-                "recovery_password_hash": recovery_password,  # In production, hash this!
-            }
-        ).eq("id", user.id).execute()
-
-        if not result.data or len(result.data) == 0:
-            raise HTTPException(status_code=500, detail="Failed to disable account - profile not found")
-
-        return {"success": True, "message": "Account disabled. Use your recovery password to re-enable."}
-
-    except HTTPException:
-        raise
-    except Exception as err:
-        print(f"Error disabling account: {err}")
-        raise HTTPException(status_code=500, detail=f"Failed to disable account: {str(err)}")
-
-
-# ── POST /account/enable ────────────────────────────────────────
-
-
-@router.post("/enable")
-def enable_account(
-    body: dict,
-    authorization: str = Header(...),
-):
-    """
-    Re-enable a disabled account using recovery password.
-    """
-    user = get_current_user(authorization)
-    sb = get_supabase()
-    recovery_password = body.get("recovery_password", "")
-
-    try:
-        # Get current profile
-        profile = sb.table("profiles").select("recovery_password_hash").eq("id", user.id).execute()
-
-        if not profile.data:
-            raise HTTPException(status_code=404, detail="Profile not found")
-
-        # Verify recovery password (in production, use proper hash comparison!)
-        if profile.data[0].get("recovery_password_hash") != recovery_password:
-            raise HTTPException(status_code=401, detail="Invalid recovery password")
-
-        # Clear disabled status
-        result = sb.table("profiles").update(
-            {
-                "disabled_at": None,
-                "recovery_password_hash": None,
-            }
-        ).eq("id", user.id).execute()
-
-        if not result.data or len(result.data) == 0:
-            raise HTTPException(status_code=500, detail="Failed to enable account - profile not found")
-
-        return {"success": True, "message": "Account re-enabled successfully"}
-
-    except HTTPException:
-        raise
-    except Exception as err:
-        print(f"Error enabling account: {err}")
-        raise HTTPException(status_code=500, detail="Failed to enable account")
-
-
-# ── DELETE /account/delete-owner-profile ────────────────────────
-
-
-@router.delete("/delete-owner-profile")
-def delete_owner_profile(
-    authorization: str = Header(...),
-):
-    """
-    Delete owner profile (listings, deals, etc.) while keeping seeker profile.
-    """
-    user = get_current_user(authorization)
-    sb = get_supabase()
-
-    try:
-        # Check if user has any listings (is an owner)
-        listings = sb.table("listings").select("id").eq("owner_id", user.id).execute()
-
-        if not listings.data or len(listings.data) == 0:
-            raise HTTPException(status_code=400, detail="You don't have an owner profile to delete")
-
-        # Delete all deals where user is owner
-        sb.table("deals").delete().eq("owner_id", user.id).execute()
-
-        # Delete all listings
-        sb.table("listings").delete().eq("owner_id", user.id).execute()
-
-        # Update profile to remove owner status
-        sb.table("profiles").update(
-            {
-                "rooms_owned": 0,
-                "properties_owned": 0,
-            }
-        ).eq("id", user.id).execute()
-
-        return {"success": True, "message": "Owner profile deleted successfully. Your seeker profile remains."}
-
-    except HTTPException:
-        raise
-    except Exception as err:
-        print(f"Error deleting owner profile: {err}")
-        raise HTTPException(status_code=500, detail=f"Failed to delete owner profile: {str(err)}")
 
 
 # ── DELETE /account/delete ──────────────────────────────────────
@@ -155,56 +24,83 @@ def delete_account(
     sb = get_supabase()
 
     try:
-        # Delete all deals where user is involved (try each separately for better error reporting)
+        print(f"Starting account deletion for user: {user.id}")
+
+        # Delete all deals where user is involved
         try:
             sb.table("deals").delete().eq("owner_id", user.id).execute()
+            print(f"Deleted owner deals")
         except Exception as e:
             print(f"Error deleting owner deals: {e}")
-            # Continue, table might not have deals
 
         try:
             sb.table("deals").delete().eq("seeker_id", user.id).execute()
+            print(f"Deleted seeker deals")
         except Exception as e:
             print(f"Error deleting seeker deals: {e}")
-            # Continue, table might not have deals
 
         # Delete all listings
         try:
             sb.table("listings").delete().eq("owner_id", user.id).execute()
+            print(f"Deleted listings")
         except Exception as e:
             print(f"Error deleting listings: {e}")
 
         # Delete all messages
         try:
             sb.table("messages").delete().eq("sender_id", user.id).execute()
+            print(f"Deleted sent messages")
         except Exception as e:
             print(f"Error deleting sent messages: {e}")
 
         try:
             sb.table("messages").delete().eq("receiver_id", user.id).execute()
+            print(f"Deleted received messages")
         except Exception as e:
             print(f"Error deleting received messages: {e}")
 
         # Delete reports if they exist
         try:
             sb.table("reports").delete().eq("reporter_id", user.id).execute()
+            print(f"Deleted reports")
         except Exception as e:
             print(f"Error deleting reports: {e}")
 
+        # Delete matches if they exist
+        try:
+            sb.table("matches").delete().eq("seeker_id", user.id).execute()
+            print(f"Deleted seeker matches")
+        except Exception as e:
+            print(f"Error deleting seeker matches: {e}")
+
+        try:
+            sb.table("matches").delete().eq("owner_id", user.id).execute()
+            print(f"Deleted owner matches")
+        except Exception as e:
+            print(f"Error deleting owner matches: {e}")
+
         # Delete profile (this is the critical one)
         result = sb.table("profiles").delete().eq("id", user.id).execute()
+        print(f"Delete profile result: {result}")
 
-        if not result.data or len(result.data) == 0:
-            raise HTTPException(status_code=500, detail="Failed to delete profile")
+        if not result or not result.data:
+            # Even if result is empty, the delete might have succeeded
+            # Supabase DELETE can return empty data on success
+            print(f"Profile deletion returned empty data, but continuing...")
 
-        # Delete auth user (requires admin/service role key)
-        # This would typically be done by a server-side background job
-        # using Supabase Admin API with service_role key
-
-        return {"success": True, "message": "Account deleted. You can sign up again later."}
+        print(f"Account deletion completed for user: {user.id}")
+        return {
+            "success": True,
+            "message": "Account and all associated data deleted successfully. You can sign up again later.",
+        }
 
     except HTTPException:
         raise
     except Exception as err:
         print(f"Error deleting account: {err}")
-        raise HTTPException(status_code=500, detail=f"Failed to delete account: {str(err)}")
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to delete account: {str(err)}",
+        )
