@@ -39,8 +39,8 @@ def disable_account(
             }
         ).eq("id", user.id).execute()
 
-        if not result.data:
-            raise HTTPException(status_code=500, detail="Failed to disable account")
+        if not result.data or len(result.data) == 0:
+            raise HTTPException(status_code=500, detail="Failed to disable account - profile not found")
 
         return {"success": True, "message": "Account disabled. Use your recovery password to re-enable."}
 
@@ -85,8 +85,8 @@ def enable_account(
             }
         ).eq("id", user.id).execute()
 
-        if not result.data:
-            raise HTTPException(status_code=500, detail="Failed to enable account")
+        if not result.data or len(result.data) == 0:
+            raise HTTPException(status_code=500, detail="Failed to enable account - profile not found")
 
         return {"success": True, "message": "Account re-enabled successfully"}
 
@@ -155,22 +155,47 @@ def delete_account(
     sb = get_supabase()
 
     try:
-        # Delete all deals where user is involved
-        sb.table("deals").delete().eq("owner_id", user.id).execute()
-        sb.table("deals").delete().eq("seeker_id", user.id).execute()
+        # Delete all deals where user is involved (try each separately for better error reporting)
+        try:
+            sb.table("deals").delete().eq("owner_id", user.id).execute()
+        except Exception as e:
+            print(f"Error deleting owner deals: {e}")
+            # Continue, table might not have deals
+
+        try:
+            sb.table("deals").delete().eq("seeker_id", user.id).execute()
+        except Exception as e:
+            print(f"Error deleting seeker deals: {e}")
+            # Continue, table might not have deals
 
         # Delete all listings
-        sb.table("listings").delete().eq("owner_id", user.id).execute()
+        try:
+            sb.table("listings").delete().eq("owner_id", user.id).execute()
+        except Exception as e:
+            print(f"Error deleting listings: {e}")
 
         # Delete all messages
-        sb.table("messages").delete().eq("sender_id", user.id).execute()
-        sb.table("messages").delete().eq("receiver_id", user.id).execute()
+        try:
+            sb.table("messages").delete().eq("sender_id", user.id).execute()
+        except Exception as e:
+            print(f"Error deleting sent messages: {e}")
 
-        # Delete reports
-        sb.table("reports").delete().eq("reporter_id", user.id).execute()
+        try:
+            sb.table("messages").delete().eq("receiver_id", user.id).execute()
+        except Exception as e:
+            print(f"Error deleting received messages: {e}")
 
-        # Delete profile
-        sb.table("profiles").delete().eq("id", user.id).execute()
+        # Delete reports if they exist
+        try:
+            sb.table("reports").delete().eq("reporter_id", user.id).execute()
+        except Exception as e:
+            print(f"Error deleting reports: {e}")
+
+        # Delete profile (this is the critical one)
+        result = sb.table("profiles").delete().eq("id", user.id).execute()
+
+        if not result.data or len(result.data) == 0:
+            raise HTTPException(status_code=500, detail="Failed to delete profile")
 
         # Delete auth user (requires admin/service role key)
         # This would typically be done by a server-side background job
@@ -178,6 +203,8 @@ def delete_account(
 
         return {"success": True, "message": "Account deleted. You can sign up again later."}
 
+    except HTTPException:
+        raise
     except Exception as err:
         print(f"Error deleting account: {err}")
         raise HTTPException(status_code=500, detail=f"Failed to delete account: {str(err)}")
