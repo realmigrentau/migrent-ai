@@ -15,6 +15,12 @@ def get_supabase() -> Client:
 
 def get_supabase_admin() -> Client:
     """Get Supabase client with service role key (for admin operations)."""
-    if not SUPABASE_URL or not SUPABASE_SERVICE_ROLE_KEY:
-        raise RuntimeError("SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY must be set")
-    return create_client(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
+    if not SUPABASE_URL:
+        raise RuntimeError("SUPABASE_URL must be set")
+
+    # If service role key is available, use it; otherwise fall back to anon key
+    key = SUPABASE_SERVICE_ROLE_KEY or SUPABASE_ANON_KEY
+    if not key:
+        raise RuntimeError("SUPABASE_SERVICE_ROLE_KEY or SUPABASE_ANON_KEY must be set")
+
+    return create_client(SUPABASE_URL, key)
