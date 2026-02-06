@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException, Header
 from models import ProfileUpdate
 from db import get_supabase, get_supabase_admin
 from routes_listings import get_current_user
+import time
 
 router = APIRouter(prefix="/profiles", tags=["profiles"])
 
@@ -10,34 +11,24 @@ router = APIRouter(prefix="/profiles", tags=["profiles"])
 def get_my_profile(authorization: str = Header(...)):
     """Get the current user's profile."""
     user = get_current_user(authorization)
-    sb_admin = get_supabase_admin()
+    sb = get_supabase_admin()
 
     try:
-        res = sb_admin.table("profiles").select("*").eq("id", user.id).execute()
-        if not res.data:
-            # Auto-create a profile row if it doesn't exist
-            row = {"id": user.id, "role": "user"}
-            try:
-                sb_admin.table("profiles").insert(row).execute()
-            except Exception as e:
-                print(f"Error creating profile: {e}")
-            print(f"Created new profile row for user {user.id}")
-            return row
+        # Use a simple, direct query
+        result = sb.from_("profiles").select("*").eq("id", str(user.id)).execute()
 
-        profile = res.data[0]
-        print(f"=== PROFILE FETCH DEBUG ===")
-        print(f"User ID: {user.id}")
-        print(f"Full profile object: {profile}")
-        print(f"legal_name: {profile.get('legal_name')}")
-        print(f"preferred_name: {profile.get('preferred_name')}")
-        print(f"residential_address: {profile.get('residential_address')}")
-        print(f"===========================")
-        return profile
+        if not result.data or len(result.data) == 0:
+            # Create profile if it doesn't exist
+            new_profile = {"id": str(user.id), "role": "user"}
+            sb.from_("profiles").insert(new_profile).execute()
+            return new_profile
+
+        return result.data[0]
     except Exception as e:
-        print(f"Error fetching profile: {e}")
+        print(f"ERROR in get_my_profile: {e}")
         import traceback
         traceback.print_exc()
-        raise HTTPException(status_code=500, detail=f"Failed to fetch profile: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.patch("/me")
@@ -47,7 +38,7 @@ def update_my_profile(
 ):
     """Update the current user's profile. Only non-null fields are updated."""
     user = get_current_user(authorization)
-    sb_admin = get_supabase_admin()
+    sb = get_supabase_admin()
 
     # Build update dict from non-None fields
     updates = {}
@@ -58,41 +49,38 @@ def update_my_profile(
     if not updates:
         raise HTTPException(status_code=400, detail="No fields to update")
 
-    # Ensure profile row exists
     try:
-        existing = sb_admin.table("profiles").select("id").eq("id", user.id).execute()
+        user_id = str(user.id)
+
+        # Ensure profile exists first
+        existing = sb.from_("profiles").select("id").eq("id", user_id).execute()
         if not existing.data:
-            # Create the profile first
-            try:
-                sb_admin.table("profiles").insert({"id": user.id, "role": "user"}).execute()
-            except Exception as e:
-                print(f"Error creating profile: {e}")
-    except Exception as e:
-        print(f"Error checking profile existence: {e}")
+            sb.from_("profiles").insert({"id": user_id, "role": "user"}).execute()
 
-    try:
-        # Simple update - just save the data
-        print(f"Updating profile for user {user.id}")
-        print(f"Fields to update: {list(updates.keys())}")
+        # Do the update
+        print(f"[UPDATE] User {user_id}: {list(updates.keys())}")
+        update_result = sb.from_("profiles").update(updates).eq("id", user_id).execute()
+        print(f"[UPDATE] Result: {update_result}")
 
-        res = sb_admin.table("profiles").update(updates).eq("id", user.id).execute()
+        # Wait a tiny bit for database to settle
+        time.sleep(0.1)
 
-        # Fetch the updated profile back
-        fetch_res = sb_admin.table("profiles").select("*").eq("id", user.id).execute()
+        # Fetch back the updated profile
+        fetch_result = sb.from_("profiles").select("*").eq("id", user_id).execute()
+        print(f"[FETCH] Result: {fetch_result}")
 
-        if fetch_res.data and len(fetch_res.data) > 0:
-            return fetch_res.data[0]
-        elif res.data and len(res.data) > 0:
-            return res.data[0]
+        if fetch_result.data and len(fetch_result.data) > 0:
+            return fetch_result.data[0]
         else:
-            # Return what we tried to save
+            # If fetch fails, return the updates we sent
+            print(f"[FALLBACK] Returning updates dict")
             return updates
 
     except Exception as e:
-        print(f"Error updating profile: {e}")
+        print(f"ERROR in update_my_profile: {e}")
         import traceback
         traceback.print_exc()
-        raise HTTPException(status_code=500, detail=f"Failed to update profile: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.get("/{user_id}")
