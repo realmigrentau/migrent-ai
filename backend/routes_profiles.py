@@ -71,43 +71,25 @@ def update_my_profile(
         print(f"Error checking profile existence: {e}")
 
     try:
-        from db import SUPABASE_SERVICE_ROLE_KEY
-
-        print(f"\n=== PROFILE UPDATE START ===")
-        print(f"User ID: {user.id}")
-        print(f"Updates to apply: {updates}")
-        print(f"Using admin client with key: {'SERVICE_ROLE' if SUPABASE_SERVICE_ROLE_KEY else 'ANON'}")
+        # Simple update - just save the data
+        print(f"Updating profile for user {user.id}")
+        print(f"Fields to update: {list(updates.keys())}")
 
         res = sb_admin.table("profiles").update(updates).eq("id", user.id).execute()
-        print(f"Update response status: {res}")
-        print(f"Update result data: {res.data}")
 
-        if not res.data or len(res.data) == 0:
-            print(f"⚠️  WARNING: Update returned empty data")
-            print(f"   This usually means the UPDATE succeeded but returned no rows")
-            print(f"   OR the UPDATE was blocked by RLS")
-
-        # Fetch the full updated profile after update
-        print(f"Fetching updated profile...")
+        # Fetch the updated profile back
         fetch_res = sb_admin.table("profiles").select("*").eq("id", user.id).execute()
-        print(f"Fetch response: {fetch_res}")
-        print(f"Fetched data: {fetch_res.data}")
 
         if fetch_res.data and len(fetch_res.data) > 0:
-            profile = fetch_res.data[0]
-            print(f"✅ SUCCESS: Got updated profile from fetch")
-            print(f"Profile data: {profile}")
-            return profile
+            return fetch_res.data[0]
         elif res.data and len(res.data) > 0:
-            print(f"✅ Using data from update result (fetch returned empty)")
             return res.data[0]
         else:
-            # Fallback: return the updates that were sent
-            print(f"🔴 CRITICAL: Both fetch and update returned empty")
-            print(f"   Returning fallback data (this means data may NOT be in database)")
+            # Return what we tried to save
             return updates
+
     except Exception as e:
-        print(f"❌ Exception during profile update: {e}")
+        print(f"Error updating profile: {e}")
         import traceback
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"Failed to update profile: {str(e)}")
