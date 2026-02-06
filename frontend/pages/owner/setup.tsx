@@ -20,7 +20,7 @@ export default function OwnerSetupPage() {
   // If already an owner, redirect to dashboard
   useEffect(() => {
     if (!loading && user?.user_metadata?.owner_account === true) {
-      router.replace("/owner/dashboard");
+      router.replace("/dashboard/owner");
     }
   }, [loading, user, router]);
 
@@ -42,7 +42,7 @@ export default function OwnerSetupPage() {
           full_name: form.name,
         },
       });
-      router.push("/owner/dashboard");
+      router.push("/dashboard/owner");
     } catch {
       setSaving(false);
     }
@@ -121,7 +121,7 @@ export default function OwnerSetupPage() {
             </motion.button>
 
             <Link
-              href="/seeker/dashboard"
+              href="/dashboard/seeker"
               className="block text-sm text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 mt-4 transition-colors"
             >
               Not an owner? Go to seeker dashboard
