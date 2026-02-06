@@ -18,18 +18,19 @@ import { getMatches, createVerificationSession } from "../../lib/api";
  */
 export default function SeekerDashboard() {
   const router = useRouter();
-  const { role, displayName, session, loading } = useDashboard();
+  const { role, displayName, session, loading, setRole } = useDashboard();
 
   const [postcode, setPostcode] = useState("");
   const [matches, setMatches] = useState<any[]>([]);
   const [searching, setSearching] = useState(false);
 
-  // Redirect if not a seeker
+  // Set role to seeker if not already
   useEffect(() => {
-    if (!loading && role && role !== "seeker") {
-      router.replace("/dashboard/owner");
+    if (!loading && session && role !== "seeker") {
+      // User navigated here explicitly, set their role to seeker
+      setRole("seeker");
     }
-  }, [loading, role, router]);
+  }, [loading, session, role, setRole]);
 
   const handleSearch = async () => {
     if (!postcode || !session) return;

@@ -17,17 +17,18 @@ import { getListings } from "../../lib/api";
  */
 export default function OwnerDashboard() {
   const router = useRouter();
-  const { role, displayName, session, user, loading } = useDashboard();
+  const { role, displayName, session, user, loading, setRole } = useDashboard();
 
   const [listings, setListings] = useState<any[]>([]);
   const [loadingListings, setLoadingListings] = useState(true);
 
-  // Redirect if not an owner
+  // Set role to owner if not already
   useEffect(() => {
-    if (!loading && role && role !== "owner") {
-      router.replace("/dashboard/seeker");
+    if (!loading && session && role !== "owner") {
+      // User navigated here explicitly, set their role to owner
+      setRole("owner");
     }
-  }, [loading, role, router]);
+  }, [loading, session, role, setRole]);
 
   // Check if owner setup is complete
   useEffect(() => {

@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "../../hooks/useAuth";
 import { getMyProfile, updateMyProfile, refreshBadges } from "../../lib/api";
+import { supabase } from "../../lib/supabase";
 import DashboardLayout from "../../components/DashboardLayout";
 
 const OWNER_BADGES = [
@@ -28,6 +29,8 @@ export default function OwnerProfilePage() {
 
   const [saved, setSaved] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [loadingProfile, setLoadingProfile] = useState(true);
   const [roomsOpen, setRoomsOpen] = useState(false);
   const [propsOpen, setPropsOpen] = useState(false);
@@ -129,6 +132,25 @@ export default function OwnerProfilePage() {
       console.error("Save failed:", err);
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleDeleteProfile = async () => {
+    setDeleting(true);
+    try {
+      // Remove owner_account flag from user metadata
+      await supabase.auth.updateUser({
+        data: {
+          owner_account: false,
+        },
+      });
+      // Clear the dashboard cache
+      localStorage.removeItem("migrent_dashboard_profile");
+      // Redirect to dashboard
+      router.push("/dashboard");
+    } catch (err) {
+      console.error("Delete failed:", err);
+      setDeleting(false);
     }
   };
 
@@ -529,11 +551,12 @@ export default function OwnerProfilePage() {
         </div>
       </motion.section>
 
-      {/* Save */}
+      {/* Save & Delete */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.25 }}
+        className="flex items-center gap-4"
       >
         <motion.button
           whileHover={{ scale: 1.02 }}
@@ -553,16 +576,54 @@ export default function OwnerProfilePage() {
             "Save profile"
           )}
         </motion.button>
-        {saved && (
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="text-sm text-emerald-600 dark:text-emerald-400 mt-3"
+
+        {!showDeleteConfirm ? (
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => setShowDeleteConfirm(true)}
+            className="py-3 px-6 rounded-xl text-sm font-bold text-red-500 border border-red-200 dark:border-red-500/30 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
           >
-            Profile saved successfully.
-          </motion.p>
+            Delete Profile
+          </motion.button>
+        ) : (
+          <div className="flex items-center gap-2">
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={handleDeleteProfile}
+              disabled={deleting}
+              className="py-3 px-6 rounded-xl text-sm font-bold text-white bg-red-500 hover:bg-red-600 transition-colors disabled:opacity-50"
+            >
+              {deleting ? (
+                <span className="flex items-center gap-2">
+                  <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  Deleting...
+                </span>
+              ) : (
+                "Confirm Delete"
+              )}
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => setShowDeleteConfirm(false)}
+              className="py-3 px-4 rounded-xl text-sm font-medium text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition-colors"
+            >
+              Cancel
+            </motion.button>
+          </div>
         )}
       </motion.div>
+      {saved && (
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="text-sm text-emerald-600 dark:text-emerald-400 mt-3"
+        >
+          Profile saved successfully.
+        </motion.p>
+      )}
     </div>
     </DashboardLayout>
   );
