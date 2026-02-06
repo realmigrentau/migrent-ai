@@ -50,9 +50,10 @@ export function useDashboard() {
           user?.email?.split("@")[0] ||
           null;
 
-        // Get role ONLY from profile table - user must explicitly choose
-        // Don't use user_metadata.type since that's from signup, not dashboard choice
-        const role: UserRole = profile?.role || null;
+        // Get role from profile table first, then fall back to user_metadata.type from signup
+        const metadataType = user?.user_metadata?.type;
+        const validMetadataRole = metadataType === "seeker" || metadataType === "owner" ? metadataType : null;
+        const role: UserRole = profile?.role || validMetadataRole;
 
         setState({
           role,
