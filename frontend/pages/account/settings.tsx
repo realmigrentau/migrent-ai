@@ -126,28 +126,39 @@ export default function SettingsPage() {
   };
 
   const handleSaveProfile = async () => {
-    if (!session) return;
+    if (!session) {
+      setMessage("Not authenticated");
+      return;
+    }
     setSaving(true);
     setMessage("");
 
     try {
       const updates: any = {
-        legal_name: legalName,
-        preferred_name: preferredName,
-        phones: phones.filter((p) => p.trim()),
-        residential_address: { address: residentialAddress },
-        preferred_language: preferredLanguage,
-        timezone: timezone,
+        legal_name: legalName || null,
+        preferred_name: preferredName || null,
+        phones: phones.filter((p) => p.trim()) || null,
+        residential_address: residentialAddress ? { address: residentialAddress } : null,
+        preferred_language: preferredLanguage || "en",
+        timezone: timezone || "Australia/Sydney",
       };
 
+      console.log("Saving profile with updates:", updates);
+
       const result = await updateMyProfile(session.access_token, updates);
+      console.log("Profile update result:", result);
+
       if (result) {
-        setMessage("Profile updated successfully!");
-        setTimeout(() => setMessage(""), 3000);
+        setMessage("✓ Profile saved successfully!");
+        setTimeout(() => setMessage(""), 4000);
+        // Refresh profile to confirm
+        await fetchProfile();
+      } else {
+        setMessage("Failed to save profile");
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error("Failed to save profile:", err);
-      setMessage("Failed to save profile");
+      setMessage(`Error: ${err?.message || "Failed to save profile"}`);
     } finally {
       setSaving(false);
     }

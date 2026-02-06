@@ -53,11 +53,18 @@ def update_my_profile(
             pass
 
     try:
+        print(f"Updating profile {user.id} with: {updates}")
         res = sb.table("profiles").update(updates).eq("id", user.id).execute()
+        print(f"Update result: {res.data}")
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        print(f"Error updating profile: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to update profile: {str(e)}")
 
-    return res.data[0] if res.data else updates
+    if res.data and len(res.data) > 0:
+        return res.data[0]
+    else:
+        # Return the updates if no data returned (which sometimes happens with Supabase)
+        return updates
 
 
 @router.get("/{user_id}")
