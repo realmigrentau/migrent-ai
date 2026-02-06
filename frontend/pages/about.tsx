@@ -157,6 +157,79 @@ export default function About() {
         </div>
       </motion.section>
 
+      {/* Contact form */}
+      <section className="space-y-4">
+        <h2 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">
+          Contact us
+        </h2>
+        <form onSubmit={handleSubmit} className="card p-6 rounded-2xl space-y-4 relative">
+          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-rose-400/50 to-transparent" />
+          <input
+            type="text"
+            placeholder="Name *"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+            className="input-field"
+          />
+          <input
+            type="email"
+            placeholder="Email *"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            className="input-field"
+          />
+          <select
+            value={role}
+            onChange={(e) => setRole(e.target.value as "seeker" | "owner")}
+            className="input-field"
+          >
+            <option value="seeker">I am a Seeker</option>
+            <option value="owner">I am an Owner</option>
+          </select>
+          <textarea
+            placeholder="Message *"
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            rows={4}
+            required
+            className="input-field"
+          />
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            type="submit"
+            className="btn-primary py-3 px-6 rounded-xl text-sm"
+          >
+            Send Message
+          </motion.button>
+          {status && (
+            <motion.p
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className={`text-sm p-3 rounded-xl ${
+                status.includes("submitted")
+                  ? "bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 text-emerald-600 dark:text-emerald-400"
+                  : "bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20 text-amber-600 dark:text-amber-400"
+              }`}
+            >
+              {status}
+            </motion.p>
+          )}
+        </form>
+        <p className="text-sm text-slate-500 dark:text-slate-400">
+          You can also reach us at{" "}
+          <a
+            href="mailto:migrentau@gmail.com"
+            className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors"
+          >
+            migrentau@gmail.com
+          </a>
+          .
+        </p>
+      </section>
+
       {/* Safety & Verification */}
       <section className="space-y-4">
         <h2 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">
@@ -427,78 +500,6 @@ export default function About() {
             />
           </div>
         </div>
-
-        {/* Contact form */}
-        <div>
-          <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-4">Contact us</h3>
-          <form onSubmit={handleSubmit} className="card p-6 rounded-2xl space-y-4 relative">
-            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-rose-400/50 to-transparent" />
-            <input
-              type="text"
-              placeholder="Name *"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-              className="input-field"
-            />
-            <input
-              type="email"
-              placeholder="Email *"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="input-field"
-            />
-            <select
-              value={role}
-              onChange={(e) => setRole(e.target.value as "seeker" | "owner")}
-              className="input-field"
-            >
-              <option value="seeker">I am a Seeker</option>
-              <option value="owner">I am an Owner</option>
-            </select>
-            <textarea
-              placeholder="Message *"
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              rows={4}
-              required
-              className="input-field"
-            />
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              type="submit"
-              className="btn-primary py-3 px-6 rounded-xl text-sm"
-            >
-              Send Message
-            </motion.button>
-            {status && (
-              <motion.p
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className={`text-sm p-3 rounded-xl ${
-                  status.includes("submitted")
-                    ? "bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 text-emerald-600 dark:text-emerald-400"
-                    : "bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20 text-amber-600 dark:text-amber-400"
-                }`}
-              >
-                {status}
-              </motion.p>
-            )}
-          </form>
-        </div>
-
-        <p className="text-sm text-slate-500 dark:text-slate-400">
-          You can also reach us at{" "}
-          <a
-            href="mailto:migrentau@gmail.com"
-            className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors"
-          >
-            migrentau@gmail.com
-          </a>
-          .
-        </p>
 
         <motion.section
           initial={{ opacity: 0, y: 20 }}
