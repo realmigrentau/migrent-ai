@@ -184,8 +184,8 @@ export default function SettingsPage() {
   const handleDeleteAccount = async () => {
     setSaving(true);
     try {
-      // Call backend to hard delete user data
-      const res = await fetch("/api/account/delete", {
+      const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
+      const res = await fetch(`${BASE_URL}/account/delete`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${session?.access_token}`,
@@ -196,7 +196,8 @@ export default function SettingsPage() {
         await supabase.auth.signOut();
         window.location.href = "/";
       } else {
-        setMessage("Failed to delete account");
+        const error = await res.json();
+        setMessage(error.detail || "Failed to delete account");
       }
     } catch (err) {
       console.error("Failed to delete account:", err);
@@ -209,8 +210,8 @@ export default function SettingsPage() {
   const handleDeleteOwnerProfile = async () => {
     setSaving(true);
     try {
-      // Call backend to delete owner profile (listings, deals, etc.)
-      const res = await fetch("/api/account/delete-owner-profile", {
+      const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
+      const res = await fetch(`${BASE_URL}/account/delete-owner-profile`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${session?.access_token}`,
@@ -223,7 +224,8 @@ export default function SettingsPage() {
         // Optionally reload profile
         await fetchProfile();
       } else {
-        setMessage("Failed to delete owner profile");
+        const error = await res.json();
+        setMessage(error.detail || "Failed to delete owner profile");
       }
     } catch (err) {
       console.error("Failed to delete owner profile:", err);
@@ -245,8 +247,8 @@ export default function SettingsPage() {
 
     setSaving(true);
     try {
-      // Call backend to disable account with recovery password
-      const res = await fetch("/api/account/disable", {
+      const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
+      const res = await fetch(`${BASE_URL}/account/disable`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -266,7 +268,8 @@ export default function SettingsPage() {
           window.location.href = "/";
         }, 2000);
       } else {
-        setMessage("Failed to disable account");
+        const error = await res.json();
+        setMessage(error.detail || "Failed to disable account");
       }
     } catch (err) {
       console.error("Failed to disable account:", err);
@@ -305,9 +308,9 @@ export default function SettingsPage() {
 
   const tabs: Array<{ id: TabType; label: string; icon: string }> = [
     { id: "personal", label: "Personal info", icon: "👤" },
-    { id: "security", label: "Security", icon: "🔒" },
-    { id: "payments", label: "Payments", icon: "💳" },
-    { id: "languages", label: "Essentials", icon: "🌐" },
+    { id: "security", label: "Security", icon: "🔐" },
+    { id: "payments", label: "Payments", icon: "💰" },
+    { id: "languages", label: "Essentials", icon: "⚙️" },
   ];
 
   return (
@@ -530,8 +533,8 @@ export default function SettingsPage() {
             <div className="space-y-6">
               {/* Account ID */}
               <div className="card p-6 rounded-2xl space-y-4">
-                <h2 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                  <span>🔑</span> Account ID
+                <h2 className="text-lg font-bold text-slate-900 dark:text-white">
+                  Account ID
                 </h2>
                 <div>
                   <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
@@ -548,8 +551,8 @@ export default function SettingsPage() {
 
               {/* Change Password */}
               <div className="card p-6 rounded-2xl space-y-4">
-                <h2 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                  <span>🔐</span> Password
+                <h2 className="text-lg font-bold text-slate-900 dark:text-white">
+                  Password
                 </h2>
                 <input
                   type="password"
@@ -583,8 +586,8 @@ export default function SettingsPage() {
 
               {/* Connected Accounts */}
               <div className="card p-6 rounded-2xl space-y-4">
-                <h2 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                  <span>🔗</span> Connected Accounts
+                <h2 className="text-lg font-bold text-slate-900 dark:text-white">
+                  Connected Accounts
                 </h2>
                 <div className="space-y-3">
                   <div className="flex items-center justify-between p-3 rounded-xl border border-slate-200 dark:border-slate-700">
@@ -623,8 +626,8 @@ export default function SettingsPage() {
 
               {/* Danger Zone */}
               <div className="card p-6 rounded-2xl space-y-4 border-red-200 dark:border-red-500/20">
-                <h2 className="text-lg font-bold text-red-600 dark:text-red-400 flex items-center gap-2">
-                  <span>⚠️</span> Danger Zone
+                <h2 className="text-lg font-bold text-red-600 dark:text-red-400">
+                  Danger Zone
                 </h2>
 
                 <div className="space-y-4">
@@ -773,8 +776,8 @@ export default function SettingsPage() {
           {activeTab === "payments" && (
             <div className="space-y-6">
               <div className="card p-6 rounded-2xl space-y-4">
-                <h2 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                  <span>💳</span> Payment Methods
+                <h2 className="text-lg font-bold text-slate-900 dark:text-white">
+                  Payment Methods
                 </h2>
                 <p className="text-sm text-slate-500 dark:text-slate-400">
                   Payment methods coming soon
@@ -782,8 +785,8 @@ export default function SettingsPage() {
               </div>
 
               <div className="card p-6 rounded-2xl space-y-4">
-                <h2 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                  <span>📊</span> Active Deals
+                <h2 className="text-lg font-bold text-slate-900 dark:text-white">
+                  Active Deals
                 </h2>
                 <p className="text-sm text-slate-500 dark:text-slate-400">
                   No active deals at the moment
@@ -791,8 +794,8 @@ export default function SettingsPage() {
               </div>
 
               <div className="card p-6 rounded-2xl space-y-4">
-                <h2 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                  <span>💰</span> Payout History
+                <h2 className="text-lg font-bold text-slate-900 dark:text-white">
+                  Payout History
                 </h2>
                 <p className="text-sm text-slate-500 dark:text-slate-400">
                   No payouts yet
@@ -805,8 +808,8 @@ export default function SettingsPage() {
           {activeTab === "languages" && (
             <div className="space-y-6">
               <div className="card p-6 rounded-2xl space-y-4">
-                <h2 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                  <span>🌐</span> Essentials
+                <h2 className="text-lg font-bold text-slate-900 dark:text-white">
+                  Essentials
                 </h2>
 
                 <div className="space-y-4">
