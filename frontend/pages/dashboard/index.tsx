@@ -315,8 +315,8 @@ export default function DashboardHome() {
           </motion.section>
         )}
 
-        {/* Quick links (if role is set) */}
-        {role && (
+        {/* Quick links (if role is set and not switching roles) */}
+        {role && !showRoleSelection && (
           <>
             {/* Primary action card */}
             <motion.section
