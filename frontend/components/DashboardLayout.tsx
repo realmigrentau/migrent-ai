@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { motion } from "framer-motion";
 import { useAuth } from "../hooks/useAuth";
 import { useDashboard, UserRole } from "../hooks/useDashboard";
+import { useOnboarding } from "../hooks/useOnboarding";
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -23,13 +24,15 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const { signOut } = useAuth();
   const { role, displayName, isAuthenticated, loading, authLoading } =
     useDashboard();
+  const { isCompleted: onboardingCompleted, isLoading: onboardingLoading } =
+    useOnboarding();
 
   // Theme colors based on role
   const isOwner = role === "owner";
   const accentColor = isOwner ? "blue" : "rose";
 
   // Show loading spinner while checking auth
-  if (authLoading || loading) {
+  if (authLoading || loading || onboardingLoading) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
         <div className="text-center space-y-4">
@@ -53,6 +56,23 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           <div className="w-10 h-10 border-2 border-rose-300 dark:border-rose-500/30 border-t-rose-500 rounded-full animate-spin mx-auto" />
           <p className="text-sm text-slate-500 dark:text-slate-400">
             Redirecting to login...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Redirect to onboarding if not completed
+  if (!onboardingCompleted && !onboardingLoading) {
+    if (typeof window !== "undefined") {
+      router.replace("/onboarding");
+    }
+    return (
+      <div className="min-h-[60vh] flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <div className="w-10 h-10 border-2 border-rose-300 dark:border-rose-500/30 border-t-rose-500 rounded-full animate-spin mx-auto" />
+          <p className="text-sm text-slate-500 dark:text-slate-400">
+            Completing setup...
           </p>
         </div>
       </div>
