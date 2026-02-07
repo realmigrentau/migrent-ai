@@ -116,7 +116,7 @@ export default function SeekerSearchExtended() {
   const [children, setChildren] = useState(0);
   const [infants, setInfants] = useState(0);
   const [pets, setPets] = useState(0);
-  const [maxPrice, setMaxPrice] = useState(100);
+  const [maxPrice, setMaxPrice] = useState(500);
 
   // Close calendar when clicking outside
   useEffect(() => {
@@ -520,16 +520,16 @@ export default function SeekerSearchExtended() {
           </label>
           <input
             type="range"
-            min="20"
-            max="200"
-            step="5"
+            min="200"
+            max="1000"
+            step="10"
             value={maxPrice}
             onChange={(e) => setMaxPrice(Number(e.target.value))}
             className="w-full accent-rose-500"
           />
           <div className="flex justify-between text-xs text-slate-400 mt-1">
-            <span>$20</span>
             <span>$200</span>
+            <span>$1000</span>
           </div>
         </div>
 

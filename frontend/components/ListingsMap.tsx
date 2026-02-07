@@ -72,15 +72,26 @@ export default function ListingsMap({ listings, isDark }: ListingsMapProps) {
     });
   };
 
-  // Initialize map
+  // Initialize map — recreate when theme changes to swap tile style
   useEffect(() => {
     if (!mapContainer.current) return;
+
+    // Preserve current view when switching themes
+    const center = map.current?.getCenter();
+    const zoom = map.current?.getZoom();
+
+    // Clean up previous map instance
+    markersRef.current.forEach((m) => m.remove());
+    markersRef.current = [];
+    map.current?.remove();
+    map.current = null;
+    mapReady.current = false;
 
     map.current = new maplibregl.Map({
       container: mapContainer.current,
       style: getStyleUrl(isDark),
-      center: [151.206, -33.892],
-      zoom: 13,
+      center: center ? [center.lng, center.lat] : [151.206, -33.892],
+      zoom: zoom ?? 13,
     });
 
     map.current.addControl(new maplibregl.NavigationControl(), "top-right");
@@ -95,16 +106,6 @@ export default function ListingsMap({ listings, isDark }: ListingsMapProps) {
       map.current?.remove();
       map.current = null;
     };
-  }, []);
-
-  // Update style on theme change
-  useEffect(() => {
-    if (!map.current || !mapReady.current) return;
-    map.current.setStyle(getStyleUrl(isDark));
-    // Re-add markers after new style loads
-    map.current.once("style.load", () => {
-      addMarkers(listings);
-    });
   }, [isDark]);
 
   // Update markers when listings change
