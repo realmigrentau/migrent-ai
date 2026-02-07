@@ -42,10 +42,11 @@ export interface SignupFunnel {
 }
 
 // ─── Fetch Real Users from profiles table ───
+// Note: Requires superadmin RLS policy to see all users
 export async function fetchAdminUsers(): Promise<AdminUser[]> {
   const { data, error } = await supabase
     .from("profiles")
-    .select("id, email, role, created_at, last_sign_in_at, email_verified, suspended")
+    .select("id, role, verified, created_at, name, legal_name")
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -55,12 +56,12 @@ export async function fetchAdminUsers(): Promise<AdminUser[]> {
 
   return (data || []).map((u: any) => ({
     id: u.id,
-    email: u.email || "No email",
+    email: u.legal_name || u.name || u.id?.slice(0, 8) + "...",
     role: u.role || "seeker",
     signupDate: u.created_at ? new Date(u.created_at).toISOString().split("T")[0] : "",
-    lastActive: u.last_sign_in_at ? new Date(u.last_sign_in_at).toISOString().split("T")[0] : "",
-    verified: u.email_verified ?? false,
-    suspended: u.suspended ?? false,
+    lastActive: "",
+    verified: u.verified ?? false,
+    suspended: false,
   }));
 }
 
