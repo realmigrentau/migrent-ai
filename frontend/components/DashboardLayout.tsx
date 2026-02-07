@@ -22,7 +22,7 @@ interface DashboardLayoutProps {
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const router = useRouter();
   const { signOut } = useAuth();
-  const { role, displayName, isAuthenticated, loading, authLoading } =
+  const { role, displayName, profilePhoto, isAuthenticated, loading, authLoading } =
     useDashboard();
   const { isCompleted: onboardingCompleted, isLoading: onboardingLoading } =
     useOnboarding();
@@ -167,8 +167,14 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         <div className="card-subtle p-4 rounded-xl">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className={`w-10 h-10 rounded-full bg-gradient-to-br ${isOwner ? "from-blue-500 to-blue-600" : "from-rose-500 to-rose-600"} flex items-center justify-center text-white font-bold text-sm`}>
-                {displayName?.charAt(0).toUpperCase() || "U"}
+              <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm overflow-hidden ${
+                profilePhoto ? "" : `bg-gradient-to-br ${isOwner ? "from-blue-500 to-blue-600" : "from-rose-500 to-rose-600"}`
+              }`}>
+                {profilePhoto ? (
+                  <img src={profilePhoto} alt="Profile" className="w-full h-full object-cover" />
+                ) : (
+                  displayName?.charAt(0).toUpperCase() || "U"
+                )}
               </div>
               <div>
                 <p className="font-semibold text-slate-900 dark:text-white text-sm">
@@ -231,8 +237,14 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           <div className="card p-6 rounded-2xl sticky top-24">
             {/* User info */}
             <div className="flex items-center gap-3 mb-6 pb-6 border-b border-slate-200 dark:border-slate-700">
-              <div className={`w-12 h-12 rounded-full bg-gradient-to-br ${isOwner ? "from-blue-500 to-blue-600" : "from-rose-500 to-rose-600"} flex items-center justify-center text-white font-bold`}>
-                {displayName?.charAt(0).toUpperCase() || "U"}
+              <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold overflow-hidden ${
+                profilePhoto ? "" : `bg-gradient-to-br ${isOwner ? "from-blue-500 to-blue-600" : "from-rose-500 to-rose-600"}`
+              }`}>
+                {profilePhoto ? (
+                  <img src={profilePhoto} alt="Profile" className="w-full h-full object-cover" />
+                ) : (
+                  displayName?.charAt(0).toUpperCase() || "U"
+                )}
               </div>
               <div className="flex-1 min-w-0">
                 <p className="font-semibold text-slate-900 dark:text-white truncate">

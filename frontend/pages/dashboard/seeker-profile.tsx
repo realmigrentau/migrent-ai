@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "../../hooks/useAuth";
+import { useDashboard } from "../../hooks/useDashboard";
 import { getMyProfile, updateMyProfile, refreshBadges } from "../../lib/api";
 import Link from "next/link";
 import DashboardLayout from "../../components/DashboardLayout";
@@ -66,6 +67,7 @@ const SEEKER_BADGES = [
 
 export default function SeekerProfilePage() {
   const { session, user, loading, signOut } = useAuth();
+  const { updateProfilePhoto } = useDashboard();
   const [saved, setSaved] = useState(false);
   const [saving, setSaving] = useState(false);
   const [loadingProfile, setLoadingProfile] = useState(true);
@@ -168,6 +170,8 @@ export default function SeekerProfilePage() {
     if (file) {
       const url = URL.createObjectURL(file);
       update("profilePhoto", url);
+      // Update sidebar avatar immediately
+      updateProfilePhoto(url);
     }
   };
 
@@ -243,7 +247,9 @@ export default function SeekerProfilePage() {
           <div className="relative group">
             <div
               onClick={() => fileRef.current?.click()}
-              className="w-20 h-20 rounded-full bg-gradient-to-br from-rose-400 to-rose-600 flex items-center justify-center text-white font-bold text-3xl shrink-0 cursor-pointer overflow-hidden ring-2 ring-white dark:ring-slate-800 shadow-lg"
+              className={`w-20 h-20 rounded-full flex items-center justify-center text-white font-bold text-3xl shrink-0 cursor-pointer overflow-hidden ring-2 ring-white dark:ring-slate-800 shadow-lg ${
+                profile.profilePhoto ? "" : "bg-gradient-to-br from-rose-400 to-rose-600"
+              }`}
             >
               {profile.profilePhoto ? (
                 <img src={profile.profilePhoto} alt="Profile" className="w-full h-full object-cover" />

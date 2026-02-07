@@ -10,11 +10,13 @@ interface DashboardState {
   loading: boolean;
   profileLoaded: boolean;
   displayName: string | null;
+  profilePhoto: string | null;
 }
 
 interface CachedProfile {
   role: UserRole;
   displayName: string | null;
+  profilePhoto: string | null;
   userId: string;
   timestamp: number;
 }
@@ -38,13 +40,13 @@ function getCachedProfile(): CachedProfile | null {
   }
 }
 
-function setCachedProfile(userId: string, role: UserRole, displayName: string | null) {
+function setCachedProfile(userId: string, role: UserRole, displayName: string | null, profilePhoto: string | null = null) {
   if (typeof window === "undefined") return;
   try {
-    const data: CachedProfile = { userId, role, displayName, timestamp: Date.now() };
+    const data: CachedProfile = { userId, role, displayName, profilePhoto, timestamp: Date.now() };
     localStorage.setItem(CACHE_KEY, JSON.stringify(data));
     // Dispatch event to notify other hook instances
-    window.dispatchEvent(new CustomEvent(ROLE_CHANGE_EVENT, { detail: { role, displayName } }));
+    window.dispatchEvent(new CustomEvent(ROLE_CHANGE_EVENT, { detail: { role, displayName, profilePhoto } }));
   } catch {
     // Ignore
   }
@@ -77,18 +79,20 @@ export function useDashboard() {
         loading: false,
         profileLoaded: true,
         displayName: cached.displayName,
+        profilePhoto: cached.profilePhoto || null,
       };
     }
-    return { role: null, loading: true, profileLoaded: false, displayName: null };
+    return { role: null, loading: true, profileLoaded: false, displayName: null, profilePhoto: null };
   });
 
   // Listen for role changes from other hook instances
   useEffect(() => {
-    const handleRoleChange = (event: CustomEvent<{ role: UserRole; displayName: string | null }>) => {
+    const handleRoleChange = (event: CustomEvent<{ role: UserRole; displayName: string | null; profilePhoto?: string | null }>) => {
       setState(prev => ({
         ...prev,
         role: event.detail.role,
         displayName: event.detail.displayName ?? prev.displayName,
+        profilePhoto: event.detail.profilePhoto ?? prev.profilePhoto,
       }));
     };
 
@@ -106,7 +110,7 @@ export function useDashboard() {
       if (authLoading) return;
 
       if (!session || !user) {
-        setState({ role: null, loading: false, profileLoaded: true, displayName: null });
+        setState({ role: null, loading: false, profileLoaded: true, displayName: null, profilePhoto: null });
         return;
       }
 
@@ -120,6 +124,7 @@ export function useDashboard() {
           loading: false,
           profileLoaded: true,
           displayName: existingCache.displayName,
+          profilePhoto: existingCache.profilePhoto || null,
         });
         hasFetched.current = true;
         return;
@@ -135,13 +140,15 @@ export function useDashboard() {
           user?.email?.split("@")[0] ||
           null;
 
+        const profilePhoto = profile?.custom_pfp || null;
+
         const profileRole = profile?.role;
         const validProfileRole = profileRole === "seeker" || profileRole === "owner" ? profileRole : null;
         const metadataType = user?.user_metadata?.type;
         const validMetadataRole = metadataType === "seeker" || metadataType === "owner" ? metadataType : null;
         const role: UserRole = validProfileRole || validMetadataRole;
 
-        setCachedProfile(userId, role, displayName);
+        setCachedProfile(userId, role, displayName, profilePhoto);
         hasFetched.current = true;
 
         setState({
@@ -149,6 +156,7 @@ export function useDashboard() {
           loading: false,
           profileLoaded: true,
           displayName,
+          profilePhoto,
         });
       } catch (err) {
         console.error("Failed to fetch profile:", err);
@@ -170,7 +178,7 @@ export function useDashboard() {
 
         if (result) {
           setState(prev => ({ ...prev, role: newRole }));
-          setCachedProfile(user.id, newRole, state.displayName);
+          setCachedProfile(user.id, newRole, state.displayName, state.profilePhoto);
           return true;
         }
         return false;
@@ -198,6 +206,12 @@ export function useDashboard() {
     hasFetched.current = false;
   }, []);
 
+  const updateProfilePhoto = useCallback((newPhoto: string | null) => {
+    if (!user) return;
+    setState(prev => ({ ...prev, profilePhoto: newPhoto }));
+    setCachedProfile(user.id, state.role, state.displayName, newPhoto);
+  }, [user, state.role, state.displayName]);
+
   return {
     ...state,
     isAuthenticated: !!session,
@@ -207,5 +221,6 @@ export function useDashboard() {
     setRole,
     goToRoleDashboard,
     clearCache,
+    updateProfilePhoto,
   };
 }
