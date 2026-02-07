@@ -4,6 +4,7 @@ import { supabase } from "./supabase";
 export interface AdminUser {
   id: string;
   email: string;
+  googleName?: string;
   role: "seeker" | "owner" | "superadmin";
   signupDate: string;
   lastActive: string;
@@ -41,12 +42,12 @@ export interface SignupFunnel {
   count: number;
 }
 
-// ─── Fetch Real Users from profiles table ───
-// Note: Requires superadmin RLS policy to see all users
+// ─── Fetch Real Users from admin_users_view ───
+// Note: Requires migration 010 (superadmin RLS) and 011 (admin_users_view)
 export async function fetchAdminUsers(): Promise<AdminUser[]> {
   const { data, error } = await supabase
-    .from("profiles")
-    .select("id, role, verified, created_at, name, legal_name")
+    .from("admin_users_view")
+    .select("id, email, google_name, role, verified, created_at, last_sign_in_at")
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -56,12 +57,14 @@ export async function fetchAdminUsers(): Promise<AdminUser[]> {
 
   return (data || []).map((u: any) => ({
     id: u.id,
-    email: u.legal_name || u.name || u.id?.slice(0, 8) + "...",
+    email: u.email || "No email",
     role: u.role || "seeker",
     signupDate: u.created_at ? new Date(u.created_at).toISOString().split("T")[0] : "",
-    lastActive: "",
+    lastActive: u.last_sign_in_at ? new Date(u.last_sign_in_at).toISOString().split("T")[0] : "",
     verified: u.verified ?? false,
     suspended: false,
+    // Extra fields for display
+    googleName: u.google_name || "",
   }));
 }
 

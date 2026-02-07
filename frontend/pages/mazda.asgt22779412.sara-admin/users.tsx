@@ -18,6 +18,22 @@ export default function AdminUsers() {
   }, []);
 
   const columns: Column<AdminUser>[] = [
+    {
+      key: "id",
+      label: "Account ID",
+      render: (row) => (
+        <span className="font-mono text-xs text-slate-500 dark:text-slate-400">{row.id}</span>
+      ),
+    },
+    {
+      key: "googleName",
+      label: "Name",
+      render: (row) => (
+        <span className="font-medium text-slate-900 dark:text-white">
+          {row.googleName || "-"}
+        </span>
+      ),
+    },
     { key: "email", label: "Email" },
     {
       key: "role",
@@ -48,23 +64,13 @@ export default function AdminUsers() {
           <span className="text-slate-400 text-xs">Unverified</span>
         ),
     },
-    {
-      key: "suspended",
-      label: "Status",
-      render: (row) =>
-        row.suspended ? (
-          <span className="text-red-500 font-semibold text-xs">Suspended</span>
-        ) : (
-          <span className="text-emerald-500 font-semibold text-xs">Active</span>
-        ),
-    },
   ];
 
   const handleExport = () => {
     exportCSV(
       "migrent-users.csv",
-      ["Email", "Role", "Signup Date", "Last Active", "Verified", "Suspended"],
-      users.map((u) => [u.email, u.role, u.signupDate, u.lastActive, String(u.verified), String(u.suspended)])
+      ["Account ID", "Name", "Email", "Role", "Signup Date", "Last Active", "Verified"],
+      users.map((u) => [u.id, u.googleName || "", u.email, u.role, u.signupDate, u.lastActive, String(u.verified)])
     );
   };
 
