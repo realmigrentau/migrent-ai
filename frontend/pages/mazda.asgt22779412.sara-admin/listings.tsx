@@ -1,12 +1,20 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import AdminLayout from "../../components/AdminLayout";
 import AdminDataTable, { Column } from "../../components/AdminDataTable";
-import { mockListings, type AdminListing } from "../../lib/adminApi";
+import { fetchAdminListings, type AdminListing } from "../../lib/adminApi";
 
 export default function AdminListings() {
-  const [listings, setListings] = useState(mockListings);
+  const [listings, setListings] = useState<AdminListing[]>([]);
+  const [loading, setLoading] = useState(true);
   const [modal, setModal] = useState<{ type: string; listing: AdminListing } | null>(null);
+
+  useEffect(() => {
+    fetchAdminListings().then((data) => {
+      setListings(data);
+      setLoading(false);
+    });
+  }, []);
 
   const columns: Column<AdminListing>[] = [
     { key: "title", label: "Title" },
@@ -75,64 +83,78 @@ export default function AdminListings() {
         </p>
       </div>
 
-      {/* Summary cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-        {[
-          { label: "Active", count: listings.filter((l) => l.status === "active").length, color: "text-emerald-500" },
-          { label: "Pending", count: listings.filter((l) => l.status === "pending").length, color: "text-amber-500" },
-          { label: "Rejected", count: listings.filter((l) => l.status === "rejected").length, color: "text-red-500" },
-        ].map((stat, i) => (
-          <motion.div
-            key={stat.label}
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.05 }}
-            className="card p-4 rounded-xl"
-          >
-            <p className="text-xs text-slate-500 dark:text-slate-400">{stat.label}</p>
-            <p className={`text-2xl font-black ${stat.color}`}>{stat.count}</p>
-          </motion.div>
-        ))}
-      </div>
-
-      <AdminDataTable<AdminListing>
-        columns={columns}
-        data={listings}
-        searchKey="title"
-        searchPlaceholder="Search listings..."
-        filterKey="status"
-        filterOptions={[
-          { label: "Active", value: "active" },
-          { label: "Pending", value: "pending" },
-          { label: "Rejected", value: "rejected" },
-        ]}
-        actions={(row) => (
-          <div className="flex items-center gap-1">
-            {row.status === "pending" && (
-              <button
-                onClick={() => handleApprove(row.id)}
-                className="px-2 py-1 text-xs font-medium rounded-lg text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-500/10 transition-colors"
+      {loading ? (
+        <div className="flex items-center justify-center py-20">
+          <div className="w-8 h-8 border-2 border-rose-500 border-t-transparent rounded-full animate-spin" />
+        </div>
+      ) : (
+        <>
+          {/* Summary cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+            {[
+              { label: "Active", count: listings.filter((l) => l.status === "active").length, color: "text-emerald-500" },
+              { label: "Pending", count: listings.filter((l) => l.status === "pending").length, color: "text-amber-500" },
+              { label: "Rejected", count: listings.filter((l) => l.status === "rejected").length, color: "text-red-500" },
+            ].map((stat, i) => (
+              <motion.div
+                key={stat.label}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.05 }}
+                className="card p-4 rounded-xl"
               >
-                Approve
-              </button>
-            )}
-            {row.status !== "rejected" && (
-              <button
-                onClick={() => handleReject(row.id)}
-                className="px-2 py-1 text-xs font-medium rounded-lg text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-500/10 transition-colors"
-              >
-                Reject
-              </button>
-            )}
-            <button
-              onClick={() => setModal({ type: "delete", listing: row })}
-              className="px-2 py-1 text-xs font-medium rounded-lg text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
-            >
-              Delete
-            </button>
+                <p className="text-xs text-slate-500 dark:text-slate-400">{stat.label}</p>
+                <p className={`text-2xl font-black ${stat.color}`}>{stat.count}</p>
+              </motion.div>
+            ))}
           </div>
-        )}
-      />
+
+          {listings.length === 0 ? (
+            <div className="card p-8 rounded-2xl text-center">
+              <p className="text-slate-500 dark:text-slate-400">No listings found.</p>
+            </div>
+          ) : (
+            <AdminDataTable<AdminListing>
+              columns={columns}
+              data={listings}
+              searchKey="title"
+              searchPlaceholder="Search listings..."
+              filterKey="status"
+              filterOptions={[
+                { label: "Active", value: "active" },
+                { label: "Pending", value: "pending" },
+                { label: "Rejected", value: "rejected" },
+              ]}
+              actions={(row) => (
+                <div className="flex items-center gap-1">
+                  {row.status === "pending" && (
+                    <button
+                      onClick={() => handleApprove(row.id)}
+                      className="px-2 py-1 text-xs font-medium rounded-lg text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-500/10 transition-colors"
+                    >
+                      Approve
+                    </button>
+                  )}
+                  {row.status !== "rejected" && (
+                    <button
+                      onClick={() => handleReject(row.id)}
+                      className="px-2 py-1 text-xs font-medium rounded-lg text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-500/10 transition-colors"
+                    >
+                      Reject
+                    </button>
+                  )}
+                  <button
+                    onClick={() => setModal({ type: "delete", listing: row })}
+                    className="px-2 py-1 text-xs font-medium rounded-lg text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
+                  >
+                    Delete
+                  </button>
+                </div>
+              )}
+            />
+          )}
+        </>
+      )}
 
       {/* Delete confirmation modal */}
       <AnimatePresence>

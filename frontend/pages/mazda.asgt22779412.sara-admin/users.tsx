@@ -1,13 +1,21 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import AdminLayout from "../../components/AdminLayout";
 import AdminDataTable, { Column } from "../../components/AdminDataTable";
-import { mockUsers, exportCSV, type AdminUser } from "../../lib/adminApi";
+import { fetchAdminUsers, exportCSV, type AdminUser } from "../../lib/adminApi";
 
 export default function AdminUsers() {
-  const [users, setUsers] = useState(mockUsers);
+  const [users, setUsers] = useState<AdminUser[]>([]);
+  const [loading, setLoading] = useState(true);
   const [modal, setModal] = useState<{ type: string; user: AdminUser } | null>(null);
   const [selectedRole, setSelectedRole] = useState("seeker");
+
+  useEffect(() => {
+    fetchAdminUsers().then((data) => {
+      setUsers(data);
+      setLoading(false);
+    });
+  }, []);
 
   const columns: Column<AdminUser>[] = [
     { key: "email", label: "Email" },
@@ -90,44 +98,54 @@ export default function AdminUsers() {
         </p>
       </div>
 
-      <AdminDataTable<AdminUser>
-        columns={columns}
-        data={users}
-        searchKey="email"
-        searchPlaceholder="Search by email..."
-        filterKey="role"
-        filterOptions={[
-          { label: "Seekers", value: "seeker" },
-          { label: "Owners", value: "owner" },
-          { label: "SuperAdmin", value: "superadmin" },
-        ]}
-        onExportCSV={handleExport}
-        actions={(row) => (
-          <div className="flex items-center gap-1">
-            <button
-              onClick={() => {
-                setSelectedRole(row.role);
-                setModal({ type: "role", user: row });
-              }}
-              className="px-2 py-1 text-xs font-medium rounded-lg text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-500/10 transition-colors"
-            >
-              Role
-            </button>
-            <button
-              onClick={() => setModal({ type: "suspend", user: row })}
-              className="px-2 py-1 text-xs font-medium rounded-lg text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-500/10 transition-colors"
-            >
-              {row.suspended ? "Unsuspend" : "Suspend"}
-            </button>
-            <button
-              onClick={() => setModal({ type: "delete", user: row })}
-              className="px-2 py-1 text-xs font-medium rounded-lg text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
-            >
-              Delete
-            </button>
-          </div>
-        )}
-      />
+      {loading ? (
+        <div className="flex items-center justify-center py-20">
+          <div className="w-8 h-8 border-2 border-rose-500 border-t-transparent rounded-full animate-spin" />
+        </div>
+      ) : users.length === 0 ? (
+        <div className="card p-8 rounded-2xl text-center">
+          <p className="text-slate-500 dark:text-slate-400">No users found.</p>
+        </div>
+      ) : (
+        <AdminDataTable<AdminUser>
+          columns={columns}
+          data={users}
+          searchKey="email"
+          searchPlaceholder="Search by email..."
+          filterKey="role"
+          filterOptions={[
+            { label: "Seekers", value: "seeker" },
+            { label: "Owners", value: "owner" },
+            { label: "SuperAdmin", value: "superadmin" },
+          ]}
+          onExportCSV={handleExport}
+          actions={(row) => (
+            <div className="flex items-center gap-1">
+              <button
+                onClick={() => {
+                  setSelectedRole(row.role);
+                  setModal({ type: "role", user: row });
+                }}
+                className="px-2 py-1 text-xs font-medium rounded-lg text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-500/10 transition-colors"
+              >
+                Role
+              </button>
+              <button
+                onClick={() => setModal({ type: "suspend", user: row })}
+                className="px-2 py-1 text-xs font-medium rounded-lg text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-500/10 transition-colors"
+              >
+                {row.suspended ? "Unsuspend" : "Suspend"}
+              </button>
+              <button
+                onClick={() => setModal({ type: "delete", user: row })}
+                className="px-2 py-1 text-xs font-medium rounded-lg text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
+              >
+                Delete
+              </button>
+            </div>
+          )}
+        />
+      )}
 
       {/* Modal */}
       <AnimatePresence>
