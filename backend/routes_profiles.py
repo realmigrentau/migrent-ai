@@ -15,8 +15,9 @@ def get_my_profile(authorization: str = Header(...)):
 
         res = sb.table("profiles").select("*").eq("id", uid).execute()
         if not res.data:
-            sb.table("profiles").insert({"id": uid, "role": "user"}).execute()
-            return {"id": uid, "role": "user"}
+            # Create profile without role - let user choose later
+            sb.table("profiles").insert({"id": uid}).execute()
+            return {"id": uid}
 
         return res.data[0]
     except Exception as e:
@@ -34,11 +35,9 @@ def update_my_profile(body: ProfileUpdate, authorization: str = Header(...)):
         if not updates:
             raise HTTPException(status_code=400, detail="No fields to update")
 
-        res = sb.table("profiles").select("id").eq("id", uid).execute()
-        if not res.data:
-            sb.table("profiles").insert({"id": uid, "role": "user"}).execute()
-
-        sb.table("profiles").update(updates).eq("id", uid).execute()
+        # Use upsert to create profile if it doesn't exist, or update if it does
+        updates["id"] = uid
+        sb.table("profiles").upsert(updates).execute()
 
         result = sb.table("profiles").select("*").eq("id", uid).execute()
         return result.data[0] if result.data else updates
