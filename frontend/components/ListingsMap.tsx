@@ -6,7 +6,8 @@ interface Listing {
   id: string;
   address: string;
   suburb: string;
-  weeklyPrice: number;
+  weeklyPrice?: number;
+  dailyPrice?: number;
   lat: number;
   lng: number;
 }
@@ -48,12 +49,16 @@ export default function ListingsMap({ listings, isDark }: ListingsMapProps) {
         (el.firstElementChild as HTMLElement).style.transform = "scale(1)";
       });
 
+      const priceDisplay = listing.dailyPrice
+        ? `AUD $${listing.dailyPrice}/day`
+        : `AUD $${listing.weeklyPrice}/wk`;
+
       const popup = new maplibregl.Popup({ offset: 25, closeButton: true })
         .setHTML(`
           <div style="padding:4px;min-width:140px;font-family:Inter,system-ui,sans-serif">
             <p style="font-weight:700;font-size:13px;color:#0f172a;margin:0">${listing.address}</p>
             <p style="font-size:11px;color:#64748b;margin:2px 0 0">${listing.suburb}</p>
-            <p style="font-weight:700;font-size:13px;color:#f43f5e;margin:6px 0 0">AUD $${listing.weeklyPrice}/wk</p>
+            <p style="font-weight:700;font-size:13px;color:#f43f5e;margin:6px 0 0">${priceDisplay}</p>
             <a href="/seeker/room/${listing.id}" style="font-size:11px;color:#3b82f6;text-decoration:none;margin-top:4px;display:inline-block">View details &rarr;</a>
           </div>
         `);
