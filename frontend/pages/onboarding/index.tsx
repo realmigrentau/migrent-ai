@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { useAuth } from "../../hooks/useAuth";
 import { completeOnboarding } from "../../lib/api";
@@ -9,16 +9,20 @@ export default function OnboardingPage() {
   const { session, user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [isReady, setIsReady] = useState(false);
 
   const [legalName, setLegalName] = useState("");
   const [preferredName, setPreferredName] = useState("");
   const [residentialAddress, setResidentialAddress] = useState("");
   const [phone, setPhone] = useState("");
 
-  if (!session || !user) {
-    router.push("/signin");
-    return null;
-  }
+  useEffect(() => {
+    if (!session || !user) {
+      router.push("/signin");
+      return;
+    }
+    setIsReady(true);
+  }, [session, user, router]);
 
   const canSubmit =
     legalName.trim() &&
@@ -33,7 +37,7 @@ export default function OnboardingPage() {
     setLoading(true);
     setError("");
 
-    const result = await completeOnboarding(session.access_token, {
+    const result = await completeOnboarding(session!.access_token, {
       legal_name: legalName,
       preferred_name: preferredName,
       residential_address: residentialAddress,
@@ -42,7 +46,7 @@ export default function OnboardingPage() {
 
     if (result) {
       // Redirect to dashboard based on user role
-      const role = user.user_metadata?.user_type || user.user_metadata?.type || "seeker";
+      const role = user!.user_metadata?.user_type || user!.user_metadata?.type || "seeker";
       router.push(role === "owner" ? "/dashboard/owner" : "/dashboard/seeker");
     } else {
       setError("Failed to complete onboarding. Please try again.");
@@ -50,6 +54,17 @@ export default function OnboardingPage() {
 
     setLoading(false);
   };
+
+  if (!isReady) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-pink-50 to-blue-50 flex items-center justify-center p-4">
+        <div className="text-center">
+          <div className="w-10 h-10 border-2 border-pink-300 border-t-pink-500 rounded-full animate-spin mx-auto" />
+          <p className="text-sm text-slate-500 mt-4">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 to-blue-50 flex items-center justify-center p-4">
