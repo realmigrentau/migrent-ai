@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { useAuth } from "../../../hooks/useAuth";
+import AvatarWithVerification from "../../../components/AvatarWithVerification";
 
 const MOCK_LISTING = {
   id: "1",
@@ -174,9 +175,13 @@ export default function ListingDetail() {
               >
                 <div className="flex items-start gap-4">
                   {/* Avatar */}
-                  <div className="w-12 h-12 shrink-0 rounded-full bg-gradient-to-br from-rose-400 to-blue-400 flex items-center justify-center text-white font-bold text-lg">
-                    {applicant.name[0]}
-                  </div>
+                  <AvatarWithVerification
+                    name={applicant.name}
+                    photo={null}
+                    isVerified={applicant.verified || false}
+                    verifiedLabel={applicant.verified ? "Verified" : null}
+                    size={48}
+                  />
 
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">

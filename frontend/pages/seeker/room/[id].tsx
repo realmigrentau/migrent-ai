@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { useAuth } from "../../../hooks/useAuth";
 import ReportModal from "../../../components/ReportModal";
+import AvatarWithVerification from "../../../components/AvatarWithVerification";
 
 const ROOMS: Record<string, any> = {
   "1": {
@@ -488,12 +489,18 @@ export default function RoomDetail() {
             <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-3">Owner</h2>
             <div className="card p-5 rounded-2xl">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-rose-400 to-rose-500 flex items-center justify-center text-white font-bold text-lg">
-                  {room.owner.name[0]}
-                </div>
+                <AvatarWithVerification
+                  name={room.owner.name}
+                  photo={room.owner.profilePhoto || null}
+                  isVerified={room.owner.verified || false}
+                  verifiedLabel={room.owner.verified ? "Verified" : null}
+                  size={48}
+                />
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="font-bold text-slate-900 dark:text-white">{room.owner.name}</span>
+                    <Link href={`/users/profile/${room.owner.id || ""}`} className="font-bold text-slate-900 dark:text-white hover:text-rose-500 dark:hover:text-rose-400 transition-colors">
+                      {room.owner.name}
+                    </Link>
                     {room.owner.verified && (
                       <span className="px-2 py-0.5 rounded-full text-xs bg-emerald-100 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
                         &#10003; Verified
