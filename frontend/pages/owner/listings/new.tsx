@@ -113,7 +113,7 @@ export default function NewListing() {
           Post a <span className="gradient-text-accent">Room</span>
         </h1>
         <p className="text-sm text-slate-500 dark:text-slate-400 mt-2">
-          Complete the steps below. A one-time AUD $99 fee applies on publish.
+          Complete the steps below to list your room for free.
         </p>
       </motion.div>
 

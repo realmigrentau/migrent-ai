@@ -827,7 +827,7 @@ export default function ListingForm({ onSubmit, loading, initialData }: ListingF
                   Publishing...
                 </span>
               ) : (
-                "Pay AUD $99 & Publish"
+                "Publish Listing"
               )}
             </motion.button>
           )}
