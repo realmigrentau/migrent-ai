@@ -113,7 +113,9 @@ export default function SettingsPage() {
         // Set all fields from the profile (with defaults)
         setLegalName(data.legal_name || "");
         setPreferredName(data.preferred_name || "");
-        setPhones(Array.isArray(data.phones) ? data.phones : []);
+        // Auto-populate phone from profile or use the phone from onboarding
+        const phoneValue = Array.isArray(data.phones) ? data.phones : (data.phone ? [data.phone] : []);
+        setPhones(phoneValue);
 
         // Handle residential_address
         let addressValue = "";
@@ -137,42 +139,9 @@ export default function SettingsPage() {
   };
 
   const handleSaveProfile = async () => {
-    if (!session) {
-      setMessage("Not authenticated");
-      return;
-    }
-    setSaving(true);
-    setMessage("");
-
-    try {
-      const updates: any = {
-        legal_name: legalName || null,
-        preferred_name: preferredName || null,
-        phones: phones.filter((p) => p.trim()) || null,
-        residential_address: residentialAddress ? { address: residentialAddress } : null,
-        preferred_language: preferredLanguage || "en",
-        timezone: timezone || "Australia/Sydney",
-      };
-
-      console.log("Saving profile with updates:", updates);
-
-      const result = await updateMyProfile(session.access_token, updates);
-      console.log("Profile update result:", result);
-
-      if (result) {
-        setMessage("✓ Profile saved successfully!");
-        setTimeout(() => setMessage(""), 4000);
-        // Refresh profile to confirm
-        await fetchProfile();
-      } else {
-        setMessage("Failed to save profile");
-      }
-    } catch (err: any) {
-      console.error("Failed to save profile:", err);
-      setMessage(`Error: ${err?.message || "Failed to save profile"}`);
-    } finally {
-      setSaving(false);
-    }
+    // Profile editing is disabled after onboarding
+    setMessage("Feature unavailable to access");
+    setTimeout(() => setMessage(""), 4000);
   };
 
   const handleChangePassword = async () => {
@@ -430,9 +399,9 @@ export default function SettingsPage() {
                       <input
                         type="text"
                         value={legalName}
-                        onChange={(e) => setLegalName(e.target.value)}
+                        disabled
                         placeholder="Your full legal name"
-                        className="input-field"
+                        className="input-field bg-slate-50 dark:bg-slate-800/50 cursor-not-allowed text-slate-600 dark:text-slate-300"
                       />
                     </div>
                     <div>
@@ -442,9 +411,9 @@ export default function SettingsPage() {
                       <input
                         type="text"
                         value={preferredName}
-                        onChange={(e) => setPreferredName(e.target.value)}
+                        disabled
                         placeholder="How you'd like to be called"
-                        className="input-field"
+                        className="input-field bg-slate-50 dark:bg-slate-800/50 cursor-not-allowed text-slate-600 dark:text-slate-300"
                       />
                     </div>
                   </div>
@@ -463,27 +432,13 @@ export default function SettingsPage() {
                             <input
                               type="tel"
                               value={phone.replace(/^\+61/, "")}
-                              onChange={(e) => handlePhoneChange(e.target.value, idx)}
+                              disabled
                               placeholder="2 XXXX XXXX"
-                              className="input-field flex-1 pl-12"
+                              className="input-field flex-1 pl-12 bg-slate-50 dark:bg-slate-800/50 cursor-not-allowed text-slate-600 dark:text-slate-300"
                             />
                           </div>
-                          <button
-                            onClick={() =>
-                              setPhones(phones.filter((_, i) => i !== idx))
-                            }
-                            className="btn-secondary px-4 rounded-xl"
-                          >
-                            Remove
-                          </button>
                         </div>
                       ))}
-                      <button
-                        onClick={() => setPhones([...phones, ""])}
-                        className="btn-secondary px-4 py-2 rounded-xl text-sm"
-                      >
-                        + Add phone
-                      </button>
                     </div>
                   </div>
 
@@ -495,9 +450,9 @@ export default function SettingsPage() {
                       <input
                         type="text"
                         value={residentialAddress}
-                        onChange={(e) => handleAddressChange(e.target.value)}
+                        disabled
                         placeholder="e.g. Bondi NSW 2026"
-                        className="input-field"
+                        className="input-field bg-slate-50 dark:bg-slate-800/50 cursor-not-allowed text-slate-600 dark:text-slate-300"
                         autoComplete="off"
                       />
                       {showAddressSuggestions && addressSuggestions.length > 0 && (
@@ -566,10 +521,10 @@ export default function SettingsPage() {
 
                 <button
                   onClick={handleSaveProfile}
-                  disabled={saving || loadingProfile}
-                  className="btn-primary py-2.5 px-5 rounded-xl text-sm disabled:opacity-50"
+                  disabled={true}
+                  className="btn-primary py-2.5 px-5 rounded-xl text-sm disabled:opacity-50 cursor-not-allowed"
                 >
-                  {saving ? "Saving..." : "Save changes"}
+                  Feature unavailable
                 </button>
               </div>
             </div>
