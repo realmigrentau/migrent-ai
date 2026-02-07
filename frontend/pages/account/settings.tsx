@@ -46,6 +46,7 @@ interface ProfileData {
   email: string;
   legal_name?: string;
   preferred_name?: string;
+  phone?: string;
   phones?: string[];
   residential_address?: any;
   emergency_contact?: any;
