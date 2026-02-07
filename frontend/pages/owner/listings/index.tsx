@@ -23,17 +23,11 @@ const STATUS_STYLES: Record<string, string> = {
   draft: "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700",
 };
 
-const MOCK_LISTINGS: Listing[] = [
-  { id: "1", address: "12 Crown St, Surry Hills", postcode: "2010", weeklyPrice: 250, description: "Private room near Central", status: "active", views: 142, applicants: 5 },
-  { id: "2", address: "8 Botany Rd, Waterloo", postcode: "2017", weeklyPrice: 280, description: "Ensuite in modern apartment", status: "active", views: 87, applicants: 3 },
-  { id: "3", address: "22 Parramatta Rd, Homebush", postcode: "2140", weeklyPrice: 190, description: "Shared room near Olympic Park", status: "paused", views: 34, applicants: 1 },
-];
-
 export default function OwnerListings() {
   const { session, user, loading } = useAuth();
   const router = useRouter();
-  const [listings, setListings] = useState<Listing[]>(MOCK_LISTINGS);
-  const [fetching, setFetching] = useState(false);
+  const [listings, setListings] = useState<Listing[]>([]);
+  const [fetching, setFetching] = useState(true);
   const justCreated = router.query.created === "1";
 
   useEffect(() => {
@@ -45,23 +39,34 @@ export default function OwnerListings() {
   useEffect(() => {
     if (session) {
       setFetching(true);
-      getListings(session.access_token).then((data) => {
-        if (data && Array.isArray(data) && data.length > 0) {
-          setListings(data.map((l: any) => ({
-            id: l.id || l._id || String(Math.random()),
-            address: l.address,
-            postcode: l.postcode,
-            weeklyPrice: l.weeklyPrice ?? l.weekly_price,
-            description: l.description,
-            status: l.status || "active",
-            views: l.views ?? 0,
-            applicants: l.applicants ?? 0,
-          })));
-        }
-        setFetching(false);
-      });
+      getListings(session.access_token)
+        .then((data) => {
+          if (data && Array.isArray(data)) {
+            setListings(data.map((l: any) => ({
+              id: l.id || l._id || String(Math.random()),
+              address: l.address,
+              postcode: l.postcode,
+              weeklyPrice: l.weeklyPrice ?? l.weekly_price,
+              description: l.description,
+              status: l.status || "active",
+              views: l.views ?? 0,
+              applicants: l.applicants ?? 0,
+            })));
+          } else {
+            setListings([]);
+          }
+        })
+        .catch((err) => {
+          console.error("Failed to fetch listings:", err);
+          setListings([]);
+        })
+        .finally(() => {
+          setFetching(false);
+        });
+    } else if (!loading) {
+      setFetching(false);
     }
-  }, [session]);
+  }, [session, loading]);
 
   if (loading)
     return (

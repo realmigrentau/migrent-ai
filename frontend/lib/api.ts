@@ -214,6 +214,25 @@ export async function getListings(token: string) {
 }
 
 /**
+ * Search listings with filters (public, no auth required).
+ * GET /listings/search
+ */
+export async function searchListings(params: Record<string, string>) {
+  try {
+    const queryString = new URLSearchParams(params).toString();
+    const res = await fetch(`${BASE_URL}/listings/search?${queryString}`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    });
+    if (!res.ok) throw new Error(`searchListings failed: ${res.status}`);
+    return await res.json();
+  } catch (err) {
+    console.error("searchListings error:", err);
+    return [];
+  }
+}
+
+/**
  * Create a Stripe Identity verification session.
  * POST /payments/create-verification-session
  */

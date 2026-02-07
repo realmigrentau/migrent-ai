@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "../../hooks/useAuth";
 import { useTheme } from "../../hooks/useTheme";
-import { updateMyProfile } from "../../lib/api";
+import { updateMyProfile, searchListings } from "../../lib/api";
 
 const ListingsMap = dynamic(() => import("../../components/ListingsMap"), {
   ssr: false,
@@ -15,26 +15,22 @@ const ListingsMap = dynamic(() => import("../../components/ListingsMap"), {
   ),
 });
 
-const PLACEHOLDER_LISTINGS = [
-  {
-    id: "1",
-    address: "12 Crown St",
-    suburb: "Surry Hills",
-    postcode: "2010",
-    dailyPrice: 250,
-    roomType: "private",
-    furnished: true,
-    billsIncluded: true,
-    verified: true,
-    photos: [
-      "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=400&h=300&fit=crop",
-    ],
-    description:
-      "Bright private room in friendly sharehouse near Central Station. 5 min walk to buses and trains.",
-    lat: -33.883,
-    lng: 151.2115,
-  },
-];
+interface Listing {
+  id: string;
+  address: string;
+  suburb: string;
+  postcode: string;
+  dailyPrice?: number;
+  weeklyPrice?: number;
+  roomType: string;
+  furnished: boolean;
+  billsIncluded: boolean;
+  verified: boolean;
+  photos: string[];
+  description: string;
+  lat: number;
+  lng: number;
+}
 
 // Calendar helper functions
 const MONTH_NAMES = [
@@ -53,7 +49,7 @@ function getFirstDayOfMonth(year: number, month: number) {
 export default function SeekerSearchExtended() {
   const { session, user } = useAuth();
   const { theme } = useTheme();
-  const [results, setResults] = useState(PLACEHOLDER_LISTINGS);
+  const [results, setResults] = useState<Listing[]>([]);
   const [searching, setSearching] = useState(false);
   const [searched, setSearched] = useState(false);
   const [saved, setSaved] = useState<Set<string>>(new Set());
@@ -108,36 +104,62 @@ export default function SeekerSearchExtended() {
   const handleSearch = async () => {
     setSearching(true);
     setSearched(true);
-    await new Promise((r) => setTimeout(r, 600));
 
-    let filtered = [...PLACEHOLDER_LISTINGS];
+    try {
+      // Build search params
+      const params: Record<string, string> = {
+        max_price: String(maxPrice),
+        guests: String(adults + children + infants),
+      };
 
-    // Filter by price
-    filtered = filtered.filter((l) => l.dailyPrice <= maxPrice);
+      if (searchType === "nearMe" && userLocation) {
+        params.lat = String(userLocation.lat);
+        params.lng = String(userLocation.lng);
+        params.radius = "5"; // 5km radius
+      } else if (searchType === "suburb" && suburbName) {
+        params.suburb = suburbName;
+      } else if (searchType === "postcode" && postcode) {
+        params.postcode = postcode;
+      } else if (searchType === "address" && nearAddress) {
+        params.address = nearAddress;
+      }
 
-    // Filter by location
-    if (searchType === "nearMe" && userLocation) {
-      // Filter by distance (mock - would use actual distance calc)
-      filtered = filtered.filter((l) => {
-        const distance = Math.sqrt(
-          Math.pow(l.lat - userLocation.lat, 2) + Math.pow(l.lng - userLocation.lng, 2)
-        );
-        return distance < 0.05; // ~5km radius
-      });
-    } else if (searchType === "suburb" && suburbName) {
-      filtered = filtered.filter((l) =>
-        l.suburb.toLowerCase().includes(suburbName.toLowerCase())
-      );
-    } else if (searchType === "postcode" && postcode) {
-      filtered = filtered.filter((l) => l.postcode.includes(postcode));
+      if (checkInDate) {
+        params.check_in = checkInDate.toISOString().split("T")[0];
+      }
+      if (checkOutDate) {
+        params.check_out = checkOutDate.toISOString().split("T")[0];
+      }
+
+      // Fetch from API
+      const data = await searchListings(params);
+
+      if (data && Array.isArray(data)) {
+        setResults(data.map((l: any) => ({
+          id: l.id || l._id,
+          address: l.address || "",
+          suburb: l.suburb || "",
+          postcode: l.postcode || "",
+          dailyPrice: l.daily_price ?? l.dailyPrice,
+          weeklyPrice: l.weekly_price ?? l.weeklyPrice,
+          roomType: l.room_type || l.roomType || "private",
+          furnished: l.furnished ?? false,
+          billsIncluded: l.bills_included ?? l.billsIncluded ?? false,
+          verified: l.verified ?? false,
+          photos: l.photos || [],
+          description: l.description || "",
+          lat: l.lat || l.latitude || -33.88,
+          lng: l.lng || l.longitude || 151.21,
+        })));
+      } else {
+        setResults([]);
+      }
+    } catch (err) {
+      console.error("Search failed:", err);
+      setResults([]);
+    } finally {
+      setSearching(false);
     }
-
-    // Filter by guests (mock)
-    const totalGuests = adults + children;
-    filtered = filtered.filter(() => totalGuests <= 4);
-
-    setResults(filtered);
-    setSearching(false);
   };
 
   const toggleSave = (id: string) => {
@@ -663,13 +685,19 @@ export default function SeekerSearchExtended() {
                 className="card p-5 rounded-2xl group"
               >
                 <div className="flex gap-4">
-                  <div className="w-28 h-20 sm:w-36 sm:h-24 shrink-0 rounded-xl bg-slate-100 dark:bg-slate-800 overflow-hidden">
-                    <img
-                      src={listing.photos[0]}
-                      alt={listing.address}
-                      className="w-full h-full object-cover"
-                      loading="lazy"
-                    />
+                  <div className="w-28 h-20 sm:w-36 sm:h-24 shrink-0 rounded-xl bg-slate-100 dark:bg-slate-800 overflow-hidden flex items-center justify-center">
+                    {listing.photos && listing.photos.length > 0 ? (
+                      <img
+                        src={listing.photos[0]}
+                        alt={listing.address}
+                        className="w-full h-full object-cover"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <svg className="w-8 h-8 text-slate-300 dark:text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+                      </svg>
+                    )}
                   </div>
 
                   <div className="flex-1 min-w-0">
@@ -684,10 +712,10 @@ export default function SeekerSearchExtended() {
                       </div>
                       <div className="shrink-0 px-2.5 py-1 rounded-lg bg-rose-50 dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/20">
                         <span className="text-rose-600 dark:text-rose-400 font-bold text-sm">
-                          AUD ${listing.dailyPrice}
+                          AUD ${listing.dailyPrice || listing.weeklyPrice || 0}
                         </span>
                         <span className="text-rose-400 dark:text-rose-500 text-xs">
-                          /day
+                          {listing.dailyPrice ? "/day" : "/wk"}
                         </span>
                       </div>
                     </div>
