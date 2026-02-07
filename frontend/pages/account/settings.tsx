@@ -430,22 +430,37 @@ export default function SettingsPage() {
                       Phone numbers
                     </label>
                     <div className="space-y-2">
-                      {phones.map((phone, idx) => (
-                        <div key={idx} className="flex gap-2">
-                          <div className="flex-1 relative">
-                            <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500 dark:text-slate-400 text-sm font-medium pointer-events-none">
-                              +61
+                      {phones && phones.length > 0 ? (
+                        phones.map((phone, idx) => (
+                          <div key={idx} className="flex gap-2">
+                            <div className="flex-1 relative">
+                              <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500 dark:text-slate-400 text-sm font-medium pointer-events-none">
+                                +61
+                              </div>
+                              <input
+                                type="tel"
+                                value={phone.replace(/^\+61\s?/, "")}
+                                disabled
+                                placeholder="2 XXXX XXXX"
+                                className="input-field flex-1 pl-12 bg-slate-50 dark:bg-slate-800/50 cursor-not-allowed text-slate-600 dark:text-slate-300"
+                              />
                             </div>
-                            <input
-                              type="tel"
-                              value={phone.replace(/^\+61\s?/, "")}
-                              disabled
-                              placeholder="2 XXXX XXXX"
-                              className="input-field flex-1 pl-12 bg-slate-50 dark:bg-slate-800/50 cursor-not-allowed text-slate-600 dark:text-slate-300"
-                            />
                           </div>
+                        ))
+                      ) : (
+                        <div className="relative">
+                          <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500 dark:text-slate-400 text-sm font-medium pointer-events-none">
+                            +61
+                          </div>
+                          <input
+                            type="tel"
+                            value={profile?.phone ? profile.phone.replace(/^\+61\s?/, "") : ""}
+                            disabled
+                            placeholder="2 XXXX XXXX"
+                            className="input-field pl-12 bg-slate-50 dark:bg-slate-800/50 cursor-not-allowed text-slate-600 dark:text-slate-300"
+                          />
                         </div>
-                      ))}
+                      )}
                     </div>
                   </div>
 
