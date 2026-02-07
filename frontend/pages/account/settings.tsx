@@ -115,6 +115,7 @@ export default function SettingsPage() {
         setPreferredName(data.preferred_name || "");
         // Auto-populate phone from profile or use the phone from onboarding
         const phoneValue = Array.isArray(data.phones) ? data.phones : (data.phone ? [data.phone] : []);
+        console.log("Phone data - phones:", data.phones, "phone:", data.phone, "phoneValue:", phoneValue);
         setPhones(phoneValue);
 
         // Handle residential_address
