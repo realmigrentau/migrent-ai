@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, Header
 from models import ProfileUpdate
-from db import get_supabase
+from db import get_supabase_admin
 from routes_listings import get_current_user
 
 router = APIRouter(prefix="/profiles", tags=["profiles"])
@@ -10,7 +10,7 @@ router = APIRouter(prefix="/profiles", tags=["profiles"])
 def get_my_profile(authorization: str = Header(...)):
     try:
         user = get_current_user(authorization)
-        sb = get_supabase()
+        sb = get_supabase_admin()
         uid = str(user.id)
 
         res = sb.table("profiles").select("*").eq("id", uid).execute()
@@ -27,7 +27,7 @@ def get_my_profile(authorization: str = Header(...)):
 def update_my_profile(body: ProfileUpdate, authorization: str = Header(...)):
     try:
         user = get_current_user(authorization)
-        sb = get_supabase()
+        sb = get_supabase_admin()
         uid = str(user.id)
 
         updates = {k: v for k, v in body.model_dump().items() if v is not None}
@@ -51,7 +51,7 @@ def update_my_profile(body: ProfileUpdate, authorization: str = Header(...)):
 @router.get("/{user_id}")
 def get_public_profile(user_id: str):
     try:
-        sb = get_supabase()
+        sb = get_supabase_admin()
         res = sb.table("profiles").select("id,name,preferred_name,about_me,most_useless_skill,interests,badges,custom_pfp,occupation,verified").eq("id", user_id).execute()
         if not res.data:
             raise HTTPException(status_code=404, detail="Profile not found")
@@ -66,7 +66,7 @@ def get_public_profile(user_id: str):
 def refresh_badges(authorization: str = Header(...)):
     try:
         user = get_current_user(authorization)
-        sb = get_supabase()
+        sb = get_supabase_admin()
         uid = str(user.id)
 
         badges = []
