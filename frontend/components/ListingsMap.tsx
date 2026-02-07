@@ -96,6 +96,10 @@ export default function ListingsMap({ listings, isDark }: ListingsMapProps) {
   useEffect(() => {
     if (!map.current || !mapReady.current) return;
     map.current.setStyle(getStyleUrl(isDark));
+    // Re-add markers after new style loads
+    map.current.once("style.load", () => {
+      addMarkers(listings);
+    });
   }, [isDark]);
 
   // Update markers when listings change
