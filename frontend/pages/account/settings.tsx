@@ -432,7 +432,7 @@ export default function SettingsPage() {
                             </div>
                             <input
                               type="tel"
-                              value={phone.replace(/^\+61/, "")}
+                              value={phone.replace(/^\+61\s?/, "")}
                               disabled
                               placeholder="2 XXXX XXXX"
                               className="input-field flex-1 pl-12 bg-slate-50 dark:bg-slate-800/50 cursor-not-allowed text-slate-600 dark:text-slate-300"
