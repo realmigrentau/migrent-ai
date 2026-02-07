@@ -17,7 +17,7 @@ export default function SignUp() {
   const { executeInstance, resetInstance } = useHCaptcha() ?? {};
 
   if (session) {
-    router.push("/");
+    router.push("/onboarding");
     return null;
   }
 

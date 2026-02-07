@@ -17,7 +17,8 @@ export default function SignIn() {
   const { executeInstance, resetInstance } = useHCaptcha() ?? {};
 
   // Get redirect URL from query params (e.g., /signin?redirect=/dashboard)
-  const redirectUrl = typeof router.query.redirect === "string" ? router.query.redirect : "/dashboard";
+  // Default to /onboarding if coming from signup flow
+  const redirectUrl = typeof router.query.redirect === "string" ? router.query.redirect : "/onboarding";
 
   if (session) {
     router.push(redirectUrl);
