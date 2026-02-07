@@ -121,7 +121,7 @@ class ProfileUpdate(BaseModel):
     legal_name: Optional[str] = Field(None, max_length=150)
     preferred_name: Optional[str] = Field(None, max_length=100)
     phones: Optional[list[str]] = None
-    residential_address: Optional[dict] = None
+    residential_address: Optional[str] = Field(None, max_length=300)
     emergency_contact: Optional[dict] = None
     preferred_language: Optional[str] = Field(None, max_length=20)
     preferred_currency: Optional[str] = Field(None, max_length=5)
