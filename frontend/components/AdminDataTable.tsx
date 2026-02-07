@@ -110,15 +110,15 @@ export default function AdminDataTable<T extends Record<string, any>>({
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700">
-        <table className="w-full text-sm text-left">
+      <div className="rounded-xl border border-slate-200 dark:border-slate-700">
+        <table className="w-full text-sm text-left table-fixed">
           <thead>
             <tr className="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-700">
               {columns.map((col) => (
                 <th
                   key={col.key}
                   onClick={() => col.sortable !== false && handleSort(col.key)}
-                  className={`px-4 py-3 font-semibold text-slate-600 dark:text-slate-300 whitespace-nowrap ${
+                  className={`px-3 py-3 font-semibold text-slate-600 dark:text-slate-300 ${
                     col.sortable !== false
                       ? "cursor-pointer hover:text-rose-500 select-none"
                       : ""
@@ -158,7 +158,7 @@ export default function AdminDataTable<T extends Record<string, any>>({
                   className="border-b border-slate-100 dark:border-slate-800 hover:bg-slate-50/50 dark:hover:bg-white/[0.02] transition-colors"
                 >
                   {columns.map((col) => (
-                    <td key={col.key} className="px-4 py-3 text-slate-700 dark:text-slate-300 whitespace-nowrap">
+                    <td key={col.key} className="px-3 py-3 text-slate-700 dark:text-slate-300 break-all">
                       {col.render
                         ? col.render(row)
                         : String(row[col.key as keyof T] ?? "")}
