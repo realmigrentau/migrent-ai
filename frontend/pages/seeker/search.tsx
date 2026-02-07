@@ -21,7 +21,7 @@ const PLACEHOLDER_LISTINGS = [
     address: "12 Crown St",
     suburb: "Surry Hills",
     postcode: "2010",
-    dailyPrice: 45,
+    dailyPrice: 250,
     roomType: "private",
     furnished: true,
     billsIncluded: true,
@@ -33,42 +33,6 @@ const PLACEHOLDER_LISTINGS = [
       "Bright private room in friendly sharehouse near Central Station. 5 min walk to buses and trains.",
     lat: -33.883,
     lng: 151.2115,
-  },
-  {
-    id: "2",
-    address: "45 George St",
-    suburb: "Redfern",
-    postcode: "2016",
-    dailyPrice: 35,
-    roomType: "shared",
-    furnished: true,
-    billsIncluded: false,
-    verified: false,
-    photos: [
-      "https://images.unsplash.com/photo-1598928506311-c55ez637a745?w=400&h=300&fit=crop",
-    ],
-    description:
-      "Affordable shared room close to USYD campus. Quiet neighbourhood with parks nearby.",
-    lat: -33.892,
-    lng: 151.204,
-  },
-  {
-    id: "3",
-    address: "8 Botany Rd",
-    suburb: "Waterloo",
-    postcode: "2017",
-    dailyPrice: 55,
-    roomType: "ensuite",
-    furnished: true,
-    billsIncluded: true,
-    verified: true,
-    photos: [
-      "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=400&h=300&fit=crop",
-    ],
-    description:
-      "Ensuite room with own bathroom in modern apartment. Green Square station 3 min walk.",
-    lat: -33.9005,
-    lng: 151.2025,
   },
 ];
 
