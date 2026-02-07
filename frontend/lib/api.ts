@@ -653,3 +653,46 @@ export async function markMessageRead(token: string, messageId: string) {
     return null;
   }
 }
+
+/**
+ * Check if user completed onboarding.
+ * GET /profiles/me/onboarding-status
+ */
+export async function checkOnboardingStatus(token: string) {
+  try {
+    const res = await fetch(`${BASE_URL}/profiles/me/onboarding-status`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if (!res.ok) throw new Error(`checkOnboardingStatus failed: ${res.status}`);
+    return await res.json();
+  } catch (err) {
+    console.error("checkOnboardingStatus error:", err);
+    return null;
+  }
+}
+
+/**
+ * Complete onboarding with required fields.
+ * POST /profiles/me/onboarding/complete
+ */
+export async function completeOnboarding(token: string, data: Record<string, any>) {
+  try {
+    const res = await fetch(`${BASE_URL}/profiles/me/onboarding/complete`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) throw new Error(`completeOnboarding failed: ${res.status}`);
+    return await res.json();
+  } catch (err) {
+    console.error("completeOnboarding error:", err);
+    return null;
+  }
+}
