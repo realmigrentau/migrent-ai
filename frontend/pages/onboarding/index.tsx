@@ -111,7 +111,7 @@ export default function OnboardingPage() {
 
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Residential Address *
+                Current Residential Address *
               </label>
               <input
                 type="text"
