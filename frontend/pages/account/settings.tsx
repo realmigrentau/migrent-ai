@@ -114,8 +114,10 @@ export default function SettingsPage() {
         setLegalName(data.legal_name || "");
         setPreferredName(data.preferred_name || "");
         // Auto-populate phone from profile or use the phone from onboarding
+        console.log("DEBUG - Full data:", JSON.stringify(data, null, 2));
         const phoneValue = Array.isArray(data.phones) ? data.phones : (data.phone ? [data.phone] : []);
         console.log("Phone data - phones:", data.phones, "phone:", data.phone, "phoneValue:", phoneValue);
+        console.log("About to setPhones with:", phoneValue);
         setPhones(phoneValue);
 
         // Handle residential_address
