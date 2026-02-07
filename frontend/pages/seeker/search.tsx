@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "../../hooks/useAuth";
 import { useTheme } from "../../hooks/useTheme";
 import { updateMyProfile } from "../../lib/api";
@@ -21,7 +21,7 @@ const PLACEHOLDER_LISTINGS = [
     address: "12 Crown St",
     suburb: "Surry Hills",
     postcode: "2010",
-    weeklyPrice: 250,
+    dailyPrice: 45,
     roomType: "private",
     furnished: true,
     billsIncluded: true,
@@ -39,7 +39,7 @@ const PLACEHOLDER_LISTINGS = [
     address: "45 George St",
     suburb: "Redfern",
     postcode: "2016",
-    weeklyPrice: 220,
+    dailyPrice: 35,
     roomType: "shared",
     furnished: true,
     billsIncluded: false,
@@ -57,7 +57,7 @@ const PLACEHOLDER_LISTINGS = [
     address: "8 Botany Rd",
     suburb: "Waterloo",
     postcode: "2017",
-    weeklyPrice: 280,
+    dailyPrice: 55,
     roomType: "ensuite",
     furnished: true,
     billsIncluded: true,
@@ -72,25 +72,19 @@ const PLACEHOLDER_LISTINGS = [
   },
 ];
 
-const AUSTRALIAN_DESTINATIONS = [
-  { label: "Sydney CBD", region: "Sydney" },
-  { label: "Surry Hills", region: "Sydney" },
-  { label: "Parramatta", region: "Sydney" },
-  { label: "Penrith", region: "Sydney" },
-  { label: "Newcastle", region: "Newcastle" },
-  { label: "Melbourne CBD", region: "Melbourne" },
-  { label: "St Kilda", region: "Melbourne" },
-  { label: "Box Hill", region: "Melbourne" },
-  { label: "Geelong", region: "Geelong" },
-  { label: "Brisbane CBD", region: "Brisbane" },
-  { label: "South Bank", region: "Brisbane" },
-  { label: "Gold Coast", region: "Gold Coast" },
-  { label: "Adelaide CBD", region: "Adelaide" },
-  { label: "Rundle Mall", region: "Adelaide" },
-  { label: "Canberra CBD", region: "Canberra" },
-  { label: "Perth CBD", region: "Perth" },
-  { label: "Hobart CBD", region: "Hobart" },
+// Calendar helper functions
+const MONTH_NAMES = [
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December"
 ];
+
+function getDaysInMonth(year: number, month: number) {
+  return new Date(year, month + 1, 0).getDate();
+}
+
+function getFirstDayOfMonth(year: number, month: number) {
+  return new Date(year, month, 1).getDay();
+}
 
 export default function SeekerSearchExtended() {
   const { session, user } = useAuth();
@@ -99,17 +93,41 @@ export default function SeekerSearchExtended() {
   const [searching, setSearching] = useState(false);
   const [searched, setSearched] = useState(false);
   const [saved, setSaved] = useState<Set<string>>(new Set());
-  const [showUseLocation, setShowUseLocation] = useState(false);
 
-  // Filter states
-  const [selectedDestinations, setSelectedDestinations] = useState<string[]>([]);
-  const [checkInDate, setCheckInDate] = useState("");
-  const [checkOutDate, setCheckOutDate] = useState("");
+  // Location states
+  const [searchType, setSearchType] = useState<"nearMe" | "suburb" | "postcode" | "address">("suburb");
+  const [suburbName, setSuburbName] = useState("");
+  const [postcode, setPostcode] = useState("");
+  const [nearAddress, setNearAddress] = useState("");
+  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [locationLoading, setLocationLoading] = useState(false);
+  const [locationError, setLocationError] = useState("");
+
+  // Calendar states
+  const [showCalendar, setShowCalendar] = useState(false);
+  const [calendarMonth, setCalendarMonth] = useState(new Date().getMonth());
+  const [calendarYear, setCalendarYear] = useState(new Date().getFullYear());
+  const [checkInDate, setCheckInDate] = useState<Date | null>(null);
+  const [checkOutDate, setCheckOutDate] = useState<Date | null>(null);
+  const calendarRef = useRef<HTMLDivElement>(null);
+
+  // Guest states
   const [adults, setAdults] = useState(1);
   const [children, setChildren] = useState(0);
   const [infants, setInfants] = useState(0);
   const [pets, setPets] = useState(0);
-  const [maxPrice, setMaxPrice] = useState(500);
+  const [maxPrice, setMaxPrice] = useState(100);
+
+  // Close calendar when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (calendarRef.current && !calendarRef.current.contains(event.target as Node)) {
+        setShowCalendar(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   // Load wishlist from localStorage on mount
   useEffect(() => {
@@ -131,14 +149,28 @@ export default function SeekerSearchExtended() {
     let filtered = [...PLACEHOLDER_LISTINGS];
 
     // Filter by price
-    filtered = filtered.filter((l) => l.weeklyPrice <= maxPrice);
+    filtered = filtered.filter((l) => l.dailyPrice <= maxPrice);
 
-    // Filter by adults/children (mock - would check availability)
+    // Filter by location
+    if (searchType === "nearMe" && userLocation) {
+      // Filter by distance (mock - would use actual distance calc)
+      filtered = filtered.filter((l) => {
+        const distance = Math.sqrt(
+          Math.pow(l.lat - userLocation.lat, 2) + Math.pow(l.lng - userLocation.lng, 2)
+        );
+        return distance < 0.05; // ~5km radius
+      });
+    } else if (searchType === "suburb" && suburbName) {
+      filtered = filtered.filter((l) =>
+        l.suburb.toLowerCase().includes(suburbName.toLowerCase())
+      );
+    } else if (searchType === "postcode" && postcode) {
+      filtered = filtered.filter((l) => l.postcode.includes(postcode));
+    }
+
+    // Filter by guests (mock)
     const totalGuests = adults + children;
-    filtered = filtered.filter((l) => {
-      // Mock: filter by room type capacity
-      return totalGuests <= 4;
-    });
+    filtered = filtered.filter(() => totalGuests <= 4);
 
     setResults(filtered);
     setSearching(false);
@@ -154,7 +186,6 @@ export default function SeekerSearchExtended() {
     setSaved(newSaved);
     localStorage.setItem("wishlist", JSON.stringify(Array.from(newSaved)));
 
-    // Sync to backend if logged in
     if (session && user?.id) {
       updateMyProfile(session.access_token, {
         wishlist: Array.from(newSaved),
@@ -163,20 +194,136 @@ export default function SeekerSearchExtended() {
   };
 
   const handleUseLocation = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          console.log("Location:", latitude, longitude);
-          // Would filter listings by distance
-          setShowUseLocation(false);
-        },
-        (error) => {
-          console.error("Geolocation error:", error);
-          alert("Unable to get your location");
-        }
+    if (!navigator.geolocation) {
+      setLocationError("Geolocation is not supported by your browser");
+      return;
+    }
+
+    setLocationLoading(true);
+    setLocationError("");
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        setUserLocation({ lat: latitude, lng: longitude });
+        setSearchType("nearMe");
+        setLocationLoading(false);
+      },
+      (error) => {
+        console.error("Geolocation error:", error);
+        setLocationError(
+          error.code === 1
+            ? "Location access denied. Please enable location permissions."
+            : "Unable to get your location. Please try again."
+        );
+        setLocationLoading(false);
+      }
+    );
+  };
+
+  // Calendar date selection
+  const handleDateClick = (day: number) => {
+    const clickedDate = new Date(calendarYear, calendarMonth, day);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    if (clickedDate < today) return; // Can't select past dates
+
+    if (!checkInDate || (checkInDate && checkOutDate)) {
+      // Start fresh selection
+      setCheckInDate(clickedDate);
+      setCheckOutDate(null);
+    } else {
+      // Set check-out date
+      if (clickedDate > checkInDate) {
+        setCheckOutDate(clickedDate);
+        setShowCalendar(false);
+      } else {
+        // Clicked before check-in, reset
+        setCheckInDate(clickedDate);
+        setCheckOutDate(null);
+      }
+    }
+  };
+
+  const isDateInRange = (day: number) => {
+    if (!checkInDate || !checkOutDate) return false;
+    const date = new Date(calendarYear, calendarMonth, day);
+    return date > checkInDate && date < checkOutDate;
+  };
+
+  const isDateSelected = (day: number) => {
+    const date = new Date(calendarYear, calendarMonth, day);
+    if (checkInDate && date.toDateString() === checkInDate.toDateString()) return "start";
+    if (checkOutDate && date.toDateString() === checkOutDate.toDateString()) return "end";
+    return null;
+  };
+
+  const formatDateRange = () => {
+    if (!checkInDate) return "Select dates";
+    const options: Intl.DateTimeFormatOptions = { day: "numeric", month: "short" };
+    const checkInStr = checkInDate.toLocaleDateString("en-AU", options);
+    if (!checkOutDate) return `${checkInStr} - ?`;
+    const checkOutStr = checkOutDate.toLocaleDateString("en-AU", options);
+    return `${checkInStr} - ${checkOutStr}`;
+  };
+
+  const goToPrevMonth = () => {
+    if (calendarMonth === 0) {
+      setCalendarMonth(11);
+      setCalendarYear(calendarYear - 1);
+    } else {
+      setCalendarMonth(calendarMonth - 1);
+    }
+  };
+
+  const goToNextMonth = () => {
+    if (calendarMonth === 11) {
+      setCalendarMonth(0);
+      setCalendarYear(calendarYear + 1);
+    } else {
+      setCalendarMonth(calendarMonth + 1);
+    }
+  };
+
+  const renderCalendar = () => {
+    const daysInMonth = getDaysInMonth(calendarYear, calendarMonth);
+    const firstDay = getFirstDayOfMonth(calendarYear, calendarMonth);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const days = [];
+    // Empty cells for days before first of month
+    for (let i = 0; i < firstDay; i++) {
+      days.push(<div key={`empty-${i}`} className="w-10 h-10" />);
+    }
+    // Days of the month
+    for (let day = 1; day <= daysInMonth; day++) {
+      const date = new Date(calendarYear, calendarMonth, day);
+      const isPast = date < today;
+      const selected = isDateSelected(day);
+      const inRange = isDateInRange(day);
+
+      days.push(
+        <button
+          key={day}
+          onClick={() => handleDateClick(day)}
+          disabled={isPast}
+          className={`w-10 h-10 rounded-full text-sm font-medium transition-all ${
+            isPast
+              ? "text-slate-300 dark:text-slate-600 cursor-not-allowed"
+              : selected === "start" || selected === "end"
+              ? "bg-rose-500 text-white"
+              : inRange
+              ? "bg-rose-100 dark:bg-rose-500/20 text-rose-600 dark:text-rose-400"
+              : "text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+          }`}
+        >
+          {day}
+        </button>
       );
     }
+    return days;
   };
 
   return (
@@ -186,7 +333,7 @@ export default function SeekerSearchExtended() {
           Find a <span className="gradient-text">Room</span>
         </h1>
         <p className="text-sm text-slate-500 dark:text-slate-400 mt-2">
-          Search by destination, dates, and group size.
+          Search by location, dates, and group size.
         </p>
       </motion.div>
 
@@ -195,92 +342,199 @@ export default function SeekerSearchExtended() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="card rounded-2xl p-6 space-y-4"
+        className="card rounded-2xl p-6 space-y-5"
       >
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {/* Destinations */}
-          <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-              Where to?
-            </label>
-            <select
-              multiple
-              value={selectedDestinations}
-              onChange={(e) =>
-                setSelectedDestinations(
-                  Array.from(e.target.selectedOptions, (o) => o.value)
-                )
-              }
-              className="input-field"
+        {/* Location search type tabs */}
+        <div>
+          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+            Search by location
+          </label>
+          <div className="flex flex-wrap gap-2 mb-3">
+            <button
+              onClick={handleUseLocation}
+              className={`px-4 py-2 rounded-xl text-sm font-medium transition-all flex items-center gap-2 ${
+                searchType === "nearMe"
+                  ? "bg-rose-500 text-white"
+                  : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"
+              }`}
             >
-              {AUSTRALIAN_DESTINATIONS.map((dest) => (
-                <option key={dest.label} value={dest.label}>
-                  {dest.label}
-                </option>
-              ))}
-            </select>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-              Hold Ctrl/Cmd to select multiple
-            </p>
+              {locationLoading ? (
+                <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              ) : (
+                "📍"
+              )}
+              Near me
+            </button>
+            <button
+              onClick={() => setSearchType("suburb")}
+              className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
+                searchType === "suburb"
+                  ? "bg-rose-500 text-white"
+                  : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"
+              }`}
+            >
+              Suburb
+            </button>
+            <button
+              onClick={() => setSearchType("postcode")}
+              className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
+                searchType === "postcode"
+                  ? "bg-rose-500 text-white"
+                  : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"
+              }`}
+            >
+              Postcode
+            </button>
+            <button
+              onClick={() => setSearchType("address")}
+              className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
+                searchType === "address"
+                  ? "bg-rose-500 text-white"
+                  : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"
+              }`}
+            >
+              Near address
+            </button>
           </div>
 
-          {/* Check-in */}
-          <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-              Check-in
-            </label>
+          {/* Location input based on type */}
+          {searchType === "nearMe" && userLocation && (
+            <p className="text-sm text-emerald-600 dark:text-emerald-400 flex items-center gap-2">
+              <span>✓</span> Using your current location
+            </p>
+          )}
+          {searchType === "nearMe" && locationError && (
+            <p className="text-sm text-red-500">{locationError}</p>
+          )}
+          {searchType === "suburb" && (
             <input
-              type="date"
-              value={checkInDate}
-              onChange={(e) => setCheckInDate(e.target.value)}
+              type="text"
+              value={suburbName}
+              onChange={(e) => setSuburbName(e.target.value)}
+              placeholder="Enter suburb name (e.g. Surry Hills)"
               className="input-field"
             />
-          </div>
-
-          {/* Check-out */}
-          <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-              Check-out
-            </label>
+          )}
+          {searchType === "postcode" && (
             <input
-              type="date"
-              value={checkOutDate}
-              onChange={(e) => setCheckOutDate(e.target.value)}
+              type="text"
+              value={postcode}
+              onChange={(e) => setPostcode(e.target.value)}
+              placeholder="Enter postcode (e.g. 2010)"
+              className="input-field"
+              maxLength={4}
+            />
+          )}
+          {searchType === "address" && (
+            <input
+              type="text"
+              value={nearAddress}
+              onChange={(e) => setNearAddress(e.target.value)}
+              placeholder="Enter address to search nearby"
               className="input-field"
             />
-          </div>
+          )}
+        </div>
 
-          {/* Guests */}
-          <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-              Guests
-            </label>
-            <select className="input-field">
-              <option>{adults + children + infants} guests</option>
-            </select>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-              {adults} adults, {children} children, {infants} infants
-            </p>
+        {/* When are you staying - Calendar picker */}
+        <div className="relative" ref={calendarRef}>
+          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+            When are you staying?
+          </label>
+          <button
+            onClick={() => setShowCalendar(!showCalendar)}
+            className="input-field text-left flex items-center justify-between"
+          >
+            <span className={checkInDate ? "text-slate-900 dark:text-white" : "text-slate-400 dark:text-slate-500"}>
+              {formatDateRange()}
+            </span>
+            <svg className="w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+          </button>
+
+          <AnimatePresence>
+            {showCalendar && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="absolute z-50 mt-2 p-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-xl w-full max-w-sm"
+              >
+                {/* Month navigation */}
+                <div className="flex items-center justify-between mb-4">
+                  <button
+                    onClick={goToPrevMonth}
+                    className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
+                  >
+                    <svg className="w-5 h-5 text-slate-600 dark:text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                    </svg>
+                  </button>
+                  <h3 className="font-bold text-slate-900 dark:text-white">
+                    {MONTH_NAMES[calendarMonth]} {calendarYear}
+                  </h3>
+                  <button
+                    onClick={goToNextMonth}
+                    className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
+                  >
+                    <svg className="w-5 h-5 text-slate-600 dark:text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </button>
+                </div>
+
+                {/* Day headers */}
+                <div className="grid grid-cols-7 gap-1 mb-2">
+                  {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map((day) => (
+                    <div key={day} className="w-10 h-8 flex items-center justify-center text-xs font-semibold text-slate-500 dark:text-slate-400">
+                      {day}
+                    </div>
+                  ))}
+                </div>
+
+                {/* Calendar days */}
+                <div className="grid grid-cols-7 gap-1">
+                  {renderCalendar()}
+                </div>
+
+                {/* Selection info */}
+                {checkInDate && (
+                  <div className="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700">
+                    <p className="text-sm text-slate-600 dark:text-slate-300">
+                      {checkOutDate
+                        ? `${Math.ceil((checkOutDate.getTime() - checkInDate.getTime()) / (1000 * 60 * 60 * 24))} nights selected`
+                        : "Select check-out date"}
+                    </p>
+                  </div>
+                )}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
+        {/* Price slider */}
+        <div>
+          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+            Max price: <span className="text-rose-500 font-bold">AUD ${maxPrice}/day</span>
+          </label>
+          <input
+            type="range"
+            min="20"
+            max="200"
+            step="5"
+            value={maxPrice}
+            onChange={(e) => setMaxPrice(Number(e.target.value))}
+            className="w-full accent-rose-500"
+          />
+          <div className="flex justify-between text-xs text-slate-400 mt-1">
+            <span>$20</span>
+            <span>$200</span>
           </div>
         </div>
 
-        <div className="grid sm:grid-cols-3 gap-4">
-          {/* Price */}
-          <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-              Max price: AUD ${maxPrice}/week
-            </label>
-            <input
-              type="range"
-              min="50"
-              max="1000"
-              step="10"
-              value={maxPrice}
-              onChange={(e) => setMaxPrice(Number(e.target.value))}
-              className="w-full"
-            />
-          </div>
-
+        {/* Guests */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           {/* Adults */}
           <div>
             <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
@@ -288,15 +542,15 @@ export default function SeekerSearchExtended() {
             </label>
             <div className="flex items-center gap-2">
               <button
-                onClick={() => setAdults(Math.max(0, adults - 1))}
-                className="btn-secondary px-3 py-2 rounded-lg"
+                onClick={() => setAdults(Math.max(1, adults - 1))}
+                className="btn-secondary px-3 py-2 rounded-lg text-lg"
               >
                 −
               </button>
-              <span className="text-sm font-semibold w-8 text-center">{adults}</span>
+              <span className="text-sm font-semibold w-8 text-center text-slate-900 dark:text-white">{adults}</span>
               <button
                 onClick={() => setAdults(adults + 1)}
-                className="btn-secondary px-3 py-2 rounded-lg"
+                className="btn-secondary px-3 py-2 rounded-lg text-lg"
               >
                 +
               </button>
@@ -311,16 +565,58 @@ export default function SeekerSearchExtended() {
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setChildren(Math.max(0, children - 1))}
-                className="btn-secondary px-3 py-2 rounded-lg"
+                className="btn-secondary px-3 py-2 rounded-lg text-lg"
               >
                 −
               </button>
-              <span className="text-sm font-semibold w-8 text-center">
-                {children}
-              </span>
+              <span className="text-sm font-semibold w-8 text-center text-slate-900 dark:text-white">{children}</span>
               <button
                 onClick={() => setChildren(children + 1)}
-                className="btn-secondary px-3 py-2 rounded-lg"
+                className="btn-secondary px-3 py-2 rounded-lg text-lg"
+              >
+                +
+              </button>
+            </div>
+          </div>
+
+          {/* Infants */}
+          <div>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+              Infants (0-2)
+            </label>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setInfants(Math.max(0, infants - 1))}
+                className="btn-secondary px-3 py-2 rounded-lg text-lg"
+              >
+                −
+              </button>
+              <span className="text-sm font-semibold w-8 text-center text-slate-900 dark:text-white">{infants}</span>
+              <button
+                onClick={() => setInfants(infants + 1)}
+                className="btn-secondary px-3 py-2 rounded-lg text-lg"
+              >
+                +
+              </button>
+            </div>
+          </div>
+
+          {/* Pets */}
+          <div>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+              Pets
+            </label>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setPets(Math.max(0, pets - 1))}
+                className="btn-secondary px-3 py-2 rounded-lg text-lg"
+              >
+                −
+              </button>
+              <span className="text-sm font-semibold w-8 text-center text-slate-900 dark:text-white">{pets}</span>
+              <button
+                onClick={() => setPets(pets + 1)}
+                className="btn-secondary px-3 py-2 rounded-lg text-lg"
               >
                 +
               </button>
@@ -328,25 +624,23 @@ export default function SeekerSearchExtended() {
           </div>
         </div>
 
-        <div className="flex gap-3 flex-wrap">
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={handleSearch}
-            disabled={searching}
-            className="btn-primary px-6 py-2.5 rounded-xl text-sm"
-          >
-            {searching ? "Searching..." : "Search"}
-          </motion.button>
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={() => setShowUseLocation(!showUseLocation)}
-            className="btn-secondary px-6 py-2.5 rounded-xl text-sm"
-          >
-            📍 Near me
-          </motion.button>
-        </div>
+        {/* Search button */}
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          onClick={handleSearch}
+          disabled={searching}
+          className="btn-primary px-8 py-3 rounded-xl text-sm font-bold w-full sm:w-auto"
+        >
+          {searching ? (
+            <span className="flex items-center justify-center gap-2">
+              <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              Searching...
+            </span>
+          ) : (
+            "Search rooms"
+          )}
+        </motion.button>
       </motion.div>
 
       {/* Results */}
@@ -426,10 +720,10 @@ export default function SeekerSearchExtended() {
                       </div>
                       <div className="shrink-0 px-2.5 py-1 rounded-lg bg-rose-50 dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/20">
                         <span className="text-rose-600 dark:text-rose-400 font-bold text-sm">
-                          AUD ${listing.weeklyPrice}
+                          AUD ${listing.dailyPrice}
                         </span>
                         <span className="text-rose-400 dark:text-rose-500 text-xs">
-                          /wk
+                          /day
                         </span>
                       </div>
                     </div>
@@ -489,7 +783,7 @@ export default function SeekerSearchExtended() {
           )}
         </div>
 
-        {/* Wishlist sidebar */}
+        {/* Map sidebar */}
         <div className="lg:col-span-2 hidden lg:block">
           <div className="sticky top-24 space-y-4">
             {/* Map view */}
