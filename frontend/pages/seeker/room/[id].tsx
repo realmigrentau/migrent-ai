@@ -36,7 +36,7 @@ const ROOMS: Record<string, any> = {
     houseRules: ["No smoking inside", "Quiet hours 10pm-7am", "No pets", "Keep shared spaces tidy", "Guests welcome (notify housemates)"],
     transport: ["Central Station — 5 min walk", "Bus stop Crown St — 1 min walk", "Light rail Surry Hills — 8 min walk"],
     safety: { securityCameras: false, securityCamerasLocation: "", weaponsOnProperty: false, weaponsExplanation: "", otherSafetyDetails: "" },
-    owner: { name: "Sarah M.", bio: "Local Surry Hills owner. I live nearby and keep the property well maintained.", verified: true, responseTime: "Usually within 2 hours" },
+    owner: { id: "owner-sarah", name: "Sarah M.", bio: "Local Surry Hills owner. I live nearby and keep the property well maintained.", verified: true, responseTime: "Usually within 2 hours" },
     photos: [
       "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&h=500&fit=crop",
       "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&h=500&fit=crop",
@@ -74,7 +74,7 @@ const ROOMS: Record<string, any> = {
     houseRules: ["No smoking", "Quiet after 10pm", "Clean up after yourself", "No overnight guests without notice"],
     transport: ["Redfern Station — 7 min walk", "Bus stop George St — 2 min walk", "USYD campus — 10 min walk"],
     safety: { securityCameras: false, securityCamerasLocation: "", weaponsOnProperty: false, weaponsExplanation: "", otherSafetyDetails: "" },
-    owner: { name: "David K.", bio: "Property investor based in Redfern. Happy to help new arrivals settle in.", verified: false, responseTime: "Usually within 24 hours" },
+    owner: { id: "owner-david", name: "David K.", bio: "Property investor based in Redfern. Happy to help new arrivals settle in.", verified: false, responseTime: "Usually within 24 hours" },
     photos: [
       "https://images.unsplash.com/photo-1598928506311-c55ece637a745?w=800&h=500&fit=crop",
       "https://images.unsplash.com/photo-1631679706909-1844bbd07221?w=800&h=500&fit=crop",
@@ -112,7 +112,7 @@ const ROOMS: Record<string, any> = {
     houseRules: ["No smoking", "Quiet hours 10pm-7am", "No pets in room", "Keep bathroom clean"],
     transport: ["Green Square Station — 3 min walk", "Bus stop Botany Rd — 1 min walk", "CBD — 10 min by train"],
     safety: { securityCameras: true, securityCamerasLocation: "Building lobby and parking", weaponsOnProperty: false, weaponsExplanation: "", otherSafetyDetails: "Secure intercom building entry" },
-    owner: { name: "Lisa T.", bio: "Owner-occupier in Waterloo. I keep the apartment in great condition and am very responsive.", verified: true, responseTime: "Usually within 1 hour" },
+    owner: { id: "owner-lisa", name: "Lisa T.", bio: "Owner-occupier in Waterloo. I keep the apartment in great condition and am very responsive.", verified: true, responseTime: "Usually within 1 hour" },
     photos: [
       "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&h=500&fit=crop",
       "https://images.unsplash.com/photo-1540518614846-7eded433c457?w=800&h=500&fit=crop",
@@ -150,7 +150,7 @@ const ROOMS: Record<string, any> = {
     houseRules: ["No smoking inside", "Quiet after 11pm", "Shared chores roster", "Recycling required"],
     transport: ["Light rail Kensington — 1 min walk", "UNSW campus — 5 min walk", "Bus stop Anzac Pde — 2 min walk"],
     safety: { securityCameras: false, securityCamerasLocation: "", weaponsOnProperty: false, weaponsExplanation: "", otherSafetyDetails: "" },
-    owner: { name: "Mike R.", bio: "Long-time Kensington local. The house has been a great sharehouse for years.", verified: false, responseTime: "Usually within 12 hours" },
+    owner: { id: "owner-mike", name: "Mike R.", bio: "Long-time Kensington local. The house has been a great sharehouse for years.", verified: false, responseTime: "Usually within 12 hours" },
     photos: [
       "https://images.unsplash.com/photo-1513694203232-719a280e022f?w=800&h=500&fit=crop",
       "https://images.unsplash.com/photo-1564078516393-cf04bd966897?w=800&h=500&fit=crop",
@@ -188,7 +188,7 @@ const ROOMS: Record<string, any> = {
     houseRules: ["No smoking", "No pets", "Quiet hours 10pm-8am", "No subletting"],
     transport: ["Glebe light rail — 5 min walk", "Bus stop Glebe Point Rd — 1 min walk", "Broadway Shopping Centre — 8 min walk"],
     safety: { securityCameras: true, securityCamerasLocation: "Building entrance", weaponsOnProperty: false, weaponsExplanation: "", otherSafetyDetails: "" },
-    owner: { name: "Jenny W.", bio: "I own several studios in the Glebe area. Clean, well-maintained, and great for independent living.", verified: true, responseTime: "Usually within 4 hours" },
+    owner: { id: "owner-jenny", name: "Jenny W.", bio: "I own several studios in the Glebe area. Clean, well-maintained, and great for independent living.", verified: true, responseTime: "Usually within 4 hours" },
     photos: [
       "https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=800&h=500&fit=crop",
       "https://images.unsplash.com/photo-1536376072261-38c75010e6c9?w=800&h=500&fit=crop",
@@ -226,7 +226,7 @@ const ROOMS: Record<string, any> = {
     houseRules: ["No smoking", "Quiet after 10pm", "Keep kitchen clean", "No parties"],
     transport: ["Homebush Station — 8 min walk", "Olympic Park — 5 min walk", "Bus stop Parramatta Rd — 1 min walk"],
     safety: { securityCameras: false, securityCamerasLocation: "", weaponsOnProperty: false, weaponsExplanation: "", otherSafetyDetails: "" },
-    owner: { name: "Raj P.", bio: "I manage a few properties in Homebush. Friendly and always available for any issues.", verified: false, responseTime: "Usually within 6 hours" },
+    owner: { id: "owner-raj", name: "Raj P.", bio: "I manage a few properties in Homebush. Friendly and always available for any issues.", verified: false, responseTime: "Usually within 6 hours" },
     photos: [
       "https://images.unsplash.com/photo-1585412727339-54e4bae3bbf9?w=800&h=500&fit=crop",
       "https://images.unsplash.com/photo-1560185007-cde436f6a4d0?w=800&h=500&fit=crop",
@@ -487,20 +487,29 @@ export default function RoomDetail() {
           {/* Owner */}
           <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}>
             <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-3">Owner</h2>
-            <div className="card p-5 rounded-2xl">
+            <Link href={`/users/profile/${room.owner.id}`} className="block card p-5 rounded-2xl hover:shadow-md dark:hover:shadow-2xl transition-shadow cursor-pointer">
               <div className="flex items-center gap-3">
-                <AvatarWithVerification
-                  name={room.owner.name}
-                  photo={room.owner.profilePhoto || null}
-                  isVerified={room.owner.verified || false}
-                  verifiedLabel={room.owner.verified ? "Verified" : null}
-                  size={48}
-                />
-                <div>
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-rose-400 to-rose-600 flex items-center justify-center text-white font-bold text-lg shrink-0 overflow-hidden ring-2 ring-white dark:ring-slate-800 shadow-lg">
+                  {room.owner.profilePhoto ? (
+                    <img src={room.owner.profilePhoto} alt={room.owner.name} className="w-full h-full object-cover" />
+                  ) : (
+                    room.owner.name[0]
+                  )}
+                  {room.owner.verified && (
+                    <div className="absolute -bottom-0.5 -right-0.5 bg-white dark:bg-slate-900 rounded-full p-0.5 w-[18px] h-[18px]">
+                      <div className="w-full h-full rounded-full bg-gradient-to-br from-rose-400 to-rose-500 flex items-center justify-center">
+                        <svg className="w-2 h-2 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                      </div>
+                    </div>
+                  )}
+                </div>
+                <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <Link href={`/users/profile/${room.owner.id || ""}`} className="font-bold text-slate-900 dark:text-white hover:text-rose-500 dark:hover:text-rose-400 transition-colors">
+                    <span className="font-bold text-slate-900 dark:text-white group-hover:text-rose-500 transition-colors">
                       {room.owner.name}
-                    </Link>
+                    </span>
                     {room.owner.verified && (
                       <span className="px-2 py-0.5 rounded-full text-xs bg-emerald-100 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
                         &#10003; Verified
@@ -509,9 +518,12 @@ export default function RoomDetail() {
                   </div>
                   <p className="text-xs text-slate-500 dark:text-slate-400">{room.owner.responseTime}</p>
                 </div>
+                <svg className="w-5 h-5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
               </div>
               <p className="text-sm text-slate-600 dark:text-slate-300 mt-3">{room.owner.bio}</p>
-            </div>
+            </Link>
           </motion.section>
 
           {/* Report button */}
