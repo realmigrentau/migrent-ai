@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { getPublicProfile } from "../lib/api";
+import { supabase } from "../lib/supabase";
 
 export interface UserProfile {
   id: string;
@@ -86,6 +86,27 @@ function computeResponseRate(months: number): number {
   return 90;
 }
 
+/** Fetch profile directly from Supabase (fast, no Railway middleman) */
+async function fetchProfileDirect(userId: string): Promise<any | null> {
+  try {
+    // Use select("*") to get all available columns — Supabase only returns columns that exist
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("*")
+      .eq("id", userId)
+      .maybeSingle();
+
+    if (error) {
+      console.error("Supabase profile fetch error:", error);
+      return null;
+    }
+    return data;
+  } catch (err) {
+    console.error("fetchProfileDirect error:", err);
+    return null;
+  }
+}
+
 export function useUserProfile(userId: string | undefined) {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [badges, setBadges] = useState<ProfileBadges | null>(null);
@@ -100,7 +121,7 @@ export function useUserProfile(userId: string | undefined) {
       setLoading(true);
       setError(null);
       try {
-        const data = await getPublicProfile(userId!);
+        const data = await fetchProfileDirect(userId!);
         if (cancelled) return;
         if (!data) {
           setError("Profile not found");
