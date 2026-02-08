@@ -89,7 +89,11 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
 
     // Check user_metadata first
     const metaRole = user.user_metadata?.role ?? user.app_metadata?.role;
+    console.log("[AdminLayout] Checking metadata role:", metaRole);
+    console.log("[AdminLayout] user_metadata:", user.user_metadata);
+    console.log("[AdminLayout] app_metadata:", user.app_metadata);
     if (metaRole === "superadmin") {
+      console.log("[AdminLayout] Found superadmin in metadata, granting access");
       setAuthorized(true);
       setChecking(false);
       return;
@@ -99,18 +103,24 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
     // Use the authenticated client (session is already set from useAuth)
     const checkProfile = async () => {
       try {
+        console.log("[AdminLayout] Checking profile for user:", user.id);
         const { data, error, status } = await supabase
           .from("profiles")
           .select("role")
           .eq("id", user.id)
           .single();
 
+        console.log("[AdminLayout] Profile query result:", { data, error, status });
+
         if (!error && data?.role === "superadmin") {
+          console.log("[AdminLayout] User is superadmin, granting access");
           setAuthorized(true);
         } else {
+          console.log("[AdminLayout] User is NOT superadmin, redirecting. Role:", data?.role);
           router.replace("/");
         }
-      } catch {
+      } catch (e) {
+        console.error("[AdminLayout] Error checking profile:", e);
         router.replace("/");
       }
       setChecking(false);
