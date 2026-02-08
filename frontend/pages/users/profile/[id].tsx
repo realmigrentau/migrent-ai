@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
@@ -7,6 +7,7 @@ import { useUserProfile } from "../../../hooks/useUserProfile";
 import { useAuth } from "../../../hooks/useAuth";
 import ReportModal from "../../../components/ReportModal";
 import VerificationModal from "../../../components/VerificationModal";
+import { blockUser, unblockUser, isUserBlocked } from "../../../lib/api";
 
 export default function PublicProfilePage() {
   const router = useRouter();
@@ -17,8 +18,30 @@ export default function PublicProfilePage() {
   const [reportOpen, setReportOpen] = useState(false);
   const [verifyModalOpen, setVerifyModalOpen] = useState(false);
   const [showAllBadges, setShowAllBadges] = useState(false);
+  const [blocked, setBlocked] = useState(false);
+  const [blockLoading, setBlockLoading] = useState(false);
 
   const isOwnProfile = user?.id === id;
+
+  // Check if user is blocked
+  useEffect(() => {
+    if (id && user && id !== user.id) {
+      isUserBlocked(id as string).then(setBlocked);
+    }
+  }, [id, user]);
+
+  const handleToggleBlock = async () => {
+    if (!id || blockLoading) return;
+    setBlockLoading(true);
+    if (blocked) {
+      const ok = await unblockUser(id as string);
+      if (ok) setBlocked(false);
+    } else {
+      const ok = await blockUser(id as string);
+      if (ok) setBlocked(true);
+    }
+    setBlockLoading(false);
+  };
 
   // Loading
   if (loading) {
@@ -105,11 +128,11 @@ export default function PublicProfilePage() {
                     onClick={() => setVerifyModalOpen(true)}
                     className="relative cursor-pointer group"
                   >
-                    <div className="w-28 h-28 rounded-full bg-gradient-to-br from-rose-400 to-rose-600 flex items-center justify-center text-white font-bold text-4xl overflow-hidden ring-4 ring-white dark:ring-slate-800 shadow-xl transition-all group-hover:shadow-rose-500/20 group-hover:ring-rose-200 dark:group-hover:ring-rose-500/30">
+                    <div className="w-28 h-28 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center overflow-hidden ring-4 ring-white dark:ring-slate-800 shadow-xl transition-all group-hover:shadow-rose-500/20 group-hover:ring-rose-200 dark:group-hover:ring-rose-500/30">
                       {profile.custom_pfp ? (
                         <img src={profile.custom_pfp} alt={displayName} className="w-full h-full object-cover" />
                       ) : (
-                        displayName[0].toUpperCase()
+                        <span className="text-4xl font-bold text-slate-500 dark:text-slate-300 select-none">{displayName[0].toUpperCase()}</span>
                       )}
                     </div>
                     {/* Verified badge on avatar */}
@@ -168,19 +191,28 @@ export default function PublicProfilePage() {
               >
                 <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-3">{displayName}&apos;s confirmed information</h3>
                 <div className="space-y-2.5">
+                  {/* Email — always confirmed (they signed up with it) */}
                   <div className="flex items-center gap-2.5">
-                    <svg className="w-4 h-4 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                    <svg className="w-4 h-4 text-emerald-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
                     <span className="text-sm text-slate-600 dark:text-slate-300">Email address</span>
                   </div>
-                  {isVerified && (
-                    <div className="flex items-center gap-2.5">
-                      <svg className="w-4 h-4 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
-                      <span className="text-sm text-slate-600 dark:text-slate-300">Identity verified</span>
-                    </div>
-                  )}
+                  {/* Identity */}
                   <div className="flex items-center gap-2.5">
-                    <svg className="w-4 h-4 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
-                    <span className="text-sm text-slate-600 dark:text-slate-300">Phone number</span>
+                    {isVerified ? (
+                      <svg className="w-4 h-4 text-emerald-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                    ) : (
+                      <svg className="w-4 h-4 text-red-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                    )}
+                    <span className={`text-sm ${isVerified ? "text-slate-600 dark:text-slate-300" : "text-slate-400 dark:text-slate-500"}`}>Identity verified</span>
+                  </div>
+                  {/* Phone */}
+                  <div className="flex items-center gap-2.5">
+                    {isVerified ? (
+                      <svg className="w-4 h-4 text-emerald-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                    ) : (
+                      <svg className="w-4 h-4 text-red-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                    )}
+                    <span className={`text-sm ${isVerified ? "text-slate-600 dark:text-slate-300" : "text-slate-400 dark:text-slate-500"}`}>Phone number</span>
                   </div>
                 </div>
                 {!isVerified && !isOwnProfile && (
@@ -205,11 +237,19 @@ export default function PublicProfilePage() {
                     </svg>
                     Report this profile
                   </button>
-                  <button className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm text-slate-500 dark:text-slate-400 hover:bg-red-50 dark:hover:bg-red-500/10 hover:text-red-600 dark:hover:text-red-400 transition-all">
+                  <button
+                    onClick={handleToggleBlock}
+                    disabled={blockLoading}
+                    className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm transition-all disabled:opacity-50 ${
+                      blocked
+                        ? "text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-500/10"
+                        : "text-slate-500 dark:text-slate-400 hover:bg-red-50 dark:hover:bg-red-500/10 hover:text-red-600 dark:hover:text-red-400"
+                    }`}
+                  >
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
                     </svg>
-                    Block this user
+                    {blockLoading ? "..." : blocked ? "Unblock this user" : "Block this user"}
                   </button>
                 </motion.div>
               )}

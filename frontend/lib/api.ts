@@ -503,6 +503,73 @@ export async function submitReport(
   }
 }
 
+// ── Block user ──────────────────────────────────────
+
+/**
+ * Block a user (inserts into blocked_users table via Supabase).
+ */
+export async function blockUser(blockedId: string): Promise<boolean> {
+  try {
+    const { createClient } = await import("@supabase/supabase-js");
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+    const supabase = createClient(supabaseUrl, supabaseAnonKey);
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return false;
+    const { error } = await supabase.from("blocked_users").insert({
+      blocker_id: session.user.id,
+      blocked_id: blockedId,
+    });
+    if (error && error.code === "23505") return true; // already blocked
+    return !error;
+  } catch (err) {
+    console.error("blockUser error:", err);
+    return false;
+  }
+}
+
+/**
+ * Unblock a user.
+ */
+export async function unblockUser(blockedId: string): Promise<boolean> {
+  try {
+    const { createClient } = await import("@supabase/supabase-js");
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+    const supabase = createClient(supabaseUrl, supabaseAnonKey);
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return false;
+    const { error } = await supabase.from("blocked_users").delete()
+      .eq("blocker_id", session.user.id)
+      .eq("blocked_id", blockedId);
+    return !error;
+  } catch (err) {
+    console.error("unblockUser error:", err);
+    return false;
+  }
+}
+
+/**
+ * Check if current user has blocked a specific user.
+ */
+export async function isUserBlocked(blockedId: string): Promise<boolean> {
+  try {
+    const { createClient } = await import("@supabase/supabase-js");
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+    const supabase = createClient(supabaseUrl, supabaseAnonKey);
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return false;
+    const { data } = await supabase.from("blocked_users").select("id")
+      .eq("blocker_id", session.user.id)
+      .eq("blocked_id", blockedId)
+      .maybeSingle();
+    return !!data;
+  } catch {
+    return false;
+  }
+}
+
 // ── Referral endpoints ──────────────────────────────────────
 
 /**
