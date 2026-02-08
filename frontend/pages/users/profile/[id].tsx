@@ -130,9 +130,9 @@ export default function PublicProfilePage() {
                   >
                     <div className="w-28 h-28 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center overflow-hidden ring-4 ring-white dark:ring-slate-800 shadow-xl transition-all group-hover:shadow-rose-500/20 group-hover:ring-rose-200 dark:group-hover:ring-rose-500/30">
                       {profile.custom_pfp ? (
-                        <img src={profile.custom_pfp} alt={displayName} className="w-full h-full object-cover" />
+                        <img src={profile.custom_pfp} alt="" className="w-full h-full object-cover" />
                       ) : (
-                        <span className="text-4xl font-bold text-slate-500 dark:text-slate-300 select-none">{displayName[0].toUpperCase()}</span>
+                        <span className="text-5xl font-black text-slate-500 dark:text-slate-300 select-none" style={{ lineHeight: 1 }}>{displayName.charAt(0).toUpperCase()}</span>
                       )}
                     </div>
                     {/* Verified badge on avatar */}
@@ -318,16 +318,16 @@ export default function PublicProfilePage() {
               )}
             </motion.div>
 
-            {/* Divider */}
-            <div className="border-t border-slate-200 dark:border-slate-700" />
-
             {/* ── About / Bio ── */}
             {(profile.about_me || profile.bio) && (
-              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-                <p className="text-[15px] text-slate-700 dark:text-slate-200 leading-relaxed whitespace-pre-line">
-                  {profile.about_me || profile.bio}
-                </p>
-              </motion.div>
+              <>
+                <div className="border-t border-slate-200 dark:border-slate-700" />
+                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
+                  <p className="text-[15px] text-slate-700 dark:text-slate-200 leading-relaxed whitespace-pre-line">
+                    {profile.about_me || profile.bio}
+                  </p>
+                </motion.div>
+              </>
             )}
 
             {/* ── Lifestyle ── */}
@@ -491,7 +491,7 @@ export default function PublicProfilePage() {
                 <div className="border-t border-slate-200 dark:border-slate-700" />
                 <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>
                   <Link
-                    href="/account/messages"
+                    href={`/account/messages/${profile.id}`}
                     className="inline-flex items-center gap-2 btn-primary py-3 px-6 rounded-xl text-sm"
                   >
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

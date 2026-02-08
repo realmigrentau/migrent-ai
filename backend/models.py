@@ -195,18 +195,26 @@ class SeekerFeeRequest(BaseModel):
 class MessageCreate(BaseModel):
     sender_id: str
     receiver_id: str
-    listing_id: str
+    listing_id: Optional[str] = None
     deal_id: Optional[str] = None
-    message_text: str = Field(..., min_length=1, max_length=2000)
+    message_text: str = Field(..., min_length=1, max_length=5000)
+    message_html: Optional[str] = None
+    attachment_url: Optional[str] = None
+    attachment_name: Optional[str] = None
+    attachment_type: Optional[str] = None
 
 
 class MessageOut(BaseModel):
     id: str
     sender_id: str
     receiver_id: str
-    listing_id: str
+    listing_id: Optional[str] = None
     deal_id: Optional[str] = None
     message_text: str
+    message_html: Optional[str] = None
+    attachment_url: Optional[str] = None
+    attachment_name: Optional[str] = None
+    attachment_type: Optional[str] = None
     read_at: Optional[str] = None
     created_at: str
     updated_at: str

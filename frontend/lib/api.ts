@@ -487,15 +487,28 @@ export async function submitReport(
   }
 ) {
   try {
+    // Send both new format AND legacy fields for backend compatibility
+    const payload = {
+      item_type: data.item_type,
+      item_id: data.item_id,
+      listing_id: data.item_id,
+      category: data.category,
+      reason: data.category,
+      message: data.message,
+      details: data.message,
+    };
     const res = await fetch(`${BASE_URL}/reports`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify(payload),
     });
-    if (!res.ok) throw new Error(`submitReport failed: ${res.status}`);
+    if (!res.ok) {
+      const errorText = await res.text().catch(() => "");
+      throw new Error(errorText || `submitReport failed: ${res.status}`);
+    }
     return await res.json();
   } catch (err) {
     console.error("submitReport error:", err);
@@ -639,7 +652,7 @@ export async function getMyReferrals(token: string) {
 // ── Messaging endpoints ──────────────────────────────────────
 
 /**
- * Send a message between seeker and owner.
+ * Send a message between users.
  * POST /messages/send
  */
 export async function sendMessage(
@@ -647,9 +660,13 @@ export async function sendMessage(
   data: {
     sender_id: string;
     receiver_id: string;
-    listing_id: string;
+    listing_id?: string;
     deal_id?: string;
     message_text: string;
+    message_html?: string;
+    attachment_url?: string;
+    attachment_name?: string;
+    attachment_type?: string;
   }
 ) {
   try {
@@ -715,6 +732,34 @@ export async function getThreadMessages(
     return await res.json();
   } catch (err) {
     console.error("getThreadMessages error:", err);
+    return null;
+  }
+}
+
+/**
+ * Get direct messages with a specific user (no listing context).
+ * GET /messages/direct/:other_user_id
+ */
+export async function getDirectMessages(
+  token: string,
+  otherUserId: string,
+  limit: number = 50
+) {
+  try {
+    const res = await fetch(
+      `${BASE_URL}/messages/direct/${otherUserId}?limit=${limit}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    if (!res.ok) throw new Error(`getDirectMessages failed: ${res.status}`);
+    return await res.json();
+  } catch (err) {
+    console.error("getDirectMessages error:", err);
     return null;
   }
 }
