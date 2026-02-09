@@ -2,12 +2,8 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import Layout from "../../../components/Layout";
 import { useAuth } from "../../../hooks/useAuth";
 import { supabase } from "../../../lib/supabase";
-import { getPublicProfile } from "../../../lib/api";
-
-const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
 
 interface Message {
   id: string;
@@ -54,11 +50,15 @@ export default function DirectMessagePage() {
 
   const otherUserName = otherUser?.preferred_name || otherUser?.name || "User";
 
-  // Fetch other user profile
+  // Fetch other user profile directly from Supabase
   useEffect(() => {
     if (!userId) return;
     async function fetchUser() {
-      const data = await getPublicProfile(userId as string);
+      const { data } = await supabase
+        .from("profiles")
+        .select("id, name, preferred_name, custom_pfp")
+        .eq("id", userId as string)
+        .maybeSingle();
       if (data) {
         setOtherUser({
           id: data.id || (userId as string),
@@ -71,31 +71,43 @@ export default function DirectMessagePage() {
     fetchUser();
   }, [userId]);
 
-  // Fetch messages
+  // Fetch messages directly from Supabase (no Railway needed)
   const fetchMessages = useCallback(async () => {
-    if (!session || !userId) return;
+    if (!user || !userId) return;
     setLoadingMessages(true);
     try {
-      const res = await fetch(`${BASE_URL}/messages/direct/${userId}?limit=100`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${session.access_token}`,
-        },
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setMessages(data.messages || []);
+      const { data, error } = await supabase
+        .from("messages")
+        .select("*")
+        .or(
+          `and(sender_id.eq.${user.id},receiver_id.eq.${userId}),and(sender_id.eq.${userId},receiver_id.eq.${user.id})`
+        )
+        .order("created_at", { ascending: true })
+        .limit(100);
+
+      if (!error && data) {
+        setMessages(data);
+        // Mark unread messages as read
+        const unreadIds = data
+          .filter((m: any) => m.receiver_id === user.id && !m.read_at)
+          .map((m: any) => m.id);
+        if (unreadIds.length > 0) {
+          await supabase
+            .from("messages")
+            .update({ read_at: new Date().toISOString() })
+            .in("id", unreadIds);
+        }
       }
     } catch (err) {
       console.error("Failed to fetch messages:", err);
     } finally {
       setLoadingMessages(false);
     }
-  }, [session, userId]);
+  }, [user, userId]);
 
   useEffect(() => {
-    if (session && userId) fetchMessages();
-  }, [session, userId, fetchMessages]);
+    if (user && userId) fetchMessages();
+  }, [user, userId, fetchMessages]);
 
   // Real-time subscription
   useEffect(() => {
@@ -208,43 +220,38 @@ export default function DirectMessagePage() {
 
       const { text, html } = formatMessage(messageText.trim());
 
-      const payload: Record<string, any> = {
+      const msgData: Record<string, any> = {
         sender_id: user.id,
-        receiver_id: userId,
+        receiver_id: userId as string,
         message_text: text || (attachData ? `📎 ${attachData.name}` : ""),
       };
 
-      // Only include html if there's formatting
-      if (html !== text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\n/g, "<br>")) {
-        payload.message_html = html;
+      // Only include html if there's actual formatting
+      const plainHtml = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\n/g, "<br>");
+      if (html !== plainHtml) {
+        msgData.message_html = html;
       }
 
       if (attachData) {
-        payload.attachment_url = attachData.url;
-        payload.attachment_name = attachData.name;
-        payload.attachment_type = attachData.type;
+        msgData.attachment_url = attachData.url;
+        msgData.attachment_name = attachData.name;
+        msgData.attachment_type = attachData.type;
       }
 
-      const res = await fetch(`${BASE_URL}/messages/send`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${session!.access_token}`,
-        },
-        body: JSON.stringify(payload),
-      });
+      // Insert directly into Supabase (no Railway needed)
+      const { error } = await supabase.from("messages").insert(msgData);
 
-      if (res.ok) {
+      if (!error) {
         setMessageText("");
         setAttachmentFile(null);
         setAttachmentPreview(null);
         setIsBold(false);
         setIsHighlight(false);
-        // Fetch messages to ensure we have the latest
+        // Real-time subscription will pick up the new message,
+        // but also fetch to be sure
         await fetchMessages();
       } else {
-        const errData = await res.text().catch(() => "");
-        console.error("Send failed:", errData);
+        console.error("Send failed:", error);
       }
     } catch (err) {
       console.error("Send error:", err);
@@ -388,17 +395,17 @@ export default function DirectMessagePage() {
 
   if (authLoading) {
     return (
-      <Layout>
+      <>
         <div className="flex items-center justify-center py-20">
           <div className="w-8 h-8 border-2 border-rose-300 dark:border-rose-500/30 border-t-rose-500 rounded-full animate-spin" />
         </div>
-      </Layout>
+      </>
     );
   }
 
   if (!session) {
     return (
-      <Layout>
+      <>
         <div className="max-w-md mx-auto px-4 py-20">
           <div className="card p-8 rounded-2xl text-center">
             <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Sign in required</h2>
@@ -406,12 +413,12 @@ export default function DirectMessagePage() {
             <Link href="/signin" className="btn-primary py-3 px-6 rounded-xl text-sm inline-block">Sign in</Link>
           </div>
         </div>
-      </Layout>
+      </>
     );
   }
 
   return (
-    <Layout>
+    <>
       <div className="max-w-3xl mx-auto px-4 py-6">
         <div className="card rounded-2xl overflow-hidden flex flex-col" style={{ height: "calc(100vh - 160px)" }}>
 
@@ -608,6 +615,6 @@ export default function DirectMessagePage() {
           </div>
         </div>
       </div>
-    </Layout>
+    </>
   );
 }

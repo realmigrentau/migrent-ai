@@ -2,10 +2,8 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { motion, AnimatePresence } from "framer-motion";
-import Layout from "../../components/Layout";
 import { useAuth } from "../../hooks/useAuth";
-
-const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
+import { supabase } from "../../lib/supabase";
 
 interface Thread {
   listing_id?: string;
@@ -29,18 +27,65 @@ export default function MessagesPage() {
   }, [session, user?.id]);
 
   const fetchThreads = async () => {
+    if (!user?.id) return;
     setLoadingThreads(true);
     try {
-      const res = await fetch(`${BASE_URL}/messages/threads`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${session?.access_token}`,
-        },
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setThreads(data.threads || []);
+      // Fetch all messages for this user directly from Supabase
+      const { data: messages, error } = await supabase
+        .from("messages")
+        .select("*")
+        .or(`sender_id.eq.${user.id},receiver_id.eq.${user.id}`)
+        .order("created_at", { ascending: false });
+
+      if (error || !messages || messages.length === 0) {
+        setThreads([]);
+        return;
       }
+
+      // Group into threads by other user
+      const threadMap: Record<string, Thread> = {};
+      for (const msg of messages) {
+        const otherId = msg.sender_id === user.id ? msg.receiver_id : msg.sender_id;
+        const key = `${msg.listing_id || "direct"}_${otherId}`;
+
+        if (!threadMap[key]) {
+          threadMap[key] = {
+            listing_id: msg.listing_id,
+            other_user_id: otherId,
+            other_user_name: "User",
+            other_user_pfp: undefined,
+            last_message: msg.message_text,
+            last_message_at: msg.created_at,
+            unread_count: 0,
+            is_direct: !msg.listing_id,
+          };
+        }
+        if (msg.receiver_id === user.id && !msg.read_at) {
+          threadMap[key].unread_count++;
+        }
+      }
+
+      // Fetch names for all other users
+      const otherIds = [...new Set(Object.values(threadMap).map((t) => t.other_user_id))];
+      if (otherIds.length > 0) {
+        const { data: profiles } = await supabase
+          .from("profiles")
+          .select("id, name, preferred_name, custom_pfp")
+          .in("id", otherIds);
+
+        if (profiles) {
+          const profileMap = Object.fromEntries(profiles.map((p: any) => [p.id, p]));
+          for (const thread of Object.values(threadMap)) {
+            const p = profileMap[thread.other_user_id];
+            if (p) {
+              thread.other_user_name = p.preferred_name || p.name || "User";
+              thread.other_user_pfp = p.custom_pfp;
+            }
+          }
+        }
+      }
+
+      setThreads(Object.values(threadMap));
     } catch (err) {
       console.error("Failed to fetch threads:", err);
     } finally {
@@ -55,17 +100,17 @@ export default function MessagesPage() {
 
   if (loading) {
     return (
-      <Layout>
+      <>
         <div className="flex items-center justify-center py-20">
           <div className="w-8 h-8 border-2 border-rose-300 dark:border-rose-500/30 border-t-rose-500 rounded-full animate-spin" />
         </div>
-      </Layout>
+      </>
     );
   }
 
   if (!session) {
     return (
-      <Layout>
+      <>
         <div className="max-w-md mx-auto px-4 py-20">
           <div className="card p-8 rounded-2xl text-center">
             <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Sign in required</h2>
@@ -73,12 +118,12 @@ export default function MessagesPage() {
             <Link href="/signin" className="btn-primary py-3 px-6 rounded-xl text-sm inline-block">Sign in</Link>
           </div>
         </div>
-      </Layout>
+      </>
     );
   }
 
   return (
-    <Layout>
+    <>
       <div className="max-w-2xl mx-auto px-4 py-8">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
           <h1 className="text-2xl md:text-3xl font-black tracking-tight text-slate-900 dark:text-white">
@@ -168,7 +213,7 @@ export default function MessagesPage() {
           )}
         </div>
       </div>
-    </Layout>
+    </>
   );
 }
 

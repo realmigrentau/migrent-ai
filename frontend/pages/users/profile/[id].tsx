@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import Layout from "../../../components/Layout";
 import { useUserProfile } from "../../../hooks/useUserProfile";
 import { useAuth } from "../../../hooks/useAuth";
 import ReportModal from "../../../components/ReportModal";
@@ -46,7 +45,7 @@ export default function PublicProfilePage() {
   // Loading
   if (loading) {
     return (
-      <Layout>
+      <>
         <div className="max-w-4xl mx-auto px-4 py-16">
           {/* Skeleton */}
           <div className="flex flex-col lg:flex-row gap-8">
@@ -64,14 +63,14 @@ export default function PublicProfilePage() {
             </div>
           </div>
         </div>
-      </Layout>
+      </>
     );
   }
 
   // Not found
   if (error || !profile) {
     return (
-      <Layout>
+      <>
         <div className="max-w-md mx-auto px-4 py-20">
           <div className="card p-8 rounded-2xl text-center">
             <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
@@ -84,7 +83,7 @@ export default function PublicProfilePage() {
             <Link href="/" className="btn-primary py-2.5 px-6 rounded-xl text-sm inline-block">Go home</Link>
           </div>
         </div>
-      </Layout>
+      </>
     );
   }
 
@@ -108,7 +107,7 @@ export default function PublicProfilePage() {
   };
 
   return (
-    <Layout>
+    <>
       <div className="max-w-4xl mx-auto px-4 py-8 md:py-12">
         <div className="flex flex-col lg:flex-row gap-8">
 
@@ -513,6 +512,6 @@ export default function PublicProfilePage() {
         onClose={() => setVerifyModalOpen(false)}
         profile={{ name: displayName, custom_pfp: profile.custom_pfp, is_verified: isVerified, verifiedLabel: badges?.verifiedLabel || null }}
       />
-    </Layout>
+    </>
   );
 }
