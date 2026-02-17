@@ -1,527 +1,210 @@
-import { useState, FormEvent } from "react";
-import { submitSupportRequest } from "../lib/api";
-import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
+import { motion, type Variants } from "framer-motion";
+import Head from "next/head";
 
-interface SectionProps {
-  title: string;
-  children: React.ReactNode;
-  defaultOpen?: boolean;
-}
+const fadeUp: Variants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: { delay: i * 0.1, duration: 0.5, ease: "easeOut" },
+  }),
+};
 
-function CollapsibleSection({ title, children, defaultOpen = false }: SectionProps) {
-  const [open, setOpen] = useState(defaultOpen);
-  return (
-    <div className="card rounded-2xl overflow-hidden">
-      <button
-        onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between p-5 text-left hover:bg-slate-50 dark:hover:bg-white/5 transition-colors"
-      >
-        <h3 className="text-lg font-bold text-slate-900 dark:text-white">{title}</h3>
-        <motion.span
-          animate={{ rotate: open ? 180 : 0 }}
-          transition={{ duration: 0.2 }}
-          className="text-slate-400 text-xl shrink-0 ml-4"
-        >
-          &#x25BE;
-        </motion.span>
-      </button>
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="overflow-hidden"
-          >
-            <div className="px-5 pb-5 text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
-              {children}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  );
-}
+const stats = [
+  { value: "2", label: "Cities", detail: "Sydney & Adelaide" },
+  { value: "AI", label: "Powered", detail: "Smart matching" },
+  { value: "$99", label: "One-time", detail: "Owner fee per match" },
+  { value: "2025", label: "Founded", detail: "Sydney, Australia" },
+];
 
-interface FAQProps {
-  q: string;
-  a: string;
-}
-
-function FAQItem({ q, a }: FAQProps) {
-  const [open, setOpen] = useState(false);
-  return (
-    <div className="card rounded-xl overflow-hidden">
-      <button
-        onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between p-4 text-left hover:bg-slate-50 dark:hover:bg-white/5 transition-colors"
-      >
-        <h3 className="font-semibold text-slate-900 dark:text-white text-sm pr-4">{q}</h3>
-        <motion.span
-          animate={{ rotate: open ? 180 : 0 }}
-          transition={{ duration: 0.2 }}
-          className="text-slate-400 shrink-0"
-        >
-          &#x25BE;
-        </motion.span>
-      </button>
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="overflow-hidden"
-          >
-            <p className="px-4 pb-4 text-sm text-slate-500 dark:text-slate-400 leading-relaxed">{a}</p>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  );
-}
+const values = [
+  { title: "Built for Newcomers", desc: "We know what it's like to arrive in a new country with no rental history. MigRent exists because the current system fails newcomers.", icon: "M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" },
+  { title: "Trust Through Technology", desc: "We use AI matching and optional verification to create a safer, more transparent rental experience for everyone.", icon: "M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" },
+  { title: "Fair for Everyone", desc: "Simple, one-time fees. No subscriptions, no commissions on rent. Owners keep 100% of ongoing payments.", icon: "M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" },
+  { title: "Community First", desc: "We're not just a platform — we're building a community where people help each other find home in a new place.", icon: "M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" },
+];
 
 export default function About() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [role, setRole] = useState<"seeker" | "owner">("seeker");
-  const [message, setMessage] = useState("");
-  const [status, setStatus] = useState("");
-
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    if (!name || !email || !message) {
-      setStatus("Please fill in all required fields.");
-      return;
-    }
-    await submitSupportRequest({ name, email, role, message });
-    setStatus(
-      "Your message has been submitted. We will get back to you by email."
-    );
-    setName("");
-    setEmail("");
-    setMessage("");
-  };
-
   return (
-    <div className="max-w-3xl mx-auto space-y-12">
-      {/* About MigRent */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-      >
-        <h1 className="text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white">
-          About <span className="gradient-text">MigRent AI</span>
-        </h1>
-      </motion.div>
+    <>
+      <Head>
+        <title>About | MigRent AI</title>
+        <meta name="description" content="MigRent AI - founded in Sydney by an entrepreneur building an AI-powered rental marketplace for migrants and students across Australia." />
+      </Head>
 
-      <motion.section
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1 }}
-        className="card p-6 rounded-2xl space-y-4"
-      >
-        <div className="space-y-3 text-sm text-slate-600 dark:text-slate-300">
-          <p>
-            MigRent AI is an online matching platform that connects room owners and
-            accommodation seekers for short- to medium-term rooms in Sydney and
-            Adelaide. MigRent is not a real estate agent, landlord, tenant, or legal
-            representative of any user.
-          </p>
-          <div>
-            <span className="text-xs font-medium uppercase tracking-wider text-slate-400 dark:text-slate-500">ABN</span>
-            <p className="text-slate-900 dark:text-white font-semibold">22 669 566 941</p>
+      <div className="space-y-16">
+        {/* Hero */}
+        <section className="relative text-center py-16 overflow-hidden">
+          <div className="absolute top-10 left-10 w-72 h-72 bg-rose-500/10 dark:bg-rose-500/5 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute bottom-10 right-10 w-96 h-96 bg-blue-500/10 dark:bg-blue-500/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "1s" }} />
+          <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="relative z-10 max-w-3xl mx-auto">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-rose-50 dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/20 text-xs font-medium text-rose-600 dark:text-rose-400 mb-6">
+              Our Story
+            </div>
+            <h1 className="text-4xl sm:text-5xl font-black tracking-tight leading-tight">
+              <span className="text-slate-900 dark:text-white">Making housing</span>{" "}
+              <span className="gradient-text">accessible</span>{" "}
+              <span className="text-slate-900 dark:text-white">for everyone</span>
+            </h1>
+            <p className="mt-6 text-lg text-slate-500 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
+              A Sydney entrepreneur is building the AI-powered rental marketplace that migrants, students, and professionals deserve.
+            </p>
+          </motion.div>
+        </section>
+
+        {/* Stats */}
+        <section className="max-w-3xl mx-auto">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {stats.map((stat, i) => (
+              <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="card p-4 rounded-2xl text-center">
+                <p className="text-2xl font-black text-rose-500">{stat.value}</p>
+                <p className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white mt-1">{stat.label}</p>
+                <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{stat.detail}</p>
+              </motion.div>
+            ))}
           </div>
-          <div>
-            <span className="text-xs font-medium uppercase tracking-wider text-slate-400 dark:text-slate-500">Structure</span>
-            <p>Sole Trader</p>
-          </div>
-          <div>
-            <span className="text-xs font-medium uppercase tracking-wider text-slate-400 dark:text-slate-500">Email</span>
-            <p>
-              <a
-                href="mailto:migrentau@gmail.com"
-                className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors"
-              >
-                migrentau@gmail.com
-              </a>
+        </section>
+
+        {/* The Story */}
+        <section className="max-w-3xl mx-auto">
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} className="card p-6 md:p-8 rounded-2xl space-y-5">
+            <motion.h2 custom={0} variants={fadeUp} className="text-2xl font-black text-slate-900 dark:text-white">
+              The <span className="gradient-text">Story</span>
+            </motion.h2>
+            <motion.div custom={1} variants={fadeUp} className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-4">
+              <p>
+                MigRent AI started from a simple frustration: finding a room in a new country shouldn&apos;t feel like a full-time job. Scrolling through endless Facebook groups, dealing with scammers on classifieds, and getting rejected because you don&apos;t have local references &mdash; it&apos;s a broken system.
+              </p>
+              <p>
+                Founded in Sydney in 2025, MigRent was built by someone who experienced these challenges firsthand. The idea was straightforward: what if technology could match the right seekers with the right rooms, build trust through verification, and make the whole process faster and safer?
+              </p>
+              <p>
+                That&apos;s what MigRent does. We use AI to analyse preferences, lifestyle compatibility, and trust signals to create meaningful matches. Owners get serious, pre-qualified enquiries instead of noise. Seekers get curated rooms that actually fit their needs and budget.
+              </p>
+              <p>
+                We launched with Sydney and expanded to Adelaide in 2026. Our goal is to become the go-to platform for short- to medium-term accommodation across Australia &mdash; and eventually beyond.
+              </p>
+            </motion.div>
+          </motion.div>
+        </section>
+
+        {/* Mission */}
+        <section className="max-w-3xl mx-auto">
+          <div className="card p-6 md:p-8 rounded-2xl bg-gradient-to-br from-rose-50 to-rose-100/50 dark:from-rose-500/10 dark:to-rose-600/5 border-rose-200 dark:border-rose-500/20 space-y-4">
+            <h2 className="text-xl font-black text-slate-900 dark:text-white">Our Mission</h2>
+            <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+              To make finding accommodation in Australia faster, safer, and fairer for everyone &mdash; especially those arriving without local rental history. We believe everyone deserves a trusted path to finding a place to call home.
             </p>
           </div>
-          <div>
-            <span className="text-xs font-medium uppercase tracking-wider text-slate-400 dark:text-slate-500">Location</span>
-            <p>Virtual business operating in Sydney/Adelaide</p>
+        </section>
+
+        {/* Values */}
+        <section className="max-w-3xl mx-auto">
+          <h2 className="text-3xl font-black tracking-tight text-slate-900 dark:text-white mb-8 text-center">
+            What we <span className="gradient-text">stand for</span>
+          </h2>
+          <div className="grid sm:grid-cols-2 gap-4">
+            {values.map((item, i) => (
+              <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="card p-5 rounded-2xl">
+                <div className="w-10 h-10 rounded-xl bg-rose-50 dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/20 flex items-center justify-center mb-3">
+                  <svg className="w-5 h-5 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d={item.icon} />
+                  </svg>
+                </div>
+                <h3 className="font-bold text-slate-900 dark:text-white text-sm mb-1">{item.title}</h3>
+                <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">{item.desc}</p>
+              </motion.div>
+            ))}
           </div>
-        </div>
-      </motion.section>
+        </section>
 
-      {/* Contact form */}
-      <section className="space-y-4">
-        <h2 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">
-          Contact us
-        </h2>
-        <form onSubmit={handleSubmit} className="card p-6 rounded-2xl space-y-4 relative">
-          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-rose-400/50 to-transparent" />
-          <input
-            type="text"
-            placeholder="Name *"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-            className="input-field"
-          />
-          <input
-            type="email"
-            placeholder="Email *"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            className="input-field"
-          />
-          <select
-            value={role}
-            onChange={(e) => setRole(e.target.value as "seeker" | "owner")}
-            className="input-field"
-          >
-            <option value="seeker">I am a Seeker</option>
-            <option value="owner">I am an Owner</option>
-          </select>
-          <textarea
-            placeholder="Message *"
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            rows={4}
-            required
-            className="input-field"
-          />
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            type="submit"
-            className="btn-primary py-3 px-6 rounded-xl text-sm"
-          >
-            Send Message
-          </motion.button>
-          {status && (
-            <motion.p
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className={`text-sm p-3 rounded-xl ${
-                status.includes("submitted")
-                  ? "bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 text-emerald-600 dark:text-emerald-400"
-                  : "bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20 text-amber-600 dark:text-amber-400"
-              }`}
-            >
-              {status}
-            </motion.p>
-          )}
-        </form>
-        <p className="text-sm text-slate-500 dark:text-slate-400">
-          You can also reach us at{" "}
-          <a
-            href="mailto:migrentau@gmail.com"
-            className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors"
-          >
-            migrentau@gmail.com
-          </a>
-          .
-        </p>
-      </section>
-
-      {/* Safety & Verification */}
-      <section className="space-y-4">
-        <h2 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">
-          Safety &amp; Verification
-        </h2>
-        <p className="text-slate-500 dark:text-slate-400 text-sm">Your safety is our priority</p>
-
-        <CollapsibleSection title="About verification" defaultOpen>
-          <p>
-            MigRent may use third-party services to assist with ID or visa
-            verification. Verification and match scores are tools to help users
-            make informed decisions but do not guarantee safety or legality.
-          </p>
-        </CollapsibleSection>
-
-        <CollapsibleSection title="Safety tips for Seekers">
-          <ul className="list-disc list-inside space-y-2">
-            <li>
-              Inspect properties (in person or via video call) before paying any
-              money.
-            </li>
-            <li>
-              Use written agreements or clear messages confirming what is agreed.
-            </li>
-            <li>
-              Ask questions about bills, bond, notice periods, and any other
-              conditions.
-            </li>
-          </ul>
-        </CollapsibleSection>
-
-        <CollapsibleSection title="Safety tips for Owners">
-          <ul className="list-disc list-inside space-y-2">
-            <li>Arrange to meet seekers in a safe environment.</li>
-            <li>Consider asking for references if appropriate.</li>
-            <li>Keep written records of arrangements.</li>
-          </ul>
-        </CollapsibleSection>
-
-        <CollapsibleSection title="Reporting">
-          <p>
-            If you encounter an unsafe, misleading, or suspicious listing or
-            profile, please report it using the Report button on the listing or
-            profile page, or contact us at{" "}
-            <a href="mailto:migrentau@gmail.com" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">
-              migrentau@gmail.com
-            </a>
-            . We take all reports seriously and will investigate promptly.
-          </p>
-        </CollapsibleSection>
-
-        <CollapsibleSection title="Regulatory compliance">
-          <p>
-            MigRent AI is not responsible for users&apos; regulatory
-            compliance. Hosts should ensure they comply with any applicable
-            local regulations (e.g. STRA registration in NSW if relevant).
-          </p>
-        </CollapsibleSection>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="card-subtle p-6 rounded-2xl border-l-2 border-l-amber-500"
-        >
-          <p className="text-sm text-slate-500 dark:text-slate-400 mb-2">
-            MigRent does not guarantee the safety, suitability, or legality of
-            any person or property.
-          </p>
-          <p className="text-sm text-slate-500 dark:text-slate-400">
-            Users must make their own independent checks and decisions.
-          </p>
-        </motion.div>
-      </section>
-
-      {/* Terms of Use */}
-      <section className="space-y-4">
-        <h2 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">
-          Terms of Use
-        </h2>
-        <p className="text-slate-500 dark:text-slate-400 text-sm">Last updated: January 2026</p>
-
-        <CollapsibleSection title="About MigRent" defaultOpen>
-          <p>
-            MigRent is an online matching platform that connects room owners and
-            accommodation seekers for short- to medium-term rooms in Sydney and
-            Adelaide.
-          </p>
-          <p>
-            MigRent is not a real estate agent, landlord, tenant, or legal
-            representative of any user.
-          </p>
-        </CollapsibleSection>
-
-        <CollapsibleSection title="Accounts and use">
-          <ul className="list-disc list-inside space-y-2">
-            <li>Users must provide accurate information when registering.</li>
-            <li>
-              Users are responsible for their actions on the platform, including
-              the accuracy of any listings or profile information.
-            </li>
-          </ul>
-        </CollapsibleSection>
-
-        <CollapsibleSection title="Platform fees">
-          <ul className="list-disc list-inside space-y-2">
-            <li>
-              Owners agree to pay a one-time AUD 99 platform fee to MigRent when
-              a successful match is made via the platform.
-            </li>
-            <li>
-              Seekers may be presented with an optional one-time AUD 19 platform
-              fee when they successfully secure accommodation via the platform;
-              this will always be disclosed clearly at checkout.
-            </li>
-            <li>
-              Users must not use MigRent to locate or contact another user and
-              then intentionally complete the arrangement entirely outside the
-              platform in order to avoid paying MigRent&apos;s platform fee. If
-              MigRent reasonably suspects circumvention, it may restrict,
-              suspend, or terminate access to the service.
-            </li>
-          </ul>
-        </CollapsibleSection>
-
-        <CollapsibleSection title="Refund policy">
-          <p>
-            MigRent AI fees are non-refundable once a deal is confirmed and
-            payment is processed. In exceptional circumstances, manual refunds
-            may be considered at the sole discretion of MigRent AI. Contact{" "}
-            <a href="mailto:migrentau@gmail.com" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">
-              migrentau@gmail.com
-            </a>{" "}
-            for refund inquiries.
-          </p>
-        </CollapsibleSection>
-
-        <CollapsibleSection title="Platform role">
-          <p>
-            MigRent AI is a platform only and is not a real estate agent or
-            property manager. All rental agreements and payments between owners
-            and seekers are between those parties directly.
-          </p>
-        </CollapsibleSection>
-
-        <CollapsibleSection title="No guarantees">
-          <ul className="list-disc list-inside space-y-2">
-            <li>
-              MigRent does not verify or guarantee properties, users, or any
-              outcomes.
-            </li>
-            <li>
-              All agreements and ongoing rent payments are between owners and
-              seekers.
-            </li>
-            <li>
-              Any verification badges, reputation signals, or platform-managed
-              protections only apply to deals that are properly confirmed and
-              recorded through MigRent&apos;s workflows.
-            </li>
-          </ul>
-        </CollapsibleSection>
-
-        <CollapsibleSection title="Suspension and termination">
-          <p>
-            MigRent may suspend or terminate accounts for rule breaches,
-            suspected fraud, or attempts to circumvent fees.
-          </p>
-        </CollapsibleSection>
-      </section>
-
-      {/* Privacy Policy */}
-      <section className="space-y-4">
-        <h2 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">
-          Privacy Policy
-        </h2>
-        <p className="text-slate-500 dark:text-slate-400 text-sm">Last updated: January 2026</p>
-
-        <CollapsibleSection title="What data we collect" defaultOpen>
-          <ul className="list-disc list-inside space-y-2">
-            <li>Account details (email, name if provided)</li>
-            <li>Listing information</li>
-            <li>Usage analytics</li>
-            <li>Verification status or related metadata</li>
-            <li>
-              Limited payment metadata via third-party providers (not full card
-              details)
-            </li>
-          </ul>
-        </CollapsibleSection>
-
-        <CollapsibleSection title="How data is used">
-          <ul className="list-disc list-inside space-y-2">
-            <li>To operate and improve the platform</li>
-            <li>To provide matching services and verification</li>
-            <li>To process payments and send important notifications</li>
-          </ul>
-        </CollapsibleSection>
-
-        <CollapsibleSection title="Third parties">
-          <p>
-            Third-party services (e.g. verification providers, payment
-            processors, email services) may process data on our behalf as part of
-            operating the platform.
-          </p>
-        </CollapsibleSection>
-
-        <CollapsibleSection title="Rights and contact">
-          <p>
-            If you have any questions about this Privacy Policy, please contact
-            us at{" "}
-            <a href="mailto:migrentau@gmail.com" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">
-              migrentau@gmail.com
-            </a>
-            .
-          </p>
-        </CollapsibleSection>
-
-        <CollapsibleSection title="Platform disclaimer">
-          <p>
-            MigRent AI is a platform only and is not a real estate agent or
-            property manager. All rental agreements and payments between owners
-            and seekers are between those parties directly.
-          </p>
-        </CollapsibleSection>
-      </section>
-
-      {/* Support & Contact */}
-      <section className="space-y-6">
-        <h2 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">
-          Support &amp; Contact
-        </h2>
-        <p className="text-slate-500 dark:text-slate-400 text-sm">We&apos;re here to help</p>
-
-        {/* FAQ */}
-        <div>
-          <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-4">
-            Frequently Asked Questions
-          </h3>
-          <div className="space-y-2">
-            <FAQItem
-              q="I can't log in — what should I do?"
-              a="Try resetting your password using the login page. If the problem persists, contact us using the form below."
-            />
-            <FAQItem
-              q="How do I report a suspicious listing or user?"
-              a="Use the contact form below and select your role. Describe the issue in detail and our team will investigate."
-            />
-            <FAQItem
-              q="When is the owner fee charged?"
-              a="The one-time AUD 99 platform fee is charged to owners when a successful match is confirmed through MigRent."
-            />
-            <FAQItem
-              q="How do fees work?"
-              a="Owners pay a one-time AUD $99 platform fee per listing. Seekers may pay an optional AUD $19 fee."
-            />
-            <FAQItem
-              q="Is MigRent AI a real estate agent?"
-              a="No. MigRent AI is a matching platform only. We do not hold bond or rent, and are not a party to any tenancy agreement."
-            />
-            <FAQItem
-              q="How do I report a problem?"
-              a="Use the Report button on any listing or profile, or contact us at migrentau@gmail.com"
-            />
-            <FAQItem
-              q="Refunds & disputes"
-              a="MigRent AI fees are non-refundable once confirmed. For exceptional cases, contact migrentau@gmail.com. Stripe receipts are sent to your email on payment."
-            />
+        {/* How It Works Quick */}
+        <section className="max-w-3xl mx-auto">
+          <div className="card p-6 rounded-2xl space-y-4">
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white">How MigRent Works</h2>
+            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
+              <p>MigRent is a matching platform. We connect room owners with accommodation seekers and use AI to make that connection smarter.</p>
+              <div className="grid sm:grid-cols-2 gap-3">
+                <div className="card-subtle p-4 rounded-xl border-l-2 border-l-rose-500">
+                  <h3 className="font-semibold text-slate-800 dark:text-slate-200 text-sm mb-1">For Seekers</h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">Create a profile, browse AI-matched rooms, connect with owners directly.</p>
+                  <Link href="/for-seekers" className="text-xs text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors mt-1 inline-block">Learn more</Link>
+                </div>
+                <div className="card-subtle p-4 rounded-xl border-l-2 border-l-blue-500">
+                  <h3 className="font-semibold text-slate-800 dark:text-slate-200 text-sm mb-1">For Owners</h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">List your room for free, receive pre-qualified enquiries, pay $99 per match.</p>
+                  <Link href="/for-owners" className="text-xs text-blue-500 hover:text-blue-600 dark:hover:text-blue-400 underline underline-offset-2 transition-colors mt-1 inline-block">Learn more</Link>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
+        </section>
 
-        <motion.section
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="card p-5 rounded-2xl border-l-2 border-l-rose-500"
-        >
-          <p className="text-sm text-slate-500 dark:text-slate-400">
-            In the future, an AI assistant (for example, &quot;Emily &mdash;
-            MigRent Helpbot&quot;) will be available here to answer common
-            questions instantly.
-          </p>
-        </motion.section>
-      </section>
+        {/* Business Details */}
+        <section className="max-w-3xl mx-auto">
+          <div className="card p-6 rounded-2xl space-y-3">
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white">Business Details</h2>
+            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-1">
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div>
+                  <span className="text-xs font-medium uppercase tracking-wider text-slate-400 dark:text-slate-500">Business Name</span>
+                  <p className="font-semibold text-slate-900 dark:text-white">MigRent AI</p>
+                </div>
+                <div>
+                  <span className="text-xs font-medium uppercase tracking-wider text-slate-400 dark:text-slate-500">ABN</span>
+                  <p className="font-semibold text-slate-900 dark:text-white">22 669 566 941</p>
+                </div>
+                <div>
+                  <span className="text-xs font-medium uppercase tracking-wider text-slate-400 dark:text-slate-500">Structure</span>
+                  <p>Sole Trader</p>
+                </div>
+                <div>
+                  <span className="text-xs font-medium uppercase tracking-wider text-slate-400 dark:text-slate-500">Location</span>
+                  <p>Sydney, Australia (Virtual business)</p>
+                </div>
+                <div>
+                  <span className="text-xs font-medium uppercase tracking-wider text-slate-400 dark:text-slate-500">Markets</span>
+                  <p>Sydney &amp; Adelaide</p>
+                </div>
+                <div>
+                  <span className="text-xs font-medium uppercase tracking-wider text-slate-400 dark:text-slate-500">Email</span>
+                  <p><a href="mailto:migrentau@gmail.com" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">migrentau@gmail.com</a></p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
 
-      {/* Business details */}
-      <div className="pt-8 border-t border-slate-200 dark:border-slate-800 text-xs text-slate-500 dark:text-slate-400 space-y-1">
-        <p className="font-medium text-slate-600 dark:text-slate-300">MigRent AI</p>
-        <p>ABN: 22 669 566 941 | Sole Trader</p>
-        <p>Virtual business operating in Sydney/Adelaide</p>
-        <p>migrentau@gmail.com</p>
+        {/* Disclaimer */}
+        <section className="max-w-3xl mx-auto">
+          <div className="card-subtle p-5 rounded-2xl border-l-2 border-l-amber-500">
+            <p className="text-sm text-slate-500 dark:text-slate-400">
+              <strong className="text-slate-700 dark:text-slate-300">Platform disclaimer:</strong> MigRent AI is a matching platform only. We are not a real estate agent, property manager, or party to any tenancy agreement. All arrangements and ongoing rent payments are between owners and seekers directly.
+            </p>
+          </div>
+        </section>
+
+        {/* CTA */}
+        <section className="max-w-3xl mx-auto pb-8">
+          <div className="card p-8 rounded-2xl bg-gradient-to-br from-rose-50 via-white to-blue-50 dark:from-rose-500/10 dark:via-slate-900 dark:to-blue-500/10 text-center">
+            <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-3">Join the MigRent community</h2>
+            <p className="text-sm text-slate-600 dark:text-slate-300 mb-6">Whether you&apos;re looking for a room or have one to share.</p>
+            <div className="flex gap-3 justify-center flex-col sm:flex-row">
+              <Link href="/seeker/dashboard">
+                <motion.span whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }} className="inline-block btn-primary text-sm px-8 py-3 rounded-xl">
+                  I&apos;m a Seeker
+                </motion.span>
+              </Link>
+              <Link href="/owner/dashboard">
+                <motion.span whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }} className="inline-block btn-secondary text-sm px-8 py-3 rounded-xl">
+                  I&apos;m an Owner
+                </motion.span>
+              </Link>
+            </div>
+          </div>
+        </section>
       </div>
-    </div>
+    </>
   );
 }

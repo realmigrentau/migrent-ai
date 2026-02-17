@@ -7,9 +7,29 @@ import { useAuth } from "../hooks/useAuth";
 
 const navLinks = [
   { href: "/", label: "Home" },
-  { href: "/rules", label: "Rules" },
-  { href: "/about", label: "About" },
+  { href: "/pricing", label: "Pricing" },
 ];
+
+const footerLinks = {
+  company: [
+    { href: "/about", label: "About" },
+    { href: "/careers", label: "Careers" },
+    { href: "/press", label: "Press" },
+    { href: "/for-owners", label: "For Owners" },
+    { href: "/for-seekers", label: "For Seekers" },
+  ],
+  trust: [
+    { href: "/safety-verification", label: "Safety & Verification" },
+    { href: "/rules-community-guidelines", label: "Community Guidelines" },
+    { href: "/privacy-policy", label: "Privacy Policy" },
+    { href: "/terms-of-service", label: "Terms of Service" },
+  ],
+  support: [
+    { href: "/faq", label: "FAQ" },
+    { href: "/contact", label: "Contact" },
+    { href: "/pricing", label: "Pricing" },
+  ],
+};
 
 export default function Layout({ children }: { children: ReactNode }) {
   const router = useRouter();
@@ -369,34 +389,81 @@ export default function Layout({ children }: { children: ReactNode }) {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-slate-200 dark:border-slate-800 py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-2">
-              <div className={`w-6 h-6 rounded-md bg-gradient-to-br ${isSignIn ? "from-blue-500 to-blue-600" : "from-rose-500 to-rose-600"} flex items-center justify-center text-white text-xs font-black`}>
-                M
-              </div>
-              <span className="text-sm font-semibold text-slate-500 dark:text-slate-400">MigRent</span>
+      <footer className="border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            {/* Brand column */}
+            <div className="col-span-2 md:col-span-1">
+              <Link href="/" className="flex items-center gap-2 group mb-4">
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-rose-500 to-rose-600 flex items-center justify-center text-white font-black text-sm group-hover:scale-110 transition-transform">
+                  M
+                </div>
+                <span className="text-lg font-black tracking-tight text-slate-900 dark:text-white">
+                  Mig<span className="text-rose-500">Rent</span>
+                </span>
+              </Link>
+              <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed mb-4">
+                AI-powered room matching for migrants, students, and professionals across Australia.
+              </p>
+              <p className="text-xs text-slate-400 dark:text-slate-500">
+                ABN: 22 669 566 941
+              </p>
             </div>
-            <p className="text-xs text-slate-400 dark:text-slate-500 text-center max-w-lg">
-              MigRent is a matching platform only. We are not a real estate agent or
-              a party to any tenancy or licence agreements.
-            </p>
-            <div className="flex gap-4">
-              {navLinks.slice(1).map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={`text-xs text-slate-400 dark:text-slate-500 ${isSignIn ? "hover:text-blue-500" : "hover:text-rose-500"} transition-colors`}
-                >
-                  {link.label}
-                </Link>
-              ))}
+
+            {/* Company */}
+            <div>
+              <h4 className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white mb-4">Company</h4>
+              <ul className="space-y-2.5">
+                {footerLinks.company.map((link) => (
+                  <li key={link.href}>
+                    <Link href={link.href} className="text-sm text-slate-500 dark:text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors">
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Trust & Safety */}
+            <div>
+              <h4 className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white mb-4">Trust &amp; Safety</h4>
+              <ul className="space-y-2.5">
+                {footerLinks.trust.map((link) => (
+                  <li key={link.href}>
+                    <Link href={link.href} className="text-sm text-slate-500 dark:text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors">
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Support */}
+            <div>
+              <h4 className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white mb-4">Support</h4>
+              <ul className="space-y-2.5">
+                {footerLinks.support.map((link) => (
+                  <li key={link.href}>
+                    <Link href={link.href} className="text-sm text-slate-500 dark:text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors">
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+              <a href="mailto:migrentau@gmail.com" className="inline-block mt-3 text-sm text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 transition-colors">
+                migrentau@gmail.com
+              </a>
             </div>
           </div>
-          <div className="mt-4 pt-4 border-t border-slate-200/50 dark:border-slate-800/50 text-xs text-slate-400 dark:text-slate-500 text-center space-y-1">
-            <div>&copy; 2026 MigRent AI | ABN: 22 669 566 941</div>
-            <div>migrentau@gmail.com</div>
+
+          {/* Bottom bar */}
+          <div className="mt-10 pt-6 border-t border-slate-200/50 dark:border-slate-800/50 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <p className="text-xs text-slate-400 dark:text-slate-500">
+              &copy; 2026 MigRent AI. All rights reserved.
+            </p>
+            <p className="text-xs text-slate-400 dark:text-slate-500 text-center max-w-md">
+              MigRent is a matching platform only. We are not a real estate agent or a party to any tenancy or licence agreements.
+            </p>
           </div>
         </div>
       </footer>
