@@ -169,7 +169,7 @@ export default function About() {
                 </div>
                 <div>
                   <span className="text-xs font-medium uppercase tracking-wider text-slate-400 dark:text-slate-500">Email</span>
-                  <p><a href="mailto:migrentau@gmail.com" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">migrentau@gmail.com</a></p>
+                  <p><a href="https://mail.google.com/mail/?view=cm&to=migrentau@gmail.com" target="_blank" rel="noopener noreferrer" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">migrentau@gmail.com</a></p>
                 </div>
               </div>
             </div>

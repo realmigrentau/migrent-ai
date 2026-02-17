@@ -147,7 +147,7 @@ export default function PrivacyPolicy() {
                 <li><strong>Objection</strong> &mdash; Object to processing of your data in certain circumstances</li>
                 <li><strong>Withdraw consent</strong> &mdash; Withdraw consent at any time where processing is based on consent</li>
               </ul>
-              <p>To exercise any of these rights, contact us at <a href="mailto:migrentau@gmail.com" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">migrentau@gmail.com</a>.</p>
+              <p>To exercise any of these rights, contact us at <a href="https://mail.google.com/mail/?view=cm&to=migrentau@gmail.com" target="_blank" rel="noopener noreferrer" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">migrentau@gmail.com</a>.</p>
             </div>
           </section>
 
@@ -175,7 +175,7 @@ export default function PrivacyPolicy() {
               <div className="card-subtle p-4 rounded-xl space-y-1">
                 <p className="font-semibold text-slate-800 dark:text-slate-200">MigRent AI</p>
                 <p>ABN: 22 669 566 941</p>
-                <p>Email: <a href="mailto:migrentau@gmail.com" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">migrentau@gmail.com</a></p>
+                <p>Email: <a href="https://mail.google.com/mail/?view=cm&to=migrentau@gmail.com" target="_blank" rel="noopener noreferrer" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">migrentau@gmail.com</a></p>
                 <p>Location: Sydney, Australia</p>
               </div>
             </div>

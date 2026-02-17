@@ -142,7 +142,7 @@ export default function Press() {
           <div className="card p-8 rounded-2xl bg-gradient-to-br from-violet-50 to-violet-100/50 dark:from-violet-500/10 dark:to-violet-600/5 border-violet-200 dark:border-violet-500/20 text-center">
             <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-3">Press enquiries</h2>
             <p className="text-sm text-slate-600 dark:text-slate-300 mb-6 max-w-md mx-auto">For interviews, media features, partnerships, or media kit requests:</p>
-            <a href="mailto:migrentau@gmail.com?subject=Press%20Enquiry%20-%20MigRent%20AI">
+            <a href="https://mail.google.com/mail/?view=cm&to=migrentau@gmail.com&su=Press%20Enquiry%20-%20MigRent%20AI" target="_blank" rel="noopener noreferrer">
               <motion.span whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }} className="inline-block btn-primary text-sm px-8 py-3 rounded-xl">
                 Contact Press Team
               </motion.span>

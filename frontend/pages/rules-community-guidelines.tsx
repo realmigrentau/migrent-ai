@@ -111,7 +111,7 @@ export default function RulesCommunityGuidelines() {
               <ol className="list-decimal list-inside space-y-1.5">
                 <li>Attempt direct communication with the other party</li>
                 <li>Document all interactions and agreements</li>
-                <li>Contact MigRent at <a href="mailto:migrentau@gmail.com" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">migrentau@gmail.com</a> for assistance</li>
+                <li>Contact MigRent at <a href="https://mail.google.com/mail/?view=cm&to=migrentau@gmail.com" target="_blank" rel="noopener noreferrer" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">migrentau@gmail.com</a> for assistance</li>
                 <li>For serious disputes, seek independent legal advice or contact your state&apos;s tenancy authority</li>
               </ol>
               <p>MigRent may mediate informally but is not a dispute resolution service and cannot enforce outcomes between users.</p>
