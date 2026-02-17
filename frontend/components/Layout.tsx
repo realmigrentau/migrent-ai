@@ -450,7 +450,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                   </li>
                 ))}
               </ul>
-              <a href="https://mail.google.com/mail/?view=cm&to=migrentau@gmail.com" target="_blank" rel="noopener noreferrer" className="inline-block mt-3 text-sm text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 transition-colors">
+              <a href="https://mail.google.com/mail/?view=cm&fs=1&to=migrentau@gmail.com" target="_blank" rel="noopener noreferrer" className="inline-block mt-3 text-sm text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 transition-colors">
                 migrentau@gmail.com
               </a>
             </div>

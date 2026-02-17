@@ -93,7 +93,7 @@ export default function TermsOfService() {
             <h2 className="text-lg font-bold text-slate-900 dark:text-white">5. Refund Policy</h2>
             <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
               <p>Platform fees are generally non-refundable once a deal is confirmed and payment is processed. In exceptional circumstances, refunds may be considered at the sole discretion of MigRent AI.</p>
-              <p>Stripe receipts are automatically sent to the email address associated with your account. For refund inquiries, contact <a href="https://mail.google.com/mail/?view=cm&to=migrentau@gmail.com" target="_blank" rel="noopener noreferrer" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">migrentau@gmail.com</a>.</p>
+              <p>Stripe receipts are automatically sent to the email address associated with your account. For refund inquiries, contact <a href="https://mail.google.com/mail/?view=cm&fs=1&to=migrentau@gmail.com" target="_blank" rel="noopener noreferrer" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">migrentau@gmail.com</a>.</p>
             </div>
           </section>
 
@@ -180,7 +180,7 @@ export default function TermsOfService() {
               <div className="card-subtle p-4 rounded-xl space-y-1">
                 <p className="font-semibold text-slate-800 dark:text-slate-200">MigRent AI</p>
                 <p>ABN: 22 669 566 941</p>
-                <p>Email: <a href="https://mail.google.com/mail/?view=cm&to=migrentau@gmail.com" target="_blank" rel="noopener noreferrer" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">migrentau@gmail.com</a></p>
+                <p>Email: <a href="https://mail.google.com/mail/?view=cm&fs=1&to=migrentau@gmail.com" target="_blank" rel="noopener noreferrer" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">migrentau@gmail.com</a></p>
                 <p>Location: Sydney, Australia</p>
               </div>
             </div>

@@ -82,6 +82,7 @@ export default function DirectMessagePage() {
   const [showEmoji, setShowEmoji] = useState(false);
   const [showMemes, setShowMemes] = useState(false);
   const [showPlus, setShowPlus] = useState(false);
+  const [showFormatBar, setShowFormatBar] = useState(false);
   const [emojiCategory, setEmojiCategory] = useState(0);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -215,27 +216,7 @@ export default function DirectMessagePage() {
     if ((!messageText.trim() && attachments.length === 0) || !user || !userId) return;
     setSending(true);
     try {
-      // Upload all attachments first
-      if (attachments.length > 0) {
-        setUploading(true);
-        for (const att of attachments) {
-          const uploaded = await uploadFile(att.file);
-          if (uploaded) {
-            // Send each attachment as its own message
-            await supabase.from("messages").insert({
-              sender_id: user.id,
-              receiver_id: userId as string,
-              message_text: `📎 ${uploaded.name}`,
-              attachment_url: uploaded.url,
-              attachment_name: uploaded.name,
-              attachment_type: uploaded.type,
-            });
-          }
-        }
-        setUploading(false);
-      }
-
-      // Send text message if there is one
+      // Send text message first (if there is one)
       if (messageText.trim()) {
         const { text, html } = formatMessage(messageText.trim());
         const msgData: Record<string, any> = {
@@ -245,7 +226,39 @@ export default function DirectMessagePage() {
         };
         const plainHtml = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\n/g, "<br>");
         if (html !== plainHtml) msgData.message_html = html;
-        await supabase.from("messages").insert(msgData);
+        const { error: textErr } = await supabase.from("messages").insert(msgData);
+        if (textErr) console.error("Text send error:", textErr);
+      }
+
+      // Upload & send each attachment
+      if (attachments.length > 0) {
+        setUploading(true);
+        for (const att of attachments) {
+          const uploaded = await uploadFile(att.file);
+          if (uploaded) {
+            const { error: attErr } = await supabase.from("messages").insert({
+              sender_id: user.id,
+              receiver_id: userId as string,
+              message_text: `📎 ${uploaded.name}`,
+              attachment_url: uploaded.url,
+              attachment_name: uploaded.name,
+              attachment_type: uploaded.type,
+            });
+            if (attErr) {
+              console.error("Attachment send error:", attErr);
+              // Fallback: send as text with URL if attachment columns fail
+              await supabase.from("messages").insert({
+                sender_id: user.id,
+                receiver_id: userId as string,
+                message_text: `📎 ${uploaded.name}\n${uploaded.url}`,
+              });
+            }
+          } else {
+            // If upload fails, notify user in chat
+            console.error("Upload failed for:", att.file.name);
+          }
+        }
+        setUploading(false);
       }
 
       setMessageText("");
@@ -546,27 +559,35 @@ export default function DirectMessagePage() {
 
         {/* ── Discord-style input bar ── */}
         <div className="border-t border-slate-100 dark:border-slate-800">
-          {/* Formatting toolbar */}
-          <div className="px-3 pt-2 pb-1 flex items-center gap-0.5">
-            <button onClick={() => insertFormatting("bold")} className="p-1.5 rounded-md text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" title="Bold **text**">
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M15.6 10.79c.97-.67 1.65-1.77 1.65-2.79 0-2.26-1.75-4-4-4H7v14h7.04c2.09 0 3.71-1.7 3.71-3.79 0-1.52-.86-2.82-2.15-3.42zM10 6.5h3c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5h-3v-3zm3.5 9H10v-3h3.5c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5z" /></svg>
-            </button>
-            <button onClick={() => insertFormatting("italic")} className="p-1.5 rounded-md text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" title="Italic *text*">
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M10 4v3h2.21l-3.42 8H6v3h8v-3h-2.21l3.42-8H18V4z" /></svg>
-            </button>
-            <button onClick={() => insertFormatting("strikethrough")} className="p-1.5 rounded-md text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" title="Strikethrough ~~text~~">
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M10 19h4v-3h-4v3zM5 4v3h5v3h4V7h5V4H5zM3 14h18v-2H3v2z" /></svg>
-            </button>
-            <button onClick={() => insertFormatting("highlight")} className="p-1.5 rounded-md text-slate-400 hover:text-yellow-500 hover:bg-yellow-50 dark:hover:bg-yellow-500/10 transition-colors" title="Highlight ==text==">
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M18 14V8a6 6 0 00-12 0v6l-2 4h16l-2-4zm-6 8c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2z" /></svg>
-            </button>
-
-            <div className="flex-1" />
-
-            <span className="text-[10px] text-slate-400 dark:text-slate-600 hidden sm:inline">
-              **bold** &middot; *italic* &middot; ~~strike~~ &middot; ==highlight==
-            </span>
-          </div>
+          {/* Formatting toolbar — toggleable */}
+          <AnimatePresence>
+            {showFormatBar && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.15 }}
+                className="overflow-hidden"
+              >
+                <div className="px-3 pt-2 pb-1 flex items-center gap-1">
+                  <button onClick={() => insertFormatting("bold")} className="p-1.5 rounded-md text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" title="Bold">
+                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M15.6 10.79c.97-.67 1.65-1.77 1.65-2.79 0-2.26-1.75-4-4-4H7v14h7.04c2.09 0 3.71-1.7 3.71-3.79 0-1.52-.86-2.82-2.15-3.42zM10 6.5h3c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5h-3v-3zm3.5 9H10v-3h3.5c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5z" /></svg>
+                  </button>
+                  <button onClick={() => insertFormatting("italic")} className="p-1.5 rounded-md text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" title="Italic">
+                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M10 4v3h2.21l-3.42 8H6v3h8v-3h-2.21l3.42-8H18V4z" /></svg>
+                  </button>
+                  <button onClick={() => insertFormatting("strikethrough")} className="p-1.5 rounded-md text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" title="Strikethrough">
+                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M10 19h4v-3h-4v3zM5 4v3h5v3h4V7h5V4H5zM3 14h18v-2H3v2z" /></svg>
+                  </button>
+                  <button onClick={() => insertFormatting("highlight")} className="p-1.5 rounded-md text-slate-400 hover:text-yellow-500 hover:bg-yellow-50 dark:hover:bg-yellow-500/10 transition-colors" title="Highlight">
+                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M18 14V8a6 6 0 00-12 0v6l-2 4h16l-2-4zm-6 8c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2z" /></svg>
+                  </button>
+                  <div className="mx-2 h-4 w-px bg-slate-200 dark:bg-slate-700" />
+                  <span className="text-[10px] text-slate-400 dark:text-slate-500">Select text, then tap a format</span>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {/* Main input row */}
           <div className="px-3 pb-3 flex items-end gap-1.5">
@@ -616,6 +637,19 @@ export default function DirectMessagePage() {
               multiple
               onChange={handleFileSelect}
             />
+
+            {/* Formatting toggle button */}
+            <button
+              onClick={() => setShowFormatBar(!showFormatBar)}
+              className={`p-2 rounded-xl transition-colors shrink-0 ${
+                showFormatBar
+                  ? "text-rose-500 bg-rose-50 dark:bg-rose-500/10"
+                  : "text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"
+              }`}
+              title="Text formatting"
+            >
+              <span className="text-xs font-bold leading-none">Aa</span>
+            </button>
 
             {/* Message textarea */}
             <textarea

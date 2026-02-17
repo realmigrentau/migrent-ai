@@ -137,7 +137,7 @@ export default function SafetyVerification() {
               <p>If you encounter unsafe, misleading, or suspicious behaviour:</p>
               <ul className="list-disc list-inside space-y-1.5">
                 <li><strong>Report button</strong> &mdash; Available on every listing and user profile</li>
-                <li><strong>Email</strong> &mdash; Contact <a href="https://mail.google.com/mail/?view=cm&to=migrentau@gmail.com" target="_blank" rel="noopener noreferrer" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">migrentau@gmail.com</a></li>
+                <li><strong>Email</strong> &mdash; Contact <a href="https://mail.google.com/mail/?view=cm&fs=1&to=migrentau@gmail.com" target="_blank" rel="noopener noreferrer" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">migrentau@gmail.com</a></li>
                 <li><strong>Emergency</strong> &mdash; If you feel unsafe, contact local emergency services (000) immediately</li>
               </ul>
               <p>We take all reports seriously and will investigate promptly. Users who are found to violate our guidelines may have their accounts suspended or terminated.</p>

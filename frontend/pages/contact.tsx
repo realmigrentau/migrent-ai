@@ -61,7 +61,7 @@ export default function Contact() {
                 </svg>
               </div>
               <h3 className="font-bold text-slate-900 dark:text-white text-sm mb-1">Email</h3>
-              <a href="https://mail.google.com/mail/?view=cm&to=migrentau@gmail.com" target="_blank" rel="noopener noreferrer" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 text-sm underline underline-offset-2 transition-colors">
+              <a href="https://mail.google.com/mail/?view=cm&fs=1&to=migrentau@gmail.com" target="_blank" rel="noopener noreferrer" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 text-sm underline underline-offset-2 transition-colors">
                 migrentau@gmail.com
               </a>
             </div>
@@ -167,7 +167,7 @@ export default function Contact() {
               <p>ABN: 22 669 566 941</p>
               <p>Structure: Sole Trader</p>
               <p>Location: Sydney, Australia (Virtual business)</p>
-              <p>Email: <a href="https://mail.google.com/mail/?view=cm&to=migrentau@gmail.com" target="_blank" rel="noopener noreferrer" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">migrentau@gmail.com</a></p>
+              <p>Email: <a href="https://mail.google.com/mail/?view=cm&fs=1&to=migrentau@gmail.com" target="_blank" rel="noopener noreferrer" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">migrentau@gmail.com</a></p>
             </div>
           </section>
 
