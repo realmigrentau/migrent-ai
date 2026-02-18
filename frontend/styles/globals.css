@@ -214,6 +214,32 @@ a {
   100% { background-position: -200% 0; }
 }
 
+/* ── Marquee scroll ── */
+@keyframes marquee-left {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes marquee-right {
+  0% { transform: translateX(-50%); }
+  100% { transform: translateX(0); }
+}
+
+.marquee-scroll-left {
+  animation: marquee-left 40s linear infinite;
+}
+
+.marquee-scroll-right {
+  animation: marquee-right 40s linear infinite;
+}
+
+@media (max-width: 640px) {
+  .marquee-scroll-left,
+  .marquee-scroll-right {
+    animation-duration: 25s;
+  }
+}
+
 /* ── Select styling ── */
 select.input-field {
   appearance: none;

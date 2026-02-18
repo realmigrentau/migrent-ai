@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { useMemo } from "react";
+import Head from "next/head";
 import { motion, type Variants } from "framer-motion";
+import OwnerMarquee from "../components/OwnerMarquee";
 
 const fadeUp: Variants = {
   hidden: { opacity: 0, y: 30 },
@@ -10,15 +11,6 @@ const fadeUp: Variants = {
     transition: { delay: i * 0.15, duration: 0.6, ease: "easeOut" as const },
   }),
 };
-
-const FEATURED_LISTINGS = [
-  { id: "1", title: "Bright Room in Surry Hills", suburb: "Sydney", postcode: "2010", price: 250, img: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=600&h=260&fit=crop&crop=center" },
-  { id: "2", title: "Cozy Share in Redfern", suburb: "Sydney", postcode: "2016", price: 220, img: "https://images.unsplash.com/photo-1598928506311-c55ece637a745?w=600&h=260&fit=crop&crop=center" },
-  { id: "3", title: "Modern Room in Waterloo", suburb: "Sydney", postcode: "2017", price: 280, img: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=600&h=260&fit=crop&crop=center" },
-  { id: "4", title: "Budget Room in Kensington", suburb: "Sydney", postcode: "2033", price: 200, img: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600&h=260&fit=crop&crop=center" },
-  { id: "5", title: "Furnished Room in Glebe", suburb: "Sydney", postcode: "2037", price: 310, img: "https://images.unsplash.com/photo-1540518614846-7eded433c457?w=600&h=260&fit=crop&crop=center" },
-  { id: "6", title: "Affordable Room in Homebush", suburb: "Sydney", postcode: "2140", price: 190, img: "https://images.unsplash.com/photo-1560185007-cde436f6a4d0?w=600&h=260&fit=crop&crop=center" },
-];
 
 const steps = {
   seekers: [
@@ -36,330 +28,324 @@ const steps = {
 };
 
 export default function Home() {
-  const featured = useMemo(() => {
-    const idx = Math.floor(Math.random() * FEATURED_LISTINGS.length);
-    const match = Math.floor(Math.random() * 16) + 82; // 82-97%
-    return { ...FEATURED_LISTINGS[idx], match };
-  }, []);
-
   return (
-    <div className="space-y-24">
-      {/* Hero */}
-      <section className="relative text-center py-20 overflow-hidden">
-        {/* Floating shapes */}
-        <div className="absolute top-10 left-10 w-72 h-72 bg-rose-500/10 dark:bg-rose-500/5 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-10 right-10 w-96 h-96 bg-blue-500/10 dark:bg-blue-500/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "1s" }} />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-rose-400/5 dark:bg-rose-600/5 rounded-full blur-3xl" />
+    <>
+      <Head>
+        <title>MigRent AI - Top Verified Rentals Sydney | Find Your Room</title>
+        <meta
+          name="description"
+          content="Browse top verified MigRent AI rentals in Sydney. Superhost-rated rooms, verified owners, and station-close listings for migrants, students, and professionals."
+        />
+        <meta property="og:title" content="MigRent AI - Top Verified Rentals Sydney" />
+        <meta property="og:description" content="Find verified rooms from trusted owners across Australia. Superhost-rated, station-close listings." />
+        <meta property="og:type" content="website" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              name: "MigRent AI",
+              url: "https://migrent.au",
+              description: "Top verified MigRent AI rentals in Sydney for migrants, students, and professionals.",
+              potentialAction: {
+                "@type": "SearchAction",
+                target: "https://migrent.au/seeker/search?q={search_term_string}",
+                "query-input": "required name=search_term_string",
+              },
+            }),
+          }}
+        />
+      </Head>
 
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="relative z-10"
-        >
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-rose-50 dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/20 text-xs font-medium text-rose-600 dark:text-rose-400 mb-6">
-            <span className="pulse-dot" />
-            Now live across Australia
-          </div>
+      <div className="space-y-24">
+        {/* Hero */}
+        <section className="relative text-center pt-16 pb-8 overflow-hidden">
+          {/* Floating shapes */}
+          <div className="absolute top-10 left-10 w-72 h-72 bg-rose-500/10 dark:bg-rose-500/5 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute bottom-10 right-10 w-96 h-96 bg-blue-500/10 dark:bg-blue-500/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "1s" }} />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-rose-400/5 dark:bg-rose-600/5 rounded-full blur-3xl" />
 
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight leading-tight max-w-4xl mx-auto">
-            <span className="gradient-text">Find your room,</span>{" "}
-            <span className="text-slate-900 dark:text-white">feel at home</span>
-          </h1>
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="relative z-10"
+          >
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-rose-50 dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/20 text-xs font-medium text-rose-600 dark:text-rose-400 mb-6">
+              <span className="pulse-dot" />
+              Now live across Australia
+            </div>
 
-          <p className="mt-6 text-lg md:text-xl text-slate-500 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed font-medium">
-            MigRent helps migrants, students, and professionals find rooms from
-            local owners &mdash; faster and safer than random classifieds.
-          </p>
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight leading-tight max-w-4xl mx-auto">
+              <span className="gradient-text">Find your room,</span>{" "}
+              <span className="text-slate-900 dark:text-white">feel at home</span>
+            </h1>
 
-          <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/seeker/dashboard">
-              <motion.span
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.98 }}
-                className="inline-block btn-primary text-base px-8 py-4 rounded-xl"
-              >
-                I&apos;m a Seeker
-              </motion.span>
-            </Link>
-            <Link href="/owner/dashboard">
-              <motion.span
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.98 }}
-                className="inline-block btn-secondary text-base px-8 py-4 rounded-xl"
-              >
-                I&apos;m an Owner
-              </motion.span>
-            </Link>
-          </div>
-        </motion.div>
+            <p className="mt-6 text-lg md:text-xl text-slate-500 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed font-medium">
+              MigRent helps migrants, students, and professionals find rooms from
+              local owners &mdash; faster and safer than random classifieds.
+            </p>
 
-        {/* 3D Card Stack Preview */}
-        <motion.div
-          initial={{ opacity: 0, y: 60 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-          className="relative z-10 mt-16 max-w-lg mx-auto"
-        >
-          <div className="relative">
-            {/* Back cards */}
-            <div className="absolute -top-3 left-4 right-4 h-40 card rounded-2xl opacity-30 -rotate-2" />
-            <div className="absolute -top-1.5 left-2 right-2 h-40 card rounded-2xl opacity-50 rotate-1" />
-            {/* Front card */}
-            <Link href={`/seeker/room/${featured.id}`}>
-              <div className="relative card rounded-2xl overflow-hidden cursor-pointer hover:shadow-lg transition-shadow text-left">
-                <img
-                  src={featured.img}
-                  alt={featured.title}
-                  className="w-full h-32 object-cover"
-                />
-                <div className="p-3">
-                  <div className="flex items-center justify-between gap-2">
+            <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
+              <Link href="/seeker/dashboard">
+                <motion.span
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="inline-block btn-primary text-base px-8 py-4 rounded-xl"
+                >
+                  I&apos;m a Seeker
+                </motion.span>
+              </Link>
+              <Link href="/owner/dashboard">
+                <motion.span
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="inline-block btn-secondary text-base px-8 py-4 rounded-xl"
+                >
+                  I&apos;m an Owner
+                </motion.span>
+              </Link>
+            </div>
+          </motion.div>
+
+          {/* Marquee of top listings */}
+          <motion.div
+            initial={{ opacity: 0, y: 60 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            className="relative z-10 mt-14 -mx-4 sm:-mx-6 md:-mx-8"
+          >
+            <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-4">
+              Top verified listings
+            </p>
+            <OwnerMarquee />
+          </motion.div>
+        </section>
+
+        {/* How it works */}
+        <section>
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            className="text-center mb-12"
+          >
+            <motion.h2
+              custom={0}
+              variants={fadeUp}
+              className="text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white"
+            >
+              How it <span className="gradient-text">works</span>
+            </motion.h2>
+          </motion.div>
+
+          <div className="grid md:grid-cols-2 gap-8">
+            {/* Seekers */}
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-50px" }}
+              className="card p-6 rounded-2xl"
+            >
+              <h3 className="text-lg font-bold text-rose-500 mb-6 flex items-center gap-2">
+                <span className="w-8 h-8 rounded-lg bg-rose-50 dark:bg-rose-500/10 flex items-center justify-center text-sm">
+                  S
+                </span>
+                For Seekers
+              </h3>
+              <div className="space-y-4">
+                {steps.seekers.map((step, i) => (
+                  <motion.div
+                    key={step.num}
+                    custom={i}
+                    variants={fadeUp}
+                    className="flex gap-4 items-start group"
+                  >
+                    <span className="text-xs font-bold text-rose-300 dark:text-rose-500/50 group-hover:text-rose-500 dark:group-hover:text-rose-400 transition-colors mt-0.5 shrink-0">
+                      {step.num}
+                    </span>
                     <div>
-                      <span className="text-[10px] uppercase tracking-wider text-rose-500 dark:text-rose-400 font-semibold">Featured Listing</span>
-                      <h3 className="text-slate-900 dark:text-white font-bold text-sm leading-snug">{featured.title}</h3>
-                      <p className="text-slate-500 dark:text-slate-400 text-xs leading-snug">{featured.suburb}, {featured.postcode}</p>
+                      <h4 className="text-slate-900 dark:text-white font-semibold text-sm">{step.title}</h4>
+                      <p className="text-slate-500 dark:text-slate-400 text-xs mt-0.5">{step.desc}</p>
                     </div>
-                    <div className="px-2.5 py-1 rounded-lg bg-rose-50 dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/20 shrink-0">
-                      <span className="text-rose-600 dark:text-rose-400 font-bold text-sm">${featured.price}</span>
-                      <span className="text-rose-400 dark:text-rose-500 text-xs">/wk</span>
-                    </div>
-                  </div>
-                  <div className="mt-2 flex items-center gap-3">
-                    <div className="flex-1 h-1.5 rounded-full bg-slate-100 dark:bg-white/10 overflow-hidden">
-                      <div className="h-full rounded-full bg-gradient-to-r from-emerald-400 to-emerald-500" style={{ width: `${featured.match}%` }} />
-                    </div>
-                    <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400">{featured.match}% match</span>
-                  </div>
-                </div>
+                  </motion.div>
+                ))}
               </div>
-            </Link>
+            </motion.div>
+
+            {/* Owners */}
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-50px" }}
+              className="card p-6 rounded-2xl"
+            >
+              <h3 className="text-lg font-bold text-blue-500 mb-6 flex items-center gap-2">
+                <span className="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-500/10 flex items-center justify-center text-sm">
+                  O
+                </span>
+                For Owners
+              </h3>
+              <div className="space-y-4">
+                {steps.owners.map((step, i) => (
+                  <motion.div
+                    key={step.num}
+                    custom={i}
+                    variants={fadeUp}
+                    className="flex gap-4 items-start group"
+                  >
+                    <span className="text-xs font-bold text-blue-300 dark:text-blue-500/50 group-hover:text-blue-500 dark:group-hover:text-blue-400 transition-colors mt-0.5 shrink-0">
+                      {step.num}
+                    </span>
+                    <div>
+                      <h4 className="text-slate-900 dark:text-white font-semibold text-sm">{step.title}</h4>
+                      <p className="text-slate-500 dark:text-slate-400 text-xs mt-0.5">{step.desc}</p>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
           </div>
-        </motion.div>
-      </section>
+        </section>
 
-      {/* How it works */}
-      <section>
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-          className="text-center mb-12"
-        >
-          <motion.h2
-            custom={0}
-            variants={fadeUp}
-            className="text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white"
-          >
-            How it <span className="gradient-text">works</span>
-          </motion.h2>
-        </motion.div>
-
-        <div className="grid md:grid-cols-2 gap-8">
-          {/* Seekers */}
+        {/* Benefits for Seekers */}
+        <section>
           <motion.div
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, margin: "-50px" }}
-            className="card p-6 rounded-2xl"
+            viewport={{ once: true, margin: "-100px" }}
           >
-            <h3 className="text-lg font-bold text-rose-500 mb-6 flex items-center gap-2">
-              <span className="w-8 h-8 rounded-lg bg-rose-50 dark:bg-rose-500/10 flex items-center justify-center text-sm">
-                S
-              </span>
-              For Seekers
-            </h3>
-            <div className="space-y-4">
-              {steps.seekers.map((step, i) => (
-                <motion.div
-                  key={step.num}
-                  custom={i}
-                  variants={fadeUp}
-                  className="flex gap-4 items-start group"
-                >
-                  <span className="text-xs font-bold text-rose-300 dark:text-rose-500/50 group-hover:text-rose-500 dark:group-hover:text-rose-400 transition-colors mt-0.5 shrink-0">
-                    {step.num}
-                  </span>
-                  <div>
-                    <h4 className="text-slate-900 dark:text-white font-semibold text-sm">{step.title}</h4>
-                    <p className="text-slate-500 dark:text-slate-400 text-xs mt-0.5">{step.desc}</p>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
+            <motion.h2
+              custom={0}
+              variants={fadeUp}
+              className="text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white mb-8"
+            >
+              Why seekers use <span className="gradient-text">MigRent</span>
+            </motion.h2>
           </motion.div>
 
-          {/* Owners */}
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[
+              { icon: "S", title: "Faster, safer discovery", desc: "Better than random classifieds and social media groups." },
+              { icon: "N", title: "Built for new arrivals", desc: "No Australian rental history needed to get started." },
+              { icon: "V", title: "Stand out with verification", desc: "Optional verification and match scores help you shine." },
+              { icon: "$", title: "Transparent pricing", desc: "Clear weekly rent upfront; optional AUD 19 success fee shown before you pay." },
+              { icon: "C", title: "You stay in control", desc: "Choose who to talk to and arrange rent directly with the owner." },
+            ].map((item, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1, duration: 0.5 }}
+                whileHover={{ y: -4 }}
+                className="card-subtle p-5 rounded-xl group hover:shadow-md dark:hover:bg-white/[0.06] transition-all"
+              >
+                <div className="w-10 h-10 rounded-xl bg-rose-50 dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/20 flex items-center justify-center text-rose-500 dark:text-rose-400 font-bold text-sm mb-3 group-hover:border-rose-300 dark:group-hover:border-rose-400/40 transition-colors">
+                  {item.icon}
+                </div>
+                <h3 className="text-slate-900 dark:text-white font-semibold text-sm">{item.title}</h3>
+                <p className="text-slate-500 dark:text-slate-400 text-xs mt-1 leading-relaxed">{item.desc}</p>
+              </motion.div>
+            ))}
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="mt-6 card p-5 rounded-2xl border-l-2 border-l-rose-500"
+          >
+            <h4 className="font-bold text-rose-500 dark:text-rose-400 text-sm mb-1">Why MigRent for seekers</h4>
+            <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+              MigRent is built for new migrants, students, and professionals
+              arriving in Australia. It reduces the noise of random classifieds
+              and social-media groups by matching you with verified listings.
+              Optional profile verification and clear platform rules help owners
+              trust you even without Australian rental history.
+            </p>
+          </motion.div>
+        </section>
+
+        {/* Benefits for Owners */}
+        <section>
           <motion.div
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, margin: "-50px" }}
-            className="card p-6 rounded-2xl"
+            viewport={{ once: true, margin: "-100px" }}
           >
-            <h3 className="text-lg font-bold text-blue-500 mb-6 flex items-center gap-2">
-              <span className="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-500/10 flex items-center justify-center text-sm">
-                O
-              </span>
-              For Owners
-            </h3>
-            <div className="space-y-4">
-              {steps.owners.map((step, i) => (
-                <motion.div
-                  key={step.num}
-                  custom={i}
-                  variants={fadeUp}
-                  className="flex gap-4 items-start group"
-                >
-                  <span className="text-xs font-bold text-blue-300 dark:text-blue-500/50 group-hover:text-blue-500 dark:group-hover:text-blue-400 transition-colors mt-0.5 shrink-0">
-                    {step.num}
-                  </span>
-                  <div>
-                    <h4 className="text-slate-900 dark:text-white font-semibold text-sm">{step.title}</h4>
-                    <p className="text-slate-500 dark:text-slate-400 text-xs mt-0.5">{step.desc}</p>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
+            <motion.h2
+              custom={0}
+              variants={fadeUp}
+              className="text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white mb-8"
+            >
+              Why owners use <span className="gradient-text-accent">MigRent</span>
+            </motion.h2>
           </motion.div>
-        </div>
-      </section>
 
-      {/* Benefits for Seekers */}
-      <section>
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-        >
-          <motion.h2
-            custom={0}
-            variants={fadeUp}
-            className="text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white mb-8"
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[
+              { icon: "R", title: "Reach serious seekers", desc: "Migrants, students, and professionals actively looking for rooms." },
+              { icon: "A", title: "AI-assisted matching", desc: "Better-fit enquiries instead of dozens of poor-fit messages." },
+              { icon: "$", title: "Simple one-time fee", desc: "AUD 99 per successful match, no ongoing commission." },
+              { icon: "K", title: "Keep all rent", desc: "Ongoing payments managed directly with the tenant." },
+              { icon: "C", title: "You stay in control", desc: "Choose who to accept. MigRent can suspend abusive accounts." },
+              { icon: "T", title: "Build your reputation", desc: "Completed deals build trust and may boost listing visibility." },
+            ].map((item, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1, duration: 0.5 }}
+                whileHover={{ y: -4 }}
+                className="card-subtle p-5 rounded-xl group hover:shadow-md dark:hover:bg-white/[0.06] transition-all"
+              >
+                <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-500/10 border border-blue-100 dark:border-blue-500/20 flex items-center justify-center text-blue-500 dark:text-blue-400 font-bold text-sm mb-3 group-hover:border-blue-300 dark:group-hover:border-blue-400/40 transition-colors">
+                  {item.icon}
+                </div>
+                <h3 className="text-slate-900 dark:text-white font-semibold text-sm">{item.title}</h3>
+                <p className="text-slate-500 dark:text-slate-400 text-xs mt-1 leading-relaxed">{item.desc}</p>
+              </motion.div>
+            ))}
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="mt-6 card p-5 rounded-2xl border-l-2 border-l-blue-500"
           >
-            Why seekers use <span className="gradient-text">MigRent</span>
-          </motion.h2>
-        </motion.div>
+            <h4 className="font-bold text-blue-500 dark:text-blue-400 text-sm mb-1">Why MigRent for owners</h4>
+            <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+              MigRent brings more serious, better-fit enquiries through simple
+              profiles and optional verification. It uses AI-assisted matching so
+              you spend less time filtering. MigRent charges a one-time AUD 99
+              fee only on successful matches while you keep all ongoing rent.
+            </p>
+          </motion.div>
+        </section>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {[
-            { icon: "S", title: "Faster, safer discovery", desc: "Better than random classifieds and social media groups." },
-            { icon: "N", title: "Built for new arrivals", desc: "No Australian rental history needed to get started." },
-            { icon: "V", title: "Stand out with verification", desc: "Optional verification and match scores help you shine." },
-            { icon: "$", title: "Transparent pricing", desc: "Clear weekly rent upfront; optional AUD 19 success fee shown before you pay." },
-            { icon: "C", title: "You stay in control", desc: "Choose who to talk to and arrange rent directly with the owner." },
-          ].map((item, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1, duration: 0.5 }}
-              whileHover={{ y: -4 }}
-              className="card-subtle p-5 rounded-xl group hover:shadow-md dark:hover:bg-white/[0.06] transition-all"
-            >
-              <div className="w-10 h-10 rounded-xl bg-rose-50 dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/20 flex items-center justify-center text-rose-500 dark:text-rose-400 font-bold text-sm mb-3 group-hover:border-rose-300 dark:group-hover:border-rose-400/40 transition-colors">
-                {item.icon}
-              </div>
-              <h3 className="text-slate-900 dark:text-white font-semibold text-sm">{item.title}</h3>
-              <p className="text-slate-500 dark:text-slate-400 text-xs mt-1 leading-relaxed">{item.desc}</p>
-            </motion.div>
-          ))}
-        </div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="mt-6 card p-5 rounded-2xl border-l-2 border-l-rose-500"
-        >
-          <h4 className="font-bold text-rose-500 dark:text-rose-400 text-sm mb-1">Why MigRent for seekers</h4>
-          <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-            MigRent is built for new migrants, students, and professionals
-            arriving in Australia. It reduces the noise of random classifieds
-            and social-media groups by matching you with verified listings.
-            Optional profile verification and clear platform rules help owners
-            trust you even without Australian rental history.
-          </p>
-        </motion.div>
-      </section>
-
-      {/* Benefits for Owners */}
-      <section>
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-        >
-          <motion.h2
-            custom={0}
-            variants={fadeUp}
-            className="text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white mb-8"
-          >
-            Why owners use <span className="gradient-text-accent">MigRent</span>
-          </motion.h2>
-        </motion.div>
-
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {[
-            { icon: "R", title: "Reach serious seekers", desc: "Migrants, students, and professionals actively looking for rooms." },
-            { icon: "A", title: "AI-assisted matching", desc: "Better-fit enquiries instead of dozens of poor-fit messages." },
-            { icon: "$", title: "Simple one-time fee", desc: "AUD 99 per successful match, no ongoing commission." },
-            { icon: "K", title: "Keep all rent", desc: "Ongoing payments managed directly with the tenant." },
-            { icon: "C", title: "You stay in control", desc: "Choose who to accept. MigRent can suspend abusive accounts." },
-            { icon: "T", title: "Build your reputation", desc: "Completed deals build trust and may boost listing visibility." },
-          ].map((item, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1, duration: 0.5 }}
-              whileHover={{ y: -4 }}
-              className="card-subtle p-5 rounded-xl group hover:shadow-md dark:hover:bg-white/[0.06] transition-all"
-            >
-              <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-500/10 border border-blue-100 dark:border-blue-500/20 flex items-center justify-center text-blue-500 dark:text-blue-400 font-bold text-sm mb-3 group-hover:border-blue-300 dark:group-hover:border-blue-400/40 transition-colors">
-                {item.icon}
-              </div>
-              <h3 className="text-slate-900 dark:text-white font-semibold text-sm">{item.title}</h3>
-              <p className="text-slate-500 dark:text-slate-400 text-xs mt-1 leading-relaxed">{item.desc}</p>
-            </motion.div>
-          ))}
-        </div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="mt-6 card p-5 rounded-2xl border-l-2 border-l-blue-500"
-        >
-          <h4 className="font-bold text-blue-500 dark:text-blue-400 text-sm mb-1">Why MigRent for owners</h4>
-          <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-            MigRent brings more serious, better-fit enquiries through simple
-            profiles and optional verification. It uses AI-assisted matching so
-            you spend less time filtering. MigRent charges a one-time AUD 99
-            fee only on successful matches while you keep all ongoing rent.
-          </p>
-        </motion.div>
-      </section>
-
-      {/* Disclaimer */}
-      <section className="pb-8">
-        <div className="card-subtle p-6 rounded-2xl space-y-3 text-sm text-slate-500 dark:text-slate-500">
-          <p>
-            <strong className="text-slate-700 dark:text-slate-400">Disclaimer:</strong> MigRent is an online platform only.
-            MigRent is not a real estate agent, landlord, tenant, or legal
-            representative of any user.
-          </p>
-          <p>
-            All agreements and ongoing rent payments are arranged directly
-            between owners and seekers.
-          </p>
-          <p>
-            MigRent charges a one-time AUD 99 fee to owners on successful
-            matches and may offer an optional AUD 19 fee to seekers.
-          </p>
-        </div>
-      </section>
-    </div>
+        {/* Disclaimer */}
+        <section className="pb-8">
+          <div className="card-subtle p-6 rounded-2xl space-y-3 text-sm text-slate-500 dark:text-slate-500">
+            <p>
+              <strong className="text-slate-700 dark:text-slate-400">Disclaimer:</strong> MigRent is an online platform only.
+              MigRent is not a real estate agent, landlord, tenant, or legal
+              representative of any user.
+            </p>
+            <p>
+              All agreements and ongoing rent payments are arranged directly
+              between owners and seekers.
+            </p>
+            <p>
+              MigRent charges a one-time AUD 99 fee to owners on successful
+              matches and may offer an optional AUD 19 fee to seekers.
+            </p>
+          </div>
+        </section>
+      </div>
+    </>
   );
 }
