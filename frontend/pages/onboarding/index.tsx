@@ -250,10 +250,10 @@ export default function OnboardingPage() {
 
   if (!isReady) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center p-4">
         <div className="text-center">
-          <div className="w-10 h-10 border-2 border-slate-300 border-t-slate-600 rounded-full animate-spin mx-auto" />
-          <p className="text-sm text-slate-500 mt-4">Loading...</p>
+          <div className="w-10 h-10 border-2 border-slate-300 dark:border-slate-600 border-t-slate-600 dark:border-t-slate-300 rounded-full animate-spin mx-auto" />
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-4">Loading...</p>
         </div>
       </div>
     );
@@ -271,7 +271,7 @@ export default function OnboardingPage() {
     !submitting;
 
   return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4 py-12">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center px-4 py-12">
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
@@ -280,21 +280,21 @@ export default function OnboardingPage() {
       >
         {/* Header */}
         <div className="mb-8 text-center">
-          <h1 className="text-2xl font-semibold text-slate-900 tracking-tight">
+          <h1 className="text-2xl font-semibold text-slate-900 dark:text-slate-100 tracking-tight">
             Complete your profile
           </h1>
-          <p className="text-slate-500 text-sm mt-2 max-w-sm mx-auto">
+          <p className="text-slate-500 dark:text-slate-400 text-sm mt-2 max-w-sm mx-auto">
             We need a few details to verify your identity and personalise your
             experience.
           </p>
         </div>
 
         {/* Form Card */}
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm">
+        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
           <form onSubmit={handleSubmit}>
             {/* Section: Identity */}
             <div className="p-6 pb-0">
-              <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-5">
+              <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-5">
                 Identity
               </h2>
 
@@ -320,11 +320,11 @@ export default function OnboardingPage() {
             </div>
 
             {/* Divider */}
-            <div className="border-t border-slate-100 my-6 mx-6" />
+            <div className="border-t border-slate-100 dark:border-slate-800 my-6 mx-6" />
 
             {/* Section: Address */}
             <div className="px-6">
-              <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-5">
+              <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-5">
                 Residential address
               </h2>
 
@@ -369,7 +369,7 @@ export default function OnboardingPage() {
 
                 {/* Nearest station (read-only, auto-populated) */}
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
                     Nearest train station
                   </label>
                   <div className="relative">
@@ -382,20 +382,20 @@ export default function OnboardingPage() {
                           : nearestStation || stationError || ""
                       }
                       placeholder="Auto-detected from your suburb"
-                      className={`w-full px-3.5 py-2.5 bg-slate-50 border rounded-lg text-sm cursor-default ${
+                      className={`w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border rounded-lg text-sm cursor-default ${
                         stationError && !stationLoading
-                          ? "border-amber-300 text-amber-600"
-                          : "border-slate-200 text-slate-600"
+                          ? "border-amber-300 dark:border-amber-600 text-amber-600 dark:text-amber-400"
+                          : "border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400"
                       }`}
                     />
                     {stationLoading && (
                       <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                        <div className="w-4 h-4 border-2 border-slate-300 border-t-slate-600 rounded-full animate-spin" />
+                        <div className="w-4 h-4 border-2 border-slate-300 dark:border-slate-600 border-t-slate-600 dark:border-t-slate-300 rounded-full animate-spin" />
                       </div>
                     )}
                   </div>
                   {!stationLoading && nearestStation && (
-                    <p className="text-xs text-emerald-600 mt-1 flex items-center gap-1">
+                    <p className="text-xs text-emerald-600 dark:text-emerald-400 mt-1 flex items-center gap-1">
                       <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                       </svg>
@@ -407,11 +407,11 @@ export default function OnboardingPage() {
             </div>
 
             {/* Divider */}
-            <div className="border-t border-slate-100 my-6 mx-6" />
+            <div className="border-t border-slate-100 dark:border-slate-800 my-6 mx-6" />
 
             {/* Section: Contact */}
             <div className="px-6">
-              <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-5">
+              <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-5">
                 Contact
               </h2>
 
@@ -439,8 +439,8 @@ export default function OnboardingPage() {
                   exit={{ opacity: 0, height: 0 }}
                   className="px-6 mt-4"
                 >
-                  <div className="flex items-center gap-2 text-sm text-slate-500">
-                    <div className="w-3.5 h-3.5 border-2 border-slate-300 border-t-slate-600 rounded-full animate-spin" />
+                  <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
+                    <div className="w-3.5 h-3.5 border-2 border-slate-300 dark:border-slate-600 border-t-slate-600 dark:border-t-slate-300 rounded-full animate-spin" />
                     Verifying your details...
                   </div>
                 </motion.div>
@@ -456,7 +456,7 @@ export default function OnboardingPage() {
                   exit={{ opacity: 0, height: 0 }}
                   className="px-6 mt-4"
                 >
-                  <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
+                  <div className="p-3 bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-800 rounded-lg text-sm text-red-700 dark:text-red-400">
                     {submitError}
                   </div>
                 </motion.div>
@@ -468,11 +468,11 @@ export default function OnboardingPage() {
               <button
                 type="submit"
                 disabled={!canSubmit}
-                className="w-full bg-slate-900 text-white font-medium text-sm py-3 rounded-lg hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                className="w-full bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 font-medium text-sm py-3 rounded-lg hover:bg-slate-800 dark:hover:bg-slate-200 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
               >
                 {submitting ? (
                   <span className="flex items-center justify-center gap-2">
-                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    <div className="w-4 h-4 border-2 border-white/30 dark:border-slate-900/30 border-t-white dark:border-t-slate-900 rounded-full animate-spin" />
                     Verifying & saving...
                   </span>
                 ) : (
@@ -480,7 +480,7 @@ export default function OnboardingPage() {
                 )}
               </button>
 
-              <p className="text-xs text-slate-400 text-center mt-4">
+              <p className="text-xs text-slate-400 dark:text-slate-500 text-center mt-4">
                 These details are locked after submission and used for identity
                 verification.
               </p>
@@ -517,7 +517,7 @@ function FormField({
 }) {
   return (
     <div>
-      <label className="block text-sm font-medium text-slate-700 mb-1.5">
+      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
         {label}
         {required && <span className="text-red-400 ml-0.5">*</span>}
       </label>
@@ -529,12 +529,12 @@ function FormField({
         maxLength={maxLength}
         className={`w-full px-3.5 py-2.5 border rounded-lg text-sm transition-colors outline-none ${
           error
-            ? "border-red-300 bg-red-50/50 focus:border-red-400 focus:ring-1 focus:ring-red-100"
-            : "border-slate-200 bg-white focus:border-slate-400 focus:ring-1 focus:ring-slate-100"
+            ? "border-red-300 dark:border-red-700 bg-red-50/50 dark:bg-red-950/30 text-slate-900 dark:text-slate-100 focus:border-red-400 dark:focus:border-red-600 focus:ring-1 focus:ring-red-100 dark:focus:ring-red-900/50"
+            : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:border-slate-400 dark:focus:border-slate-500 focus:ring-1 focus:ring-slate-100 dark:focus:ring-slate-700/50"
         }`}
       />
       {hint && !error && (
-        <p className="text-xs text-slate-400 mt-1">{hint}</p>
+        <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">{hint}</p>
       )}
       <AnimatePresence>
         {error && (
@@ -542,7 +542,7 @@ function FormField({
             initial={{ opacity: 0, y: -4 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -4 }}
-            className="text-xs text-red-500 mt-1"
+            className="text-xs text-red-500 dark:text-red-400 mt-1"
           >
             {error}
           </motion.p>
