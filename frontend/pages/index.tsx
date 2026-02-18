@@ -31,7 +31,7 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>MigRent AI - Find Your Room, Feel at Home</title>
+        <title>MigRent AI - AU Housing</title>
         <meta
           name="description"
           content="Browse top verified MigRent AI rentals in Sydney. Superhost-rated rooms, verified owners, and station-close listings for migrants, students, and professionals."
@@ -117,7 +117,7 @@ export default function Home() {
             className="relative z-10 mt-14 -mx-4 sm:-mx-6 md:-mx-8"
           >
             <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-4">
-              AU Housing
+              Top verified listings
             </p>
             <OwnerMarquee />
           </motion.div>
