@@ -6,7 +6,7 @@ from datetime import datetime
 
 router = APIRouter(prefix="/profiles", tags=["profiles"])
 
-LOCKED_FIELDS = {"legal_name", "preferred_name", "residential_address", "phone"}
+LOCKED_FIELDS = {"legal_name", "preferred_name", "residential_address", "suburb_city", "nearest_station", "phone"}
 
 
 @router.get("/me")

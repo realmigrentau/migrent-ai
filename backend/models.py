@@ -122,6 +122,8 @@ class ProfileUpdate(BaseModel):
     preferred_name: Optional[str] = Field(None, max_length=100)
     phones: Optional[list[str]] = None
     residential_address: Optional[str] = Field(None, max_length=300)
+    suburb_city: Optional[str] = Field(None, max_length=100)
+    nearest_station: Optional[str] = Field(None, max_length=200)
     emergency_contact: Optional[dict] = None
     preferred_language: Optional[str] = Field(None, max_length=20)
     preferred_currency: Optional[str] = Field(None, max_length=5)

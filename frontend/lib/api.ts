@@ -827,3 +827,72 @@ export async function completeOnboarding(token: string, data: Record<string, any
     return null;
   }
 }
+
+// ── Onboarding validation endpoints ───────────────────────
+
+/**
+ * Look up nearest train station for a suburb/city.
+ * GET /utils/nearest-station?suburb_city=Kellyville/Sydney
+ */
+export async function getNearestStation(suburbCity: string): Promise<{
+  station: string | null;
+  vicinity?: string;
+  display?: string;
+  message?: string;
+} | null> {
+  try {
+    const res = await fetch(
+      `${BASE_URL}/utils/nearest-station?suburb_city=${encodeURIComponent(suburbCity)}`,
+      { method: "GET", headers: { "Content-Type": "application/json" } }
+    );
+    if (!res.ok) throw new Error(`getNearestStation failed: ${res.status}`);
+    return await res.json();
+  } catch (err) {
+    console.error("getNearestStation error:", err);
+    return null;
+  }
+}
+
+/**
+ * Validate Australian suburb/city + postcode combination.
+ * POST /validate/address
+ */
+export async function validateAddress(suburbCity: string, postcode: string): Promise<{
+  valid: boolean;
+  reason?: string;
+} | null> {
+  try {
+    const res = await fetch(`${BASE_URL}/validate/address`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ suburb_city: suburbCity, postcode: postcode }),
+    });
+    if (!res.ok) throw new Error(`validateAddress failed: ${res.status}`);
+    return await res.json();
+  } catch (err) {
+    console.error("validateAddress error:", err);
+    return null;
+  }
+}
+
+/**
+ * Validate an Australian phone number.
+ * POST /validate/phone
+ */
+export async function validatePhone(phone: string): Promise<{
+  valid: boolean;
+  reason?: string;
+} | null> {
+  try {
+    const res = await fetch(`${BASE_URL}/validate/phone`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ phone }),
+    });
+    if (!res.ok) throw new Error(`validatePhone failed: ${res.status}`);
+    return await res.json();
+  } catch (err) {
+    console.error("validatePhone error:", err);
+    return null;
+  }
+}

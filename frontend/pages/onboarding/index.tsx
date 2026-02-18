@@ -1,21 +1,102 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/router";
 import { useAuth } from "../../hooks/useAuth";
-import { completeOnboarding } from "../../lib/api";
-import { motion } from "framer-motion";
+import {
+  completeOnboarding,
+  getNearestStation,
+  validateAddress,
+  validatePhone,
+} from "../../lib/api";
+import { motion, AnimatePresence } from "framer-motion";
+
+// ── Types ─────────────────────────────────────────────────
+
+interface FieldErrors {
+  legalName?: string;
+  preferredName?: string;
+  residentialAddress?: string;
+  suburbCity?: string;
+  postcode?: string;
+  phone?: string;
+}
+
+interface ValidationState {
+  addressValid: boolean | null;
+  phoneValid: boolean | null;
+  addressChecking: boolean;
+  phoneChecking: boolean;
+}
+
+// ── Debounce utility ──────────────────────────────────────
+
+function useDebouncedCallback<T extends (...args: any[]) => any>(
+  callback: T,
+  delay: number
+) {
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const debounced = useCallback(
+    (...args: Parameters<T>) => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+      timerRef.current = setTimeout(() => callback(...args), delay);
+    },
+    [callback, delay]
+  );
+
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  }, []);
+
+  return debounced;
+}
+
+// ── Suburb/City format regex ──────────────────────────────
+
+const SUBURB_CITY_REGEX = /^[A-Za-z\s'-]+\/[A-Za-z\s'-]+$/;
+
+function validateSuburbCityFormat(value: string): string | undefined {
+  if (!value.trim()) return "Suburb & City is required";
+  if (!SUBURB_CITY_REGEX.test(value.trim()))
+    return "Format must be Suburb/City (e.g. Kellyville/Sydney)";
+  return undefined;
+}
+
+// ── Component ─────────────────────────────────────────────
 
 export default function OnboardingPage() {
   const router = useRouter();
   const { session, user } = useAuth();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
   const [isReady, setIsReady] = useState(false);
 
+  // Form fields
   const [legalName, setLegalName] = useState("");
   const [preferredName, setPreferredName] = useState("");
   const [residentialAddress, setResidentialAddress] = useState("");
+  const [suburbCity, setSuburbCity] = useState("");
+  const [postcode, setPostcode] = useState("");
   const [phone, setPhone] = useState("");
 
+  // Station lookup
+  const [nearestStation, setNearestStation] = useState("");
+  const [stationLoading, setStationLoading] = useState(false);
+  const [stationError, setStationError] = useState("");
+
+  // Validation
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
+  const [validation, setValidation] = useState<ValidationState>({
+    addressValid: null,
+    phoneValid: null,
+    addressChecking: false,
+    phoneChecking: false,
+  });
+
+  // Submit
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
+
+  // Auth gate
   useEffect(() => {
     if (!session || !user) {
       router.push("/signin");
@@ -24,143 +105,449 @@ export default function OnboardingPage() {
     setIsReady(true);
   }, [session, user, router]);
 
-  const canSubmit =
-    legalName.trim() &&
-    preferredName.trim() &&
-    residentialAddress.trim() &&
-    phone.trim();
+  // ── Station lookup (debounced) ──────────────────────────
+
+  const lookupStation = useCallback(
+    async (value: string) => {
+      const formatErr = validateSuburbCityFormat(value);
+      if (formatErr) {
+        setNearestStation("");
+        setStationError("");
+        return;
+      }
+
+      setStationLoading(true);
+      setStationError("");
+      setNearestStation("");
+
+      const result = await getNearestStation(value.trim());
+
+      if (result && result.station) {
+        setNearestStation(result.display || result.station);
+      } else if (result && result.message) {
+        setStationError(result.message);
+      } else {
+        setStationError("Could not find a nearby station");
+      }
+      setStationLoading(false);
+    },
+    []
+  );
+
+  const debouncedLookupStation = useDebouncedCallback(lookupStation, 800);
+
+  const handleSuburbCityChange = (value: string) => {
+    setSuburbCity(value);
+    setFieldErrors((prev) => ({ ...prev, suburbCity: undefined }));
+    setValidation((prev) => ({ ...prev, addressValid: null }));
+
+    if (value.trim() && !validateSuburbCityFormat(value)) {
+      debouncedLookupStation(value);
+    } else {
+      setNearestStation("");
+      setStationError("");
+    }
+  };
+
+  // ── Submit handler ──────────────────────────────────────
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!canSubmit) return;
+    setSubmitError("");
 
-    setLoading(true);
-    setError("");
+    // Step 1: Client-side validation
+    const errors: FieldErrors = {};
 
+    if (!legalName.trim()) errors.legalName = "Legal name is required";
+    if (!preferredName.trim()) errors.preferredName = "Preferred name is required";
+    if (!residentialAddress.trim()) errors.residentialAddress = "Street address is required";
+
+    const suburbErr = validateSuburbCityFormat(suburbCity);
+    if (suburbErr) errors.suburbCity = suburbErr;
+
+    if (!postcode.trim()) {
+      errors.postcode = "Postcode is required";
+    } else if (!/^\d{4}$/.test(postcode.trim())) {
+      errors.postcode = "Must be a 4-digit Australian postcode";
+    }
+
+    if (!phone.trim()) errors.phone = "Phone number is required";
+
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors);
+      return;
+    }
+
+    setFieldErrors({});
+    setSubmitting(true);
+
+    // Step 2: Server-side validation (address + phone in parallel)
+    setValidation({
+      addressValid: null,
+      phoneValid: null,
+      addressChecking: true,
+      phoneChecking: true,
+    });
+
+    const [addressResult, phoneResult] = await Promise.all([
+      validateAddress(suburbCity.trim(), postcode.trim()),
+      validatePhone(phone.trim()),
+    ]);
+
+    const addrValid = addressResult?.valid ?? false;
+    const phValid = phoneResult?.valid ?? false;
+
+    setValidation({
+      addressValid: addrValid,
+      phoneValid: phValid,
+      addressChecking: false,
+      phoneChecking: false,
+    });
+
+    if (!addrValid) {
+      setFieldErrors((prev) => ({
+        ...prev,
+        suburbCity: addressResult?.reason || "Suburb/City combination doesn't look valid in Australia",
+      }));
+    }
+
+    if (!phValid) {
+      setFieldErrors((prev) => ({
+        ...prev,
+        phone: phoneResult?.reason || "Phone number appears invalid or not active",
+      }));
+    }
+
+    if (!addrValid || !phValid) {
+      setSubmitting(false);
+      return;
+    }
+
+    // Step 3: Complete onboarding
     const result = await completeOnboarding(session!.access_token, {
-      legal_name: legalName,
-      preferred_name: preferredName,
-      residential_address: residentialAddress,
-      phone: phone,
+      legal_name: legalName.trim(),
+      preferred_name: preferredName.trim(),
+      residential_address: residentialAddress.trim(),
+      suburb_city: suburbCity.trim(),
+      nearest_station: nearestStation || null,
+      phone: phone.trim(),
     });
 
     if (result) {
-      // Redirect to dashboard based on user role
-      const role = user!.user_metadata?.user_type || user!.user_metadata?.type || "seeker";
+      const role =
+        user!.user_metadata?.user_type ||
+        user!.user_metadata?.type ||
+        "seeker";
       router.push(role === "owner" ? "/dashboard/owner" : "/dashboard/seeker");
     } else {
-      setError("Failed to complete onboarding. Please try again.");
+      setSubmitError("Failed to complete onboarding. Please try again.");
     }
 
-    setLoading(false);
+    setSubmitting(false);
   };
+
+  // ── Loading state ───────────────────────────────────────
 
   if (!isReady) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-pink-50 to-blue-50 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
         <div className="text-center">
-          <div className="w-10 h-10 border-2 border-pink-300 border-t-pink-500 rounded-full animate-spin mx-auto" />
+          <div className="w-10 h-10 border-2 border-slate-300 border-t-slate-600 rounded-full animate-spin mx-auto" />
           <p className="text-sm text-slate-500 mt-4">Loading...</p>
         </div>
       </div>
     );
   }
 
+  // ── Render ──────────────────────────────────────────────
+
+  const canSubmit =
+    legalName.trim() &&
+    preferredName.trim() &&
+    residentialAddress.trim() &&
+    suburbCity.trim() &&
+    postcode.trim() &&
+    phone.trim() &&
+    !submitting;
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 to-blue-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4 py-12">
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="w-full max-w-md"
+        transition={{ duration: 0.4, ease: "easeOut" }}
+        className="w-full max-w-lg"
       >
-        <div className="bg-white rounded-2xl shadow-xl p-8">
-          <h1 className="text-3xl font-bold mb-2">Welcome to MigRent</h1>
-          <p className="text-gray-600 mb-8">
-            Let's get to know you. This information helps us personalize your experience.
-          </p>
-
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Legal Name *
-              </label>
-              <input
-                type="text"
-                value={legalName}
-                onChange={(e) => setLegalName(e.target.value)}
-                placeholder="Your full legal name"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Preferred Name *
-              </label>
-              <input
-                type="text"
-                value={preferredName}
-                onChange={(e) => setPreferredName(e.target.value)}
-                placeholder="What should we call you?"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Current Residential Address *
-              </label>
-              <input
-                type="text"
-                value={residentialAddress}
-                onChange={(e) => setResidentialAddress(e.target.value)}
-                placeholder="e.g., Bondi NSW 2026"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Phone Number *
-              </label>
-              <input
-                type="tel"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="+61 2 1234 5678"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
-                required
-              />
-            </div>
-
-            {error && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700"
-              >
-                {error}
-              </motion.div>
-            )}
-
-            <button
-              type="submit"
-              disabled={!canSubmit || loading}
-              className="w-full bg-gradient-to-r from-pink-500 to-pink-600 text-white font-semibold py-3 rounded-lg hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-            >
-              {loading ? "Setting up..." : "Complete Setup"}
-            </button>
-          </form>
-
-          <p className="text-xs text-gray-500 text-center mt-6">
-            This information is required and cannot be changed later.
+        {/* Header */}
+        <div className="mb-8 text-center">
+          <h1 className="text-2xl font-semibold text-slate-900 tracking-tight">
+            Complete your profile
+          </h1>
+          <p className="text-slate-500 text-sm mt-2 max-w-sm mx-auto">
+            We need a few details to verify your identity and personalise your
+            experience.
           </p>
         </div>
+
+        {/* Form Card */}
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm">
+          <form onSubmit={handleSubmit}>
+            {/* Section: Identity */}
+            <div className="p-6 pb-0">
+              <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-5">
+                Identity
+              </h2>
+
+              <div className="space-y-4">
+                <FormField
+                  label="Legal name"
+                  value={legalName}
+                  onChange={setLegalName}
+                  placeholder="As it appears on your ID"
+                  error={fieldErrors.legalName}
+                  required
+                />
+
+                <FormField
+                  label="Preferred name"
+                  value={preferredName}
+                  onChange={setPreferredName}
+                  placeholder="What should we call you?"
+                  error={fieldErrors.preferredName}
+                  required
+                />
+              </div>
+            </div>
+
+            {/* Divider */}
+            <div className="border-t border-slate-100 my-6 mx-6" />
+
+            {/* Section: Address */}
+            <div className="px-6">
+              <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-5">
+                Residential address
+              </h2>
+
+              <div className="space-y-4">
+                <FormField
+                  label="Street address"
+                  value={residentialAddress}
+                  onChange={setResidentialAddress}
+                  placeholder="123 Example Street, Unit 4A"
+                  error={fieldErrors.residentialAddress}
+                  required
+                />
+
+                <div className="grid grid-cols-3 gap-3">
+                  <div className="col-span-2">
+                    <FormField
+                      label="Suburb & City"
+                      value={suburbCity}
+                      onChange={handleSuburbCityChange}
+                      placeholder="Kellyville/Sydney"
+                      error={fieldErrors.suburbCity}
+                      hint="Format: Suburb/City"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <FormField
+                      label="Postcode"
+                      value={postcode}
+                      onChange={(v) => {
+                        setPostcode(v);
+                        setFieldErrors((prev) => ({ ...prev, postcode: undefined }));
+                        setValidation((prev) => ({ ...prev, addressValid: null }));
+                      }}
+                      placeholder="2155"
+                      error={fieldErrors.postcode}
+                      maxLength={4}
+                      required
+                    />
+                  </div>
+                </div>
+
+                {/* Nearest station (read-only, auto-populated) */}
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                    Nearest train station
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      readOnly
+                      value={
+                        stationLoading
+                          ? "Looking up..."
+                          : nearestStation || stationError || ""
+                      }
+                      placeholder="Auto-detected from your suburb"
+                      className={`w-full px-3.5 py-2.5 bg-slate-50 border rounded-lg text-sm cursor-default ${
+                        stationError && !stationLoading
+                          ? "border-amber-300 text-amber-600"
+                          : "border-slate-200 text-slate-600"
+                      }`}
+                    />
+                    {stationLoading && (
+                      <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                        <div className="w-4 h-4 border-2 border-slate-300 border-t-slate-600 rounded-full animate-spin" />
+                      </div>
+                    )}
+                  </div>
+                  {!stationLoading && nearestStation && (
+                    <p className="text-xs text-emerald-600 mt-1 flex items-center gap-1">
+                      <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
+                      Station found
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Divider */}
+            <div className="border-t border-slate-100 my-6 mx-6" />
+
+            {/* Section: Contact */}
+            <div className="px-6">
+              <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-5">
+                Contact
+              </h2>
+
+              <FormField
+                label="Phone number"
+                value={phone}
+                onChange={(v) => {
+                  setPhone(v);
+                  setFieldErrors((prev) => ({ ...prev, phone: undefined }));
+                  setValidation((prev) => ({ ...prev, phoneValid: null }));
+                }}
+                placeholder="+61 412 345 678"
+                error={fieldErrors.phone}
+                type="tel"
+                required
+              />
+            </div>
+
+            {/* Validation status badges */}
+            <AnimatePresence>
+              {(validation.addressChecking || validation.phoneChecking) && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="px-6 mt-4"
+                >
+                  <div className="flex items-center gap-2 text-sm text-slate-500">
+                    <div className="w-3.5 h-3.5 border-2 border-slate-300 border-t-slate-600 rounded-full animate-spin" />
+                    Verifying your details...
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Submit error */}
+            <AnimatePresence>
+              {submitError && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="px-6 mt-4"
+                >
+                  <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
+                    {submitError}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Submit */}
+            <div className="p-6 pt-6">
+              <button
+                type="submit"
+                disabled={!canSubmit}
+                className="w-full bg-slate-900 text-white font-medium text-sm py-3 rounded-lg hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              >
+                {submitting ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    Verifying & saving...
+                  </span>
+                ) : (
+                  "Continue"
+                )}
+              </button>
+
+              <p className="text-xs text-slate-400 text-center mt-4">
+                These details are locked after submission and used for identity
+                verification.
+              </p>
+            </div>
+          </form>
+        </div>
       </motion.div>
+    </div>
+  );
+}
+
+// ── Reusable form field ───────────────────────────────────
+
+function FormField({
+  label,
+  value,
+  onChange,
+  placeholder,
+  error,
+  hint,
+  type = "text",
+  required,
+  maxLength,
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  placeholder?: string;
+  error?: string;
+  hint?: string;
+  type?: string;
+  required?: boolean;
+  maxLength?: number;
+}) {
+  return (
+    <div>
+      <label className="block text-sm font-medium text-slate-700 mb-1.5">
+        {label}
+        {required && <span className="text-red-400 ml-0.5">*</span>}
+      </label>
+      <input
+        type={type}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        maxLength={maxLength}
+        className={`w-full px-3.5 py-2.5 border rounded-lg text-sm transition-colors outline-none ${
+          error
+            ? "border-red-300 bg-red-50/50 focus:border-red-400 focus:ring-1 focus:ring-red-100"
+            : "border-slate-200 bg-white focus:border-slate-400 focus:ring-1 focus:ring-slate-100"
+        }`}
+      />
+      {hint && !error && (
+        <p className="text-xs text-slate-400 mt-1">{hint}</p>
+      )}
+      <AnimatePresence>
+        {error && (
+          <motion.p
+            initial={{ opacity: 0, y: -4 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -4 }}
+            className="text-xs text-red-500 mt-1"
+          >
+            {error}
+          </motion.p>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
