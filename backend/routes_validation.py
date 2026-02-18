@@ -105,9 +105,9 @@ async def nearest_station(suburb_city: str = Query(..., description="Format: Sub
                 f'('
                 f'node["railway"="station"](around:{radius},{lat},{lng});'
                 f'node["railway"="halt"](around:{radius},{lat},{lng});'
+                f'node["railway"="stop"]["subway"="yes"](around:{radius},{lat},{lng});'
                 f'node["railway"="light_rail"]["name"](around:{radius},{lat},{lng});'
-                f'node["station"="subway"]["name"](around:{radius},{lat},{lng});'
-                f'node["public_transport"="station"]["railway"](around:{radius},{lat},{lng});'
+                f'node["railway"="stop"]["light_rail"="yes"](around:{radius},{lat},{lng});'
                 f');'
                 f'out body;'
             )
@@ -132,9 +132,9 @@ async def nearest_station(suburb_city: str = Query(..., description="Format: Sub
             return {"station": None, "message": "No train station found nearby"}
 
         # Step 3: Pick the closest station by haversine distance
+        # Deduplicate by name (e.g. platform 1 and 2 of same station)
         elements = overpass_data["elements"]
-        closest = None
-        closest_dist = float("inf")
+        seen_names: dict[str, tuple[float, dict]] = {}
 
         for el in elements:
             if "lat" not in el or "lon" not in el:
@@ -144,15 +144,18 @@ async def nearest_station(suburb_city: str = Query(..., description="Format: Sub
             if not name:
                 continue
             dist = _haversine(lat, lng, el["lat"], el["lon"])
-            if dist < closest_dist:
-                closest_dist = dist
-                closest = el
+            if name not in seen_names or dist < seen_names[name][0]:
+                seen_names[name] = (dist, el)
 
-        if not closest:
+        if not seen_names:
             return {"station": None, "message": "No named station found nearby"}
 
+        # Find the closest unique station
+        station_name, (closest_dist, closest) = min(
+            seen_names.items(), key=lambda x: x[1][0]
+        )
+
         tags = closest.get("tags", {})
-        station_name = tags.get("name", "Unknown Station")
         operator = tags.get("operator", tags.get("network", ""))
 
         display = f"{station_name} – {operator}" if operator else station_name
