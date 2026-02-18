@@ -54,7 +54,7 @@ async def nearest_station(suburb_city: str = Query(..., description="Format: Sub
         raise HTTPException(status_code=400, detail="Format must be Suburb/City (e.g. Kellyville/Sydney)")
 
     if not GOOGLE_MAPS_API_KEY:
-        raise HTTPException(status_code=503, detail="Google Maps API key not configured")
+        return {"station": None, "message": "Station lookup not available yet"}
 
     suburb, city = suburb_city.split("/", 1)
     query = f"{suburb.strip()}, {city.strip()}, Australia"
