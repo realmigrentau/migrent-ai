@@ -31,7 +31,7 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>MigRent AI - Top Verified Rentals Sydney | Find Your Room</title>
+        <title>MigRent AI - Find Your Room, Feel at Home</title>
         <meta
           name="description"
           content="Browse top verified MigRent AI rentals in Sydney. Superhost-rated rooms, verified owners, and station-close listings for migrants, students, and professionals."
