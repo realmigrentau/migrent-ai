@@ -1,0 +1,177 @@
+{
+  "nav": {
+    "home": "Home",
+    "dashboard": "Dashboard",
+    "features": "Features",
+    "guides": "Guides",
+    "pricing": "Pricing",
+    "resources": "Resources",
+    "signUp": "Sign Up",
+    "myAccount": "My Account",
+    "seeker": "Seeker",
+    "owner": "Owner",
+    "findRoom": "Find a room",
+    "listRoom": "List a room",
+    "messages": "Messages",
+    "wishlist": "Wishlist",
+    "settings": "Settings",
+    "iAmA": "I am a..."
+  },
+  "features": {
+    "heroTitle": "Powerful Features",
+    "heroSubtitle": "Everything you need to find or list a room — powered by AI, built for migrants.",
+    "heroBadge": "Platform Features",
+    "aiMatching": {
+      "title": "AI Matching",
+      "navDesc": "Smart room-to-seeker matching",
+      "desc": "Our intelligent algorithms analyse your preferences, budget, lifestyle, and location to surface the best room matches — so you spend less time searching and more time settling in.",
+      "bullets": ["Personalised match scores", "Learns from your behaviour", "Budget-aware suggestions"]
+    },
+    "verifiedHosts": {
+      "title": "Verified Hosts",
+      "navDesc": "Identity-checked owners",
+      "desc": "Every owner on MigRent goes through identity verification. Look for the trust badge before you enquire — because safety comes first when you're new to a country.",
+      "bullets": ["ID & document checks", "Trust badges on profiles", "Verified listing photos"]
+    },
+    "instantBooking": {
+      "title": "Instant Booking",
+      "navDesc": "One-click confirmed bookings",
+      "desc": "Skip the endless back-and-forth emails. Verified rooms with Instant Booking let you secure your spot with a single click — perfect for arrivals who need certainty fast.",
+      "bullets": ["One-click confirmation", "Instant availability check", "Secure booking guarantee"]
+    },
+    "smartFilters": {
+      "title": "Smart Filters",
+      "navDesc": "20+ search criteria",
+      "desc": "Narrow down thousands of listings with powerful filters — suburb, price range, room type, furnishing, pet policy, transport links, and 20+ more criteria built for real needs.",
+      "bullets": ["20+ filter options", "Save filter presets", "Suburb & transport search"]
+    },
+    "superhost": {
+      "title": "Superhost Program",
+      "navDesc": "Trusted owner recognition",
+      "desc": "Our best owners earn Superhost status through consistent 5-star reviews, fast response times, and zero cancellations. Superhosts get priority visibility and a gold badge.",
+      "bullets": ["Priority search ranking", "Gold trust badge", "Performance-based rewards"]
+    },
+    "support": {
+      "title": "24/7 Support",
+      "navDesc": "Round-the-clock assistance",
+      "desc": "Moving to a new country is stressful enough. Our multilingual support team is available around the clock via in-app chat to help with any issues — from booking problems to safety concerns.",
+      "bullets": ["In-app live chat", "Multilingual agents", "Emergency escalation"]
+    },
+    "cta": {
+      "title": "Ready to get started?",
+      "subtitle": "Join thousands of migrants and owners already using MigRent AI.",
+      "button": "Create Free Account"
+    }
+  },
+  "guides": {
+    "heroTitle": "Guides & How-Tos",
+    "heroSubtitle": "Step-by-step guides to help you get the most out of MigRent — whether you're a seeker or an owner.",
+    "heroBadge": "Help Centre",
+    "hostFirst": {
+      "title": "Host Your First Room",
+      "navDesc": "Step-by-step listing guide",
+      "desc": "A complete walkthrough for first-time hosts — from creating your listing to welcoming your first guest."
+    },
+    "findFast": {
+      "title": "Find Rentals Fast",
+      "navDesc": "Tips for quick matches",
+      "desc": "Learn the best strategies to find and secure your perfect room quickly, with tips on using filters and alerts."
+    },
+    "verifyProfile": {
+      "title": "Verify Your Profile",
+      "navDesc": "Build trust with verification",
+      "desc": "How to complete identity verification to build trust with owners and unlock faster matches."
+    },
+    "listProperty": {
+      "title": "List a Property",
+      "navDesc": "Owner listing walkthrough",
+      "desc": "Everything owners need to know about creating compelling listings that attract quality seekers."
+    },
+    "superhost": {
+      "title": "Become a Superhost",
+      "navDesc": "Earn top-owner status",
+      "desc": "What it takes to earn Superhost status — response times, reviews, and hosting best practices."
+    },
+    "earnings": {
+      "title": "Earnings Calculator",
+      "navDesc": "Estimate your rental income",
+      "desc": "Use our calculator to estimate weekly and monthly rental income based on your suburb and room type."
+    },
+    "visas": {
+      "title": "Migrant Visa Guide",
+      "navDesc": "Visa types and housing rights",
+      "desc": "Understand Australian visa categories and your housing rights as a migrant, student, or worker."
+    },
+    "disputes": {
+      "title": "Dispute Resolution",
+      "navDesc": "Resolve issues fairly",
+      "desc": "How MigRent's dispute resolution process works to protect both seekers and owners."
+    },
+    "comingSoon": "Coming soon",
+    "readGuide": "Read guide",
+    "cta": {
+      "title": "Need more help?",
+      "subtitle": "Our support team is available 24/7 to assist you.",
+      "button": "Contact Support"
+    }
+  },
+  "resources": {
+    "heroTitle": "Resources & Tools",
+    "heroSubtitle": "Helpful tools, community links, and information to support your housing journey in Australia.",
+    "heroBadge": "Resource Hub",
+    "blog": {
+      "title": "Blog",
+      "desc": "Tips, news, and community stories from the MigRent team and our users."
+    },
+    "calculator": {
+      "title": "Rent Calculator",
+      "desc": "Estimate weekly rent and living costs across Australian suburbs."
+    },
+    "apiDocs": {
+      "title": "API Docs",
+      "desc": "Build on the MigRent platform with our developer API."
+    },
+    "discord": {
+      "title": "Discord Community",
+      "desc": "Join thousands of migrants and owners in our community chat."
+    },
+    "careers": {
+      "title": "Careers",
+      "desc": "Join the MigRent team and help migrants find home."
+    },
+    "rentalLaws": {
+      "title": "AU Rental Laws",
+      "desc": "Know your rights — tenancy laws, bond rules, and dispute processes by state."
+    },
+    "ownerROI": {
+      "title": "Owner ROI Calculator",
+      "desc": "Calculate your return on investment from listing spare rooms."
+    },
+    "comingSoon": "Coming soon",
+    "visitLink": "Visit",
+    "cta": {
+      "title": "Have a suggestion?",
+      "subtitle": "We're always adding new resources. Let us know what you need.",
+      "button": "Contact Us"
+    }
+  },
+  "footer": {
+    "company": "Company",
+    "trustSafety": "Trust & Safety",
+    "support": "Support",
+    "about": "About",
+    "careers": "Careers",
+    "press": "Press",
+    "forOwners": "For Owners",
+    "forSeekers": "For Seekers",
+    "safetyVerification": "Safety & Verification",
+    "communityGuidelines": "Community Guidelines",
+    "privacyPolicy": "Privacy Policy",
+    "termsOfService": "Terms of Service",
+    "faq": "FAQ",
+    "contact": "Contact",
+    "pricing": "Pricing",
+    "copyright": "© {{year}} MigRent AI. All rights reserved.",
+    "tagline": "Built for migrants. Trusted by owners."
+  }
+}

@@ -6,6 +6,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import Layout from "../components/Layout";
 import SEOHead from "../components/SEOHead";
 import { HCAPTCHA_SITE_KEY } from "../lib/recaptcha";
+import "../lib/i18n";
 import "../styles/globals.css";
 
 export default function App({ Component, pageProps, router }: AppProps) {

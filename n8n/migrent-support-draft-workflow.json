@@ -1,0 +1,254 @@
+{
+  "name": "MigRent AI - Support Email → Gmail Draft",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {
+          "readStatus": "unread",
+          "receivedAfter": "",
+          "sender": "",
+          "subject": "New support request from"
+        },
+        "simple": false
+      },
+      "id": "gmail-trigger",
+      "name": "Gmail Trigger - Watch Support Emails",
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.2,
+      "position": [240, 300],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "GMAIL_CREDENTIAL_ID",
+          "name": "Gmail - migrentau@gmail.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse the Resend contact form email\nconst items = $input.all();\nconst results = [];\n\nfor (const item of items) {\n  const subject = item.json.subject || '';\n  const body = item.json.textPlain || item.json.snippet || '';\n  const htmlBody = item.json.textHtml || '';\n  const fromEmail = item.json.from?.value?.[0]?.address || item.json.from || '';\n  const messageId = item.json.messageId || '';\n  const threadId = item.json.threadId || '';\n  \n  // Parse subject: \"New support request from Jane Doe (seeker)\"\n  const subjectMatch = subject.match(/New support request from (.+?) \\((seeker|owner)\\)/i);\n  const senderName = subjectMatch ? subjectMatch[1].trim() : 'User';\n  const senderRole = subjectMatch ? subjectMatch[2].toLowerCase() : 'seeker';\n  \n  // Parse HTML body for structured fields\n  // Format: <p><strong>Name:</strong> Jane Doe</p>\n  //         <p><strong>Email:</strong> jane@example.com</p>\n  //         <p><strong>Role:</strong> seeker</p>\n  //         <p><strong>Message:</strong></p><p>...</p>\n  \n  let parsedName = senderName;\n  let parsedEmail = '';\n  let parsedRole = senderRole;\n  let parsedMessage = '';\n  \n  // Try HTML parsing first\n  const nameMatch = htmlBody.match(/<strong>Name:<\\/strong>\\s*([^<]+)/i);\n  if (nameMatch) parsedName = nameMatch[1].trim();\n  \n  const emailMatch = htmlBody.match(/<strong>Email:<\\/strong>\\s*([^<]+)/i);\n  if (emailMatch) parsedEmail = emailMatch[1].trim();\n  \n  const roleMatch = htmlBody.match(/<strong>Role:<\\/strong>\\s*([^<]+)/i);\n  if (roleMatch) parsedRole = roleMatch[1].trim();\n  \n  const messageMatch = htmlBody.match(/<strong>Message:<\\/strong>\\s*<\\/p>\\s*<p>([\\s\\S]*?)<\\/p>/i);\n  if (messageMatch) parsedMessage = messageMatch[1].trim();\n  \n  // Fallback: parse plain text body\n  if (!parsedEmail) {\n    const textEmailMatch = body.match(/Email:\\s*(.+)/i);\n    if (textEmailMatch) parsedEmail = textEmailMatch[1].trim();\n  }\n  if (!parsedMessage) {\n    const textMsgMatch = body.match(/Message:\\s*([\\s\\S]+)/i);\n    if (textMsgMatch) parsedMessage = textMsgMatch[1].trim();\n  }\n  \n  // Clean up role display\n  const roleDisplay = parsedRole === 'owner' ? 'Property Owner' : 'Room Seeker';\n  \n  // Create issue summary (first 50 chars)\n  const issueSummary = parsedMessage.length > 50 \n    ? parsedMessage.substring(0, 50) + '...' \n    : parsedMessage;\n  \n  // Generate smart personalized response based on role and keywords\n  let personalizedResponse = '';\n  const msgLower = parsedMessage.toLowerCase();\n  \n  if (msgLower.includes('login') || msgLower.includes('sign in') || msgLower.includes('password') || msgLower.includes('access')) {\n    personalizedResponse = `I can see you're having trouble accessing your account. Here are a few things to try:\\n\\n1. Clear your browser cache and try signing in again\\n2. Use the \"Forgot Password\" option on the login page\\n3. Make sure you're using the same email you registered with\\n\\nIf the issue persists, I can look into your account directly.`;\n  } else if (msgLower.includes('payment') || msgLower.includes('pay') || msgLower.includes('charge') || msgLower.includes('refund') || msgLower.includes('billing')) {\n    personalizedResponse = `I understand you have a billing-related concern. I'll review your account details and get back to you with a resolution within 24 hours.\\n\\nIn the meantime, please don't hesitate to share any relevant transaction IDs or screenshots.`;\n  } else if (msgLower.includes('listing') || msgLower.includes('property') || msgLower.includes('room') || msgLower.includes('post')) {\n    if (parsedRole === 'owner') {\n      personalizedResponse = `I'll help you with your property listing. As a property owner, you can manage your listings from your dashboard.\\n\\nIf you're having trouble creating or editing a listing, I'd be happy to walk you through the process or make changes on your end.`;\n    } else {\n      personalizedResponse = `I'll help you find what you're looking for. Our platform has a range of listings that might suit your needs.\\n\\nYou can refine your search using filters on the listings page, or let me know your preferences and I can point you in the right direction.`;\n    }\n  } else if (msgLower.includes('bug') || msgLower.includes('error') || msgLower.includes('broken') || msgLower.includes('not working') || msgLower.includes('issue')) {\n    personalizedResponse = `Thanks for reporting this issue. I've noted the details and our team will investigate.\\n\\nCould you let me know:\\n- What device/browser you're using\\n- When the issue first occurred\\n- Any error messages you saw\\n\\nThis will help us resolve it faster.`;\n  } else if (msgLower.includes('verify') || msgLower.includes('verification') || msgLower.includes('id') || msgLower.includes('identity')) {\n    personalizedResponse = `I understand you have a question about verification. Our verification process helps keep the community safe for everyone.\\n\\nI'll review your verification status and follow up with next steps.`;\n  } else if (msgLower.includes('message') || msgLower.includes('chat') || msgLower.includes('contact') || msgLower.includes('reply')) {\n    personalizedResponse = `I'll look into your messaging concern. You can access your messages from your dashboard or the messages page.\\n\\nIf you're having trouble reaching another user, let me know and I can help.`;\n  } else {\n    personalizedResponse = `I've reviewed your message and I'll look into this for you. I'll follow up with more details shortly.\\n\\nIf you have any additional information to share, feel free to reply to this email.`;\n  }\n  \n  results.push({\n    json: {\n      senderName: parsedName,\n      senderEmail: parsedEmail,\n      senderRole: parsedRole,\n      roleDisplay: roleDisplay,\n      message: parsedMessage,\n      issueSummary: issueSummary,\n      personalizedResponse: personalizedResponse,\n      originalSubject: subject,\n      originalMessageId: messageId,\n      threadId: threadId,\n      receivedAt: new Date().toISOString()\n    }\n  });\n}\n\nreturn results;"
+      },
+      "id": "parse-email",
+      "name": "Parse Resend Email Body",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [480, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "email-not-empty",
+              "leftValue": "={{ $json.senderEmail }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "filter-valid",
+      "name": "Filter - Has Valid Email",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [700, 300]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.senderEmail }}",
+        "subject": "=Re: {{ $json.originalSubject }} - {{ $json.senderName }}",
+        "emailType": "html",
+        "message": "=<div style=\"font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; color: #333;\">\n  <p>Hi {{ $json.senderName }},</p>\n  \n  <p>Thanks for reaching out about your {{ $json.roleDisplay }} account on MigRent AI.</p>\n  \n  <p>Regarding \"<em>{{ $json.issueSummary }}</em>\":</p>\n  \n  <div style=\"background: #f8f9fa; border-left: 3px solid #6366f1; padding: 12px 16px; margin: 16px 0; border-radius: 0 4px 4px 0;\">\n    {{ $json.personalizedResponse }}\n  </div>\n  \n  <p style=\"margin-top: 24px;\"><strong>Quick links:</strong></p>\n  <ul style=\"list-style: none; padding: 0;\">\n    <li style=\"margin: 8px 0;\">📊 <a href=\"https://migrent-ai.vercel.app/dashboard\" style=\"color: #6366f1;\">Your Dashboard</a></li>\n    <li style=\"margin: 8px 0;\">👤 <a href=\"https://migrent-ai.vercel.app/account/profile\" style=\"color: #6366f1;\">Your Profile</a></li>\n    <li style=\"margin: 8px 0;\">💬 <a href=\"https://migrent-ai.vercel.app/account/messages\" style=\"color: #6366f1;\">Messages</a></li>\n    <li style=\"margin: 8px 0;\">🏠 <a href=\"https://migrent-ai.vercel.app/listings\" style=\"color: #6366f1;\">Browse Listings</a></li>\n  </ul>\n  \n  <hr style=\"border: none; border-top: 1px solid #e5e7eb; margin: 24px 0;\" />\n  \n  <p style=\"color: #6b7280; font-size: 14px;\">Best Wishes,<br/><strong>MigRent AI Support</strong><br/>migrent-ai.vercel.app</p>\n</div>",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "create-draft",
+      "name": "Gmail - Create Draft Reply",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [920, 300],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "GMAIL_CREDENTIAL_ID",
+          "name": "Gmail - migrentau@gmail.com"
+        }
+      },
+      "parameters_note": "IMPORTANT: After import, change the 'Resource' to 'Draft' and 'Operation' to 'Create'. N8N's Gmail node supports draft creation - select it from the Resource dropdown."
+    },
+    {
+      "parameters": {
+        "jsCode": "// Format notification message\nconst item = $input.first();\nconst data = item.json;\n\nconst now = new Date();\nconst timeStr = now.toLocaleString('en-AU', { timeZone: 'Australia/Melbourne' });\n\nreturn [{\n  json: {\n    notificationSubject: `📬 Draft ready: ${data.senderName} (${data.roleDisplay})`,\n    notificationBody: `A Gmail draft has been created for a support request.\\n\\n👤 From: ${data.senderName} (${data.senderEmail})\\n🏷️ Role: ${data.roleDisplay}\\n💬 Issue: ${data.issueSummary}\\n⏰ Received: ${timeStr}\\n\\nOpen Gmail to review and send the draft.`,\n    senderName: data.senderName,\n    senderEmail: data.senderEmail,\n    roleDisplay: data.roleDisplay,\n    issueSummary: data.issueSummary\n  }\n}];"
+      },
+      "id": "format-notification",
+      "name": "Format Notification",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1140, 300]
+    },
+    {
+      "parameters": {
+        "sendTo": "migrentau@gmail.com",
+        "subject": "={{ $json.notificationSubject }}",
+        "emailType": "text",
+        "message": "={{ $json.notificationBody }}",
+        "options": {}
+      },
+      "id": "notify-email",
+      "name": "Gmail - Notify Draft Ready",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [1360, 200],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "GMAIL_CREDENTIAL_ID",
+          "name": "Gmail - migrentau@gmail.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "=**📬 Draft Ready for Review**\n\n**From:** {{ $json.senderName }} ({{ $json.senderEmail }})\n**Role:** {{ $json.roleDisplay }}\n**Issue:** {{ $json.issueSummary }}\n\n→ Open Gmail to review and send",
+        "options": {}
+      },
+      "id": "notify-slack",
+      "name": "Slack - Notify Draft Ready (Optional)",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.2,
+      "position": [1360, 420],
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "SLACK_CREDENTIAL_ID",
+          "name": "Slack"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "has-error",
+              "leftValue": "={{ $json.error }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "error-check",
+      "name": "Error Handler",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [700, 520],
+      "continueOnFail": true
+    }
+  ],
+  "connections": {
+    "Gmail Trigger - Watch Support Emails": {
+      "main": [
+        [
+          {
+            "node": "Parse Resend Email Body",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Resend Email Body": {
+      "main": [
+        [
+          {
+            "node": "Filter - Has Valid Email",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Error Handler",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter - Has Valid Email": {
+      "main": [
+        [
+          {
+            "node": "Gmail - Create Draft Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail - Create Draft Reply": {
+      "main": [
+        [
+          {
+            "node": "Format Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Notification": {
+      "main": [
+        [
+          {
+            "node": "Gmail - Notify Draft Ready",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Slack - Notify Draft Ready (Optional)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": ""
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "name": "MigRent AI",
+      "id": "migrent-support"
+    }
+  ],
+  "triggerCount": 1,
+  "pinData": {}
+}

@@ -10,6 +10,7 @@ logger = logging.getLogger(__name__)
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routes_auth import router as auth_router
+from routes_magic_auth import router as magic_auth_router
 from routes_listings import router as listings_router
 from routes_matches import router as matches_router
 from routes_deals import router as deals_router, webhook_router
@@ -58,6 +59,7 @@ app.add_middleware(
 )
 
 app.include_router(auth_router)
+app.include_router(magic_auth_router)
 app.include_router(listings_router)
 app.include_router(matches_router)
 app.include_router(deals_router)

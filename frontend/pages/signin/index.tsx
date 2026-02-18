@@ -56,19 +56,6 @@ export default function SignIn() {
     }
   };
 
-  const handleMagicLink = async () => {
-    setMsg("");
-    if (!email) {
-      setMsg("Enter your email first.");
-      return;
-    }
-    setLoading(true);
-    const { error } = await supabase.auth.signInWithOtp({ email });
-    if (error) setMsg(error.message);
-    else setMsg("Check your email for a login link.");
-    setLoading(false);
-  };
-
   return (
     <div className="min-h-[70vh] flex items-center justify-center px-4">
       {/* Floating shapes */}
@@ -152,14 +139,12 @@ export default function SignIn() {
 
             <SignInButton redirectTo={typeof window !== "undefined" ? window.location.origin : undefined} />
 
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={handleMagicLink}
-              className="w-full btn-secondary py-3 rounded-xl text-sm"
+            <Link
+              href="/magic-link-login"
+              className="block w-full text-center btn-secondary py-3 rounded-xl text-sm"
             >
-              Send login link to email
-            </motion.button>
+              Sign in with magic link
+            </Link>
 
             {msg && (
               <motion.p
