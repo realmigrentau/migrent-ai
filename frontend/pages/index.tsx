@@ -117,7 +117,7 @@ export default function Home() {
             className="relative z-10 mt-14 -mx-4 sm:-mx-6 md:-mx-8"
           >
             <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-4">
-              Top verified listings
+              AU Housing
             </p>
             <OwnerMarquee />
           </motion.div>
