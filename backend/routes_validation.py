@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 router = APIRouter(tags=["validation"])
 
 # ── Environment variables ──────────────────────────────────
-GOOGLE_MAPS_API_KEY = os.environ.get("GOOGLE_MAPS_API_KEY", "").strip()
+MAPTILER_API_KEY = os.environ.get("MAPTILER_API_KEY", "").strip()
 ADDRESSIFY_API_KEY = os.environ.get("ADDRESSIFY_API_KEY", "").strip()
 PHONE_VALIDATION_API_KEY = os.environ.get("PHONE_VALIDATION_API_KEY", "").strip()
 
@@ -46,56 +46,67 @@ async def nearest_station(suburb_city: str = Query(..., description="Format: Sub
     """
     Find the nearest train station for a given suburb/city.
 
-    1. Geocodes the suburb/city to lat/lng via Google Geocoding API
-    2. Searches nearby for type=train_station via Google Places Nearby Search
-    3. Returns the station name and vicinity
+    Uses MapTiler Geocoding (free) + Overpass API (free, no key) to:
+    1. Geocode the suburb/city to lat/lng
+    2. Query OpenStreetMap for nearby railway stations
+    3. Return the closest station name
     """
     if "/" not in suburb_city:
         raise HTTPException(status_code=400, detail="Format must be Suburb/City (e.g. Kellyville/Sydney)")
 
-    if not GOOGLE_MAPS_API_KEY:
-        return {"station": None, "message": "Station lookup not available yet"}
+    if not MAPTILER_API_KEY:
+        return {"station": None, "message": "Station lookup not configured yet"}
 
     suburb, city = suburb_city.split("/", 1)
     query = f"{suburb.strip()}, {city.strip()}, Australia"
 
-    async with httpx.AsyncClient(timeout=10) as client:
-        # Step 1: Geocode suburb/city to coordinates
+    async with httpx.AsyncClient(timeout=15) as client:
+        # Step 1: Geocode via MapTiler (free tier)
         geocode_resp = await client.get(
-            "https://maps.googleapis.com/maps/api/geocode/json",
-            params={"address": query, "key": GOOGLE_MAPS_API_KEY, "region": "au"},
+            "https://api.maptiler.com/geocoding/" + query + ".json",
+            params={"key": MAPTILER_API_KEY, "country": "au", "limit": "1"},
         )
         geocode_data = geocode_resp.json()
 
-        if geocode_data.get("status") != "OK" or not geocode_data.get("results"):
-            raise HTTPException(status_code=404, detail="Could not geocode suburb/city. Check the format.")
+        features = geocode_data.get("features", [])
+        if not features:
+            return {"station": None, "message": "Could not locate that suburb"}
 
-        location = geocode_data["results"][0]["geometry"]["location"]
-        lat, lng = location["lat"], location["lng"]
+        coords = features[0]["geometry"]["coordinates"]  # [lng, lat]
+        lng, lat = coords[0], coords[1]
 
-        # Step 2: Find nearest train station
-        places_resp = await client.get(
-            "https://maps.googleapis.com/maps/api/place/nearbysearch/json",
-            params={
-                "location": f"{lat},{lng}",
-                "rankby": "distance",
-                "type": "train_station",
-                "key": GOOGLE_MAPS_API_KEY,
-            },
+        # Step 2: Find nearest train station via Overpass API (free, no key)
+        # Search within 10km radius for railway stations
+        overpass_query = f"""
+        [out:json][timeout:10];
+        (
+          node["railway"="station"](around:10000,{lat},{lng});
+          node["railway"="halt"](around:10000,{lat},{lng});
+        );
+        out body 1;
+        """
+
+        overpass_resp = await client.post(
+            "https://overpass-api.de/api/interpreter",
+            data={"data": overpass_query},
         )
-        places_data = places_resp.json()
+        overpass_data = overpass_resp.json()
 
-        if places_data.get("status") != "OK" or not places_data.get("results"):
-            return {"station": None, "message": "No train station found nearby"}
+        elements = overpass_data.get("elements", [])
+        if not elements:
+            return {"station": None, "message": "No train station found within 10km"}
 
-        station = places_data["results"][0]
-        station_name = station.get("name", "Unknown Station")
-        vicinity = station.get("vicinity", "")
+        station = elements[0]
+        tags = station.get("tags", {})
+        station_name = tags.get("name", "Unknown Station")
+        operator = tags.get("operator", tags.get("network", ""))
+
+        display = f"{station_name} – {operator}" if operator else station_name
 
         return {
             "station": station_name,
-            "vicinity": vicinity,
-            "display": f"{station_name} – {vicinity}" if vicinity else station_name,
+            "vicinity": operator,
+            "display": display,
         }
 
 
