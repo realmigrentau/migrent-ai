@@ -519,25 +519,6 @@ export default function SettingsPage() {
                   </div>
                 </div>
 
-                {message && (
-                  <div
-                    className={`p-3 rounded-xl text-sm ${
-                      message.includes("success")
-                        ? "bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 text-emerald-600 dark:text-emerald-400"
-                        : "bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 text-red-600 dark:text-red-400"
-                    }`}
-                  >
-                    {message}
-                  </div>
-                )}
-
-                <button
-                  onClick={handleSaveProfile}
-                  disabled={true}
-                  className="btn-primary py-2.5 px-5 rounded-xl text-sm disabled:opacity-50 cursor-not-allowed"
-                >
-                  Feature unavailable
-                </button>
               </div>
             </div>
           )}
