@@ -8,6 +8,7 @@ Endpoints:
 """
 
 import os
+import math
 import logging
 import httpx
 from fastapi import APIRouter, HTTPException, Query
@@ -60,7 +61,7 @@ async def nearest_station(suburb_city: str = Query(..., description="Format: Sub
     suburb, city = suburb_city.split("/", 1)
     query = f"{suburb.strip()}, {city.strip()}, Australia"
 
-    async with httpx.AsyncClient(timeout=15) as client:
+    async with httpx.AsyncClient(timeout=20) as client:
         # Step 1: Geocode via MapTiler (free tier)
         geocode_resp = await client.get(
             "https://api.maptiler.com/geocoding/" + query + ".json",
@@ -75,15 +76,18 @@ async def nearest_station(suburb_city: str = Query(..., description="Format: Sub
         coords = features[0]["geometry"]["coordinates"]  # [lng, lat]
         lng, lat = coords[0], coords[1]
 
-        # Step 2: Find nearest train station via Overpass API (free, no key)
-        # Search within 10km radius for railway stations
+        # Step 2: Find nearby train/metro stations via Overpass API (free, no key)
+        # Search within 15km, return up to 10 results, includes metro/light rail
         overpass_query = f"""
         [out:json][timeout:10];
         (
-          node["railway"="station"](around:10000,{lat},{lng});
-          node["railway"="halt"](around:10000,{lat},{lng});
+          node["railway"="station"](around:15000,{lat},{lng});
+          node["railway"="halt"](around:15000,{lat},{lng});
+          node["station"="subway"](around:15000,{lat},{lng});
+          node["railway"="tram_stop"]["name"](around:15000,{lat},{lng});
+          node["public_transport"="station"]["train"="yes"](around:15000,{lat},{lng});
         );
-        out body 1;
+        out body;
         """
 
         overpass_resp = await client.post(
@@ -94,12 +98,40 @@ async def nearest_station(suburb_city: str = Query(..., description="Format: Sub
 
         elements = overpass_data.get("elements", [])
         if not elements:
-            return {"station": None, "message": "No train station found within 10km"}
+            return {"station": None, "message": "No train station found within 15km"}
 
-        station = elements[0]
-        tags = station.get("tags", {})
+        # Step 3: Calculate distance to each station and pick the closest
+        def haversine(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
+            """Return distance in km between two lat/lng points."""
+            R = 6371  # Earth radius in km
+            dlat = math.radians(lat2 - lat1)
+            dlon = math.radians(lon2 - lon1)
+            a = (math.sin(dlat / 2) ** 2 +
+                 math.cos(math.radians(lat1)) * math.cos(math.radians(lat2)) *
+                 math.sin(dlon / 2) ** 2)
+            return R * 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+
+        closest = None
+        closest_dist = float("inf")
+        for el in elements:
+            if "lat" not in el or "lon" not in el:
+                continue
+            tags = el.get("tags", {})
+            name = tags.get("name")
+            if not name:
+                continue
+            dist = haversine(lat, lng, el["lat"], el["lon"])
+            if dist < closest_dist:
+                closest_dist = dist
+                closest = el
+
+        if not closest:
+            return {"station": None, "message": "No named train station found nearby"}
+
+        tags = closest.get("tags", {})
         station_name = tags.get("name", "Unknown Station")
         operator = tags.get("operator", tags.get("network", ""))
+        dist_str = f"{closest_dist:.1f}km away"
 
         display = f"{station_name} – {operator}" if operator else station_name
 
@@ -107,6 +139,7 @@ async def nearest_station(suburb_city: str = Query(..., description="Format: Sub
             "station": station_name,
             "vicinity": operator,
             "display": display,
+            "distance_km": round(closest_dist, 1),
         }
 
 
