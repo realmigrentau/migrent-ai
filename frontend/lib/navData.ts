@@ -180,7 +180,7 @@ export const navItems: NavItem[] = [
           color: "text-green-500",
         },
         {
-          href: "/resources#api-docs",
+          href: "/resources#api",
           iconPath:
             "M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4",
           titleKey: "resources.apiDocs.title",

@@ -116,32 +116,32 @@
     }
   },
   "resources": {
-    "heroTitle": "Resources & Tools",
+    "heroTitle": "Resources for MigRent Hosts & Seekers",
     "heroSubtitle": "Helpful tools, community links, and information to support your housing journey in Australia.",
     "heroBadge": "Resource Hub",
     "blog": {
-      "title": "Blog",
+      "title": "MigRent Blog",
       "desc": "Tips, news, and community stories from the MigRent team and our users."
     },
     "calculator": {
-      "title": "Rent Calculator",
-      "desc": "Estimate weekly rent and living costs across Australian suburbs."
+      "title": "Owner ROI Calculator",
+      "desc": "Calculate your return on investment from listing spare rooms across Australian suburbs."
     },
     "apiDocs": {
-      "title": "API Docs",
-      "desc": "Build on the MigRent platform with our developer API."
+      "title": "Developer API Docs",
+      "desc": "Build on the MigRent platform with our RESTful developer API and webhooks."
     },
     "discord": {
-      "title": "Discord Community",
-      "desc": "Join thousands of migrants and owners in our community chat."
+      "title": "Join MigRent Discord",
+      "desc": "Join thousands of migrants and owners in our community chat with city-specific channels."
     },
     "careers": {
-      "title": "Careers",
-      "desc": "Join the MigRent team and help migrants find home."
+      "title": "Join MigRent AI Team",
+      "desc": "Help migrants find home — engineering, design, and product roles based in Sydney."
     },
     "rentalLaws": {
-      "title": "AU Rental Laws",
-      "desc": "Know your rights — tenancy laws, bond rules, and dispute processes by state."
+      "title": "Australian Rental Laws for Migrants",
+      "desc": "Know your rights — tenancy laws, bond rules, and dispute processes by state for migrant renters."
     },
     "ownerROI": {
       "title": "Owner ROI Calculator",
