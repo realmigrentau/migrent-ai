@@ -1,0 +1,177 @@
+{
+  "nav": {
+    "home": "Inicio",
+    "dashboard": "Painel",
+    "features": "Funcionalidades",
+    "guides": "Guias",
+    "pricing": "Precos",
+    "resources": "Recursos",
+    "signUp": "Cadastrar",
+    "myAccount": "Minha Conta",
+    "seeker": "Buscador",
+    "owner": "Proprietario",
+    "findRoom": "Encontrar um quarto",
+    "listRoom": "Anunciar um quarto",
+    "messages": "Mensagens",
+    "wishlist": "Favoritos",
+    "settings": "Configuracoes",
+    "iAmA": "Eu sou..."
+  },
+  "features": {
+    "heroTitle": "Funcionalidades Poderosas",
+    "heroSubtitle": "Tudo o que voce precisa para encontrar ou anunciar um quarto — com inteligencia artificial, feito para imigrantes.",
+    "heroBadge": "Funcionalidades da Plataforma",
+    "aiMatching": {
+      "title": "Correspondencia por IA",
+      "navDesc": "Correspondencia inteligente entre quartos e buscadores",
+      "desc": "Nossos algoritmos inteligentes analisam suas preferencias, orcamento, estilo de vida e localizacao para apresentar as melhores opcoes de quartos — para que voce gaste menos tempo procurando e mais tempo se instalando.",
+      "bullets": ["Pontuacoes de correspondencia personalizadas", "Aprende com seu comportamento", "Sugestoes que consideram o orcamento"]
+    },
+    "verifiedHosts": {
+      "title": "Anfitrioes Verificados",
+      "navDesc": "Proprietarios com identidade verificada",
+      "desc": "Todo proprietario no MigRent passa por verificacao de identidade. Procure o selo de confianca antes de fazer uma consulta — porque seguranca vem em primeiro lugar quando voce e novo em um pais.",
+      "bullets": ["Verificacao de identidade e documentos", "Selos de confianca nos perfis", "Fotos de anuncios verificadas"]
+    },
+    "instantBooking": {
+      "title": "Reserva Instantanea",
+      "navDesc": "Reservas confirmadas com um clique",
+      "desc": "Pule a troca interminavel de e-mails. Quartos verificados com Reserva Instantanea permitem que voce garanta sua vaga com um unico clique — perfeito para recem-chegados que precisam de certeza rapida.",
+      "bullets": ["Confirmacao com um clique", "Verificacao instantanea de disponibilidade", "Garantia de reserva segura"]
+    },
+    "smartFilters": {
+      "title": "Filtros Inteligentes",
+      "navDesc": "Mais de 20 criterios de busca",
+      "desc": "Refine milhares de anuncios com filtros poderosos — bairro, faixa de preco, tipo de quarto, mobilia, politica de animais, transporte proximo e mais de 20 criterios feitos para necessidades reais.",
+      "bullets": ["Mais de 20 opcoes de filtro", "Salve combinacoes de filtros", "Busca por bairro e transporte"]
+    },
+    "superhost": {
+      "title": "Programa Superanfitriao",
+      "navDesc": "Reconhecimento de proprietarios confiaveis",
+      "desc": "Nossos melhores proprietarios conquistam o status de Superanfitriao por meio de avaliacoes consistentes de 5 estrelas, tempos de resposta rapidos e zero cancelamentos. Superanfitrioes ganham visibilidade prioritaria e um selo dourado.",
+      "bullets": ["Posicionamento prioritario na busca", "Selo dourado de confianca", "Recompensas baseadas em desempenho"]
+    },
+    "support": {
+      "title": "Suporte 24/7",
+      "navDesc": "Assistencia a qualquer hora",
+      "desc": "Mudar para um novo pais ja e estressante o suficiente. Nossa equipe de suporte multilingual esta disponivel 24 horas por dia pelo chat do aplicativo para ajudar com qualquer problema — desde questoes de reserva ate preocupacoes com seguranca.",
+      "bullets": ["Chat ao vivo no aplicativo", "Agentes multilinguais", "Escalacao de emergencia"]
+    },
+    "cta": {
+      "title": "Pronto para comecar?",
+      "subtitle": "Junte-se a milhares de imigrantes e proprietarios que ja usam o MigRent AI.",
+      "button": "Criar Conta Gratuita"
+    }
+  },
+  "guides": {
+    "heroTitle": "Guias e Tutoriais",
+    "heroSubtitle": "Guias passo a passo para ajudar voce a aproveitar ao maximo o MigRent — seja voce um buscador ou proprietario.",
+    "heroBadge": "Central de Ajuda",
+    "hostFirst": {
+      "title": "Hospede Seu Primeiro Quarto",
+      "navDesc": "Guia passo a passo para anunciar",
+      "desc": "Um passo a passo completo para anfitrioes de primeira viagem — desde criar seu anuncio ate receber seu primeiro hospede."
+    },
+    "findFast": {
+      "title": "Encontre Alugueis Rapidamente",
+      "navDesc": "Dicas para encontrar rapidamente",
+      "desc": "Aprenda as melhores estrategias para encontrar e garantir seu quarto perfeito rapidamente, com dicas sobre como usar filtros e alertas."
+    },
+    "verifyProfile": {
+      "title": "Verifique Seu Perfil",
+      "navDesc": "Construa confianca com verificacao",
+      "desc": "Como completar a verificacao de identidade para construir confianca com proprietarios e desbloquear correspondencias mais rapidas."
+    },
+    "listProperty": {
+      "title": "Anunciar um Imovel",
+      "navDesc": "Passo a passo para proprietarios",
+      "desc": "Tudo o que os proprietarios precisam saber sobre como criar anuncios atraentes que atraiam buscadores de qualidade."
+    },
+    "superhost": {
+      "title": "Torne-se um Superanfitriao",
+      "navDesc": "Conquiste o status de melhor proprietario",
+      "desc": "O que e necessario para conquistar o status de Superanfitriao — tempos de resposta, avaliacoes e melhores praticas de hospedagem."
+    },
+    "earnings": {
+      "title": "Calculadora de Ganhos",
+      "navDesc": "Estime sua renda com aluguel",
+      "desc": "Use nossa calculadora para estimar a renda semanal e mensal de aluguel com base no seu bairro e tipo de quarto."
+    },
+    "visas": {
+      "title": "Guia de Vistos para Imigrantes",
+      "navDesc": "Tipos de visto e direitos de moradia",
+      "desc": "Entenda as categorias de visto australianas e seus direitos de moradia como imigrante, estudante ou trabalhador."
+    },
+    "disputes": {
+      "title": "Resolucao de Disputas",
+      "navDesc": "Resolva problemas de forma justa",
+      "desc": "Como funciona o processo de resolucao de disputas do MigRent para proteger tanto buscadores quanto proprietarios."
+    },
+    "comingSoon": "Em breve",
+    "readGuide": "Ler guia",
+    "cta": {
+      "title": "Precisa de mais ajuda?",
+      "subtitle": "Nossa equipe de suporte esta disponivel 24/7 para ajudar voce.",
+      "button": "Contatar Suporte"
+    }
+  },
+  "resources": {
+    "heroTitle": "Recursos e Ferramentas",
+    "heroSubtitle": "Ferramentas uteis, links da comunidade e informacoes para apoiar sua jornada de moradia na Australia.",
+    "heroBadge": "Central de Recursos",
+    "blog": {
+      "title": "Blog",
+      "desc": "Dicas, noticias e historias da comunidade da equipe MigRent e nossos usuarios."
+    },
+    "calculator": {
+      "title": "Calculadora de Aluguel",
+      "desc": "Estime o aluguel semanal e os custos de vida em bairros australianos."
+    },
+    "apiDocs": {
+      "title": "Documentacao da API",
+      "desc": "Construa na plataforma MigRent com nossa API para desenvolvedores."
+    },
+    "discord": {
+      "title": "Comunidade Discord",
+      "desc": "Junte-se a milhares de imigrantes e proprietarios no nosso chat comunitario."
+    },
+    "careers": {
+      "title": "Carreiras",
+      "desc": "Junte-se a equipe MigRent e ajude imigrantes a encontrar um lar."
+    },
+    "rentalLaws": {
+      "title": "Leis de Aluguel da Australia",
+      "desc": "Conheca seus direitos — leis de locacao, regras de caucao e processos de disputa por estado."
+    },
+    "ownerROI": {
+      "title": "Calculadora de ROI para Proprietarios",
+      "desc": "Calcule seu retorno sobre o investimento ao anunciar quartos extras."
+    },
+    "comingSoon": "Em breve",
+    "visitLink": "Visitar",
+    "cta": {
+      "title": "Tem uma sugestao?",
+      "subtitle": "Estamos sempre adicionando novos recursos. Diga-nos o que voce precisa.",
+      "button": "Fale Conosco"
+    }
+  },
+  "footer": {
+    "company": "Empresa",
+    "trustSafety": "Confianca e Seguranca",
+    "support": "Suporte",
+    "about": "Sobre",
+    "careers": "Carreiras",
+    "press": "Imprensa",
+    "forOwners": "Para Proprietarios",
+    "forSeekers": "Para Buscadores",
+    "safetyVerification": "Seguranca e Verificacao",
+    "communityGuidelines": "Diretrizes da Comunidade",
+    "privacyPolicy": "Politica de Privacidade",
+    "termsOfService": "Termos de Servico",
+    "faq": "Perguntas Frequentes",
+    "contact": "Contato",
+    "pricing": "Precos",
+    "copyright": "© {{year}} MigRent AI. Todos os direitos reservados.",
+    "tagline": "Feito para imigrantes. Confiado por proprietarios."
+  }
+}

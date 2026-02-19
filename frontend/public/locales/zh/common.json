@@ -1,0 +1,177 @@
+{
+  "nav": {
+    "home": "首页",
+    "dashboard": "仪表板",
+    "features": "功能",
+    "guides": "指南",
+    "pricing": "价格",
+    "resources": "资源",
+    "signUp": "注册",
+    "myAccount": "我的账户",
+    "seeker": "租客",
+    "owner": "房东",
+    "findRoom": "找房间",
+    "listRoom": "发布房间",
+    "messages": "消息",
+    "wishlist": "收藏夹",
+    "settings": "设置",
+    "iAmA": "我是..."
+  },
+  "features": {
+    "heroTitle": "强大功能",
+    "heroSubtitle": "找房或发布房间所需的一切——由AI驱动，专为移民打造。",
+    "heroBadge": "平台功能",
+    "aiMatching": {
+      "title": "AI智能匹配",
+      "navDesc": "智能房源与租客匹配",
+      "desc": "我们的智能算法会分析您的偏好、预算、生活方式和位置，为您推荐最佳房源——让您花更少的时间搜索，更多的时间安顿下来。",
+      "bullets": ["个性化匹配评分", "根据您的行为不断学习", "预算感知推荐"]
+    },
+    "verifiedHosts": {
+      "title": "认证房东",
+      "navDesc": "身份验证房东",
+      "desc": "MigRent上的每位房东都经过身份验证。在咨询前请查看信任徽章——因为当您初到一个国家时，安全是第一位的。",
+      "bullets": ["身份证件核验", "个人资料信任徽章", "房源照片已验证"]
+    },
+    "instantBooking": {
+      "title": "即时预订",
+      "navDesc": "一键确认预订",
+      "desc": "跳过无休止的来回邮件沟通。经过验证的即时预订房源让您一键锁定房间——非常适合需要快速确认的新到者。",
+      "bullets": ["一键确认", "即时查询可用性", "安全预订保障"]
+    },
+    "smartFilters": {
+      "title": "智能筛选",
+      "navDesc": "20多项搜索条件",
+      "desc": "通过强大的筛选功能从成千上万的房源中精准搜索——区域、价格范围、房间类型、家具配置、宠物政策、交通连接，以及20多项为实际需求而设计的筛选条件。",
+      "bullets": ["20多项筛选选项", "保存筛选预设", "区域和交通搜索"]
+    },
+    "superhost": {
+      "title": "超级房东计划",
+      "navDesc": "优质房东认可",
+      "desc": "我们最优秀的房东通过持续获得五星评价、快速响应和零取消记录来获得超级房东身份。超级房东享有优先展示和金色徽章。",
+      "bullets": ["搜索优先排名", "金色信任徽章", "基于表现的奖励"]
+    },
+    "support": {
+      "title": "全天候支持",
+      "navDesc": "全天候在线协助",
+      "desc": "搬到一个新国家已经压力够大了。我们的多语言支持团队通过应用内聊天全天候提供帮助——从预订问题到安全顾虑。",
+      "bullets": ["应用内在线聊天", "多语言客服", "紧急问题升级处理"]
+    },
+    "cta": {
+      "title": "准备好开始了吗？",
+      "subtitle": "加入成千上万已经在使用MigRent AI的移民和房东。",
+      "button": "免费创建账户"
+    }
+  },
+  "guides": {
+    "heroTitle": "指南与教程",
+    "heroSubtitle": "分步指南帮助您充分利用MigRent——无论您是租客还是房东。",
+    "heroBadge": "帮助中心",
+    "hostFirst": {
+      "title": "发布您的第一个房间",
+      "navDesc": "分步发布指南",
+      "desc": "为首次房东提供的完整操作指南——从创建房源到迎接第一位租客。"
+    },
+    "findFast": {
+      "title": "快速找到房源",
+      "navDesc": "快速匹配技巧",
+      "desc": "学习最佳策略来快速找到并锁定您的理想房间，包括使用筛选器和提醒的技巧。"
+    },
+    "verifyProfile": {
+      "title": "验证您的个人资料",
+      "navDesc": "通过验证建立信任",
+      "desc": "如何完成身份验证以与房东建立信任，并解锁更快的匹配。"
+    },
+    "listProperty": {
+      "title": "发布房产",
+      "navDesc": "房东发布操作指南",
+      "desc": "房东创建吸引优质租客的精彩房源所需了解的一切。"
+    },
+    "superhost": {
+      "title": "成为超级房东",
+      "navDesc": "获得顶级房东身份",
+      "desc": "获得超级房东身份所需的条件——响应时间、评价和托管最佳实践。"
+    },
+    "earnings": {
+      "title": "收入计算器",
+      "navDesc": "估算您的租金收入",
+      "desc": "使用我们的计算器根据您所在的区域和房间类型来估算每周和每月的租金收入。"
+    },
+    "visas": {
+      "title": "移民签证指南",
+      "navDesc": "签证类型和住房权利",
+      "desc": "了解澳大利亚签证类别以及作为移民、学生或工作者的住房权利。"
+    },
+    "disputes": {
+      "title": "争议解决",
+      "navDesc": "公平解决问题",
+      "desc": "MigRent的争议解决流程如何保护租客和房东双方的权益。"
+    },
+    "comingSoon": "即将推出",
+    "readGuide": "阅读指南",
+    "cta": {
+      "title": "需要更多帮助？",
+      "subtitle": "我们的支持团队全天候为您服务。",
+      "button": "联系客服"
+    }
+  },
+  "resources": {
+    "heroTitle": "资源与工具",
+    "heroSubtitle": "实用工具、社区链接和信息，为您在澳大利亚的住房之旅提供支持。",
+    "heroBadge": "资源中心",
+    "blog": {
+      "title": "博客",
+      "desc": "来自MigRent团队和用户的技巧、新闻和社区故事。"
+    },
+    "calculator": {
+      "title": "租金计算器",
+      "desc": "估算澳大利亚各区域的每周租金和生活成本。"
+    },
+    "apiDocs": {
+      "title": "API文档",
+      "desc": "使用我们的开发者API在MigRent平台上进行开发。"
+    },
+    "discord": {
+      "title": "Discord社区",
+      "desc": "加入数千名移民和房东的社区聊天。"
+    },
+    "careers": {
+      "title": "招聘",
+      "desc": "加入MigRent团队，帮助移民找到家。"
+    },
+    "rentalLaws": {
+      "title": "澳大利亚租赁法规",
+      "desc": "了解您的权利——各州的租赁法律、押金规则和争议处理流程。"
+    },
+    "ownerROI": {
+      "title": "房东投资回报计算器",
+      "desc": "计算出租闲置房间的投资回报率。"
+    },
+    "comingSoon": "即将推出",
+    "visitLink": "访问",
+    "cta": {
+      "title": "有建议？",
+      "subtitle": "我们一直在添加新资源。请告诉我们您需要什么。",
+      "button": "联系我们"
+    }
+  },
+  "footer": {
+    "company": "公司",
+    "trustSafety": "信任与安全",
+    "support": "支持",
+    "about": "关于我们",
+    "careers": "招聘",
+    "press": "新闻",
+    "forOwners": "房东专区",
+    "forSeekers": "租客专区",
+    "safetyVerification": "安全与验证",
+    "communityGuidelines": "社区准则",
+    "privacyPolicy": "隐私政策",
+    "termsOfService": "服务条款",
+    "faq": "常见问题",
+    "contact": "联系我们",
+    "pricing": "价格",
+    "copyright": "© {{year}} MigRent AI. 保留所有权利。",
+    "tagline": "为移民而建，深受房东信赖。"
+  }
+}

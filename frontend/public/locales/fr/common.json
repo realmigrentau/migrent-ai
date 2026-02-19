@@ -1,0 +1,177 @@
+{
+  "nav": {
+    "home": "Accueil",
+    "dashboard": "Tableau de bord",
+    "features": "Fonctionnalités",
+    "guides": "Guides",
+    "pricing": "Tarifs",
+    "resources": "Ressources",
+    "signUp": "S'inscrire",
+    "myAccount": "Mon compte",
+    "seeker": "Chercheur",
+    "owner": "Propriétaire",
+    "findRoom": "Trouver une chambre",
+    "listRoom": "Publier une chambre",
+    "messages": "Messages",
+    "wishlist": "Favoris",
+    "settings": "Paramètres",
+    "iAmA": "Je suis..."
+  },
+  "features": {
+    "heroTitle": "Fonctionnalités puissantes",
+    "heroSubtitle": "Tout ce dont vous avez besoin pour trouver ou publier une chambre — propulsé par l'IA, conçu pour les migrants.",
+    "heroBadge": "Fonctionnalités de la plateforme",
+    "aiMatching": {
+      "title": "Matching IA",
+      "navDesc": "Correspondance intelligente chambre-chercheur",
+      "desc": "Nos algorithmes intelligents analysent vos préférences, votre budget, votre style de vie et votre emplacement pour faire ressortir les meilleures correspondances de chambres — afin que vous passiez moins de temps à chercher et plus de temps à vous installer.",
+      "bullets": ["Scores de correspondance personnalisés", "Apprend de votre comportement", "Suggestions adaptées au budget"]
+    },
+    "verifiedHosts": {
+      "title": "Hôtes vérifiés",
+      "navDesc": "Propriétaires avec identité vérifiée",
+      "desc": "Chaque propriétaire sur MigRent passe par une vérification d'identité. Recherchez le badge de confiance avant de faire une demande — car la sécurité passe en premier lorsque vous êtes nouveau dans un pays.",
+      "bullets": ["Vérifications d'identité et de documents", "Badges de confiance sur les profils", "Photos d'annonces vérifiées"]
+    },
+    "instantBooking": {
+      "title": "Réservation instantanée",
+      "navDesc": "Réservations confirmées en un clic",
+      "desc": "Fini les échanges d'e-mails interminables. Les chambres vérifiées avec réservation instantanée vous permettent de sécuriser votre place en un seul clic — idéal pour les nouveaux arrivants qui ont besoin de certitude rapidement.",
+      "bullets": ["Confirmation en un clic", "Vérification instantanée de la disponibilité", "Garantie de réservation sécurisée"]
+    },
+    "smartFilters": {
+      "title": "Filtres intelligents",
+      "navDesc": "Plus de 20 critères de recherche",
+      "desc": "Affinez des milliers d'annonces grâce à des filtres puissants — quartier, fourchette de prix, type de chambre, ameublement, politique animaux, liaisons de transport, et plus de 20 autres critères adaptés aux besoins réels.",
+      "bullets": ["Plus de 20 options de filtres", "Enregistrer les préréglages de filtres", "Recherche par quartier et transport"]
+    },
+    "superhost": {
+      "title": "Programme Superhôte",
+      "navDesc": "Reconnaissance des propriétaires de confiance",
+      "desc": "Nos meilleurs propriétaires obtiennent le statut de Superhôte grâce à des avis 5 étoiles constants, des temps de réponse rapides et zéro annulation. Les Superhôtes bénéficient d'une visibilité prioritaire et d'un badge doré.",
+      "bullets": ["Classement prioritaire dans les recherches", "Badge de confiance doré", "Récompenses basées sur la performance"]
+    },
+    "support": {
+      "title": "Assistance 24h/24 7j/7",
+      "navDesc": "Aide disponible en permanence",
+      "desc": "Déménager dans un nouveau pays est déjà assez stressant. Notre équipe d'assistance multilingue est disponible 24h/24 via le chat intégré pour vous aider avec tout problème — des soucis de réservation aux questions de sécurité.",
+      "bullets": ["Chat en direct dans l'application", "Agents multilingues", "Escalade d'urgence"]
+    },
+    "cta": {
+      "title": "Prêt à commencer ?",
+      "subtitle": "Rejoignez des milliers de migrants et de propriétaires qui utilisent déjà MigRent AI.",
+      "button": "Créer un compte gratuit"
+    }
+  },
+  "guides": {
+    "heroTitle": "Guides et tutoriels",
+    "heroSubtitle": "Des guides étape par étape pour vous aider à tirer le meilleur parti de MigRent — que vous soyez chercheur ou propriétaire.",
+    "heroBadge": "Centre d'aide",
+    "hostFirst": {
+      "title": "Hébergez votre première chambre",
+      "navDesc": "Guide de publication étape par étape",
+      "desc": "Un guide complet pour les hôtes débutants — de la création de votre annonce à l'accueil de votre premier locataire."
+    },
+    "findFast": {
+      "title": "Trouvez un logement rapidement",
+      "navDesc": "Conseils pour des correspondances rapides",
+      "desc": "Découvrez les meilleures stratégies pour trouver et sécuriser votre chambre idéale rapidement, avec des conseils sur l'utilisation des filtres et des alertes."
+    },
+    "verifyProfile": {
+      "title": "Vérifiez votre profil",
+      "navDesc": "Établissez la confiance avec la vérification",
+      "desc": "Comment compléter la vérification d'identité pour établir la confiance avec les propriétaires et débloquer des correspondances plus rapides."
+    },
+    "listProperty": {
+      "title": "Publier un bien",
+      "navDesc": "Guide de publication pour les propriétaires",
+      "desc": "Tout ce que les propriétaires doivent savoir pour créer des annonces attrayantes qui attirent des chercheurs de qualité."
+    },
+    "superhost": {
+      "title": "Devenir Superhôte",
+      "navDesc": "Obtenir le statut de meilleur propriétaire",
+      "desc": "Ce qu'il faut pour obtenir le statut de Superhôte — temps de réponse, avis et meilleures pratiques d'hébergement."
+    },
+    "earnings": {
+      "title": "Calculateur de revenus",
+      "navDesc": "Estimez vos revenus locatifs",
+      "desc": "Utilisez notre calculateur pour estimer les revenus locatifs hebdomadaires et mensuels en fonction de votre quartier et du type de chambre."
+    },
+    "visas": {
+      "title": "Guide des visas pour migrants",
+      "navDesc": "Types de visas et droits au logement",
+      "desc": "Comprenez les catégories de visas australiens et vos droits au logement en tant que migrant, étudiant ou travailleur."
+    },
+    "disputes": {
+      "title": "Résolution des litiges",
+      "navDesc": "Résolvez les problèmes équitablement",
+      "desc": "Comment fonctionne le processus de résolution des litiges de MigRent pour protéger à la fois les chercheurs et les propriétaires."
+    },
+    "comingSoon": "Bientôt disponible",
+    "readGuide": "Lire le guide",
+    "cta": {
+      "title": "Besoin de plus d'aide ?",
+      "subtitle": "Notre équipe d'assistance est disponible 24h/24 7j/7 pour vous aider.",
+      "button": "Contacter l'assistance"
+    }
+  },
+  "resources": {
+    "heroTitle": "Ressources et outils",
+    "heroSubtitle": "Des outils utiles, des liens communautaires et des informations pour vous accompagner dans votre parcours logement en Australie.",
+    "heroBadge": "Centre de ressources",
+    "blog": {
+      "title": "Blog",
+      "desc": "Conseils, actualités et témoignages de la communauté par l'équipe MigRent et nos utilisateurs."
+    },
+    "calculator": {
+      "title": "Calculateur de loyer",
+      "desc": "Estimez le loyer hebdomadaire et le coût de la vie dans les quartiers australiens."
+    },
+    "apiDocs": {
+      "title": "Documentation API",
+      "desc": "Développez sur la plateforme MigRent avec notre API développeur."
+    },
+    "discord": {
+      "title": "Communauté Discord",
+      "desc": "Rejoignez des milliers de migrants et de propriétaires dans notre chat communautaire."
+    },
+    "careers": {
+      "title": "Carrières",
+      "desc": "Rejoignez l'équipe MigRent et aidez les migrants à trouver un chez-soi."
+    },
+    "rentalLaws": {
+      "title": "Lois locatives australiennes",
+      "desc": "Connaissez vos droits — lois sur la location, règles de caution et procédures de litige par État."
+    },
+    "ownerROI": {
+      "title": "Calculateur de ROI propriétaire",
+      "desc": "Calculez votre retour sur investissement en publiant des chambres disponibles."
+    },
+    "comingSoon": "Bientôt disponible",
+    "visitLink": "Visiter",
+    "cta": {
+      "title": "Vous avez une suggestion ?",
+      "subtitle": "Nous ajoutons constamment de nouvelles ressources. Dites-nous ce dont vous avez besoin.",
+      "button": "Nous contacter"
+    }
+  },
+  "footer": {
+    "company": "Entreprise",
+    "trustSafety": "Confiance et sécurité",
+    "support": "Assistance",
+    "about": "À propos",
+    "careers": "Carrières",
+    "press": "Presse",
+    "forOwners": "Pour les propriétaires",
+    "forSeekers": "Pour les chercheurs",
+    "safetyVerification": "Sécurité et vérification",
+    "communityGuidelines": "Règles de la communauté",
+    "privacyPolicy": "Politique de confidentialité",
+    "termsOfService": "Conditions d'utilisation",
+    "faq": "FAQ",
+    "contact": "Contact",
+    "pricing": "Tarifs",
+    "copyright": "© {{year}} MigRent AI. Tous droits réservés.",
+    "tagline": "Conçu pour les migrants. Approuvé par les propriétaires."
+  }
+}

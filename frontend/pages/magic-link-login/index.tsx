@@ -24,10 +24,9 @@ export default function MagicLinkLogin() {
   const pollIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // Redirect if already logged in
-  if (session) {
-    router.push("/onboarding");
-    return null;
-  }
+  useEffect(() => {
+    if (session) router.push("/onboarding");
+  }, [session, router]);
 
   // Poll for cross-device login when in "sent" state
   useEffect(() => {
@@ -94,6 +93,8 @@ export default function MagicLinkLogin() {
     }
     setLoading(false);
   };
+
+  if (session) return null;
 
   return (
     <div className="min-h-[70vh] flex items-center justify-center px-4">

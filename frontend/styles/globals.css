@@ -249,3 +249,20 @@ select.input-field {
   background-size: 16px;
   padding-right: 40px;
 }
+
+/* ── Scroll offset for fixed navbar ── */
+[id] {
+  scroll-margin-top: 80px;
+}
+
+/* ── RTL Support (Arabic) ── */
+[dir="rtl"] {
+  direction: rtl;
+  text-align: right;
+}
+
+[dir="rtl"] select.input-field {
+  background-position: left 12px center;
+  padding-right: 16px;
+  padding-left: 40px;
+}
