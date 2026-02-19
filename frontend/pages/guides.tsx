@@ -12,6 +12,23 @@ const fadeUp: Variants = {
   }),
 };
 
+/* ── Step illustrations for each guide ───────────────────────────── */
+
+function StepsPreview({ steps, color }: { steps: string[]; color: string }) {
+  return (
+    <div className="flex flex-col gap-2 mt-4">
+      {steps.map((step, i) => (
+        <div key={i} className="flex items-center gap-3">
+          <span className={`w-6 h-6 rounded-full bg-gradient-to-br ${color} flex items-center justify-center text-[10px] font-bold text-white shrink-0`}>
+            {i + 1}
+          </span>
+          <span className="text-xs text-slate-500 dark:text-slate-400">{step}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 const guides = [
   {
     id: "host-first",
@@ -21,6 +38,9 @@ const guides = [
     color: "text-blue-500",
     bgColor: "bg-blue-50 dark:bg-blue-500/10",
     gradient: "from-blue-500 to-indigo-500",
+    steps: ["Create your listing", "Add photos & pricing", "Set house rules", "Welcome your first seeker"],
+    readTime: "5 min read",
+    difficulty: "Beginner",
   },
   {
     id: "find-fast",
@@ -30,6 +50,9 @@ const guides = [
     color: "text-rose-500",
     bgColor: "bg-rose-50 dark:bg-rose-500/10",
     gradient: "from-rose-500 to-pink-500",
+    steps: ["Set up smart filters", "Enable instant alerts", "Save favourite suburbs", "Apply with one click"],
+    readTime: "4 min read",
+    difficulty: "Beginner",
   },
   {
     id: "verify-profile",
@@ -39,6 +62,9 @@ const guides = [
     color: "text-green-500",
     bgColor: "bg-green-50 dark:bg-green-500/10",
     gradient: "from-green-500 to-emerald-500",
+    steps: ["Upload your ID", "Take a selfie for matching", "Confirm your address", "Earn your trust badge"],
+    readTime: "3 min read",
+    difficulty: "Beginner",
   },
   {
     id: "list-property",
@@ -48,6 +74,9 @@ const guides = [
     color: "text-purple-500",
     bgColor: "bg-purple-50 dark:bg-purple-500/10",
     gradient: "from-purple-500 to-violet-500",
+    steps: ["Enter room details", "Upload quality photos", "Set pricing & availability", "Publish and go live"],
+    readTime: "6 min read",
+    difficulty: "Intermediate",
   },
   {
     id: "superhost",
@@ -57,6 +86,9 @@ const guides = [
     color: "text-amber-500",
     bgColor: "bg-amber-50 dark:bg-amber-500/10",
     gradient: "from-amber-500 to-orange-500",
+    steps: ["Maintain 4.8+ rating", "Respond within 1 hour", "Zero cancellations", "Complete 10+ bookings"],
+    readTime: "4 min read",
+    difficulty: "Advanced",
   },
   {
     id: "earnings",
@@ -66,6 +98,9 @@ const guides = [
     color: "text-emerald-500",
     bgColor: "bg-emerald-50 dark:bg-emerald-500/10",
     gradient: "from-emerald-500 to-teal-500",
+    steps: ["Select your suburb", "Choose room type", "See weekly estimates", "Compare with market rates"],
+    readTime: "3 min read",
+    difficulty: "Beginner",
   },
   {
     id: "visas",
@@ -75,6 +110,9 @@ const guides = [
     color: "text-indigo-500",
     bgColor: "bg-indigo-50 dark:bg-indigo-500/10",
     gradient: "from-indigo-500 to-blue-500",
+    steps: ["Identify your visa type", "Check housing rights", "Understand bond rules", "Know your protections"],
+    readTime: "7 min read",
+    difficulty: "Intermediate",
   },
   {
     id: "disputes",
@@ -84,8 +122,17 @@ const guides = [
     color: "text-red-500",
     bgColor: "bg-red-50 dark:bg-red-500/10",
     gradient: "from-red-500 to-rose-500",
+    steps: ["File your dispute", "Provide evidence", "Mediation process", "Resolution & outcome"],
+    readTime: "5 min read",
+    difficulty: "Intermediate",
   },
 ];
+
+const difficultyColors: Record<string, string> = {
+  Beginner: "bg-green-50 dark:bg-green-500/10 text-green-600 dark:text-green-400",
+  Intermediate: "bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400",
+  Advanced: "bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400",
+};
 
 export default function Guides() {
   const { t } = useTranslation();
@@ -97,29 +144,118 @@ export default function Guides() {
         <meta name="description" content="Step-by-step guides for MigRent AI — learn how to host, find rentals, verify your profile, become a superhost, and more." />
       </Head>
 
-      <div className="space-y-16">
-        {/* Hero */}
-        <section className="relative text-center py-16 overflow-hidden">
-          <div className="absolute top-10 left-10 w-72 h-72 bg-blue-500/10 dark:bg-blue-500/5 rounded-full blur-3xl animate-pulse" />
-          <div className="absolute bottom-10 right-10 w-72 h-72 bg-green-500/10 dark:bg-green-500/5 rounded-full blur-3xl animate-pulse" />
-          <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="relative z-10 max-w-3xl mx-auto">
+      <div className="space-y-20">
+        {/* ── Hero ───────────────────────────────────────────────── */}
+        <section className="relative text-center py-20 overflow-hidden">
+          <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-500/12 dark:bg-blue-500/6 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-green-500/12 dark:bg-green-500/6 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "1s" }} />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-teal-400/5 dark:bg-teal-600/5 rounded-full blur-3xl" />
+
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="relative z-10 max-w-3xl mx-auto"
+          >
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 dark:bg-blue-500/10 border border-blue-100 dark:border-blue-500/20 text-xs font-medium text-blue-600 dark:text-blue-400 mb-6">
               <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
               {t("guides.heroBadge")}
             </div>
-            <h1 className="text-4xl sm:text-5xl font-black tracking-tight leading-tight">
-              <span className="bg-gradient-to-r from-blue-500 to-green-500 bg-clip-text text-transparent">{t("guides.heroTitle")}</span>
+
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight leading-tight">
+              <span className="bg-gradient-to-r from-blue-500 via-teal-500 to-green-500 bg-clip-text text-transparent">
+                Guides & How-Tos
+              </span>
             </h1>
-            <p className="mt-6 text-lg text-slate-500 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
+
+            <p className="mt-6 text-lg md:text-xl text-slate-500 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
               {t("guides.heroSubtitle")}
             </p>
+
+            {/* Category filter pills */}
+            <div className="mt-10 flex flex-wrap justify-center gap-2">
+              {[
+                { label: "All Guides", active: true },
+                { label: "For Seekers", active: false },
+                { label: "For Owners", active: false },
+                { label: "Legal & Visa", active: false },
+              ].map((cat) => (
+                <span
+                  key={cat.label}
+                  className={`px-4 py-2 rounded-full text-xs font-medium border transition-all cursor-pointer ${
+                    cat.active
+                      ? "bg-blue-500 text-white border-blue-500"
+                      : "bg-white dark:bg-white/5 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-600"
+                  }`}
+                >
+                  {cat.label}
+                </span>
+              ))}
+            </div>
           </motion.div>
         </section>
 
-        {/* Guide cards grid */}
+        {/* ── Featured guide (first one, full width) ─────────────── */}
         <section>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {guides.map((guide, i) => (
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            custom={0}
+            variants={fadeUp}
+            id={guides[0].id}
+            className="scroll-mt-24"
+          >
+            <div className="group relative rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-hidden hover:shadow-xl transition-all duration-300">
+              <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${guides[0].gradient}`} />
+              <div className="flex flex-col md:flex-row">
+                {/* Visual */}
+                <div className={`w-full md:w-2/5 bg-gradient-to-br ${guides[0].gradient} p-8 flex flex-col justify-center min-h-[240px]`}>
+                  <div className="flex items-center gap-2 mb-4">
+                    <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
+                      <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d={guides[0].icon} />
+                      </svg>
+                    </div>
+                    <span className="text-white/60 text-xs font-medium uppercase tracking-wider">Featured Guide</span>
+                  </div>
+                  <h3 className="text-xl sm:text-2xl font-black text-white">
+                    {t(guides[0].titleKey)}
+                  </h3>
+                  <p className="text-white/70 text-sm mt-2 leading-relaxed">
+                    {t(guides[0].descKey)}
+                  </p>
+                </div>
+                {/* Steps */}
+                <div className="w-full md:w-3/5 p-6 md:p-8">
+                  <div className="flex items-center gap-3 mb-4">
+                    <span className={`text-[10px] font-semibold px-2.5 py-1 rounded-full ${difficultyColors[guides[0].difficulty]}`}>
+                      {guides[0].difficulty}
+                    </span>
+                    <span className="text-xs text-slate-400 dark:text-slate-500 flex items-center gap-1">
+                      <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      {guides[0].readTime}
+                    </span>
+                  </div>
+                  <StepsPreview steps={guides[0].steps} color={guides[0].gradient} />
+                  <span className="inline-flex items-center gap-1 mt-6 text-xs font-medium text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-white/5 px-3 py-1.5 rounded-full">
+                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    {t("guides.comingSoon")}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </section>
+
+        {/* ── Guide cards grid (remaining guides) ────────────────── */}
+        <section>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {guides.slice(1).map((guide, i) => (
               <motion.div
                 key={guide.id}
                 id={guide.id}
@@ -127,27 +263,50 @@ export default function Guides() {
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: true }}
-                custom={i % 4}
+                custom={i % 6}
                 variants={fadeUp}
               >
-                <div className="group relative rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 hover:shadow-lg transition-all duration-300 hover:border-slate-300 dark:hover:border-slate-600 h-full">
-                  {/* Gradient accent bar */}
-                  <div className={`absolute top-0 left-6 right-6 h-0.5 rounded-b-full bg-gradient-to-r ${guide.gradient} opacity-0 group-hover:opacity-100 transition-opacity`} />
+                <motion.div
+                  whileHover={{ y: -6 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                  className="group relative rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-hidden hover:shadow-lg transition-all duration-300 h-full flex flex-col"
+                >
+                  {/* Top gradient accent */}
+                  <div className={`h-1 bg-gradient-to-r ${guide.gradient} opacity-0 group-hover:opacity-100 transition-opacity`} />
+                  <div className={`h-1 bg-gradient-to-r ${guide.gradient} opacity-100 group-hover:opacity-0 transition-opacity -mt-1`} style={{ height: "2px" }} />
 
-                  <div className="flex items-start gap-4">
-                    <div className={`w-12 h-12 rounded-xl ${guide.bgColor} flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform`}>
-                      <svg className={`w-6 h-6 ${guide.color}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d={guide.icon} />
-                      </svg>
+                  <div className="p-6 flex flex-col flex-1">
+                    {/* Header */}
+                    <div className="flex items-start gap-4 mb-4">
+                      <div className={`w-12 h-12 rounded-xl ${guide.bgColor} flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform`}>
+                        <svg className={`w-6 h-6 ${guide.color}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d={guide.icon} />
+                        </svg>
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+                          {t(guide.titleKey)}
+                        </h3>
+                        <div className="flex items-center gap-2 mt-1">
+                          <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${difficultyColors[guide.difficulty]}`}>
+                            {guide.difficulty}
+                          </span>
+                          <span className="text-[10px] text-slate-400 dark:text-slate-500">{guide.readTime}</span>
+                        </div>
+                      </div>
                     </div>
-                    <div className="flex-1">
-                      <h3 className="text-lg font-bold text-slate-900 dark:text-white">
-                        {t(guide.titleKey)}
-                      </h3>
-                      <p className="mt-2 text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
-                        {t(guide.descKey)}
-                      </p>
-                      <span className="inline-flex items-center gap-1 mt-4 text-xs font-medium text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-white/5 px-3 py-1.5 rounded-full">
+
+                    {/* Description */}
+                    <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+                      {t(guide.descKey)}
+                    </p>
+
+                    {/* Steps preview */}
+                    <StepsPreview steps={guide.steps} color={guide.gradient} />
+
+                    {/* Footer */}
+                    <div className="mt-auto pt-4">
+                      <span className="inline-flex items-center gap-1 text-xs font-medium text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-white/5 px-3 py-1.5 rounded-full">
                         <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
@@ -155,13 +314,49 @@ export default function Guides() {
                       </span>
                     </div>
                   </div>
-                </div>
+                </motion.div>
               </motion.div>
             ))}
           </div>
         </section>
 
-        {/* CTA */}
+        {/* ── Help banner ────────────────────────────────────────── */}
+        <section>
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="rounded-2xl bg-gradient-to-r from-blue-500 via-teal-500 to-green-500 p-[1px]"
+          >
+            <div className="rounded-2xl bg-white dark:bg-slate-900 p-8 md:p-10 flex flex-col md:flex-row items-center gap-6">
+              <div className="w-14 h-14 rounded-2xl bg-blue-50 dark:bg-blue-500/10 flex items-center justify-center shrink-0">
+                <svg className="w-7 h-7 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" />
+                </svg>
+              </div>
+              <div className="flex-1 text-center md:text-left">
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+                  Can&apos;t find what you need?
+                </h3>
+                <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                  Our support team can help you with any question — available 24/7 in multiple languages.
+                </p>
+              </div>
+              <Link href="/contact">
+                <motion.span
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="inline-block btn-primary text-sm px-6 py-3 rounded-xl whitespace-nowrap"
+                >
+                  {t("guides.cta.button")}
+                </motion.span>
+              </Link>
+            </div>
+          </motion.div>
+        </section>
+
+        {/* ── CTA ────────────────────────────────────────────────── */}
         <section className="text-center py-12">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
