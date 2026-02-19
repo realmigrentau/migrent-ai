@@ -4,15 +4,42 @@ import Link from "next/link";
 import { supabase } from "../../../lib/supabase";
 import { motion } from "framer-motion";
 
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
+
+/**
+ * After magic link verification, store session tokens in the backend
+ * so the original device (e.g. laptop) can pick them up via polling.
+ */
+async function storeCrossDeviceTokens(
+  pollingId: string,
+  accessToken: string,
+  refreshToken: string
+) {
+  try {
+    await fetch(`${API_BASE}/auth/cross-device/store`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        polling_id: pollingId,
+        access_token: accessToken,
+        refresh_token: refreshToken,
+      }),
+    });
+  } catch {
+    // Best-effort — the phone still logs in regardless
+  }
+}
+
 export default function AuthCallback() {
   const router = useRouter();
   const [error, setError] = useState("");
 
   useEffect(() => {
-    // Supabase appends auth tokens as a hash fragment after magic link click.
-    // The JS client picks them up automatically via onAuthStateChange,
-    // but we call getSession() to ensure the session is established.
     const handleCallback = async () => {
+      // Extract polling_id from the URL query params (added by magic link pages)
+      const params = new URLSearchParams(window.location.search);
+      const pollingId = params.get("polling_id");
+
       const { data: { session }, error: sessionError } = await supabase.auth.getSession();
 
       if (sessionError) {
@@ -21,15 +48,21 @@ export default function AuthCallback() {
       }
 
       if (session) {
+        // If there's a polling_id, store tokens so the other device can auto-login
+        if (pollingId && session.access_token && session.refresh_token) {
+          await storeCrossDeviceTokens(pollingId, session.access_token, session.refresh_token);
+        }
         router.replace("/onboarding");
         return;
       }
 
-      // If no session yet, wait a moment — the hash might still be processing
-      // Listen for auth state change as a fallback
-      const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      // Listen for auth state change as a fallback (hash fragment processing)
+      const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
         if (session) {
           subscription.unsubscribe();
+          if (pollingId && session.access_token && session.refresh_token) {
+            await storeCrossDeviceTokens(pollingId, session.access_token, session.refresh_token);
+          }
           router.replace("/onboarding");
         }
       });

@@ -1,9 +1,17 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { supabase } from "../../lib/supabase";
 import { useAuth } from "../../hooks/useAuth";
 import { motion } from "framer-motion";
+
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
+
+function generatePollingId(): string {
+  const arr = new Uint8Array(16);
+  crypto.getRandomValues(arr);
+  return Array.from(arr, (b) => b.toString(16).padStart(2, "0")).join("");
+}
 
 export default function MagicLinkSignup() {
   const router = useRouter();
@@ -12,11 +20,57 @@ export default function MagicLinkSignup() {
   const [msg, setMsg] = useState("");
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
+  const pollingIdRef = useRef<string>("");
+  const pollIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
+  // Redirect if already logged in
   if (session) {
     router.push("/onboarding");
     return null;
   }
+
+  // Poll for cross-device login when in "sent" state
+  useEffect(() => {
+    if (!sent || !pollingIdRef.current) return;
+
+    const pollForSession = async () => {
+      try {
+        const res = await fetch(`${API_BASE}/auth/cross-device/poll`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ polling_id: pollingIdRef.current }),
+        });
+        const data = await res.json();
+
+        if (data.status === "ready" && data.access_token && data.refresh_token) {
+          // Set the session on this device using the tokens from the other device
+          await supabase.auth.setSession({
+            access_token: data.access_token,
+            refresh_token: data.refresh_token,
+          });
+          if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
+          router.push("/onboarding");
+        } else if (data.status === "expired") {
+          if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
+        }
+      } catch {
+        // Silently retry on next interval
+      }
+    };
+
+    // Poll every 3 seconds
+    pollIntervalRef.current = setInterval(pollForSession, 3000);
+
+    // Stop polling after 5 minutes
+    const timeout = setTimeout(() => {
+      if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
+    }, 5 * 60 * 1000);
+
+    return () => {
+      if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
+      clearTimeout(timeout);
+    };
+  }, [sent, router]);
 
   const handleSendLink = async () => {
     setMsg("");
@@ -25,11 +79,16 @@ export default function MagicLinkSignup() {
       return;
     }
     setLoading(true);
+
+    // Generate a polling ID for cross-device login
+    const pollingId = generatePollingId();
+    pollingIdRef.current = pollingId;
+
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
         shouldCreateUser: true,
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
+        emailRedirectTo: `${window.location.origin}/auth/callback?polling_id=${pollingId}`,
       },
     });
     if (error) {
@@ -91,12 +150,16 @@ export default function MagicLinkSignup() {
                 <p className="text-xs text-emerald-500 dark:text-emerald-500 mt-2">
                   Click the link in the email to create your account and sign in.
                 </p>
+                <div className="flex items-center justify-center gap-2 mt-3 text-xs text-slate-400 dark:text-slate-500">
+                  <span className="w-3 h-3 border-2 border-slate-300 dark:border-slate-600 border-t-emerald-500 rounded-full animate-spin" />
+                  Waiting for verification...
+                </div>
               </div>
 
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                onClick={() => { setSent(false); setMsg(""); }}
+                onClick={() => { setSent(false); setMsg(""); pollingIdRef.current = ""; }}
                 className="w-full btn-secondary py-3 rounded-xl text-sm"
               >
                 Send again with a different email
