@@ -54,15 +54,14 @@ def _is_agent(user) -> bool:
     """Check if user has support_agent or admin role in profiles."""
     if not user:
         return False
-    sb = get_supabase_admin()
-    uid = str(user.id)
-    res = sb.table("profiles").select("role").eq("id", uid).execute()
-    if res.data and res.data[0].get("role") in ("support_agent", "admin"):
-        return True
-    # Also check superadmin flag
-    res2 = sb.rpc("is_superadmin", {"check_user_id": uid}).execute()
-    if res2.data:
-        return True
+    try:
+        sb = get_supabase_admin()
+        uid = str(user.id)
+        res = sb.table("profiles").select("role").eq("id", uid).execute()
+        if res.data and res.data[0].get("role") in ("support_agent", "admin"):
+            return True
+    except Exception:
+        logger.exception("Failed to check agent role")
     return False
 
 
