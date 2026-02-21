@@ -213,14 +213,6 @@ export const navItems: NavItem[] = [
           descKey: "resources.rentalLaws.desc",
           color: "text-cyan-500",
         },
-        {
-          href: "/resources/roi-calculator",
-          iconPath:
-            "M13 7h8m0 0v8m0-8l-8 8-4-4-6 6",
-          titleKey: "resources.ownerROI.title",
-          descKey: "resources.ownerROI.desc",
-          color: "text-purple-500",
-        },
       ],
     ],
   },
