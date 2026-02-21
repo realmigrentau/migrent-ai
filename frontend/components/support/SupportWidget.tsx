@@ -25,7 +25,7 @@ export default function SupportWidget() {
   const [submitted, setSubmitted] = useState(false);
   const [ticketId, setTicketId] = useState("");
 
-  const debounceRef = useRef<NodeJS.Timeout>();
+  const debounceRef = useRef<NodeJS.Timeout | null>(null);
 
   // Debounced article search
   useEffect(() => {
@@ -33,14 +33,14 @@ export default function SupportWidget() {
       setArticles([]);
       return;
     }
-    clearTimeout(debounceRef.current);
+    if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(async () => {
       setSearching(true);
       const res = await getHelpArticles({ query: query.trim() });
       setArticles(res?.articles || []);
       setSearching(false);
     }, 300);
-    return () => clearTimeout(debounceRef.current);
+    return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
   }, [query]);
 
   async function handleSubmit(e: React.FormEvent) {
