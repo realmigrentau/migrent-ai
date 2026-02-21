@@ -94,7 +94,7 @@ export default function MegaNavbar() {
 
   // Shared nav link classes
   const navLinkClass = (active: boolean) =>
-    `relative px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 bg-transparent ${
+    `relative px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 bg-transparent border-0 outline-none appearance-none ${
       active
         ? "text-rose-500"
         : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5"
@@ -252,7 +252,7 @@ export default function MegaNavbar() {
             <div ref={langRef} className="relative ml-1">
               <button
                 onClick={() => setLangOpen(!langOpen)}
-                className="px-3 py-2 rounded-lg text-sm font-medium bg-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 transition-all duration-200 inline-flex items-center gap-1.5"
+                className="px-3 py-2 rounded-lg text-sm font-medium bg-transparent border-0 outline-none appearance-none text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 transition-all duration-200 inline-flex items-center gap-1.5"
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
@@ -310,7 +310,7 @@ export default function MegaNavbar() {
             <li>
               <button
                 onClick={toggle}
-                className="p-2 rounded-lg bg-transparent text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5 transition-colors"
+                className="p-2 rounded-lg bg-transparent border-0 outline-none appearance-none text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5 transition-colors"
                 aria-label="Toggle theme"
               >
                 {theme === "dark" ? (

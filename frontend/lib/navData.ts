@@ -187,6 +187,8 @@ export const navItems: NavItem[] = [
           descKey: "resources.apiDocs.desc",
           color: "text-blue-500",
         },
+      ],
+      [
         {
           href: "/resources/discord",
           iconPath:
@@ -195,8 +197,6 @@ export const navItems: NavItem[] = [
           descKey: "resources.discord.desc",
           color: "text-indigo-500",
         },
-      ],
-      [
         {
           href: "/careers",
           iconPath:
