@@ -203,6 +203,7 @@ const resources = [
     headline: "MigRent Blog",
     subline: "Tips, news, and migrant community stories",
     MockUI: MockBlog,
+    href: "/blog",
     bullets: [
       "Weekly rental market updates",
       "Migrant housing success stories",
@@ -220,6 +221,7 @@ const resources = [
     headline: "Owner ROI Calculator",
     subline: "Estimate returns on your spare room listing",
     MockUI: MockCalculator,
+    href: "/resources/roi-calculator",
     bullets: [
       "Suburb-level rent estimates",
       "Annual yield projections",
@@ -237,6 +239,7 @@ const resources = [
     headline: "Developer API Docs",
     subline: "Build integrations on the MigRent platform",
     MockUI: MockAPIDocs,
+    href: "/resources/api-docs",
     bullets: [
       "RESTful API with JSON responses",
       "OAuth 2.0 authentication",
@@ -254,6 +257,7 @@ const resources = [
     headline: "Join MigRent Discord",
     subline: "Connect with thousands of migrants and hosts",
     MockUI: MockDiscord,
+    href: "/resources/discord",
     bullets: [
       "City-specific channels",
       "Real-time housing alerts",
@@ -289,6 +293,7 @@ const resources = [
     headline: "Australian Rental Laws for Migrants",
     subline: "Know your rights as a renter in Australia",
     MockUI: MockRentalLaws,
+    href: "/resources/rental-laws",
     bullets: [
       "State-by-state tenancy laws",
       "Bond rules & dispute processes",

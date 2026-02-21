@@ -286,6 +286,7 @@ const features = [
     headline: "24/7 multilingual support",
     subline: "Help in your language, any time of day",
     MockUI: MockSupport,
+    href: "/support",
   },
 ];
 
@@ -424,6 +425,17 @@ export default function Features() {
                         </li>
                       ))}
                   </ul>
+                  {(feature as typeof feature & { href?: string }).href && (
+                    <Link href={(feature as typeof feature & { href?: string }).href!}>
+                      <motion.span
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.98 }}
+                        className="inline-block mt-6 btn-primary text-sm px-6 py-2.5 rounded-xl"
+                      >
+                        Try it now
+                      </motion.span>
+                    </Link>
+                  )}
                 </div>
               </motion.div>
             </section>

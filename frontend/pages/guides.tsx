@@ -240,12 +240,15 @@ export default function Guides() {
                     </span>
                   </div>
                   <StepsPreview steps={guides[0].steps} color={guides[0].gradient} />
-                  <span className="inline-flex items-center gap-1 mt-6 text-xs font-medium text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-white/5 px-3 py-1.5 rounded-full">
-                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    {t("guides.comingSoon")}
-                  </span>
+                  <Link href={`/guides/${guides[0].id}`}>
+                    <motion.span
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.98 }}
+                      className="inline-block mt-6 btn-primary text-sm px-6 py-2.5 rounded-xl"
+                    >
+                      {t("guides.readGuide")}
+                    </motion.span>
+                  </Link>
                 </div>
               </div>
             </div>
@@ -266,55 +269,57 @@ export default function Guides() {
                 custom={i % 6}
                 variants={fadeUp}
               >
-                <motion.div
-                  whileHover={{ y: -6 }}
-                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                  className="group relative rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-hidden hover:shadow-lg transition-all duration-300 h-full flex flex-col"
-                >
-                  {/* Top gradient accent */}
-                  <div className={`h-1 bg-gradient-to-r ${guide.gradient} opacity-0 group-hover:opacity-100 transition-opacity`} />
-                  <div className={`h-1 bg-gradient-to-r ${guide.gradient} opacity-100 group-hover:opacity-0 transition-opacity -mt-1`} style={{ height: "2px" }} />
+                <Link href={`/guides/${guide.id}`}>
+                  <motion.div
+                    whileHover={{ y: -6 }}
+                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                    className="group relative rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-hidden hover:shadow-lg transition-all duration-300 h-full flex flex-col cursor-pointer"
+                  >
+                    {/* Top gradient accent */}
+                    <div className={`h-1 bg-gradient-to-r ${guide.gradient} opacity-0 group-hover:opacity-100 transition-opacity`} />
+                    <div className={`h-1 bg-gradient-to-r ${guide.gradient} opacity-100 group-hover:opacity-0 transition-opacity -mt-1`} style={{ height: "2px" }} />
 
-                  <div className="p-6 flex flex-col flex-1">
-                    {/* Header */}
-                    <div className="flex items-start gap-4 mb-4">
-                      <div className={`w-12 h-12 rounded-xl ${guide.bgColor} flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform`}>
-                        <svg className={`w-6 h-6 ${guide.color}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d={guide.icon} />
-                        </svg>
-                      </div>
-                      <div className="flex-1">
-                        <h3 className="text-lg font-bold text-slate-900 dark:text-white">
-                          {t(guide.titleKey)}
-                        </h3>
-                        <div className="flex items-center gap-2 mt-1">
-                          <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${difficultyColors[guide.difficulty]}`}>
-                            {guide.difficulty}
-                          </span>
-                          <span className="text-[10px] text-slate-400 dark:text-slate-500">{guide.readTime}</span>
+                    <div className="p-6 flex flex-col flex-1">
+                      {/* Header */}
+                      <div className="flex items-start gap-4 mb-4">
+                        <div className={`w-12 h-12 rounded-xl ${guide.bgColor} flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform`}>
+                          <svg className={`w-6 h-6 ${guide.color}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d={guide.icon} />
+                          </svg>
+                        </div>
+                        <div className="flex-1">
+                          <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+                            {t(guide.titleKey)}
+                          </h3>
+                          <div className="flex items-center gap-2 mt-1">
+                            <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${difficultyColors[guide.difficulty]}`}>
+                              {guide.difficulty}
+                            </span>
+                            <span className="text-[10px] text-slate-400 dark:text-slate-500">{guide.readTime}</span>
+                          </div>
                         </div>
                       </div>
+
+                      {/* Description */}
+                      <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+                        {t(guide.descKey)}
+                      </p>
+
+                      {/* Steps preview */}
+                      <StepsPreview steps={guide.steps} color={guide.gradient} />
+
+                      {/* Footer */}
+                      <div className="mt-auto pt-4">
+                        <span className="inline-flex items-center gap-1 text-xs font-medium text-rose-500 dark:text-rose-400">
+                          {t("guides.readGuide")}
+                          <svg className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                          </svg>
+                        </span>
+                      </div>
                     </div>
-
-                    {/* Description */}
-                    <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
-                      {t(guide.descKey)}
-                    </p>
-
-                    {/* Steps preview */}
-                    <StepsPreview steps={guide.steps} color={guide.gradient} />
-
-                    {/* Footer */}
-                    <div className="mt-auto pt-4">
-                      <span className="inline-flex items-center gap-1 text-xs font-medium text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-white/5 px-3 py-1.5 rounded-full">
-                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        {t("guides.comingSoon")}
-                      </span>
-                    </div>
-                  </div>
-                </motion.div>
+                  </motion.div>
+                </Link>
               </motion.div>
             ))}
           </div>
