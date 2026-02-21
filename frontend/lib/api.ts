@@ -896,3 +896,309 @@ export async function validatePhone(phone: string): Promise<{
     return null;
   }
 }
+
+
+// ══════════════════════════════════════════════════════════════
+//  SUPPORT SYSTEM
+// ══════════════════════════════════════════════════════════════
+
+export interface Ticket {
+  id: string;
+  user_id: string | null;
+  email: string | null;
+  name: string | null;
+  status: string;
+  priority: string;
+  category: string | null;
+  source: string;
+  subject: string;
+  assigned_to: string | null;
+  first_response_at: string | null;
+  resolved_at: string | null;
+  csat_rating: number | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface TicketMessage {
+  id: string;
+  ticket_id: string;
+  sender_id: string | null;
+  sender_type: "user" | "agent" | "system";
+  body: string;
+  is_internal: boolean;
+  created_at: string;
+}
+
+export interface TicketDetail extends Ticket {
+  messages: TicketMessage[];
+}
+
+export interface HelpArticle {
+  id: string;
+  slug: string;
+  title: string;
+  category_id: string | null;
+  category_name?: string;
+  category_slug?: string;
+  body: string;
+  audience: string;
+  published: boolean;
+  view_count: number;
+  helpful_yes: number;
+  helpful_no: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface HelpCategory {
+  id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  icon: string | null;
+  sort_order: number;
+  article_count: number;
+}
+
+/**
+ * Create a support ticket. Works for both auth and guest users.
+ * POST /support/tickets
+ */
+export async function createTicket(
+  data: {
+    subject: string;
+    message: string;
+    category?: string;
+    priority?: string;
+    source?: string;
+    email?: string;
+    name?: string;
+  },
+  token?: string
+) {
+  try {
+    const headers: Record<string, string> = { "Content-Type": "application/json" };
+    if (token) headers["Authorization"] = `Bearer ${token}`;
+    const res = await fetch(`${BASE_URL}/support/tickets`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) throw new Error(`createTicket failed: ${res.status}`);
+    return await res.json();
+  } catch (err) {
+    console.error("createTicket error:", err);
+    return null;
+  }
+}
+
+/**
+ * List tickets for current user (or all for agents).
+ * GET /support/tickets
+ */
+export async function listTickets(
+  token: string,
+  filters?: { status?: string; priority?: string; category?: string; page?: number; per_page?: number }
+) {
+  try {
+    const params = new URLSearchParams();
+    if (filters?.status) params.set("status", filters.status);
+    if (filters?.priority) params.set("priority", filters.priority);
+    if (filters?.category) params.set("category", filters.category);
+    if (filters?.page) params.set("page", String(filters.page));
+    if (filters?.per_page) params.set("per_page", String(filters.per_page));
+    const qs = params.toString();
+    const res = await fetch(`${BASE_URL}/support/tickets${qs ? `?${qs}` : ""}`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if (!res.ok) throw new Error(`listTickets failed: ${res.status}`);
+    return await res.json() as { tickets: Ticket[]; total: number; page: number; per_page: number };
+  } catch (err) {
+    console.error("listTickets error:", err);
+    return null;
+  }
+}
+
+/**
+ * Get ticket detail with messages.
+ * GET /support/tickets/{id}
+ */
+export async function getTicket(token: string, ticketId: string): Promise<TicketDetail | null> {
+  try {
+    const res = await fetch(`${BASE_URL}/support/tickets/${ticketId}`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if (!res.ok) throw new Error(`getTicket failed: ${res.status}`);
+    return await res.json();
+  } catch (err) {
+    console.error("getTicket error:", err);
+    return null;
+  }
+}
+
+/**
+ * Reply to a ticket.
+ * POST /support/tickets/{id}/reply
+ */
+export async function replyToTicket(token: string, ticketId: string, body: string) {
+  try {
+    const res = await fetch(`${BASE_URL}/support/tickets/${ticketId}/reply`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ body }),
+    });
+    if (!res.ok) throw new Error(`replyToTicket failed: ${res.status}`);
+    return await res.json();
+  } catch (err) {
+    console.error("replyToTicket error:", err);
+    return null;
+  }
+}
+
+/**
+ * Agent-only: update ticket status/priority/category.
+ * PATCH /support/tickets/{id}
+ */
+export async function updateTicket(
+  token: string,
+  ticketId: string,
+  data: { status?: string; priority?: string; category?: string; internal_note?: string }
+) {
+  try {
+    const res = await fetch(`${BASE_URL}/support/tickets/${ticketId}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) throw new Error(`updateTicket failed: ${res.status}`);
+    return await res.json();
+  } catch (err) {
+    console.error("updateTicket error:", err);
+    return null;
+  }
+}
+
+/**
+ * Submit CSAT rating for a resolved ticket.
+ * POST /support/tickets/{id}/csat
+ */
+export async function submitCSAT(ticketId: string, rating: number, comment?: string) {
+  try {
+    const res = await fetch(`${BASE_URL}/support/tickets/${ticketId}/csat`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ rating, comment }),
+    });
+    if (!res.ok) throw new Error(`submitCSAT failed: ${res.status}`);
+    return await res.json();
+  } catch (err) {
+    console.error("submitCSAT error:", err);
+    return null;
+  }
+}
+
+/**
+ * Get help center categories.
+ * GET /support/help/categories
+ */
+export async function getHelpCategories(): Promise<{ categories: HelpCategory[] } | null> {
+  try {
+    const res = await fetch(`${BASE_URL}/support/help/categories`);
+    if (!res.ok) throw new Error(`getHelpCategories failed: ${res.status}`);
+    return await res.json();
+  } catch (err) {
+    console.error("getHelpCategories error:", err);
+    return null;
+  }
+}
+
+/**
+ * List/search help articles.
+ * GET /support/help/articles
+ */
+export async function getHelpArticles(filters?: {
+  query?: string;
+  category?: string;
+  audience?: string;
+}): Promise<{ articles: HelpArticle[] } | null> {
+  try {
+    const params = new URLSearchParams();
+    if (filters?.query) params.set("query", filters.query);
+    if (filters?.category) params.set("category", filters.category);
+    if (filters?.audience) params.set("audience", filters.audience);
+    const qs = params.toString();
+    const res = await fetch(`${BASE_URL}/support/help/articles${qs ? `?${qs}` : ""}`);
+    if (!res.ok) throw new Error(`getHelpArticles failed: ${res.status}`);
+    return await res.json();
+  } catch (err) {
+    console.error("getHelpArticles error:", err);
+    return null;
+  }
+}
+
+/**
+ * Get a single help article by slug.
+ * GET /support/help/articles/{slug}
+ */
+export async function getHelpArticle(slug: string): Promise<HelpArticle | null> {
+  try {
+    const res = await fetch(`${BASE_URL}/support/help/articles/${slug}`);
+    if (!res.ok) throw new Error(`getHelpArticle failed: ${res.status}`);
+    return await res.json();
+  } catch (err) {
+    console.error("getHelpArticle error:", err);
+    return null;
+  }
+}
+
+/**
+ * Vote a help article as helpful or not.
+ * POST /support/help/articles/{id}/vote
+ */
+export async function voteHelpArticle(articleId: string, helpful: boolean) {
+  try {
+    const res = await fetch(`${BASE_URL}/support/help/articles/${articleId}/vote`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ helpful }),
+    });
+    if (!res.ok) throw new Error(`voteHelpArticle failed: ${res.status}`);
+    return await res.json();
+  } catch (err) {
+    console.error("voteHelpArticle error:", err);
+    return null;
+  }
+}
+
+/**
+ * Agent-only: get support analytics summary.
+ * GET /support/analytics/summary
+ */
+export async function getSupportAnalytics(token: string) {
+  try {
+    const res = await fetch(`${BASE_URL}/support/analytics/summary`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if (!res.ok) throw new Error(`getSupportAnalytics failed: ${res.status}`);
+    return await res.json();
+  } catch (err) {
+    console.error("getSupportAnalytics error:", err);
+    return null;
+  }
+}

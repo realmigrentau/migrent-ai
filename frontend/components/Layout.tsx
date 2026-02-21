@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import MegaNavbar from "./ui/mega-navbar";
+import SupportWidget from "./support/SupportWidget";
 
 export default function Layout({ children }: { children: ReactNode }) {
   const router = useRouter();
@@ -93,6 +94,9 @@ export default function Layout({ children }: { children: ReactNode }) {
           </div>
         </div>
       </footer>
+
+      {/* Global support widget */}
+      <SupportWidget />
     </div>
   );
 }

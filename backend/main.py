@@ -15,6 +15,7 @@ from routes_listings import router as listings_router
 from routes_matches import router as matches_router
 from routes_deals import router as deals_router, webhook_router
 from routes_support import router as support_router
+from routes_support_tickets import router as support_tickets_router
 from routes_reports import router as reports_router
 from routes_profiles import router as profiles_router
 from routes_verification import router as verification_router
@@ -64,6 +65,7 @@ app.include_router(listings_router)
 app.include_router(matches_router)
 app.include_router(deals_router)
 app.include_router(support_router)
+app.include_router(support_tickets_router)
 app.include_router(reports_router)
 app.include_router(profiles_router)
 app.include_router(verification_router)
