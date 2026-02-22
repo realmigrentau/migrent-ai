@@ -58,7 +58,7 @@ def _is_agent(user) -> bool:
         sb = get_supabase_admin()
         uid = str(user.id)
         res = sb.table("profiles").select("role").eq("id", uid).execute()
-        if res.data and res.data[0].get("role") in ("support_agent", "admin"):
+        if res.data and res.data[0].get("role") in ("support_agent", "admin", "superadmin"):
             return True
     except Exception:
         logger.exception("Failed to check agent role")
