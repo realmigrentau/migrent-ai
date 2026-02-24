@@ -739,7 +739,7 @@ export default function Home() {
               MigRent.
             </p>
             <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href={session ? "/seeker/dashboard" : "/signup"}>
+              <Link href={session ? "/dashboard" : "/signup"}>
                 <motion.span
                   whileHover={{ scale: 1.04 }}
                   whileTap={{ scale: 0.98 }}
