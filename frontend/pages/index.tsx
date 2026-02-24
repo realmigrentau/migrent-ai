@@ -2,6 +2,7 @@ import Link from "next/link";
 import Head from "next/head";
 import { motion, type Variants } from "framer-motion";
 import OwnerMarquee from "../components/OwnerMarquee";
+import { useAuth } from "../hooks/useAuth";
 import {
   Globe,
   ShieldCheck,
@@ -148,6 +149,8 @@ const pressLogos = ["TechCrunch", "StartupDaily", "SBS News", "Product Hunt"];
 /* ── Page ── */
 
 export default function Home() {
+  const { session } = useAuth();
+
   return (
     <>
       <Head>
@@ -204,10 +207,8 @@ export default function Home() {
 
             {/* Headline */}
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tight leading-[1.1]">
-              <span className="text-slate-900 dark:text-white">Your new chapter</span>
-              <br />
-              <span className="text-slate-900 dark:text-white">starts with the </span>
-              <span className="gradient-text">right room</span>
+              <span className="gradient-text">Find your room,</span>{" "}
+              <span className="text-slate-900 dark:text-white">feel at home</span>
             </h1>
 
             {/* Subheadline */}
@@ -738,7 +739,7 @@ export default function Home() {
               MigRent.
             </p>
             <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/seeker/dashboard">
+              <Link href={session ? "/seeker/dashboard" : "/signup"}>
                 <motion.span
                   whileHover={{ scale: 1.04 }}
                   whileTap={{ scale: 0.98 }}

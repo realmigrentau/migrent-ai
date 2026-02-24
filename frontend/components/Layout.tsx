@@ -4,6 +4,7 @@ import { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import MegaNavbar from "./ui/mega-navbar";
 import SupportWidget from "./support/SupportWidget";
+import SmoothScroll from "./SmoothScroll";
 
 export default function Layout({ children }: { children: ReactNode }) {
   const router = useRouter();
@@ -15,11 +16,13 @@ export default function Layout({ children }: { children: ReactNode }) {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <SmoothScroll />
+
       {/* Sticky navbar */}
       <MegaNavbar />
 
-      {/* Spacer */}
-      <div className="h-16" />
+      {/* Spacer for floating navbar */}
+      <div className="h-20" />
 
       {/* Page content */}
       <main className={`flex-1 ${isFullWidth ? "w-full" : "max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8"}`}>

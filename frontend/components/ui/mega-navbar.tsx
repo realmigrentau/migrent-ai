@@ -112,13 +112,13 @@ export default function MegaNavbar() {
       initial={{ y: -80 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled
-          ? "bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800 shadow-sm"
-          : "bg-transparent border-b border-transparent"
-      }`}
+      className="fixed top-0 left-0 right-0 z-50 px-4 sm:px-6 pt-4"
     >
-      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
+      <nav className={`max-w-5xl mx-auto px-4 sm:px-5 py-2.5 flex items-center justify-between rounded-2xl transition-all duration-300 ${
+        scrolled
+          ? "bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl border border-slate-200/60 dark:border-slate-700/60 shadow-lg shadow-black/[0.04] dark:shadow-black/[0.2]"
+          : "bg-white/60 dark:bg-slate-950/60 backdrop-blur-lg border border-slate-200/40 dark:border-slate-700/40"
+      }`}>
         {/* Logo */}
         <Link href={session ? "/dashboard" : "/"} className="flex items-center gap-2 group">
           <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${isSignIn ? "from-blue-500 to-blue-600" : "from-rose-500 to-rose-600"} flex items-center justify-center text-white font-black text-sm group-hover:scale-110 transition-transform`}>
@@ -130,7 +130,7 @@ export default function MegaNavbar() {
         </Link>
 
         {/* Desktop nav */}
-        <ul className="hidden lg:flex items-center gap-1" ref={navRef}>
+        <ul className="hidden lg:flex items-center gap-0.5" ref={navRef}>
           {navItems.map((item, index) => {
             if (item.type === "link") {
               const active = router.pathname === item.href;
@@ -249,7 +249,7 @@ export default function MegaNavbar() {
 
           {/* Language selector */}
           <li>
-            <div ref={langRef} className="relative ml-1">
+            <div ref={langRef} className="relative">
               <button
                 onClick={() => setLangOpen(!langOpen)}
                 className="px-3 py-2 rounded-lg text-sm font-medium bg-transparent border-0 outline-none appearance-none text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 transition-all duration-200 inline-flex items-center gap-1.5"
@@ -329,7 +329,7 @@ export default function MegaNavbar() {
           {/* Account / Sign Up */}
           <li>
             {session ? (
-              <div ref={accountRef} className="relative ml-1">
+              <div ref={accountRef} className="relative">
                 <button
                   onClick={() => setAccountOpen(!accountOpen)}
                   className="px-4 py-2 rounded-full text-sm font-semibold bg-gradient-to-r from-rose-500 to-rose-600 text-white hover:scale-105 transition-transform inline-flex items-center gap-1.5"
@@ -413,7 +413,7 @@ export default function MegaNavbar() {
             ) : (
               <Link
                 href="/signup"
-                className={`ml-1 px-4 py-2 rounded-full text-sm font-semibold bg-gradient-to-r ${isSignIn ? "from-blue-500 to-blue-600" : "from-rose-500 to-rose-600"} text-white hover:scale-105 transition-transform inline-block`}
+                className={`px-4 py-2 rounded-full text-sm font-semibold bg-gradient-to-r ${isSignIn ? "from-blue-500 to-blue-600" : "from-rose-500 to-rose-600"} text-white hover:scale-105 transition-transform inline-block`}
               >
                 {t("nav.signUp")}
               </Link>
@@ -469,7 +469,7 @@ export default function MegaNavbar() {
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="lg:hidden overflow-hidden bg-white dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800"
+            className="lg:hidden overflow-hidden mt-2 max-w-5xl mx-auto rounded-2xl bg-white/95 dark:bg-slate-950/95 backdrop-blur-xl border border-slate-200/60 dark:border-slate-700/60 shadow-lg"
           >
             <div className="px-4 py-3 space-y-1 max-h-[80vh] overflow-y-auto">
               {navItems.map((item, index) => {
