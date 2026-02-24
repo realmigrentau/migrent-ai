@@ -286,7 +286,7 @@ const features = [
     headline: "24/7 multilingual support",
     subline: "Help in your language, any time of day",
     MockUI: MockSupport,
-    href: "/support",
+    href: "/help",
   },
 ];
 
