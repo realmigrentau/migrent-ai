@@ -10,6 +10,8 @@ export default function Layout({ children }: { children: ReactNode }) {
   const { t } = useTranslation();
 
   const isAdminRoute = router.pathname.startsWith("/mazda.asgt22779412.sara-admin");
+  const isHomePage = router.pathname === "/";
+  const isFullWidth = isAdminRoute || isHomePage;
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -20,7 +22,7 @@ export default function Layout({ children }: { children: ReactNode }) {
       <div className="h-16" />
 
       {/* Page content */}
-      <main className={`flex-1 ${isAdminRoute ? "w-full" : "max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8"}`}>
+      <main className={`flex-1 ${isFullWidth ? "w-full" : "max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8"}`}>
         {children}
       </main>
 
