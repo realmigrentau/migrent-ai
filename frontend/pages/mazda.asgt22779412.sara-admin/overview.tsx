@@ -10,7 +10,7 @@ const quickLinks = [
   { label: "Review Listings", href: "/mazda.asgt22779412.sara-admin/listings", desc: "Approve, reject, manage" },
   { label: "Analytics", href: "/mazda.asgt22779412.sara-admin/analytics", desc: "Page views, funnels, geo" },
   { label: "Owner Dashboard", href: "/owner/dashboard", desc: "View as owner" },
-  { label: "Seeker Dashboard", href: "/seeker/dashboard", desc: "View as seeker" },
+  { label: "Seeker Dashboard", href: "/dashboard", desc: "View as seeker" },
 ];
 
 export default function AdminOverview() {

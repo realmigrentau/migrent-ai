@@ -55,7 +55,7 @@ export default function ForSeekers() {
               {t("forSeekers.subtitle")}
             </p>
             <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/seeker/dashboard">
+              <Link href="/dashboard">
                 <motion.span whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }} className="inline-block btn-primary text-base px-8 py-3.5 rounded-xl">
                   {t("forSeekers.startSearching")}
                 </motion.span>
@@ -146,7 +146,7 @@ export default function ForSeekers() {
           <div className="card p-8 rounded-2xl bg-gradient-to-br from-rose-50 to-rose-100/50 dark:from-rose-500/10 dark:to-rose-600/5 border-rose-200 dark:border-rose-500/20 text-center">
             <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-3">{t("forSeekers.ctaTitle")}</h2>
             <p className="text-sm text-slate-600 dark:text-slate-300 mb-6 max-w-md mx-auto">{t("forSeekers.ctaSubtitle")}</p>
-            <Link href="/seeker/dashboard">
+            <Link href="/dashboard">
               <motion.span whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }} className="inline-block btn-primary text-base px-8 py-3.5 rounded-xl">
                 {t("forSeekers.ctaCta")}
               </motion.span>

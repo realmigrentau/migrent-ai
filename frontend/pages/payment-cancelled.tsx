@@ -32,7 +32,7 @@ export default function PaymentCancelled() {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
-          <Link href="/seeker/dashboard">
+          <Link href="/dashboard">
             <motion.span
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}

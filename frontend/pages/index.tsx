@@ -151,7 +151,7 @@ export default function Home() {
             </p>
 
             <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/seeker/dashboard">
+              <Link href="/dashboard">
                 <motion.span whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.98 }} className="inline-flex items-center gap-2 btn-primary text-base px-8 py-4 rounded-xl">
                   {t("home.seekerCta")}
                   <ArrowRight className="w-4 h-4" />

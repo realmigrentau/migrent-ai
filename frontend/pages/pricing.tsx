@@ -108,7 +108,7 @@ export default function Pricing() {
                   </li>
                 ))}
               </ul>
-              <Link href="/seeker/dashboard">
+              <Link href="/dashboard">
                 <motion.span whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="block w-full text-center py-3 rounded-xl text-sm font-semibold bg-gradient-to-r from-rose-500 to-rose-600 text-white hover:shadow-lg transition-shadow">
                   {t("pricing.seekerCta")}
                 </motion.span>

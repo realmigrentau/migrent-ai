@@ -194,7 +194,7 @@ export default function About() {
             <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-3">{t("about.ctaTitle")}</h2>
             <p className="text-sm text-slate-600 dark:text-slate-300 mb-6">{t("about.ctaSubtitle")}</p>
             <div className="flex gap-3 justify-center flex-col sm:flex-row">
-              <Link href="/seeker/dashboard">
+              <Link href="/dashboard">
                 <motion.span whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }} className="inline-block btn-primary text-sm px-8 py-3 rounded-xl">
                   {t("about.seekerCta")}
                 </motion.span>
