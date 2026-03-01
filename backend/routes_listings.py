@@ -103,7 +103,7 @@ def create_listing(
     try:
         res = sb.table("listings").insert(row).execute()
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail="Failed to create listing")
 
     return res.data[0] if res.data else row
 

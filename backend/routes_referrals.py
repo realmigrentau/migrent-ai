@@ -31,7 +31,7 @@ def generate_referral_code(authorization: str = Header(...)):
             "referral_code": code,
         }).execute()
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail="Operation failed")
 
     return {"referral_code": code}
 
@@ -62,7 +62,7 @@ def use_referral_code(body: ReferralUse, authorization: str = Header(...)):
             "used_at": "now()",
         }).eq("id", referral["id"]).execute()
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail="Operation failed")
 
     return {"message": "Referral code applied", "referral_code": body.referral_code}
 

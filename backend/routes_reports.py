@@ -160,7 +160,7 @@ def list_reports(
 
 @router.patch("/{report_id}")
 @limiter.limit("30/minute")
-def update_report(
+async def update_report(
     report_id: str,
     request: Request,
     authorization: Optional[str] = Header(None),
@@ -173,8 +173,10 @@ def update_report(
     if not profile.data or profile.data.get("role") != "admin":
         raise HTTPException(status_code=403, detail="Admin access required")
 
-    import json
-    body = json.loads(request._body) if hasattr(request, '_body') else {}
+    try:
+        body = await request.json()
+    except Exception:
+        body = {}
     new_status = body.get("status", "reviewed")
     if new_status not in ("reviewed", "dismissed", "actioned"):
         raise HTTPException(status_code=400, detail="Invalid status")

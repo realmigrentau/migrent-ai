@@ -124,7 +124,7 @@ class ProfileUpdate(BaseModel):
     residential_address: Optional[str] = Field(None, max_length=300)
     suburb_city: Optional[str] = Field(None, max_length=100)
     nearest_station: Optional[str] = Field(None, max_length=200)
-    emergency_contact: Optional[dict] = None
+    emergency_contact: Optional[dict] = Field(None, description="Emergency contact info: {name, phone, relationship}")
     preferred_language: Optional[str] = Field(None, max_length=20)
     preferred_currency: Optional[str] = Field(None, max_length=5)
     timezone: Optional[str] = Field(None, max_length=50)
@@ -200,10 +200,10 @@ class MessageCreate(BaseModel):
     listing_id: Optional[str] = None
     deal_id: Optional[str] = None
     message_text: str = Field(..., min_length=1, max_length=5000)
-    message_html: Optional[str] = None
-    attachment_url: Optional[str] = None
-    attachment_name: Optional[str] = None
-    attachment_type: Optional[str] = None
+    message_html: Optional[str] = Field(None, max_length=5000)
+    attachment_url: Optional[str] = Field(None, max_length=500)
+    attachment_name: Optional[str] = Field(None, max_length=200)
+    attachment_type: Optional[str] = Field(None, max_length=50)
 
 
 class MessageOut(BaseModel):

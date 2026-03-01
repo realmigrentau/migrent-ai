@@ -1,8 +1,12 @@
-from fastapi import APIRouter, HTTPException, Header
+import logging
+from fastapi import APIRouter, HTTPException, Header, Request
 from models import ProfileUpdate
 from db import get_supabase_admin
 from routes_listings import get_current_user
+from limiter import limiter
 from datetime import datetime
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/profiles", tags=["profiles"])
 
@@ -10,7 +14,8 @@ LOCKED_FIELDS = {"legal_name", "preferred_name", "residential_address", "suburb_
 
 
 @router.get("/me")
-def get_my_profile(authorization: str = Header(...)):
+@limiter.limit("30/minute")
+def get_my_profile(request: Request, authorization: str = Header(...)):
     try:
         user = get_current_user(authorization)
         sb = get_supabase_admin()
@@ -22,8 +27,11 @@ def get_my_profile(authorization: str = Header(...)):
             return {"id": uid}
 
         return res.data[0]
+    except HTTPException:
+        raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        logger.exception("Failed to fetch profile")
+        raise HTTPException(status_code=500, detail="Failed to fetch profile")
 
 
 @router.get("/me/onboarding-status")
@@ -43,12 +51,16 @@ def get_onboarding_status(authorization: str = Header(...)):
             "onboarding_completed": profile.get("onboarding_completed", False),
             "onboarding_completed_at": profile.get("onboarding_completed_at")
         }
+    except HTTPException:
+        raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        logger.exception("Failed to fetch onboarding status")
+        raise HTTPException(status_code=500, detail="Failed to fetch onboarding status")
 
 
 @router.post("/me/onboarding/complete")
-def complete_onboarding(body: ProfileUpdate, authorization: str = Header(...)):
+@limiter.limit("10/minute")
+def complete_onboarding(request: Request, body: ProfileUpdate, authorization: str = Header(...)):
     """Complete onboarding with required fields."""
     try:
         user = get_current_user(authorization)
@@ -76,11 +88,13 @@ def complete_onboarding(body: ProfileUpdate, authorization: str = Header(...)):
     except HTTPException:
         raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        logger.exception("Failed to complete onboarding")
+        raise HTTPException(status_code=500, detail="Failed to complete onboarding")
 
 
 @router.patch("/me")
-def update_my_profile(body: ProfileUpdate, authorization: str = Header(...)):
+@limiter.limit("10/minute")
+def update_my_profile(request: Request, body: ProfileUpdate, authorization: str = Header(...)):
     """Update user profile. Locked fields cannot be changed after onboarding."""
     try:
         user = get_current_user(authorization)
@@ -115,7 +129,8 @@ def update_my_profile(body: ProfileUpdate, authorization: str = Header(...)):
     except HTTPException:
         raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        logger.exception("Failed to update profile")
+        raise HTTPException(status_code=500, detail="Failed to update profile")
 
 
 @router.get("/{user_id}")
@@ -130,7 +145,8 @@ def get_public_profile(user_id: str):
     except HTTPException:
         raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        logger.exception("Failed to fetch public profile")
+        raise HTTPException(status_code=500, detail="Failed to fetch profile")
 
 
 @router.post("/badges/refresh")
@@ -163,4 +179,5 @@ def refresh_badges(authorization: str = Header(...)):
 
         return {"badges": badges}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        logger.exception("Failed to refresh badges")
+        raise HTTPException(status_code=500, detail="Failed to refresh badges")

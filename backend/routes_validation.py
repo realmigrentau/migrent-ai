@@ -8,11 +8,13 @@ Endpoints:
 """
 
 import os
+import re
 import math
 import logging
 import httpx
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query, Request
 from pydantic import BaseModel
+from limiter import limiter
 
 logger = logging.getLogger(__name__)
 
@@ -43,7 +45,8 @@ class ValidationResponse(BaseModel):
 # ── Nearest Station ────────────────────────────────────────
 
 @router.get("/utils/nearest-station")
-async def nearest_station(suburb_city: str = Query(..., description="Format: Suburb/City e.g. Kellyville/Sydney")):
+@limiter.limit("10/minute")
+async def nearest_station(request: Request, suburb_city: str = Query(..., description="Format: Suburb/City e.g. Kellyville/Sydney")):
     """
     Find the nearest train station for a given suburb/city.
 
@@ -59,7 +62,12 @@ async def nearest_station(suburb_city: str = Query(..., description="Format: Sub
         return {"station": None, "message": "Station lookup not configured yet"}
 
     suburb, city = suburb_city.split("/", 1)
-    query = f"{suburb.strip()}, {city.strip()}, Australia"
+    # Sanitize input to prevent SSRF (only allow letters, spaces, hyphens, apostrophes)
+    suburb_clean = re.sub(r"[^a-zA-Z\s\-']", "", suburb.strip())[:50]
+    city_clean = re.sub(r"[^a-zA-Z\s\-']", "", city.strip())[:50]
+    if not suburb_clean or not city_clean:
+        raise HTTPException(status_code=400, detail="Invalid suburb/city name")
+    query = f"{suburb_clean}, {city_clean}, Australia"
 
     async with httpx.AsyncClient(timeout=20) as client:
         # Step 1: Geocode via MapTiler (free tier)
@@ -75,6 +83,10 @@ async def nearest_station(suburb_city: str = Query(..., description="Format: Sub
 
         coords = features[0]["geometry"]["coordinates"]  # [lng, lat]
         lng, lat = coords[0], coords[1]
+
+        # Validate lat/lng are reasonable numbers (prevent injection into Overpass query)
+        if not (-90 <= lat <= 90) or not (-180 <= lng <= 180):
+            return {"station": None, "message": "Invalid coordinates from geocoder"}
 
         # Step 2: Find nearby train/metro stations via Overpass API (free, no key)
         # Search within 15km, return up to 10 results, includes metro/light rail
@@ -146,7 +158,8 @@ async def nearest_station(suburb_city: str = Query(..., description="Format: Sub
 # ── Address Validation ─────────────────────────────────────
 
 @router.post("/validate/address", response_model=ValidationResponse)
-async def validate_address(body: AddressValidationRequest):
+@limiter.limit("10/minute")
+async def validate_address(request: Request, body: AddressValidationRequest):
     """
     Validate an Australian suburb/city + postcode combination.
 
@@ -221,7 +234,8 @@ async def validate_address(body: AddressValidationRequest):
 # ── Phone Validation ───────────────────────────────────────
 
 @router.post("/validate/phone", response_model=ValidationResponse)
-async def validate_phone(body: PhoneValidationRequest):
+@limiter.limit("10/minute")
+async def validate_phone(request: Request, body: PhoneValidationRequest):
     """
     Validate an Australian phone number.
 

@@ -72,7 +72,7 @@ def create_deal(
     try:
         res = sb.table("deals").insert(deal_row).execute()
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail="Operation failed")
 
     deal = res.data[0]
     deal_id = deal["id"]
@@ -103,7 +103,7 @@ def create_deal(
             cancel_url=CANCEL_URL,
         )
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Stripe error: {e}")
+        raise HTTPException(status_code=500, detail="Payment processing failed")
 
     # Store the Stripe session ID on the deal
     try:
@@ -111,7 +111,7 @@ def create_deal(
             {"owner_payment_stripe_session_id": session.id}
         ).eq("id", deal_id).execute()
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail="Operation failed")
 
     return {"deal_id": deal_id, "checkout_url": session.url}
 
@@ -172,7 +172,7 @@ def create_seeker_fee_session(
             cancel_url=CANCEL_URL,
         )
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Stripe error: {e}")
+        raise HTTPException(status_code=500, detail="Payment processing failed")
 
     # Store the seeker session ID on the deal
     try:
@@ -180,7 +180,7 @@ def create_seeker_fee_session(
             {"seeker_payment_stripe_session_id": session.id}
         ).eq("id", deal["id"]).execute()
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail="Operation failed")
 
     return {"deal_id": deal["id"], "checkout_url": session.url}
 
@@ -256,7 +256,7 @@ def cancel_deal(
             {"status": DealStatus.cancelled.value}
         ).eq("id", deal_id).execute()
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail="Operation failed")
 
     return {"deal_id": deal_id, "status": DealStatus.cancelled.value, "flagged": flagged}
 
@@ -304,7 +304,7 @@ async def stripe_webhook(request: Request):
                 try:
                     sb.table("profiles").update({"verified": True}).eq("id", verification_user_id).execute()
                 except Exception as e:
-                    raise HTTPException(status_code=500, detail=str(e))
+                    raise HTTPException(status_code=500, detail="Operation failed")
 
             # Optional: log to payment_events
             try:
@@ -338,7 +338,7 @@ async def stripe_webhook(request: Request):
                     {"status": DealStatus.owner_paid.value}
                 ).eq("id", deal_id).execute()
             except Exception as e:
-                raise HTTPException(status_code=500, detail=str(e))
+                raise HTTPException(status_code=500, detail="Operation failed")
 
             # Optionally log a payment event
             try:
@@ -360,7 +360,7 @@ async def stripe_webhook(request: Request):
                     {"status": DealStatus.completed.value}
                 ).eq("id", deal_id).execute()
             except Exception as e:
-                raise HTTPException(status_code=500, detail=str(e))
+                raise HTTPException(status_code=500, detail="Operation failed")
 
             try:
                 sb.table("payment_events").insert({

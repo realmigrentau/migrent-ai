@@ -365,20 +365,27 @@ def update_ticket(ticket_id: str, body: TicketUpdate, authorization: str = Heade
 
 
 @router.post("/tickets/{ticket_id}/csat")
-def submit_csat(ticket_id: str, body: CSATSubmit, authorization: Optional[str] = Header(None)):
+def submit_csat(ticket_id: str, body: CSATSubmit, authorization: str = Header(...)):
     """Submit customer satisfaction rating for a resolved ticket."""
+    user = get_current_user(authorization)
     sb = get_supabase_admin()
+    uid = str(user.id)
 
     res = sb.table("tickets").select("*").eq("id", ticket_id).execute()
     if not res.data:
         raise HTTPException(status_code=404, detail="Ticket not found")
+
+    ticket = res.data[0]
+    # Only the ticket creator can submit CSAT
+    if ticket.get("user_id") != uid:
+        raise HTTPException(status_code=403, detail="Not authorized")
 
     sb.table("tickets").update({
         "csat_rating": body.rating,
         "csat_comment": body.comment,
     }).eq("id", ticket_id).execute()
 
-    _log_event(ticket_id, None, "csat_submitted", new_value=str(body.rating))
+    _log_event(ticket_id, uid, "csat_submitted", new_value=str(body.rating))
 
     return {"status": "ok"}
 
@@ -430,7 +437,11 @@ def list_help_articles(
         q = q.in_("audience", [audience, "both"])
 
     if query:
-        q = q.or_(f"title.ilike.%{query}%,body.ilike.%{query}%")
+        # Sanitize query to prevent filter injection (only allow safe characters)
+        import re
+        safe_query = re.sub(r"[^a-zA-Z0-9\s\-]", "", query)[:100]
+        if safe_query:
+            q = q.or_(f"title.ilike.%{safe_query}%,body.ilike.%{safe_query}%")
 
     res = q.order("created_at", desc=True).execute()
 

@@ -3,7 +3,9 @@ Messaging endpoints for real-time chat between seeker and owner.
 Supports direct messages (from profiles) and listing-based messages.
 """
 
-from fastapi import APIRouter, HTTPException, Header
+import re
+import logging
+from fastapi import APIRouter, HTTPException, Header, Request
 from fastapi.responses import JSONResponse
 from datetime import datetime
 from typing import Optional
@@ -12,15 +14,36 @@ from uuid import UUID
 from models import MessageCreate, MessageOut
 from db import get_supabase
 from routes_listings import get_current_user
+from limiter import limiter
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/messages", tags=["messages"])
+
+UUID_RE = re.compile(r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", re.IGNORECASE)
+
+
+def _validate_uuid(value: str, field_name: str) -> str:
+    """Validate that a string is a proper UUID to prevent query injection."""
+    if not UUID_RE.match(value):
+        raise HTTPException(status_code=400, detail=f"Invalid {field_name} format")
+    return value
+
+
+def _sanitize_html(html: str) -> str:
+    """Strip all HTML tags to prevent XSS."""
+    if not html:
+        return html
+    return re.sub(r"<[^>]+>", "", html)[:5000]
 
 
 # ── POST /messages/send ──────────────────────────────────────
 
 
 @router.post("/send")
+@limiter.limit("30/minute")
 def send_message(
+    request: Request,
     body: MessageCreate,
     authorization: str = Header(...),
 ):
@@ -31,29 +54,37 @@ def send_message(
     user = get_current_user(authorization)
     sb = get_supabase()
 
-    # Validate sender is the authenticated user
-    if user.id != body.sender_id:
+    # Validate sender is the authenticated user (str() both sides to fix UUID vs string mismatch)
+    if str(user.id) != str(body.sender_id):
         raise HTTPException(status_code=403, detail="Cannot send messages as another user")
 
+    # Validate UUID formats to prevent query injection
+    _validate_uuid(str(body.sender_id), "sender_id")
+    _validate_uuid(str(body.receiver_id), "receiver_id")
+    if body.listing_id:
+        _validate_uuid(str(body.listing_id), "listing_id")
+    if body.deal_id:
+        _validate_uuid(str(body.deal_id), "deal_id")
+
     # Verify receiver exists
-    receiver = sb.table("profiles").select("id").eq("id", body.receiver_id).execute()
+    receiver = sb.table("profiles").select("id").eq("id", str(body.receiver_id)).execute()
     if not receiver.data:
         raise HTTPException(status_code=404, detail="Receiver not found")
 
     # If listing_id is provided, verify listing exists
     if body.listing_id:
-        listing = sb.table("listings").select("id, owner_id").eq("id", body.listing_id).execute()
+        listing = sb.table("listings").select("id, owner_id").eq("id", str(body.listing_id)).execute()
         if not listing.data:
             raise HTTPException(status_code=404, detail="Listing not found")
 
-    # Create message
+    # Create message (sanitize HTML to prevent XSS)
     msg_data = {
         "sender_id": str(body.sender_id),
         "receiver_id": str(body.receiver_id),
         "listing_id": str(body.listing_id) if body.listing_id else None,
         "deal_id": str(body.deal_id) if body.deal_id else None,
         "message_text": body.message_text,
-        "message_html": body.message_html if body.message_html else None,
+        "message_html": _sanitize_html(body.message_html) if body.message_html else None,
         "attachment_url": body.attachment_url if body.attachment_url else None,
         "attachment_name": body.attachment_name if body.attachment_name else None,
         "attachment_type": body.attachment_type if body.attachment_type else None,
@@ -84,12 +115,13 @@ def get_message_threads(
     """
     user = get_current_user(authorization)
     sb = get_supabase()
+    uid = str(user.id)
 
-    # Get messages where user is sender or receiver
+    # Get messages where user is sender or receiver (uid is from JWT, safe)
     messages = (
         sb.table("messages")
         .select("*")
-        .or_(f"sender_id.eq.{user.id},receiver_id.eq.{user.id}")
+        .or_(f"sender_id.eq.{uid},receiver_id.eq.{uid}")
         .order("created_at", desc=True)
         .execute()
     )
@@ -104,7 +136,7 @@ def get_message_threads(
         receiver_id = msg["receiver_id"]
         listing_id = msg.get("listing_id") or "direct"
 
-        other_user_id = receiver_id if sender_id == user.id else sender_id
+        other_user_id = receiver_id if sender_id == uid else sender_id
         thread_key = f"{listing_id}_{other_user_id}"
 
         if thread_key not in threads:
@@ -118,7 +150,7 @@ def get_message_threads(
             }
 
         # Count unread messages
-        if msg["receiver_id"] == user.id and not msg.get("read_at"):
+        if msg["receiver_id"] == uid and not msg.get("read_at"):
             threads[thread_key]["unread_count"] += 1
 
     # Fetch other user names for display
@@ -157,14 +189,18 @@ def get_direct_messages(
     """
     user = get_current_user(authorization)
     sb = get_supabase()
+    uid = str(user.id)
+
+    # Validate other_user_id to prevent query injection
+    _validate_uuid(other_user_id, "other_user_id")
 
     messages = (
         sb.table("messages")
         .select("*")
         .is_("listing_id", "null")
         .or_(
-            f"and(sender_id.eq.{user.id},receiver_id.eq.{other_user_id}),"
-            f"and(sender_id.eq.{other_user_id},receiver_id.eq.{user.id})"
+            f"and(sender_id.eq.{uid},receiver_id.eq.{other_user_id}),"
+            f"and(sender_id.eq.{other_user_id},receiver_id.eq.{uid})"
         )
         .order("created_at", desc=False)
         .range(offset, offset + limit - 1)
@@ -176,7 +212,7 @@ def get_direct_messages(
         unread_ids = [
             msg["id"]
             for msg in messages.data
-            if msg["receiver_id"] == user.id and not msg.get("read_at")
+            if msg["receiver_id"] == uid and not msg.get("read_at")
         ]
         if unread_ids:
             for msg_id in unread_ids:
@@ -204,6 +240,11 @@ def get_thread_messages(
     """
     user = get_current_user(authorization)
     sb = get_supabase()
+    uid = str(user.id)
+
+    # Validate IDs to prevent query injection
+    _validate_uuid(listing_id, "listing_id")
+    _validate_uuid(other_user_id, "other_user_id")
 
     # Get messages in this thread
     messages = (
@@ -211,8 +252,8 @@ def get_thread_messages(
         .select("*")
         .eq("listing_id", listing_id)
         .or_(
-            f"and(sender_id.eq.{user.id},receiver_id.eq.{other_user_id}),"
-            f"and(sender_id.eq.{other_user_id},receiver_id.eq.{user.id})"
+            f"and(sender_id.eq.{uid},receiver_id.eq.{other_user_id}),"
+            f"and(sender_id.eq.{other_user_id},receiver_id.eq.{uid})"
         )
         .order("created_at", desc=False)
         .range(offset, offset + limit - 1)
@@ -224,7 +265,7 @@ def get_thread_messages(
         unread_ids = [
             msg["id"]
             for msg in messages.data
-            if msg["receiver_id"] == user.id and not msg.get("read_at")
+            if msg["receiver_id"] == uid and not msg.get("read_at")
         ]
         if unread_ids:
             for msg_id in unread_ids:
@@ -249,12 +290,15 @@ def mark_message_read(
     """
     user = get_current_user(authorization)
     sb = get_supabase()
+    uid = str(user.id)
+
+    _validate_uuid(message_id, "message_id")
 
     msg = sb.table("messages").select("*").eq("id", message_id).execute()
     if not msg.data:
         raise HTTPException(status_code=404, detail="Message not found")
 
-    if msg.data[0]["receiver_id"] != user.id:
+    if msg.data[0]["receiver_id"] != uid:
         raise HTTPException(status_code=403, detail="Only receiver can mark as read")
 
     result = sb.table("messages").update(
