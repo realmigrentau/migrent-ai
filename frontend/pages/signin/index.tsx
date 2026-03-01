@@ -6,8 +6,10 @@ import { supabase } from "../../lib/supabase";
 import { useAuth } from "../../hooks/useAuth";
 import SignInButton from "../../components/SignInButton";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 
 export default function SignIn() {
+  const { t } = useTranslation();
   const router = useRouter();
   const { session } = useAuth();
   const [email, setEmail] = useState("");
@@ -49,7 +51,7 @@ export default function SignIn() {
         router.push(redirectUrl);
       }
     } catch {
-      setMsg("Verification failed. Please try again.");
+      setMsg(t("auth.verificationFailed"));
     } finally {
       resetInstance?.();
       setLoading(false);
@@ -77,16 +79,16 @@ export default function SignIn() {
               M
             </div>
             <h1 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">
-              Sign in to <span className="gradient-text-accent">MigRent</span>
+              {t("auth.signInTitle")} <span className="gradient-text-accent">{t("auth.signInAccent")}</span>
             </h1>
-            <p className="text-slate-500 dark:text-slate-400 text-sm mt-2">Welcome back! Enter your details below.</p>
+            <p className="text-slate-500 dark:text-slate-400 text-sm mt-2">{t("auth.signInSubtitle")}</p>
           </div>
 
           <div className="space-y-4">
             <div>
               <input
                 type="email"
-                placeholder="Email"
+                placeholder={t("auth.email")}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="input-field focus:!border-blue-500 focus:!shadow-[0_0_0_3px_rgba(59,130,246,0.1)]"
@@ -95,7 +97,7 @@ export default function SignIn() {
             <div>
               <input
                 type="password"
-                placeholder="Password"
+                placeholder={t("auth.password")}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="input-field focus:!border-blue-500 focus:!shadow-[0_0_0_3px_rgba(59,130,246,0.1)]"
@@ -114,17 +116,17 @@ export default function SignIn() {
               {loading ? (
                 <span className="flex items-center justify-center gap-2">
                   <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  Signing in...
+                  {t("auth.signingIn")}
                 </span>
               ) : (
-                "Sign in"
+                t("auth.signIn")
               )}
             </motion.button>
 
             <p className="text-center text-sm text-slate-500 dark:text-slate-400">
-              Don&apos;t have an account?{" "}
+              {t("auth.noAccount")}{" "}
               <Link href="/signup" className="text-blue-500 hover:text-blue-600 font-semibold transition-colors">
-                Sign up
+                {t("auth.signUpLink")}
               </Link>
             </p>
 
@@ -133,7 +135,7 @@ export default function SignIn() {
                 <div className="w-full border-t border-slate-200 dark:border-slate-700" />
               </div>
               <div className="relative flex justify-center text-xs">
-                <span className="px-3 text-slate-400 dark:text-slate-500 bg-white dark:bg-slate-900 rounded-full">or</span>
+                <span className="px-3 text-slate-400 dark:text-slate-500 bg-white dark:bg-slate-900 rounded-full">{t("auth.or")}</span>
               </div>
             </div>
 
@@ -143,7 +145,7 @@ export default function SignIn() {
               href="/magic-link-login"
               className="block w-full text-center btn-secondary py-3 rounded-xl text-sm"
             >
-              Sign in with magic link
+              {t("auth.magicLinkSignIn")}
             </Link>
 
             {msg && (

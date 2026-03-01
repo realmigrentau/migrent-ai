@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { motion, type Variants } from "framer-motion";
 import Head from "next/head";
+import { useTranslation } from "react-i18next";
 
 const fadeUp: Variants = {
   hidden: { opacity: 0, y: 30 },
@@ -11,23 +12,25 @@ const fadeUp: Variants = {
   }),
 };
 
-const steps = [
-  { num: "01", title: "Create your profile", desc: "Sign up and tell us what you need — budget, location, lifestyle preferences.", icon: "M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" },
-  { num: "02", title: "Get verified (optional)", desc: "Build trust with owners by verifying your identity. Verified seekers are matched faster.", icon: "M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" },
-  { num: "03", title: "Browse AI-matched rooms", desc: "See listings ranked by how well they match your preferences. Save your favourites.", icon: "M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" },
-  { num: "04", title: "Arrange directly", desc: "Connect with owners, inspect the room, and arrange rent directly on your terms.", icon: "M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" },
-];
-
-const benefits = [
-  { title: "Faster, safer discovery", desc: "Better than random classifieds and social media groups. Curated, filtered listings.", icon: "S" },
-  { title: "Built for new arrivals", desc: "No Australian rental history needed to get started. Perfect for migrants and students.", icon: "N" },
-  { title: "Stand out with verification", desc: "Optional verification and match scores help you shine to owners.", icon: "V" },
-  { title: "Transparent pricing", desc: "Clear weekly rent upfront. Optional AUD $19 fee always shown before you pay.", icon: "$" },
-  { title: "Smart filters", desc: "Filter by suburb, price range, room type, furnishing, pets, and more.", icon: "F" },
-  { title: "You stay in control", desc: "Choose who to talk to and arrange everything directly with the owner.", icon: "C" },
-];
-
 export default function ForSeekers() {
+  const { t } = useTranslation();
+
+  const steps = [
+    { num: t("forSeekers.step1Num"), title: t("forSeekers.step1Title"), desc: t("forSeekers.step1Desc"), icon: "M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" },
+    { num: t("forSeekers.step2Num"), title: t("forSeekers.step2Title"), desc: t("forSeekers.step2Desc"), icon: "M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" },
+    { num: t("forSeekers.step3Num"), title: t("forSeekers.step3Title"), desc: t("forSeekers.step3Desc"), icon: "M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" },
+    { num: t("forSeekers.step4Num"), title: t("forSeekers.step4Title"), desc: t("forSeekers.step4Desc"), icon: "M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" },
+  ];
+
+  const benefits = [
+    { title: t("forSeekers.ben1Title"), desc: t("forSeekers.ben1Desc"), icon: "S" },
+    { title: t("forSeekers.ben2Title"), desc: t("forSeekers.ben2Desc"), icon: "N" },
+    { title: t("forSeekers.ben3Title"), desc: t("forSeekers.ben3Desc"), icon: "V" },
+    { title: t("forSeekers.ben4Title"), desc: t("forSeekers.ben4Desc"), icon: "$" },
+    { title: t("forSeekers.ben5Title"), desc: t("forSeekers.ben5Desc"), icon: "F" },
+    { title: t("forSeekers.ben6Title"), desc: t("forSeekers.ben6Desc"), icon: "C" },
+  ];
+
   return (
     <>
       <Head>
@@ -42,24 +45,24 @@ export default function ForSeekers() {
           <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="relative z-10 max-w-3xl mx-auto">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-rose-50 dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/20 text-xs font-medium text-rose-600 dark:text-rose-400 mb-6">
               <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
-              For Room Seekers
+              {t("forSeekers.badge")}
             </div>
             <h1 className="text-4xl sm:text-5xl font-black tracking-tight leading-tight">
-              <span className="gradient-text">Find your room.</span>{" "}
-              <span className="text-slate-900 dark:text-white">Feel at home.</span>
+              <span className="gradient-text">{t("forSeekers.headline1")}</span>{" "}
+              <span className="text-slate-900 dark:text-white">{t("forSeekers.headline2")}</span>
             </h1>
             <p className="mt-6 text-lg text-slate-500 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
-              MigRent helps migrants, students, and professionals find rooms from local owners &mdash; faster and safer than random classifieds.
+              {t("forSeekers.subtitle")}
             </p>
             <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/seeker/dashboard">
                 <motion.span whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }} className="inline-block btn-primary text-base px-8 py-3.5 rounded-xl">
-                  Start Searching
+                  {t("forSeekers.startSearching")}
                 </motion.span>
               </Link>
               <Link href="/pricing">
                 <motion.span whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }} className="inline-block btn-secondary text-base px-8 py-3.5 rounded-xl">
-                  View Pricing
+                  {t("forSeekers.viewPricing")}
                 </motion.span>
               </Link>
             </div>
@@ -69,7 +72,7 @@ export default function ForSeekers() {
         {/* How It Works */}
         <section className="max-w-3xl mx-auto">
           <motion.h2 initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0} variants={fadeUp} className="text-3xl font-black tracking-tight text-slate-900 dark:text-white mb-8 text-center">
-            How it <span className="gradient-text">works</span>
+            {t("forSeekers.howTitle")} <span className="gradient-text">{t("forSeekers.howAccent")}</span>
           </motion.h2>
           <div className="space-y-4">
             {steps.map((step, i) => (
@@ -94,7 +97,7 @@ export default function ForSeekers() {
         {/* Benefits */}
         <section className="max-w-3xl mx-auto">
           <h2 className="text-3xl font-black tracking-tight text-slate-900 dark:text-white mb-8 text-center">
-            Why seekers choose <span className="gradient-text">MigRent</span>
+            {t("forSeekers.benefitsTitle")} <span className="gradient-text">{t("forSeekers.benefitsAccent")}</span>
           </h2>
           <div className="grid sm:grid-cols-2 gap-4">
             {benefits.map((item, i) => (
@@ -112,19 +115,19 @@ export default function ForSeekers() {
         {/* Search Filters Showcase */}
         <section className="max-w-3xl mx-auto">
           <div className="card p-6 rounded-2xl space-y-4">
-            <h2 className="text-xl font-bold text-slate-900 dark:text-white">Powerful Search Filters</h2>
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white">{t("forSeekers.filtersTitle")}</h2>
             <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
-              <p>Find exactly what you need with our advanced search:</p>
+              <p>{t("forSeekers.filtersIntro")}</p>
               <div className="grid sm:grid-cols-2 gap-3">
                 {[
-                  "Location & suburb",
-                  "Price range (weekly)",
-                  "Room type (private/shared)",
-                  "Furnished / unfurnished",
-                  "Pet-friendly",
-                  "Bills included",
-                  "Minimum stay period",
-                  "Available from date",
+                  t("forSeekers.filter1"),
+                  t("forSeekers.filter2"),
+                  t("forSeekers.filter3"),
+                  t("forSeekers.filter4"),
+                  t("forSeekers.filter5"),
+                  t("forSeekers.filter6"),
+                  t("forSeekers.filter7"),
+                  t("forSeekers.filter8"),
                 ].map((filter) => (
                   <div key={filter} className="flex items-center gap-2 card-subtle p-3 rounded-lg">
                     <svg className="w-4 h-4 text-rose-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -141,11 +144,11 @@ export default function ForSeekers() {
         {/* CTA */}
         <section className="max-w-3xl mx-auto pb-8">
           <div className="card p-8 rounded-2xl bg-gradient-to-br from-rose-50 to-rose-100/50 dark:from-rose-500/10 dark:to-rose-600/5 border-rose-200 dark:border-rose-500/20 text-center">
-            <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-3">Ready to find your room?</h2>
-            <p className="text-sm text-slate-600 dark:text-slate-300 mb-6 max-w-md mx-auto">Join MigRent and get AI-matched with rooms from verified local owners.</p>
+            <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-3">{t("forSeekers.ctaTitle")}</h2>
+            <p className="text-sm text-slate-600 dark:text-slate-300 mb-6 max-w-md mx-auto">{t("forSeekers.ctaSubtitle")}</p>
             <Link href="/seeker/dashboard">
               <motion.span whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }} className="inline-block btn-primary text-base px-8 py-3.5 rounded-xl">
-                Start Searching
+                {t("forSeekers.ctaCta")}
               </motion.span>
             </Link>
           </div>

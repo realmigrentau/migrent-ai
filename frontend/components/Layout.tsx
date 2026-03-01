@@ -94,7 +94,7 @@ export default function Layout({ children }: { children: ReactNode }) {
               {t("footer.copyright", { year: new Date().getFullYear() })}
             </p>
             <p className="text-xs text-slate-400 dark:text-slate-500 text-center max-w-md">
-              MigRent is a matching platform only. We are not a real estate agent or a party to any tenancy or licence agreements.
+              {t("footer.disclaimer")}
             </p>
           </div>
         </div>

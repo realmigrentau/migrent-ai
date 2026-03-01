@@ -6,8 +6,10 @@ import { supabase } from "../../lib/supabase";
 import { useAuth } from "../../hooks/useAuth";
 import SignInButton from "../../components/SignInButton";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 
 export default function SignUp() {
+  const { t } = useTranslation();
   const router = useRouter();
   const { session } = useAuth();
   const [email, setEmail] = useState("");
@@ -24,11 +26,11 @@ export default function SignUp() {
   const handleSignUp = async () => {
     setMsg("");
     if (!email || !password) {
-      setMsg("Please enter your email and password.");
+      setMsg(t("auth.enterEmailPassword"));
       return;
     }
     if (password.length < 6) {
-      setMsg("Password must be at least 6 characters.");
+      setMsg(t("auth.passwordMinLength"));
       return;
     }
     setLoading(true);
@@ -53,10 +55,10 @@ export default function SignUp() {
       if (error) {
         setMsg(error.message);
       } else {
-        setMsg("Check your email to confirm your account.");
+        setMsg(t("auth.checkEmail"));
       }
     } catch {
-      setMsg("Verification failed. Please try again.");
+      setMsg(t("auth.verificationFailed"));
     } finally {
       resetInstance?.();
       setLoading(false);
@@ -84,16 +86,16 @@ export default function SignUp() {
               M
             </div>
             <h1 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">
-              Sign up to <span className="gradient-text">MigRent</span>
+              {t("auth.signUpTitle")} <span className="gradient-text">{t("auth.signUpAccent")}</span>
             </h1>
-            <p className="text-slate-500 dark:text-slate-400 text-sm mt-2">Create your account to get started.</p>
+            <p className="text-slate-500 dark:text-slate-400 text-sm mt-2">{t("auth.signUpSubtitle")}</p>
           </div>
 
           <div className="space-y-4">
             <div>
               <input
                 type="email"
-                placeholder="Email"
+                placeholder={t("auth.email")}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="input-field"
@@ -102,7 +104,7 @@ export default function SignUp() {
             <div>
               <input
                 type="password"
-                placeholder="Password"
+                placeholder={t("auth.password")}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="input-field"
@@ -120,17 +122,17 @@ export default function SignUp() {
               {loading ? (
                 <span className="flex items-center justify-center gap-2">
                   <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  Creating account...
+                  {t("auth.creatingAccount")}
                 </span>
               ) : (
-                "Sign up"
+                t("auth.signUp")
               )}
             </motion.button>
 
             <p className="text-center text-sm text-slate-500 dark:text-slate-400">
-              Already have an account?{" "}
+              {t("auth.hasAccount")}{" "}
               <Link href="/signin" className="text-rose-500 hover:text-rose-600 font-semibold transition-colors">
-                Sign in
+                {t("auth.signInLink")}
               </Link>
             </p>
 
@@ -139,7 +141,7 @@ export default function SignUp() {
                 <div className="w-full border-t border-slate-200 dark:border-slate-700" />
               </div>
               <div className="relative flex justify-center text-xs">
-                <span className="px-3 text-slate-400 dark:text-slate-500 bg-white dark:bg-slate-900 rounded-full">or</span>
+                <span className="px-3 text-slate-400 dark:text-slate-500 bg-white dark:bg-slate-900 rounded-full">{t("auth.or")}</span>
               </div>
             </div>
 
@@ -149,7 +151,7 @@ export default function SignUp() {
               href="/magic-link-signup"
               className="block w-full text-center btn-secondary py-3 rounded-xl text-sm"
             >
-              Sign up with magic link
+              {t("auth.magicLinkSignUp")}
             </Link>
 
             {msg && (

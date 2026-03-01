@@ -1,22 +1,25 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import Head from "next/head";
-
-const stats = [
-  { label: "Cities", value: "2", detail: "Sydney & Adelaide" },
-  { label: "Platform", value: "AI", detail: "Powered matching" },
-  { label: "Fee Model", value: "$99", detail: "One-time per match" },
-  { label: "Founded", value: "2025", detail: "Sydney, Australia" },
-];
-
-const milestones = [
-  { date: "2025", title: "MigRent AI Founded", desc: "Platform conceived and development begins in Sydney." },
-  { date: "2025", title: "Beta Launch", desc: "First listings go live in Sydney with AI matching." },
-  { date: "2026", title: "Adelaide Expansion", desc: "MigRent extends to Adelaide, serving more Australian cities." },
-  { date: "2026", title: "Verification System", desc: "ID and visa verification launched for enhanced trust." },
-];
+import { useTranslation } from "react-i18next";
 
 export default function Press() {
+  const { t } = useTranslation();
+
+  const stats = [
+    { label: t("press.stat1Label"), value: t("press.stat1Value"), detail: t("press.stat1Detail") },
+    { label: t("press.stat2Label"), value: t("press.stat2Value"), detail: t("press.stat2Detail") },
+    { label: t("press.stat3Label"), value: t("press.stat3Value"), detail: t("press.stat3Detail") },
+    { label: t("press.stat4Label"), value: t("press.stat4Value"), detail: t("press.stat4Detail") },
+  ];
+
+  const milestones = [
+    { date: t("press.m1Date"), title: t("press.m1Title"), desc: t("press.m1Desc") },
+    { date: t("press.m2Date"), title: t("press.m2Title"), desc: t("press.m2Desc") },
+    { date: t("press.m3Date"), title: t("press.m3Title"), desc: t("press.m3Desc") },
+    { date: t("press.m4Date"), title: t("press.m4Title"), desc: t("press.m4Desc") },
+  ];
+
   return (
     <>
       <Head>
@@ -30,14 +33,14 @@ export default function Press() {
           <div className="absolute top-10 right-10 w-72 h-72 bg-violet-500/10 dark:bg-violet-500/5 rounded-full blur-3xl animate-pulse" />
           <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="relative z-10 max-w-3xl mx-auto">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-violet-50 dark:bg-violet-500/10 border border-violet-100 dark:border-violet-500/20 text-xs font-medium text-violet-600 dark:text-violet-400 mb-6">
-              Press &amp; Media
+              {t("press.badge")}
             </div>
             <h1 className="text-4xl sm:text-5xl font-black tracking-tight leading-tight">
-              <span className="gradient-text">MigRent AI</span>{" "}
-              <span className="text-slate-900 dark:text-white">in the media</span>
+              <span className="gradient-text">{t("press.headline1")}</span>{" "}
+              <span className="text-slate-900 dark:text-white">{t("press.headline2")}</span>
             </h1>
             <p className="mt-6 text-lg text-slate-500 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
-              Everything you need to write about MigRent AI. Company facts, media kit, and press contact.
+              {t("press.subtitle")}
             </p>
           </motion.div>
         </section>
@@ -58,19 +61,19 @@ export default function Press() {
         {/* About */}
         <section className="max-w-3xl mx-auto">
           <div className="card p-6 rounded-2xl space-y-4">
-            <h2 className="text-xl font-bold text-slate-900 dark:text-white">About MigRent AI</h2>
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white">{t("press.aboutTitle")}</h2>
             <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
               <p>
-                MigRent AI is an Australian proptech startup that uses artificial intelligence to match accommodation seekers &mdash; primarily migrants, international students, and working professionals &mdash; with room owners across Australia.
+                {t("press.aboutP1")}
               </p>
               <p>
-                Founded in Sydney in 2025, MigRent addresses a critical pain point: finding safe, affordable accommodation in a new country without local rental history or references. The platform replaces chaotic social media groups and random classifieds with structured, trust-scored, AI-powered matching.
+                {t("press.aboutP2")}
               </p>
               <p>
-                MigRent operates on a simple fee model: owners pay a one-time AUD $99 platform fee per successful match, while seekers can optionally verify their identity for AUD $19. There are no subscriptions, no rent commissions, and no ongoing fees.
+                {t("press.aboutP3")}
               </p>
               <div className="card-subtle p-4 rounded-xl space-y-1 mt-2">
-                <p className="font-semibold text-slate-800 dark:text-slate-200">Company Details</p>
+                <p className="font-semibold text-slate-800 dark:text-slate-200">{t("press.companyDetails")}</p>
                 <p>Business Name: MigRent AI</p>
                 <p>ABN: 22 669 566 941</p>
                 <p>Structure: Sole Trader</p>
@@ -84,7 +87,7 @@ export default function Press() {
         {/* Milestones */}
         <section className="max-w-3xl mx-auto">
           <h2 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white mb-6 text-center">
-            Milestones
+            {t("press.milestonesTitle")}
           </h2>
           <div className="space-y-3">
             {milestones.map((m, i) => (
@@ -102,15 +105,15 @@ export default function Press() {
         {/* Media Kit */}
         <section className="max-w-3xl mx-auto">
           <div className="card p-6 rounded-2xl space-y-4">
-            <h2 className="text-xl font-bold text-slate-900 dark:text-white">Media Kit</h2>
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white">{t("press.mediaKitTitle")}</h2>
             <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
-              <p>For logos, brand assets, and high-resolution images, please contact our press team. We&apos;ll provide:</p>
+              <p>{t("press.mediaKitIntro")}</p>
               <ul className="list-disc list-inside space-y-1.5">
-                <li>MigRent AI logo (SVG, PNG) in various formats</li>
-                <li>Brand colour palette and usage guidelines</li>
-                <li>Product screenshots and mockups</li>
-                <li>Founder photos and bios</li>
-                <li>Boilerplate company description</li>
+                <li>{t("press.mk1")}</li>
+                <li>{t("press.mk2")}</li>
+                <li>{t("press.mk3")}</li>
+                <li>{t("press.mk4")}</li>
+                <li>{t("press.mk5")}</li>
               </ul>
             </div>
           </div>
@@ -119,20 +122,20 @@ export default function Press() {
         {/* Testimonials */}
         <section className="max-w-3xl mx-auto">
           <h2 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white mb-6 text-center">
-            What users say
+            {t("press.userSayTitle")}
           </h2>
           <div className="grid sm:grid-cols-2 gap-4">
             <div className="card p-5 rounded-2xl">
               <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed italic mb-3">
-                &quot;MigRent made finding a room so much easier than scrolling through Facebook groups. The AI matching actually pointed me to rooms I could afford near my uni.&quot;
+                &quot;{t("press.userSay1")}&quot;
               </p>
-              <p className="text-xs font-semibold text-slate-900 dark:text-white">International Student, Sydney</p>
+              <p className="text-xs font-semibold text-slate-900 dark:text-white">{t("press.userSay1Author")}</p>
             </div>
             <div className="card p-5 rounded-2xl">
               <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed italic mb-3">
-                &quot;As an owner, I was getting dozens of random messages on Gumtree. MigRent brought me serious, verified seekers. The $99 fee paid for itself immediately.&quot;
+                &quot;{t("press.userSay2")}&quot;
               </p>
-              <p className="text-xs font-semibold text-slate-900 dark:text-white">Room Owner, Sydney</p>
+              <p className="text-xs font-semibold text-slate-900 dark:text-white">{t("press.userSay2Author")}</p>
             </div>
           </div>
         </section>
@@ -140,11 +143,11 @@ export default function Press() {
         {/* Press Contact */}
         <section className="max-w-3xl mx-auto pb-8">
           <div className="card p-8 rounded-2xl bg-gradient-to-br from-violet-50 to-violet-100/50 dark:from-violet-500/10 dark:to-violet-600/5 border-violet-200 dark:border-violet-500/20 text-center">
-            <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-3">Press enquiries</h2>
-            <p className="text-sm text-slate-600 dark:text-slate-300 mb-6 max-w-md mx-auto">For interviews, media features, partnerships, or media kit requests:</p>
+            <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-3">{t("press.ctaTitle")}</h2>
+            <p className="text-sm text-slate-600 dark:text-slate-300 mb-6 max-w-md mx-auto">{t("press.ctaSubtitle")}</p>
             <a href="https://mail.google.com/mail/?view=cm&fs=1&to=migrentau@gmail.com&su=Press%20Enquiry%20-%20MigRent%20AI" target="_blank" rel="noopener noreferrer">
               <motion.span whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }} className="inline-block btn-primary text-sm px-8 py-3 rounded-xl">
-                Contact Press Team
+                {t("press.ctaCta")}
               </motion.span>
             </a>
           </div>
