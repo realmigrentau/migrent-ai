@@ -202,27 +202,28 @@ GRANT SELECT, INSERT, UPDATE ON referrals TO authenticated;
 GRANT ALL ON referrals TO service_role;
 
 
--- ── 7. ENABLE RLS on matches ──────────────────────────────────
-ALTER TABLE IF EXISTS matches ENABLE ROW LEVEL SECURITY;
+-- ── 7. ENABLE RLS on matches (only if table exists) ──────────
+DO $$ BEGIN
+    IF EXISTS (SELECT FROM information_schema.tables WHERE table_name = 'matches') THEN
+        ALTER TABLE matches ENABLE ROW LEVEL SECURITY;
 
-DROP POLICY IF EXISTS "matches_own_select" ON matches;
-DROP POLICY IF EXISTS "matches_own_insert" ON matches;
-DROP POLICY IF EXISTS "matches_own_delete" ON matches;
+        DROP POLICY IF EXISTS "matches_own_select" ON matches;
+        DROP POLICY IF EXISTS "matches_own_insert" ON matches;
+        DROP POLICY IF EXISTS "matches_own_delete" ON matches;
 
--- Users can see their own matches
-CREATE POLICY "matches_own_select" ON matches
-    FOR SELECT TO authenticated
-    USING (auth.uid()::text = seeker_id::text OR auth.uid()::text = owner_id::text);
+        CREATE POLICY "matches_own_select" ON matches
+            FOR SELECT TO authenticated
+            USING (auth.uid()::text = seeker_id::text OR auth.uid()::text = owner_id::text);
 
--- Users can create matches
-CREATE POLICY "matches_own_insert" ON matches
-    FOR INSERT TO authenticated
-    WITH CHECK (auth.uid()::text = seeker_id::text);
+        CREATE POLICY "matches_own_insert" ON matches
+            FOR INSERT TO authenticated
+            WITH CHECK (auth.uid()::text = seeker_id::text);
 
--- Users can delete their own matches
-CREATE POLICY "matches_own_delete" ON matches
-    FOR DELETE TO authenticated
-    USING (auth.uid()::text = seeker_id::text OR auth.uid()::text = owner_id::text);
+        CREATE POLICY "matches_own_delete" ON matches
+            FOR DELETE TO authenticated
+            USING (auth.uid()::text = seeker_id::text OR auth.uid()::text = owner_id::text);
 
-GRANT SELECT, INSERT, DELETE ON matches TO authenticated;
-GRANT ALL ON matches TO service_role;
+        GRANT SELECT, INSERT, DELETE ON matches TO authenticated;
+        GRANT ALL ON matches TO service_role;
+    END IF;
+END $$;
