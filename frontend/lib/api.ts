@@ -474,6 +474,24 @@ export async function refreshBadges(token: string) {
 }
 
 /**
+ * Get featured community profiles (top listers + top members).
+ * GET /profiles/featured/community
+ */
+export async function getFeaturedProfiles() {
+  try {
+    const res = await fetch(`${BASE_URL}/profiles/featured/community`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    });
+    if (!res.ok) throw new Error(`getFeaturedProfiles failed: ${res.status}`);
+    return await res.json();
+  } catch (err) {
+    console.error("getFeaturedProfiles error:", err);
+    return null;
+  }
+}
+
+/**
  * Submit a report for a listing or profile.
  * POST /reports
  */

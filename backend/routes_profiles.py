@@ -133,6 +133,74 @@ def update_my_profile(request: Request, body: ProfileUpdate, authorization: str 
         raise HTTPException(status_code=500, detail="Failed to update profile")
 
 
+@router.get("/featured/community")
+def get_featured_profiles(request: Request):
+    """Get top listers and active community members for the dashboard."""
+    try:
+        sb = get_supabase_admin()
+
+        # Top listers: owners with the most listings
+        top_listers_raw = (
+            sb.table("listings")
+            .select("owner_id, owner_id.count()")
+            .execute()
+        )
+
+        # Count listings per owner manually since grouping varies by SDK
+        owner_counts: dict[str, int] = {}
+        if top_listers_raw.data:
+            for row in top_listers_raw.data:
+                oid = row.get("owner_id")
+                if oid:
+                    owner_counts[oid] = owner_counts.get(oid, 0) + 1
+
+        # Sort by count descending, take top 6
+        sorted_owners = sorted(owner_counts.items(), key=lambda x: x[1], reverse=True)[:6]
+        top_owner_ids = [oid for oid, _ in sorted_owners]
+
+        top_listers = []
+        if top_owner_ids:
+            profiles_res = sb.table("profiles").select(
+                "id,name,preferred_name,custom_pfp,badges,occupation,about_me"
+            ).in_("id", top_owner_ids).execute()
+            if profiles_res.data:
+                profile_map = {p["id"]: p for p in profiles_res.data}
+                for oid, count in sorted_owners:
+                    p = profile_map.get(oid)
+                    if p:
+                        top_listers.append({
+                            **p,
+                            "listing_count": count,
+                        })
+
+        # Top community members: profiles with the most badges
+        badged_res = (
+            sb.table("profiles")
+            .select("id,name,preferred_name,custom_pfp,badges,occupation,about_me")
+            .not_.is_("badges", "null")
+            .limit(20)
+            .execute()
+        )
+
+        top_members = []
+        if badged_res.data:
+            # Sort by badge count descending, take top 6
+            sorted_members = sorted(
+                [p for p in badged_res.data if p.get("badges") and len(p["badges"]) > 0],
+                key=lambda p: len(p.get("badges", [])),
+                reverse=True,
+            )[:6]
+            top_members = sorted_members
+
+        return {
+            "top_listers": top_listers,
+            "top_members": top_members,
+        }
+    except Exception as e:
+        logger.exception("Failed to fetch featured profiles")
+        raise HTTPException(status_code=500, detail="Failed to fetch featured profiles")
+
+
 @router.get("/{user_id}")
 def get_public_profile(user_id: str):
     """Get public profile (limited fields)."""

@@ -10,6 +10,7 @@ import RecentActivity from "../../components/dashboard/RecentActivity";
 import OwnerView from "../../components/dashboard/OwnerView";
 import SeekerView from "../../components/dashboard/SeekerView";
 import ProfileCompleteness from "../../components/dashboard/ProfileCompleteness";
+import CommunityHighlights from "../../components/dashboard/CommunityHighlights";
 import confetti from "canvas-confetti";
 
 /**
@@ -93,12 +94,19 @@ export default function DashboardHome() {
   const handleRoleToggle = useCallback(
     async (newRole: "seeker" | "owner") => {
       if (newRole === role || roleChanging) return;
+
+      // Seekers switching to owner go through the owner setup flow
+      if (newRole === "owner" && role === "seeker") {
+        router.push("/owner/setup");
+        return;
+      }
+
       setRoleChanging(true);
       await setRole(newRole);
       refetch();
       setRoleChanging(false);
     },
-    [role, roleChanging, setRole, refetch]
+    [role, roleChanging, setRole, refetch, router]
   );
 
   const handleSelectRole = async (selectedRole: "seeker" | "owner") => {
@@ -157,6 +165,7 @@ export default function DashboardHome() {
               role={role}
               loading={dataLoading}
             />
+            <CommunityHighlights />
           </div>
 
           {/* Role-specific view - right column */}
