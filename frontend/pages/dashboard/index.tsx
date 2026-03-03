@@ -97,7 +97,7 @@ export default function DashboardHome() {
 
       // Seekers switching to owner go through the owner setup flow
       if (newRole === "owner" && role === "seeker") {
-        router.push("/owner/setup");
+        router.push("/dashboard/owner-profile");
         return;
       }
 

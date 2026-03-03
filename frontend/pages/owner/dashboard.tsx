@@ -14,7 +14,7 @@ export default function OwnerDashboard() {
 
   useEffect(() => {
     if (!loading && session && user?.user_metadata?.owner_account !== true) {
-      router.replace("/owner/setup");
+      router.replace("/dashboard/owner-profile");
     }
   }, [loading, session, user, router]);
 

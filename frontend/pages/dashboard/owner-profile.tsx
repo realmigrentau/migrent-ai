@@ -21,11 +21,7 @@ export default function OwnerProfilePage() {
   const router = useRouter();
   const fileRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    if (!loading && session && user?.user_metadata?.owner_account !== true) {
-      router.replace("/owner/setup");
-    }
-  }, [loading, session, user, router]);
+  // No owner_account guard — allow any authenticated user to set up their owner profile
 
   const [saved, setSaved] = useState(false);
   const [saving, setSaving] = useState(false);
