@@ -30,11 +30,7 @@ export default function OwnerListings() {
   const [fetching, setFetching] = useState(true);
   const justCreated = router.query.created === "1";
 
-  useEffect(() => {
-    if (!loading && session && user?.user_metadata?.owner_account !== true) {
-      router.replace("/dashboard/owner-profile");
-    }
-  }, [loading, session, user, router]);
+  // All authenticated users can view their listings
 
   useEffect(() => {
     if (session) {

@@ -12,11 +12,7 @@ export default function NewListing() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    if (!loading && session && user?.user_metadata?.owner_account !== true) {
-      router.replace("/dashboard/owner-profile");
-    }
-  }, [loading, session, user, router]);
+  // All authenticated users can create listings
 
   const handleSubmit = async (data: ListingFormData) => {
     if (!session) return;

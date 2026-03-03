@@ -12,11 +12,7 @@ export default function OwnerDashboard() {
   const { session, user, loading, signOut } = useAuth();
   const router = useRouter();
 
-  useEffect(() => {
-    if (!loading && session && user?.user_metadata?.owner_account !== true) {
-      router.replace("/dashboard/owner-profile");
-    }
-  }, [loading, session, user, router]);
+  // All authenticated users can access owner dashboard
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -96,12 +92,7 @@ export default function OwnerDashboard() {
   const handleDeleteOwnerAccount = async () => {
     setDeleting(true);
     try {
-      const { error } = await supabase.auth.updateUser({
-        data: { owner_account: false },
-      });
-      if (!error) {
-        router.replace("/");
-      }
+      router.replace("/");
     } catch (err) {
       console.error(err);
     } finally {

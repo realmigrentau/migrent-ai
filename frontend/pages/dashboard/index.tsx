@@ -95,12 +95,6 @@ export default function DashboardHome() {
     async (newRole: "seeker" | "owner") => {
       if (newRole === role || roleChanging) return;
 
-      // Seekers switching to owner go through the owner setup flow
-      if (newRole === "owner" && role === "seeker") {
-        router.push("/dashboard/owner-profile");
-        return;
-      }
-
       setRoleChanging(true);
       await setRole(newRole);
       refetch();

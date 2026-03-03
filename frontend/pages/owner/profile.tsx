@@ -19,11 +19,7 @@ export default function OwnerProfilePage() {
   const router = useRouter();
   const fileRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    if (!loading && session && user?.user_metadata?.owner_account !== true) {
-      router.replace("/dashboard/owner-profile");
-    }
-  }, [loading, session, user, router]);
+  // All authenticated users can access owner profile
 
   const [saved, setSaved] = useState(false);
   const [saving, setSaving] = useState(false);

@@ -72,11 +72,7 @@ export default function ListingDetail() {
   const { id } = router.query;
   const { session, user, loading } = useAuth();
 
-  useEffect(() => {
-    if (!loading && session && user?.user_metadata?.owner_account !== true) {
-      router.replace("/dashboard/owner-profile");
-    }
-  }, [loading, session, user, router]);
+  // All authenticated users can view listing details
 
   const [applicantStatuses, setApplicantStatuses] = useState<Record<string, string>>(
     Object.fromEntries(MOCK_APPLICANTS.map((a) => [a.id, a.status]))

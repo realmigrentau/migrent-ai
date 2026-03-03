@@ -30,13 +30,7 @@ export default function OwnerDashboard() {
     }
   }, [loading, session, role, setRole]);
 
-  // Check if owner setup is complete
-  useEffect(() => {
-    if (!loading && session && user?.user_metadata?.owner_account !== true) {
-      // Redirect to owner setup if not completed
-      router.replace("/dashboard/owner-profile");
-    }
-  }, [loading, session, user, router]);
+  // All authenticated users can access owner dashboard
 
   // Fetch listings
   useEffect(() => {

@@ -134,12 +134,6 @@ export default function OwnerProfilePage() {
   const handleDeleteProfile = async () => {
     setDeleting(true);
     try {
-      // Remove owner_account flag from user metadata
-      await supabase.auth.updateUser({
-        data: {
-          owner_account: false,
-        },
-      });
       // Clear the dashboard cache
       localStorage.removeItem("migrent_dashboard_profile");
       // Redirect to dashboard
