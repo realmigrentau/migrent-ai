@@ -264,6 +264,102 @@ select.input-field {
   padding-right: 40px;
 }
 
+/* ── Glass card (glassmorphism) ── */
+.glass-card {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 16px;
+  transition: all 0.2s ease;
+}
+
+.dark .glass-card {
+  background: rgba(15, 23, 42, 0.8);
+  border-color: rgba(255, 255, 255, 0.05);
+}
+
+.glass-card:hover {
+  box-shadow: 0 8px 32px rgba(99, 102, 241, 0.1);
+  transform: translateY(-1px);
+}
+
+.dark .glass-card:hover {
+  box-shadow: 0 8px 32px rgba(99, 102, 241, 0.15);
+}
+
+/* ── Indigo/Pink gradient ── */
+.gradient-indigo-pink {
+  background: linear-gradient(135deg, #6366f1, #ec4899);
+}
+
+.gradient-text-indigo {
+  background: linear-gradient(135deg, #6366f1, #ec4899);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Status dots ── */
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.status-dot-green { background: #10b981; }
+.status-dot-yellow { background: #f59e0b; }
+.status-dot-red { background: #ef4444; }
+
+/* ── Slide-in animation ── */
+@keyframes slide-in-right {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slide-in-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-slide-in-right {
+  animation: slide-in-right 0.3s ease-out forwards;
+}
+
+.animate-slide-in-up {
+  animation: slide-in-up 0.3s ease-out forwards;
+}
+
+/* ── Glow hover effect ── */
+.hover-glow:hover {
+  box-shadow: 0 0 20px rgba(99, 102, 241, 0.15), 0 4px 16px rgba(0, 0, 0, 0.05);
+}
+
+.dark .hover-glow:hover {
+  box-shadow: 0 0 20px rgba(99, 102, 241, 0.25), 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* ── Sparkline container ── */
+.sparkline-container {
+  height: 32px;
+  width: 80px;
+}
+
+/* ── Hide scrollbar utility ── */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* ── Bottom nav safe area ── */
+.pb-safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 16px);
+}
+
 /* ── Scroll offset for fixed navbar ── */
 [id] {
   scroll-margin-top: 80px;
