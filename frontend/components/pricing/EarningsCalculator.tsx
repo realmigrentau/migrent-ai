@@ -1,0 +1,204 @@
+import { motion } from "framer-motion";
+import { useCalculator } from "../../hooks/useCalculator";
+import { Calculator, TrendingUp, DollarSign, Minus } from "lucide-react";
+
+function SliderInput({
+  label,
+  value,
+  min,
+  max,
+  step,
+  unit,
+  onChange,
+}: {
+  label: string;
+  value: number;
+  min: number;
+  max: number;
+  step: number;
+  unit: string;
+  onChange: (v: number) => void;
+}) {
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-2">
+        <label className="text-sm font-medium text-slate-600 dark:text-slate-300">
+          {label}
+        </label>
+        <span className="text-sm font-bold text-slate-900 dark:text-white">
+          {unit === "$" ? `$${value.toLocaleString()}` : `${value}${unit}`}
+        </span>
+      </div>
+      <input
+        type="range"
+        min={min}
+        max={max}
+        step={step}
+        value={value}
+        onChange={(e) => onChange(Number(e.target.value))}
+        className="w-full h-2 rounded-full appearance-none cursor-pointer bg-slate-200 dark:bg-slate-700 accent-rose-500"
+      />
+      <div className="flex justify-between text-xs text-slate-400 mt-1">
+        <span>{unit === "$" ? `$${min}` : `${min}${unit}`}</span>
+        <span>{unit === "$" ? `$${max}` : `${max}${unit}`}</span>
+      </div>
+    </div>
+  );
+}
+
+function StatCard({
+  label,
+  value,
+  icon: Icon,
+  color,
+  delay,
+}: {
+  label: string;
+  value: string;
+  icon: typeof TrendingUp;
+  color: string;
+  delay: number;
+}) {
+  const bgClasses: Record<string, string> = {
+    blue: "bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400",
+    emerald: "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
+    rose: "bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400",
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ delay }}
+      className="card-subtle p-4 rounded-xl text-center"
+    >
+      <div className={`w-10 h-10 rounded-xl ${bgClasses[color]} flex items-center justify-center mx-auto mb-2`}>
+        <Icon className="w-5 h-5" />
+      </div>
+      <div className="text-2xl font-black text-slate-900 dark:text-white">
+        {value}
+      </div>
+      <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+        {label}
+      </div>
+    </motion.div>
+  );
+}
+
+export default function EarningsCalculator() {
+  const { inputs, outputs, updateInput } = useCalculator();
+
+  return (
+    <section id="calculator" className="max-w-5xl mx-auto px-4 scroll-mt-24">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="text-center mb-10"
+      >
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-200 dark:border-indigo-500/20 mb-4">
+          <Calculator className="w-3.5 h-3.5 text-indigo-500" />
+          <span className="text-xs font-semibold text-indigo-600 dark:text-indigo-400">
+            Interactive Calculator
+          </span>
+        </div>
+        <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 dark:text-white">
+          Owner <span className="gradient-text-indigo">Earnings</span> Calculator
+        </h2>
+        <p className="mt-3 text-slate-500 dark:text-slate-400 text-sm max-w-lg mx-auto">
+          See how much you could earn renting on MigRent. Adjust the sliders to match your property.
+        </p>
+      </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ delay: 0.1 }}
+        className="glass-card rounded-2xl p-6 sm:p-8"
+      >
+        <div className="grid lg:grid-cols-2 gap-8">
+          {/* Sliders */}
+          <div className="space-y-8">
+            <SliderInput
+              label="Rooms rented out"
+              value={inputs.rooms}
+              min={1}
+              max={20}
+              step={1}
+              unit=""
+              onChange={(v) => updateInput("rooms", v)}
+            />
+            <SliderInput
+              label="Average weekly rate"
+              value={inputs.weeklyRate}
+              min={100}
+              max={2000}
+              step={50}
+              unit="$"
+              onChange={(v) => updateInput("weeklyRate", v)}
+            />
+            <SliderInput
+              label="Occupancy rate"
+              value={inputs.occupancy}
+              min={10}
+              max={100}
+              step={5}
+              unit="%"
+              onChange={(v) => updateInput("occupancy", v)}
+            />
+          </div>
+
+          {/* Results */}
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <StatCard
+                label="Monthly Revenue"
+                value={`$${outputs.monthlyRevenue.toLocaleString()}`}
+                icon={TrendingUp}
+                color="blue"
+                delay={0.15}
+              />
+              <StatCard
+                label="MigRent Fee"
+                value={`$${outputs.migrentFee.toLocaleString()}`}
+                icon={Minus}
+                color="rose"
+                delay={0.2}
+              />
+            </div>
+
+            {/* Take-home highlight */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.25 }}
+              className="p-6 rounded-xl bg-gradient-to-br from-emerald-50 to-emerald-100/50 dark:from-emerald-500/10 dark:to-emerald-500/5 border border-emerald-200 dark:border-emerald-500/20"
+            >
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center">
+                  <DollarSign className="w-4 h-4 text-white" />
+                </div>
+                <span className="text-sm font-semibold text-emerald-700 dark:text-emerald-400">
+                  Your Annual Take-Home
+                </span>
+              </div>
+              <div className="text-4xl font-black text-emerald-700 dark:text-emerald-300">
+                ${outputs.annualTakeHome.toLocaleString()}
+              </div>
+              <div className="text-sm text-emerald-600 dark:text-emerald-400 mt-1">
+                ~${outputs.monthlyTakeHome.toLocaleString()}/month after one-time fees
+              </div>
+            </motion.div>
+
+            <p className="text-xs text-slate-400 dark:text-slate-500 text-center">
+              MigRent fee is a one-time $99 per property, charged only when matched with a tenant.
+            </p>
+          </div>
+        </div>
+      </motion.div>
+    </section>
+  );
+}
