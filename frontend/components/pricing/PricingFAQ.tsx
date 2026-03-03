@@ -66,7 +66,7 @@ function FAQAccordionItem({ item, isOpen, onToggle }: { item: FAQItem; isOpen: b
       initial={{ opacity: 0, y: 10 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      className="card rounded-xl overflow-hidden"
+      className="card hover-glow rounded-xl overflow-hidden"
     >
       <button
         onClick={onToggle}
@@ -80,7 +80,7 @@ function FAQAccordionItem({ item, isOpen, onToggle }: { item: FAQItem; isOpen: b
           transition={{ duration: 0.2 }}
           className="shrink-0"
         >
-          <ChevronDown className="w-4 h-4 text-slate-400" />
+          <ChevronDown className="w-4 h-4 text-indigo-400" />
         </motion.div>
       </button>
       <AnimatePresence initial={false}>
@@ -120,7 +120,7 @@ export default function PricingFAQ() {
           </span>
         </div>
         <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 dark:text-white">
-          Frequently Asked <span className="gradient-text-accent">Questions</span>
+          Frequently Asked <span className="gradient-text-indigo">Questions</span>
         </h2>
       </motion.div>
 

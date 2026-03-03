@@ -36,10 +36,10 @@ const testimonials: Testimonial[] = [
 ];
 
 const stats = [
-  { label: "Host satisfaction", value: "98%", icon: Heart },
-  { label: "Seeker rating", value: "4.9/5", icon: Star },
-  { label: "Active users", value: "10K+", icon: Users },
-  { label: "Avg. match time", value: "48hrs", icon: TrendingUp },
+  { label: "Host satisfaction", value: "98%", icon: Heart, color: "text-pink-500", bg: "bg-pink-100 dark:bg-pink-500/20" },
+  { label: "Seeker rating", value: "4.9/5", icon: Star, color: "text-amber-500", bg: "bg-amber-100 dark:bg-amber-500/20" },
+  { label: "Active users", value: "10K+", icon: Users, color: "text-indigo-500", bg: "bg-indigo-100 dark:bg-indigo-500/20" },
+  { label: "Avg. match time", value: "48hrs", icon: TrendingUp, color: "text-emerald-500", bg: "bg-emerald-100 dark:bg-emerald-500/20" },
 ];
 
 function StarRating({ count }: { count: number }) {
@@ -66,7 +66,7 @@ export default function TestimonialCarousel() {
         className="text-center mb-10"
       >
         <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 dark:text-white">
-          Loved by <span className="gradient-text">thousands</span>
+          Loved by <span className="gradient-text-indigo">thousands</span>
         </h2>
         <p className="mt-3 text-slate-500 dark:text-slate-400 text-sm max-w-lg mx-auto">
           Real stories from real users across Australia.
@@ -88,9 +88,11 @@ export default function TestimonialCarousel() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 + i * 0.05 }}
-            className="glass-card p-4 rounded-xl text-center"
+            className="glass-card hover-glow p-4 rounded-xl text-center"
           >
-            <stat.icon className="w-5 h-5 text-rose-500 mx-auto mb-2" />
+            <div className={`w-10 h-10 rounded-xl ${stat.bg} flex items-center justify-center mx-auto mb-2`}>
+              <stat.icon className={`w-5 h-5 ${stat.color}`} />
+            </div>
             <div className="text-2xl font-black text-slate-900 dark:text-white">
               {stat.value}
             </div>
@@ -110,15 +112,15 @@ export default function TestimonialCarousel() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 + i * 0.08 }}
-            className="card p-6 rounded-xl relative group hover:shadow-lg transition-shadow"
+            className="glass-card hover-glow p-6 rounded-xl relative group"
           >
-            <Quote className="w-8 h-8 text-rose-100 dark:text-rose-500/10 absolute top-4 right-4" />
+            <Quote className="w-8 h-8 text-indigo-100 dark:text-indigo-500/10 absolute top-4 right-4" />
             <StarRating count={t.rating} />
             <p className="mt-3 text-sm text-slate-600 dark:text-slate-300 leading-relaxed relative z-10">
               &ldquo;{t.quote}&rdquo;
             </p>
             <div className="mt-4 flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-rose-400 to-indigo-400 flex items-center justify-center text-white text-xs font-bold">
+              <div className="w-8 h-8 rounded-full gradient-indigo-pink flex items-center justify-center text-white text-xs font-bold">
                 {t.name.charAt(0)}
               </div>
               <div>

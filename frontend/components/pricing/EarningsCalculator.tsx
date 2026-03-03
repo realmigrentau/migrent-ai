@@ -36,7 +36,7 @@ function SliderInput({
         step={step}
         value={value}
         onChange={(e) => onChange(Number(e.target.value))}
-        className="w-full h-2 rounded-full appearance-none cursor-pointer bg-slate-200 dark:bg-slate-700 accent-rose-500"
+        className="w-full h-2 rounded-full appearance-none cursor-pointer bg-slate-200 dark:bg-slate-700 accent-indigo-500"
       />
       <div className="flex justify-between text-xs text-slate-400 mt-1">
         <span>{unit === "$" ? `$${min}` : `${min}${unit}`}</span>
@@ -60,9 +60,10 @@ function StatCard({
   delay: number;
 }) {
   const bgClasses: Record<string, string> = {
-    blue: "bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400",
-    emerald: "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
-    rose: "bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400",
+    indigo: "bg-indigo-100 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400",
+    emerald: "bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400",
+    pink: "bg-pink-100 dark:bg-pink-500/20 text-pink-600 dark:text-pink-400",
+    amber: "bg-amber-100 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400",
   };
 
   return (
@@ -116,9 +117,13 @@ export default function EarningsCalculator() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ delay: 0.1 }}
-        className="glass-card rounded-2xl p-6 sm:p-8"
+        className="glass-card hover-glow rounded-2xl p-6 sm:p-8 relative overflow-hidden"
       >
-        <div className="grid lg:grid-cols-2 gap-8">
+        {/* Decorative gradient blurs */}
+        <div className="absolute -top-20 -right-20 w-40 h-40 bg-indigo-500/10 rounded-full blur-3xl" />
+        <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-pink-500/10 rounded-full blur-3xl" />
+
+        <div className="relative grid lg:grid-cols-2 gap-8">
           {/* Sliders */}
           <div className="space-y-8">
             <SliderInput
@@ -157,14 +162,14 @@ export default function EarningsCalculator() {
                 label="Monthly Revenue"
                 value={`$${outputs.monthlyRevenue.toLocaleString()}`}
                 icon={TrendingUp}
-                color="blue"
+                color="indigo"
                 delay={0.15}
               />
               <StatCard
                 label="MigRent Fee"
                 value={`$${outputs.migrentFee.toLocaleString()}`}
                 icon={Minus}
-                color="rose"
+                color="pink"
                 delay={0.2}
               />
             </div>
@@ -175,7 +180,7 @@ export default function EarningsCalculator() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.25 }}
-              className="p-6 rounded-xl bg-gradient-to-br from-emerald-50 to-emerald-100/50 dark:from-emerald-500/10 dark:to-emerald-500/5 border border-emerald-200 dark:border-emerald-500/20"
+              className="p-6 rounded-xl bg-gradient-to-br from-emerald-50 via-emerald-100/50 to-teal-50 dark:from-emerald-500/10 dark:via-emerald-500/5 dark:to-teal-500/5 border border-emerald-200 dark:border-emerald-500/20"
             >
               <div className="flex items-center gap-2 mb-3">
                 <div className="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center">

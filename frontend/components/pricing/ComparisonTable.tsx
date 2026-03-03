@@ -28,8 +28,8 @@ function CellValue({ value, highlight }: { value: boolean | string; highlight?: 
   }
   if (value) {
     return highlight ? (
-      <div className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-emerald-100 dark:bg-emerald-500/20">
-        <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" strokeWidth={3} />
+      <div className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-gradient-to-br from-indigo-100 to-pink-100 dark:from-indigo-500/20 dark:to-pink-500/20">
+        <Check className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" strokeWidth={3} />
       </div>
     ) : (
       <Check className="w-4 h-4 text-slate-300 dark:text-slate-600 mx-auto" strokeWidth={2} />
@@ -48,7 +48,7 @@ export default function ComparisonTable() {
         className="text-center mb-10"
       >
         <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 dark:text-white">
-          Why <span className="gradient-text">MigRent</span>?
+          Why <span className="gradient-text-indigo">MigRent</span>?
         </h2>
         <p className="mt-3 text-slate-500 dark:text-slate-400 text-sm max-w-lg mx-auto">
           See how we compare to traditional rental platforms in Australia.
@@ -60,7 +60,7 @@ export default function ComparisonTable() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ delay: 0.1 }}
-        className="card rounded-2xl overflow-hidden"
+        className="card hover-glow rounded-2xl overflow-hidden"
       >
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
@@ -79,9 +79,9 @@ export default function ComparisonTable() {
                   Domain
                 </th>
                 <th className="text-center p-4 min-w-[100px]">
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-50 dark:bg-rose-500/10">
-                    <Sparkles className="w-3 h-3 text-rose-500" />
-                    <span className="font-bold text-rose-500">MigRent</span>
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full gradient-indigo-pink">
+                    <Sparkles className="w-3 h-3 text-yellow-300" />
+                    <span className="font-bold text-white">MigRent</span>
                   </div>
                 </th>
               </tr>

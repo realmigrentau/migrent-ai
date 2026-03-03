@@ -36,9 +36,10 @@ export default function Pricing() {
             viewport={{ once: true }}
             className="relative rounded-2xl overflow-hidden"
           >
-            {/* Gradient background */}
-            <div className="absolute inset-0 bg-gradient-to-br from-indigo-500 via-rose-500 to-emerald-500 opacity-90" />
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(255,255,255,0.15),transparent_50%)]" />
+            {/* Gradient background matching dashboard hero */}
+            <div className="absolute inset-0 gradient-indigo-pink" />
+            <div className="absolute top-0 right-0 -translate-y-1/4 translate-x-1/4 w-48 h-48 bg-white/10 rounded-full blur-2xl" />
+            <div className="absolute bottom-0 left-0 translate-y-1/4 -translate-x-1/4 w-36 h-36 bg-white/10 rounded-full blur-2xl" />
 
             <div className="relative z-10 text-center py-14 px-6">
               <motion.h2
