@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { ProfileData } from "../../hooks/useDashboardData";
 import {
   Plus,
   Pause,
@@ -9,18 +10,21 @@ import {
   MapPin,
   DollarSign,
   Eye,
+  Trophy,
+  Home,
 } from "lucide-react";
 
 interface OwnerViewProps {
   listings: any[];
   loading: boolean;
+  profile: ProfileData | null;
 }
 
 function Skeleton({ className = "" }: { className?: string }) {
   return <div className={`shimmer rounded-lg ${className}`} />;
 }
 
-export default function OwnerView({ listings, loading }: OwnerViewProps) {
+export default function OwnerView({ listings, loading, profile }: OwnerViewProps) {
   return (
     <div className="space-y-6">
       {/* Quick Actions Bar */}
@@ -175,6 +179,53 @@ export default function OwnerView({ listings, loading }: OwnerViewProps) {
           </div>
         )}
       </div>
+
+      {/* Owner profile snapshot: badges + properties */}
+      {profile && (profile.badges.length > 0 || profile.roomsOwned > 0 || profile.propertiesOwned > 0) && (
+        <div className="glass-card p-5 space-y-4">
+          {/* Properties counter */}
+          {(profile.roomsOwned > 0 || profile.propertiesOwned > 0) && (
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-200 dark:border-indigo-500/20">
+                <Home className="w-4 h-4 text-indigo-500" />
+                <span className="text-sm font-semibold text-indigo-600 dark:text-indigo-400">{profile.roomsOwned}</span>
+                <span className="text-xs text-indigo-500/70 dark:text-indigo-400/70">rooms</span>
+              </div>
+              <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-pink-50 dark:bg-pink-500/10 border border-pink-200 dark:border-pink-500/20">
+                <Building2 className="w-4 h-4 text-pink-500" />
+                <span className="text-sm font-semibold text-pink-600 dark:text-pink-400">{profile.propertiesOwned}</span>
+                <span className="text-xs text-pink-500/70 dark:text-pink-400/70">properties</span>
+              </div>
+              <Link
+                href="/dashboard/owner-profile"
+                className="text-xs text-indigo-500 hover:text-indigo-600 dark:hover:text-indigo-400 font-medium ml-auto"
+              >
+                Edit
+              </Link>
+            </div>
+          )}
+
+          {/* Badges */}
+          {profile.badges.length > 0 && (
+            <div>
+              <h4 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">
+                Your Badges
+              </h4>
+              <div className="flex flex-wrap gap-1.5">
+                {profile.badges.map((badge) => (
+                  <span
+                    key={badge}
+                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-500/20"
+                  >
+                    <Trophy className="w-3 h-3" />
+                    {badge}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

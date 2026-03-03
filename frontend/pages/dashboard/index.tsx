@@ -9,6 +9,7 @@ import MetricsCards from "../../components/dashboard/MetricsCards";
 import RecentActivity from "../../components/dashboard/RecentActivity";
 import OwnerView from "../../components/dashboard/OwnerView";
 import SeekerView from "../../components/dashboard/SeekerView";
+import ProfileCompleteness from "../../components/dashboard/ProfileCompleteness";
 import confetti from "canvas-confetti";
 
 /**
@@ -131,6 +132,7 @@ export default function DashboardHome() {
           displayName={displayName}
           role={role}
           metrics={data?.metrics || null}
+          profile={data?.profile || null}
           onRoleToggle={handleRoleToggle}
           roleChanging={roleChanging}
         />
@@ -144,10 +146,15 @@ export default function DashboardHome() {
 
         {/* Two-column layout: Activity + Role View */}
         <div className="grid lg:grid-cols-5 gap-6">
-          {/* Recent Activity - left column */}
-          <div className="lg:col-span-2">
+          {/* Left column: Activity + Profile Completeness */}
+          <div className="lg:col-span-2 space-y-6">
             <RecentActivity
               activity={data?.activity || []}
+              loading={dataLoading}
+            />
+            <ProfileCompleteness
+              profile={data?.profile || null}
+              role={role}
               loading={dataLoading}
             />
           </div>
@@ -166,6 +173,7 @@ export default function DashboardHome() {
                   <OwnerView
                     listings={data?.listings || []}
                     loading={dataLoading}
+                    profile={data?.profile || null}
                   />
                 </motion.div>
               ) : (
@@ -176,7 +184,10 @@ export default function DashboardHome() {
                   exit={{ opacity: 0, x: -10 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <SeekerView loading={dataLoading} />
+                  <SeekerView
+                    loading={dataLoading}
+                    profile={data?.profile || null}
+                  />
                 </motion.div>
               )}
             </AnimatePresence>

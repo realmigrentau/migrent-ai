@@ -1,14 +1,15 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { UserRole } from "../../hooks/useDashboard";
-import { DashboardMetrics } from "../../hooks/useDashboardData";
+import { DashboardMetrics, ProfileData } from "../../hooks/useDashboardData";
 import RoleToggle from "./RoleToggle";
-import { Plus, Sparkles } from "lucide-react";
+import { Plus, Sparkles, ShieldCheck } from "lucide-react";
 
 interface HeroSectionProps {
   displayName: string | null;
   role: UserRole;
   metrics: DashboardMetrics | null;
+  profile: ProfileData | null;
   onRoleToggle: (role: "seeker" | "owner") => void;
   roleChanging?: boolean;
 }
@@ -17,6 +18,7 @@ export default function HeroSection({
   displayName,
   role,
   metrics,
+  profile,
   onRoleToggle,
   roleChanging,
 }: HeroSectionProps) {
@@ -36,23 +38,48 @@ export default function HeroSection({
       </div>
 
       <div className="relative z-10">
-        {/* Top row: welcome + role toggle */}
+        {/* Top row: avatar + welcome + role toggle */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-          <div>
-            <motion.h1
-              className="text-2xl md:text-3xl font-black text-white tracking-tight"
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.1 }}
-            >
-              Welcome back, {displayName || "there"}{" "}
-              <Sparkles className="inline w-6 h-6 text-yellow-300" />
-            </motion.h1>
-            <p className="text-white/70 text-sm mt-1">
-              {isOwner
-                ? "Manage your properties and connect with tenants"
-                : "Find your perfect room and track applications"}
-            </p>
+          <div className="flex items-center gap-4">
+            {/* Profile photo */}
+            <Link href={isOwner ? "/dashboard/owner-profile" : "/dashboard/seeker-profile"}>
+              <div className="relative shrink-0 group cursor-pointer">
+                <div className={`w-14 h-14 rounded-xl flex items-center justify-center text-white font-bold text-lg overflow-hidden ring-2 ring-white/30 group-hover:ring-white/60 transition-all ${
+                  profile?.photo ? "" : "bg-white/20 backdrop-blur-sm"
+                }`}>
+                  {profile?.photo ? (
+                    <img src={profile.photo} alt="" className="w-full h-full object-cover" />
+                  ) : (
+                    (displayName || "U")[0].toUpperCase()
+                  )}
+                </div>
+                {/* Verified badge */}
+                {profile?.idVerified && (
+                  <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-emerald-500 border-2 border-white flex items-center justify-center">
+                    <ShieldCheck className="w-3 h-3 text-white" />
+                  </div>
+                )}
+              </div>
+            </Link>
+
+            <div>
+              <motion.h1
+                className="text-2xl md:text-3xl font-black text-white tracking-tight"
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.1 }}
+              >
+                Welcome back, {displayName || "there"}{" "}
+                <Sparkles className="inline w-6 h-6 text-yellow-300" />
+              </motion.h1>
+              <p className="text-white/70 text-sm mt-1">
+                {profile?.occupation
+                  ? `${profile.occupation} · ${isOwner ? "Property Owner" : "Room Seeker"}`
+                  : isOwner
+                    ? "Manage your properties and connect with tenants"
+                    : "Find your perfect room and track applications"}
+              </p>
+            </div>
           </div>
 
           <RoleToggle
@@ -93,6 +120,14 @@ export default function HeroSection({
                 />
               )}
             </>
+          )}
+          {/* Profile completion pill */}
+          {profile && profile.completionPercent < 100 && (
+            <StatPill
+              label="Profile"
+              value={`${profile.completionPercent}%`}
+              delay={0.3}
+            />
           )}
         </div>
 

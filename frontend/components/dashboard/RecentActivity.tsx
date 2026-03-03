@@ -8,6 +8,9 @@ import {
   MessageCircle,
   Sparkles,
   ChevronRight,
+  User,
+  Camera,
+  Trophy,
 } from "lucide-react";
 
 interface RecentActivityProps {
@@ -21,6 +24,9 @@ const iconMap: Record<string, React.ReactNode> = {
   shield: <ShieldCheck className="w-4 h-4" />,
   message: <MessageCircle className="w-4 h-4" />,
   sparkles: <Sparkles className="w-4 h-4" />,
+  user: <User className="w-4 h-4" />,
+  camera: <Camera className="w-4 h-4" />,
+  trophy: <Trophy className="w-4 h-4" />,
 };
 
 const statusColors: Record<string, string> = {
