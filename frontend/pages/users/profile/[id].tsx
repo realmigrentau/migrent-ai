@@ -1,7 +1,7 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import { motion, useInView } from "framer-motion";
+import { motion } from "framer-motion";
 import { useUserProfile } from "../../../hooks/useUserProfile";
 import { useProfileListings, useProfileReviews } from "../../../hooks/useProfileData";
 import { useAuth } from "../../../hooks/useAuth";
@@ -39,16 +39,12 @@ export default function PublicProfilePage() {
 
   const isOwnProfile = user?.id === id;
 
-  // Scroll-triggered animation refs
-  const aboutRef = useRef<HTMLDivElement>(null);
-  const listingsRef = useRef<HTMLDivElement>(null);
-  const reviewsRef = useRef<HTMLDivElement>(null);
-  const verifyRef = useRef<HTMLDivElement>(null);
-
-  const aboutInView = useInView(aboutRef, { once: true, margin: "-50px" });
-  const listingsInView = useInView(listingsRef, { once: true, margin: "-50px" });
-  const reviewsInView = useInView(reviewsRef, { once: true, margin: "-50px" });
-  const verifyInView = useInView(verifyRef, { once: true, margin: "-50px" });
+  // Staggered section animation helper
+  const sectionAnim = (delay: number) => ({
+    initial: { opacity: 0, y: 20 } as const,
+    animate: { opacity: 1, y: 0 } as const,
+    transition: { duration: 0.4, delay, ease: "easeOut" as const },
+  });
 
   // Check if user is blocked
   useEffect(() => {
@@ -80,15 +76,9 @@ export default function PublicProfilePage() {
 
   const handleTabChange = (key: string) => {
     setActiveTab(key);
-    const refMap: Record<string, React.RefObject<HTMLDivElement | null>> = {
-      about: aboutRef,
-      listings: listingsRef,
-      reviews: reviewsRef,
-      verification: verifyRef,
-    };
-    const ref = refMap[key];
-    if (ref?.current) {
-      ref.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    const el = document.getElementById(key);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   };
 
@@ -171,20 +161,15 @@ export default function PublicProfilePage() {
 
           {/* ── About Section ── */}
           <motion.section
-            ref={aboutRef}
             id="about"
-            initial={{ opacity: 0, y: 24 }}
-            animate={aboutInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.5 }}
+            {...sectionAnim(0.1)}
           >
             <HostAbout profile={profile} />
           </motion.section>
 
           {/* ── Host Details ── */}
           <motion.section
-            initial={{ opacity: 0, y: 24 }}
-            animate={aboutInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.5, delay: 0.1 }}
+            {...sectionAnim(0.2)}
           >
             <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4">Host details</h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -201,11 +186,8 @@ export default function PublicProfilePage() {
 
           {/* ── Verification Trust ── */}
           <motion.section
-            ref={verifyRef}
             id="verification"
-            initial={{ opacity: 0, y: 24 }}
-            animate={verifyInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.5 }}
+            {...sectionAnim(0.3)}
           >
             <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4">
               {displayName}&apos;s verified information
@@ -220,9 +202,7 @@ export default function PublicProfilePage() {
           {/* ── Badges ── */}
           {profile.badges.length > 0 && (
             <motion.section
-              initial={{ opacity: 0, y: 24 }}
-              animate={verifyInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.5, delay: 0.1 }}
+              {...sectionAnim(0.35)}
             >
               <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-3">{displayName}&apos;s badges</h3>
               <div className="flex flex-wrap gap-2">
@@ -247,11 +227,8 @@ export default function PublicProfilePage() {
 
           {/* ── Reviews ── */}
           <motion.section
-            ref={reviewsRef}
             id="reviews"
-            initial={{ opacity: 0, y: 24 }}
-            animate={reviewsInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.5 }}
+            {...sectionAnim(0.4)}
           >
             <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4">{displayName}&apos;s reviews</h3>
             <ReviewCarousel
@@ -265,11 +242,8 @@ export default function PublicProfilePage() {
 
           {/* ── Listings ── */}
           <motion.section
-            ref={listingsRef}
             id="listings"
-            initial={{ opacity: 0, y: 24 }}
-            animate={listingsInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.5 }}
+            {...sectionAnim(0.45)}
           >
             <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4">{displayName}&apos;s listings</h3>
             <ListingsGrid

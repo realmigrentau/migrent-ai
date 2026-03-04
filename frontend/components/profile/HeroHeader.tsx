@@ -125,7 +125,7 @@ export default function HeroHeader({
                 <>
                   <Link
                     href={`/account/messages/${profile.id}`}
-                    className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold bg-white text-slate-900 shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all"
+                    className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all"
                   >
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
                     Message
@@ -143,7 +143,7 @@ export default function HeroHeader({
               ) : (
                 <Link
                   href={profile.role === "owner" ? "/dashboard/owner-profile" : "/dashboard/seeker-profile"}
-                  className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold bg-white text-slate-900 shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all"
+                  className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all"
                 >
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
                   Edit Profile
