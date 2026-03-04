@@ -97,6 +97,7 @@ export default function SeekerProfilePage() {
         try {
           const data = await getMyProfile(session.access_token);
           if (data) {
+            const validPhoto = data.custom_pfp && data.custom_pfp.startsWith("http") ? data.custom_pfp : null;
             setProfile((prev) => ({
               ...prev,
               name: data.name || user?.user_metadata?.full_name || user?.email?.split("@")[0] || "",
@@ -111,9 +112,13 @@ export default function SeekerProfilePage() {
               bio: data.about_me || data.bio || "",
               uselessSkill: data.most_useless_skill || "",
               interests: data.interests || ["Travel", "Coffee"],
-              profilePhoto: data.custom_pfp || null,
+              profilePhoto: validPhoto,
               badges: data.badges || [],
             }));
+            // Clean up invalid photo URL from DB
+            if (data.custom_pfp && !data.custom_pfp.startsWith("http")) {
+              updateMyProfile(session.access_token, { custom_pfp: null }).catch(() => {});
+            }
           }
           // Also refresh badges
           const badgeData = await refreshBadges(session.access_token);

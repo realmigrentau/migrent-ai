@@ -57,7 +57,7 @@ export default function OwnerProfilePage() {
               uselessSkill: data.most_useless_skill || "",
               aboutMe: data.about_me || "",
               interests: data.interests || [],
-              profilePhoto: data.custom_pfp || null,
+              profilePhoto: data.custom_pfp && data.custom_pfp.startsWith("http") ? data.custom_pfp : null,
               notifyEmail: data.notify_email ?? true,
               notifySms: data.notify_sms ?? false,
               roomsOwned: data.rooms_owned || 0,

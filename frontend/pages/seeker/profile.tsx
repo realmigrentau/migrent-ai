@@ -108,7 +108,7 @@ export default function SeekerProfilePage() {
               bio: data.about_me || data.bio || "",
               uselessSkill: data.most_useless_skill || "",
               interests: data.interests || ["Travel", "Coffee"],
-              profilePhoto: data.custom_pfp || null,
+              profilePhoto: data.custom_pfp && data.custom_pfp.startsWith("http") ? data.custom_pfp : null,
               badges: data.badges || [],
             }));
           }

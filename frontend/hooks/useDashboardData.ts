@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useAuth } from "./useAuth";
-import { getListings, getMyProfile, refreshBadges } from "../lib/api";
+import { getListings, getMyProfile, refreshBadges, updateMyProfile } from "../lib/api";
 
 // ── Types ──
 export interface DashboardMetrics {
@@ -295,6 +295,11 @@ export function useDashboardData() {
 
       const role = profileResult?.role || null;
       const parsed = parseProfile(profileWithBadges, role);
+
+      // Clean up invalid photo URL (blob:, etc.) from DB
+      if (profileResult?.custom_pfp && !profileResult.custom_pfp.startsWith("http")) {
+        updateMyProfile(session.access_token, { custom_pfp: null }).catch(() => {});
+      }
 
       const dashData: DashboardData = {
         metrics: computeMetrics(listings),

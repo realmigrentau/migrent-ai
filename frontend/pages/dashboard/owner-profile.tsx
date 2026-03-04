@@ -52,6 +52,7 @@ export default function OwnerProfilePage() {
         try {
           const data = await getMyProfile(session.access_token);
           if (data) {
+            const validPhoto = data.custom_pfp && data.custom_pfp.startsWith("http") ? data.custom_pfp : null;
             setProfile((prev) => ({
               ...prev,
               name: data.name || user?.user_metadata?.full_name || user?.email?.split("@")[0] || "",
@@ -60,13 +61,17 @@ export default function OwnerProfilePage() {
               uselessSkill: data.most_useless_skill || "",
               aboutMe: data.about_me || "",
               interests: data.interests || [],
-              profilePhoto: data.custom_pfp || null,
+              profilePhoto: validPhoto,
               notifyEmail: data.notify_email ?? true,
               notifySms: data.notify_sms ?? false,
               roomsOwned: data.rooms_owned || 0,
               propertiesOwned: data.properties_owned || 0,
               badges: data.badges || [],
             }));
+            // Clean up invalid photo URL from DB
+            if (data.custom_pfp && !data.custom_pfp.startsWith("http")) {
+              updateMyProfile(session.access_token, { custom_pfp: null }).catch(() => {});
+            }
           }
           // Refresh badges
           const badgeData = await refreshBadges(session.access_token);
