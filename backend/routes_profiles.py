@@ -112,14 +112,12 @@ def update_my_profile(request: Request, body: ProfileUpdate, authorization: str 
         if not updates:
             raise HTTPException(status_code=400, detail="No fields to update")
 
-        # If onboarded, block locked fields
+        # If onboarded, silently strip locked fields instead of blocking
         if is_onboarded:
-            locked_in_request = LOCKED_FIELDS & set(updates.keys())
-            if locked_in_request:
-                raise HTTPException(
-                    status_code=403,
-                    detail=f"Cannot modify fields after onboarding: {', '.join(locked_in_request)}"
-                )
+            for field in LOCKED_FIELDS:
+                updates.pop(field, None)
+            if not updates:
+                raise HTTPException(status_code=400, detail="No updatable fields provided")
 
         updates["id"] = uid
         sb.table("profiles").upsert(updates).execute()
@@ -139,22 +137,15 @@ def get_featured_profiles(request: Request):
     try:
         sb = get_supabase_admin()
 
-        # Top listers: owners with the most listings
-        top_listers_raw = (
-            sb.table("listings")
-            .select("owner_id, owner_id.count()")
-            .execute()
-        )
-
-        # Count listings per owner manually since grouping varies by SDK
+        # Top listers: count listings per owner
+        listings_res = sb.table("listings").select("owner_id").execute()
         owner_counts: dict[str, int] = {}
-        if top_listers_raw.data:
-            for row in top_listers_raw.data:
+        if listings_res.data:
+            for row in listings_res.data:
                 oid = row.get("owner_id")
                 if oid:
                     owner_counts[oid] = owner_counts.get(oid, 0) + 1
 
-        # Sort by count descending, take top 6
         sorted_owners = sorted(owner_counts.items(), key=lambda x: x[1], reverse=True)[:6]
         top_owner_ids = [oid for oid, _ in sorted_owners]
 
@@ -168,29 +159,17 @@ def get_featured_profiles(request: Request):
                 for oid, count in sorted_owners:
                     p = profile_map.get(oid)
                     if p:
-                        top_listers.append({
-                            **p,
-                            "listing_count": count,
-                        })
+                        top_listers.append({**p, "listing_count": count})
 
-        # Top community members: profiles with the most badges
-        badged_res = (
-            sb.table("profiles")
-            .select("id,name,preferred_name,custom_pfp,badges,occupation,about_me")
-            .not_.is_("badges", "null")
-            .limit(20)
-            .execute()
-        )
+        # Top community members: profiles with badges
+        all_profiles = sb.table("profiles").select(
+            "id,name,preferred_name,custom_pfp,badges,occupation,about_me"
+        ).limit(50).execute()
 
         top_members = []
-        if badged_res.data:
-            # Sort by badge count descending, take top 6
-            sorted_members = sorted(
-                [p for p in badged_res.data if p.get("badges") and len(p["badges"]) > 0],
-                key=lambda p: len(p.get("badges", [])),
-                reverse=True,
-            )[:6]
-            top_members = sorted_members
+        if all_profiles.data:
+            with_badges = [p for p in all_profiles.data if p.get("badges") and len(p["badges"]) > 0]
+            top_members = sorted(with_badges, key=lambda p: len(p["badges"]), reverse=True)[:6]
 
         return {
             "top_listers": top_listers,

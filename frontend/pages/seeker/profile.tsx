@@ -187,7 +187,7 @@ export default function SeekerProfilePage() {
         preferred_suburbs: profile.preferredSuburbs || null,
         move_in_date: profile.moveInDate || null,
         lifestyle: profile.lifestyle,
-        custom_pfp: profile.profilePhoto || null,
+        custom_pfp: profile.profilePhoto && profile.profilePhoto.startsWith("http") ? profile.profilePhoto : null,
       });
       setSaved(true);
     } catch (err) {

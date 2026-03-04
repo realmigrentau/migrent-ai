@@ -117,7 +117,7 @@ export default function OwnerProfilePage() {
         properties_owned: profile.propertiesOwned,
         notify_email: profile.notifyEmail,
         notify_sms: profile.notifySms,
-        custom_pfp: profile.profilePhoto || null,
+        custom_pfp: profile.profilePhoto && profile.profilePhoto.startsWith("http") ? profile.profilePhoto : null,
       });
       setSaved(true);
     } catch (err) {

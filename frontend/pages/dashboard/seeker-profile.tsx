@@ -175,15 +175,30 @@ export default function SeekerProfilePage() {
     update("profilePhoto", preview);
     updateProfilePhoto(preview);
 
-    // Upload to Supabase storage
+    // Upload to Supabase storage — try attachments then public bucket
     const ext = file.name.split(".").pop() || "jpg";
     const path = `profile-photos/${user.id}.${ext}`;
-    const { error } = await supabase.storage.from("public").upload(path, file, { cacheControl: "3600", upsert: true });
-    if (!error) {
-      const { data: urlData } = supabase.storage.from("public").getPublicUrl(path);
-      const permanentUrl = urlData.publicUrl + "?t=" + Date.now();
+    let permanentUrl: string | null = null;
+
+    const { error: err1 } = await supabase.storage.from("attachments").upload(path, file, { cacheControl: "3600", upsert: true });
+    if (!err1) {
+      const { data } = supabase.storage.from("attachments").getPublicUrl(path);
+      permanentUrl = data.publicUrl + "?t=" + Date.now();
+    } else {
+      const { error: err2 } = await supabase.storage.from("public").upload(path, file, { cacheControl: "3600", upsert: true });
+      if (!err2) {
+        const { data } = supabase.storage.from("public").getPublicUrl(path);
+        permanentUrl = data.publicUrl + "?t=" + Date.now();
+      }
+    }
+
+    if (permanentUrl) {
       update("profilePhoto", permanentUrl);
       updateProfilePhoto(permanentUrl);
+    } else {
+      // Revert if upload failed — don't save blob URL
+      update("profilePhoto", null);
+      updateProfilePhoto(null);
     }
   };
 
@@ -204,7 +219,7 @@ export default function SeekerProfilePage() {
         preferred_suburbs: profile.preferredSuburbs || null,
         move_in_date: profile.moveInDate || null,
         lifestyle: profile.lifestyle,
-        custom_pfp: profile.profilePhoto || null,
+        custom_pfp: profile.profilePhoto && profile.profilePhoto.startsWith("http") ? profile.profilePhoto : null,
       });
       setSaved(true);
     } catch (err) {
