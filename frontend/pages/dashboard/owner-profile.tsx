@@ -99,11 +99,22 @@ export default function OwnerProfilePage() {
     setSaved(false);
   };
 
-  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const url = URL.createObjectURL(file);
-      update("profilePhoto", url);
+    if (!file || !user) return;
+
+    // Show preview immediately
+    const preview = URL.createObjectURL(file);
+    update("profilePhoto", preview);
+
+    // Upload to Supabase storage
+    const ext = file.name.split(".").pop() || "jpg";
+    const path = `profile-photos/${user.id}.${ext}`;
+    const { error } = await supabase.storage.from("public").upload(path, file, { cacheControl: "3600", upsert: true });
+    if (!error) {
+      const { data: urlData } = supabase.storage.from("public").getPublicUrl(path);
+      const permanentUrl = urlData.publicUrl + "?t=" + Date.now();
+      update("profilePhoto", permanentUrl);
     }
   };
 

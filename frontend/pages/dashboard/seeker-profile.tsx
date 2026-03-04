@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "../../hooks/useAuth";
 import { useDashboard } from "../../hooks/useDashboard";
 import { getMyProfile, updateMyProfile, refreshBadges } from "../../lib/api";
+import { supabase } from "../../lib/supabase";
 import Link from "next/link";
 import DashboardLayout from "../../components/DashboardLayout";
 
@@ -165,13 +166,24 @@ export default function SeekerProfilePage() {
     setSaved(false);
   };
 
-  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const url = URL.createObjectURL(file);
-      update("profilePhoto", url);
-      // Update sidebar avatar immediately
-      updateProfilePhoto(url);
+    if (!file || !user) return;
+
+    // Show preview immediately
+    const preview = URL.createObjectURL(file);
+    update("profilePhoto", preview);
+    updateProfilePhoto(preview);
+
+    // Upload to Supabase storage
+    const ext = file.name.split(".").pop() || "jpg";
+    const path = `profile-photos/${user.id}.${ext}`;
+    const { error } = await supabase.storage.from("public").upload(path, file, { cacheControl: "3600", upsert: true });
+    if (!error) {
+      const { data: urlData } = supabase.storage.from("public").getPublicUrl(path);
+      const permanentUrl = urlData.publicUrl + "?t=" + Date.now();
+      update("profilePhoto", permanentUrl);
+      updateProfilePhoto(permanentUrl);
     }
   };
 

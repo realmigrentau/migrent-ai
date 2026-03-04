@@ -140,7 +140,8 @@ export function useDashboard() {
           user?.email?.split("@")[0] ||
           null;
 
-        const profilePhoto = profile?.custom_pfp || null;
+        const rawPfp = profile?.custom_pfp || null;
+        const profilePhoto = rawPfp && typeof rawPfp === "string" && rawPfp.startsWith("http") ? rawPfp : null;
 
         const profileRole = profile?.role;
         const validProfileRole = profileRole === "seeker" || profileRole === "owner" ? profileRole : null;

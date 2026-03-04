@@ -190,7 +190,8 @@ function parseProfile(data: any, role: string | null): ProfileData {
   const name = data.name || "";
   const bio = data.about_me || data.bio || "";
   const occupation = data.occupation || "";
-  const photo = data.custom_pfp || null;
+  const rawPhoto = data.custom_pfp || null;
+  const photo = rawPhoto && typeof rawPhoto === "string" && rawPhoto.startsWith("http") ? rawPhoto : null;
   const badges = data.badges || [];
   const interests = data.interests || [];
   const lifestyle = data.lifestyle || [];

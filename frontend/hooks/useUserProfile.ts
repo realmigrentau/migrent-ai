@@ -140,7 +140,7 @@ export function useUserProfile(userId: string | undefined) {
             preferred_name: data.preferred_name || null,
             about_me: data.about_me || data.bio || null,
             bio: data.bio || data.about_me || null,
-            custom_pfp: data.custom_pfp || null,
+            custom_pfp: data.custom_pfp && typeof data.custom_pfp === "string" && data.custom_pfp.startsWith("http") ? data.custom_pfp : null,
             role: data.role || null,
             is_verified: data.is_verified ?? false,
             verified: data.verified ?? false,
