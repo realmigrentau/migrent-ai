@@ -474,6 +474,30 @@ export async function refreshBadges(token: string) {
 }
 
 /**
+ * Upload a profile photo.
+ * POST /profiles/me/photo
+ */
+export async function uploadProfilePhoto(token: string, file: File): Promise<string | null> {
+  try {
+    const formData = new FormData();
+    formData.append("file", file);
+    const res = await fetch(`${BASE_URL}/profiles/me/photo`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    });
+    if (!res.ok) throw new Error(`uploadProfilePhoto failed: ${res.status}`);
+    const data = await res.json();
+    return data.url || null;
+  } catch (err) {
+    console.error("uploadProfilePhoto error:", err);
+    return null;
+  }
+}
+
+/**
  * Get featured community profiles (top listers + top members).
  * GET /profiles/featured/community
  */

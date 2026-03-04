@@ -3,8 +3,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "../../hooks/useAuth";
-import { getMyProfile, updateMyProfile, refreshBadges } from "../../lib/api";
-import { supabase } from "../../lib/supabase";
+import { getMyProfile, updateMyProfile, refreshBadges, uploadProfilePhoto } from "../../lib/api";
 import DashboardLayout from "../../components/DashboardLayout";
 
 const OWNER_BADGES = [
@@ -101,33 +100,17 @@ export default function OwnerProfilePage() {
 
   const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file || !user) return;
+    if (!file || !session?.access_token) return;
 
     // Show preview immediately
     const preview = URL.createObjectURL(file);
     update("profilePhoto", preview);
 
-    // Upload to Supabase storage — try attachments then public bucket
-    const ext = file.name.split(".").pop() || "jpg";
-    const path = `profile-photos/${user.id}.${ext}`;
-    let permanentUrl: string | null = null;
-
-    const { error: err1 } = await supabase.storage.from("attachments").upload(path, file, { cacheControl: "3600", upsert: true });
-    if (!err1) {
-      const { data } = supabase.storage.from("attachments").getPublicUrl(path);
-      permanentUrl = data.publicUrl + "?t=" + Date.now();
-    } else {
-      const { error: err2 } = await supabase.storage.from("public").upload(path, file, { cacheControl: "3600", upsert: true });
-      if (!err2) {
-        const { data } = supabase.storage.from("public").getPublicUrl(path);
-        permanentUrl = data.publicUrl + "?t=" + Date.now();
-      }
-    }
-
+    // Upload via backend API (handles storage + DB update)
+    const permanentUrl = await uploadProfilePhoto(session.access_token, file);
     if (permanentUrl) {
       update("profilePhoto", permanentUrl);
     } else {
-      // Revert if upload failed — don't save blob URL
       update("profilePhoto", null);
     }
   };

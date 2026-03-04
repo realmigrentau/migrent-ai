@@ -1,7 +1,9 @@
 import logging
-from fastapi import APIRouter, HTTPException, Header, Request
+import base64
+import uuid
+from fastapi import APIRouter, HTTPException, Header, Request, UploadFile, File
 from models import ProfileUpdate
-from db import get_supabase_admin
+from db import get_supabase_admin, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY
 from routes_listings import get_current_user
 from limiter import limiter
 from datetime import datetime
@@ -178,6 +180,64 @@ def get_featured_profiles(request: Request):
     except Exception as e:
         logger.exception("Failed to fetch featured profiles")
         raise HTTPException(status_code=500, detail="Failed to fetch featured profiles")
+
+
+@router.post("/me/photo")
+@limiter.limit("10/minute")
+async def upload_profile_photo(request: Request, file: UploadFile = File(...), authorization: str = Header(...)):
+    """Upload a profile photo to Supabase storage and update the profile."""
+    try:
+        user = get_current_user(authorization)
+        sb = get_supabase_admin()
+        uid = str(user.id)
+
+        # Read file content
+        content = await file.read()
+        if len(content) > 5 * 1024 * 1024:
+            raise HTTPException(status_code=400, detail="File too large (max 5MB)")
+
+        # Determine extension
+        ext = "jpg"
+        if file.content_type:
+            ext_map = {"image/png": "png", "image/jpeg": "jpg", "image/webp": "webp", "image/gif": "gif"}
+            ext = ext_map.get(file.content_type, "jpg")
+
+        path = f"profile-photos/{uid}.{ext}"
+        bucket = "avatars"
+
+        # Try to upload — create bucket if needed
+        try:
+            sb.storage.from_(bucket).upload(path, content, {"content-type": file.content_type or "image/jpeg", "upsert": "true"})
+        except Exception as upload_err:
+            # Bucket might not exist, try creating it
+            try:
+                sb.storage.create_bucket(bucket, {"public": True})
+            except Exception:
+                pass  # Bucket might already exist
+            # Retry upload
+            try:
+                sb.storage.from_(bucket).upload(path, content, {"content-type": file.content_type or "image/jpeg", "upsert": "true"})
+            except Exception:
+                # Last resort: remove old file and upload fresh
+                try:
+                    sb.storage.from_(bucket).remove([path])
+                except Exception:
+                    pass
+                sb.storage.from_(bucket).upload(path, content, {"content-type": file.content_type or "image/jpeg"})
+
+        # Get public URL
+        public_url = f"{SUPABASE_URL}/storage/v1/object/public/{bucket}/{path}"
+
+        # Update profile with the permanent URL (add cache buster)
+        final_url = f"{public_url}?t={int(datetime.utcnow().timestamp())}"
+        sb.table("profiles").upsert({"id": uid, "custom_pfp": final_url}).execute()
+
+        return {"url": final_url}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.exception("Failed to upload profile photo")
+        raise HTTPException(status_code=500, detail="Failed to upload photo")
 
 
 @router.get("/{user_id}")
