@@ -365,6 +365,45 @@ select.input-field {
   scroll-margin-top: 80px;
 }
 
+/* ── Profile hero gradient ── */
+.profile-hero-gradient {
+  background: linear-gradient(135deg, #ec4899 0%, #6366f1 50%, #10b981 100%);
+}
+
+.dark .profile-hero-gradient {
+  background: linear-gradient(135deg, #be185d 0%, #4338ca 50%, #059669 100%);
+}
+
+/* ── Badge glow ── */
+@keyframes badge-glow {
+  0%, 100% { box-shadow: 0 0 8px rgba(251, 191, 36, 0.4); }
+  50% { box-shadow: 0 0 20px rgba(251, 191, 36, 0.7); }
+}
+
+.badge-glow {
+  animation: badge-glow 2s ease-in-out infinite;
+}
+
+/* ── Verification pulse ── */
+@keyframes verify-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(244, 63, 94, 0.4); }
+  50% { box-shadow: 0 0 0 6px rgba(244, 63, 94, 0); }
+}
+
+.verify-pulse {
+  animation: verify-pulse 2s ease-in-out infinite;
+}
+
+/* ── Scroll reveal ── */
+@keyframes scroll-reveal {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.scroll-reveal {
+  animation: scroll-reveal 0.6s ease-out forwards;
+}
+
 /* ── RTL Support (Arabic) ── */
 [dir="rtl"] {
   direction: rtl;
