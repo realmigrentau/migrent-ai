@@ -1,7 +1,6 @@
 import type { AppProps } from "next/app";
 import { AnimatePresence, motion } from "framer-motion";
 import { HCaptchaProvider } from "@hcaptcha/react-hcaptcha/hooks";
-import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import Layout from "../components/Layout";
 import SEOHead from "../components/SEOHead";
@@ -36,7 +35,6 @@ export default function App({ Component, pageProps, router }: AppProps) {
     <>
       <SEOHead />
       {inner}
-      <Analytics />
       <SpeedInsights />
     </>
   );

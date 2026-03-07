@@ -237,10 +237,7 @@ export function useTopListings() {
       try {
         const { data, error } = await supabase
           .from("listings")
-          .select("id, title, suburb, weekly_price, rating, reviews_count, beds, photos, nearest_station, owner_verified, superhost")
-          .eq("owner_verified", true)
-          .order("rating", { ascending: false })
-          .order("reviews_count", { ascending: false })
+          .select("*")
           .limit(16);
 
         if (cancelled) return;
