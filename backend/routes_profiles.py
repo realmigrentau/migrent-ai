@@ -75,8 +75,8 @@ def complete_onboarding(request: Request, body: ProfileUpdate, authorization: st
             if not getattr(body, field, None):
                 raise HTTPException(status_code=400, detail=f"Missing required field: {field}")
 
-        # Build updates with all fields
-        updates = {k: v for k, v in body.model_dump().items() if v is not None}
+        # Build updates with explicitly set fields
+        updates = {k: v for k, v in body.model_dump(exclude_unset=True).items() if v is not None}
         updates["id"] = uid
         updates["onboarding_completed"] = True
         updates["onboarding_completed_at"] = datetime.utcnow().isoformat()
@@ -109,8 +109,9 @@ def update_my_profile(request: Request, body: ProfileUpdate, authorization: str 
         if profile_res.data:
             is_onboarded = profile_res.data[0].get("onboarding_completed", False)
 
-        # Extract updates
-        updates = {k: v for k, v in body.model_dump().items() if v is not None}
+        # Extract only fields that were explicitly sent in the request
+        # This allows setting fields to null (e.g. clearing custom_pfp)
+        updates = body.model_dump(exclude_unset=True)
         if not updates:
             raise HTTPException(status_code=400, detail="No fields to update")
 
@@ -204,26 +205,29 @@ async def upload_profile_photo(request: Request, file: UploadFile = File(...), a
 
         path = f"profile-photos/{uid}.{ext}"
         bucket = "avatars"
+        content_type = file.content_type or "image/jpeg"
+        file_opts = {"content-type": content_type, "upsert": "true"}
 
-        # Try to upload — create bucket if needed
+        # Ensure bucket exists
         try:
-            sb.storage.from_(bucket).upload(path, content, {"content-type": file.content_type or "image/jpeg", "upsert": "true"})
-        except Exception as upload_err:
-            # Bucket might not exist, try creating it
+            sb.storage.get_bucket(bucket)
+        except Exception:
             try:
                 sb.storage.create_bucket(bucket, {"public": True})
-            except Exception:
-                pass  # Bucket might already exist
-            # Retry upload
+                logger.info(f"Created storage bucket: {bucket}")
+            except Exception as bucket_err:
+                logger.warning(f"Bucket creation attempt: {bucket_err}")
+
+        # Try to upload — remove old file first if upsert fails
+        try:
+            sb.storage.from_(bucket).upload(path, content, file_opts)
+        except Exception as upload_err:
+            logger.warning(f"First upload attempt failed: {upload_err}, trying remove + upload")
             try:
-                sb.storage.from_(bucket).upload(path, content, {"content-type": file.content_type or "image/jpeg", "upsert": "true"})
+                sb.storage.from_(bucket).remove([path])
             except Exception:
-                # Last resort: remove old file and upload fresh
-                try:
-                    sb.storage.from_(bucket).remove([path])
-                except Exception:
-                    pass
-                sb.storage.from_(bucket).upload(path, content, {"content-type": file.content_type or "image/jpeg"})
+                pass
+            sb.storage.from_(bucket).upload(path, content, {"content-type": content_type})
 
         # Get public URL
         public_url = f"{SUPABASE_URL}/storage/v1/object/public/{bucket}/{path}"

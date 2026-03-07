@@ -296,7 +296,7 @@ export function useDashboardData() {
       const role = profileResult?.role || null;
       const parsed = parseProfile(profileWithBadges, role);
 
-      // Clean up invalid photo URL (blob:, etc.) from DB
+      // Clean up invalid photo URL (blob:, etc.) from DB — fire-and-forget
       if (profileResult?.custom_pfp && !profileResult.custom_pfp.startsWith("http")) {
         updateMyProfile(session.access_token, { custom_pfp: null }).catch(() => {});
       }
