@@ -474,10 +474,66 @@ export async function refreshBadges(token: string) {
 }
 
 /**
- * Upload a profile photo.
- * POST /profiles/me/photo
+ * Upload a profile photo directly to Supabase Storage, then update the profile.
+ * Uses the Supabase JS client for reliable uploads.
+ * Falls back to backend endpoint if direct upload fails.
  */
 export async function uploadProfilePhoto(token: string, file: File): Promise<string | null> {
+  // Try direct Supabase Storage upload first (most reliable)
+  try {
+    const { supabase } = await import("./supabase");
+
+    // Get current user from the active Supabase session
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error("Not authenticated");
+
+    const uid = user.id;
+
+    // Determine extension from file type
+    const extMap: Record<string, string> = {
+      "image/png": "png",
+      "image/jpeg": "jpg",
+      "image/webp": "webp",
+      "image/gif": "gif",
+    };
+    const ext = extMap[file.type] || "jpg";
+    const filePath = `profile-photos/${uid}.${ext}`;
+    const bucket = "avatars";
+
+    // Upload to Supabase Storage (upsert to replace existing)
+    const { error: uploadError } = await supabase.storage
+      .from(bucket)
+      .upload(filePath, file, {
+        cacheControl: "3600",
+        upsert: true,
+        contentType: file.type || "image/jpeg",
+      });
+
+    if (uploadError) {
+      console.error("Supabase storage upload error:", uploadError);
+      throw uploadError;
+    }
+
+    // Get the public URL
+    const { data: urlData } = supabase.storage
+      .from(bucket)
+      .getPublicUrl(filePath);
+
+    const publicUrl = urlData?.publicUrl;
+    if (!publicUrl) throw new Error("Failed to get public URL");
+
+    // Add cache buster to force browser refresh
+    const finalUrl = `${publicUrl}?t=${Date.now()}`;
+
+    // Update the profile in the database via backend API
+    await updateMyProfile(token, { custom_pfp: finalUrl });
+
+    return finalUrl;
+  } catch (directErr) {
+    console.warn("Direct Supabase upload failed, trying backend fallback:", directErr);
+  }
+
+  // Fallback: try the backend endpoint
   try {
     const formData = new FormData();
     formData.append("file", file);
@@ -488,11 +544,11 @@ export async function uploadProfilePhoto(token: string, file: File): Promise<str
       },
       body: formData,
     });
-    if (!res.ok) throw new Error(`uploadProfilePhoto failed: ${res.status}`);
+    if (!res.ok) throw new Error(`uploadProfilePhoto backend failed: ${res.status}`);
     const data = await res.json();
     return data.url || null;
-  } catch (err) {
-    console.error("uploadProfilePhoto error:", err);
+  } catch (backendErr) {
+    console.error("uploadProfilePhoto error (both methods failed):", backendErr);
     return null;
   }
 }

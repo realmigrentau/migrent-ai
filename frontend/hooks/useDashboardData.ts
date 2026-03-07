@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useAuth } from "./useAuth";
-import { getListings, getMyProfile, refreshBadges, updateMyProfile } from "../lib/api";
+import { getListings, getMyProfile, refreshBadges } from "../lib/api";
 
 // ── Types ──
 export interface DashboardMetrics {
@@ -296,10 +296,8 @@ export function useDashboardData() {
       const role = profileResult?.role || null;
       const parsed = parseProfile(profileWithBadges, role);
 
-      // Clean up invalid photo URL (blob:, etc.) from DB — fire-and-forget
-      if (profileResult?.custom_pfp && !profileResult.custom_pfp.startsWith("http")) {
-        updateMyProfile(session.access_token, { custom_pfp: null }).catch(() => {});
-      }
+      // If DB has an invalid photo URL (blob:, data:, etc.), just ignore it locally
+      // Don't try to clean it up via API call — it causes 400 errors
 
       const dashData: DashboardData = {
         metrics: computeMetrics(listings),

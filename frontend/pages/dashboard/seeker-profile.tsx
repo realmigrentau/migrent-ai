@@ -115,10 +115,7 @@ export default function SeekerProfilePage() {
               profilePhoto: validPhoto,
               badges: data.badges || [],
             }));
-            // Clean up invalid photo URL from DB
-            if (data.custom_pfp && !data.custom_pfp.startsWith("http")) {
-              updateMyProfile(session.access_token, { custom_pfp: null }).catch(() => {});
-            }
+            // If DB has an invalid photo URL (blob:, etc.), just ignore it locally
           }
           // Also refresh badges
           const badgeData = await refreshBadges(session.access_token);
