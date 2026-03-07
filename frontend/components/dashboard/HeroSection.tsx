@@ -26,9 +26,9 @@ export default function HeroSection({
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 16 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.15 }}
       className="relative overflow-hidden rounded-2xl gradient-indigo-pink p-6 md:p-8"
     >
       {/* Background pattern */}
@@ -63,15 +63,12 @@ export default function HeroSection({
             </Link>
 
             <div>
-              <motion.h1
+              <h1
                 className="text-2xl md:text-3xl font-black text-white tracking-tight"
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.1 }}
               >
                 Welcome back, {displayName || "there"}{" "}
                 <Sparkles className="inline w-6 h-6 text-yellow-300" />
-              </motion.h1>
+              </h1>
               <p className="text-white/70 text-sm mt-1">
                 {profile?.occupation
                   ? `${profile.occupation} · ${isOwner ? "Property Owner" : "Room Seeker"}`
@@ -149,16 +146,11 @@ export default function HeroSection({
   );
 }
 
-function StatPill({ label, value, delay }: { label: string; value: string; delay: number }) {
+function StatPill({ label, value }: { label: string; value: string; delay?: number }) {
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ delay }}
-      className="flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-lg px-3 py-1.5"
-    >
+    <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-lg px-3 py-1.5">
       <span className="text-white font-bold text-sm">{value}</span>
       <span className="text-white/70 text-xs">{label}</span>
-    </motion.div>
+    </div>
   );
 }

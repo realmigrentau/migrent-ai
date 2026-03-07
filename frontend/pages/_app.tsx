@@ -11,7 +11,9 @@ import "../styles/globals.css";
 export default function App({ Component, pageProps, router }: AppProps) {
   const isAdmin = router.pathname.startsWith("/mazda.asgt22779412.sara-admin");
 
-  const inner = isAdmin ? (
+  const isDashboard = router.pathname.startsWith("/dashboard");
+
+  const inner = isAdmin || isDashboard ? (
     <Layout>
       <Component {...pageProps} />
     </Layout>
@@ -20,10 +22,10 @@ export default function App({ Component, pageProps, router }: AppProps) {
       <AnimatePresence mode="wait">
         <motion.div
           key={router.route}
-          initial={{ opacity: 0, y: 12 }}
+          initial={{ opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -12 }}
-          transition={{ duration: 0.3, ease: "easeInOut" }}
+          exit={{ opacity: 0, y: -6 }}
+          transition={{ duration: 0.15, ease: "easeOut" }}
         >
           <Component {...pageProps} />
         </motion.div>

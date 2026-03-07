@@ -22,13 +22,13 @@ export default function OwnerDashboard() {
   const [listings, setListings] = useState<any[]>([]);
   const [loadingListings, setLoadingListings] = useState(true);
 
-  // Set role to owner if not already
+  // Set role to owner only if user explicitly navigated here with a different role
   useEffect(() => {
-    if (!loading && session && role !== "owner") {
-      // User navigated here explicitly, set their role to owner
+    if (!loading && session && role && role !== "owner") {
       setRole("owner");
     }
-  }, [loading, session, role, setRole]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loading, session]);
 
   // All authenticated users can access owner dashboard
 
@@ -51,25 +51,17 @@ export default function OwnerDashboard() {
     <DashboardLayout>
       <div className="space-y-8">
         {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-        >
+        <div>
           <h1 className="text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white">
             Owner <span className="gradient-text-accent">Hub</span>
           </h1>
           <p className="mt-2 text-slate-500 dark:text-slate-400">
             Manage your listings and connect with seekers
           </p>
-        </motion.div>
+        </div>
 
         {/* Quick actions */}
-        <motion.section
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="grid sm:grid-cols-3 gap-4"
-        >
+        <section className="grid sm:grid-cols-3 gap-4">
           {[
             {
               href: "/owner/listings/new",
@@ -118,14 +110,10 @@ export default function OwnerDashboard() {
               </p>
             </motion.a>
           ))}
-        </motion.section>
+        </section>
 
         {/* Listings overview */}
-        <motion.section
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.15 }}
-        >
+        <section>
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-bold text-slate-900 dark:text-white">
               Your Listings
@@ -189,16 +177,11 @@ export default function OwnerDashboard() {
               </Link>
             </div>
           )}
-        </motion.section>
+        </section>
 
         {/* Stats (placeholder) */}
         {listings.length > 0 && (
-          <motion.section
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="grid grid-cols-2 sm:grid-cols-4 gap-4"
-          >
+          <section className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {[
               { label: "Active Listings", value: listings.length, color: "blue" },
               { label: "Total Views", value: "—", color: "slate" },
@@ -223,15 +206,11 @@ export default function OwnerDashboard() {
                 </p>
               </div>
             ))}
-          </motion.section>
+          </section>
         )}
 
         {/* Why MigRent */}
-        <motion.section
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-        >
+        <section>
           <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-3">
             Why use MigRent as an owner
           </h2>
@@ -249,28 +228,19 @@ export default function OwnerDashboard() {
               "Control over who you accept, with the option for MigRent to suspend abusive accounts.",
               "Completing deals on-platform helps you build a positive track record.",
             ].map((text, i) => (
-              <motion.div
+              <div
                 key={i}
-                initial={{ opacity: 0, x: -10 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.05 }}
                 className="flex gap-2 items-start text-sm text-slate-600 dark:text-slate-300"
               >
                 <span className="text-blue-500 mt-0.5 shrink-0">&#x2713;</span>
                 {text}
-              </motion.div>
+              </div>
             ))}
           </div>
-        </motion.section>
+        </section>
 
         {/* Platform fee explanation */}
-        <motion.section
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="card-subtle p-6 rounded-2xl space-y-3 text-sm text-slate-500 dark:text-slate-400"
-        >
+        <section className="card-subtle p-6 rounded-2xl space-y-3 text-sm text-slate-500 dark:text-slate-400">
           <div className="inline-flex items-center px-3 py-1 rounded-full text-xs bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
             MigRent AI ABN: 22 669 566 941
           </div>
@@ -289,7 +259,7 @@ export default function OwnerDashboard() {
             You agree not to bypass MigRent in order to avoid this fee. MigRent
             may suspend accounts that attempt to circumvent fees.
           </p>
-        </motion.section>
+        </section>
 
         {/* Disclaimers */}
         <section className="text-xs text-slate-400 dark:text-slate-500 space-y-2 pb-4">

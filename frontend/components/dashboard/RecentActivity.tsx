@@ -92,11 +92,8 @@ export default function RecentActivity({ activity, loading }: RecentActivityProp
 
       <div className="space-y-1">
         {visibleItems.map((item, i) => (
-          <motion.div
+          <div
             key={item.id}
-            initial={{ opacity: 0, x: 8 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: i * 0.04 }}
             className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer group"
           >
             <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${statusColors[item.status]}`}>
@@ -118,7 +115,7 @@ export default function RecentActivity({ activity, loading }: RecentActivityProp
               </span>
               <ChevronRight className="w-3.5 h-3.5 text-slate-300 dark:text-slate-600 group-hover:text-indigo-500 transition-colors" />
             </div>
-          </motion.div>
+          </div>
         ))}
       </div>
 

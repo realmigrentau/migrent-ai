@@ -11,7 +11,7 @@ import OwnerView from "../../components/dashboard/OwnerView";
 import SeekerView from "../../components/dashboard/SeekerView";
 import ProfileCompleteness from "../../components/dashboard/ProfileCompleteness";
 import CommunityHighlights from "../../components/dashboard/CommunityHighlights";
-import confetti from "canvas-confetti";
+import type confettiType from "canvas-confetti";
 
 /**
  * Main Dashboard Page (/dashboard)
@@ -39,20 +39,20 @@ export default function DashboardHome() {
 
   const [roleChanging, setRoleChanging] = useState(false);
 
-  // First-visit confetti
+  // First-visit confetti (dynamic import, no delay)
   useEffect(() => {
     if (typeof window === "undefined") return;
     const key = "migrent_dashboard_confetti_seen";
     if (!localStorage.getItem(key) && isAuthenticated && !profileLoading) {
       localStorage.setItem(key, "1");
-      setTimeout(() => {
-        confetti({
+      import("canvas-confetti").then((mod) => {
+        mod.default({
           particleCount: 80,
           spread: 60,
           origin: { y: 0.3 },
           colors: ["#6366f1", "#ec4899", "#10b981", "#f59e0b"],
         });
-      }, 800);
+      });
     }
   }, [isAuthenticated, profileLoading]);
 

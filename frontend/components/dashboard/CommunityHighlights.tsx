@@ -131,12 +131,7 @@ export default function CommunityHighlights() {
           const badgeCount = profile.badges?.length || 0;
 
           return (
-            <motion.div
-              key={profile.id}
-              initial={{ opacity: 0, x: 8 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: i * 0.04 }}
-            >
+            <div key={profile.id}>
               <Link
                 href={`/users/profile/${profile.id}`}
                 className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group"
@@ -192,7 +187,7 @@ export default function CommunityHighlights() {
 
                 <ChevronRight className="w-3.5 h-3.5 text-slate-300 dark:text-slate-600 group-hover:text-indigo-500 transition-colors shrink-0" />
               </Link>
-            </motion.div>
+            </div>
           );
         })}
       </div>

@@ -2,9 +2,11 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
+import dynamic from "next/dynamic";
 import MegaNavbar from "./ui/mega-navbar";
 import SupportWidget from "./support/SupportWidget";
-import SmoothScroll from "./SmoothScroll";
+
+const SmoothScroll = dynamic(() => import("./SmoothScroll"), { ssr: false });
 
 export default function Layout({ children }: { children: ReactNode }) {
   const router = useRouter();
@@ -12,11 +14,13 @@ export default function Layout({ children }: { children: ReactNode }) {
 
   const isAdminRoute = router.pathname.startsWith("/mazda.asgt22779412.sara-admin");
   const isHomePage = router.pathname === "/";
+  const isDashboard = router.pathname.startsWith("/dashboard");
   const isFullWidth = isAdminRoute || isHomePage;
 
   return (
     <div className="min-h-screen flex flex-col">
-      <SmoothScroll />
+      {/* Only load smooth scroll on marketing pages, skip on dashboard for speed */}
+      {!isDashboard && !isAdminRoute && <SmoothScroll />}
 
       {/* Sticky navbar */}
       <MegaNavbar />

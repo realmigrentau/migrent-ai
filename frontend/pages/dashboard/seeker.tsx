@@ -24,13 +24,13 @@ export default function SeekerDashboard() {
   const [matches, setMatches] = useState<any[]>([]);
   const [searching, setSearching] = useState(false);
 
-  // Set role to seeker if not already
+  // Set role to seeker only if user explicitly navigated here with a different role
   useEffect(() => {
-    if (!loading && session && role !== "seeker") {
-      // User navigated here explicitly, set their role to seeker
+    if (!loading && session && role && role !== "seeker") {
       setRole("seeker");
     }
-  }, [loading, session, role, setRole]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loading, session]);
 
   const handleSearch = async () => {
     if (!postcode || !session) return;
@@ -52,25 +52,17 @@ export default function SeekerDashboard() {
     <DashboardLayout>
       <div className="space-y-8">
         {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-        >
+        <div>
           <h1 className="text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white">
             Seeker <span className="gradient-text">Hub</span>
           </h1>
           <p className="mt-2 text-slate-500 dark:text-slate-400">
             Find your perfect room and manage your search
           </p>
-        </motion.div>
+        </div>
 
         {/* Quick actions */}
-        <motion.section
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="grid sm:grid-cols-3 gap-4"
-        >
+        <section className="grid sm:grid-cols-3 gap-4">
           {[
             {
               href: "/seeker/search",
@@ -119,14 +111,10 @@ export default function SeekerDashboard() {
               </p>
             </motion.a>
           ))}
-        </motion.section>
+        </section>
 
         {/* Quick search */}
-        <motion.section
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.15 }}
-        >
+        <section>
           <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-4">
             Quick Search
           </h2>
@@ -161,14 +149,11 @@ export default function SeekerDashboard() {
               Enter an Australian postcode to find rooms in that area
             </p>
           </div>
-        </motion.section>
+        </section>
 
         {/* Search results */}
         {matches.length > 0 && (
-          <motion.section
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
+          <section>
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-bold text-slate-900 dark:text-white">
                 Matches ({matches.length})
@@ -196,15 +181,11 @@ export default function SeekerDashboard() {
                 );
               })}
             </div>
-          </motion.section>
+          </section>
         )}
 
         {/* Why MigRent */}
-        <motion.section
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-        >
+        <section>
           <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-3">
             Why use MigRent as a seeker
           </h2>
@@ -221,28 +202,19 @@ export default function SeekerDashboard() {
               "Verification and trust signals can help you stand out.",
               "Completing matches on MigRent builds a stronger profile.",
             ].map((text, i) => (
-              <motion.div
+              <div
                 key={i}
-                initial={{ opacity: 0, x: -10 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.05 }}
                 className="flex gap-2 items-start text-sm text-slate-600 dark:text-slate-300"
               >
                 <span className="text-rose-500 mt-0.5 shrink-0">&#x2713;</span>
                 {text}
-              </motion.div>
+              </div>
             ))}
           </div>
-        </motion.section>
+        </section>
 
         {/* Profile verification */}
-        <motion.section
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="card p-6 rounded-2xl"
-        >
+        <section className="card p-6 rounded-2xl">
           <div className="flex items-start gap-4">
             <div className="w-12 h-12 rounded-xl bg-emerald-100 dark:bg-emerald-500/20 flex items-center justify-center shrink-0">
               <svg
@@ -267,31 +239,24 @@ export default function SeekerDashboard() {
                 Verification can help owners trust you more. It is optional, but
                 recommended. Complete a quick ID check via Stripe.
               </p>
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+              <button
                 onClick={handleVerify}
-                className="btn-primary py-2.5 px-5 rounded-xl text-sm"
+                className="btn-primary py-2.5 px-5 rounded-xl text-sm hover:scale-[1.02] active:scale-[0.98] transition-transform"
               >
                 Verify Profile
-              </motion.button>
+              </button>
             </div>
           </div>
-        </motion.section>
+        </section>
 
         {/* Platform fee info */}
-        <motion.section
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="card-subtle p-5 rounded-2xl text-sm text-slate-500 dark:text-slate-400"
-        >
+        <section className="card-subtle p-5 rounded-2xl text-sm text-slate-500 dark:text-slate-400">
           <p>
             When you successfully secure a place through MigRent, a small
             one-time platform fee of AUD 19 may be offered. This fee is optional
             at this stage and will always be shown clearly before you pay.
           </p>
-        </motion.section>
+        </section>
 
         {/* Disclaimers */}
         <section className="text-xs text-slate-400 dark:text-slate-500 space-y-2 pb-4">

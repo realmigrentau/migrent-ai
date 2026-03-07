@@ -69,7 +69,7 @@ export default function ProfileCompleteness({ profile, role, loading }: ProfileC
                 strokeDasharray={`${2 * Math.PI * 20}`}
                 initial={{ strokeDashoffset: 2 * Math.PI * 20 }}
                 animate={{ strokeDashoffset: 2 * Math.PI * 20 * (1 - profile.completionPercent / 100) }}
-                transition={{ duration: 1, ease: "easeOut" }}
+                transition={{ duration: 0.4, ease: "easeOut" }}
               />
               <defs>
                 <linearGradient id="progress-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -108,10 +108,7 @@ export default function ProfileCompleteness({ profile, role, loading }: ProfileC
         <div className="space-y-1">
           {profile.missingFields.slice(0, 3).map((field, i) => (
             <Link key={field} href={profileHref}>
-              <motion.div
-                initial={{ opacity: 0, x: 6 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: i * 0.05 }}
+              <div
                 className="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group cursor-pointer"
               >
                 <Circle className="w-4 h-4 text-slate-300 dark:text-slate-600 shrink-0" />
@@ -119,7 +116,7 @@ export default function ProfileCompleteness({ profile, role, loading }: ProfileC
                   Add {field.toLowerCase()}
                 </span>
                 <ChevronRight className="w-3 h-3 ml-auto text-slate-300 dark:text-slate-600 group-hover:text-indigo-500 transition-colors" />
-              </motion.div>
+              </div>
             </Link>
           ))}
           {profile.missingFields.length > 3 && (
