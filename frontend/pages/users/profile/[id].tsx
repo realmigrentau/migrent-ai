@@ -294,7 +294,7 @@ export default function PublicProfilePage() {
           <div className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg border-t border-slate-200 dark:border-slate-800 px-4 py-3 pb-safe-bottom">
             <div className="flex items-center gap-3 max-w-lg mx-auto">
               <Link
-                href={`/account/messages/${profile.id}`}
+                href={`/messages?userId=${profile.id}`}
                 className="flex-1 flex items-center justify-center gap-2 btn-primary py-3 rounded-xl text-sm"
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

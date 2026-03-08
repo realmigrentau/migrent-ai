@@ -75,7 +75,7 @@ export default function DashboardHome() {
           router.push("/seeker/search");
           break;
         case "n":
-          router.push("/account/messages");
+          router.push("/messages");
           break;
         case "p":
           router.push(

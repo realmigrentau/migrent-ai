@@ -375,7 +375,7 @@ export default function MegaNavbar() {
                       </Link>
                       <div className="border-t border-slate-100 dark:border-slate-800">
                         <Link
-                          href="/account/messages"
+                          href="/messages"
                           onClick={() => setAccountOpen(false)}
                           className="flex items-center gap-3 px-4 py-3 text-sm text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors"
                         >

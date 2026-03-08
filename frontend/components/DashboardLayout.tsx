@@ -104,7 +104,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         { href: "/owner/listings/new", label: "Post Room", icon: <Plus className="w-5 h-5" /> },
         { href: "/owner/listings", label: "Listings", icon: <ListOrdered className="w-5 h-5" /> },
         { href: "/dashboard/owner-profile", label: "Profile", icon: <User className="w-5 h-5" /> },
-        { href: "/account/messages", label: "Messages", icon: <MessageCircle className="w-5 h-5" /> },
+        { href: "/messages", label: "Messages", icon: <MessageCircle className="w-5 h-5" /> },
         { href: "/account/settings", label: "Settings", icon: <Settings className="w-5 h-5" /> },
       ];
     }
@@ -116,14 +116,14 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         { href: "/seeker/search", label: "Search", icon: <Search className="w-5 h-5" /> },
         { href: "/seeker/saved", label: "Saved", icon: <Heart className="w-5 h-5" /> },
         { href: "/dashboard/seeker-profile", label: "Profile", icon: <User className="w-5 h-5" /> },
-        { href: "/account/messages", label: "Messages", icon: <MessageCircle className="w-5 h-5" /> },
+        { href: "/messages", label: "Messages", icon: <MessageCircle className="w-5 h-5" /> },
         { href: "/account/settings", label: "Settings", icon: <Settings className="w-5 h-5" /> },
       ];
     }
 
     return [
       ...common,
-      { href: "/account/messages", label: "Messages", icon: <MessageCircle className="w-5 h-5" /> },
+      { href: "/messages", label: "Messages", icon: <MessageCircle className="w-5 h-5" /> },
       { href: "/account/settings", label: "Settings", icon: <Settings className="w-5 h-5" /> },
     ];
   };
@@ -135,7 +135,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         { href: "/dashboard", label: "Home", icon: <LayoutDashboard className="w-5 h-5" /> },
         { href: "/owner/listings", label: "Listings", icon: <ListOrdered className="w-5 h-5" /> },
         { href: "/dashboard/owner-profile", label: "Profile", icon: <User className="w-5 h-5" /> },
-        { href: "/account/messages", label: "Messages", icon: <MessageCircle className="w-5 h-5" /> },
+        { href: "/messages", label: "Messages", icon: <MessageCircle className="w-5 h-5" /> },
         { href: "/faq", label: "Support", icon: <HelpCircle className="w-5 h-5" /> },
       ];
     }
@@ -144,7 +144,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       { href: "/dashboard", label: "Home", icon: <LayoutDashboard className="w-5 h-5" /> },
       { href: "/seeker/search", label: "Search", icon: <Search className="w-5 h-5" /> },
       { href: "/dashboard/seeker-profile", label: "Profile", icon: <User className="w-5 h-5" /> },
-      { href: "/account/messages", label: "Messages", icon: <MessageCircle className="w-5 h-5" /> },
+      { href: "/messages", label: "Messages", icon: <MessageCircle className="w-5 h-5" /> },
       { href: "/faq", label: "Support", icon: <HelpCircle className="w-5 h-5" /> },
     ];
   };
