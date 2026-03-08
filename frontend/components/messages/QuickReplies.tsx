@@ -1,0 +1,88 @@
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Zap, ChevronDown, ChevronUp, Settings, Plus, X } from "lucide-react";
+
+// ── Default templates ───────────────────────────────────────
+const DEFAULT_TEMPLATES = [
+  { id: "1", label: "Room available", text: "Hi! The room is available. Would you like to schedule a viewing?" },
+  { id: "2", label: "Send contract", text: "I'll prepare the rental agreement and send it over shortly." },
+  { id: "3", label: "Need ID", text: "Could you please complete your ID verification? It helps both of us!" },
+  { id: "4", label: "Payment received", text: "Payment received, thank you! Welcome to your new home." },
+  { id: "5", label: "Schedule viewing", text: "Let's schedule a viewing! What times work best for you?" },
+  { id: "6", label: "Not available", text: "Sorry, this room is no longer available. I can suggest similar listings!" },
+  { id: "7", label: "Moved in", text: "Welcome! Please let me know if you need anything to settle in." },
+  { id: "8", label: "Thanks!", text: "Thanks for your interest! I'll get back to you shortly." },
+];
+
+interface Template {
+  id: string;
+  label: string;
+  text: string;
+}
+
+interface QuickRepliesProps {
+  onSelect: (text: string) => void;
+  expanded?: boolean;
+}
+
+export default function QuickReplies({ onSelect, expanded: initialExpanded }: QuickRepliesProps) {
+  const [expanded, setExpanded] = useState(initialExpanded ?? false);
+  const [templates, setTemplates] = useState<Template[]>(DEFAULT_TEMPLATES);
+  const [showAll, setShowAll] = useState(false);
+
+  const visibleTemplates = showAll ? templates : templates.slice(0, 4);
+
+  return (
+    <div className="px-3 pb-1">
+      {/* Toggle button */}
+      <button
+        onClick={() => setExpanded(!expanded)}
+        className="flex items-center gap-1.5 text-[11px] font-semibold text-indigo-500 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors mb-1.5 px-1"
+      >
+        <Zap className="w-3 h-3" />
+        Quick replies
+        {expanded ? (
+          <ChevronUp className="w-3 h-3" />
+        ) : (
+          <ChevronDown className="w-3 h-3" />
+        )}
+      </button>
+
+      <AnimatePresence>
+        {expanded && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="overflow-hidden"
+          >
+            <div className="flex flex-wrap gap-1.5 mb-2">
+              {visibleTemplates.map((template) => (
+                <motion.button
+                  key={template.id}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => onSelect(template.text)}
+                  className="px-3 py-1.5 rounded-full text-[11px] font-semibold bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-500/20 transition-all border border-indigo-200/50 dark:border-indigo-500/20"
+                  title={template.text}
+                >
+                  {template.label}
+                </motion.button>
+              ))}
+
+              {templates.length > 4 && (
+                <button
+                  onClick={() => setShowAll(!showAll)}
+                  className="px-3 py-1.5 rounded-full text-[11px] font-semibold text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all border border-slate-200 dark:border-slate-700"
+                >
+                  {showAll ? "Show less" : `+${templates.length - 4} more`}
+                </button>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
