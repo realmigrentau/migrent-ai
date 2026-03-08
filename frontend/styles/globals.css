@@ -665,3 +665,80 @@ select.input-field {
 .border-r-3 {
   border-right-width: 3px;
 }
+
+/* ══════════════════════════════════════════════════════════════
+   Wishlist Page Animations & Styles
+   ══════════════════════════════════════════════════════════════ */
+
+/* Reply badge pulse */
+@keyframes wl-reply-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.3); }
+  50% { box-shadow: 0 0 0 4px rgba(16, 185, 129, 0); }
+}
+
+.wl-reply-badge {
+  animation: wl-reply-pulse 2s ease-in-out infinite;
+}
+
+/* Card glow on hover */
+@keyframes wl-card-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(244, 63, 94, 0); }
+  50% { box-shadow: 0 0 20px 4px rgba(244, 63, 94, 0.08); }
+}
+
+/* Heart burst particles */
+@keyframes wl-heart-particle {
+  0% { opacity: 1; transform: translate(0, 0) scale(1); }
+  100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0); }
+}
+
+/* Level up celebration */
+@keyframes wl-level-up {
+  0% { transform: scale(0) rotate(-180deg); opacity: 0; }
+  50% { transform: scale(1.2) rotate(10deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+.wl-level-up {
+  animation: wl-level-up 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* Price drop celebration */
+@keyframes wl-price-flash {
+  0%, 100% { background-color: transparent; }
+  50% { background-color: rgba(16, 185, 129, 0.05); }
+}
+
+.wl-price-flash {
+  animation: wl-price-flash 1s ease-in-out;
+}
+
+/* Activity feed slide */
+@keyframes wl-slide-in-feed {
+  from { opacity: 0; transform: translateX(16px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.wl-slide-in-feed {
+  animation: wl-slide-in-feed 0.3s ease-out forwards;
+}
+
+/* Collection pill bounce */
+@keyframes wl-pill-bounce {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.wl-pill-bounce {
+  animation: wl-pill-bounce 0.3s ease-in-out;
+}
+
+/* Floating action button pulse */
+@keyframes wl-fab-pulse {
+  0%, 100% { box-shadow: 0 4px 20px rgba(244, 63, 94, 0.3); }
+  50% { box-shadow: 0 4px 30px rgba(244, 63, 94, 0.5); }
+}
+
+.wl-fab-pulse {
+  animation: wl-fab-pulse 2s ease-in-out infinite;
+}

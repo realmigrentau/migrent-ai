@@ -1,0 +1,690 @@
+import { useState, useEffect, useCallback, useMemo } from "react";
+import { useAuth } from "./useAuth";
+import { getMyProfile, updateMyProfile } from "../lib/api";
+
+// ── Types ──
+
+export interface WishlistListing {
+  id: string;
+  address: string;
+  suburb: string;
+  postcode: string;
+  weeklyPrice: number;
+  originalPrice?: number;
+  roomType: string;
+  furnished: boolean;
+  billsIncluded: boolean;
+  verified: boolean;
+  superhost: boolean;
+  rating: number;
+  reviewCount: number;
+  photos: string[];
+  description: string;
+  ownerName: string;
+  ownerPhoto?: string;
+  ownerVerified: boolean;
+  nearestStation?: string;
+  stationWalkMin?: number;
+  ownerReply?: string;
+  savedAt: string;
+  collectionId?: string;
+}
+
+export interface WishlistCollection {
+  id: string;
+  name: string;
+  color: string;
+  gradient: string;
+  emoji: string;
+  count: number;
+  isSmartCollection?: boolean;
+}
+
+export interface ActivityItem {
+  id: string;
+  type: "price_drop" | "owner_reply" | "new_review" | "new_match";
+  listingId: string;
+  message: string;
+  timestamp: string;
+  read: boolean;
+}
+
+export type SortOption = "recent" | "price-low" | "price-high" | "rating" | "verified" | "station";
+
+// ── Gradient palette for collections ──
+
+export const COLLECTION_GRADIENTS = [
+  { color: "#8b5cf6", gradient: "from-violet-500 to-purple-600" },
+  { color: "#f97316", gradient: "from-orange-400 to-amber-500" },
+  { color: "#10b981", gradient: "from-emerald-400 to-teal-500" },
+  { color: "#3b82f6", gradient: "from-blue-400 to-indigo-500" },
+  { color: "#ec4899", gradient: "from-pink-400 to-rose-500" },
+  { color: "#14b8a6", gradient: "from-teal-400 to-cyan-500" },
+  { color: "#f43f5e", gradient: "from-rose-400 to-red-500" },
+  { color: "#6366f1", gradient: "from-indigo-400 to-violet-500" },
+  { color: "#eab308", gradient: "from-yellow-400 to-amber-500" },
+  { color: "#06b6d4", gradient: "from-cyan-400 to-sky-500" },
+  { color: "#d946ef", gradient: "from-fuchsia-400 to-purple-500" },
+  { color: "#84cc16", gradient: "from-lime-400 to-green-500" },
+];
+
+// ── Default smart collections ──
+
+const SMART_COLLECTIONS: WishlistCollection[] = [
+  {
+    id: "all",
+    name: "All Listings",
+    color: "#f43f5e",
+    gradient: "from-rose-500 to-pink-500",
+    emoji: "heart",
+    count: 0,
+    isSmartCollection: true,
+  },
+  {
+    id: "near-station",
+    name: "Near Station",
+    color: "#10b981",
+    gradient: "from-emerald-400 to-teal-500",
+    emoji: "train",
+    count: 0,
+    isSmartCollection: true,
+  },
+  {
+    id: "budget",
+    name: "Under $450/wk",
+    color: "#eab308",
+    gradient: "from-yellow-400 to-amber-500",
+    emoji: "money",
+    count: 0,
+    isSmartCollection: true,
+  },
+  {
+    id: "price-drops",
+    name: "Price Drops",
+    color: "#f97316",
+    gradient: "from-orange-400 to-red-500",
+    emoji: "fire",
+    count: 0,
+    isSmartCollection: true,
+  },
+  {
+    id: "superhost",
+    name: "Superhosts",
+    color: "#8b5cf6",
+    gradient: "from-violet-500 to-purple-600",
+    emoji: "star",
+    count: 0,
+    isSmartCollection: true,
+  },
+];
+
+// ── Placeholder data (enriched) ──
+
+const PLACEHOLDER_LISTINGS: Record<string, WishlistListing> = {
+  "1": {
+    id: "1",
+    address: "12 Crown St",
+    suburb: "Surry Hills",
+    postcode: "2010",
+    weeklyPrice: 420,
+    originalPrice: 470,
+    roomType: "private",
+    furnished: true,
+    billsIncluded: true,
+    verified: true,
+    superhost: true,
+    rating: 4.92,
+    reviewCount: 127,
+    photos: [
+      "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=600&h=400&fit=crop",
+    ],
+    description: "Bright private room in friendly sharehouse near Central Station. Modern kitchen, fast wifi, and a rooftop terrace with city views.",
+    ownerName: "Sarah",
+    ownerVerified: true,
+    nearestStation: "Central",
+    stationWalkMin: 3,
+    ownerReply: "Available next week!",
+    savedAt: "2026-03-07T10:30:00Z",
+  },
+  "2": {
+    id: "2",
+    address: "45 George St",
+    suburb: "Redfern",
+    postcode: "2016",
+    weeklyPrice: 320,
+    roomType: "shared",
+    furnished: true,
+    billsIncluded: false,
+    verified: false,
+    superhost: false,
+    rating: 4.3,
+    reviewCount: 42,
+    photos: [
+      "https://images.unsplash.com/photo-1598928506311-c55ez637a745?w=600&h=400&fit=crop",
+    ],
+    description: "Affordable shared room close to USYD campus. Great for students, quiet neighbourhood with cafes nearby.",
+    ownerName: "Mike",
+    ownerVerified: true,
+    nearestStation: "Redfern",
+    stationWalkMin: 5,
+    savedAt: "2026-03-06T14:20:00Z",
+  },
+  "3": {
+    id: "3",
+    address: "8 Botany Rd",
+    suburb: "Waterloo",
+    postcode: "2017",
+    weeklyPrice: 380,
+    originalPrice: 420,
+    roomType: "ensuite",
+    furnished: true,
+    billsIncluded: true,
+    verified: true,
+    superhost: true,
+    rating: 4.88,
+    reviewCount: 89,
+    photos: [
+      "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600&h=400&fit=crop",
+    ],
+    description: "Ensuite room with own bathroom in modern apartment. Building has a gym, pool, and concierge.",
+    ownerName: "Emma",
+    ownerVerified: true,
+    nearestStation: "Green Square",
+    stationWalkMin: 4,
+    ownerReply: "Can do a virtual tour!",
+    savedAt: "2026-03-05T09:15:00Z",
+  },
+  "4": {
+    id: "4",
+    address: "22 Darling Dr",
+    suburb: "Pyrmont",
+    postcode: "2009",
+    weeklyPrice: 450,
+    roomType: "studio",
+    furnished: true,
+    billsIncluded: true,
+    verified: true,
+    superhost: false,
+    rating: 4.65,
+    reviewCount: 56,
+    photos: [
+      "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=600&h=400&fit=crop",
+    ],
+    description: "Self-contained studio with harbour glimpses. Walking distance to Darling Harbour, ICC, and The Star.",
+    ownerName: "James",
+    ownerVerified: true,
+    nearestStation: "Convention",
+    stationWalkMin: 6,
+    savedAt: "2026-03-04T16:45:00Z",
+  },
+  "5": {
+    id: "5",
+    address: "15 Station St",
+    suburb: "Kellyville",
+    postcode: "2155",
+    weeklyPrice: 280,
+    roomType: "private",
+    furnished: true,
+    billsIncluded: true,
+    verified: true,
+    superhost: true,
+    rating: 4.95,
+    reviewCount: 203,
+    photos: [
+      "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=600&h=400&fit=crop",
+    ],
+    description: "Spacious private room in quiet family home. 2min walk to Kellyville Metro, perfect for working professionals.",
+    ownerName: "Priya",
+    ownerVerified: true,
+    nearestStation: "Kellyville",
+    stationWalkMin: 2,
+    ownerReply: "Room is freshly painted!",
+    savedAt: "2026-03-03T11:00:00Z",
+  },
+  "6": {
+    id: "6",
+    address: "101 Bondi Rd",
+    suburb: "Bondi",
+    postcode: "2026",
+    weeklyPrice: 490,
+    originalPrice: 540,
+    roomType: "private",
+    furnished: true,
+    billsIncluded: false,
+    verified: true,
+    superhost: true,
+    rating: 4.78,
+    reviewCount: 165,
+    photos: [
+      "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&h=400&fit=crop",
+    ],
+    description: "Sun-drenched room in Bondi just 5min walk to the beach. Great vibes, social house with weekly BBQs.",
+    ownerName: "Liam",
+    ownerVerified: true,
+    nearestStation: "Bondi Junction",
+    stationWalkMin: 12,
+    savedAt: "2026-03-02T08:30:00Z",
+  },
+  "7": {
+    id: "7",
+    address: "33 Oxford St",
+    suburb: "Darlinghurst",
+    postcode: "2010",
+    weeklyPrice: 400,
+    roomType: "private",
+    furnished: false,
+    billsIncluded: true,
+    verified: false,
+    superhost: false,
+    rating: 4.1,
+    reviewCount: 18,
+    photos: [
+      "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=600&h=400&fit=crop",
+    ],
+    description: "Cosy room in the heart of Darlinghurst. Surrounded by restaurants, bars, and nightlife.",
+    ownerName: "Alex",
+    ownerVerified: false,
+    nearestStation: "Kings Cross",
+    stationWalkMin: 7,
+    savedAt: "2026-03-01T17:20:00Z",
+  },
+};
+
+// ── Mock activity feed ──
+
+const MOCK_ACTIVITIES: ActivityItem[] = [
+  {
+    id: "a1",
+    type: "price_drop",
+    listingId: "1",
+    message: "Crown St, Surry Hills dropped $50/wk",
+    timestamp: "2026-03-08T09:00:00Z",
+    read: false,
+  },
+  {
+    id: "a2",
+    type: "owner_reply",
+    listingId: "3",
+    message: "Emma replied: \"Can do a virtual tour!\"",
+    timestamp: "2026-03-07T15:30:00Z",
+    read: false,
+  },
+  {
+    id: "a3",
+    type: "new_review",
+    listingId: "5",
+    message: "New review on Kellyville listing: \"Perfect for students!\"",
+    timestamp: "2026-03-07T11:00:00Z",
+    read: true,
+  },
+  {
+    id: "a4",
+    type: "price_drop",
+    listingId: "6",
+    message: "Bondi Rd dropped $50/wk - beach vibes for less!",
+    timestamp: "2026-03-06T14:00:00Z",
+    read: true,
+  },
+  {
+    id: "a5",
+    type: "new_match",
+    listingId: "4",
+    message: "3 new listings match your saved search \"near station\"",
+    timestamp: "2026-03-06T08:00:00Z",
+    read: true,
+  },
+  {
+    id: "a6",
+    type: "owner_reply",
+    listingId: "5",
+    message: "Priya replied: \"Room is freshly painted!\"",
+    timestamp: "2026-03-05T16:45:00Z",
+    read: true,
+  },
+];
+
+// ── Gamification levels ──
+
+const LEVELS = [
+  { level: 1, name: "Browser", min: 0, max: 5 },
+  { level: 2, name: "Explorer", min: 5, max: 15 },
+  { level: 3, name: "Collector", min: 15, max: 30 },
+  { level: 4, name: "Curator", min: 30, max: 50 },
+  { level: 5, name: "Connoisseur", min: 50, max: 100 },
+  { level: 6, name: "Legend", min: 100, max: 200 },
+];
+
+export function getWishlistLevel(count: number) {
+  const level = LEVELS.find((l) => count >= l.min && count < l.max) || LEVELS[LEVELS.length - 1];
+  const progress = Math.min(((count - level.min) / (level.max - level.min)) * 100, 100);
+  return { ...level, progress, count };
+}
+
+// ── Collections storage ──
+
+const COLLECTIONS_KEY = "migrent_wishlist_collections";
+
+function getStoredCollections(): WishlistCollection[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const stored = localStorage.getItem(COLLECTIONS_KEY);
+    return stored ? JSON.parse(stored) : [];
+  } catch {
+    return [];
+  }
+}
+
+function storeCollections(collections: WishlistCollection[]) {
+  if (typeof window === "undefined") return;
+  localStorage.setItem(COLLECTIONS_KEY, JSON.stringify(collections));
+}
+
+// ── Listing-collection mapping ──
+
+const COLLECTION_MAP_KEY = "migrent_wishlist_collection_map";
+
+function getCollectionMap(): Record<string, string> {
+  if (typeof window === "undefined") return {};
+  try {
+    const stored = localStorage.getItem(COLLECTION_MAP_KEY);
+    return stored ? JSON.parse(stored) : {};
+  } catch {
+    return {};
+  }
+}
+
+function storeCollectionMap(map: Record<string, string>) {
+  if (typeof window === "undefined") return;
+  localStorage.setItem(COLLECTION_MAP_KEY, JSON.stringify(map));
+}
+
+// ── Main hook ──
+
+export function useWishlist() {
+  const { session, user } = useAuth();
+  const [wishlistIds, setWishlistIds] = useState<string[]>([]);
+  const [listings, setListings] = useState<WishlistListing[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [sortBy, setSortBy] = useState<SortOption>("recent");
+  const [activeCollection, setActiveCollection] = useState("all");
+  const [customCollections, setCustomCollections] = useState<WishlistCollection[]>([]);
+  const [collectionMap, setCollectionMap] = useState<Record<string, string>>({});
+  const [compareIds, setCompareIds] = useState<Set<string>>(new Set());
+  const [compareMode, setCompareMode] = useState(false);
+  const [activities] = useState<ActivityItem[]>(MOCK_ACTIVITIES);
+
+  // Load initial data
+  useEffect(() => {
+    loadWishlist();
+    setCustomCollections(getStoredCollections());
+    setCollectionMap(getCollectionMap());
+  }, [session, user?.id]);
+
+  const loadWishlist = async () => {
+    setLoading(true);
+    let ids: string[] = [];
+
+    if (session && user?.id) {
+      try {
+        const profile = await getMyProfile(session.access_token);
+        if (profile?.wishlist && profile.wishlist.length > 0) {
+          ids = profile.wishlist;
+        } else {
+          const saved = localStorage.getItem("wishlist");
+          if (saved) {
+            try {
+              ids = JSON.parse(saved);
+              await updateMyProfile(session.access_token, { wishlist: ids });
+            } catch (e) {
+              console.error("Failed to parse wishlist:", e);
+            }
+          }
+        }
+      } catch (err) {
+        console.error("Failed to load wishlist:", err);
+        const saved = localStorage.getItem("wishlist");
+        if (saved) {
+          try { ids = JSON.parse(saved); } catch {}
+        }
+      }
+    } else {
+      const saved = localStorage.getItem("wishlist");
+      if (saved) {
+        try { ids = JSON.parse(saved); } catch {}
+      }
+    }
+
+    // If no real IDs, use all placeholder IDs for demo
+    if (ids.length === 0) {
+      ids = Object.keys(PLACEHOLDER_LISTINGS);
+    }
+
+    setWishlistIds(ids);
+    const items = ids.map((id) => PLACEHOLDER_LISTINGS[id]).filter(Boolean);
+    setListings(items);
+    setLoading(false);
+  };
+
+  const removeFromWishlist = useCallback(async (id: string) => {
+    const updated = wishlistIds.filter((wid) => wid !== id);
+    setWishlistIds(updated);
+    setListings((prev) => prev.filter((l) => l.id !== id));
+    setCompareIds((prev) => {
+      const next = new Set(prev);
+      next.delete(id);
+      return next;
+    });
+
+    localStorage.setItem("wishlist", JSON.stringify(updated));
+
+    // Remove from collection map
+    const newMap = { ...collectionMap };
+    delete newMap[id];
+    setCollectionMap(newMap);
+    storeCollectionMap(newMap);
+
+    if (session && user?.id) {
+      try {
+        await updateMyProfile(session.access_token, { wishlist: updated });
+      } catch (err) {
+        console.error("Failed to sync wishlist:", err);
+      }
+    }
+  }, [wishlistIds, collectionMap, session, user?.id]);
+
+  // Collections with computed counts
+  const allCollections = useMemo(() => {
+    const smartWithCounts = SMART_COLLECTIONS.map((c) => {
+      let count = 0;
+      switch (c.id) {
+        case "all":
+          count = listings.length;
+          break;
+        case "near-station":
+          count = listings.filter((l) => l.stationWalkMin && l.stationWalkMin <= 10).length;
+          break;
+        case "budget":
+          count = listings.filter((l) => l.weeklyPrice < 450).length;
+          break;
+        case "price-drops":
+          count = listings.filter((l) => l.originalPrice && l.originalPrice > l.weeklyPrice).length;
+          break;
+        case "superhost":
+          count = listings.filter((l) => l.superhost && l.rating >= 4.8).length;
+          break;
+      }
+      return { ...c, count };
+    });
+
+    const customWithCounts = customCollections.map((c) => ({
+      ...c,
+      count: Object.values(collectionMap).filter((cid) => cid === c.id).length,
+    }));
+
+    return [...smartWithCounts, ...customWithCounts];
+  }, [listings, customCollections, collectionMap]);
+
+  // Filtered listings by active collection
+  const filteredListings = useMemo(() => {
+    let filtered = listings;
+
+    switch (activeCollection) {
+      case "all":
+        break;
+      case "near-station":
+        filtered = listings.filter((l) => l.stationWalkMin && l.stationWalkMin <= 10);
+        break;
+      case "budget":
+        filtered = listings.filter((l) => l.weeklyPrice < 450);
+        break;
+      case "price-drops":
+        filtered = listings.filter((l) => l.originalPrice && l.originalPrice > l.weeklyPrice);
+        break;
+      case "superhost":
+        filtered = listings.filter((l) => l.superhost && l.rating >= 4.8);
+        break;
+      default:
+        // Custom collection
+        filtered = listings.filter((l) => collectionMap[l.id] === activeCollection);
+        break;
+    }
+
+    // Sort
+    const sorted = [...filtered];
+    switch (sortBy) {
+      case "price-low":
+        sorted.sort((a, b) => a.weeklyPrice - b.weeklyPrice);
+        break;
+      case "price-high":
+        sorted.sort((a, b) => b.weeklyPrice - a.weeklyPrice);
+        break;
+      case "rating":
+        sorted.sort((a, b) => b.rating - a.rating);
+        break;
+      case "verified":
+        sorted.sort((a, b) => (b.verified ? 1 : 0) - (a.verified ? 1 : 0));
+        break;
+      case "station":
+        sorted.sort((a, b) => (a.stationWalkMin || 99) - (b.stationWalkMin || 99));
+        break;
+      default:
+        sorted.sort((a, b) => new Date(b.savedAt).getTime() - new Date(a.savedAt).getTime());
+    }
+
+    return sorted;
+  }, [listings, activeCollection, sortBy, collectionMap]);
+
+  // Stats
+  const stats = useMemo(() => {
+    const priceDrops = listings.filter((l) => l.originalPrice && l.originalPrice > l.weeklyPrice).length;
+    const ownerReplies = listings.filter((l) => l.ownerReply).length;
+    const totalSaved = listings.reduce((sum, l) => {
+      if (l.originalPrice) return sum + (l.originalPrice - l.weeklyPrice);
+      return sum;
+    }, 0);
+    return {
+      total: listings.length,
+      priceDrops,
+      ownerReplies,
+      totalSaved,
+      avgPrice: listings.length > 0 ? Math.round(listings.reduce((s, l) => s + l.weeklyPrice, 0) / listings.length) : 0,
+    };
+  }, [listings]);
+
+  // Compare mode
+  const toggleCompare = useCallback((id: string) => {
+    setCompareIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else if (next.size < 4) {
+        next.add(id);
+      }
+      return next;
+    });
+  }, []);
+
+  const compareListings = useMemo(() => {
+    return listings.filter((l) => compareIds.has(l.id));
+  }, [listings, compareIds]);
+
+  // Add collection
+  const addCollection = useCallback((name: string, gradientIndex: number, emoji: string) => {
+    const gradient = COLLECTION_GRADIENTS[gradientIndex % COLLECTION_GRADIENTS.length];
+    const newCollection: WishlistCollection = {
+      id: `custom-${Date.now()}`,
+      name,
+      color: gradient.color,
+      gradient: gradient.gradient,
+      emoji,
+      count: 0,
+    };
+    const updated = [...customCollections, newCollection];
+    setCustomCollections(updated);
+    storeCollections(updated);
+    return newCollection.id;
+  }, [customCollections]);
+
+  // Remove collection
+  const removeCollection = useCallback((id: string) => {
+    const updated = customCollections.filter((c) => c.id !== id);
+    setCustomCollections(updated);
+    storeCollections(updated);
+
+    // Remove listings from this collection
+    const newMap = { ...collectionMap };
+    Object.keys(newMap).forEach((key) => {
+      if (newMap[key] === id) delete newMap[key];
+    });
+    setCollectionMap(newMap);
+    storeCollectionMap(newMap);
+
+    if (activeCollection === id) setActiveCollection("all");
+  }, [customCollections, collectionMap, activeCollection]);
+
+  // Move listing to collection
+  const moveToCollection = useCallback((listingId: string, collectionId: string) => {
+    const newMap = { ...collectionMap };
+    if (collectionId === "all") {
+      delete newMap[listingId];
+    } else {
+      newMap[listingId] = collectionId;
+    }
+    setCollectionMap(newMap);
+    storeCollectionMap(newMap);
+  }, [collectionMap]);
+
+  const unreadActivityCount = useMemo(
+    () => activities.filter((a) => !a.read).length,
+    [activities]
+  );
+
+  return {
+    listings: filteredListings,
+    allListings: listings,
+    loading,
+    sortBy,
+    setSortBy,
+    removeFromWishlist,
+    // Collections
+    collections: allCollections,
+    activeCollection,
+    setActiveCollection,
+    addCollection,
+    removeCollection,
+    moveToCollection,
+    collectionMap,
+    // Compare
+    compareMode,
+    setCompareMode,
+    compareIds,
+    toggleCompare,
+    compareListings,
+    // Stats & gamification
+    stats,
+    level: getWishlistLevel(listings.length),
+    // Activity
+    activities,
+    unreadActivityCount,
+  };
+}
