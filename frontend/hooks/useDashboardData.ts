@@ -57,13 +57,40 @@ export interface DashboardData {
   profile: ProfileData | null;
 }
 
-// ── In-memory cache ──
+// ── Cache (in-memory + localStorage for instant loads across sessions) ──
+const LS_CACHE_KEY = "migrent_dashboard_data";
+const CACHE_TTL = 5 * 60 * 1000; // 5 min for in-memory
+const LS_CACHE_TTL = 30 * 60 * 1000; // 30 min for localStorage (stale-while-revalidate)
+
 let cachedData: DashboardData | null = null;
 let cacheTimestamp = 0;
-const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
 function isCacheValid(): boolean {
   return cachedData !== null && Date.now() - cacheTimestamp < CACHE_TTL;
+}
+
+function loadFromLocalStorage(): DashboardData | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = localStorage.getItem(LS_CACHE_KEY);
+    if (!raw) return null;
+    const { data, timestamp } = JSON.parse(raw);
+    if (Date.now() - timestamp < LS_CACHE_TTL && data) {
+      return data as DashboardData;
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+function saveToLocalStorage(data: DashboardData) {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem(LS_CACHE_KEY, JSON.stringify({ data, timestamp: Date.now() }));
+  } catch {
+    // Ignore quota errors
+  }
 }
 
 // ── Generate activity based on real listings + profile state ──
@@ -265,8 +292,11 @@ function computeCompleteness(
 // ── Hook ──
 export function useDashboardData() {
   const { session } = useAuth();
-  const [data, setData] = useState<DashboardData | null>(cachedData);
-  const [loading, setLoading] = useState(!isCacheValid());
+
+  // Initialize from in-memory cache first, then localStorage fallback
+  const initial = cachedData || loadFromLocalStorage();
+  const [data, setData] = useState<DashboardData | null>(initial);
+  const [loading, setLoading] = useState(!initial);
   const [error, setError] = useState<string | null>(null);
   const fetchedRef = useRef(false);
 
@@ -308,6 +338,7 @@ export function useDashboardData() {
 
       cachedData = dashData;
       cacheTimestamp = Date.now();
+      saveToLocalStorage(dashData);
       setData(dashData);
       setError(null);
     } catch (err) {
@@ -321,12 +352,21 @@ export function useDashboardData() {
   useEffect(() => {
     if (fetchedRef.current) return;
 
-    // If cache is valid, use it immediately and refetch in background
+    // If in-memory cache is valid, use it and revalidate in background
     if (isCacheValid() && cachedData) {
       setData(cachedData);
       setLoading(false);
       fetchedRef.current = true;
-      // Background revalidate
+      fetchData(false);
+      return;
+    }
+
+    // If localStorage has data, show it instantly and revalidate in background
+    const lsData = loadFromLocalStorage();
+    if (lsData) {
+      setData(lsData);
+      setLoading(false);
+      fetchedRef.current = true;
       fetchData(false);
       return;
     }
@@ -341,6 +381,7 @@ export function useDashboardData() {
     fetchedRef.current = false;
     cachedData = null;
     cacheTimestamp = 0;
+    try { localStorage.removeItem(LS_CACHE_KEY); } catch {}
     return fetchData(true);
   }, [fetchData]);
 
