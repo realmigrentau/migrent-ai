@@ -78,6 +78,6 @@ app.include_router(webhook_router)
 # Note: each router defines its own prefix (/auth, /listings, /matches, /deals)
 
 
-@app.get("/")
+@app.api_route("/", methods=["GET", "HEAD"])
 def health():
     return {"status": "ok"}
