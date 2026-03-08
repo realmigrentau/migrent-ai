@@ -33,7 +33,7 @@ export default function RulesCommunityGuidelines() {
           <section className="card p-6 rounded-2xl space-y-3">
             <h2 className="text-lg font-bold text-slate-900 dark:text-white">Our Community Standards</h2>
             <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
-              <p>MigRent AI is built on trust, respect, and transparency. These guidelines apply to all users &mdash; both owners and seekers. Violations may result in content removal, account suspension, or termination.</p>
+              <p>MigRent AI is built on trust, respect, and transparency. These guidelines apply to all users - both owners and seekers. Violations may result in content removal, account suspension, or termination.</p>
             </div>
           </section>
 
@@ -47,7 +47,7 @@ export default function RulesCommunityGuidelines() {
                 <li>Do not engage in discrimination, harassment, threats, or bullying</li>
                 <li>Do not post or share illegal, offensive, or inappropriate content</li>
                 <li>Do not use the platform for scams, fraud, or deceptive practices</li>
-                <li>Respect the privacy of other users &mdash; do not share personal information without consent</li>
+                <li>Respect the privacy of other users - do not share personal information without consent</li>
                 <li>Do not create fake profiles or impersonate others</li>
                 <li>Report any suspicious activity promptly</li>
               </ul>
@@ -93,11 +93,11 @@ export default function RulesCommunityGuidelines() {
             <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
               <p>All listings must meet the following minimum standards:</p>
               <ul className="list-disc list-inside space-y-1.5">
-                <li><strong>Accuracy</strong> &mdash; Photos must be current and representative of the actual space</li>
-                <li><strong>Pricing</strong> &mdash; Weekly rent must be clearly stated with no hidden fees</li>
-                <li><strong>Location</strong> &mdash; Suburb and general area must be accurate</li>
-                <li><strong>Availability</strong> &mdash; Dates and availability must be kept up to date</li>
-                <li><strong>Conditions</strong> &mdash; Bond, bills, house rules, and notice periods must be disclosed</li>
+                <li><strong>Accuracy</strong> - Photos must be current and representative of the actual space</li>
+                <li><strong>Pricing</strong> - Weekly rent must be clearly stated with no hidden fees</li>
+                <li><strong>Location</strong> - Suburb and general area must be accurate</li>
+                <li><strong>Availability</strong> - Dates and availability must be kept up to date</li>
+                <li><strong>Conditions</strong> - Bond, bills, house rules, and notice periods must be disclosed</li>
               </ul>
               <p>Listings that do not meet these standards may be flagged, hidden, or removed.</p>
             </div>
@@ -139,10 +139,10 @@ export default function RulesCommunityGuidelines() {
             <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
               <p>MigRent may take the following actions for guideline violations:</p>
               <ul className="list-disc list-inside space-y-1.5">
-                <li><strong>Warning</strong> &mdash; First-time or minor violations</li>
-                <li><strong>Content removal</strong> &mdash; Listings or messages that violate standards</li>
-                <li><strong>Temporary suspension</strong> &mdash; Repeated or moderate violations</li>
-                <li><strong>Permanent ban</strong> &mdash; Severe violations, fraud, or illegal activity</li>
+                <li><strong>Warning</strong> - First-time or minor violations</li>
+                <li><strong>Content removal</strong> - Listings or messages that violate standards</li>
+                <li><strong>Temporary suspension</strong> - Repeated or moderate violations</li>
+                <li><strong>Permanent ban</strong> - Severe violations, fraud, or illegal activity</li>
               </ul>
             </div>
           </section>

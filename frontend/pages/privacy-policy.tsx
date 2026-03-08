@@ -85,7 +85,7 @@ export default function PrivacyPolicy() {
                 <h3 className="font-semibold text-slate-800 dark:text-slate-200 mb-2">Payment Data</h3>
                 <ul className="list-disc list-inside space-y-1.5">
                   <li>Payment metadata (transaction ID, amount, date) via Stripe</li>
-                  <li>We do not store full credit card numbers &mdash; all payment processing is handled by Stripe</li>
+                  <li>We do not store full credit card numbers - all payment processing is handled by Stripe</li>
                 </ul>
               </div>
             </div>
@@ -115,11 +115,11 @@ export default function PrivacyPolicy() {
             <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-2">
               <p>We use the following third-party services that may process your data:</p>
               <ul className="list-disc list-inside space-y-1.5">
-                <li><strong>Supabase</strong> &mdash; Database hosting and authentication</li>
-                <li><strong>Stripe</strong> &mdash; Payment processing</li>
-                <li><strong>Vercel</strong> &mdash; Website hosting and analytics</li>
-                <li><strong>hCaptcha</strong> &mdash; Bot prevention during sign-up</li>
-                <li><strong>Third-party verification providers</strong> &mdash; ID and visa checks</li>
+                <li><strong>Supabase</strong> - Database hosting and authentication</li>
+                <li><strong>Stripe</strong> - Payment processing</li>
+                <li><strong>Vercel</strong> - Website hosting and analytics</li>
+                <li><strong>hCaptcha</strong> - Bot prevention during sign-up</li>
+                <li><strong>Third-party verification providers</strong> - ID and visa checks</li>
               </ul>
               <p>Each provider operates under their own privacy policy and we only share the minimum data necessary for them to provide their services.</p>
             </div>
@@ -140,12 +140,12 @@ export default function PrivacyPolicy() {
             <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-2">
               <p>Under the Australian Privacy Act and GDPR (where applicable), you have the right to:</p>
               <ul className="list-disc list-inside space-y-1.5">
-                <li><strong>Access</strong> &mdash; Request a copy of the personal data we hold about you</li>
-                <li><strong>Correction</strong> &mdash; Request correction of inaccurate or incomplete data</li>
-                <li><strong>Deletion</strong> &mdash; Request deletion of your personal data</li>
-                <li><strong>Portability</strong> &mdash; Request your data in a machine-readable format</li>
-                <li><strong>Objection</strong> &mdash; Object to processing of your data in certain circumstances</li>
-                <li><strong>Withdraw consent</strong> &mdash; Withdraw consent at any time where processing is based on consent</li>
+                <li><strong>Access</strong> - Request a copy of the personal data we hold about you</li>
+                <li><strong>Correction</strong> - Request correction of inaccurate or incomplete data</li>
+                <li><strong>Deletion</strong> - Request deletion of your personal data</li>
+                <li><strong>Portability</strong> - Request your data in a machine-readable format</li>
+                <li><strong>Objection</strong> - Object to processing of your data in certain circumstances</li>
+                <li><strong>Withdraw consent</strong> - Withdraw consent at any time where processing is based on consent</li>
               </ul>
               <p>To exercise any of these rights, contact us at <a href="https://mail.google.com/mail/?view=cm&fs=1&to=migrentau@gmail.com" target="_blank" rel="noopener noreferrer" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">migrentau@gmail.com</a>.</p>
             </div>

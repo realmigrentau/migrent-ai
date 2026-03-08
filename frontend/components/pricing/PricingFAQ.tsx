@@ -51,7 +51,7 @@ const faqs: FAQItem[] = [
   {
     question: "Can I list multiple properties?",
     answer:
-      "Yes! You can list unlimited properties for free. The $99 fee is charged per property only when a tenant is successfully matched. List 1 room or 100 properties &mdash; you only pay for results.",
+      "Yes! You can list unlimited properties for free. The $99 fee is charged per property only when a tenant is successfully matched. List 1 room or 100 properties - you only pay for results.",
   },
   {
     question: "How do I become a Superhost?",

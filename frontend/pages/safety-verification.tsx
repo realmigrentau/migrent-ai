@@ -60,7 +60,7 @@ export default function SafetyVerification() {
                   <span className="text-lg">3</span>
                   <h3 className="font-bold text-slate-900 dark:text-white">ID Verified</h3>
                 </div>
-                <p className="text-sm text-slate-600 dark:text-slate-300">Optional identity verification through third-party providers. We may use services connected to VEVO (Visa Entitlement Verification Online) for visa status checks where applicable. Only verification status (pass/fail) is stored &mdash; not raw ID documents.</p>
+                <p className="text-sm text-slate-600 dark:text-slate-300">Optional identity verification through third-party providers. We may use services connected to VEVO (Visa Entitlement Verification Online) for visa status checks where applicable. Only verification status (pass/fail) is stored - not raw ID documents.</p>
               </div>
             </div>
           </section>
@@ -136,9 +136,9 @@ export default function SafetyVerification() {
             <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
               <p>If you encounter unsafe, misleading, or suspicious behaviour:</p>
               <ul className="list-disc list-inside space-y-1.5">
-                <li><strong>Report button</strong> &mdash; Available on every listing and user profile</li>
-                <li><strong>Email</strong> &mdash; Contact <a href="https://mail.google.com/mail/?view=cm&fs=1&to=migrentau@gmail.com" target="_blank" rel="noopener noreferrer" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">migrentau@gmail.com</a></li>
-                <li><strong>Emergency</strong> &mdash; If you feel unsafe, contact local emergency services (000) immediately</li>
+                <li><strong>Report button</strong> - Available on every listing and user profile</li>
+                <li><strong>Email</strong> - Contact <a href="https://mail.google.com/mail/?view=cm&fs=1&to=migrentau@gmail.com" target="_blank" rel="noopener noreferrer" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">migrentau@gmail.com</a></li>
+                <li><strong>Emergency</strong> - If you feel unsafe, contact local emergency services (000) immediately</li>
               </ul>
               <p>We take all reports seriously and will investigate promptly. Users who are found to violate our guidelines may have their accounts suspended or terminated.</p>
             </div>

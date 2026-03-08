@@ -20,13 +20,18 @@ export default function Pricing() {
         />
       </Head>
 
-      <div className="space-y-20 pb-12">
-        <PricingHero />
-        <PricingTables />
-        <EarningsCalculator />
-        <ComparisonTable />
-        <TestimonialCarousel />
-        <PricingFAQ />
+      <div className="pb-12">
+        <div className="-mt-6">
+          <PricingHero />
+        </div>
+        <div className="h-20" />
+        <div className="space-y-20">
+          <PricingTables />
+          <EarningsCalculator />
+          <ComparisonTable />
+          <TestimonialCarousel />
+          <PricingFAQ />
+        </div>
 
         {/* Bottom CTA */}
         <section className="max-w-4xl mx-auto px-4">
