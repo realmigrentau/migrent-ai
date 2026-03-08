@@ -103,11 +103,13 @@ export default function MessageBubble({
         {!isMine && (
           <div className="w-7 mr-2 shrink-0">
             {isLastInGroup && (
-              <div className="w-7 h-7 rounded-full bg-gradient-to-br from-emerald-100 to-indigo-100 dark:from-emerald-500/20 dark:to-indigo-500/20 flex items-center justify-center overflow-hidden mt-auto">
+              <div className={`w-7 h-7 rounded-full flex items-center justify-center overflow-hidden mt-auto ${
+                otherUserAvatar ? "bg-slate-200 dark:bg-slate-700" : "bg-gradient-to-br from-indigo-500 to-emerald-500"
+              }`}>
                 {otherUserAvatar ? (
                   <img src={otherUserAvatar} alt="" className="w-full h-full object-cover" />
                 ) : (
-                  <span className="text-[10px] font-bold bg-gradient-to-br from-emerald-600 to-indigo-600 bg-clip-text text-transparent">
+                  <span className="text-[10px] font-bold text-white">
                     {(otherUserName || "U").charAt(0).toUpperCase()}
                   </span>
                 )}

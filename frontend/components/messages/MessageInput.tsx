@@ -27,20 +27,20 @@ const EMOJI_CATEGORIES = [
   { label: "Reactions", emojis: ["💯","✅","❌","⚠️","🚩","💤","💬","👑","🎵","🎶","📸","🔔","💌","🏳️","🎭","🃏","♟️","🧩","🪄","🫧"] },
 ];
 
-// ── Meme stickers ───────────────────────────────────────────
+// ── Quick response stickers ──────────────────────────────────
 const MEME_STICKERS = [
-  { label: "This is fine 🔥", value: "🔥 This is fine 🔥" },
-  { label: "Bruh 💀", value: "💀 Bruh" },
-  { label: "W", value: "🏆 W" },
-  { label: "No cap", value: "🧢 No cap fr fr" },
-  { label: "Slay 💅", value: "💅 Slay" },
-  { label: "LMAO", value: "🤣 LMAOOO" },
-  { label: "Let's go!", value: "🚀 LET'S GOOO" },
-  { label: "Sheesh", value: "🥶 Sheeeesh" },
-  { label: "GG", value: "🤝 GG" },
-  { label: "Crying", value: "😭😭😭" },
-  { label: "Respect", value: "🫡 Respect" },
-  { label: "Noted", value: "📝 Noted" },
+  { label: "Sounds great!", value: "Sounds great! 👍" },
+  { label: "Thank you", value: "Thank you so much! 🙏" },
+  { label: "On my way", value: "On my way! 🚗" },
+  { label: "Confirmed", value: "Confirmed, thank you! ✅" },
+  { label: "Let me check", value: "Let me check and get back to you shortly." },
+  { label: "Available", value: "Yes, it's still available! 🏠" },
+  { label: "Interested", value: "I'm very interested! When can I view?" },
+  { label: "Perfect", value: "Perfect, that works for me! ✨" },
+  { label: "Will do", value: "Will do, thanks for letting me know!" },
+  { label: "See you then", value: "See you then! Looking forward to it." },
+  { label: "Noted", value: "Noted, I'll keep that in mind. 📝" },
+  { label: "No worries", value: "No worries at all! Take your time." },
 ];
 
 interface MessageInputProps {
@@ -417,7 +417,7 @@ export default function MessageInput({
                 className="absolute bottom-12 right-0 w-64 max-h-72 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-2xl z-50 overflow-hidden"
               >
                 <div className="px-3 py-2 border-b border-slate-100 dark:border-slate-700">
-                  <p className="text-xs font-bold text-slate-500 dark:text-slate-400">Quick Reactions</p>
+                  <p className="text-xs font-bold text-slate-500 dark:text-slate-400">Quick Responses</p>
                 </div>
                 <div className="overflow-y-auto max-h-56 p-2 grid grid-cols-2 gap-1">
                   {MEME_STICKERS.map((meme) => (

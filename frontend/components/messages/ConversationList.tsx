@@ -293,11 +293,13 @@ function ThreadItem({
     >
       {/* Avatar */}
       <div className="relative shrink-0">
-        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-indigo-100 to-emerald-100 dark:from-indigo-500/20 dark:to-emerald-500/20 flex items-center justify-center overflow-hidden ring-2 ring-white dark:ring-slate-950">
+        <div className={`w-12 h-12 rounded-full flex items-center justify-center overflow-hidden ring-2 ring-white dark:ring-slate-950 ${
+          thread.other_user_pfp ? "bg-slate-200 dark:bg-slate-700" : "bg-gradient-to-br from-indigo-500 to-emerald-500"
+        }`}>
           {thread.other_user_pfp ? (
             <img src={thread.other_user_pfp} alt="" className="w-full h-full object-cover" />
           ) : (
-            <span className="text-lg font-bold bg-gradient-to-br from-indigo-600 to-emerald-600 bg-clip-text text-transparent">
+            <span className="text-lg font-bold text-white">
               {(thread.other_user_name || "U").charAt(0).toUpperCase()}
             </span>
           )}

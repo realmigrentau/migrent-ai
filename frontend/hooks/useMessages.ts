@@ -115,7 +115,7 @@ export function useThreads(userId?: string) {
             const p = profileMap[thread.other_user_id];
             if (p) {
               thread.other_user_name = p.preferred_name || p.name || "User";
-              thread.other_user_pfp = p.custom_pfp;
+              thread.other_user_pfp = p.custom_pfp && typeof p.custom_pfp === "string" && p.custom_pfp.startsWith("http") ? p.custom_pfp : undefined;
             }
           }
         }
@@ -217,11 +217,12 @@ export function useChat(currentUserId?: string, otherUserId?: string) {
         .eq("id", otherUserId)
         .maybeSingle();
       if (data) {
+        const validPfp = data.custom_pfp && typeof data.custom_pfp === "string" && data.custom_pfp.startsWith("http") ? data.custom_pfp : undefined;
         setOtherUser({
           id: data.id || otherUserId,
           name: data.name || "User",
           preferred_name: data.preferred_name,
-          custom_pfp: data.custom_pfp,
+          custom_pfp: validPfp,
         });
       }
     })();

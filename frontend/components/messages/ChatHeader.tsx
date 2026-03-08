@@ -97,11 +97,13 @@ export default function ChatHeader({
           className="flex items-center gap-3 flex-1 min-w-0 hover:opacity-80 transition-opacity text-left"
         >
           <div className="relative shrink-0">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-100 to-emerald-100 dark:from-indigo-500/20 dark:to-emerald-500/20 flex items-center justify-center overflow-hidden ring-2 ring-white dark:ring-slate-950 shadow-md">
+            <div className={`w-10 h-10 rounded-full flex items-center justify-center overflow-hidden ring-2 ring-white dark:ring-slate-950 shadow-md ${
+              userAvatar ? "bg-slate-200 dark:bg-slate-700" : "bg-gradient-to-br from-indigo-500 to-emerald-500"
+            }`}>
               {userAvatar ? (
                 <img src={userAvatar} alt="" className="w-full h-full object-cover" />
               ) : (
-                <span className="text-base font-bold bg-gradient-to-br from-indigo-600 to-emerald-600 bg-clip-text text-transparent">
+                <span className="text-base font-bold text-white">
                   {userName.charAt(0).toUpperCase()}
                 </span>
               )}
