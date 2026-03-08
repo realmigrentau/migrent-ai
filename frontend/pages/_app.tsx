@@ -43,7 +43,7 @@ export default function App({ Component, pageProps, router }: AppProps) {
     </>
   );
 
-  if (!HCAPTCHA_SITE_KEY) {
+  if (!HCAPTCHA_SITE_KEY || isFullScreen) {
     return wrapped;
   }
 
