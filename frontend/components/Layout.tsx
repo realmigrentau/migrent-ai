@@ -15,7 +15,8 @@ export default function Layout({ children }: { children: ReactNode }) {
   const isAdminRoute = router.pathname.startsWith("/mazda.asgt22779412.sara-admin");
   const isHomePage = router.pathname === "/";
   const isDashboard = router.pathname.startsWith("/dashboard");
-  const isFullWidth = isAdminRoute || isHomePage;
+  const isPricing = router.pathname === "/pricing";
+  const isFullWidth = isAdminRoute || isHomePage || isPricing;
 
   return (
     <div className="min-h-screen flex flex-col">
