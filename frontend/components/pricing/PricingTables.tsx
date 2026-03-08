@@ -11,6 +11,12 @@ const ownerFeatures = [
   "Verified tenant profiles",
   "In-app secure messaging",
   "Superhost badge eligible",
+  "Smart pricing recommendations",
+  "Detailed listing analytics",
+  "Priority customer support",
+  "Tenant background insights",
+  "Automated booking management",
+  "Multi-property dashboard",
 ];
 
 const seekerFreeFeatures = [
@@ -143,7 +149,7 @@ export default function PricingTables() {
             <div className="mb-2">
               <h3 className="text-xl font-bold text-slate-900 dark:text-white">Free Forever</h3>
               <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-                Search, apply, and book &mdash; completely free
+                Search, apply, and book - completely free
               </p>
             </div>
 
@@ -218,7 +224,7 @@ export default function PricingTables() {
                 whileTap={{ scale: 0.98 }}
                 className="block w-full text-center py-3 rounded-xl text-sm font-semibold bg-gradient-to-r from-emerald-500 to-emerald-600 text-white hover:shadow-lg hover:shadow-emerald-500/25 transition-all"
               >
-                Get Verified &mdash; $19
+                Get Verified - $19
               </motion.span>
             </Link>
           </motion.div>
