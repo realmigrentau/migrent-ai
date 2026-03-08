@@ -11,11 +11,8 @@ import "../styles/globals.css";
 export default function App({ Component, pageProps, router }: AppProps) {
   const isAdmin = router.pathname.startsWith("/mazda.asgt22779412.sara-admin");
   const isDashboard = router.pathname.startsWith("/dashboard");
-  const isFullScreen = router.pathname === "/messages";
 
-  const inner = isFullScreen ? (
-    <Component {...pageProps} />
-  ) : isAdmin || isDashboard ? (
+  const inner = isAdmin || isDashboard ? (
     <Layout>
       <Component {...pageProps} />
     </Layout>
@@ -43,7 +40,7 @@ export default function App({ Component, pageProps, router }: AppProps) {
     </>
   );
 
-  if (!HCAPTCHA_SITE_KEY || isFullScreen) {
+  if (!HCAPTCHA_SITE_KEY) {
     return wrapped;
   }
 

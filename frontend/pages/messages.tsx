@@ -179,7 +179,7 @@ export default function MessagesPage() {
   // ── Auth loading ──
   if (authLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-slate-50 dark:bg-slate-950">
+      <div className="flex items-center justify-center py-20">
         <div className="w-8 h-8 border-2 border-indigo-300 dark:border-indigo-500/30 border-t-indigo-500 rounded-full animate-spin" />
       </div>
     );
@@ -188,7 +188,7 @@ export default function MessagesPage() {
   // ── Not authenticated ──
   if (!session) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-slate-50 dark:bg-slate-950 px-4">
+      <div className="flex items-center justify-center py-20 px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -217,7 +217,7 @@ export default function MessagesPage() {
   // ── Main layout ──
   return (
     <>
-      <div className="h-screen flex bg-slate-50 dark:bg-slate-950 overflow-hidden">
+      <div className="flex rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 overflow-hidden shadow-sm" style={{ height: "calc(100vh - 10rem)" }}>
         {/* ════════════════════════════════════════════════════════
             LEFT SIDEBAR - Conversation List
             ════════════════════════════════════════════════════════ */}
@@ -376,7 +376,7 @@ export default function MessagesPage() {
 // ═══════════════════════════════════════════════════════════════
 function WelcomeScreen() {
   return (
-    <div className="flex-1 flex flex-col items-center justify-center bg-gradient-to-br from-slate-50 via-white to-indigo-50/30 dark:from-slate-950 dark:via-slate-900 dark:to-indigo-950/20 px-8">
+    <div className="flex-1 flex flex-col items-center justify-center bg-gradient-to-br from-slate-50 via-white to-indigo-50/30 dark:from-slate-900 dark:via-slate-900 dark:to-indigo-950/20 px-8 rounded-r-2xl">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
