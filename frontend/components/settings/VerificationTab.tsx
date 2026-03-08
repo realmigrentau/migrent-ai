@@ -162,7 +162,7 @@ export default function VerificationTab({
         <div className="backdrop-blur-xl bg-emerald-50/80 dark:bg-emerald-500/10 rounded-xl p-3 text-center border border-emerald-100 dark:border-emerald-500/20">
           <Star className="w-5 h-5 text-emerald-500 mx-auto mb-1" />
           <p className="text-lg font-bold text-emerald-700 dark:text-emerald-400">
-            {profile?.average_rating?.toFixed(1) || "—"}
+            {profile?.average_rating?.toFixed(1) || "-"}
           </p>
           <p className="text-[10px] text-emerald-600/70 dark:text-emerald-400/60">Rating</p>
         </div>

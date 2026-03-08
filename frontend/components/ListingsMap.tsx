@@ -72,7 +72,7 @@ export default function ListingsMap({ listings, isDark }: ListingsMapProps) {
     });
   };
 
-  // Initialize map — recreate when theme changes to swap tile style
+  // Initialize map - recreate when theme changes to swap tile style
   useEffect(() => {
     if (!mapContainer.current) return;
 

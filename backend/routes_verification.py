@@ -20,12 +20,12 @@ VERIFICATION_CANCEL_URL = f"{FRONTEND_URL}/verification-cancelled"
 def create_verification_session(authorization: str = Header(...)):
     """
     Create a Stripe Checkout Session for seeker profile verification.
-    Auth required — uses the authenticated user's ID (not client-supplied).
+    Auth required - uses the authenticated user's ID (not client-supplied).
     """
     user = get_current_user(authorization)
     sb = get_supabase()
 
-    # Check if user is already verified — no need to pay again
+    # Check if user is already verified - no need to pay again
     try:
         res = sb.table("profiles").select("verified").eq("id", user.id).execute()
         if res.data and res.data[0].get("verified"):

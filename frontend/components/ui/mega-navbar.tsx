@@ -146,7 +146,7 @@ export default function MegaNavbar() {
                       />
                     )}
                   </Link>
-                  {/* Dashboard link — after Home */}
+                  {/* Dashboard link - after Home */}
                   {index === 0 && session && (
                     <Link
                       href="/dashboard"
@@ -609,7 +609,7 @@ export default function MegaNavbar() {
                 <>
                   <div className="border-t border-slate-100 dark:border-slate-800 pt-2 mt-2">
                     <p className="px-3 pt-1 pb-1 text-xs font-medium text-slate-400 dark:text-slate-500">
-                      {t("nav.myAccount")} — {t("nav.iAmA")}
+                      {t("nav.myAccount")} - {t("nav.iAmA")}
                     </p>
                     <Link
                       href="/dashboard/seeker"

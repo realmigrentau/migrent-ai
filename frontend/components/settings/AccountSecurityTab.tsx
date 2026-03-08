@@ -283,7 +283,7 @@ export default function AccountSecurityTab({
           </div>
           <div>
             <h3 className="font-bold text-red-600 dark:text-red-400">Danger Zone</h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400">Permanent actions — cannot be undone</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400">Permanent actions - cannot be undone</p>
           </div>
         </div>
 

@@ -327,7 +327,7 @@ export function useDashboardData() {
       const parsed = parseProfile(profileWithBadges, role);
 
       // If DB has an invalid photo URL (blob:, data:, etc.), just ignore it locally
-      // Don't try to clean it up via API call — it causes 400 errors
+      // Don't try to clean it up via API call - it causes 400 errors
 
       const dashData: DashboardData = {
         metrics: computeMetrics(listings),

@@ -304,7 +304,7 @@ export default function SeekerProfilePage() {
         <textarea
           value={profile.bio}
           onChange={(e) => update("bio", e.target.value.slice(0, 200))}
-          placeholder="Tell owners about yourself — what brings you to Australia, your hobbies, what you're like to live with..."
+          placeholder="Tell owners about yourself - what brings you to Australia, your hobbies, what you're like to live with..."
           rows={4}
           className="input-field text-sm"
           maxLength={200}
@@ -333,7 +333,7 @@ export default function SeekerProfilePage() {
         className="card p-6 rounded-2xl space-y-4"
       >
         <h2 className="text-lg font-bold text-slate-900 dark:text-white">Interests</h2>
-        <p className="text-sm text-slate-500 dark:text-slate-400">Pick what you enjoy (max 5) — helps find like-minded housemates.</p>
+        <p className="text-sm text-slate-500 dark:text-slate-400">Pick what you enjoy (max 5) - helps find like-minded housemates.</p>
         <div className="flex flex-wrap gap-2">
           {INTEREST_OPTIONS.map((item) => {
             const active = profile.interests.includes(item);

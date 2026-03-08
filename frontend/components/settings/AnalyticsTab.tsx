@@ -21,14 +21,14 @@ interface AnalyticsTabProps {
 // Mock analytics data
 const MOCK_LISTINGS = [
   {
-    title: "Sydney Loft — Bondi",
+    title: "Sydney Loft - Bondi",
     occupancy: 92,
     revenue: 1200,
     views: 340,
     rating: 4.9,
   },
   {
-    title: "Bondi Room — Beach View",
+    title: "Bondi Room - Beach View",
     occupancy: 65,
     revenue: 780,
     views: 210,

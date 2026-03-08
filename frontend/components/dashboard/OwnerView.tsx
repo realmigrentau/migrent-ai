@@ -166,7 +166,7 @@ export default function OwnerView({ listings, loading, profile }: OwnerViewProps
                   {/* Views */}
                   <div className="col-span-2 flex items-center gap-1 text-sm text-slate-500 dark:text-slate-400">
                     <Eye className="w-3.5 h-3.5" />
-                    {listing.views || "—"}
+                    {listing.views || "-"}
                   </div>
 
                   {/* Arrow */}

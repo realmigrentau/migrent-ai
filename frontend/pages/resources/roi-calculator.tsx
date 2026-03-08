@@ -252,7 +252,7 @@ export default function ROICalculator() {
             {/* Room type comparison chart */}
             <div className="card rounded-2xl p-6">
               <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-4">
-                Room Type Comparison — {selectedSuburb}
+                Room Type Comparison - {selectedSuburb}
               </h3>
               <div className="h-64">
                 <ResponsiveContainer width="100%" height="100%">

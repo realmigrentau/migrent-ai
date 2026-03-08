@@ -273,7 +273,7 @@ const resources = [
     iconColor: "text-amber-500",
     bgColor: "bg-amber-50 dark:bg-amber-500/10",
     headline: "Join MigRent AI Team",
-    subline: "Help migrants find home — based in Sydney",
+    subline: "Help migrants find home - based in Sydney",
     MockUI: MockCareers,
     href: "/careers",
     bullets: [
@@ -309,7 +309,7 @@ export default function Resources() {
     <>
       <Head>
         <title>Resources for MigRent Hosts & Seekers | MigRent AI</title>
-        <meta name="description" content="MigRent AI resources — blog, ROI calculator, API docs, Discord community, careers, and Australian rental laws for migrants." />
+        <meta name="description" content="MigRent AI resources - blog, ROI calculator, API docs, Discord community, careers, and Australian rental laws for migrants." />
       </Head>
 
       <div className="space-y-24">

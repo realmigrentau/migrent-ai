@@ -132,7 +132,7 @@ export default function MetricsCards({ metrics, loading, role }: MetricsCardsPro
                 {card.icon}
               </div>
               <p className={`text-2xl font-bold ${card.color}`}>
-                {metrics ? card.format(metrics[card.key]) : "—"}
+                {metrics ? card.format(metrics[card.key]) : "-"}
               </p>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-medium">
                 {card.label}

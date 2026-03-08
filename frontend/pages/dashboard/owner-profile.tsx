@@ -20,7 +20,7 @@ export default function OwnerProfilePage() {
   const router = useRouter();
   const fileRef = useRef<HTMLInputElement>(null);
 
-  // No owner_account guard — allow any authenticated user to set up their owner profile
+  // No owner_account guard - allow any authenticated user to set up their owner profile
 
   const [saved, setSaved] = useState(false);
   const [saving, setSaving] = useState(false);

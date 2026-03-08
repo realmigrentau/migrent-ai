@@ -297,7 +297,7 @@ export default function Features() {
     <>
       <Head>
         <title>{t("features.heroTitle")} | MigRent AI</title>
-        <meta name="description" content="Discover MigRent AI's powerful features — AI matching, verified hosts, instant booking, smart filters, superhost program, and 24/7 support." />
+        <meta name="description" content="Discover MigRent AI's powerful features - AI matching, verified hosts, instant booking, smart filters, superhost program, and 24/7 support." />
       </Head>
 
       <div className="space-y-24">

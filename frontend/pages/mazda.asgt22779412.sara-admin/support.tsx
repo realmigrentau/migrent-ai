@@ -240,7 +240,7 @@ function TicketsTab({ token }: { token: string }) {
                       </div>
                       <div className="flex items-center gap-2 text-xs text-slate-400">
                         <span className="font-mono">{t.id.slice(0, 8)}</span>
-                        <span>{t.email || "—"}</span>
+                        <span>{t.email || "-"}</span>
                         <span>{categoryLabels[t.category || ""] || t.category}</span>
                         <span>{new Date(t.created_at).toLocaleDateString()}</span>
                       </div>
@@ -287,7 +287,7 @@ function TicketsTab({ token }: { token: string }) {
                       <h2 className="font-bold text-slate-900 dark:text-white">{selectedTicket.subject}</h2>
                       <div className="flex flex-wrap items-center gap-2 mt-1 text-xs text-slate-400">
                         <span className="font-mono">{selectedTicket.id.slice(0, 8)}</span>
-                        <span>{selectedTicket.email || "—"}</span>
+                        <span>{selectedTicket.email || "-"}</span>
                         <span>{selectedTicket.source.replace("_", " ")}</span>
                         <span>{new Date(selectedTicket.created_at).toLocaleString()}</span>
                       </div>

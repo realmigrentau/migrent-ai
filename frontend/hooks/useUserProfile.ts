@@ -89,7 +89,7 @@ function computeResponseRate(months: number): number {
 /** Fetch profile directly from Supabase (fast, no Railway middleman) */
 async function fetchProfileDirect(userId: string): Promise<any | null> {
   try {
-    // Use select("*") to get all available columns — Supabase only returns columns that exist
+    // Use select("*") to get all available columns - Supabase only returns columns that exist
     const { data, error } = await supabase
       .from("profiles")
       .select("*")

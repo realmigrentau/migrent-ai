@@ -218,7 +218,7 @@ async def upload_profile_photo(request: Request, file: UploadFile = File(...), a
             except Exception as bucket_err:
                 logger.warning(f"Bucket creation attempt: {bucket_err}")
 
-        # Try to upload — remove old file first if upsert fails
+        # Try to upload - remove old file first if upsert fails
         try:
             sb.storage.from_(bucket).upload(path, content, file_opts)
         except Exception as upload_err:

@@ -109,7 +109,7 @@ def cross_device_poll(request: Request, body: CrossDevicePoll):
         # Check expiry
         expires_at = datetime.fromisoformat(row["expires_at"].replace("Z", "+00:00"))
         if datetime.now(timezone.utc) > expires_at:
-            # Expired — delete and return waiting
+            # Expired - delete and return waiting
             sb.table("cross_device_tokens").delete().eq("polling_id", body.polling_id).execute()
             return {"status": "expired"}
 

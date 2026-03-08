@@ -124,7 +124,7 @@ export default function ReviewCarousel({ reviews, reviewsCount, averageRating, l
     );
   }
 
-  // No reviews — show count or empty state
+  // No reviews - show count or empty state
   if (reviewsCount > 0) {
     return (
       <div className="card-subtle p-6 rounded-2xl text-center">

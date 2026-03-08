@@ -220,7 +220,7 @@ export default function SupportWidget() {
                     </button>
                   </div>
                   <p className="text-[10px] text-slate-400 mt-1.5 text-center">
-                    AI assistant — for human support, use the Contact tab
+                    AI assistant - for human support, use the Contact tab
                   </p>
                 </div>
               </div>

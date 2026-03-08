@@ -89,7 +89,7 @@ export default function ProfileCompleteness({ profile, role, loading }: ProfileC
             </h3>
             <p className="text-xs text-slate-500 dark:text-slate-400">
               {isComplete
-                ? "You're all set — your profile is fully filled out"
+                ? "You're all set - your profile is fully filled out"
                 : `${profile.missingFields.length} field${profile.missingFields.length > 1 ? "s" : ""} remaining`}
             </p>
           </div>

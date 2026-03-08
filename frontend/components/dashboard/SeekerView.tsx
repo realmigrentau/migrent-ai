@@ -60,7 +60,7 @@ export default function SeekerView({ loading, profile }: SeekerViewProps) {
     if (!profile.bio) {
       recommendations.push({
         title: "Write your bio",
-        desc: "Tell owners about yourself — what brings you here, your lifestyle",
+        desc: "Tell owners about yourself - what brings you here, your lifestyle",
         icon: <User className="w-4 h-4" />,
         href: "/dashboard/seeker-profile",
         color: "bg-violet-100 text-violet-600 dark:bg-violet-500/20 dark:text-violet-400",

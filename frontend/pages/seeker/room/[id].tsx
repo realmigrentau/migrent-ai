@@ -34,7 +34,7 @@ const ROOMS: Record<string, any> = {
       "Bright and spacious private room in a friendly 3-bedroom sharehouse. The room gets plenty of natural light and comes fully furnished with a queen bed, desk, and wardrobe. Shared kitchen and bathroom are well-maintained. Great for students or young professionals.",
     amenities: ["WiFi included", "Washing machine", "Fully equipped kitchen", "Living room", "Balcony", "Air conditioning"],
     houseRules: ["No smoking inside", "Quiet hours 10pm-7am", "No pets", "Keep shared spaces tidy", "Guests welcome (notify housemates)"],
-    transport: ["Central Station — 5 min walk", "Bus stop Crown St — 1 min walk", "Light rail Surry Hills — 8 min walk"],
+    transport: ["Central Station - 5 min walk", "Bus stop Crown St - 1 min walk", "Light rail Surry Hills - 8 min walk"],
     safety: { securityCameras: false, securityCamerasLocation: "", weaponsOnProperty: false, weaponsExplanation: "", otherSafetyDetails: "" },
     owner: { id: "owner-sarah", name: "Sarah M.", bio: "Local Surry Hills owner. I live nearby and keep the property well maintained.", verified: true, responseTime: "Usually within 2 hours" },
     photos: [
@@ -72,7 +72,7 @@ const ROOMS: Record<string, any> = {
       "Affordable shared room close to USYD campus. The house is in a quiet neighbourhood with parks nearby. Shared with one other friendly tenant. Furnished with single bed, wardrobe, and desk. Common areas are spacious and clean.",
     amenities: ["WiFi included", "Washing machine", "Shared kitchen", "Backyard", "Near parks"],
     houseRules: ["No smoking", "Quiet after 10pm", "Clean up after yourself", "No overnight guests without notice"],
-    transport: ["Redfern Station — 7 min walk", "Bus stop George St — 2 min walk", "USYD campus — 10 min walk"],
+    transport: ["Redfern Station - 7 min walk", "Bus stop George St - 2 min walk", "USYD campus - 10 min walk"],
     safety: { securityCameras: false, securityCamerasLocation: "", weaponsOnProperty: false, weaponsExplanation: "", otherSafetyDetails: "" },
     owner: { id: "owner-david", name: "David K.", bio: "Property investor based in Redfern. Happy to help new arrivals settle in.", verified: false, responseTime: "Usually within 24 hours" },
     photos: [
@@ -110,7 +110,7 @@ const ROOMS: Record<string, any> = {
       "Ensuite room with your own private bathroom in a modern 2-year-old apartment building. The room is fully furnished with a double bed, built-in wardrobe, and study nook. Building has a gym and rooftop terrace. Green Square station is a 3 minute walk.",
     amenities: ["Private bathroom", "WiFi included", "Building gym", "Rooftop terrace", "Air conditioning", "Intercom entry"],
     houseRules: ["No smoking", "Quiet hours 10pm-7am", "No pets in room", "Keep bathroom clean"],
-    transport: ["Green Square Station — 3 min walk", "Bus stop Botany Rd — 1 min walk", "CBD — 10 min by train"],
+    transport: ["Green Square Station - 3 min walk", "Bus stop Botany Rd - 1 min walk", "CBD - 10 min by train"],
     safety: { securityCameras: true, securityCamerasLocation: "Building lobby and parking", weaponsOnProperty: false, weaponsExplanation: "", otherSafetyDetails: "Secure intercom building entry" },
     owner: { id: "owner-lisa", name: "Lisa T.", bio: "Owner-occupier in Waterloo. I keep the apartment in great condition and am very responsive.", verified: true, responseTime: "Usually within 1 hour" },
     photos: [
@@ -148,7 +148,7 @@ const ROOMS: Record<string, any> = {
       "Unfurnished private room near UNSW in a large 4-bedroom house. Light rail stop is right at the doorstep. Large backyard with BBQ area. Bills are split evenly between housemates. Bring your own furniture or we can help source basics.",
     amenities: ["Large backyard", "BBQ area", "Laundry", "Storage shed", "Street parking"],
     houseRules: ["No smoking inside", "Quiet after 11pm", "Shared chores roster", "Recycling required"],
-    transport: ["Light rail Kensington — 1 min walk", "UNSW campus — 5 min walk", "Bus stop Anzac Pde — 2 min walk"],
+    transport: ["Light rail Kensington - 1 min walk", "UNSW campus - 5 min walk", "Bus stop Anzac Pde - 2 min walk"],
     safety: { securityCameras: false, securityCamerasLocation: "", weaponsOnProperty: false, weaponsExplanation: "", otherSafetyDetails: "" },
     owner: { id: "owner-mike", name: "Mike R.", bio: "Long-time Kensington local. The house has been a great sharehouse for years.", verified: false, responseTime: "Usually within 12 hours" },
     photos: [
@@ -186,7 +186,7 @@ const ROOMS: Record<string, any> = {
       "Self-contained studio apartment with kitchenette and private bathroom. Fully furnished with a queen bed, compact kitchen, and small dining area. Walking distance to Broadway Shopping Centre and Glebe Markets. All bills included in rent.",
     amenities: ["Private kitchenette", "Private bathroom", "WiFi included", "Air conditioning", "Laundry in building"],
     houseRules: ["No smoking", "No pets", "Quiet hours 10pm-8am", "No subletting"],
-    transport: ["Glebe light rail — 5 min walk", "Bus stop Glebe Point Rd — 1 min walk", "Broadway Shopping Centre — 8 min walk"],
+    transport: ["Glebe light rail - 5 min walk", "Bus stop Glebe Point Rd - 1 min walk", "Broadway Shopping Centre - 8 min walk"],
     safety: { securityCameras: true, securityCamerasLocation: "Building entrance", weaponsOnProperty: false, weaponsExplanation: "", otherSafetyDetails: "" },
     owner: { id: "owner-jenny", name: "Jenny W.", bio: "I own several studios in the Glebe area. Clean, well-maintained, and great for independent living.", verified: true, responseTime: "Usually within 4 hours" },
     photos: [
@@ -224,7 +224,7 @@ const ROOMS: Record<string, any> = {
       "Budget-friendly shared room near Olympic Park. All bills and WiFi are included in the rent. The house is clean and well-maintained. Close to Homebush station and local shops. Ideal for new arrivals looking for an affordable start.",
     amenities: ["WiFi included", "All bills included", "Washing machine", "Shared kitchen", "Near shops"],
     houseRules: ["No smoking", "Quiet after 10pm", "Keep kitchen clean", "No parties"],
-    transport: ["Homebush Station — 8 min walk", "Olympic Park — 5 min walk", "Bus stop Parramatta Rd — 1 min walk"],
+    transport: ["Homebush Station - 8 min walk", "Olympic Park - 5 min walk", "Bus stop Parramatta Rd - 1 min walk"],
     safety: { securityCameras: false, securityCamerasLocation: "", weaponsOnProperty: false, weaponsExplanation: "", otherSafetyDetails: "" },
     owner: { id: "owner-raj", name: "Raj P.", bio: "I manage a few properties in Homebush. Friendly and always available for any issues.", verified: false, responseTime: "Usually within 6 hours" },
     photos: [
@@ -647,7 +647,7 @@ export default function RoomDetail() {
                   </p>
                   {dealStartDate && (
                     <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">
-                      {dealStartDate}{dealEndDate ? ` — ${dealEndDate}` : ""} &middot; {dealGuests} guest{dealGuests !== 1 ? "s" : ""}
+                      {dealStartDate}{dealEndDate ? ` - ${dealEndDate}` : ""} &middot; {dealGuests} guest{dealGuests !== 1 ? "s" : ""}
                     </p>
                   )}
                 </motion.div>

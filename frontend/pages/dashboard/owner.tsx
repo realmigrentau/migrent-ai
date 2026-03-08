@@ -184,9 +184,9 @@ export default function OwnerDashboard() {
           <section className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {[
               { label: "Active Listings", value: listings.length, color: "blue" },
-              { label: "Total Views", value: "—", color: "slate" },
-              { label: "Messages", value: "—", color: "slate" },
-              { label: "Deals", value: "—", color: "slate" },
+              { label: "Total Views", value: "-", color: "slate" },
+              { label: "Messages", value: "-", color: "slate" },
+              { label: "Deals", value: "-", color: "slate" },
             ].map((stat) => (
               <div
                 key={stat.label}

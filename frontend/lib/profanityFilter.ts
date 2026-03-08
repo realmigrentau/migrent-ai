@@ -1,6 +1,6 @@
 /**
  * Basic profanity / slur filter for user-generated content.
- * This is a simple keyword check — for production, consider
+ * This is a simple keyword check - for production, consider
  * a more robust library or API-based content moderation service.
  */
 
@@ -44,7 +44,7 @@ export function checkContent(text: string): FilterResult {
 }
 
 /**
- * Quick boolean check — is the text acceptable?
+ * Quick boolean check - is the text acceptable?
  */
 export function isClean(text: string): boolean {
   return checkContent(text).clean;

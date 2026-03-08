@@ -119,7 +119,7 @@ export function useProfileReviews(userId: string | undefined) {
 
         if (cancelled) return;
         if (error) {
-          // Reviews table may not exist yet — that's fine
+          // Reviews table may not exist yet - that's fine
           console.warn("Reviews fetch:", error.message);
           setReviews([]);
         } else {

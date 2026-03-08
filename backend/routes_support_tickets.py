@@ -164,7 +164,7 @@ async def create_ticket(body: TicketCreate, authorization: Optional[str] = Heade
                 <p><strong>Subject:</strong> {body.subject}</p>
                 <p>You can view your ticket status in your <a href="https://migrent-ai.vercel.app/support/tickets">support dashboard</a>.</p>
                 <br/>
-                <p>— The MigRent Team</p>
+                <p>- The MigRent Team</p>
                 """,
             })
         except Exception:

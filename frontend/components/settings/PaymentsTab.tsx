@@ -24,9 +24,9 @@ interface PaymentsTabProps {
 
 // Mock payout history
 const MOCK_PAYOUTS = [
-  { id: "1", date: "2026-02-28", amount: 1200, status: "completed", description: "Payout — February 2026" },
-  { id: "2", date: "2026-01-31", amount: 950, status: "completed", description: "Payout — January 2026" },
-  { id: "3", date: "2025-12-31", amount: 1100, status: "completed", description: "Payout — December 2025" },
+  { id: "1", date: "2026-02-28", amount: 1200, status: "completed", description: "Payout - February 2026" },
+  { id: "2", date: "2026-01-31", amount: 950, status: "completed", description: "Payout - January 2026" },
+  { id: "3", date: "2025-12-31", amount: 1100, status: "completed", description: "Payout - December 2025" },
 ];
 
 export default function PaymentsTab({ profile, isOwner, showMessage }: PaymentsTabProps) {
@@ -34,7 +34,7 @@ export default function PaymentsTab({ profile, isOwner, showMessage }: PaymentsT
 
   const handleExportCsv = () => {
     setExportingCsv(true);
-    showMessage("CSV export started — check your downloads", "success");
+    showMessage("CSV export started - check your downloads", "success");
     setTimeout(() => setExportingCsv(false), 2000);
   };
 

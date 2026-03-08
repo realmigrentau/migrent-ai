@@ -28,7 +28,7 @@ from routes_validation import router as validation_router
 REQUIRED_ENV = ["SUPABASE_URL", "SUPABASE_ANON_KEY", "STRIPE_SECRET_KEY", "STRIPE_WEBHOOK_SECRET"]
 missing = [v for v in REQUIRED_ENV if not os.environ.get(v)]
 if missing:
-    logger.warning(f"Missing environment variables: {', '.join(missing)} — some features will not work")
+    logger.warning(f"Missing environment variables: {', '.join(missing)} - some features will not work")
 
 logger.info(f"PORT env var = {os.environ.get('PORT', 'not set')}")
 

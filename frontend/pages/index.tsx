@@ -105,7 +105,7 @@ export default function Home() {
     <>
       <Head>
         <title>MigRent AI – Find Verified Rooms in Australia</title>
-        <meta name="description" content="MigRent helps migrants, students, and professionals find verified rooms from trusted Australian owners — faster and safer than classifieds." />
+        <meta name="description" content="MigRent helps migrants, students, and professionals find verified rooms from trusted Australian owners - faster and safer than classifieds." />
         <meta property="og:title" content="MigRent AI – Find Verified Rooms in Australia" />
         <meta property="og:description" content="Find verified rooms from trusted owners across Australia. Superhost-rated, station-close listings." />
         <meta property="og:type" content="website" />

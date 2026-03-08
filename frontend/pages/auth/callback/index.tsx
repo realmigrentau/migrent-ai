@@ -26,7 +26,7 @@ async function storeCrossDeviceTokens(
       }),
     });
   } catch {
-    // Best-effort — the phone still logs in regardless
+    // Best-effort - the phone still logs in regardless
   }
 }
 

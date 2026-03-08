@@ -141,7 +141,7 @@ export default function Guides() {
     <>
       <Head>
         <title>{t("guides.heroTitle")} | MigRent AI</title>
-        <meta name="description" content="Step-by-step guides for MigRent AI — learn how to host, find rentals, verify your profile, become a superhost, and more." />
+        <meta name="description" content="Step-by-step guides for MigRent AI - learn how to host, find rentals, verify your profile, become a superhost, and more." />
       </Head>
 
       <div className="space-y-20">
@@ -345,7 +345,7 @@ export default function Guides() {
                   Can&apos;t find what you need?
                 </h3>
                 <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-                  Our support team can help you with any question — available 24/7 in multiple languages.
+                  Our support team can help you with any question - available 24/7 in multiple languages.
                 </p>
               </div>
               <Link href="/contact">

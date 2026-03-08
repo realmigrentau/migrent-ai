@@ -50,7 +50,7 @@ export default function VerificationCarousel({ profile, badges, onVerifyClick }:
       icon: "⭐",
       label: "Superhost",
       verified: true,
-      detail: `Superhost status — ${profile.average_rating.toFixed(1)} rating with ${profile.reviews_count}+ reviews`,
+      detail: `Superhost status - ${profile.average_rating.toFixed(1)} rating with ${profile.reviews_count}+ reviews`,
       color: "amber",
     });
   }

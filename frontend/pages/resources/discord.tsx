@@ -59,7 +59,7 @@ const rules = [
   "No spam, self-promotion, or irrelevant links",
   "Keep discussions housing-related and helpful",
   "Report suspicious listings or scam attempts immediately",
-  "Protect your personal information — never share sensitive details in public channels",
+  "Protect your personal information - never share sensitive details in public channels",
   "Use city-specific channels for local questions",
 ];
 
