@@ -3,7 +3,7 @@ from fastapi import APIRouter, HTTPException, Header
 from pydantic import BaseModel
 from typing import Optional
 from db import get_supabase
-from routes_listings import get_current_user
+from auth_utils import get_current_user
 
 router = APIRouter(prefix="/referrals", tags=["referrals"])
 

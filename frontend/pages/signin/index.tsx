@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { useHCaptcha } from "@hcaptcha/react-hcaptcha/hooks";
@@ -22,8 +22,13 @@ export default function SignIn() {
   // Default to /onboarding if coming from signup flow
   const redirectUrl = typeof router.query.redirect === "string" ? router.query.redirect : "/onboarding";
 
+  useEffect(() => {
+    if (session) {
+      router.push(redirectUrl);
+    }
+  }, [session, redirectUrl, router]);
+
   if (session) {
-    router.push(redirectUrl);
     return null;
   }
 

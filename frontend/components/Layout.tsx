@@ -12,7 +12,8 @@ export default function Layout({ children }: { children: ReactNode }) {
   const router = useRouter();
   const { t } = useTranslation();
 
-  const isAdminRoute = router.pathname.startsWith("/mazda.asgt22779412.sara-admin");
+  const adminPath = process.env.NEXT_PUBLIC_ADMIN_PATH || "/mazda.asgt22779412.sara-admin";
+  const isAdminRoute = router.pathname.startsWith(adminPath);
   const isHomePage = router.pathname === "/";
   const isDashboard = router.pathname.startsWith("/dashboard");
   const isPricing = router.pathname === "/pricing";
@@ -87,7 +88,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                 <li><Link href="/contact" className="text-sm text-slate-500 dark:text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors">{t("footer.contact")}</Link></li>
                 <li><Link href="/pricing" className="text-sm text-slate-500 dark:text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors">{t("footer.pricing")}</Link></li>
               </ul>
-              <a href="https://mail.google.com/mail/?view=cm&fs=1&to=migrentau@gmail.com" target="_blank" rel="noopener noreferrer" className="inline-block mt-3 text-sm text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 transition-colors">
+              <a href="mailto:migrentau@gmail.com" className="inline-block mt-3 text-sm text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 transition-colors">
                 migrentau@gmail.com
               </a>
             </div>

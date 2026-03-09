@@ -3,7 +3,7 @@ import stripe
 from fastapi import APIRouter, HTTPException, Header, Request
 from models import DealCreate, DealOut, DealStatus, SeekerFeeRequest
 from db import get_supabase
-from routes_listings import get_current_user
+from auth_utils import get_current_user
 
 router = APIRouter(prefix="/deals", tags=["deals"])
 
@@ -32,7 +32,7 @@ def create_deal(
     user_meta = user.user_metadata or {}
 
     # Only the owner (or at minimum, the owner_id must match the caller)
-    if user.id != body.owner_id:
+    if str(user.id) != str(body.owner_id):
         raise HTTPException(status_code=403, detail="Only the owner can create a deal")
     if user_meta.get("user_type") != "owner":
         raise HTTPException(status_code=403, detail="Only owners can create deals")

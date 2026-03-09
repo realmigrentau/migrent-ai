@@ -5,7 +5,7 @@ Account management endpoints - Delete account only.
 import logging
 from fastapi import APIRouter, HTTPException, Header, Request
 from db import get_supabase, get_supabase_admin
-from routes_listings import get_current_user
+from auth_utils import get_current_user
 from limiter import limiter
 
 logger = logging.getLogger(__name__)

@@ -1,32 +1,39 @@
 from fastapi import APIRouter, HTTPException, Header
 from typing import Optional
 from models import ListingCreate
-from db import get_supabase
+from db import get_supabase, get_supabase_admin
+from auth_utils import get_current_user
 
 router = APIRouter(prefix="/listings", tags=["listings"])
 
 
 def derive_city(postcode: int) -> Optional[str]:
-    if 1000 <= postcode <= 2999:
+    """Map Australian postcodes to their capital city/region."""
+    if 800 <= postcode <= 899:
+        return "Darwin"
+    if 900 <= postcode <= 999:
+        return "Darwin"  # NT rural
+    if 1000 <= postcode <= 1999:
         return "Sydney"
+    if 2000 <= postcode <= 2599:
+        return "Sydney"
+    if 2600 <= postcode <= 2620:
+        return "Canberra"
+    if 2621 <= postcode <= 2899:
+        return "Sydney"  # Regional NSW
+    if 2900 <= postcode <= 2999:
+        return "Canberra"  # ACT surrounds
+    if 3000 <= postcode <= 3999:
+        return "Melbourne"
+    if 4000 <= postcode <= 4999:
+        return "Brisbane"
     if 5000 <= postcode <= 5999:
         return "Adelaide"
+    if 6000 <= postcode <= 6999:
+        return "Perth"
+    if 7000 <= postcode <= 7999:
+        return "Hobart"
     return None
-
-
-def get_current_user(authorization: str):
-    """Validate the Bearer token via Supabase and return the user."""
-    if not authorization.startswith("Bearer "):
-        raise HTTPException(status_code=401, detail="Invalid authorization header")
-    token = authorization.removeprefix("Bearer ")
-    sb = get_supabase()
-    try:
-        res = sb.auth.get_user(token)
-    except Exception:
-        raise HTTPException(status_code=401, detail="Invalid or expired token")
-    if res is None or res.user is None:
-        raise HTTPException(status_code=401, detail="Invalid or expired token")
-    return res.user
 
 
 @router.post("")
@@ -43,7 +50,7 @@ def create_listing(
 
     city = listing.city or derive_city(listing.postcode)
 
-    sb = get_supabase()
+    sb = get_supabase_admin()
     row = {
         "address": listing.address,
         "postcode": listing.postcode,
@@ -51,7 +58,7 @@ def create_listing(
         "weekly_price": listing.weekly_price,
         "description": listing.description,
         "images": listing.images,
-        "owner_id": user.id,
+        "owner_id": str(user.id),
     }
 
     # Add all extended fields if provided
@@ -114,8 +121,18 @@ def list_listings(
     min_price: Optional[float] = None,
     max_price: Optional[float] = None,
     owner: Optional[bool] = None,
+    limit: int = 20,
+    offset: int = 0,
     authorization: Optional[str] = Header(None),
 ):
+    # Clamp limit to prevent abuse
+    if limit < 1:
+        limit = 1
+    if limit > 100:
+        limit = 100
+    if offset < 0:
+        offset = 0
+
     sb = get_supabase()
     query = sb.table("listings").select("*")
     if city:
@@ -126,7 +143,9 @@ def list_listings(
         query = query.lte("weekly_price", max_price)
     if owner and authorization:
         user = get_current_user(authorization)
-        query = query.eq("owner_id", user.id)
+        query = query.eq("owner_id", str(user.id))
+
+    query = query.range(offset, offset + limit - 1)
 
     res = query.execute()
     return res.data

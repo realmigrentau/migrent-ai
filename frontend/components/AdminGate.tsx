@@ -1,9 +1,6 @@
 import { useState, useEffect, useRef, useCallback, useContext, createContext, ReactNode } from "react";
 import { motion } from "framer-motion";
 
-const ADMIN_USERNAME = "CRAVER_RULES";
-const ADMIN_PASSWORD = "7ADAM15";
-const LOCKOUT_PASSWORD = "westxlopez";
 const MAX_ATTEMPTS = 3;
 const INACTIVITY_TIMEOUT = 20_000; // 20 seconds
 
@@ -81,12 +78,27 @@ export default function AdminGate({ children }: { children: ReactNode }) {
     };
   }, [authenticated, resetInactivityTimer]);
 
-  const handleLogin = () => {
+  const [loginLoading, setLoginLoading] = useState(false);
+
+  const handleLogin = async () => {
     setError("");
-    if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
-      setAuthenticated(true);
-      return;
+    setLoginLoading(true);
+    try {
+      const res = await fetch("/api/admin/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
+      });
+      const data = await res.json();
+      if (data.valid) {
+        setAuthenticated(true);
+        setLoginLoading(false);
+        return;
+      }
+    } catch {
+      // Network error - treat as failed attempt
     }
+    setLoginLoading(false);
 
     const next = attempts + 1;
     setAttempts(next);
@@ -99,22 +111,31 @@ export default function AdminGate({ children }: { children: ReactNode }) {
     }
   };
 
-  const handleLockoutSubmit = () => {
+  const handleLockoutSubmit = async () => {
     setLockoutError("");
-    if (lockoutPassword === LOCKOUT_PASSWORD) {
-      setLocked(false);
-      setLockoutPassword("");
-
-      if (lockReason === "inactivity") {
-        setAuthenticated(true);
-      } else {
-        setAttempts(0);
-        setUsername("");
-        setPassword("");
+    try {
+      const res = await fetch("/api/admin/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: "_lockout_", password: lockoutPassword }),
+      });
+      const data = await res.json();
+      if (data.valid) {
+        setLocked(false);
+        setLockoutPassword("");
+        if (lockReason === "inactivity") {
+          setAuthenticated(true);
+        } else {
+          setAttempts(0);
+          setUsername("");
+          setPassword("");
+        }
+        return;
       }
-    } else {
-      setLockoutError("Wrong password.");
+    } catch {
+      // Network error
     }
+    setLockoutError("Wrong password.");
   };
 
   if (!mounted) return null;

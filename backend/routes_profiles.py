@@ -4,7 +4,7 @@ import uuid
 from fastapi import APIRouter, HTTPException, Header, Request, UploadFile, File
 from models import ProfileUpdate
 from db import get_supabase_admin, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY
-from routes_listings import get_current_user
+from auth_utils import get_current_user
 from limiter import limiter
 from datetime import datetime
 
@@ -200,7 +200,7 @@ async def upload_profile_photo(request: Request, file: UploadFile = File(...), a
         # Determine extension
         ext = "jpg"
         if file.content_type:
-            ext_map = {"image/png": "png", "image/jpeg": "jpg", "image/webp": "webp", "image/gif": "gif"}
+            ext_map = {"image/png": "png", "image/jpeg": "jpg", "image/webp": "webp"}
             ext = ext_map.get(file.content_type, "jpg")
 
         path = f"profile-photos/{uid}.{ext}"
@@ -272,11 +272,11 @@ def refresh_badges(authorization: str = Header(...)):
 
         deals = sb.table("deals").select("id").eq("seeker_id", uid).eq("status", "completed").execute()
         if deals.data and len(deals.data) >= 1:
-            badges.append("Purchased 1+ homes")
+            badges.append("Booked 1+ rooms")
         if deals.data and len(deals.data) >= 5:
-            badges.append("Frequent Flyer")
+            badges.append("Frequent Renter")
         if deals.data and len(deals.data) >= 10:
-            badges.append("Globe Trotter")
+            badges.append("Seasoned Renter")
 
         listings = sb.table("listings").select("id").eq("owner_id", uid).execute()
         if listings.data and len(listings.data) >= 1:

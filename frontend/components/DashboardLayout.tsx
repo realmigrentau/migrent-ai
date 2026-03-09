@@ -1,4 +1,4 @@
-import { ReactNode, useState } from "react";
+import { ReactNode, useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { motion } from "framer-motion";
@@ -57,11 +57,14 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     );
   }
 
-  // Redirect to login if not authenticated
-  if (!isAuthenticated) {
-    if (typeof window !== "undefined") {
+  // Redirect to login if not authenticated (via useEffect to avoid render-time side effects)
+  useEffect(() => {
+    if (!authLoading && !loading && !isAuthenticated) {
       router.replace("/signin?redirect=/dashboard");
     }
+  }, [authLoading, loading, isAuthenticated, router]);
+
+  if (!isAuthenticated) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
         <div className="text-center space-y-4">
@@ -74,11 +77,14 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     );
   }
 
-  // Redirect to onboarding if not completed
-  if (!onboardingCompleted && !onboardingLoading) {
-    if (typeof window !== "undefined") {
+  // Redirect to onboarding if not completed (via useEffect)
+  useEffect(() => {
+    if (!onboardingLoading && !onboardingCompleted && isAuthenticated) {
       router.replace("/onboarding");
     }
+  }, [onboardingLoading, onboardingCompleted, isAuthenticated, router]);
+
+  if (!onboardingCompleted && !onboardingLoading) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
         <div className="text-center space-y-4">
@@ -115,7 +121,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         ...common,
         { href: "/dashboard/seeker", label: "Seeker Hub", icon: <Search className="w-5 h-5" /> },
         { href: "/seeker/search", label: "Search", icon: <Search className="w-5 h-5" /> },
-        { href: "/seeker/saved", label: "Saved", icon: <Heart className="w-5 h-5" /> },
+        { href: "/seeker/wishlist", label: "Saved", icon: <Heart className="w-5 h-5" /> },
         { href: "/dashboard/seeker-profile", label: "Profile", icon: <User className="w-5 h-5" /> },
         { href: "/messages", label: "Messages", icon: <MessageCircle className="w-5 h-5" /> },
         { href: "/guides", label: "Help Centre", icon: <HelpCircle className="w-5 h-5" /> },
@@ -139,7 +145,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         { href: "/owner/listings", label: "Listings", icon: <ListOrdered className="w-5 h-5" /> },
         { href: "/dashboard/owner-profile", label: "Profile", icon: <User className="w-5 h-5" /> },
         { href: "/messages", label: "Messages", icon: <MessageCircle className="w-5 h-5" /> },
-        { href: "/faq", label: "Support", icon: <HelpCircle className="w-5 h-5" /> },
+        { href: "/guides", label: "Support", icon: <HelpCircle className="w-5 h-5" /> },
       ];
     }
 
@@ -148,7 +154,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       { href: "/seeker/search", label: "Search", icon: <Search className="w-5 h-5" /> },
       { href: "/dashboard/seeker-profile", label: "Profile", icon: <User className="w-5 h-5" /> },
       { href: "/messages", label: "Messages", icon: <MessageCircle className="w-5 h-5" /> },
-      { href: "/faq", label: "Support", icon: <HelpCircle className="w-5 h-5" /> },
+      { href: "/guides", label: "Support", icon: <HelpCircle className="w-5 h-5" /> },
     ];
   };
 

@@ -23,7 +23,7 @@ import httpx
 from typing import Optional
 from fastapi import APIRouter, HTTPException, Header, Query
 from db import get_supabase_admin
-from routes_listings import get_current_user
+from auth_utils import get_current_user
 from models_support import (
     TicketCreate, TicketReply, TicketUpdate, TicketOut, TicketDetailOut,
     HelpArticleCreate, HelpArticleOut, HelpCategoryOut, HelpVote, CSATSubmit,

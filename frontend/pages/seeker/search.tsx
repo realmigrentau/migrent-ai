@@ -46,7 +46,7 @@ function getFirstDayOfMonth(year: number, month: number) {
   return new Date(year, month, 1).getDay();
 }
 
-export default function SeekerSearchExtended() {
+export default function SeekerSearch() {
   const { session, user } = useAuth();
   const { theme } = useTheme();
   const [results, setResults] = useState<Listing[]>([]);

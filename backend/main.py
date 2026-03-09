@@ -44,10 +44,14 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 # ── CORS ────────────────────────────────────────────────────
 FRONTEND_URL = os.environ.get("FRONTEND_URL", "")
+ENV = os.environ.get("ENV", "development")
+
 allowed_origins = [
-    "http://localhost:3000",
     "https://migrent-ai.vercel.app",
 ]
+# Only allow localhost in development
+if ENV != "production":
+    allowed_origins.append("http://localhost:3000")
 if FRONTEND_URL:
     allowed_origins.append(FRONTEND_URL)
 
@@ -55,7 +59,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins,
     allow_credentials=True,
-    allow_methods=["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+    allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allow_headers=["Authorization", "Content-Type"],
 )
 

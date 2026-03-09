@@ -2,7 +2,7 @@ import os
 import stripe
 from fastapi import APIRouter, HTTPException, Header
 from db import get_supabase
-from routes_listings import get_current_user
+from auth_utils import get_current_user
 
 router = APIRouter(prefix="/payments", tags=["verification"])
 

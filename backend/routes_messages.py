@@ -13,7 +13,7 @@ from uuid import UUID
 
 from models import MessageCreate, MessageOut
 from db import get_supabase
-from routes_listings import get_current_user
+from auth_utils import get_current_user
 from limiter import limiter
 
 logger = logging.getLogger(__name__)

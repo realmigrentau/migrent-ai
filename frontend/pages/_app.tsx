@@ -8,8 +8,10 @@ import { HCAPTCHA_SITE_KEY } from "../lib/recaptcha";
 import "../lib/i18n";
 import "../styles/globals.css";
 
+const ADMIN_PATH = process.env.NEXT_PUBLIC_ADMIN_PATH || "/mazda.asgt22779412.sara-admin";
+
 export default function App({ Component, pageProps, router }: AppProps) {
-  const isAdmin = router.pathname.startsWith("/mazda.asgt22779412.sara-admin");
+  const isAdmin = router.pathname.startsWith(ADMIN_PATH);
   const isDashboard = router.pathname.startsWith("/dashboard");
 
   const inner = isAdmin || isDashboard ? (

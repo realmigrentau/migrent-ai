@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import Head from "next/head";
 import { motion, type Variants } from "framer-motion";
 import OwnerMarquee from "../components/OwnerMarquee";
@@ -56,7 +57,7 @@ const colorMap = {
   },
 } as const;
 
-const pressLogos = ["TechCrunch", "StartupDaily", "SBS News", "Product Hunt"];
+const pressLogos: string[] = [];
 
 /* ── Page ── */
 
@@ -116,11 +117,11 @@ export default function Home() {
               "@context": "https://schema.org",
               "@type": "WebSite",
               name: "MigRent AI",
-              url: "https://migrent.au",
+              url: "https://migrent-ai.vercel.app",
               description: "Find verified rooms from trusted owners across Australia.",
               potentialAction: {
                 "@type": "SearchAction",
-                target: "https://migrent.au/seeker/search?q={search_term_string}",
+                target: "https://migrent-ai.vercel.app/seeker/search?q={search_term_string}",
                 "query-input": "required name=search_term_string",
               },
             }),
@@ -151,13 +152,13 @@ export default function Home() {
             </p>
 
             <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/dashboard">
+              <Link href={session ? "/dashboard" : "/for-seekers"}>
                 <motion.span whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.98 }} className="inline-flex items-center gap-2 btn-primary text-base px-8 py-4 rounded-xl">
                   {t("home.seekerCta")}
                   <ArrowRight className="w-4 h-4" />
                 </motion.span>
               </Link>
-              <Link href="/owner/dashboard">
+              <Link href={session ? "/owner/dashboard" : "/for-owners"}>
                 <motion.span whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.98 }} className="inline-flex items-center gap-2 btn-secondary text-base px-8 py-4 rounded-xl">
                   {t("home.ownerCta")}
                   <ArrowRight className="w-4 h-4" />
@@ -310,8 +311,8 @@ export default function Home() {
           </motion.div>
 
           <div className="grid md:grid-cols-3 gap-6">
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.6 }} className="md:col-span-2 md:row-span-2 relative rounded-3xl overflow-hidden group">
-              <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&q=80" alt="Beautiful furnished room" className="w-full h-full min-h-[300px] md:min-h-[480px] object-cover group-hover:scale-105 transition-transform duration-700" />
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.6 }} className="md:col-span-2 md:row-span-2 relative rounded-3xl overflow-hidden group min-h-[300px] md:min-h-[480px]">
+              <Image src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&q=80" alt="Beautiful furnished room" fill className="object-cover group-hover:scale-105 transition-transform duration-700" sizes="(max-width: 768px) 100vw, 66vw" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
               <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
                 <span className="inline-block px-3 py-1 rounded-full bg-rose-500 text-white text-xs font-bold mb-3">{t("home.featured")}</span>
@@ -320,8 +321,8 @@ export default function Home() {
               </div>
             </motion.div>
 
-            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1, duration: 0.5 }} className="relative rounded-3xl overflow-hidden group">
-              <img src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&q=80" alt="Modern bedroom" className="w-full h-[220px] object-cover group-hover:scale-105 transition-transform duration-700" />
+            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1, duration: 0.5 }} className="relative rounded-3xl overflow-hidden group h-[220px]">
+              <Image src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&q=80" alt="Modern bedroom" fill className="object-cover group-hover:scale-105 transition-transform duration-700" sizes="(max-width: 768px) 100vw, 33vw" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
               <div className="absolute bottom-0 left-0 right-0 p-5">
                 <span className="inline-block px-2.5 py-0.5 rounded-full bg-emerald-500 text-white text-[10px] font-bold mb-2">{t("home.successStory")}</span>
@@ -329,8 +330,8 @@ export default function Home() {
               </div>
             </motion.div>
 
-            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.2, duration: 0.5 }} className="relative rounded-3xl overflow-hidden group">
-              <img src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=400&q=80" alt="Cozy living space" className="w-full h-[220px] object-cover group-hover:scale-105 transition-transform duration-700" />
+            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.2, duration: 0.5 }} className="relative rounded-3xl overflow-hidden group h-[220px]">
+              <Image src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=400&q=80" alt="Cozy living space" fill className="object-cover group-hover:scale-105 transition-transform duration-700" sizes="(max-width: 768px) 100vw, 33vw" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
               <div className="absolute bottom-0 left-0 right-0 p-5">
                 <span className="inline-block px-2.5 py-0.5 rounded-full bg-blue-500 text-white text-[10px] font-bold mb-2">{t("home.successStory")}</span>
@@ -349,16 +350,6 @@ export default function Home() {
             <h2 className="text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white">
               {t("home.testimonialsTitle")} <span className="gradient-text">{t("home.testimonialsAccent")}</span>
             </h2>
-          </motion.div>
-
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="flex items-center justify-center gap-3 mb-12">
-            <div className="flex items-center gap-1">
-              {[1, 2, 3, 4, 5].map((s) => (
-                <Star key={s} className="w-5 h-5 fill-amber-400 text-amber-400" />
-              ))}
-            </div>
-            <span className="text-lg font-bold text-slate-900 dark:text-white">{t("home.rating")}</span>
-            <span className="text-sm text-slate-400 dark:text-slate-500">{t("home.ratingNote")}</span>
           </motion.div>
 
           <div className="grid md:grid-cols-3 gap-6">
@@ -381,14 +372,16 @@ export default function Home() {
             ))}
           </div>
 
-          <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.3 }} className="mt-16 text-center">
-            <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-6">{t("home.asSeenOn")}</p>
-            <div className="flex items-center justify-center gap-4 sm:gap-8 flex-wrap">
-              {pressLogos.map((name) => (
-                <div key={name} className="px-6 py-3 rounded-xl bg-slate-100 dark:bg-slate-800/50 text-slate-400 dark:text-slate-500 text-sm font-semibold">{name}</div>
-              ))}
-            </div>
-          </motion.div>
+          {pressLogos.length > 0 && (
+            <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.3 }} className="mt-16 text-center">
+              <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-6">{t("home.asSeenOn")}</p>
+              <div className="flex items-center justify-center gap-4 sm:gap-8 flex-wrap">
+                {pressLogos.map((name) => (
+                  <div key={name} className="px-6 py-3 rounded-xl bg-slate-100 dark:bg-slate-800/50 text-slate-400 dark:text-slate-500 text-sm font-semibold">{name}</div>
+                ))}
+              </div>
+            </motion.div>
+          )}
         </div>
       </section>
 
