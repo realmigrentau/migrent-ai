@@ -1,4 +1,4 @@
-import { createClient } from "@supabase/supabase-js";
+import { createBrowserClient } from "@supabase/ssr";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -10,4 +10,9 @@ if (!supabaseUrl || !supabaseAnonKey) {
   );
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+/**
+ * Browser-side Supabase client using @supabase/ssr.
+ * Stores auth tokens in cookies (readable by middleware)
+ * AND localStorage (for backward compatibility).
+ */
+export const supabase = createBrowserClient(supabaseUrl, supabaseAnonKey);

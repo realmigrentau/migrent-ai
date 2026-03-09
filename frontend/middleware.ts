@@ -1,41 +1,60 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { createMiddlewareSupabaseClient } from "./lib/supabase-middleware";
+
+const ADMIN_PATH = process.env.NEXT_PUBLIC_ADMIN_PATH || "/mazda.asgt22779412.sara-admin";
 
 /**
- * Middleware for route protection.
+ * Server-side route protection middleware.
  *
- * Currently handles:
- * - Admin routes (protected client-side by AdminLayout)
- * - Dashboard routes (protected client-side by DashboardLayout)
- *
- * Note: Full server-side auth protection will be added when migrating
- * to @supabase/ssr with cookie-based sessions. For now, the client-side
- * protection in DashboardLayout handles auth redirection.
- *
- * This middleware serves as a placeholder and can be extended to:
- * - Check Supabase session cookies (when using @supabase/ssr)
- * - Add rate limiting
- * - Add security headers
+ * - Dashboard routes (/dashboard/*) require an authenticated session.
+ *   Unauthenticated visitors are redirected to /signin with a redirect param.
+ * - Admin routes are left to client-side AdminGate (credentials checked via API).
+ * - All other routes pass through.
  */
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
+  const res = NextResponse.next();
 
-  // For now, let all requests through
-  // The DashboardLayout component handles auth redirection client-side
-  // This avoids SSR hydration issues with Supabase client-side auth
+  // Skip admin routes - AdminGate handles its own auth via API
+  if (pathname.startsWith(ADMIN_PATH)) {
+    return res;
+  }
 
-  // Future: When migrating to @supabase/ssr, add server-side session checks here
-  // Example:
-  // const supabase = createMiddlewareClient({ req, res });
-  // const { data: { session } } = await supabase.auth.getSession();
-  // if (!session && pathname.startsWith('/dashboard')) {
-  //   return NextResponse.redirect(new URL('/signin?redirect=' + pathname, req.url));
-  // }
+  // Protect dashboard routes with server-side session check
+  if (
+    pathname.startsWith("/dashboard") ||
+    pathname.startsWith("/owner") ||
+    pathname.startsWith("/seeker") ||
+    pathname.startsWith("/account")
+  ) {
+    try {
+      const supabase = createMiddlewareSupabaseClient(req, res);
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
 
-  return NextResponse.next();
+      if (!user) {
+        const signInUrl = new URL("/signin", req.url);
+        signInUrl.searchParams.set("redirect", pathname);
+        return NextResponse.redirect(signInUrl);
+      }
+    } catch {
+      // If Supabase call fails, let the request through
+      // Client-side DashboardLayout will handle auth as a fallback
+      return res;
+    }
+  }
+
+  return res;
 }
 
 export const config = {
-  // Match admin and dashboard routes
-  matcher: ["/mazda.asgt22779412.sara-admin/:path*", "/dashboard/:path*"],
+  matcher: [
+    "/dashboard/:path*",
+    "/owner/:path*",
+    "/seeker/:path*",
+    "/account/:path*",
+    "/mazda.asgt22779412.sara-admin/:path*",
+  ],
 };
