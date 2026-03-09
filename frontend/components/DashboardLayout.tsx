@@ -43,6 +43,19 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
   const isOwner = role === "owner";
 
+  // All useEffect hooks MUST be before any early returns (React Rules of Hooks)
+  useEffect(() => {
+    if (!authLoading && !loading && !isAuthenticated) {
+      router.replace("/signin?redirect=/dashboard");
+    }
+  }, [authLoading, loading, isAuthenticated, router]);
+
+  useEffect(() => {
+    if (!onboardingLoading && !onboardingCompleted && isAuthenticated) {
+      router.replace("/onboarding");
+    }
+  }, [onboardingLoading, onboardingCompleted, isAuthenticated, router]);
+
   // Loading state
   if (authLoading || loading || onboardingLoading) {
     return (
@@ -57,13 +70,6 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     );
   }
 
-  // Redirect to login if not authenticated (via useEffect to avoid render-time side effects)
-  useEffect(() => {
-    if (!authLoading && !loading && !isAuthenticated) {
-      router.replace("/signin?redirect=/dashboard");
-    }
-  }, [authLoading, loading, isAuthenticated, router]);
-
   if (!isAuthenticated) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
@@ -76,13 +82,6 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       </div>
     );
   }
-
-  // Redirect to onboarding if not completed (via useEffect)
-  useEffect(() => {
-    if (!onboardingLoading && !onboardingCompleted && isAuthenticated) {
-      router.replace("/onboarding");
-    }
-  }, [onboardingLoading, onboardingCompleted, isAuthenticated, router]);
 
   if (!onboardingCompleted && !onboardingLoading) {
     return (
