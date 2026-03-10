@@ -22,16 +22,18 @@ interface CachedProfile {
 }
 
 const CACHE_KEY = "migrent_dashboard_profile";
-const CACHE_TTL = 10 * 60 * 1000; // 10 minutes
 const ROLE_CHANGE_EVENT = "migrent_role_changed";
 
+// No TTL check - use cached profile for instant UI rendering.
+// Profile data (role, displayName) rarely changes within a session.
+// Cache is cleared on signOut.
 function getCachedProfile(): CachedProfile | null {
   if (typeof window === "undefined") return null;
   try {
     const cached = localStorage.getItem(CACHE_KEY);
     if (!cached) return null;
     const data: CachedProfile = JSON.parse(cached);
-    if (Date.now() - data.timestamp < CACHE_TTL) {
+    if (data.userId && data.role) {
       return data;
     }
     return null;
@@ -66,7 +68,7 @@ function clearCachedProfile() {
  * Uses aggressive caching for instant page loads.
  */
 export function useDashboard() {
-  const { session, user, loading: authLoading } = useAuth();
+  const { session, user, loading: authLoading, refreshing: authRefreshing } = useAuth();
   const router = useRouter();
   const hasFetched = useRef(false);
 
@@ -107,7 +109,9 @@ export function useDashboard() {
     if (hasFetched.current) return;
 
     async function fetchProfile() {
-      if (authLoading) return;
+      // Wait for useAuth to finish validating/refreshing the session token
+      // so we have a fresh access_token for API calls
+      if (authLoading || authRefreshing) return;
 
       if (!session || !user) {
         setState({ role: null, loading: false, profileLoaded: true, displayName: null, profilePhoto: null });
@@ -166,7 +170,7 @@ export function useDashboard() {
     }
 
     fetchProfile();
-  }, [session, user, authLoading]);
+  }, [session, user, authLoading, authRefreshing]);
 
   const setRole = useCallback(
     async (newRole: "seeker" | "owner") => {
