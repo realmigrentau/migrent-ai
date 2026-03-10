@@ -7,7 +7,7 @@ export default function PrivacyPolicy() {
     <>
       <Head>
         <title>Privacy Policy | MigRent AI</title>
-        <meta name="description" content="MigRent AI Privacy Policy - how we collect, use, and protect your data. GDPR and Australian Privacy Act compliant." />
+        <meta name="description" content="MigRent AI Privacy Policy - how we collect, use, and protect your data. Australian Privacy Principles and GDPR compliant." />
       </Head>
 
       <div className="max-w-3xl mx-auto space-y-10">
@@ -23,7 +23,7 @@ export default function PrivacyPolicy() {
               <h1 className="text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white">
                 Privacy <span className="gradient-text">Policy</span>
               </h1>
-              <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Last updated: January 2026</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Last updated: March 2026</p>
             </div>
           </div>
         </motion.div>
@@ -31,26 +31,25 @@ export default function PrivacyPolicy() {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="space-y-8">
           {/* Introduction */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">Introduction</h2>
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white">1. Introduction</h2>
             <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
-              <p>
-                MigRent AI (&quot;we&quot;, &quot;us&quot;, &quot;our&quot;) is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our platform at migrent.au.
-              </p>
-              <p>
-                MigRent AI operates under ABN 22 669 566 941 and is based in Sydney, Australia. We comply with the Australian Privacy Act 1988 (Cth), the Australian Privacy Principles (APPs), and applicable GDPR provisions for users located in the European Economic Area.
-              </p>
+              <p>MigRent AI (&quot;we&quot;, &quot;us&quot;, &quot;our&quot;) is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our platform at migrent-ai.vercel.app.</p>
+              <p>MigRent AI operates under ABN 22 669 566 941 and is based in Sydney, Australia. We comply with the Australian Privacy Act 1988 (Cth), the Australian Privacy Principles (APPs), and applicable GDPR provisions for users located in the European Economic Area (EEA).</p>
+              <p>MigRent AI is an online introduction service only. We facilitate connections between room owners and accommodation seekers. We do not collect rent, bonds, or manage tenancy agreements.</p>
             </div>
           </section>
 
           {/* Data We Collect */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">Information We Collect</h2>
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white">2. Information We Collect</h2>
             <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-4">
               <div>
                 <h3 className="font-semibold text-slate-800 dark:text-slate-200 mb-2">Account Information</h3>
                 <ul className="list-disc list-inside space-y-1.5">
                   <li>Email address (required for account creation)</li>
-                  <li>Full name and preferred name (if provided)</li>
+                  <li>Legal name and preferred name (collected during onboarding)</li>
+                  <li>Residential address, suburb, city, and postcode</li>
+                  <li>Phone number (validated for Australian numbers)</li>
                   <li>Profile information including bio, preferences, and role (seeker or owner)</li>
                   <li>Profile photo (if uploaded)</li>
                 </ul>
@@ -93,13 +92,14 @@ export default function PrivacyPolicy() {
 
           {/* How We Use Data */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">How We Use Your Information</h2>
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white">3. How We Use Your Information</h2>
             <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-2">
               <ul className="list-disc list-inside space-y-1.5">
                 <li>To operate the MigRent platform and provide our matching services</li>
                 <li>To create and manage your account</li>
                 <li>To facilitate communication between seekers and owners</li>
                 <li>To process platform fees via Stripe</li>
+                <li>To send transactional emails via Resend (account confirmations, deal notifications, receipts)</li>
                 <li>To verify user identity and visa status through third-party providers</li>
                 <li>To improve our AI matching algorithms and platform experience</li>
                 <li>To send important service notifications (account, payment, safety)</li>
@@ -111,75 +111,190 @@ export default function PrivacyPolicy() {
 
           {/* Third Parties */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">Third-Party Services</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-2">
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white">4. Third-Party Services</h2>
+            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
               <p>We use the following third-party services that may process your data:</p>
-              <ul className="list-disc list-inside space-y-1.5">
-                <li><strong>Supabase</strong> - Database hosting and authentication</li>
-                <li><strong>Stripe</strong> - Payment processing</li>
-                <li><strong>Vercel</strong> - Website hosting and analytics</li>
-                <li><strong>hCaptcha</strong> - Bot prevention during sign-up</li>
-                <li><strong>Third-party verification providers</strong> - ID and visa checks</li>
-              </ul>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm border-collapse">
+                  <thead>
+                    <tr className="border-b border-slate-200 dark:border-slate-700">
+                      <th className="text-left py-3 px-3 font-semibold text-slate-800 dark:text-slate-200">Service</th>
+                      <th className="text-left py-3 px-3 font-semibold text-slate-800 dark:text-slate-200">Purpose</th>
+                      <th className="text-left py-3 px-3 font-semibold text-slate-800 dark:text-slate-200">Data Shared</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                    <tr>
+                      <td className="py-2.5 px-3 font-medium">Supabase</td>
+                      <td className="py-2.5 px-3">Database hosting &amp; authentication</td>
+                      <td className="py-2.5 px-3">Account data, profile data</td>
+                    </tr>
+                    <tr>
+                      <td className="py-2.5 px-3 font-medium">Stripe</td>
+                      <td className="py-2.5 px-3">Payment processing</td>
+                      <td className="py-2.5 px-3">Payment metadata (no full card numbers)</td>
+                    </tr>
+                    <tr>
+                      <td className="py-2.5 px-3 font-medium">Resend</td>
+                      <td className="py-2.5 px-3">Transactional emails</td>
+                      <td className="py-2.5 px-3">Email address, name</td>
+                    </tr>
+                    <tr>
+                      <td className="py-2.5 px-3 font-medium">Vercel</td>
+                      <td className="py-2.5 px-3">Website hosting &amp; analytics</td>
+                      <td className="py-2.5 px-3">Anonymous usage statistics</td>
+                    </tr>
+                    <tr>
+                      <td className="py-2.5 px-3 font-medium">hCaptcha</td>
+                      <td className="py-2.5 px-3">Bot prevention during sign-up</td>
+                      <td className="py-2.5 px-3">Browser metadata</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
               <p>Each provider operates under their own privacy policy and we only share the minimum data necessary for them to provide their services.</p>
+            </div>
+          </section>
+
+          {/* Data Sharing */}
+          <section className="card p-6 rounded-2xl space-y-3">
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white">5. Data Sharing with Other Users</h2>
+            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
+              <p>When you use MigRent, certain profile information is visible to other users to facilitate connections:</p>
+              <ul className="list-disc list-inside space-y-1.5">
+                <li><strong>Public profile:</strong> Preferred name, profile photo, bio, preferences, and verification status</li>
+                <li><strong>Listing details:</strong> Property information, photos, pricing (for owners)</li>
+                <li><strong>Messages:</strong> Content you send to other users via our messaging system</li>
+              </ul>
+              <p>Your legal name, residential address, email address, and phone number are <strong>not</strong> shared with other users unless you choose to share them directly.</p>
             </div>
           </section>
 
           {/* Data Retention */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">Data Retention</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-2">
-              <p>We retain your personal information for as long as your account is active or as needed to provide services. If you delete your account, we will remove your personal data within 30 days, except where retention is required by law (e.g., financial records for tax purposes).</p>
-              <p>Anonymised or aggregated data that cannot identify you may be retained for analytics and platform improvement purposes.</p>
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white">6. Data Retention</h2>
+            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
+              <p>We retain your personal information according to the following schedule:</p>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm border-collapse">
+                  <thead>
+                    <tr className="border-b border-slate-200 dark:border-slate-700">
+                      <th className="text-left py-3 px-3 font-semibold text-slate-800 dark:text-slate-200">Data Type</th>
+                      <th className="text-left py-3 px-3 font-semibold text-slate-800 dark:text-slate-200">Retention Period</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                    <tr>
+                      <td className="py-2.5 px-3">Account and profile data</td>
+                      <td className="py-2.5 px-3">While account is active + 30 days after deletion request</td>
+                    </tr>
+                    <tr>
+                      <td className="py-2.5 px-3">Financial and transaction records</td>
+                      <td className="py-2.5 px-3 font-medium">7 years (Australian tax law requirement)</td>
+                    </tr>
+                    <tr>
+                      <td className="py-2.5 px-3">Messages between users</td>
+                      <td className="py-2.5 px-3">While both accounts are active + 90 days</td>
+                    </tr>
+                    <tr>
+                      <td className="py-2.5 px-3">Verification records</td>
+                      <td className="py-2.5 px-3">While account is active + 12 months</td>
+                    </tr>
+                    <tr>
+                      <td className="py-2.5 px-3">Anonymised analytics data</td>
+                      <td className="py-2.5 px-3">Indefinitely (cannot identify you)</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <p>If you delete your account, we will remove your personal data within 30 days, except where retention is required by law (e.g., financial records retained for 7 years for tax purposes under the Taxation Administration Act 1953).</p>
             </div>
           </section>
 
           {/* Your Rights */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">Your Rights</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-2">
-              <p>Under the Australian Privacy Act and GDPR (where applicable), you have the right to:</p>
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white">7. Your Rights</h2>
+            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
+              <p>Under the Australian Privacy Act and Australian Privacy Principles (APPs), you have the right to:</p>
               <ul className="list-disc list-inside space-y-1.5">
-                <li><strong>Access</strong> - Request a copy of the personal data we hold about you</li>
-                <li><strong>Correction</strong> - Request correction of inaccurate or incomplete data</li>
-                <li><strong>Deletion</strong> - Request deletion of your personal data</li>
-                <li><strong>Portability</strong> - Request your data in a machine-readable format</li>
-                <li><strong>Objection</strong> - Object to processing of your data in certain circumstances</li>
-                <li><strong>Withdraw consent</strong> - Withdraw consent at any time where processing is based on consent</li>
+                <li><strong>Access (APP 12)</strong> - Request a copy of the personal data we hold about you</li>
+                <li><strong>Correction (APP 13)</strong> - Request correction of inaccurate or incomplete data</li>
+                <li><strong>Deletion</strong> - Request deletion of your personal data (subject to legal retention requirements)</li>
+                <li><strong>Complaint</strong> - Lodge a complaint with the Office of the Australian Information Commissioner (OAIC) if you believe we have breached the APPs</li>
               </ul>
-              <p>To exercise any of these rights, contact us at <a href="https://mail.google.com/mail/?view=cm&fs=1&to=migrentau@gmail.com" target="_blank" rel="noopener noreferrer" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">migrentau@gmail.com</a>.</p>
+              <p>To exercise any of these rights, contact us at <a href="mailto:migrentau@gmail.com" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">migrentau@gmail.com</a>. We will respond within 30 days.</p>
+            </div>
+          </section>
+
+          {/* GDPR */}
+          <section className="card p-6 rounded-2xl space-y-3">
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white">8. GDPR Rights (EU/EEA Users)</h2>
+            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
+              <p>If you are located in the European Economic Area (EEA), you have additional rights under the General Data Protection Regulation (GDPR). As MigRent serves migrants who may originate from EU/EEA countries, we extend these protections:</p>
+              <ul className="list-disc list-inside space-y-1.5">
+                <li><strong>Right to Portability</strong> - Request your data in a machine-readable format (JSON or CSV)</li>
+                <li><strong>Right to Erasure</strong> - Request deletion of all personal data (&quot;right to be forgotten&quot;)</li>
+                <li><strong>Right to Restrict Processing</strong> - Request that we limit how we use your data</li>
+                <li><strong>Right to Object</strong> - Object to processing of your data for specific purposes</li>
+                <li><strong>Right to Withdraw Consent</strong> - Withdraw consent at any time where processing is based on consent</li>
+              </ul>
+              <div className="card-subtle p-4 rounded-xl">
+                <h3 className="font-semibold text-slate-800 dark:text-slate-200 mb-2">Legal Basis for Processing (GDPR Article 6)</h3>
+                <ul className="list-disc list-inside space-y-1.5">
+                  <li><strong>Contract:</strong> Processing necessary to provide our service (account, matching, messaging)</li>
+                  <li><strong>Legitimate Interest:</strong> Fraud prevention, platform security, service improvement</li>
+                  <li><strong>Legal Obligation:</strong> Tax record retention, regulatory compliance</li>
+                  <li><strong>Consent:</strong> Marketing communications (you may withdraw at any time)</li>
+                </ul>
+              </div>
+              <p>For GDPR requests, contact <a href="mailto:migrentau@gmail.com" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">migrentau@gmail.com</a> with the subject line &quot;GDPR Request.&quot; We will respond within 30 days. You may also lodge a complaint with your local EU data protection authority.</p>
             </div>
           </section>
 
           {/* Cookies */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">Cookies &amp; Tracking</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-2">
-              <p>We use essential cookies to maintain your session and preferences (such as dark mode). We use Vercel Analytics for anonymous usage statistics. We do not use advertising cookies or sell your data to advertisers.</p>
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white">9. Cookies &amp; Tracking</h2>
+            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
+              <p>We use essential cookies to maintain your session and preferences (such as dark mode and language). We use Vercel Analytics for anonymous usage statistics. We do not use advertising cookies or sell your data to advertisers.</p>
+              <p>For more details, see our <Link href="/cookie-policy" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">Cookie Policy</Link>.</p>
             </div>
           </section>
 
           {/* Security */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">Security</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-2">
-              <p>We implement industry-standard security measures including encryption in transit (TLS), secure authentication, and access controls. However, no method of transmission over the internet is 100% secure, and we cannot guarantee absolute security.</p>
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white">10. Security</h2>
+            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
+              <p>We implement industry-standard security measures including:</p>
+              <ul className="list-disc list-inside space-y-1.5">
+                <li>Encryption in transit (TLS/HTTPS) for all data transfers</li>
+                <li>Secure authentication via Supabase Auth with hCaptcha bot prevention</li>
+                <li>Row Level Security (RLS) policies on all database tables</li>
+                <li>Stripe PCI-DSS compliant payment processing</li>
+                <li>Regular security reviews and access controls</li>
+              </ul>
+              <p>However, no method of transmission over the internet is 100% secure, and we cannot guarantee absolute security. If you discover a vulnerability, please report it to <a href="mailto:migrentau@gmail.com" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">migrentau@gmail.com</a>.</p>
             </div>
           </section>
 
           {/* Contact */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">Contact Us</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-2">
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white">11. Contact Us</h2>
+            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
               <p>If you have questions about this Privacy Policy or wish to exercise your rights, contact us:</p>
               <div className="card-subtle p-4 rounded-xl space-y-1">
-                <p className="font-semibold text-slate-800 dark:text-slate-200">MigRent AI</p>
+                <p className="font-semibold text-slate-800 dark:text-slate-200">MigRent AI - Privacy Inquiries</p>
                 <p>ABN: 22 669 566 941</p>
-                <p>Email: <a href="https://mail.google.com/mail/?view=cm&fs=1&to=migrentau@gmail.com" target="_blank" rel="noopener noreferrer" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">migrentau@gmail.com</a></p>
+                <p>Email: <a href="mailto:migrentau@gmail.com" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">migrentau@gmail.com</a></p>
                 <p>Location: Sydney, Australia</p>
               </div>
+              <p className="text-xs text-slate-400 dark:text-slate-500">You may also contact the Office of the Australian Information Commissioner (OAIC) at <a href="https://www.oaic.gov.au" target="_blank" rel="noopener noreferrer" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">www.oaic.gov.au</a> if you believe your privacy has been breached.</p>
             </div>
           </section>
+
+          {/* Legal Disclaimer */}
+          <div className="card-subtle p-4 rounded-xl text-xs text-slate-400 dark:text-slate-500 leading-relaxed">
+            <p>This privacy policy is provided for informational purposes. MigRent recommends consulting a qualified privacy law professional for specific legal advice. Last reviewed: March 2026.</p>
+          </div>
 
           {/* CTA */}
           <div className="card p-6 rounded-2xl bg-gradient-to-br from-rose-50 to-rose-100/50 dark:from-rose-500/10 dark:to-rose-600/5 border-rose-200 dark:border-rose-500/20 text-center">

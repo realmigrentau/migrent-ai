@@ -75,8 +75,10 @@ export default function Layout({ children }: { children: ReactNode }) {
               <ul className="space-y-2.5">
                 <li><Link href="/safety-verification" className="text-sm text-slate-500 dark:text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors">{t("footer.safetyVerification")}</Link></li>
                 <li><Link href="/rules-community-guidelines" className="text-sm text-slate-500 dark:text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors">{t("footer.communityGuidelines")}</Link></li>
-                <li><Link href="/privacy-policy" className="text-sm text-slate-500 dark:text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors">{t("footer.privacyPolicy")}</Link></li>
-                <li><Link href="/terms-of-service" className="text-sm text-slate-500 dark:text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors">{t("footer.termsOfService")}</Link></li>
+                <li><Link href="/safety-reporting" className="text-sm text-slate-500 dark:text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors">Safety &amp; Reporting</Link></li>
+                <li><Link href="/anti-discrimination" className="text-sm text-slate-500 dark:text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors">Fair Housing</Link></li>
+                <li><Link href="/code-of-conduct" className="text-sm text-slate-500 dark:text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors">STRA Code of Conduct</Link></li>
+                <li><Link href="/support-disputes" className="text-sm text-slate-500 dark:text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors">Dispute Resolution</Link></li>
               </ul>
             </div>
 
@@ -94,14 +96,26 @@ export default function Layout({ children }: { children: ReactNode }) {
             </div>
           </div>
 
-          {/* Bottom bar */}
-          <div className="mt-10 pt-6 border-t border-slate-200/50 dark:border-slate-800/50 flex flex-col sm:flex-row items-center justify-between gap-3">
-            <p className="text-xs text-slate-400 dark:text-slate-500">
-              {t("footer.copyright", { year: new Date().getFullYear() })}
-            </p>
-            <p className="text-xs text-slate-400 dark:text-slate-500 text-center max-w-md">
-              {t("footer.disclaimer")}
-            </p>
+          {/* Legal links */}
+          <div className="mt-10 pt-6 border-t border-slate-200/50 dark:border-slate-800/50">
+            <div className="flex flex-wrap gap-x-4 gap-y-1.5 mb-4">
+              <Link href="/terms-of-service" className="text-xs text-slate-400 dark:text-slate-500 hover:text-rose-500 dark:hover:text-rose-400 transition-colors">{t("footer.termsOfService")}</Link>
+              <Link href="/privacy-policy" className="text-xs text-slate-400 dark:text-slate-500 hover:text-rose-500 dark:hover:text-rose-400 transition-colors">{t("footer.privacyPolicy")}</Link>
+              <Link href="/disclaimer" className="text-xs text-slate-400 dark:text-slate-500 hover:text-rose-500 dark:hover:text-rose-400 transition-colors">Disclaimer</Link>
+              <Link href="/no-agency" className="text-xs text-slate-400 dark:text-slate-500 hover:text-rose-500 dark:hover:text-rose-400 transition-colors">No Agency</Link>
+              <Link href="/rental-laws" className="text-xs text-slate-400 dark:text-slate-500 hover:text-rose-500 dark:hover:text-rose-400 transition-colors">Rental Laws</Link>
+              <Link href="/cookie-policy" className="text-xs text-slate-400 dark:text-slate-500 hover:text-rose-500 dark:hover:text-rose-400 transition-colors">Cookies</Link>
+              <Link href="/abn-terms" className="text-xs text-slate-400 dark:text-slate-500 hover:text-rose-500 dark:hover:text-rose-400 transition-colors">ABN Details</Link>
+              <Link href="/contact-legal" className="text-xs text-slate-400 dark:text-slate-500 hover:text-rose-500 dark:hover:text-rose-400 transition-colors">Legal Contact</Link>
+            </div>
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
+              <p className="text-xs text-slate-400 dark:text-slate-500">
+                {t("footer.copyright", { year: new Date().getFullYear() })} Last updated: March 2026. ABN: 22 669 566 941.
+              </p>
+              <p className="text-xs text-slate-400 dark:text-slate-500 text-center max-w-md">
+                {t("footer.disclaimer")}
+              </p>
+            </div>
           </div>
         </div>
       </footer>

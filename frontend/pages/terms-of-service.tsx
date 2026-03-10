@@ -23,7 +23,7 @@ export default function TermsOfService() {
               <h1 className="text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white">
                 Terms of <span className="gradient-text">Service</span>
               </h1>
-              <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Last updated: January 2026</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Last updated: March 2026</p>
             </div>
           </div>
         </motion.div>
@@ -39,16 +39,17 @@ export default function TermsOfService() {
 
           {/* Platform Role */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">2. Platform Role</h2>
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white">2. Platform Role - Online Introduction Service</h2>
             <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
-              <p>MigRent AI is a matching platform only. We connect room owners with accommodation seekers for short- to medium-term rooms. We are not:</p>
+              <p>MigRent AI is an <strong>online introduction service only</strong>. We connect room owners with accommodation seekers for short- to medium-term rooms. We are not:</p>
               <ul className="list-disc list-inside space-y-1.5">
                 <li>A real estate agent, property manager, or letting agent</li>
                 <li>A landlord or tenant</li>
                 <li>A party to any tenancy, licence, or rental agreement</li>
                 <li>A legal representative of any user</li>
+                <li>A collector of rent, bonds, or deposits on behalf of any user</li>
               </ul>
-              <p>All arrangements, agreements, and ongoing rent payments are between owners and seekers directly.</p>
+              <p>All arrangements, agreements, and ongoing rent payments are between owners and seekers directly. MigRent does not create tenancy agreements, collect bonds, or handle rent payments. Users make their own direct arrangements. See our <Link href="/no-agency" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">No Agency Disclosure</Link> for further details.</p>
             </div>
           </section>
 
@@ -68,13 +69,74 @@ export default function TermsOfService() {
             </div>
           </section>
 
+          {/* User/Owner Obligations Table */}
+          <section className="card p-6 rounded-2xl space-y-3">
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white">4. User Obligations</h2>
+            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
+              <p>By using MigRent, you acknowledge and agree to the following responsibilities based on your role:</p>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm border-collapse">
+                  <thead>
+                    <tr className="border-b border-slate-200 dark:border-slate-700">
+                      <th className="text-left py-3 px-3 font-semibold text-slate-800 dark:text-slate-200">Obligation</th>
+                      <th className="text-center py-3 px-3 font-semibold text-slate-800 dark:text-slate-200">Owner</th>
+                      <th className="text-center py-3 px-3 font-semibold text-slate-800 dark:text-slate-200">Seeker</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                    <tr>
+                      <td className="py-2.5 px-3">Provide accurate listing/profile information</td>
+                      <td className="py-2.5 px-3 text-center text-emerald-500">Yes</td>
+                      <td className="py-2.5 px-3 text-center text-emerald-500">Yes</td>
+                    </tr>
+                    <tr>
+                      <td className="py-2.5 px-3">Comply with all applicable AU rental and STRA laws</td>
+                      <td className="py-2.5 px-3 text-center text-emerald-500">Yes</td>
+                      <td className="py-2.5 px-3 text-center text-emerald-500">Yes</td>
+                    </tr>
+                    <tr>
+                      <td className="py-2.5 px-3">Arrange your own tenancy agreements and bonds</td>
+                      <td className="py-2.5 px-3 text-center text-emerald-500">Yes</td>
+                      <td className="py-2.5 px-3 text-center text-emerald-500">Yes</td>
+                    </tr>
+                    <tr>
+                      <td className="py-2.5 px-3">Pay applicable platform fees</td>
+                      <td className="py-2.5 px-3 text-center text-emerald-500">$99/deal</td>
+                      <td className="py-2.5 px-3 text-center text-slate-400">$19 optional</td>
+                    </tr>
+                    <tr>
+                      <td className="py-2.5 px-3">Ensure property meets safety and habitability standards</td>
+                      <td className="py-2.5 px-3 text-center text-emerald-500">Yes</td>
+                      <td className="py-2.5 px-3 text-center text-slate-400">N/A</td>
+                    </tr>
+                    <tr>
+                      <td className="py-2.5 px-3">Conduct personal inspection before committing</td>
+                      <td className="py-2.5 px-3 text-center text-slate-400">N/A</td>
+                      <td className="py-2.5 px-3 text-center text-emerald-500">Yes</td>
+                    </tr>
+                    <tr>
+                      <td className="py-2.5 px-3">Comply with anti-discrimination laws</td>
+                      <td className="py-2.5 px-3 text-center text-emerald-500">Yes</td>
+                      <td className="py-2.5 px-3 text-center text-emerald-500">Yes</td>
+                    </tr>
+                    <tr>
+                      <td className="py-2.5 px-3">Indemnify MigRent against claims from your deals</td>
+                      <td className="py-2.5 px-3 text-center text-emerald-500">Yes</td>
+                      <td className="py-2.5 px-3 text-center text-emerald-500">Yes</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+
           {/* Fees */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">4. Platform Fees &amp; Payments</h2>
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white">5. Platform Fees &amp; Payments</h2>
             <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
               <div className="card-subtle p-4 rounded-xl">
                 <h3 className="font-semibold text-slate-800 dark:text-slate-200 mb-2">Owner Fees</h3>
-                <p>Owners agree to pay a one-time AUD $99 platform fee per successful match made through MigRent. This fee is charged at the time a deal is confirmed through the platform.</p>
+                <p>Owners agree to pay a one-time AUD $99 platform fee per successful match made through MigRent. This fee is charged at the time a deal is confirmed through the platform. MigRent charges flat fees only - we do not take a percentage of rent.</p>
               </div>
               <div className="card-subtle p-4 rounded-xl">
                 <h3 className="font-semibold text-slate-800 dark:text-slate-200 mb-2">Seeker Fees</h3>
@@ -90,16 +152,16 @@ export default function TermsOfService() {
 
           {/* Refunds */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">5. Refund Policy</h2>
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white">6. Refund Policy</h2>
             <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
               <p>Platform fees are generally non-refundable once a deal is confirmed and payment is processed. In exceptional circumstances, refunds may be considered at the sole discretion of MigRent AI.</p>
-              <p>Stripe receipts are automatically sent to the email address associated with your account. For refund inquiries, contact <a href="https://mail.google.com/mail/?view=cm&fs=1&to=migrentau@gmail.com" target="_blank" rel="noopener noreferrer" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">migrentau@gmail.com</a>.</p>
+              <p>Stripe receipts are automatically sent to the email address associated with your account. For refund inquiries, contact <a href="mailto:migrentau@gmail.com" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">migrentau@gmail.com</a>.</p>
             </div>
           </section>
 
           {/* Listings */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">6. Listings &amp; Content</h2>
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white">7. Listings &amp; Content</h2>
             <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
               <p>Users are solely responsible for the accuracy of all content they post, including listing descriptions, photos, pricing, and profile information. You agree not to post:</p>
               <ul className="list-disc list-inside space-y-1.5">
@@ -112,31 +174,67 @@ export default function TermsOfService() {
             </div>
           </section>
 
+          {/* No Warranty */}
+          <section className="card p-6 rounded-2xl space-y-3">
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white">8. No Warranty</h2>
+            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
+              <p>The Platform is provided on an &quot;as is&quot; and &quot;as available&quot; basis. To the maximum extent permitted by law, MigRent makes no warranties, express or implied, including but not limited to:</p>
+              <ul className="list-disc list-inside space-y-1.5">
+                <li>The condition, safety, quality, or legality of any listed property</li>
+                <li>The accuracy of listings, user profiles, or verification data</li>
+                <li>The ability or willingness of users to complete an arrangement</li>
+                <li>That the Platform will be uninterrupted, secure, or error-free</li>
+              </ul>
+              <p>All properties are listed &quot;as is.&quot; Users must verify property condition, safety, and suitability for themselves before entering any arrangement.</p>
+            </div>
+          </section>
+
           {/* Liability */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">7. Limitation of Liability</h2>
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white">9. Limitation of Liability</h2>
             <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
-              <p>To the maximum extent permitted by Australian law:</p>
+              <p>To the maximum extent permitted by Australian law (including the Australian Consumer Law):</p>
               <ul className="list-disc list-inside space-y-1.5">
-                <li>MigRent does not verify or guarantee properties, users, or any outcomes</li>
+                <li>MigRent excludes all liability for indirect, incidental, special, consequential, or punitive damages arising from or related to your use of the Platform</li>
                 <li>MigRent is not liable for disputes between owners and seekers</li>
-                <li>MigRent is not liable for any direct, indirect, incidental, or consequential damages arising from use of the platform</li>
+                <li>MigRent is not liable for any loss, injury, damage, or harm arising from any arrangement made through the Platform</li>
                 <li>Verification badges and match scores are informational tools only and do not constitute guarantees of safety or suitability</li>
               </ul>
-              <p>Users are responsible for conducting their own due diligence before entering into any arrangement.</p>
+              <div className="card-subtle p-4 rounded-xl border-l-2 border-l-rose-500">
+                <h3 className="font-semibold text-rose-600 dark:text-rose-400 mb-2">Maximum Liability Cap</h3>
+                <p>In any event, MigRent&apos;s total aggregate liability to you for all claims arising out of or relating to the use of the Platform shall not exceed the total amount of platform fees you have paid to MigRent in the 12 months preceding the claim.</p>
+              </div>
+              <p>Users are responsible for conducting their own due diligence before entering into any arrangement. Nothing in these Terms excludes, restricts, or modifies rights that cannot be excluded under Australian Consumer Law.</p>
+            </div>
+          </section>
+
+          {/* Indemnity */}
+          <section className="card p-6 rounded-2xl space-y-3">
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white">10. Indemnity</h2>
+            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
+              <p>You agree to indemnify, defend, and hold harmless MigRent AI, its officers, directors, employees, and agents from and against any and all claims, liabilities, damages, losses, costs, and expenses (including reasonable legal fees) arising out of or in connection with:</p>
+              <ul className="list-disc list-inside space-y-1.5">
+                <li>Your use of or conduct on the Platform</li>
+                <li>Any arrangement or deal you enter into with another user</li>
+                <li>Your violation of these Terms or any applicable law</li>
+                <li>Any content you post or submit through the Platform</li>
+                <li>Any dispute between you and another user of the Platform</li>
+                <li>Your failure to comply with applicable rental, tenancy, or STRA laws</li>
+              </ul>
+              <p>This indemnity obligation survives the termination of your account and these Terms.</p>
             </div>
           </section>
 
           {/* Regulatory */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">8. Regulatory Compliance</h2>
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white">11. Regulatory Compliance</h2>
             <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
               <p>Users are responsible for complying with all applicable local, state, and federal laws, including but not limited to:</p>
               <ul className="list-disc list-inside space-y-1.5">
-                <li>Short-term rental accommodation (STRA) regulations in NSW</li>
-                <li>Anti-discrimination laws</li>
-                <li>Residential tenancy laws</li>
-                <li>Tax obligations</li>
+                <li>Short-term rental accommodation (STRA) regulations - see our <Link href="/code-of-conduct" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">STRA Code of Conduct</Link> page</li>
+                <li>Anti-discrimination laws - see our <Link href="/anti-discrimination" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">Fair Housing Policy</Link></li>
+                <li>Residential tenancy laws - see our <Link href="/rental-laws" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">State Rental Laws Guide</Link></li>
+                <li>Tax obligations (including income tax on rental income)</li>
               </ul>
               <p>MigRent does not provide legal advice and is not responsible for users&apos; regulatory compliance.</p>
             </div>
@@ -144,7 +242,7 @@ export default function TermsOfService() {
 
           {/* Suspension */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">9. Suspension &amp; Termination</h2>
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white">12. Suspension &amp; Termination</h2>
             <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
               <p>MigRent may suspend or terminate your account at any time for:</p>
               <ul className="list-disc list-inside space-y-1.5">
@@ -157,17 +255,39 @@ export default function TermsOfService() {
             </div>
           </section>
 
+          {/* Dispute Resolution & Arbitration */}
+          <section className="card p-6 rounded-2xl space-y-3">
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white">13. Dispute Resolution &amp; Arbitration</h2>
+            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
+              <p>Any dispute, controversy, or claim arising out of or relating to these Terms or your use of the Platform shall be resolved as follows:</p>
+              <div className="card-subtle p-4 rounded-xl space-y-2">
+                <p><strong className="text-slate-800 dark:text-slate-200">Step 1 - Direct Resolution:</strong> Contact the other party directly to attempt resolution.</p>
+                <p><strong className="text-slate-800 dark:text-slate-200">Step 2 - MigRent Mediation:</strong> If unresolved within 14 days, contact MigRent at <a href="mailto:migrentau@gmail.com" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">migrentau@gmail.com</a> for informal mediation assistance.</p>
+                <p><strong className="text-slate-800 dark:text-slate-200">Step 3 - Binding Arbitration:</strong> If mediation fails within 30 days, any remaining dispute shall be finally resolved by binding arbitration administered by the Australian Centre for International Commercial Arbitration (ACICA) in accordance with ACICA Arbitration Rules. The seat of arbitration shall be Sydney, NSW. The language of arbitration shall be English.</p>
+              </div>
+              <p>To the extent permitted by law, you agree to waive any right to participate in a class action, representative proceeding, or class-wide arbitration. See our <Link href="/support-disputes" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">Dispute Resolution</Link> page for full details.</p>
+            </div>
+          </section>
+
           {/* Governing Law */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">10. Governing Law</h2>
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white">14. Governing Law</h2>
             <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
-              <p>These Terms are governed by the laws of New South Wales, Australia. Any disputes will be subject to the exclusive jurisdiction of the courts of New South Wales.</p>
+              <p>These Terms are governed by and construed in accordance with the laws of New South Wales, Australia, without regard to conflict of law principles. Subject to the arbitration clause above, any disputes shall be subject to the exclusive jurisdiction of the courts of New South Wales.</p>
+            </div>
+          </section>
+
+          {/* Severability */}
+          <section className="card p-6 rounded-2xl space-y-3">
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white">15. Severability</h2>
+            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
+              <p>If any provision of these Terms is found to be invalid, illegal, or unenforceable by a court of competent jurisdiction, such invalidity shall not affect the remaining provisions, which shall continue in full force and effect. The invalid provision shall be modified to the minimum extent necessary to make it valid and enforceable while preserving the original intent.</p>
             </div>
           </section>
 
           {/* Changes */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">11. Changes to Terms</h2>
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white">16. Changes to Terms</h2>
             <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
               <p>We may update these Terms from time to time. We will notify users of material changes via email or a notice on the platform. Continued use of the platform after changes constitutes acceptance of the updated Terms.</p>
             </div>
@@ -175,16 +295,21 @@ export default function TermsOfService() {
 
           {/* Contact */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">12. Contact</h2>
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white">17. Contact</h2>
             <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
               <div className="card-subtle p-4 rounded-xl space-y-1">
                 <p className="font-semibold text-slate-800 dark:text-slate-200">MigRent AI</p>
                 <p>ABN: 22 669 566 941</p>
-                <p>Email: <a href="https://mail.google.com/mail/?view=cm&fs=1&to=migrentau@gmail.com" target="_blank" rel="noopener noreferrer" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">migrentau@gmail.com</a></p>
+                <p>Email: <a href="mailto:migrentau@gmail.com" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">migrentau@gmail.com</a></p>
                 <p>Location: Sydney, Australia</p>
               </div>
             </div>
           </section>
+
+          {/* Legal Disclaimer */}
+          <div className="card-subtle p-4 rounded-xl text-xs text-slate-400 dark:text-slate-500 leading-relaxed">
+            <p>This document is for informational purposes and constitutes the binding terms between you and MigRent AI. MigRent recommends that users seek independent legal advice regarding their own obligations under applicable tenancy and rental laws. Last reviewed by MigRent: March 2026.</p>
+          </div>
 
           {/* CTA */}
           <div className="card p-6 rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-500/10 dark:to-blue-600/5 border-blue-200 dark:border-blue-500/20 text-center">

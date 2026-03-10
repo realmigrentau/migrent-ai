@@ -5,6 +5,7 @@ import { useHCaptcha } from "@hcaptcha/react-hcaptcha/hooks";
 import { supabase } from "../../lib/supabase";
 import { useAuth } from "../../hooks/useAuth";
 import SignInButton from "../../components/SignInButton";
+import ConsentCheckboxes from "../../components/legal/ConsentCheckboxes";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 
@@ -16,6 +17,13 @@ export default function SignUp() {
   const [password, setPassword] = useState("");
   const [msg, setMsg] = useState("");
   const [loading, setLoading] = useState(false);
+  const [consents, setConsents] = useState({
+    facilitator: false,
+    terms: false,
+    rentalLaws: false,
+    indemnity: false,
+  });
+  const [consentError, setConsentError] = useState("");
   const { executeInstance, resetInstance } = useHCaptcha() ?? {};
 
   if (session) {
@@ -25,12 +33,17 @@ export default function SignUp() {
 
   const handleSignUp = async () => {
     setMsg("");
+    setConsentError("");
     if (!email || !password) {
       setMsg(t("auth.enterEmailPassword"));
       return;
     }
     if (password.length < 6) {
       setMsg(t("auth.passwordMinLength"));
+      return;
+    }
+    if (!consents.facilitator || !consents.terms || !consents.rentalLaws || !consents.indemnity) {
+      setConsentError("You must accept all legal acknowledgements to create an account.");
       return;
     }
     setLoading(true);
@@ -111,6 +124,12 @@ export default function SignUp() {
                 onKeyDown={(e) => e.key === "Enter" && handleSignUp()}
               />
             </div>
+
+            <ConsentCheckboxes
+              consents={consents}
+              onChange={(c) => { setConsents(c); setConsentError(""); }}
+              error={consentError}
+            />
 
             <motion.button
               whileHover={{ scale: 1.02 }}
