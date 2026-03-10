@@ -91,9 +91,6 @@ export default function Layout({ children }: { children: ReactNode }) {
                 <li><Link href="/rental-laws" className="text-sm text-slate-500 dark:text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors">Rental Laws</Link></li>
                 <li><Link href="/code-of-conduct" className="text-sm text-slate-500 dark:text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors">STRA Code</Link></li>
               </ul>
-              <a href="mailto:migrentau@gmail.com" className="inline-block mt-3 text-sm text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 transition-colors">
-                migrentau@gmail.com
-              </a>
             </div>
           </div>
 
