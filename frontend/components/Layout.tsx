@@ -77,8 +77,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                 <li><Link href="/rules-community-guidelines" className="text-sm text-slate-500 dark:text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors">{t("footer.communityGuidelines")}</Link></li>
                 <li><Link href="/safety-reporting" className="text-sm text-slate-500 dark:text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors">Safety &amp; Reporting</Link></li>
                 <li><Link href="/anti-discrimination" className="text-sm text-slate-500 dark:text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors">Fair Housing</Link></li>
-                <li><Link href="/code-of-conduct" className="text-sm text-slate-500 dark:text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors">STRA Code of Conduct</Link></li>
-                <li><Link href="/support-disputes" className="text-sm text-slate-500 dark:text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors">Dispute Resolution</Link></li>
+                <li><Link href="/support-disputes" className="text-sm text-slate-500 dark:text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors">Disputes</Link></li>
               </ul>
             </div>
 
@@ -89,6 +88,8 @@ export default function Layout({ children }: { children: ReactNode }) {
                 <li><Link href="/faq" className="text-sm text-slate-500 dark:text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors">{t("footer.faq")}</Link></li>
                 <li><Link href="/contact" className="text-sm text-slate-500 dark:text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors">{t("footer.contact")}</Link></li>
                 <li><Link href="/pricing" className="text-sm text-slate-500 dark:text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors">{t("footer.pricing")}</Link></li>
+                <li><Link href="/rental-laws" className="text-sm text-slate-500 dark:text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors">Rental Laws</Link></li>
+                <li><Link href="/code-of-conduct" className="text-sm text-slate-500 dark:text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors">STRA Code</Link></li>
               </ul>
               <a href="mailto:migrentau@gmail.com" className="inline-block mt-3 text-sm text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 transition-colors">
                 migrentau@gmail.com
@@ -97,22 +98,27 @@ export default function Layout({ children }: { children: ReactNode }) {
           </div>
 
           {/* Legal links */}
-          <div className="mt-10 pt-6 border-t border-slate-200/50 dark:border-slate-800/50">
-            <div className="flex flex-wrap gap-x-4 gap-y-1.5 mb-4">
-              <Link href="/terms-of-service" className="text-xs text-slate-400 dark:text-slate-500 hover:text-rose-500 dark:hover:text-rose-400 transition-colors">{t("footer.termsOfService")}</Link>
-              <Link href="/privacy-policy" className="text-xs text-slate-400 dark:text-slate-500 hover:text-rose-500 dark:hover:text-rose-400 transition-colors">{t("footer.privacyPolicy")}</Link>
-              <Link href="/disclaimer" className="text-xs text-slate-400 dark:text-slate-500 hover:text-rose-500 dark:hover:text-rose-400 transition-colors">Disclaimer</Link>
-              <Link href="/no-agency" className="text-xs text-slate-400 dark:text-slate-500 hover:text-rose-500 dark:hover:text-rose-400 transition-colors">No Agency</Link>
-              <Link href="/rental-laws" className="text-xs text-slate-400 dark:text-slate-500 hover:text-rose-500 dark:hover:text-rose-400 transition-colors">Rental Laws</Link>
-              <Link href="/cookie-policy" className="text-xs text-slate-400 dark:text-slate-500 hover:text-rose-500 dark:hover:text-rose-400 transition-colors">Cookies</Link>
-              <Link href="/abn-terms" className="text-xs text-slate-400 dark:text-slate-500 hover:text-rose-500 dark:hover:text-rose-400 transition-colors">ABN Details</Link>
-              <Link href="/contact-legal" className="text-xs text-slate-400 dark:text-slate-500 hover:text-rose-500 dark:hover:text-rose-400 transition-colors">Legal Contact</Link>
+          <div className="mt-10 pt-6 border-t border-slate-200/50 dark:border-slate-800/50 space-y-4">
+            <div className="flex flex-wrap items-center justify-center gap-x-1 gap-y-1 text-xs text-slate-400 dark:text-slate-500">
+              <Link href="/terms-of-service" className="hover:text-rose-500 dark:hover:text-rose-400 transition-colors">{t("footer.termsOfService")}</Link>
+              <span className="mx-1">-</span>
+              <Link href="/privacy-policy" className="hover:text-rose-500 dark:hover:text-rose-400 transition-colors">{t("footer.privacyPolicy")}</Link>
+              <span className="mx-1">-</span>
+              <Link href="/disclaimer" className="hover:text-rose-500 dark:hover:text-rose-400 transition-colors">Disclaimer</Link>
+              <span className="mx-1">-</span>
+              <Link href="/no-agency" className="hover:text-rose-500 dark:hover:text-rose-400 transition-colors">No Agency</Link>
+              <span className="mx-1">-</span>
+              <Link href="/cookie-policy" className="hover:text-rose-500 dark:hover:text-rose-400 transition-colors">Cookies</Link>
+              <span className="mx-1">-</span>
+              <Link href="/abn-terms" className="hover:text-rose-500 dark:hover:text-rose-400 transition-colors">ABN Details</Link>
+              <span className="mx-1">-</span>
+              <Link href="/contact-legal" className="hover:text-rose-500 dark:hover:text-rose-400 transition-colors">Legal Contact</Link>
             </div>
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div className="flex flex-col items-center gap-2 text-center">
               <p className="text-xs text-slate-400 dark:text-slate-500">
-                {t("footer.copyright", { year: new Date().getFullYear() })} Last updated: March 2026. ABN: 22 669 566 941.
+                {t("footer.copyright", { year: new Date().getFullYear() })} ABN: 22 669 566 941.
               </p>
-              <p className="text-xs text-slate-400 dark:text-slate-500 text-center max-w-md">
+              <p className="text-xs text-slate-400 dark:text-slate-500 max-w-lg">
                 {t("footer.disclaimer")}
               </p>
             </div>
