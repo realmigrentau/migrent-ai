@@ -24,15 +24,16 @@ const STATUS_STYLES: Record<string, string> = {
 };
 
 export default function OwnerListings() {
-  const { session, user, loading } = useAuth();
+  const { session, user, loading, refreshing } = useAuth();
   const router = useRouter();
   const [listings, setListings] = useState<Listing[]>([]);
   const [fetching, setFetching] = useState(true);
   const justCreated = router.query.created === "1";
 
-  // All authenticated users can view their listings
+  // Wait for fresh token before fetching (cached token may be expired)
 
   useEffect(() => {
+    if (loading || refreshing) return;
     if (session) {
       setFetching(true);
       getListings(session.access_token, true)
@@ -59,10 +60,10 @@ export default function OwnerListings() {
         .finally(() => {
           setFetching(false);
         });
-    } else if (!loading) {
+    } else {
       setFetching(false);
     }
-  }, [session, loading]);
+  }, [session, loading, refreshing]);
 
   if (loading)
     return (
