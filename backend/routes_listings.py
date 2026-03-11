@@ -133,7 +133,7 @@ def list_listings(
     if offset < 0:
         offset = 0
 
-    sb = get_supabase()
+    sb = get_supabase_admin()
     query = sb.table("listings").select("*")
     if city:
         query = query.eq("city", city)
