@@ -35,7 +35,7 @@ export default function OwnerListings() {
   useEffect(() => {
     if (session) {
       setFetching(true);
-      getListings(session.access_token)
+      getListings(session.access_token, true)
         .then((data) => {
           if (data && Array.isArray(data)) {
             setListings(data.map((l: any) => ({

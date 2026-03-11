@@ -218,9 +218,10 @@ export async function createListing(
  * Get listings (optionally filtered for the current owner).
  * GET /listings
  */
-export async function getListings(token: string) {
+export async function getListings(token: string, ownerOnly = false) {
   try {
-    const res = await fetch(`${BASE_URL}/listings`, {
+    const url = ownerOnly ? `${BASE_URL}/listings?owner=true` : `${BASE_URL}/listings`;
+    const res = await fetch(url, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
