@@ -5,6 +5,47 @@ import { motion } from "framer-motion";
 import { useAuth } from "../../../hooks/useAuth";
 import ListingForm, { ListingFormData } from "../../../components/ListingForm";
 import { createListing } from "../../../lib/api";
+import { supabase } from "../../../lib/supabase";
+
+const LISTING_IMAGES_BUCKET = "listing-images";
+
+async function uploadListingPhotos(
+  files: File[],
+  userId: string
+): Promise<string[]> {
+  if (files.length === 0) return [];
+  const urls: string[] = [];
+  const timestamp = Date.now();
+
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
+    const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
+    const filePath = `${userId}/${timestamp}-${i}.${ext}`;
+
+    const { error } = await supabase.storage
+      .from(LISTING_IMAGES_BUCKET)
+      .upload(filePath, file, {
+        cacheControl: "3600",
+        upsert: false,
+        contentType: file.type || "image/jpeg",
+      });
+
+    if (error) {
+      console.error(`Failed to upload photo ${i + 1}:`, error);
+      continue;
+    }
+
+    const { data: urlData } = supabase.storage
+      .from(LISTING_IMAGES_BUCKET)
+      .getPublicUrl(filePath);
+
+    if (urlData?.publicUrl) {
+      urls.push(urlData.publicUrl);
+    }
+  }
+
+  return urls;
+}
 
 export default function NewListing() {
   const { session, user, loading } = useAuth();
@@ -12,12 +53,21 @@ export default function NewListing() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
 
-  // All authenticated users can create listings
-
   const handleSubmit = async (data: ListingFormData) => {
-    if (!session) return;
+    if (!session || !user) return;
     setSubmitting(true);
     setError("");
+
+    // Upload photos first if any
+    let imageUrls: string[] = [];
+    if (data.photos && data.photos.length > 0) {
+      try {
+        imageUrls = await uploadListingPhotos(data.photos, user.id);
+      } catch (err) {
+        console.error("Photo upload failed:", err);
+        // Continue without photos - don't block listing creation
+      }
+    }
 
     const result = await createListing(session.access_token, {
       address: `${data.suburb}, ${data.postcode}`,
@@ -25,6 +75,7 @@ export default function NewListing() {
       weeklyPrice: data.weeklyPrice,
       description: data.description,
       title: data.title,
+      images: imageUrls.length > 0 ? imageUrls : undefined,
       propertyType: data.propertyType,
       placeType: data.placeType,
       maxGuests: data.maxGuests,
@@ -67,10 +118,10 @@ export default function NewListing() {
       couplesOk: data.couplesOk,
     });
 
-    if (result) {
+    if (result && !result.error) {
       router.push("/owner/listings?created=1");
     } else {
-      setError("Failed to create listing. Please try again.");
+      setError(result?.error || "Failed to create listing. Please try again.");
       setSubmitting(false);
     }
   };

@@ -74,6 +74,7 @@ export interface CreateListingPayload {
   postcode: string;
   weeklyPrice: number;
   description: string;
+  images?: string[];
   title?: string;
   propertyType?: string;
   placeType?: string;
@@ -133,6 +134,9 @@ export async function createListing(
       description: payload.description,
     };
 
+    // Add images if provided
+    if (payload.images && payload.images.length > 0) body.images = payload.images;
+
     // Add optional extended fields (snake_case for backend)
     if (payload.title) body.title = payload.title;
     if (payload.propertyType) body.property_type = payload.propertyType;
@@ -184,11 +188,29 @@ export async function createListing(
       },
       body: JSON.stringify(body),
     });
-    if (!res.ok) throw new Error(`createListing failed: ${res.status}`);
+    if (!res.ok) {
+      let detail = `Server returned ${res.status}`;
+      try {
+        const errBody = await res.json();
+        // FastAPI/Pydantic validation errors come as { detail: [...] }
+        if (errBody.detail) {
+          if (Array.isArray(errBody.detail)) {
+            detail = errBody.detail
+              .map((d: any) => d.msg || d.message || JSON.stringify(d))
+              .join("; ");
+          } else if (typeof errBody.detail === "string") {
+            detail = errBody.detail;
+          }
+        }
+      } catch {
+        // Could not parse error body
+      }
+      throw new Error(detail);
+    }
     return await res.json();
-  } catch (err) {
+  } catch (err: any) {
     console.error("createListing error:", err);
-    return null;
+    return { error: err.message || "Failed to create listing" };
   }
 }
 

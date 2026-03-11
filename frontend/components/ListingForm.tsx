@@ -158,13 +158,53 @@ export default function ListingForm({ onSubmit, loading, initialData }: ListingF
     update("highlights", form.highlights.filter((_, i) => i !== idx));
   };
 
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
+
+  const validateStep = (s: number): string[] => {
+    const errors: string[] = [];
+    if (s === 0) {
+      if (!form.suburb.trim()) errors.push("Suburb is required");
+      if (!form.postcode.trim()) errors.push("Postcode is required");
+      else {
+        const pc = Number(form.postcode);
+        if (isNaN(pc) || pc < 800 || pc > 9999) errors.push("Enter a valid Australian postcode (800-9999)");
+      }
+      if (!form.weeklyPrice || form.weeklyPrice <= 0) errors.push("Weekly price must be greater than $0");
+      if (form.weeklyPrice > 50000) errors.push("Weekly price cannot exceed $50,000");
+    }
+    if (s === 1) {
+      if (!form.title.trim()) errors.push("Title is required");
+      if (form.description.trim().length < 10) errors.push("Description must be at least 10 characters");
+      if (form.description.length > 5000) errors.push("Description cannot exceed 5000 characters");
+    }
+    return errors;
+  };
+
   const canProceed = () => {
-    if (step === 0) return form.suburb && form.postcode && form.weeklyPrice > 0;
-    if (step === 1) return form.title.trim().length > 0 && form.description.trim().length > 0;
-    return true;
+    return validateStep(step).length === 0;
+  };
+
+  const handleNext = () => {
+    const errors = validateStep(step);
+    if (errors.length > 0) {
+      setValidationErrors(errors);
+      return;
+    }
+    setValidationErrors([]);
+    setStep(step + 1);
   };
 
   const handleSubmit = () => {
+    // Validate all steps before submitting
+    for (let s = 0; s <= step; s++) {
+      const errors = validateStep(s);
+      if (errors.length > 0) {
+        setValidationErrors(errors);
+        setStep(s);
+        return;
+      }
+    }
+    setValidationErrors([]);
     onSubmit(form);
   };
 
@@ -794,10 +834,23 @@ export default function ListingForm({ onSubmit, loading, initialData }: ListingF
           </motion.div>
         </AnimatePresence>
 
+        {/* Validation errors */}
+        {validationErrors.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="p-3 rounded-xl bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20"
+          >
+            {validationErrors.map((err, i) => (
+              <p key={i} className="text-sm text-red-600 dark:text-red-400">{err}</p>
+            ))}
+          </motion.div>
+        )}
+
         {/* Navigation buttons */}
         <div className="flex justify-between">
           <button
-            onClick={() => setStep(Math.max(0, step - 1))}
+            onClick={() => { setValidationErrors([]); setStep(Math.max(0, step - 1)); }}
             disabled={step === 0}
             className="btn-secondary py-2.5 px-5 rounded-xl text-sm disabled:opacity-30"
           >
@@ -807,8 +860,7 @@ export default function ListingForm({ onSubmit, loading, initialData }: ListingF
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              onClick={() => setStep(step + 1)}
-              disabled={!canProceed()}
+              onClick={handleNext}
               className="btn-primary py-2.5 px-5 rounded-xl text-sm disabled:opacity-50"
             >
               Next
