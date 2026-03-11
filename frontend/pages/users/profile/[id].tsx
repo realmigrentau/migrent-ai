@@ -28,7 +28,7 @@ export default function PublicProfilePage() {
   const { user } = useAuth();
   const { profile, badges, loading, error } = useUserProfile(id as string | undefined);
   const { listings, loading: listingsLoading, hasMore, loadMore } = useProfileListings(id as string | undefined);
-  const { reviews, loading: reviewsLoading } = useProfileReviews(id as string | undefined);
+  const { reviews, loading: reviewsLoading, reviewsCount, averageRating } = useProfileReviews(id as string | undefined);
 
   const [activeTab, setActiveTab] = useState("about");
   const [reportOpen, setReportOpen] = useState(false);
@@ -57,7 +57,7 @@ export default function PublicProfilePage() {
   const tabsWithCounts = TABS.map(tab => ({
     ...tab,
     count: tab.key === "listings" ? listings.length
-      : tab.key === "reviews" ? (reviews.length || profile?.reviews_count || 0)
+      : tab.key === "reviews" ? (reviewsCount || reviews.length || profile?.reviews_count || 0)
       : undefined,
   }));
 
@@ -233,8 +233,8 @@ export default function PublicProfilePage() {
             <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4">{displayName}&apos;s reviews</h3>
             <ReviewCarousel
               reviews={reviews}
-              reviewsCount={profile.reviews_count}
-              averageRating={profile.average_rating}
+              reviewsCount={reviewsCount || profile.reviews_count}
+              averageRating={averageRating || profile.average_rating}
               loading={reviewsLoading}
               ownerName={displayName}
             />

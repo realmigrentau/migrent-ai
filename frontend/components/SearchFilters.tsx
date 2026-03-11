@@ -13,6 +13,7 @@ export interface FilterState {
   billsIncluded: string;
   femaleOnly: boolean;
   maxPrice: string;
+  minRating: string;
 }
 
 const defaultFilters: FilterState = {
@@ -22,6 +23,7 @@ const defaultFilters: FilterState = {
   billsIncluded: "",
   femaleOnly: false,
   maxPrice: "",
+  minRating: "",
 };
 
 export default function SearchFilters({ onSearch, loading }: SearchFiltersProps) {
@@ -46,6 +48,7 @@ export default function SearchFilters({ onSearch, loading }: SearchFiltersProps)
     filters.billsIncluded,
     filters.femaleOnly ? "yes" : "",
     filters.maxPrice,
+    filters.minRating,
   ].filter(Boolean).length;
 
   return (
@@ -140,6 +143,17 @@ export default function SearchFilters({ onSearch, loading }: SearchFiltersProps)
           <option value="400">Up to $400/wk</option>
         </select>
 
+        <select
+          value={filters.minRating}
+          onChange={(e) => update("minRating", e.target.value)}
+          className="input-field w-auto"
+        >
+          <option value="">Min rating</option>
+          <option value="3">3+ stars</option>
+          <option value="4">4+ stars</option>
+          <option value="4.5">4.5+ stars</option>
+        </select>
+
         <label className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300 cursor-pointer">
           <input
             type="checkbox"
@@ -225,6 +239,17 @@ export default function SearchFilters({ onSearch, loading }: SearchFiltersProps)
                   <option value="300">Up to $300/wk</option>
                   <option value="350">Up to $350/wk</option>
                   <option value="400">Up to $400/wk</option>
+                </select>
+
+                <select
+                  value={filters.minRating}
+                  onChange={(e) => update("minRating", e.target.value)}
+                  className="input-field"
+                >
+                  <option value="">Min rating</option>
+                  <option value="3">3+ stars</option>
+                  <option value="4">4+ stars</option>
+                  <option value="4.5">4.5+ stars</option>
                 </select>
 
                 <label className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300 cursor-pointer">

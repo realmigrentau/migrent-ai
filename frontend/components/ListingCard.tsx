@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { ReviewBadge } from "./reviews/ReviewStats";
 
 interface ListingCardProps {
   address: string;
@@ -7,6 +8,8 @@ interface ListingCardProps {
   weeklyPrice: number;
   description: string;
   matchScore?: number;
+  avgRating?: number;
+  reviewCount?: number;
 }
 
 export default function ListingCard({
@@ -16,6 +19,8 @@ export default function ListingCard({
   weeklyPrice,
   description,
   matchScore,
+  avgRating,
+  reviewCount,
 }: ListingCardProps) {
   return (
     <motion.div
@@ -43,21 +48,27 @@ export default function ListingCard({
         {description}
       </p>
 
-      {matchScore !== undefined && (
-        <div className="mt-3 flex items-center gap-2">
-          <div className="flex-1 h-1.5 rounded-full bg-slate-100 dark:bg-white/10 overflow-hidden">
-            <motion.div
-              initial={{ width: 0 }}
-              animate={{ width: `${matchScore}%` }}
-              transition={{ duration: 1, delay: 0.3, ease: "easeOut" }}
-              className="h-full rounded-full bg-gradient-to-r from-emerald-400 to-emerald-500"
-            />
+      {/* Rating badge + match score */}
+      <div className="mt-3 flex items-center gap-3">
+        {avgRating !== undefined && reviewCount !== undefined && reviewCount > 0 && (
+          <ReviewBadge avgRating={avgRating} reviewCount={reviewCount} />
+        )}
+        {matchScore !== undefined && (
+          <div className="flex-1 flex items-center gap-2">
+            <div className="flex-1 h-1.5 rounded-full bg-slate-100 dark:bg-white/10 overflow-hidden">
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: `${matchScore}%` }}
+                transition={{ duration: 1, delay: 0.3, ease: "easeOut" }}
+                className="h-full rounded-full bg-gradient-to-r from-emerald-400 to-emerald-500"
+              />
+            </div>
+            <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+              {matchScore}%
+            </span>
           </div>
-          <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400">
-            {matchScore}%
-          </span>
-        </div>
-      )}
+        )}
+      </div>
     </motion.div>
   );
 }

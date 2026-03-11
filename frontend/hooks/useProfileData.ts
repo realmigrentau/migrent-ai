@@ -99,9 +99,13 @@ export function useProfileListings(userId: string | undefined) {
   return { listings, loading, hasMore, loadMore };
 }
 
+const REVIEWS_API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
+
 export function useProfileReviews(userId: string | undefined) {
   const [reviews, setReviews] = useState<ProfileReview[]>([]);
   const [loading, setLoading] = useState(true);
+  const [reviewsCount, setReviewsCount] = useState(0);
+  const [averageRating, setAverageRating] = useState(0);
 
   useEffect(() => {
     if (!userId) { setLoading(false); return; }
@@ -110,29 +114,34 @@ export function useProfileReviews(userId: string | undefined) {
     async function load() {
       setLoading(true);
       try {
-        const { data, error } = await supabase
-          .from("reviews")
-          .select("id, reviewer_id, reviewer_name, reviewer_photo, rating, comment, created_at")
-          .eq("reviewee_id", userId!)
-          .order("created_at", { ascending: false })
-          .limit(20);
-
+        const res = await fetch(`${REVIEWS_API_BASE}/reviews/user/${userId}?page=1&per_page=20`);
         if (cancelled) return;
-        if (error) {
-          // Reviews table may not exist yet - that's fine
-          console.warn("Reviews fetch:", error.message);
+        if (!res.ok) {
+          console.warn("Reviews fetch failed:", res.status);
           setReviews([]);
-        } else {
-          setReviews((data || []).map((d: any) => ({
-            id: d.id,
-            reviewer_id: d.reviewer_id || "",
-            reviewer_name: d.reviewer_name || "Anonymous",
-            reviewer_photo: d.reviewer_photo && d.reviewer_photo.startsWith("http") ? d.reviewer_photo : null,
-            rating: d.rating || 5,
-            comment: d.comment || "",
-            created_at: d.created_at || "",
-          })));
+          return;
         }
+        const data = await res.json();
+        const allStats = data.stats || {};
+        // Sum up review counts across review types
+        let totalCount = 0;
+        let totalRating = 0;
+        for (const key of Object.keys(allStats)) {
+          totalCount += allStats[key].review_count || 0;
+          totalRating += (allStats[key].avg_rating || 0) * (allStats[key].review_count || 0);
+        }
+        setReviewsCount(totalCount);
+        setAverageRating(totalCount > 0 ? totalRating / totalCount : 0);
+
+        setReviews((data.reviews || []).map((d: any) => ({
+          id: d.id,
+          reviewer_id: d.reviewer_id || "",
+          reviewer_name: d.reviewer_name || "Anonymous",
+          reviewer_photo: d.reviewer_photo && d.reviewer_photo.startsWith("http") ? d.reviewer_photo : null,
+          rating: d.rating || 5,
+          comment: d.review_text || "",
+          created_at: d.created_at || "",
+        })));
       } catch {
         if (!cancelled) setReviews([]);
       } finally {
@@ -144,5 +153,5 @@ export function useProfileReviews(userId: string | undefined) {
     return () => { cancelled = true; };
   }, [userId]);
 
-  return { reviews, loading };
+  return { reviews, loading, reviewsCount, averageRating };
 }
