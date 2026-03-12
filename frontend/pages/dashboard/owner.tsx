@@ -6,6 +6,8 @@ import DashboardLayout from "../../components/DashboardLayout";
 import { useDashboard } from "../../hooks/useDashboard";
 import ListingCard from "../../components/ListingCard";
 import { getListings } from "../../lib/api";
+import { useBookings } from "../../hooks/useBookings";
+import OwnerBookingsTable from "../../components/bookings/OwnerBookingsTable";
 
 /**
  * Owner Hub (/dashboard/owner)
@@ -21,6 +23,11 @@ export default function OwnerDashboard() {
 
   const [listings, setListings] = useState<any[]>([]);
   const [loadingListings, setLoadingListings] = useState(true);
+  const {
+    bookings,
+    loading: loadingBookings,
+    respond,
+  } = useBookings("owner");
 
   // Set role to owner only if user explicitly navigated here with a different role
   useEffect(() => {
@@ -177,6 +184,26 @@ export default function OwnerDashboard() {
               </Link>
             </div>
           )}
+        </section>
+
+        {/* Booking requests */}
+        <section>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white">
+              Booking Requests
+            </h2>
+            {bookings.length > 0 && (
+              <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400">
+                {bookings.filter((b) => b.status === "PENDING_OWNER").length} pending
+              </span>
+            )}
+          </div>
+          <OwnerBookingsTable
+            bookings={bookings}
+            loading={loadingBookings}
+            onAccept={(id) => respond(id, "accept")}
+            onDecline={(id) => respond(id, "decline")}
+          />
         </section>
 
         {/* Stats (placeholder) */}

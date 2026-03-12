@@ -115,6 +115,26 @@ def create_listing(
     return res.data[0] if res.data else row
 
 
+@router.get("/{listing_id}")
+def get_listing_by_id(listing_id: str):
+    """Get a single listing by ID (public)."""
+    sb = get_supabase_admin()
+    res = sb.table("listings").select("*").eq("id", listing_id).execute()
+    if not res.data:
+        raise HTTPException(status_code=404, detail="Listing not found")
+
+    listing = res.data[0]
+
+    # Enrich with owner profile
+    owner_id = listing.get("owner_id")
+    if owner_id:
+        profile_res = sb.table("profiles").select("name, custom_pfp, verified, bio").eq("id", owner_id).execute()
+        if profile_res.data:
+            listing["owner_profile"] = profile_res.data[0]
+
+    return listing
+
+
 @router.get("")
 def list_listings(
     city: Optional[str] = None,

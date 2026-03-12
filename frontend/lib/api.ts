@@ -1323,3 +1323,130 @@ export async function getSupportAnalytics(token: string) {
     return null;
   }
 }
+
+
+// ── Booking API ─────────────────────────────────────────────
+
+
+export interface CreateBookingPayload {
+  listing_id: string;
+  check_in: string;
+  check_out: string;
+  guests: number;
+  message_to_owner?: string;
+}
+
+/**
+ * Create a booking request (or instant book).
+ * POST /bookings
+ */
+export async function createBooking(token: string, payload: CreateBookingPayload) {
+  try {
+    const res = await fetch(`${BASE_URL}/bookings`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail || `createBooking failed: ${res.status}`);
+    }
+    return await res.json();
+  } catch (err: any) {
+    console.error("createBooking error:", err);
+    throw err;
+  }
+}
+
+/**
+ * Get bookings for current user.
+ * GET /bookings/me?role=seeker|owner
+ */
+export async function getMyBookings(token: string, role: "seeker" | "owner" = "seeker") {
+  try {
+    const res = await fetch(`${BASE_URL}/bookings/me?role=${role}`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if (!res.ok) throw new Error(`getMyBookings failed: ${res.status}`);
+    return await res.json();
+  } catch (err) {
+    console.error("getMyBookings error:", err);
+    return { bookings: [] };
+  }
+}
+
+/**
+ * Owner respond to a booking (accept/decline).
+ * POST /bookings/{id}/respond
+ */
+export async function respondToBooking(
+  token: string,
+  bookingId: string,
+  action: "accept" | "decline"
+) {
+  try {
+    const res = await fetch(`${BASE_URL}/bookings/${bookingId}/respond`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ action }),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail || `respondToBooking failed: ${res.status}`);
+    }
+    return await res.json();
+  } catch (err: any) {
+    console.error("respondToBooking error:", err);
+    throw err;
+  }
+}
+
+/**
+ * Seeker cancel a booking.
+ * POST /bookings/{id}/cancel
+ */
+export async function cancelBooking(token: string, bookingId: string) {
+  try {
+    const res = await fetch(`${BASE_URL}/bookings/${bookingId}/cancel`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail || `cancelBooking failed: ${res.status}`);
+    }
+    return await res.json();
+  } catch (err: any) {
+    console.error("cancelBooking error:", err);
+    throw err;
+  }
+}
+
+/**
+ * Get a single listing by ID (public).
+ * GET /listings/{id}
+ */
+export async function getListingById(listingId: string) {
+  try {
+    const res = await fetch(`${BASE_URL}/listings/${listingId}`, {
+      headers: { "Content-Type": "application/json" },
+    });
+    if (!res.ok) throw new Error(`getListingById failed: ${res.status}`);
+    return await res.json();
+  } catch (err) {
+    console.error("getListingById error:", err);
+    return null;
+  }
+}

@@ -24,6 +24,7 @@ from routes_account import router as account_router
 from routes_messages import router as messages_router
 from routes_validation import router as validation_router
 from routes_reviews import router as reviews_router
+from routes_bookings import router as bookings_router
 
 # ── Startup validation ──────────────────────────────────────
 REQUIRED_ENV = ["SUPABASE_URL", "SUPABASE_ANON_KEY", "STRIPE_SECRET_KEY", "STRIPE_WEBHOOK_SECRET"]
@@ -79,6 +80,7 @@ app.include_router(messages_router)
 app.include_router(account_router)
 app.include_router(validation_router)
 app.include_router(reviews_router)
+app.include_router(bookings_router)
 app.include_router(webhook_router)
 
 # Note: each router defines its own prefix (/auth, /listings, /matches, /deals)

@@ -191,6 +191,36 @@ class SeekerFeeRequest(BaseModel):
     deal_id: str
 
 
+# ── Booking models ─────────────────────────────────────────
+
+
+class BookingType(str, Enum):
+    request_to_book = "REQUEST_TO_BOOK"
+    instant_book = "INSTANT_BOOK"
+
+
+class BookingStatus(str, Enum):
+    pending_owner = "PENDING_OWNER"
+    owner_accepted = "OWNER_ACCEPTED"
+    owner_declined = "OWNER_DECLINED"
+    seeker_cancelled = "SEEKER_CANCELLED"
+    paid = "PAID"
+    completed = "COMPLETED"
+    expired = "EXPIRED"
+
+
+class BookingCreate(BaseModel):
+    listing_id: str
+    check_in: str = Field(..., description="Check-in date (YYYY-MM-DD)")
+    check_out: str = Field(..., description="Check-out date (YYYY-MM-DD)")
+    guests: int = Field(1, ge=1, le=20)
+    message_to_owner: Optional[str] = Field(None, max_length=1000)
+
+
+class BookingRespond(BaseModel):
+    action: Literal["accept", "decline"]
+
+
 # ── Message models ──────────────────────────────────────────
 
 

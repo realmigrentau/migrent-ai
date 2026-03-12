@@ -285,6 +285,64 @@ async def stripe_webhook(request: Request):
         session = event["data"]["object"]
         metadata = session.get("metadata", {})
 
+        # ── Booking payment branch ─────────────────────────────
+        if metadata.get("fee_type") == "booking":
+            booking_id = metadata.get("booking_id")
+            if not booking_id:
+                return {"status": "ignored"}
+
+            sb = get_supabase()
+            try:
+                sb.table("bookings").update(
+                    {"status": "PAID"}
+                ).eq("id", booking_id).execute()
+            except Exception as e:
+                raise HTTPException(status_code=500, detail="Operation failed")
+
+            # Send confirmation emails
+            try:
+                from email_bookings import send_booking_confirmed_to_both
+                booking_res = sb.table("bookings").select("*").eq("id", booking_id).execute()
+                if booking_res.data:
+                    bk = booking_res.data[0]
+                    listing_res = sb.table("listings").select("title, address").eq("id", bk["listing_id"]).execute()
+                    listing_title = "Listing"
+                    if listing_res.data:
+                        listing_title = listing_res.data[0].get("title") or listing_res.data[0].get("address", "Listing")
+
+                    owner_profile = sb.table("profiles").select("name").eq("id", bk["owner_id"]).execute()
+                    seeker_profile = sb.table("profiles").select("name").eq("id", bk["seeker_id"]).execute()
+
+                    owner_user = sb.auth.admin.get_user_by_id(bk["owner_id"])
+                    seeker_user = sb.auth.admin.get_user_by_id(bk["seeker_id"])
+
+                    send_booking_confirmed_to_both(
+                        owner_email=owner_user.user.email if owner_user and owner_user.user else "",
+                        owner_name=owner_profile.data[0]["name"] if owner_profile.data else "Owner",
+                        seeker_email=seeker_user.user.email if seeker_user and seeker_user.user else "",
+                        seeker_name=seeker_profile.data[0]["name"] if seeker_profile.data else "Seeker",
+                        listing_title=listing_title,
+                        check_in=bk["check_in_date"],
+                        check_out=bk["check_out_date"],
+                        booking_id=booking_id,
+                    )
+            except Exception:
+                pass
+
+            try:
+                sb.table("payment_events").insert({
+                    "deal_id": None,
+                    "fee_type": "booking",
+                    "stripe_session_id": session["id"],
+                    "amount": session.get("amount_total", OWNER_FEE_AUD + SEEKER_FEE_AUD),
+                    "currency": "aud",
+                    "event_type": "checkout.session.completed",
+                }).execute()
+            except Exception:
+                pass
+
+            return {"status": "ok", "booking": True}
+
         # ── Verification payment branch ────────────────────────
         if metadata.get("purpose") == "verification":
             verification_user_id = metadata.get("user_id")

@@ -6,6 +6,8 @@ import DashboardLayout from "../../components/DashboardLayout";
 import { useDashboard } from "../../hooks/useDashboard";
 import ListingCard from "../../components/ListingCard";
 import { getMatches, createVerificationSession } from "../../lib/api";
+import { useBookings } from "../../hooks/useBookings";
+import SeekerBookingsTable from "../../components/bookings/SeekerBookingsTable";
 
 /**
  * Seeker Hub (/dashboard/seeker)
@@ -23,6 +25,11 @@ export default function SeekerDashboard() {
   const [postcode, setPostcode] = useState("");
   const [matches, setMatches] = useState<any[]>([]);
   const [searching, setSearching] = useState(false);
+  const {
+    bookings,
+    loading: loadingBookings,
+    cancel,
+  } = useBookings("seeker");
 
   // Set role to seeker only if user explicitly navigated here with a different role
   useEffect(() => {
@@ -183,6 +190,25 @@ export default function SeekerDashboard() {
             </div>
           </section>
         )}
+
+        {/* My Bookings */}
+        <section>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white">
+              My Bookings
+            </h2>
+            {bookings.length > 0 && (
+              <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400">
+                {bookings.filter((b) => ["PENDING_OWNER", "OWNER_ACCEPTED"].includes(b.status)).length} active
+              </span>
+            )}
+          </div>
+          <SeekerBookingsTable
+            bookings={bookings}
+            loading={loadingBookings}
+            onCancel={cancel}
+          />
+        </section>
 
         {/* Why MigRent */}
         <section>
