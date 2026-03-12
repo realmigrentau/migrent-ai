@@ -71,6 +71,7 @@ export async function getMatches(token: string, postcode: string) {
  */
 export interface CreateListingPayload {
   address: string;
+  suburb?: string;
   postcode: string;
   weeklyPrice: number;
   description: string;
@@ -129,6 +130,7 @@ export async function createListing(
   try {
     const body: Record<string, any> = {
       address: payload.address,
+      suburb: payload.suburb,
       postcode: Number(payload.postcode),
       weekly_price: payload.weeklyPrice,
       description: payload.description,

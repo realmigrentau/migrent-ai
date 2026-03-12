@@ -53,6 +53,7 @@ def create_listing(
     sb = get_supabase_admin()
     row = {
         "address": listing.address,
+        "suburb": listing.suburb,
         "postcode": listing.postcode,
         "city": city,
         "weekly_price": listing.weekly_price,
@@ -113,6 +114,50 @@ def create_listing(
         raise HTTPException(status_code=500, detail="Failed to create listing")
 
     return res.data[0] if res.data else row
+
+
+@router.get("/search")
+def search_listings(
+    suburb: Optional[str] = None,
+    postcode: Optional[str] = None,
+    address: Optional[str] = None,
+    max_price: Optional[float] = None,
+    guests: Optional[int] = None,
+    check_in: Optional[str] = None,
+    check_out: Optional[str] = None,
+    lat: Optional[float] = None,
+    lng: Optional[float] = None,
+    radius: Optional[float] = None,
+    limit: int = 50,
+    offset: int = 0,
+):
+    """Search listings with filters (public, no auth required)."""
+    if limit < 1:
+        limit = 1
+    if limit > 100:
+        limit = 100
+    if offset < 0:
+        offset = 0
+
+    sb = get_supabase_admin()
+    query = sb.table("listings").select("*")
+
+    if max_price is not None:
+        query = query.lte("weekly_price", max_price)
+    if guests is not None:
+        query = query.gte("max_guests", guests)
+
+    # Text-based location filters
+    if suburb:
+        query = query.ilike("suburb", f"%{suburb}%")
+    if postcode:
+        query = query.eq("postcode", int(postcode))
+    if address:
+        query = query.ilike("address", f"%{address}%")
+
+    query = query.range(offset, offset + limit - 1)
+    res = query.execute()
+    return res.data
 
 
 @router.get("/{listing_id}")

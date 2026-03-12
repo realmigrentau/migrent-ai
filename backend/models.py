@@ -29,6 +29,7 @@ class UserLogin(BaseModel):
 
 class ListingCreate(BaseModel):
     address: str = Field(..., min_length=5, max_length=300)
+    suburb: Optional[str] = Field(None, max_length=100)
     postcode: int = Field(..., ge=800, le=9999)
     city: Optional[str] = Field(None, max_length=100)
     weekly_price: float = Field(..., gt=0, le=50000)

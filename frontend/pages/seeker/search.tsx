@@ -138,15 +138,15 @@ export default function SeekerSearch() {
         setResults(data.map((l: any) => ({
           id: l.id || l._id,
           address: l.address || "",
-          suburb: l.suburb || "",
-          postcode: l.postcode || "",
+          suburb: l.suburb || l.city || "",
+          postcode: l.postcode ? String(l.postcode) : "",
           dailyPrice: l.daily_price ?? l.dailyPrice,
           weeklyPrice: l.weekly_price ?? l.weeklyPrice,
-          roomType: l.room_type || l.roomType || "private",
+          roomType: l.place_type || l.room_type || l.roomType || "private",
           furnished: l.furnished ?? false,
           billsIncluded: l.bills_included ?? l.billsIncluded ?? false,
           verified: l.verified ?? false,
-          photos: l.photos || [],
+          photos: l.images || l.photos || [],
           description: l.description || "",
           lat: l.lat || l.latitude || -33.88,
           lng: l.lng || l.longitude || 151.21,
@@ -502,7 +502,7 @@ export default function SeekerSearch() {
         {/* Price slider */}
         <div>
           <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-            Max price: <span className="text-rose-500 font-bold">AUD ${maxPrice}/day</span>
+            Max price: <span className="text-rose-500 font-bold">AUD ${maxPrice}/week</span>
           </label>
           <input
             type="range"

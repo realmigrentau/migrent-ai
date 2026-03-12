@@ -71,6 +71,7 @@ export default function NewListing() {
 
     const result = await createListing(session.access_token, {
       address: `${data.suburb}, ${data.postcode}`,
+      suburb: data.suburb,
       postcode: data.postcode,
       weeklyPrice: data.weeklyPrice,
       description: data.description,
