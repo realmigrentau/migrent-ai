@@ -1,241 +1,10 @@
 import { useRouter } from "next/router";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useAuth } from "../../../hooks/useAuth";
 import ReportModal from "../../../components/ReportModal";
-import AvatarWithVerification from "../../../components/AvatarWithVerification";
-
-const ROOMS: Record<string, any> = {
-  "1": {
-    id: "1",
-    title: "Bright room near Central Station",
-    address: "12 Crown St",
-    suburb: "Surry Hills",
-    postcode: "2010",
-    weeklyPrice: 250,
-    bond: "4 weeks rent (AUD $1,000)",
-    minStay: "3 months",
-    propertyType: "Apartment",
-    placeType: "Private room",
-    bedrooms: 1,
-    beds: 1,
-    bathrooms: 1,
-    bathroomType: "shared",
-    maxGuests: 1,
-    furnished: true,
-    billsIncluded: true,
-    highlights: ["5 min walk to Central", "Fully furnished", "Natural light", "Friendly housemates"],
-    weeklyDiscount: null,
-    monthlyDiscount: 5,
-    whoElseLivesHere: "Two other tenants",
-    totalOtherPeople: "2",
-    description:
-      "Bright and spacious private room in a friendly 3-bedroom sharehouse. The room gets plenty of natural light and comes fully furnished with a queen bed, desk, and wardrobe. Shared kitchen and bathroom are well-maintained. Great for students or young professionals.",
-    amenities: ["WiFi included", "Washing machine", "Fully equipped kitchen", "Living room", "Balcony", "Air conditioning"],
-    houseRules: ["No smoking inside", "Quiet hours 10pm-7am", "No pets", "Keep shared spaces tidy", "Guests welcome (notify housemates)"],
-    transport: ["Central Station - 5 min walk", "Bus stop Crown St - 1 min walk", "Light rail Surry Hills - 8 min walk"],
-    safety: { securityCameras: false, securityCamerasLocation: "", weaponsOnProperty: false, weaponsExplanation: "", otherSafetyDetails: "" },
-    owner: { id: "owner-sarah", name: "Sarah M.", bio: "Local Surry Hills owner. I live nearby and keep the property well maintained.", verified: true, responseTime: "Usually within 2 hours" },
-    photos: [
-      "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&h=500&fit=crop",
-      "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&h=500&fit=crop",
-      "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=400&h=300&fit=crop",
-      "https://images.unsplash.com/photo-1540518614846-7eded433c457?w=400&h=300&fit=crop",
-      "https://images.unsplash.com/photo-1560185007-cde436f6a4d0?w=400&h=300&fit=crop",
-    ],
-  },
-  "2": {
-    id: "2",
-    title: "Affordable share near USYD",
-    address: "45 George St",
-    suburb: "Redfern",
-    postcode: "2016",
-    weeklyPrice: 220,
-    bond: "2 weeks rent (AUD $440)",
-    minStay: "1 month",
-    propertyType: "House",
-    placeType: "Shared room",
-    bedrooms: 1,
-    beds: 2,
-    bathrooms: 1,
-    bathroomType: "shared",
-    maxGuests: 2,
-    furnished: true,
-    billsIncluded: false,
-    highlights: ["Close to USYD", "Quiet neighbourhood", "Near parks", "Budget-friendly"],
-    weeklyDiscount: null,
-    monthlyDiscount: null,
-    whoElseLivesHere: "One other tenant",
-    totalOtherPeople: "1",
-    description:
-      "Affordable shared room close to USYD campus. The house is in a quiet neighbourhood with parks nearby. Shared with one other friendly tenant. Furnished with single bed, wardrobe, and desk. Common areas are spacious and clean.",
-    amenities: ["WiFi included", "Washing machine", "Shared kitchen", "Backyard", "Near parks"],
-    houseRules: ["No smoking", "Quiet after 10pm", "Clean up after yourself", "No overnight guests without notice"],
-    transport: ["Redfern Station - 7 min walk", "Bus stop George St - 2 min walk", "USYD campus - 10 min walk"],
-    safety: { securityCameras: false, securityCamerasLocation: "", weaponsOnProperty: false, weaponsExplanation: "", otherSafetyDetails: "" },
-    owner: { id: "owner-david", name: "David K.", bio: "Property investor based in Redfern. Happy to help new arrivals settle in.", verified: false, responseTime: "Usually within 24 hours" },
-    photos: [
-      "https://images.unsplash.com/photo-1598928506311-c55ece637a745?w=800&h=500&fit=crop",
-      "https://images.unsplash.com/photo-1631679706909-1844bbd07221?w=800&h=500&fit=crop",
-      "https://images.unsplash.com/photo-1585412727339-54e4bae3bbf9?w=400&h=300&fit=crop",
-      "https://images.unsplash.com/photo-1536376072261-38c75010e6c9?w=400&h=300&fit=crop",
-      "https://images.unsplash.com/photo-1564078516393-cf04bd966897?w=400&h=300&fit=crop",
-    ],
-  },
-  "3": {
-    id: "3",
-    title: "Modern ensuite in Waterloo",
-    address: "8 Botany Rd",
-    suburb: "Waterloo",
-    postcode: "2017",
-    weeklyPrice: 280,
-    bond: "4 weeks rent (AUD $1,120)",
-    minStay: "3 months",
-    propertyType: "Apartment",
-    placeType: "Private room",
-    bedrooms: 1,
-    beds: 1,
-    bathrooms: 1,
-    bathroomType: "private",
-    maxGuests: 1,
-    furnished: true,
-    billsIncluded: true,
-    highlights: ["Private bathroom", "Building gym", "Rooftop terrace", "3 min to station"],
-    weeklyDiscount: null,
-    monthlyDiscount: 10,
-    whoElseLivesHere: "Owner lives here",
-    totalOtherPeople: "1",
-    description:
-      "Ensuite room with your own private bathroom in a modern 2-year-old apartment building. The room is fully furnished with a double bed, built-in wardrobe, and study nook. Building has a gym and rooftop terrace. Green Square station is a 3 minute walk.",
-    amenities: ["Private bathroom", "WiFi included", "Building gym", "Rooftop terrace", "Air conditioning", "Intercom entry"],
-    houseRules: ["No smoking", "Quiet hours 10pm-7am", "No pets in room", "Keep bathroom clean"],
-    transport: ["Green Square Station - 3 min walk", "Bus stop Botany Rd - 1 min walk", "CBD - 10 min by train"],
-    safety: { securityCameras: true, securityCamerasLocation: "Building lobby and parking", weaponsOnProperty: false, weaponsExplanation: "", otherSafetyDetails: "Secure intercom building entry" },
-    owner: { id: "owner-lisa", name: "Lisa T.", bio: "Owner-occupier in Waterloo. I keep the apartment in great condition and am very responsive.", verified: true, responseTime: "Usually within 1 hour" },
-    photos: [
-      "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&h=500&fit=crop",
-      "https://images.unsplash.com/photo-1540518614846-7eded433c457?w=800&h=500&fit=crop",
-      "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=400&h=300&fit=crop",
-      "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&h=300&fit=crop",
-      "https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=400&h=300&fit=crop",
-    ],
-  },
-  "4": {
-    id: "4",
-    title: "Budget room near UNSW",
-    address: "77 Anzac Pde",
-    suburb: "Kensington",
-    postcode: "2033",
-    weeklyPrice: 200,
-    bond: "2 weeks rent (AUD $400)",
-    minStay: "6 months",
-    propertyType: "House",
-    placeType: "Private room",
-    bedrooms: 1,
-    beds: 1,
-    bathrooms: 1,
-    bathroomType: "shared",
-    maxGuests: 1,
-    furnished: false,
-    billsIncluded: false,
-    highlights: ["Next to light rail", "Near UNSW", "Large backyard", "BBQ area"],
-    weeklyDiscount: null,
-    monthlyDiscount: null,
-    whoElseLivesHere: "3 other housemates",
-    totalOtherPeople: "3",
-    description:
-      "Unfurnished private room near UNSW in a large 4-bedroom house. Light rail stop is right at the doorstep. Large backyard with BBQ area. Bills are split evenly between housemates. Bring your own furniture or we can help source basics.",
-    amenities: ["Large backyard", "BBQ area", "Laundry", "Storage shed", "Street parking"],
-    houseRules: ["No smoking inside", "Quiet after 11pm", "Shared chores roster", "Recycling required"],
-    transport: ["Light rail Kensington - 1 min walk", "UNSW campus - 5 min walk", "Bus stop Anzac Pde - 2 min walk"],
-    safety: { securityCameras: false, securityCamerasLocation: "", weaponsOnProperty: false, weaponsExplanation: "", otherSafetyDetails: "" },
-    owner: { id: "owner-mike", name: "Mike R.", bio: "Long-time Kensington local. The house has been a great sharehouse for years.", verified: false, responseTime: "Usually within 12 hours" },
-    photos: [
-      "https://images.unsplash.com/photo-1513694203232-719a280e022f?w=800&h=500&fit=crop",
-      "https://images.unsplash.com/photo-1564078516393-cf04bd966897?w=800&h=500&fit=crop",
-      "https://images.unsplash.com/photo-1560185007-cde436f6a4d0?w=400&h=300&fit=crop",
-      "https://images.unsplash.com/photo-1585412727339-54e4bae3bbf9?w=400&h=300&fit=crop",
-      "https://images.unsplash.com/photo-1631679706909-1844bbd07221?w=400&h=300&fit=crop",
-    ],
-  },
-  "5": {
-    id: "5",
-    title: "Self-contained studio in Glebe",
-    address: "3/15 Glebe Point Rd",
-    suburb: "Glebe",
-    postcode: "2037",
-    weeklyPrice: 310,
-    bond: "4 weeks rent (AUD $1,240)",
-    minStay: "3 months",
-    propertyType: "Studio",
-    placeType: "Entire place",
-    bedrooms: 1,
-    beds: 1,
-    bathrooms: 1,
-    bathroomType: "private",
-    maxGuests: 2,
-    furnished: true,
-    billsIncluded: true,
-    highlights: ["Self-contained", "All bills included", "Walking to shops", "Private kitchenette"],
-    weeklyDiscount: 5,
-    monthlyDiscount: 10,
-    whoElseLivesHere: "",
-    totalOtherPeople: "",
-    description:
-      "Self-contained studio apartment with kitchenette and private bathroom. Fully furnished with a queen bed, compact kitchen, and small dining area. Walking distance to Broadway Shopping Centre and Glebe Markets. All bills included in rent.",
-    amenities: ["Private kitchenette", "Private bathroom", "WiFi included", "Air conditioning", "Laundry in building"],
-    houseRules: ["No smoking", "No pets", "Quiet hours 10pm-8am", "No subletting"],
-    transport: ["Glebe light rail - 5 min walk", "Bus stop Glebe Point Rd - 1 min walk", "Broadway Shopping Centre - 8 min walk"],
-    safety: { securityCameras: true, securityCamerasLocation: "Building entrance", weaponsOnProperty: false, weaponsExplanation: "", otherSafetyDetails: "" },
-    owner: { id: "owner-jenny", name: "Jenny W.", bio: "I own several studios in the Glebe area. Clean, well-maintained, and great for independent living.", verified: true, responseTime: "Usually within 4 hours" },
-    photos: [
-      "https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=800&h=500&fit=crop",
-      "https://images.unsplash.com/photo-1536376072261-38c75010e6c9?w=800&h=500&fit=crop",
-      "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=400&h=300&fit=crop",
-      "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=400&h=300&fit=crop",
-      "https://images.unsplash.com/photo-1540518614846-7eded433c457?w=400&h=300&fit=crop",
-    ],
-  },
-  "6": {
-    id: "6",
-    title: "Budget room near Olympic Park",
-    address: "22 Parramatta Rd",
-    suburb: "Homebush",
-    postcode: "2140",
-    weeklyPrice: 190,
-    bond: "2 weeks rent (AUD $380)",
-    minStay: "1 month",
-    propertyType: "House",
-    placeType: "Shared room",
-    bedrooms: 1,
-    beds: 2,
-    bathrooms: 1,
-    bathroomType: "shared",
-    maxGuests: 2,
-    furnished: true,
-    billsIncluded: true,
-    highlights: ["All bills included", "Near Olympic Park", "Budget-friendly", "Close to shops"],
-    weeklyDiscount: null,
-    monthlyDiscount: null,
-    whoElseLivesHere: "Family home",
-    totalOtherPeople: "3",
-    description:
-      "Budget-friendly shared room near Olympic Park. All bills and WiFi are included in the rent. The house is clean and well-maintained. Close to Homebush station and local shops. Ideal for new arrivals looking for an affordable start.",
-    amenities: ["WiFi included", "All bills included", "Washing machine", "Shared kitchen", "Near shops"],
-    houseRules: ["No smoking", "Quiet after 10pm", "Keep kitchen clean", "No parties"],
-    transport: ["Homebush Station - 8 min walk", "Olympic Park - 5 min walk", "Bus stop Parramatta Rd - 1 min walk"],
-    safety: { securityCameras: false, securityCamerasLocation: "", weaponsOnProperty: false, weaponsExplanation: "", otherSafetyDetails: "" },
-    owner: { id: "owner-raj", name: "Raj P.", bio: "I manage a few properties in Homebush. Friendly and always available for any issues.", verified: false, responseTime: "Usually within 6 hours" },
-    photos: [
-      "https://images.unsplash.com/photo-1585412727339-54e4bae3bbf9?w=800&h=500&fit=crop",
-      "https://images.unsplash.com/photo-1560185007-cde436f6a4d0?w=800&h=500&fit=crop",
-      "https://images.unsplash.com/photo-1513694203232-719a280e022f?w=400&h=300&fit=crop",
-      "https://images.unsplash.com/photo-1564078516393-cf04bd966897?w=400&h=300&fit=crop",
-      "https://images.unsplash.com/photo-1631679706909-1844bbd07221?w=400&h=300&fit=crop",
-    ],
-  },
-};
+import { getListingById } from "../../../lib/api";
 
 export default function RoomDetail() {
   const router = useRouter();
@@ -245,6 +14,9 @@ export default function RoomDetail() {
   const [interestSent, setInterestSent] = useState(false);
   const [message, setMessage] = useState("");
   const [reportOpen, setReportOpen] = useState(false);
+  const [room, setRoom] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   // Deal customization state
   const [dealStartDate, setDealStartDate] = useState("");
@@ -252,17 +24,159 @@ export default function RoomDetail() {
   const [dealGuests, setDealGuests] = useState(1);
   const [dealSpecialRequests, setDealSpecialRequests] = useState("");
 
-  const room = ROOMS[id as string] || ROOMS["1"];
+  useEffect(() => {
+    if (!id) return;
+    setLoading(true);
+    setError("");
+    getListingById(id as string)
+      .then((data) => {
+        if (!data) {
+          setError("Listing not found");
+          return;
+        }
+        // Normalize backend fields to what the UI expects
+        const normalized = {
+          id: data.id,
+          title: data.title || "",
+          address: data.address || "",
+          suburb: data.suburb || data.city || "",
+          postcode: data.postcode ? String(data.postcode) : "",
+          weeklyPrice: data.weekly_price ?? data.weeklyPrice ?? 0,
+          bond: data.bond || null,
+          minStay: data.min_stay || null,
+          propertyType: data.property_type || "Apartment",
+          placeType: data.place_type || "Private room",
+          bedrooms: data.bedrooms ?? 1,
+          beds: data.beds ?? 1,
+          bathrooms: data.bathrooms ?? 1,
+          bathroomType: data.bathroom_type || "shared",
+          maxGuests: data.max_guests ?? 1,
+          furnished: data.furnished ?? false,
+          billsIncluded: data.bills_included ?? false,
+          highlights: data.highlights || [],
+          weeklyDiscount: data.weekly_discount || null,
+          monthlyDiscount: data.monthly_discount || null,
+          whoElseLivesHere: data.who_else_lives_here || "",
+          totalOtherPeople: data.total_other_people || "",
+          description: data.description || "",
+          photos: data.images || data.photos || [],
+          instantBook: data.instant_book || data.instant_book_enabled || false,
+          internetIncluded: data.internet_included ?? false,
+          internetSpeed: data.internet_speed || null,
+          petsAllowed: data.pets_allowed ?? false,
+          petDetails: data.pet_details || null,
+          airConditioning: data.air_conditioning ?? false,
+          laundry: data.laundry || null,
+          dishwasher: data.dishwasher ?? false,
+          nearestTransport: data.nearest_transport || null,
+          neighbourhoodVibe: data.neighbourhood_vibe || null,
+          noSmoking: data.no_smoking ?? true,
+          quietHours: data.quiet_hours || null,
+          tenantPrefs: data.tenant_prefs || null,
+          genderPreference: data.gender_preference || "Any",
+          couplesOk: data.couples_ok ?? false,
+          minStayWeeks: data.min_stay_weeks ?? 1,
+          maxStayWeeks: data.max_stay_weeks ?? 52,
+          availableFrom: data.available_from || null,
+          availableTo: data.available_to || null,
+          safety: {
+            securityCameras: data.security_cameras ?? false,
+            securityCamerasLocation: data.security_cameras_location || "",
+            weaponsOnProperty: data.weapons_on_property ?? false,
+            weaponsExplanation: data.weapons_explanation || "",
+            otherSafetyDetails: data.other_safety_details || "",
+          },
+          owner: data.owner_profile
+            ? {
+                id: data.owner_id,
+                name: data.owner_profile.name || "Owner",
+                bio: data.owner_profile.bio || "",
+                verified: data.owner_profile.verified ?? false,
+                identityVerified: data.owner_profile.identity_verified ?? false,
+                profilePhoto: data.owner_profile.custom_pfp || null,
+                listingsCount: data.owner_profile.listings_count || 0,
+              }
+            : {
+                id: data.owner_id,
+                name: "Owner",
+                bio: "",
+                verified: false,
+                identityVerified: false,
+                profilePhoto: null,
+                listingsCount: 0,
+              },
+        };
+        setRoom(normalized);
+      })
+      .catch((err) => {
+        console.error("Failed to load listing:", err);
+        setError("Failed to load listing");
+      })
+      .finally(() => setLoading(false));
+  }, [id]);
 
   const handleInterest = () => {
     setInterestSent(true);
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="text-center">
+          <div className="w-8 h-8 border-2 border-rose-500 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+          <p className="text-sm text-slate-500 dark:text-slate-400">Loading listing...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !room) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="text-center space-y-4">
+          <p className="text-lg font-semibold text-slate-700 dark:text-slate-300">{error || "Listing not found"}</p>
+          <Link href="/seeker/search" className="btn-primary py-2 px-6 rounded-xl text-sm inline-block">
+            Back to search
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   const hasSafetyInfo = room.safety && (
     room.safety.securityCameras ||
     room.safety.weaponsOnProperty ||
     room.safety.otherSafetyDetails
   );
+
+  // Build amenities list from actual listing data
+  const amenities: string[] = [];
+  if (room.furnished) amenities.push("Furnished");
+  if (room.billsIncluded) amenities.push("Bills included");
+  if (room.internetIncluded) amenities.push(room.internetSpeed ? `WiFi (${room.internetSpeed})` : "WiFi included");
+  if (room.airConditioning) amenities.push("Air conditioning");
+  if (room.dishwasher) amenities.push("Dishwasher");
+  if (room.laundry) amenities.push(`Laundry: ${room.laundry}`);
+  if (room.petsAllowed) amenities.push(room.petDetails ? `Pets allowed (${room.petDetails})` : "Pets allowed");
+  if (room.instantBook) amenities.push("Instant book available");
+
+  // Build house rules from data
+  const houseRules: string[] = [];
+  if (room.noSmoking) houseRules.push("No smoking");
+  if (room.quietHours) houseRules.push(`Quiet hours: ${room.quietHours}`);
+  if (room.genderPreference && room.genderPreference !== "Any") houseRules.push(`Gender preference: ${room.genderPreference}`);
+  if (room.couplesOk) houseRules.push("Couples welcome");
+  if (room.tenantPrefs) houseRules.push(room.tenantPrefs);
+
+  // Bond display
+  const bondDisplay = room.bond
+    ? room.bond
+    : room.weeklyPrice
+    ? `4 weeks rent (AUD $${room.weeklyPrice * 4})`
+    : null;
+
+  // Min stay display
+  const minStayDisplay = room.minStay || (room.minStayWeeks ? `${room.minStayWeeks} week${room.minStayWeeks !== 1 ? "s" : ""}` : null);
 
   return (
     <div className="space-y-8">
@@ -277,40 +191,46 @@ export default function RoomDetail() {
         </Link>
         <span>/</span>
         <span className="text-slate-900 dark:text-white font-medium">
-          {room.suburb}, {room.postcode}
+          {room.suburb}{room.postcode ? `, ${room.postcode}` : ""}
         </span>
       </motion.div>
 
-      {/* Photo carousel */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="grid grid-cols-4 gap-2 rounded-2xl overflow-hidden"
-      >
-        <div className="col-span-4 md:col-span-2 aspect-video bg-slate-100 dark:bg-slate-800 overflow-hidden cursor-pointer">
-          <img
-            src={room.photos[activePhoto]}
-            alt={`${room.address} photo ${activePhoto + 1}`}
-            className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-          />
-        </div>
-        {room.photos.slice(1, 5).map((photo: string, i: number) => (
-          <div
-            key={i}
-            onClick={() => setActivePhoto(i + 1)}
-            className={`hidden md:block aspect-video bg-slate-100 dark:bg-slate-800 overflow-hidden cursor-pointer ${
-              activePhoto === i + 1 ? "ring-2 ring-rose-500 ring-offset-1" : ""
-            }`}
-          >
+      {/* Photo gallery */}
+      {room.photos && room.photos.length > 0 ? (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="grid grid-cols-4 gap-2 rounded-2xl overflow-hidden"
+        >
+          <div className="col-span-4 md:col-span-2 aspect-video bg-slate-100 dark:bg-slate-800 overflow-hidden cursor-pointer">
             <img
-              src={photo}
-              alt={`${room.address} photo ${i + 2}`}
+              src={room.photos[activePhoto] || room.photos[0]}
+              alt={`${room.title} photo ${activePhoto + 1}`}
               className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-              loading="lazy"
             />
           </div>
-        ))}
-      </motion.div>
+          {room.photos.slice(1, 5).map((photo: string, i: number) => (
+            <div
+              key={i}
+              onClick={() => setActivePhoto(i + 1)}
+              className={`hidden md:block aspect-video bg-slate-100 dark:bg-slate-800 overflow-hidden cursor-pointer ${
+                activePhoto === i + 1 ? "ring-2 ring-rose-500 ring-offset-1" : ""
+              }`}
+            >
+              <img
+                src={photo}
+                alt={`${room.title} photo ${i + 2}`}
+                className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                loading="lazy"
+              />
+            </div>
+          ))}
+        </motion.div>
+      ) : (
+        <div className="aspect-video bg-slate-100 dark:bg-slate-800 rounded-2xl flex items-center justify-center">
+          <p className="text-slate-400 dark:text-slate-500">No photos available</p>
+        </div>
+      )}
 
       <div className="grid lg:grid-cols-3 gap-8">
         {/* Main content */}
@@ -320,10 +240,10 @@ export default function RoomDetail() {
               {room.title || `${room.address}, ${room.suburb}`}
             </h1>
             <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-              {room.address}, {room.suburb} {room.postcode}
+              {room.address}{room.suburb ? `, ${room.suburb}` : ""} {room.postcode}
             </p>
             <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
-              {room.propertyType} &middot; {room.placeType} &middot; {room.bedrooms} bed{room.bedrooms !== 1 ? "s" : ""} &middot; {room.bathrooms} bath ({room.bathroomType}) &middot; Up to {room.maxGuests} guest{room.maxGuests !== 1 ? "s" : ""}
+              {room.propertyType} - {room.placeType} - {room.bedrooms} bed{room.bedrooms !== 1 ? "s" : ""} - {room.bathrooms} bath ({room.bathroomType}) - Up to {room.maxGuests} guest{room.maxGuests !== 1 ? "s" : ""}
             </p>
             <div className="flex flex-wrap gap-2 mt-4">
               <span className="px-3 py-1.5 rounded-lg bg-rose-50 dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/20 text-rose-600 dark:text-rose-400 font-bold text-sm">
@@ -334,22 +254,26 @@ export default function RoomDetail() {
                   Bills included
                 </span>
               )}
-              <span className="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 text-sm font-medium">
-                Min stay: {room.minStay}
-              </span>
-              <span className="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 text-sm font-medium">
-                Bond: {room.bond}
-              </span>
+              {minStayDisplay && (
+                <span className="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 text-sm font-medium">
+                  Min stay: {minStayDisplay}
+                </span>
+              )}
+              {bondDisplay && (
+                <span className="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 text-sm font-medium">
+                  Bond: {bondDisplay}
+                </span>
+              )}
             </div>
             {/* Discounts */}
             {(room.weeklyDiscount || room.monthlyDiscount) && (
               <div className="flex gap-2 mt-3">
-                {room.weeklyDiscount && (
+                {room.weeklyDiscount > 0 && (
                   <span className="px-2.5 py-1 rounded-lg text-xs font-medium bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-500/20">
                     {room.weeklyDiscount}% weekly discount
                   </span>
                 )}
-                {room.monthlyDiscount && (
+                {room.monthlyDiscount > 0 && (
                   <span className="px-2.5 py-1 rounded-lg text-xs font-medium bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-500/20">
                     {room.monthlyDiscount}% monthly discount
                   </span>
@@ -393,44 +317,61 @@ export default function RoomDetail() {
             </motion.section>
           )}
 
-          <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-3">Amenities</h2>
-            <div className="grid sm:grid-cols-2 gap-2">
-              {room.amenities.map((item: string, i: number) => (
-                <div key={i} className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
-                  <span className="text-rose-500">&#10003;</span>
-                  {item}
-                </div>
-              ))}
-            </div>
-          </motion.section>
+          {/* Amenities */}
+          {amenities.length > 0 && (
+            <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+              <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-3">Amenities</h2>
+              <div className="grid sm:grid-cols-2 gap-2">
+                {amenities.map((item: string, i: number) => (
+                  <div key={i} className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
+                    <span className="text-rose-500">&#10003;</span>
+                    {item}
+                  </div>
+                ))}
+              </div>
+            </motion.section>
+          )}
 
-          <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}>
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-3">House rules</h2>
-            <div className="space-y-2">
-              {room.houseRules.map((rule: string, i: number) => (
-                <div key={i} className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
-                  <span className="text-slate-400 dark:text-slate-500">&bull;</span>
-                  {rule}
-                </div>
-              ))}
-            </div>
-          </motion.section>
+          {/* House rules */}
+          {houseRules.length > 0 && (
+            <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}>
+              <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-3">House rules</h2>
+              <div className="space-y-2">
+                {houseRules.map((rule: string, i: number) => (
+                  <div key={i} className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
+                    <span className="text-slate-400 dark:text-slate-500">&bull;</span>
+                    {rule}
+                  </div>
+                ))}
+              </div>
+            </motion.section>
+          )}
 
-          <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-3">Transport</h2>
-            <div className="space-y-2">
-              {room.transport.map((item: string, i: number) => (
-                <div key={i} className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
-                  <svg className="w-4 h-4 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                  {item}
-                </div>
-              ))}
-            </div>
-          </motion.section>
+          {/* Transport */}
+          {room.nearestTransport && (
+            <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
+              <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-3">Transport</h2>
+              <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
+                <svg className="w-4 h-4 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                {room.nearestTransport}
+              </div>
+            </motion.section>
+          )}
+
+          {/* Availability */}
+          {(room.availableFrom || room.availableTo) && (
+            <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.31 }}>
+              <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-3">Availability</h2>
+              <div className="card-subtle p-4 rounded-xl text-sm text-slate-600 dark:text-slate-300">
+                {room.availableFrom && <p>Available from: {new Date(room.availableFrom).toLocaleDateString()}</p>}
+                {room.availableTo && <p>Available until: {new Date(room.availableTo).toLocaleDateString()}</p>}
+                <p className="mt-1">Stay: {room.minStayWeeks} - {room.maxStayWeeks} weeks</p>
+              </div>
+            </motion.section>
+          )}
 
           {/* Safety section */}
           <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.33 }}>
@@ -495,19 +436,10 @@ export default function RoomDetail() {
                   ) : (
                     room.owner.name[0]
                   )}
-                  {room.owner.verified && (
-                    <div className="absolute -bottom-0.5 -right-0.5 bg-white dark:bg-slate-900 rounded-full p-0.5 w-[18px] h-[18px]">
-                      <div className="w-full h-full rounded-full bg-gradient-to-br from-rose-400 to-rose-500 flex items-center justify-center">
-                        <svg className="w-2 h-2 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                        </svg>
-                      </div>
-                    </div>
-                  )}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className="font-bold text-slate-900 dark:text-white group-hover:text-rose-500 transition-colors">
+                    <span className="font-bold text-slate-900 dark:text-white">
                       {room.owner.name}
                     </span>
                     {room.owner.verified && (
@@ -516,13 +448,17 @@ export default function RoomDetail() {
                       </span>
                     )}
                   </div>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">{room.owner.responseTime}</p>
+                  {room.owner.listingsCount > 0 && (
+                    <p className="text-xs text-slate-500 dark:text-slate-400">{room.owner.listingsCount} listing{room.owner.listingsCount !== 1 ? "s" : ""}</p>
+                  )}
                 </div>
                 <svg className="w-5 h-5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
                 </svg>
               </div>
-              <p className="text-sm text-slate-600 dark:text-slate-300 mt-3">{room.owner.bio}</p>
+              {room.owner.bio && (
+                <p className="text-sm text-slate-600 dark:text-slate-300 mt-3">{room.owner.bio}</p>
+              )}
             </Link>
           </motion.section>
 
@@ -556,7 +492,7 @@ export default function RoomDetail() {
                   <span className="text-base font-normal text-slate-500 dark:text-slate-400">/wk</span>
                 </div>
                 <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
-                  {room.placeType} &middot; {room.furnished ? "Furnished" : "Unfurnished"}
+                  {room.placeType} - {room.furnished ? "Furnished" : "Unfurnished"}
                 </p>
               </div>
 
@@ -647,7 +583,7 @@ export default function RoomDetail() {
                   </p>
                   {dealStartDate && (
                     <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">
-                      {dealStartDate}{dealEndDate ? ` - ${dealEndDate}` : ""} &middot; {dealGuests} guest{dealGuests !== 1 ? "s" : ""}
+                      {dealStartDate}{dealEndDate ? ` - ${dealEndDate}` : ""} - {dealGuests} guest{dealGuests !== 1 ? "s" : ""}
                     </p>
                   )}
                 </motion.div>
