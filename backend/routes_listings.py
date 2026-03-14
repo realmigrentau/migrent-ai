@@ -320,18 +320,12 @@ def list_listings(
     return res.data
 
 
-class DeleteListingRequest(BaseModel):
-    password: Optional[str] = None
-    oauth_confirmed: Optional[bool] = False
-
-
 @router.delete("/{listing_id}")
 def delete_listing(
     listing_id: str,
-    body: DeleteListingRequest,
     authorization: str = Header(...),
 ):
-    """Delete a listing. Requires password for email users or OAuth re-auth for Google users."""
+    """Delete a listing. Requires valid auth token and listing ownership."""
     user = get_current_user(authorization)
     user_id = str(user.id)
 
@@ -342,36 +336,6 @@ def delete_listing(
         raise HTTPException(status_code=404, detail="Listing not found")
     if listing_res.data[0]["owner_id"] != user_id:
         raise HTTPException(status_code=403, detail="You can only delete your own listings")
-
-    # Check auth provider
-    provider = (user.app_metadata or {}).get("provider", "email")
-    is_oauth = provider in ("google", "github", "apple", "facebook")
-
-    if is_oauth:
-        # For OAuth users, the valid session token + confirmation is enough
-        if not body.oauth_confirmed:
-            raise HTTPException(status_code=400, detail="Please confirm deletion")
-    else:
-        # For email/password users, verify password
-        if not body.password:
-            raise HTTPException(status_code=400, detail="Password is required")
-
-        email = user.email
-        if not email:
-            raise HTTPException(status_code=400, detail="Could not verify identity")
-
-        try:
-            sb_anon = create_client(SUPABASE_URL, SUPABASE_ANON_KEY)
-            auth_res = sb_anon.auth.sign_in_with_password({
-                "email": email,
-                "password": body.password,
-            })
-            if not auth_res or not auth_res.user:
-                raise HTTPException(status_code=401, detail="Incorrect password")
-        except HTTPException:
-            raise
-        except Exception:
-            raise HTTPException(status_code=401, detail="Incorrect password")
 
     # Delete the listing
     sb_admin.table("listings").delete().eq("id", listing_id).execute()
