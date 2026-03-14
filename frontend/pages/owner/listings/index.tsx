@@ -41,8 +41,13 @@ export default function OwnerListings() {
   const [deleting, setDeleting] = useState(false);
 
   // Detect if user signed in with OAuth (Google, etc)
-  const isOAuthUser = user?.app_metadata?.provider && user.app_metadata.provider !== "email";
-  const oauthProvider = user?.app_metadata?.provider || "email";
+  // Check multiple places where Supabase stores provider info
+  const detectedProvider = user?.app_metadata?.provider
+    || user?.app_metadata?.providers?.[0]
+    || (user?.identities?.[0]?.provider)
+    || "email";
+  const isOAuthUser = detectedProvider !== "email";
+  const oauthProvider = detectedProvider;
 
   useEffect(() => {
     if (loading || refreshing) return;
