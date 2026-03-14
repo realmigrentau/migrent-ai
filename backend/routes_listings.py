@@ -320,12 +320,18 @@ def list_listings(
     return res.data
 
 
+class DeleteListingRequest(BaseModel):
+    password: Optional[str] = None
+    oauth_confirmed: Optional[bool] = False
+
+
 @router.delete("/{listing_id}")
 def delete_listing(
     listing_id: str,
+    body: DeleteListingRequest = DeleteListingRequest(),
     authorization: str = Header(...),
 ):
-    """Delete a listing. Requires valid auth token and listing ownership."""
+    """Delete a listing. Requires password or OAuth re-auth confirmation."""
     user = get_current_user(authorization)
     user_id = str(user.id)
 
@@ -336,6 +342,28 @@ def delete_listing(
         raise HTTPException(status_code=404, detail="Listing not found")
     if listing_res.data[0]["owner_id"] != user_id:
         raise HTTPException(status_code=403, detail="You can only delete your own listings")
+
+    # Verify identity - either password or OAuth re-auth
+    if body.oauth_confirmed:
+        pass  # Valid session after OAuth redirect is sufficient
+    elif body.password:
+        email = user.email
+        if not email:
+            raise HTTPException(status_code=400, detail="Could not verify identity")
+        try:
+            sb_anon = create_client(SUPABASE_URL, SUPABASE_ANON_KEY)
+            auth_res = sb_anon.auth.sign_in_with_password({
+                "email": email,
+                "password": body.password,
+            })
+            if not auth_res or not auth_res.user:
+                raise HTTPException(status_code=401, detail="Incorrect password")
+        except HTTPException:
+            raise
+        except Exception:
+            raise HTTPException(status_code=401, detail="Incorrect password")
+    else:
+        raise HTTPException(status_code=400, detail="Please confirm with your password or Google sign-in")
 
     # Delete the listing
     sb_admin.table("listings").delete().eq("id", listing_id).execute()
