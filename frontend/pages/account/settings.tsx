@@ -120,8 +120,11 @@ export default function SettingsPage() {
     displayName,
     // Security
     changePassword,
+    setNewPassword,
     deleteAccount,
     googleConnected,
+    isGoogleOnlyUser,
+    hasPassword,
     sessions,
     // Notifications
     notifPrefs,
@@ -188,9 +191,12 @@ export default function SettingsPage() {
               user={user}
               profile={profile}
               googleConnected={googleConnected}
+              isGoogleOnlyUser={isGoogleOnlyUser}
+              hasPassword={hasPassword}
               sessions={sessions}
               saving={saving}
               changePassword={changePassword}
+              setNewPassword={setNewPassword}
               deleteAccount={deleteAccount}
               signOut={signOut}
               showMessage={showMessage}

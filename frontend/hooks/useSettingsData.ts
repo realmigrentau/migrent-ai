@@ -146,8 +146,10 @@ export function useSettingsData() {
   // Sessions
   const [sessions, setSessions] = useState<SessionInfo[]>([]);
 
-  // Google connected
+  // Google connected & password status
   const [googleConnected, setGoogleConnected] = useState(false);
+  const [isGoogleOnlyUser, setIsGoogleOnlyUser] = useState(false);
+  const [hasPassword, setHasPassword] = useState(true);
 
   // Ref to prevent double-fetches
   const fetchedRef = useRef(false);
@@ -185,6 +187,13 @@ export function useSettingsData() {
       } = await supabase.auth.getUser();
       if (authUser?.app_metadata?.providers?.includes("google")) {
         setGoogleConnected(true);
+      }
+      // Check if user is Google-only (no email/password login)
+      const providers = authUser?.app_metadata?.providers || [];
+      const provider = authUser?.app_metadata?.provider || "email";
+      if (provider === "google" && !providers.includes("email")) {
+        setIsGoogleOnlyUser(true);
+        setHasPassword(false);
       }
     } catch { /* ignore */ }
   }, []);
@@ -283,10 +292,32 @@ export function useSettingsData() {
           showMessage(error.message, "error");
           return false;
         }
-        showMessage("Password changed successfully! 🔒", "success");
+        showMessage("Password changed successfully!", "success");
         return true;
       } catch (err) {
         showMessage("Failed to change password", "error");
+        return false;
+      } finally {
+        setSaving(false);
+      }
+    },
+    [showMessage]
+  );
+
+  const setNewPassword = useCallback(
+    async (password: string) => {
+      setSaving(true);
+      try {
+        const { error } = await supabase.auth.updateUser({ password });
+        if (error) {
+          showMessage(error.message, "error");
+          return false;
+        }
+        showMessage("Password set successfully! You can now use it to sign in and confirm actions.", "success");
+        setHasPassword(true);
+        return true;
+      } catch (err) {
+        showMessage("Failed to set password", "error");
         return false;
       } finally {
         setSaving(false);
@@ -415,8 +446,11 @@ export function useSettingsData() {
     displayName,
     // Security
     changePassword,
+    setNewPassword,
     deleteAccount,
     googleConnected,
+    isGoogleOnlyUser,
+    hasPassword,
     sessions,
     // Notifications
     notifPrefs,

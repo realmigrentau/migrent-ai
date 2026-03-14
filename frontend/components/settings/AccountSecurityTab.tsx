@@ -22,9 +22,12 @@ interface AccountSecurityTabProps {
   user: any;
   profile: ProfileData | null;
   googleConnected: boolean;
+  isGoogleOnlyUser: boolean;
+  hasPassword: boolean;
   sessions: SessionInfo[];
   saving: boolean;
   changePassword: (pw: string) => Promise<boolean>;
+  setNewPassword: (pw: string) => Promise<boolean>;
   deleteAccount: () => Promise<boolean>;
   signOut: () => void;
   showMessage: (text: string, type: "success" | "error" | "info") => void;
@@ -34,9 +37,12 @@ export default function AccountSecurityTab({
   user,
   profile,
   googleConnected,
+  isGoogleOnlyUser,
+  hasPassword,
   sessions,
   saving,
   changePassword,
+  setNewPassword,
   deleteAccount,
   signOut,
   showMessage,
@@ -48,6 +54,24 @@ export default function AccountSecurityTab({
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleteEmailConfirm, setDeleteEmailConfirm] = useState("");
   const [copied, setCopied] = useState(false);
+  const [setPasswordValue, setSetPasswordValue] = useState("");
+  const [setPasswordConfirm, setSetPasswordConfirm] = useState("");
+
+  const handleSetPassword = async () => {
+    if (setPasswordValue.length < 6) {
+      showMessage("Password must be at least 6 characters", "error");
+      return;
+    }
+    if (setPasswordValue !== setPasswordConfirm) {
+      showMessage("Passwords do not match", "error");
+      return;
+    }
+    const ok = await setNewPassword(setPasswordValue);
+    if (ok) {
+      setSetPasswordValue("");
+      setSetPasswordConfirm("");
+    }
+  };
 
   const handleChangePassword = async () => {
     if (newPassword !== confirmPassword) {
@@ -128,6 +152,56 @@ export default function AccountSecurityTab({
           </div>
         </div>
       </GlassCard>
+
+      {/* Set Password - only for Google-only users who haven't set one yet */}
+      {isGoogleOnlyUser && !hasPassword && (
+        <GlassCard delay={0.12} gradient="emerald">
+          <div className="flex items-start gap-4 mb-5">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shadow-lg shrink-0">
+              <Key className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <h3 className="font-bold text-slate-900 dark:text-white">Set a Password</h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                You signed in with Google. Set a password so you can also use it to sign in and confirm actions like deleting listings.
+              </p>
+            </div>
+          </div>
+
+          <div className="space-y-3 ml-14">
+            <input
+              type={showPasswords ? "text" : "password"}
+              placeholder="New password (min 6 characters)"
+              value={setPasswordValue}
+              onChange={(e) => setSetPasswordValue(e.target.value)}
+              className="input-field"
+            />
+            <input
+              type={showPasswords ? "text" : "password"}
+              placeholder="Confirm password"
+              value={setPasswordConfirm}
+              onChange={(e) => setSetPasswordConfirm(e.target.value)}
+              className="input-field"
+            />
+            <div className="flex items-center justify-between">
+              <button
+                onClick={() => setShowPasswords(!showPasswords)}
+                className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition-colors"
+              >
+                {showPasswords ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                {showPasswords ? "Hide" : "Show"} passwords
+              </button>
+              <button
+                onClick={handleSetPassword}
+                disabled={saving || !setPasswordValue || !setPasswordConfirm}
+                className="btn-primary py-2 px-5 rounded-xl text-sm disabled:opacity-50"
+              >
+                {saving ? "Setting..." : "Set password"}
+              </button>
+            </div>
+          </div>
+        </GlassCard>
+      )}
 
       {/* Password */}
       <GlassCard delay={0.15}>
