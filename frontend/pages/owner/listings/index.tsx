@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "../../../hooks/useAuth";
-import { getListings } from "../../../lib/api";
+import { getListings, deleteListing } from "../../../lib/api";
 
 interface Listing {
   id: string;
@@ -15,6 +15,8 @@ interface Listing {
   status?: string;
   views?: number;
   applicants?: number;
+  title?: string;
+  suburb?: string;
 }
 
 const STATUS_STYLES: Record<string, string> = {
@@ -30,7 +32,12 @@ export default function OwnerListings() {
   const [fetching, setFetching] = useState(true);
   const justCreated = router.query.created === "1";
 
-  // Wait for fresh token before fetching (cached token may be expired)
+  // Delete modal state
+  const [deleteTarget, setDeleteTarget] = useState<Listing | null>(null);
+  const [deleteStep, setDeleteStep] = useState<"confirm" | "password">("confirm");
+  const [deletePassword, setDeletePassword] = useState("");
+  const [deleteError, setDeleteError] = useState("");
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     if (loading || refreshing) return;
@@ -48,6 +55,8 @@ export default function OwnerListings() {
               status: l.status || "active",
               views: l.views ?? 0,
               applicants: l.applicants ?? 0,
+              title: l.title || "",
+              suburb: l.suburb || "",
             })));
           } else {
             setListings([]);
@@ -64,6 +73,38 @@ export default function OwnerListings() {
       setFetching(false);
     }
   }, [session, loading, refreshing]);
+
+  const openDeleteModal = (listing: Listing) => {
+    setDeleteTarget(listing);
+    setDeleteStep("confirm");
+    setDeletePassword("");
+    setDeleteError("");
+  };
+
+  const closeDeleteModal = () => {
+    setDeleteTarget(null);
+    setDeleteStep("confirm");
+    setDeletePassword("");
+    setDeleteError("");
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!deleteTarget || !session) return;
+    if (!deletePassword.trim()) {
+      setDeleteError("Please enter your password");
+      return;
+    }
+    setDeleting(true);
+    setDeleteError("");
+    const result = await deleteListing(deleteTarget.id, deletePassword, session.access_token);
+    setDeleting(false);
+    if (result.success) {
+      setListings((prev) => prev.filter((l) => l.id !== deleteTarget.id));
+      closeDeleteModal();
+    } else {
+      setDeleteError(result.error || "Failed to delete listing");
+    }
+  };
 
   if (loading)
     return (
@@ -167,7 +208,8 @@ export default function OwnerListings() {
                 {listings.map((l) => (
                   <tr key={l.id} className="border-b border-slate-100 dark:border-slate-800 last:border-0 hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors">
                     <td className="py-3 px-5">
-                      <span className="font-semibold text-slate-900 dark:text-white">{l.address}</span>
+                      <span className="font-semibold text-slate-900 dark:text-white">{l.title || l.address}</span>
+                      {l.suburb && <span className="text-xs text-slate-400 dark:text-slate-500 ml-2">{l.suburb}</span>}
                     </td>
                     <td className="py-3 px-5 text-slate-600 dark:text-slate-300">{l.postcode}</td>
                     <td className="py-3 px-5 text-rose-600 dark:text-rose-400 font-bold">${l.weeklyPrice}/wk</td>
@@ -179,10 +221,16 @@ export default function OwnerListings() {
                     <td className="py-3 px-5 text-slate-600 dark:text-slate-300">{l.views ?? 0}</td>
                     <td className="py-3 px-5 text-slate-600 dark:text-slate-300">{l.applicants ?? 0}</td>
                     <td className="py-3 px-5">
-                      <div className="flex gap-2 justify-end">
-                        <Link href={`/owner/listings/${l.id}`} className="text-xs text-rose-500 hover:text-rose-600 font-semibold transition-colors">
+                      <div className="flex gap-3 justify-end">
+                        <Link href={`/seeker/room/${l.id}`} className="text-xs text-slate-500 hover:text-rose-500 font-semibold transition-colors">
                           View
                         </Link>
+                        <button
+                          onClick={() => openDeleteModal(l)}
+                          className="text-xs text-slate-400 hover:text-red-500 font-semibold transition-colors"
+                        >
+                          Delete
+                        </button>
                       </div>
                     </td>
                   </tr>
@@ -203,8 +251,8 @@ export default function OwnerListings() {
               >
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <h3 className="font-bold text-slate-900 dark:text-white text-sm">{l.address}</h3>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{l.postcode}</p>
+                    <h3 className="font-bold text-slate-900 dark:text-white text-sm">{l.title || l.address}</h3>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{l.suburb ? `${l.suburb}, ` : ""}{l.postcode}</p>
                   </div>
                   <div className="px-2.5 py-1 rounded-lg bg-rose-50 dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/20">
                     <span className="text-rose-600 dark:text-rose-400 font-bold text-sm">${l.weeklyPrice}/wk</span>
@@ -218,18 +266,124 @@ export default function OwnerListings() {
                   <span>{l.applicants ?? 0} applicants</span>
                 </div>
                 <div className="flex gap-2 mt-3 pt-3 border-t border-slate-100 dark:border-slate-800">
-                  <Link href={`/owner/listings/${l.id}`} className="btn-primary py-2 px-4 rounded-lg text-xs flex-1 text-center">
+                  <Link href={`/seeker/room/${l.id}`} className="btn-primary py-2 px-4 rounded-lg text-xs flex-1 text-center">
                     View details
                   </Link>
-                  <Link href={`/seeker/room/${l.id}`} className="btn-secondary py-2 px-4 rounded-lg text-xs text-center">
-                    Public view
-                  </Link>
+                  <button
+                    onClick={() => openDeleteModal(l)}
+                    className="py-2 px-4 rounded-lg text-xs border border-red-200 dark:border-red-500/20 text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
+                  >
+                    Delete
+                  </button>
                 </div>
               </motion.div>
             ))}
           </div>
         </>
       )}
+
+      {/* Delete confirmation modal */}
+      <AnimatePresence>
+        {deleteTarget && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            onClick={(e) => { if (e.target === e.currentTarget) closeDeleteModal(); }}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="card p-6 rounded-2xl max-w-md w-full space-y-4"
+            >
+              {deleteStep === "confirm" ? (
+                <>
+                  {/* Step 1: Are you sure? */}
+                  <div className="text-center">
+                    <div className="w-12 h-12 rounded-full bg-red-100 dark:bg-red-500/10 flex items-center justify-center mx-auto mb-3">
+                      <svg className="w-6 h-6 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                    </div>
+                    <h3 className="text-lg font-bold text-slate-900 dark:text-white">Delete this listing?</h3>
+                    <p className="text-sm text-slate-500 dark:text-slate-400 mt-2">
+                      Are you sure you want to delete <span className="font-semibold text-slate-700 dark:text-slate-300">{deleteTarget.title || deleteTarget.address}</span>?
+                      This action cannot be undone.
+                    </p>
+                  </div>
+                  <div className="flex gap-3">
+                    <button
+                      onClick={closeDeleteModal}
+                      className="flex-1 py-2.5 px-4 rounded-xl text-sm font-semibold border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={() => setDeleteStep("password")}
+                      className="flex-1 py-2.5 px-4 rounded-xl text-sm font-semibold bg-red-500 hover:bg-red-600 text-white transition-colors"
+                    >
+                      Yes, delete it
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  {/* Step 2: Enter password */}
+                  <div className="text-center">
+                    <div className="w-12 h-12 rounded-full bg-amber-100 dark:bg-amber-500/10 flex items-center justify-center mx-auto mb-3">
+                      <svg className="w-6 h-6 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                      </svg>
+                    </div>
+                    <h3 className="text-lg font-bold text-slate-900 dark:text-white">Confirm with password</h3>
+                    <p className="text-sm text-slate-500 dark:text-slate-400 mt-2">
+                      Enter your account password to confirm deletion.
+                    </p>
+                  </div>
+                  <div>
+                    <input
+                      type="password"
+                      placeholder="Enter your password"
+                      value={deletePassword}
+                      onChange={(e) => { setDeletePassword(e.target.value); setDeleteError(""); }}
+                      onKeyDown={(e) => { if (e.key === "Enter") handleConfirmDelete(); }}
+                      className="input-field w-full text-sm"
+                      autoFocus
+                    />
+                    {deleteError && (
+                      <p className="text-xs text-red-500 mt-2">{deleteError}</p>
+                    )}
+                  </div>
+                  <div className="flex gap-3">
+                    <button
+                      onClick={() => { setDeleteStep("confirm"); setDeletePassword(""); setDeleteError(""); }}
+                      className="flex-1 py-2.5 px-4 rounded-xl text-sm font-semibold border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                    >
+                      Back
+                    </button>
+                    <button
+                      onClick={handleConfirmDelete}
+                      disabled={deleting || !deletePassword.trim()}
+                      className="flex-1 py-2.5 px-4 rounded-xl text-sm font-semibold bg-red-500 hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed text-white transition-colors flex items-center justify-center gap-2"
+                    >
+                      {deleting ? (
+                        <>
+                          <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                          Deleting...
+                        </>
+                      ) : (
+                        "Delete listing"
+                      )}
+                    </button>
+                  </div>
+                </>
+              )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

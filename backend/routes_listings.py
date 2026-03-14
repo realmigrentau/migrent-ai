@@ -1,8 +1,10 @@
 from fastapi import APIRouter, HTTPException, Header
+from pydantic import BaseModel
 from typing import Optional
 from models import ListingCreate
-from db import get_supabase, get_supabase_admin
+from db import get_supabase, get_supabase_admin, SUPABASE_URL, SUPABASE_ANON_KEY
 from auth_utils import get_current_user
+from supabase import create_client
 
 router = APIRouter(prefix="/listings", tags=["listings"])
 
@@ -316,3 +318,49 @@ def list_listings(
 
     res = query.execute()
     return res.data
+
+
+class DeleteListingRequest(BaseModel):
+    password: str
+
+
+@router.delete("/{listing_id}")
+def delete_listing(
+    listing_id: str,
+    body: DeleteListingRequest,
+    authorization: str = Header(...),
+):
+    """Delete a listing. Requires the owner's password for confirmation."""
+    user = get_current_user(authorization)
+    user_id = str(user.id)
+
+    # Verify the listing exists and belongs to this user
+    sb_admin = get_supabase_admin()
+    listing_res = sb_admin.table("listings").select("id, owner_id").eq("id", listing_id).execute()
+    if not listing_res.data:
+        raise HTTPException(status_code=404, detail="Listing not found")
+    if listing_res.data[0]["owner_id"] != user_id:
+        raise HTTPException(status_code=403, detail="You can only delete your own listings")
+
+    # Verify password by attempting to sign in with the user's email
+    email = user.email
+    if not email:
+        raise HTTPException(status_code=400, detail="Could not verify identity")
+
+    try:
+        sb_anon = create_client(SUPABASE_URL, SUPABASE_ANON_KEY)
+        auth_res = sb_anon.auth.sign_in_with_password({
+            "email": email,
+            "password": body.password,
+        })
+        if not auth_res or not auth_res.user:
+            raise HTTPException(status_code=401, detail="Incorrect password")
+    except HTTPException:
+        raise
+    except Exception:
+        raise HTTPException(status_code=401, detail="Incorrect password")
+
+    # Delete the listing
+    sb_admin.table("listings").delete().eq("id", listing_id).execute()
+
+    return {"message": "Listing deleted successfully"}

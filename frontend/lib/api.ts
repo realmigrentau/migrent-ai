@@ -1454,6 +1454,39 @@ export async function getListingById(listingId: string) {
 }
 
 /**
+ * Delete a listing (requires password confirmation).
+ * DELETE /listings/{id}
+ */
+export async function deleteListing(
+  listingId: string,
+  password: string,
+  token: string
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const res = await fetch(`${BASE_URL}/listings/${listingId}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ password }),
+    });
+    if (!res.ok) {
+      let detail = "Failed to delete listing";
+      try {
+        const errBody = await res.json();
+        if (errBody.detail) detail = errBody.detail;
+      } catch {}
+      return { success: false, error: detail };
+    }
+    return { success: true };
+  } catch (err) {
+    console.error("deleteListing error:", err);
+    return { success: false, error: "Network error - please try again" };
+  }
+}
+
+/**
  * Get listing detail with reviews and similar listings bundled.
  * GET /listings/{id}?include=reviews,similar
  */
