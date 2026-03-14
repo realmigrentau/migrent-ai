@@ -46,6 +46,25 @@ function getFirstDayOfMonth(year: number, month: number) {
   return new Date(year, month, 1).getDay();
 }
 
+function mapListingData(l: any): Listing {
+  return {
+    id: l.id || l._id,
+    address: l.address || "",
+    suburb: l.suburb || l.city || "",
+    postcode: l.postcode ? String(l.postcode) : "",
+    dailyPrice: l.daily_price ?? l.dailyPrice,
+    weeklyPrice: l.weekly_price ?? l.weeklyPrice,
+    roomType: l.place_type || l.room_type || l.roomType || "private",
+    furnished: l.furnished ?? false,
+    billsIncluded: l.bills_included ?? l.billsIncluded ?? false,
+    verified: l.verified ?? false,
+    photos: l.images || l.photos || [],
+    description: l.description || "",
+    lat: l.lat || l.latitude || -33.88,
+    lng: l.lng || l.longitude || 151.21,
+  };
+}
+
 export default function SeekerSearch() {
   const { session, user } = useAuth();
   const { theme } = useTheme();
@@ -101,6 +120,25 @@ export default function SeekerSearch() {
     }
   }, []);
 
+  // Load all listings on page load so users see results immediately
+  useEffect(() => {
+    async function loadInitial() {
+      setSearching(true);
+      try {
+        const data = await searchListings({ max_price: "1000", guests: "1" });
+        if (data && Array.isArray(data)) {
+          setResults(data.map(mapListingData));
+          setSearched(true);
+        }
+      } catch (err) {
+        console.error("Initial load failed:", err);
+      } finally {
+        setSearching(false);
+      }
+    }
+    loadInitial();
+  }, []);
+
   const handleSearch = async () => {
     setSearching(true);
     setSearched(true);
@@ -135,22 +173,7 @@ export default function SeekerSearch() {
       const data = await searchListings(params);
 
       if (data && Array.isArray(data)) {
-        setResults(data.map((l: any) => ({
-          id: l.id || l._id,
-          address: l.address || "",
-          suburb: l.suburb || l.city || "",
-          postcode: l.postcode ? String(l.postcode) : "",
-          dailyPrice: l.daily_price ?? l.dailyPrice,
-          weeklyPrice: l.weekly_price ?? l.weeklyPrice,
-          roomType: l.place_type || l.room_type || l.roomType || "private",
-          furnished: l.furnished ?? false,
-          billsIncluded: l.bills_included ?? l.billsIncluded ?? false,
-          verified: l.verified ?? false,
-          photos: l.images || l.photos || [],
-          description: l.description || "",
-          lat: l.lat || l.latitude || -33.88,
-          lng: l.lng || l.longitude || 151.21,
-        })));
+        setResults(data.map(mapListingData));
       } else {
         setResults([]);
       }
