@@ -246,7 +246,7 @@ export default function CompareTable({
             <div className="flex-1" />
             {listings.length > 0 && (
               <Link
-                href={`/seeker/room/${listings[0].id}`}
+                href={`/listing/${listings[0].id}`}
                 className="btn-primary px-4 py-2 rounded-xl text-xs flex items-center gap-1.5"
               >
                 View Top Pick <ArrowRight className="w-3.5 h-3.5" />

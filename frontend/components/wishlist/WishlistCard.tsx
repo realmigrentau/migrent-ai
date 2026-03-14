@@ -172,7 +172,7 @@ export default function WishlistCard({
             {/* Quick actions on hover */}
             <div className="absolute bottom-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
               <Link
-                href={`/seeker/room/${listing.id}`}
+                href={`/listing/${listing.id}`}
                 className="px-3 py-1.5 rounded-xl bg-rose-500 hover:bg-rose-600 text-white text-xs font-semibold shadow-lg flex items-center gap-1 transition-colors"
                 onClick={(e) => e.stopPropagation()}
               >
@@ -298,7 +298,7 @@ export default function WishlistCard({
             {/* Action bar */}
             <div className="flex items-center gap-2 pt-2 border-t border-slate-200/50 dark:border-slate-700/50">
               <Link
-                href={`/seeker/room/${listing.id}`}
+                href={`/listing/${listing.id}`}
                 className="flex-1 text-center py-2 px-3 rounded-xl bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white text-xs font-semibold shadow-md hover:shadow-lg transition-all"
                 onClick={(e) => e.stopPropagation()}
               >

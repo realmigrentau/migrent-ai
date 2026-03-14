@@ -267,7 +267,7 @@ export default function OwnerListings() {
                 {listings.map((l) => (
                   <tr key={l.id} className="border-b border-slate-100 dark:border-slate-800 last:border-0 hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors">
                     <td className="py-3 px-5">
-                      <Link href={`/seeker/room/${l.id}`} className="hover:text-rose-500 transition-colors">
+                      <Link href={`/listing/${l.id}`} className="hover:text-rose-500 transition-colors">
                         <span className="font-semibold text-slate-900 dark:text-white">{l.title || l.address}</span>
                         {l.suburb && <span className="text-xs text-slate-400 dark:text-slate-500 ml-2">{l.suburb}</span>}
                       </Link>
@@ -283,7 +283,7 @@ export default function OwnerListings() {
                     <td className="py-3 px-5 text-slate-600 dark:text-slate-300">{l.applicants ?? 0}</td>
                     <td className="py-3 px-5">
                       <div className="flex gap-3 justify-end">
-                        <Link href={`/seeker/room/${l.id}`} className="text-xs text-slate-500 hover:text-rose-500 font-semibold transition-colors">
+                        <Link href={`/listing/${l.id}`} className="text-xs text-slate-500 hover:text-rose-500 font-semibold transition-colors">
                           View
                         </Link>
                         <button
@@ -327,7 +327,7 @@ export default function OwnerListings() {
                   <span>{l.applicants ?? 0} applicants</span>
                 </div>
                 <div className="flex gap-2 mt-3 pt-3 border-t border-slate-100 dark:border-slate-800">
-                  <Link href={`/seeker/room/${l.id}`} className="btn-primary py-2 px-4 rounded-lg text-xs flex-1 text-center">
+                  <Link href={`/listing/${l.id}`} className="btn-primary py-2 px-4 rounded-lg text-xs flex-1 text-center">
                     View details
                   </Link>
                   <button

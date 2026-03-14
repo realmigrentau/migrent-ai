@@ -59,7 +59,7 @@ export default function ListingsMap({ listings, isDark }: ListingsMapProps) {
             <p style="font-weight:700;font-size:13px;color:#0f172a;margin:0">${listing.address}</p>
             <p style="font-size:11px;color:#64748b;margin:2px 0 0">${listing.suburb}</p>
             <p style="font-weight:700;font-size:13px;color:#f43f5e;margin:6px 0 0">${priceDisplay}</p>
-            <a href="/seeker/room/${listing.id}" style="font-size:11px;color:#3b82f6;text-decoration:none;margin-top:4px;display:inline-block">View details &rarr;</a>
+            <a href="/listing/${listing.id}" style="font-size:11px;color:#3b82f6;text-decoration:none;margin-top:4px;display:inline-block">View details &rarr;</a>
           </div>
         `);
 

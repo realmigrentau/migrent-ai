@@ -5,7 +5,7 @@ import { useTopListings, type MarqueeListing } from "../hooks/useTopListings";
 function MarqueeCard({ listing }: { listing: MarqueeListing }) {
   const href = listing.id.startsWith("fallback-")
     ? "/seeker/search"
-    : `/seeker/room/${listing.id}`;
+    : `/listing/${listing.id}`;
 
   return (
     <Link href={href} className="block shrink-0">

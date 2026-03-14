@@ -411,7 +411,7 @@ export default function SeekerSearchExtended() {
 
                 <div className="flex gap-2 mt-3 pt-3 border-t border-slate-100 dark:border-slate-800">
                   <Link
-                    href={`/seeker/room/${listing.id}`}
+                    href={`/listing/${listing.id}`}
                     className="btn-primary py-2 px-4 rounded-lg text-xs flex-1 text-center"
                   >
                     View details

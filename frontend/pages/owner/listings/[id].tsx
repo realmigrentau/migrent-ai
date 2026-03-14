@@ -8,7 +8,7 @@ export default function OwnerListingDetail() {
 
   useEffect(() => {
     if (id) {
-      router.replace(`/seeker/room/${id}`);
+      router.replace(`/listing/${id}`);
     }
   }, [id, router]);
 
