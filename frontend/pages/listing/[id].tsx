@@ -1,27 +1,27 @@
 import { useRouter } from "next/router";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
   ArrowLeft,
   MapPin,
-  Bed,
-  Bath,
-  Users,
-  Wifi,
-  Car,
-  Snowflake,
-  Shield,
   Star,
   CheckCircle,
-  Home,
+  Shield,
+  Send,
   Zap,
-  Calendar,
+  Mail,
+  CreditCard,
 } from "lucide-react";
 import { useAuth } from "../../hooks/useAuth";
-import { getListingById } from "../../lib/api";
-import RequestToBookForm from "../../components/bookings/RequestToBookForm";
+import { getListingDetail } from "../../lib/api";
 import { createBooking } from "../../lib/api";
+import RequestToBookForm from "../../components/bookings/RequestToBookForm";
+import ListingHero from "../../components/listings/ListingHero";
+import OwnerCard from "../../components/listings/OwnerCard";
+import KeyDetails from "../../components/listings/KeyDetails";
+import ReviewsSection from "../../components/listings/ReviewsSection";
+import SimilarListings from "../../components/listings/SimilarListings";
 import SEOHead from "../../components/SEOHead";
 
 export default function ListingDetailPage() {
@@ -33,16 +33,30 @@ export default function ListingDetailPage() {
   const [loading, setLoading] = useState(true);
   const [bookingLoading, setBookingLoading] = useState(false);
   const [bookingSuccess, setBookingSuccess] = useState(false);
-  const [selectedPhoto, setSelectedPhoto] = useState(0);
+
+  // Track if booking form is in viewport (for mobile sticky CTA)
+  const bookingFormRef = useRef<HTMLDivElement>(null);
+  const [showMobileCTA, setShowMobileCTA] = useState(false);
 
   useEffect(() => {
     if (!id || typeof id !== "string") return;
     setLoading(true);
-    getListingById(id).then((data) => {
+    getListingDetail(id).then((data) => {
       setListing(data);
       setLoading(false);
     });
   }, [id]);
+
+  // Intersection observer for mobile sticky CTA
+  useEffect(() => {
+    if (!bookingFormRef.current) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setShowMobileCTA(!entry.isIntersecting),
+      { threshold: 0.1 }
+    );
+    observer.observe(bookingFormRef.current);
+    return () => observer.disconnect();
+  }, [listing]);
 
   const handleBooking = async (data: {
     listing_id: string;
@@ -68,12 +82,37 @@ export default function ListingDetailPage() {
     }
   };
 
+  const scrollToBooking = () => {
+    bookingFormRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
   const isOwner = user && listing && user.id === listing.owner_id;
 
+  // Loading skeleton
   if (loading) {
     return (
-      <div className="min-h-screen bg-white dark:bg-slate-950 flex items-center justify-center">
-        <div className="w-8 h-8 border-3 border-rose-200 border-t-rose-500 rounded-full animate-spin" />
+      <div className="min-h-screen bg-white dark:bg-slate-950">
+        <div className="max-w-7xl mx-auto px-4 py-6">
+          {/* Hero skeleton */}
+          <div className="aspect-[16/9] md:aspect-[2/1] rounded-2xl bg-slate-100 dark:bg-slate-800 animate-pulse" />
+          <div className="flex gap-2 mt-3">
+            {[1, 2, 3, 4].map((i) => (
+              <div
+                key={i}
+                className="w-20 h-14 rounded-lg bg-slate-100 dark:bg-slate-800 animate-pulse"
+              />
+            ))}
+          </div>
+          <div className="grid lg:grid-cols-3 gap-8 mt-8">
+            <div className="lg:col-span-2 space-y-6">
+              <div className="h-8 w-3/4 bg-slate-100 dark:bg-slate-800 rounded animate-pulse" />
+              <div className="h-4 w-1/2 bg-slate-100 dark:bg-slate-800 rounded animate-pulse" />
+              <div className="h-32 bg-slate-100 dark:bg-slate-800 rounded-2xl animate-pulse" />
+              <div className="h-48 bg-slate-100 dark:bg-slate-800 rounded-2xl animate-pulse" />
+            </div>
+            <div className="h-80 bg-slate-100 dark:bg-slate-800 rounded-2xl animate-pulse" />
+          </div>
+        </div>
       </div>
     );
   }
@@ -98,6 +137,9 @@ export default function ListingDetailPage() {
 
   const images = listing.images || [];
   const ownerProfile = listing.owner_profile || {};
+  const reviewStats = listing.review_stats;
+  const similarListings = listing.similar_listings || [];
+  const isInstantBook = listing.instant_book_enabled || listing.instant_book;
 
   return (
     <>
@@ -107,8 +149,8 @@ export default function ListingDetailPage() {
       />
 
       <div className="min-h-screen bg-white dark:bg-slate-950">
-        {/* Top bar */}
-        <div className="sticky top-0 z-20 bg-white/80 dark:bg-slate-950/80 backdrop-blur-lg border-b border-slate-200 dark:border-slate-800">
+        {/* Sticky top bar */}
+        <div className="sticky top-0 z-30 bg-white/80 dark:bg-slate-950/80 backdrop-blur-lg border-b border-slate-200 dark:border-slate-800">
           <div className="max-w-7xl mx-auto px-4 py-3 flex items-center gap-3">
             <button
               onClick={() => router.back()}
@@ -120,104 +162,59 @@ export default function ListingDetailPage() {
               <p className="text-sm font-semibold text-slate-900 dark:text-white truncate">
                 {listing.title || listing.address}
               </p>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
-                {listing.city || "Australia"}
-              </p>
+              <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+                <span>{listing.suburb || listing.city || "Australia"}</span>
+                {reviewStats && reviewStats.review_count > 0 && (
+                  <>
+                    <span>-</span>
+                    <span className="flex items-center gap-0.5">
+                      <Star className="w-3 h-3 text-amber-400 fill-amber-400" />
+                      {Number(reviewStats.avg_rating).toFixed(1)}
+                      <span className="text-slate-400">
+                        ({reviewStats.review_count})
+                      </span>
+                    </span>
+                  </>
+                )}
+              </div>
             </div>
-            <span className="text-lg font-black text-slate-900 dark:text-white">
-              ${listing.weekly_price}
-              <span className="text-xs font-normal text-slate-400">/wk</span>
-            </span>
+            <div className="hidden sm:block">
+              <span className="text-lg font-black text-slate-900 dark:text-white">
+                ${listing.weekly_price}
+                <span className="text-xs font-normal text-slate-400">/wk</span>
+              </span>
+            </div>
           </div>
         </div>
 
         <div className="max-w-7xl mx-auto px-4 py-6">
-          <div className="grid lg:grid-cols-3 gap-8">
+          {/* Hero */}
+          <ListingHero
+            images={images}
+            title={listing.title || listing.address}
+            instantBook={isInstantBook}
+            verified={ownerProfile.verified}
+          />
+
+          {/* Title + address */}
+          <div className="mt-6">
+            <h1 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white">
+              {listing.title || listing.address}
+            </h1>
+            <div className="flex items-center gap-2 mt-2 text-sm text-slate-500 dark:text-slate-400">
+              <MapPin className="w-4 h-4" />
+              <span>
+                {listing.address}
+                {listing.suburb && `, ${listing.suburb}`}
+                {listing.city && `, ${listing.city}`} {listing.postcode}
+              </span>
+            </div>
+          </div>
+
+          {/* Two-column layout */}
+          <div className="grid lg:grid-cols-3 gap-8 mt-8">
             {/* Left column - Details */}
             <div className="lg:col-span-2 space-y-8">
-              {/* Photo gallery */}
-              {images.length > 0 && (
-                <div>
-                  <div className="relative aspect-[16/9] rounded-2xl overflow-hidden mb-3">
-                    <img
-                      src={images[selectedPhoto] || images[0]}
-                      alt={listing.title || "Listing photo"}
-                      className="w-full h-full object-cover"
-                    />
-                    {(listing.instant_book_enabled || listing.instant_book) && (
-                      <span className="absolute top-4 left-4 flex items-center gap-1 text-xs font-semibold text-amber-800 bg-amber-100 px-3 py-1.5 rounded-full">
-                        <Zap className="w-3 h-3" />
-                        Instant Book
-                      </span>
-                    )}
-                  </div>
-                  {images.length > 1 && (
-                    <div className="flex gap-2 overflow-x-auto pb-2">
-                      {images.map((img: string, i: number) => (
-                        <button
-                          key={i}
-                          onClick={() => setSelectedPhoto(i)}
-                          className={`flex-shrink-0 w-20 h-14 rounded-lg overflow-hidden border-2 transition-colors ${
-                            selectedPhoto === i
-                              ? "border-rose-500"
-                              : "border-transparent opacity-70 hover:opacity-100"
-                          }`}
-                        >
-                          <img
-                            src={img}
-                            alt=""
-                            className="w-full h-full object-cover"
-                          />
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* Title & address */}
-              <div>
-                <h1 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white">
-                  {listing.title || listing.address}
-                </h1>
-                <div className="flex items-center gap-2 mt-2 text-sm text-slate-500 dark:text-slate-400">
-                  <MapPin className="w-4 h-4" />
-                  <span>
-                    {listing.address}, {listing.city} {listing.postcode}
-                  </span>
-                </div>
-              </div>
-
-              {/* Key specs */}
-              <div className="flex flex-wrap gap-4">
-                {listing.property_type && (
-                  <div className="flex items-center gap-1.5 text-sm text-slate-600 dark:text-slate-300">
-                    <Home className="w-4 h-4 text-slate-400" />
-                    {listing.property_type}
-                    {listing.place_type && ` - ${listing.place_type}`}
-                  </div>
-                )}
-                {listing.bedrooms && (
-                  <div className="flex items-center gap-1.5 text-sm text-slate-600 dark:text-slate-300">
-                    <Bed className="w-4 h-4 text-slate-400" />
-                    {listing.bedrooms} bed{listing.bedrooms !== 1 ? "s" : ""}
-                  </div>
-                )}
-                {listing.bathrooms && (
-                  <div className="flex items-center gap-1.5 text-sm text-slate-600 dark:text-slate-300">
-                    <Bath className="w-4 h-4 text-slate-400" />
-                    {listing.bathrooms} bath
-                    {listing.bathroom_type && ` (${listing.bathroom_type})`}
-                  </div>
-                )}
-                {listing.max_guests && (
-                  <div className="flex items-center gap-1.5 text-sm text-slate-600 dark:text-slate-300">
-                    <Users className="w-4 h-4 text-slate-400" />
-                    Max {listing.max_guests} guest{listing.max_guests !== 1 ? "s" : ""}
-                  </div>
-                )}
-              </div>
-
               {/* Description */}
               <div>
                 <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-2">
@@ -228,207 +225,74 @@ export default function ListingDetailPage() {
                 </p>
               </div>
 
-              {/* Highlights */}
-              {listing.highlights?.length > 0 && (
-                <div>
-                  <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-3">
-                    Highlights
-                  </h2>
-                  <div className="flex flex-wrap gap-2">
-                    {listing.highlights.map((h: string, i: number) => (
-                      <span
-                        key={i}
-                        className="text-xs font-medium px-3 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400"
-                      >
-                        {h}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
+              {/* Key Details (amenities, map, availability, rules) */}
+              <KeyDetails listing={listing} />
 
-              {/* Key details */}
-              <div className="grid sm:grid-cols-2 gap-4">
-                {listing.furnished !== undefined && (
-                  <div className="flex items-center gap-2 text-sm">
-                    <CheckCircle
-                      className={`w-4 h-4 ${
-                        listing.furnished ? "text-emerald-500" : "text-slate-300"
-                      }`}
-                    />
-                    <span className="text-slate-600 dark:text-slate-300">
-                      {listing.furnished ? "Furnished" : "Unfurnished"}
-                    </span>
-                  </div>
-                )}
-                {listing.bills_included !== undefined && (
-                  <div className="flex items-center gap-2 text-sm">
-                    <CheckCircle
-                      className={`w-4 h-4 ${
-                        listing.bills_included ? "text-emerald-500" : "text-slate-300"
-                      }`}
-                    />
-                    <span className="text-slate-600 dark:text-slate-300">
-                      {listing.bills_included ? "Bills included" : "Bills not included"}
-                    </span>
-                  </div>
-                )}
-                {listing.internet_included !== undefined && (
-                  <div className="flex items-center gap-2 text-sm">
-                    <Wifi
-                      className={`w-4 h-4 ${
-                        listing.internet_included ? "text-emerald-500" : "text-slate-300"
-                      }`}
-                    />
-                    <span className="text-slate-600 dark:text-slate-300">
-                      {listing.internet_included
-                        ? `WiFi included${listing.internet_speed ? ` (${listing.internet_speed})` : ""}`
-                        : "No WiFi included"}
-                    </span>
-                  </div>
-                )}
-                {listing.parking !== undefined && (
-                  <div className="flex items-center gap-2 text-sm">
-                    <Car
-                      className={`w-4 h-4 ${
-                        listing.parking ? "text-emerald-500" : "text-slate-300"
-                      }`}
-                    />
-                    <span className="text-slate-600 dark:text-slate-300">
-                      {listing.parking ? "Parking available" : "No parking"}
-                    </span>
-                  </div>
-                )}
-                {listing.air_conditioning !== undefined && (
-                  <div className="flex items-center gap-2 text-sm">
-                    <Snowflake
-                      className={`w-4 h-4 ${
-                        listing.air_conditioning ? "text-emerald-500" : "text-slate-300"
-                      }`}
-                    />
-                    <span className="text-slate-600 dark:text-slate-300">
-                      {listing.air_conditioning ? "Air conditioning" : "No A/C"}
-                    </span>
-                  </div>
-                )}
-              </div>
-
-              {/* Availability */}
-              {(listing.available_from || listing.min_stay_weeks) && (
-                <div>
-                  <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-3">
-                    Availability
-                  </h2>
-                  <div className="flex flex-wrap gap-4 text-sm text-slate-600 dark:text-slate-300">
-                    {listing.available_from && (
-                      <div className="flex items-center gap-1.5">
-                        <Calendar className="w-4 h-4 text-slate-400" />
-                        Available from {listing.available_from}
-                      </div>
-                    )}
-                    {listing.min_stay_weeks && (
-                      <div>
-                        Min stay: {listing.min_stay_weeks} week
-                        {listing.min_stay_weeks !== 1 ? "s" : ""}
-                      </div>
-                    )}
-                    {listing.max_stay_weeks && (
-                      <div>Max stay: {listing.max_stay_weeks} weeks</div>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              {/* Transport */}
-              {listing.nearest_transport && (
-                <div>
-                  <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-2">
-                    Transport
-                  </h2>
-                  <p className="text-sm text-slate-600 dark:text-slate-300">
-                    {listing.nearest_transport}
-                  </p>
-                </div>
-              )}
-
-              {/* House rules */}
-              {(listing.no_smoking || listing.quiet_hours || listing.tenant_prefs) && (
-                <div>
-                  <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-3">
-                    House rules
-                  </h2>
-                  <ul className="space-y-1.5 text-sm text-slate-600 dark:text-slate-300">
-                    {listing.no_smoking && <li>No smoking</li>}
-                    {listing.quiet_hours && (
-                      <li>Quiet hours: {listing.quiet_hours}</li>
-                    )}
-                    {listing.tenant_prefs && <li>{listing.tenant_prefs}</li>}
-                  </ul>
-                </div>
-              )}
-
-              {/* Safety */}
-              {(listing.security_cameras || listing.other_safety_details) && (
-                <div>
-                  <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
-                    <Shield className="w-5 h-5 text-slate-400" />
-                    Safety
-                  </h2>
-                  <ul className="space-y-1.5 text-sm text-slate-600 dark:text-slate-300">
-                    {listing.security_cameras && (
-                      <li>
-                        Security cameras
-                        {listing.security_cameras_location &&
-                          `: ${listing.security_cameras_location}`}
-                      </li>
-                    )}
-                    {listing.other_safety_details && (
-                      <li>{listing.other_safety_details}</li>
-                    )}
-                  </ul>
-                </div>
-              )}
-
-              {/* Owner profile */}
+              {/* Owner card */}
               {ownerProfile.name && (
-                <div className="card p-5 rounded-xl">
-                  <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-3">
-                    Your host
-                  </h2>
-                  <div className="flex items-center gap-3">
-                    {ownerProfile.custom_pfp ? (
-                      <img
-                        src={ownerProfile.custom_pfp}
-                        alt={ownerProfile.name}
-                        className="w-12 h-12 rounded-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-rose-400 to-purple-500 flex items-center justify-center text-white font-bold text-lg">
-                        {ownerProfile.name.charAt(0)}
-                      </div>
-                    )}
+                <OwnerCard
+                  profile={ownerProfile}
+                  ownerId={listing.owner_id}
+                  listingId={listing.id}
+                />
+              )}
+
+              {/* Reviews */}
+              <ReviewsSection
+                listingId={listing.id}
+                initialStats={reviewStats}
+              />
+
+              {/* Similar Listings */}
+              {similarListings.length > 0 && (
+                <SimilarListings
+                  listings={similarListings}
+                  currentSuburb={listing.suburb}
+                />
+              )}
+
+              {/* Trust footer */}
+              <div className="border-t border-slate-200 dark:border-slate-800 pt-8 pb-4">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div className="flex items-center gap-3 p-4 rounded-xl bg-slate-50 dark:bg-slate-900/50">
+                    <Shield className="w-8 h-8 text-rose-500" />
                     <div>
-                      <p className="font-semibold text-slate-900 dark:text-white">
-                        {ownerProfile.name}
-                        {ownerProfile.verified && (
-                          <span className="ml-1.5 text-xs text-blue-500 font-normal">
-                            Verified
-                          </span>
-                        )}
+                      <p className="text-sm font-semibold text-slate-900 dark:text-white">
+                        MigRent Guarantee
                       </p>
-                      {ownerProfile.bio && (
-                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-2">
-                          {ownerProfile.bio}
-                        </p>
-                      )}
+                      <p className="text-xs text-slate-500 dark:text-slate-400">
+                        Verified listings you can trust
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 p-4 rounded-xl bg-slate-50 dark:bg-slate-900/50">
+                    <CreditCard className="w-8 h-8 text-indigo-500" />
+                    <div>
+                      <p className="text-sm font-semibold text-slate-900 dark:text-white">
+                        Secure Payments
+                      </p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">
+                        Protected by Stripe
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 p-4 rounded-xl bg-slate-50 dark:bg-slate-900/50">
+                    <Mail className="w-8 h-8 text-emerald-500" />
+                    <div>
+                      <p className="text-sm font-semibold text-slate-900 dark:text-white">
+                        24h Support
+                      </p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">
+                        migrentau@gmail.com
+                      </p>
                     </div>
                   </div>
                 </div>
-              )}
+              </div>
             </div>
 
             {/* Right column - Booking form (sticky) */}
-            <div className="lg:col-span-1">
+            <div className="lg:col-span-1" ref={bookingFormRef}>
               <div className="sticky top-20">
                 {bookingSuccess ? (
                   <motion.div
@@ -441,7 +305,8 @@ export default function ListingDetailPage() {
                       Request sent!
                     </h3>
                     <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">
-                      The owner has been notified. You will receive an email when they respond.
+                      The owner has been notified. You will receive an email
+                      when they respond.
                     </p>
                     <Link
                       href="/dashboard/seeker"
@@ -496,6 +361,48 @@ export default function ListingDetailPage() {
             </div>
           </div>
         </div>
+
+        {/* Mobile sticky CTA */}
+        {showMobileCTA && !isOwner && !bookingSuccess && (
+          <div className="fixed bottom-0 left-0 right-0 z-40 lg:hidden bg-white/95 dark:bg-slate-950/95 backdrop-blur-lg border-t border-slate-200 dark:border-slate-800 px-4 py-3 safe-area-pb">
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <span className="text-lg font-black text-slate-900 dark:text-white">
+                  ${listing.weekly_price}
+                </span>
+                <span className="text-sm text-slate-500 dark:text-slate-400">
+                  {" "}
+                  / week
+                </span>
+              </div>
+              {session ? (
+                <button
+                  onClick={scrollToBooking}
+                  className="btn-primary py-2.5 px-6 rounded-xl text-sm font-semibold flex items-center gap-2"
+                >
+                  {isInstantBook ? (
+                    <>
+                      <Zap className="w-4 h-4" />
+                      Instant Book
+                    </>
+                  ) : (
+                    <>
+                      <Send className="w-4 h-4" />
+                      Request to Book
+                    </>
+                  )}
+                </button>
+              ) : (
+                <Link
+                  href="/signin"
+                  className="btn-primary py-2.5 px-6 rounded-xl text-sm font-semibold"
+                >
+                  Sign in to book
+                </Link>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </>
   );

@@ -161,8 +161,11 @@ def search_listings(
 
 
 @router.get("/{listing_id}")
-def get_listing_by_id(listing_id: str):
-    """Get a single listing by ID (public)."""
+def get_listing_by_id(listing_id: str, include: Optional[str] = None):
+    """Get a single listing by ID (public).
+
+    Optional ?include=reviews,similar to bundle extra data.
+    """
     sb = get_supabase_admin()
     res = sb.table("listings").select("*").eq("id", listing_id).execute()
     if not res.data:
@@ -173,9 +176,108 @@ def get_listing_by_id(listing_id: str):
     # Enrich with owner profile
     owner_id = listing.get("owner_id")
     if owner_id:
-        profile_res = sb.table("profiles").select("name, custom_pfp, verified, bio").eq("id", owner_id).execute()
+        profile_res = (
+            sb.table("profiles")
+            .select("name, custom_pfp, verified, bio, badges, identity_verified")
+            .eq("id", owner_id)
+            .execute()
+        )
         if profile_res.data:
-            listing["owner_profile"] = profile_res.data[0]
+            owner_profile = profile_res.data[0]
+            # Count how many listings this owner has
+            count_res = sb.table("listings").select("id", count="exact").eq("owner_id", owner_id).execute()
+            owner_profile["listings_count"] = count_res.count if count_res.count is not None else 0
+            listing["owner_profile"] = owner_profile
+
+    includes = set((include or "").split(","))
+
+    # Reviews
+    if "reviews" in includes:
+        try:
+            stats_res = (
+                sb.table("listing_review_stats")
+                .select("*")
+                .eq("listing_id", listing_id)
+                .execute()
+            )
+            listing["review_stats"] = stats_res.data[0] if stats_res.data else {
+                "review_count": 0,
+                "avg_rating": 0,
+                "avg_migrant_friendliness": None,
+                "positive_count": 0,
+            }
+        except Exception:
+            listing["review_stats"] = {
+                "review_count": 0,
+                "avg_rating": 0,
+                "avg_migrant_friendliness": None,
+                "positive_count": 0,
+            }
+
+        try:
+            reviews_res = (
+                sb.table("reviews")
+                .select("id, reviewer_id, rating, review_text, migrant_friendliness, photos, created_at")
+                .eq("listing_id", listing_id)
+                .eq("flagged", False)
+                .order("created_at", desc=True)
+                .limit(5)
+                .execute()
+            )
+            reviews = reviews_res.data or []
+            # Enrich with reviewer names
+            reviewer_ids = list({r["reviewer_id"] for r in reviews})
+            if reviewer_ids:
+                profiles_res = (
+                    sb.table("profiles")
+                    .select("id, name, custom_pfp")
+                    .in_("id", reviewer_ids)
+                    .execute()
+                )
+                profile_map = {p["id"]: p for p in (profiles_res.data or [])}
+                for r in reviews:
+                    p = profile_map.get(r["reviewer_id"], {})
+                    r["reviewer_name"] = p.get("name", "Anonymous")
+                    r["reviewer_photo"] = p.get("custom_pfp")
+            listing["recent_reviews"] = reviews
+        except Exception:
+            listing["recent_reviews"] = []
+
+    # Similar listings
+    if "similar" in includes:
+        try:
+            price = listing.get("weekly_price", 0)
+            suburb = listing.get("suburb")
+            min_p = price * 0.7
+            max_p = price * 1.3
+            q = (
+                sb.table("listings")
+                .select("id, title, address, suburb, city, postcode, weekly_price, images, instant_book_enabled")
+                .neq("id", listing_id)
+                .gte("weekly_price", min_p)
+                .lte("weekly_price", max_p)
+            )
+            if suburb:
+                q = q.eq("suburb", suburb)
+            similar_res = q.limit(4).execute()
+            listing["similar_listings"] = similar_res.data or []
+            # If not enough from same suburb, fill from same city
+            if len(listing["similar_listings"]) < 4 and listing.get("city"):
+                existing_ids = [listing_id] + [s["id"] for s in listing["similar_listings"]]
+                fill_q = (
+                    sb.table("listings")
+                    .select("id, title, address, suburb, city, postcode, weekly_price, images, instant_book_enabled")
+                    .eq("city", listing["city"])
+                    .gte("weekly_price", min_p)
+                    .lte("weekly_price", max_p)
+                    .limit(4 - len(listing["similar_listings"]))
+                )
+                for eid in existing_ids:
+                    fill_q = fill_q.neq("id", eid)
+                fill_res = fill_q.execute()
+                listing["similar_listings"].extend(fill_res.data or [])
+        except Exception:
+            listing["similar_listings"] = []
 
     return listing
 

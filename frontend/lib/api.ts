@@ -1452,3 +1452,21 @@ export async function getListingById(listingId: string) {
     return null;
   }
 }
+
+/**
+ * Get listing detail with reviews and similar listings bundled.
+ * GET /listings/{id}?include=reviews,similar
+ */
+export async function getListingDetail(listingId: string) {
+  try {
+    const res = await fetch(
+      `${BASE_URL}/listings/${listingId}?include=reviews,similar`,
+      { headers: { "Content-Type": "application/json" } }
+    );
+    if (!res.ok) throw new Error(`getListingDetail failed: ${res.status}`);
+    return await res.json();
+  } catch (err) {
+    console.error("getListingDetail error:", err);
+    return null;
+  }
+}
