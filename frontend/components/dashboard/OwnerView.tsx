@@ -127,7 +127,7 @@ export default function OwnerView({ listings, loading, profile }: OwnerViewProps
                 transition={{ delay: i * 0.05 }}
               >
                 <Link
-                  href={`/owner/listings/${listing.id || ""}`}
+                  href={`/seeker/room/${listing.id || ""}`}
                   className="block md:grid md:grid-cols-12 gap-4 px-5 py-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group"
                 >
                   {/* Property info */}

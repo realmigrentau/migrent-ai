@@ -454,14 +454,53 @@ export function useWishlist() {
       }
     }
 
-    // If no real IDs, use all placeholder IDs for demo
+    // If no saved wishlist items, just show empty
     if (ids.length === 0) {
-      ids = Object.keys(PLACEHOLDER_LISTINGS);
+      setWishlistIds([]);
+      setListings([]);
+      setLoading(false);
+      return;
     }
 
     setWishlistIds(ids);
-    const items = ids.map((id) => PLACEHOLDER_LISTINGS[id]).filter(Boolean);
-    setListings(items);
+    // Try to fetch real listing data for saved IDs
+    try {
+      const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
+      const fetched: WishlistListing[] = [];
+      for (const id of ids) {
+        try {
+          const res = await fetch(`${BASE_URL}/listings/${id}`, {
+            headers: { "Content-Type": "application/json" },
+          });
+          if (res.ok) {
+            const d = await res.json();
+            fetched.push({
+              id: d.id,
+              address: d.address || "",
+              suburb: d.suburb || d.city || "",
+              postcode: d.postcode ? String(d.postcode) : "",
+              weeklyPrice: d.weekly_price ?? 0,
+              rating: d.rating ?? 4.5,
+              reviewCount: d.review_count ?? 0,
+              photos: d.images || d.photos || [],
+              description: d.description || "",
+              roomType: d.place_type || "Private room",
+              furnished: d.furnished ?? false,
+              billsIncluded: d.bills_included ?? false,
+              verified: d.verified ?? false,
+              ownerName: d.owner_profile?.name || "Owner",
+              ownerPhoto: d.owner_profile?.custom_pfp || null,
+              ownerVerified: d.owner_profile?.verified ?? false,
+              nearestStation: d.nearest_transport || null,
+              badges: [],
+            });
+          }
+        } catch {}
+      }
+      setListings(fetched);
+    } catch {
+      setListings([]);
+    }
     setLoading(false);
   };
 

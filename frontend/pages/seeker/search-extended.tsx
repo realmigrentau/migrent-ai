@@ -2,58 +2,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { useAuth } from "../../hooks/useAuth";
-import { updateMyProfile } from "../../lib/api";
-
-const PLACEHOLDER_LISTINGS = [
-  {
-    id: "1",
-    address: "12 Crown St",
-    suburb: "Surry Hills",
-    postcode: "2010",
-    weeklyPrice: 250,
-    roomType: "private",
-    furnished: true,
-    billsIncluded: true,
-    verified: true,
-    photos: [
-      "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=400&h=300&fit=crop",
-    ],
-    description:
-      "Bright private room in friendly sharehouse near Central Station. 5 min walk to buses and trains.",
-  },
-  {
-    id: "2",
-    address: "45 George St",
-    suburb: "Redfern",
-    postcode: "2016",
-    weeklyPrice: 220,
-    roomType: "shared",
-    furnished: true,
-    billsIncluded: false,
-    verified: false,
-    photos: [
-      "https://images.unsplash.com/photo-1598928506311-c55ez637a745?w=400&h=300&fit=crop",
-    ],
-    description:
-      "Affordable shared room close to USYD campus. Quiet neighbourhood with parks nearby.",
-  },
-  {
-    id: "3",
-    address: "8 Botany Rd",
-    suburb: "Waterloo",
-    postcode: "2017",
-    weeklyPrice: 280,
-    roomType: "ensuite",
-    furnished: true,
-    billsIncluded: true,
-    verified: true,
-    photos: [
-      "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=400&h=300&fit=crop",
-    ],
-    description:
-      "Ensuite room with own bathroom in modern apartment. Green Square station 3 min walk.",
-  },
-];
+import { updateMyProfile, searchListings } from "../../lib/api";
 
 const AUSTRALIAN_DESTINATIONS = [
   { label: "Sydney CBD", region: "Sydney" },
@@ -77,7 +26,7 @@ const AUSTRALIAN_DESTINATIONS = [
 
 export default function SeekerSearchExtended() {
   const { session, user } = useAuth();
-  const [results, setResults] = useState(PLACEHOLDER_LISTINGS);
+  const [results, setResults] = useState<any[]>([]);
   const [searching, setSearching] = useState(false);
   const [searched, setSearched] = useState(false);
   const [saved, setSaved] = useState<Set<string>>(new Set());
@@ -108,22 +57,39 @@ export default function SeekerSearchExtended() {
   const handleSearch = async () => {
     setSearching(true);
     setSearched(true);
-    await new Promise((r) => setTimeout(r, 600));
 
-    let filtered = [...PLACEHOLDER_LISTINGS];
-
-    // Filter by price
-    filtered = filtered.filter((l) => l.weeklyPrice <= maxPrice);
-
-    // Filter by adults/children (mock - would check availability)
-    const totalGuests = adults + children;
-    filtered = filtered.filter((l) => {
-      // Mock: filter by room type capacity
-      return totalGuests <= 4;
-    });
-
-    setResults(filtered);
-    setSearching(false);
+    try {
+      const params: Record<string, string> = {
+        max_price: String(maxPrice),
+        guests: String(adults + children + infants),
+      };
+      if (selectedDestinations.length > 0) {
+        params.suburb = selectedDestinations[0];
+      }
+      const data = await searchListings(params);
+      if (data && Array.isArray(data)) {
+        setResults(data.map((l: any) => ({
+          id: l.id,
+          address: l.address || "",
+          suburb: l.suburb || l.city || "",
+          postcode: l.postcode ? String(l.postcode) : "",
+          weeklyPrice: l.weekly_price ?? l.weeklyPrice ?? 0,
+          roomType: l.place_type || l.room_type || "private",
+          furnished: l.furnished ?? false,
+          billsIncluded: l.bills_included ?? false,
+          verified: l.verified ?? false,
+          photos: l.images || l.photos || [],
+          description: l.description || "",
+        })));
+      } else {
+        setResults([]);
+      }
+    } catch (err) {
+      console.error("Search failed:", err);
+      setResults([]);
+    } finally {
+      setSearching(false);
+    }
   };
 
   const toggleSave = (id: string) => {

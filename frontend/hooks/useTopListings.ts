@@ -251,25 +251,27 @@ export function useTopListings() {
         const mapped: MarqueeListing[] = data.map((row: Record<string, unknown>) => ({
           id: row.id as string,
           title: (row.title as string) || "Beautiful Room",
-          suburb: (row.suburb as string) || "Sydney",
+          suburb: (row.suburb as string) || (row.city as string) || "Sydney",
           weeklyPrice: (row.weekly_price as number) || 250,
           rating: (row.rating as number) || 4.5,
           reviewsCount: (row.reviews_count as number) || 0,
           beds: (row.beds as number) || 1,
-          photos: Array.isArray(row.photos) && row.photos.length > 0 ? row.photos as string[] : ["https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=480&h=360&fit=crop&crop=center"],
+          photos: Array.isArray(row.images) && (row.images as string[]).length > 0
+            ? row.images as string[]
+            : Array.isArray(row.photos) && (row.photos as string[]).length > 0
+              ? row.photos as string[]
+              : ["/images/placeholder-room.jpg"],
           nearestStation: (row.nearest_station as string) || null,
           ownerVerified: true,
           superhost: (row.superhost as boolean) || false,
         }));
 
-        // Fill with fallbacks if less than 16
-        const result = [...mapped];
-        if (result.length < 16) {
-          const needed = 16 - result.length;
-          result.push(...FALLBACK_LISTINGS.slice(0, needed));
+        // Only show real listings - if we have some, use them; otherwise show fallbacks
+        if (mapped.length > 0) {
+          setListings(mapped);
+        } else {
+          setListings(FALLBACK_LISTINGS);
         }
-
-        setListings(result);
       } catch {
         if (!cancelled) {
           setListings(FALLBACK_LISTINGS);

@@ -1454,13 +1454,13 @@ export async function getListingById(listingId: string) {
 }
 
 /**
- * Delete a listing (requires password confirmation).
+ * Delete a listing (requires password or OAuth confirmation).
  * DELETE /listings/{id}
  */
 export async function deleteListing(
   listingId: string,
-  password: string,
-  token: string
+  token: string,
+  options: { password?: string; oauthConfirmed?: boolean }
 ): Promise<{ success: boolean; error?: string }> {
   try {
     const res = await fetch(`${BASE_URL}/listings/${listingId}`, {
@@ -1469,7 +1469,10 @@ export async function deleteListing(
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ password }),
+      body: JSON.stringify({
+        password: options.password || null,
+        oauth_confirmed: options.oauthConfirmed || false,
+      }),
     });
     if (!res.ok) {
       let detail = "Failed to delete listing";

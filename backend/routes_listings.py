@@ -321,7 +321,8 @@ def list_listings(
 
 
 class DeleteListingRequest(BaseModel):
-    password: str
+    password: Optional[str] = None
+    oauth_confirmed: Optional[bool] = False
 
 
 @router.delete("/{listing_id}")
@@ -330,7 +331,7 @@ def delete_listing(
     body: DeleteListingRequest,
     authorization: str = Header(...),
 ):
-    """Delete a listing. Requires the owner's password for confirmation."""
+    """Delete a listing. Requires password for email users or OAuth re-auth for Google users."""
     user = get_current_user(authorization)
     user_id = str(user.id)
 
@@ -342,25 +343,45 @@ def delete_listing(
     if listing_res.data[0]["owner_id"] != user_id:
         raise HTTPException(status_code=403, detail="You can only delete your own listings")
 
-    # Verify password by attempting to sign in with the user's email
-    email = user.email
-    if not email:
-        raise HTTPException(status_code=400, detail="Could not verify identity")
+    # Check auth provider
+    provider = (user.app_metadata or {}).get("provider", "email")
+    is_oauth = provider in ("google", "github", "apple", "facebook")
 
-    try:
-        sb_anon = create_client(SUPABASE_URL, SUPABASE_ANON_KEY)
-        auth_res = sb_anon.auth.sign_in_with_password({
-            "email": email,
-            "password": body.password,
-        })
-        if not auth_res or not auth_res.user:
+    if is_oauth:
+        # For OAuth users, the valid session token + confirmation is enough
+        if not body.oauth_confirmed:
+            raise HTTPException(status_code=400, detail="Please confirm deletion")
+    else:
+        # For email/password users, verify password
+        if not body.password:
+            raise HTTPException(status_code=400, detail="Password is required")
+
+        email = user.email
+        if not email:
+            raise HTTPException(status_code=400, detail="Could not verify identity")
+
+        try:
+            sb_anon = create_client(SUPABASE_URL, SUPABASE_ANON_KEY)
+            auth_res = sb_anon.auth.sign_in_with_password({
+                "email": email,
+                "password": body.password,
+            })
+            if not auth_res or not auth_res.user:
+                raise HTTPException(status_code=401, detail="Incorrect password")
+        except HTTPException:
+            raise
+        except Exception:
             raise HTTPException(status_code=401, detail="Incorrect password")
-    except HTTPException:
-        raise
-    except Exception:
-        raise HTTPException(status_code=401, detail="Incorrect password")
 
     # Delete the listing
     sb_admin.table("listings").delete().eq("id", listing_id).execute()
 
     return {"message": "Listing deleted successfully"}
+
+
+@router.get("/auth/provider")
+def get_auth_provider(authorization: str = Header(...)):
+    """Return the current user's auth provider (email, google, etc)."""
+    user = get_current_user(authorization)
+    provider = (user.app_metadata or {}).get("provider", "email")
+    return {"provider": provider}
