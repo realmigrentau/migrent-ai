@@ -492,6 +492,8 @@ export function useWishlist() {
               ownerPhoto: d.owner_profile?.custom_pfp || null,
               ownerVerified: d.owner_profile?.verified ?? false,
               nearestStation: d.nearest_transport || null,
+              superhost: false,
+              savedAt: new Date().toISOString(),
             });
           }
         } catch {}
