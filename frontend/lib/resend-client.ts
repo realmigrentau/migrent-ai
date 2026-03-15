@@ -22,7 +22,7 @@ import PasswordReset from "../emails/PasswordReset";
 import AccountAlert from "../emails/AccountAlert";
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY || "";
-const FROM_EMAIL = process.env.FROM_EMAIL || "MigRent <migrantau@gmail.com>";
+const FROM_EMAIL = process.env.FROM_EMAIL || "MigRent <onboarding@resend.dev>";
 
 let resendInstance: Resend | null = null;
 

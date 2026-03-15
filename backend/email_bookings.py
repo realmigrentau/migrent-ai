@@ -11,7 +11,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 RESEND_API_KEY = os.environ.get("RESEND_API_KEY", "")
-FROM_EMAIL = os.environ.get("FROM_EMAIL", "MigRent <migrantau@gmail.com>")
+FROM_EMAIL = os.environ.get("FROM_EMAIL", "MigRent <onboarding@resend.dev>")
 FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:3000")
 
 # Brand colors
