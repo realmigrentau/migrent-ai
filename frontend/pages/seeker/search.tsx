@@ -638,7 +638,7 @@ export default function SeekerSearch() {
                 onChange={(e) => setMinPrice(e.target.value)}
                 placeholder="Min"
                 min="0"
-                className="input-field pl-7"
+                className="input-field pl-9"
               />
             </div>
             <span className="flex items-center text-slate-400">-</span>
@@ -650,7 +650,7 @@ export default function SeekerSearch() {
                 onChange={(e) => setMaxPrice(e.target.value)}
                 placeholder="Max (no limit)"
                 min="0"
-                className="input-field pl-7"
+                className="input-field pl-9"
               />
             </div>
           </div>
