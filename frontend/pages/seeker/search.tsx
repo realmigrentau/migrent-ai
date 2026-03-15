@@ -631,26 +631,26 @@ export default function SeekerSearch() {
           </label>
           <div className="flex gap-3">
             <div className="relative flex-1">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">$</span>
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm">$</span>
               <input
                 type="number"
                 value={minPrice}
                 onChange={(e) => setMinPrice(e.target.value)}
                 placeholder="Min"
                 min="0"
-                className="input-field pl-9"
+                className="input-field pl-12"
               />
             </div>
             <span className="flex items-center text-slate-400">-</span>
             <div className="relative flex-1">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">$</span>
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm">$</span>
               <input
                 type="number"
                 value={maxPrice}
                 onChange={(e) => setMaxPrice(e.target.value)}
                 placeholder="Max (no limit)"
                 min="0"
-                className="input-field pl-9"
+                className="input-field pl-12"
               />
             </div>
           </div>
