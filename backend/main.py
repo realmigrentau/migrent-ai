@@ -26,6 +26,7 @@ from routes_validation import router as validation_router
 from routes_reviews import router as reviews_router
 from routes_bookings import router as bookings_router
 from routes_geocode import router as geocode_router
+from routes_owner import router as owner_router
 
 # ── Startup validation ──────────────────────────────────────
 REQUIRED_ENV = ["SUPABASE_URL", "SUPABASE_ANON_KEY", "STRIPE_SECRET_KEY", "STRIPE_WEBHOOK_SECRET"]
@@ -83,6 +84,7 @@ app.include_router(validation_router)
 app.include_router(reviews_router)
 app.include_router(bookings_router)
 app.include_router(geocode_router)
+app.include_router(owner_router)
 app.include_router(webhook_router)
 
 # Note: each router defines its own prefix (/auth, /listings, /matches, /deals)

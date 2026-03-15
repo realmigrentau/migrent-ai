@@ -1512,3 +1512,49 @@ export async function getListingDetail(listingId: string) {
     return null;
   }
 }
+
+// ── Owner Dashboard API ──
+
+export async function getOwnerMetrics(token: string) {
+  const res = await fetch(`${BASE_URL}/owner/metrics`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  if (!res.ok) throw new Error(`getOwnerMetrics failed: ${res.status}`);
+  return await res.json();
+}
+
+export async function getOwnerBookings(
+  token: string,
+  page: number = 1,
+  perPage: number = 20,
+  status?: string
+) {
+  const params = new URLSearchParams({
+    page: String(page),
+    per_page: String(perPage),
+  });
+  if (status) params.set("status", status);
+
+  const res = await fetch(`${BASE_URL}/owner/bookings?${params}`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  if (!res.ok) throw new Error(`getOwnerBookings failed: ${res.status}`);
+  return await res.json();
+}
+
+export async function getOwnerActivity(token: string, limit: number = 10) {
+  const res = await fetch(`${BASE_URL}/owner/activity?limit=${limit}`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  if (!res.ok) throw new Error(`getOwnerActivity failed: ${res.status}`);
+  return await res.json();
+}
