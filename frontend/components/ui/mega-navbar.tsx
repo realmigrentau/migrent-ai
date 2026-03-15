@@ -114,7 +114,7 @@ export default function MegaNavbar() {
       transition={{ duration: 0.5, ease: "easeOut" }}
       className="fixed top-0 left-0 right-0 z-50 px-4 sm:px-6 pt-4"
     >
-      <nav className={`max-w-5xl mx-auto px-4 sm:px-5 py-2.5 flex items-center justify-between rounded-2xl transition-all duration-300 ${
+      <nav className={`${session ? "max-w-5xl" : "max-w-4xl"} mx-auto px-4 sm:px-5 py-2.5 flex items-center justify-between rounded-2xl transition-all duration-300 ${
         scrolled
           ? "bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl border border-slate-200/60 dark:border-slate-700/60 shadow-lg shadow-black/[0.04] dark:shadow-black/[0.2]"
           : "bg-white/60 dark:bg-slate-950/60 backdrop-blur-lg border border-slate-200/40 dark:border-slate-700/40"
@@ -479,7 +479,7 @@ export default function MegaNavbar() {
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="lg:hidden overflow-hidden mt-2 max-w-5xl mx-auto rounded-2xl bg-white/95 dark:bg-slate-950/95 backdrop-blur-xl border border-slate-200/60 dark:border-slate-700/60 shadow-lg"
+            className={`lg:hidden overflow-hidden mt-2 ${session ? "max-w-5xl" : "max-w-4xl"} mx-auto rounded-2xl bg-white/95 dark:bg-slate-950/95 backdrop-blur-xl border border-slate-200/60 dark:border-slate-700/60 shadow-lg`}
           >
             <div className="px-4 py-3 space-y-1 max-h-[80vh] overflow-y-auto">
               {navItems.map((item, index) => {
