@@ -1,10 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { sendEmail, emailTemplates } from "../../../lib/resend-client";
+import { sendEmail, renderToHtml, emailTemplates } from "../../../lib/resend-client";
 
 /**
  * POST /api/emails/send
  *
- * General-purpose email sending endpoint.
+ * General-purpose email sending endpoint via Mailjet.
  * Used by the frontend for test emails, welcome series, and other
  * frontend-triggered notifications.
  *
@@ -29,7 +29,7 @@ export default async function handler(
 
   try {
     const result = await sendEmailByType(type, to, data || {});
-    return res.status(200).json({ success: true, id: result?.id });
+    return res.status(200).json({ success: true, result });
   } catch (error: any) {
     console.error("Email send error:", error);
     return res.status(500).json({
@@ -39,92 +39,78 @@ export default async function handler(
 }
 
 async function sendEmailByType(type: string, to: string, data: any) {
+  let subject: string;
+  let template: React.ReactElement;
+
   switch (type) {
     case "test":
-      return sendEmail({
-        to,
-        subject: "Test Email from MigRent",
-        react: emailTemplates.welcome({
-          userName: data.userName || "there",
-          userRole: data.userRole || "seeker",
-          day: 1,
-        }),
+      subject = "Test Email from MigRent";
+      template = emailTemplates.welcome({
+        userName: data.userName || "there",
+        userRole: data.userRole || "seeker",
+        day: 1,
       });
+      break;
 
     case "welcome":
-      return sendEmail({
-        to,
-        subject: data.day === 1
-          ? "Welcome to MigRent!"
-          : data.day === 3
-          ? "Complete your MigRent profile"
-          : "How's your search going?",
-        react: emailTemplates.welcome({
-          userName: data.userName,
-          userRole: data.userRole || "seeker",
-          day: data.day || 1,
-        }),
+      subject = data.day === 1
+        ? "Welcome to MigRent!"
+        : data.day === 3
+        ? "Complete your MigRent profile"
+        : "How's your search going?";
+      template = emailTemplates.welcome({
+        userName: data.userName,
+        userRole: data.userRole || "seeker",
+        day: data.day || 1,
       });
+      break;
 
     case "new_booking_request":
-      return sendEmail({
-        to,
-        subject: `New booking request for ${data.listingTitle}`,
-        react: emailTemplates.newBookingRequest(data),
-      });
+      subject = `New booking request for ${data.listingTitle}`;
+      template = emailTemplates.newBookingRequest(data);
+      break;
 
     case "booking_approved":
-      return sendEmail({
-        to,
-        subject: `Your booking for ${data.listingTitle} was approved!`,
-        react: emailTemplates.bookingApproved(data),
-      });
+      subject = `Your booking for ${data.listingTitle} was approved!`;
+      template = emailTemplates.bookingApproved(data);
+      break;
 
     case "booking_declined":
-      return sendEmail({
-        to,
-        subject: `Update on your booking request for ${data.listingTitle}`,
-        react: emailTemplates.bookingDeclined(data),
-      });
+      subject = `Update on your booking request for ${data.listingTitle}`;
+      template = emailTemplates.bookingDeclined(data);
+      break;
 
     case "new_message":
-      return sendEmail({
-        to,
-        subject: `New message from ${data.senderName}`,
-        react: emailTemplates.newMessage(data),
-      });
+      subject = `New message from ${data.senderName}`;
+      template = emailTemplates.newMessage(data);
+      break;
 
     case "booking_confirmed":
-      return sendEmail({
-        to,
-        subject: `Booking confirmed - ${data.listingTitle}`,
-        react: emailTemplates.bookingConfirmed(data),
-      });
+      subject = `Booking confirmed - ${data.listingTitle}`;
+      template = emailTemplates.bookingConfirmed(data);
+      break;
 
     case "review_reminder":
-      return sendEmail({
-        to,
-        subject: `How was your stay at ${data.listingTitle}?`,
-        react: emailTemplates.reviewReminder(data),
-      });
+      subject = `How was your stay at ${data.listingTitle}?`;
+      template = emailTemplates.reviewReminder(data);
+      break;
 
     case "password_reset":
-      return sendEmail({
-        to,
-        subject: "Reset your MigRent password",
-        react: emailTemplates.passwordReset(data),
-      });
+      subject = "Reset your MigRent password";
+      template = emailTemplates.passwordReset(data);
+      break;
 
     case "account_alert":
-      return sendEmail({
-        to,
-        subject: getAlertSubject(data.alertType, data),
-        react: emailTemplates.accountAlert(data),
-      });
+      subject = getAlertSubject(data.alertType, data);
+      template = emailTemplates.accountAlert(data);
+      break;
 
     default:
       throw new Error(`Unknown email type: ${type}`);
   }
+
+  const html = await renderToHtml(template);
+  return sendEmail({ to, subject, html });
 }
 
 function getAlertSubject(alertType: string, data: any): string {

@@ -1,17 +1,20 @@
 """
 Email notifications for the booking flow.
 
-Uses Resend for transactional emails. All functions are fire-and-forget
+Uses Mailjet for transactional emails. All functions are fire-and-forget
 - callers should wrap in try/except so email failures never block bookings.
 """
 
 import os
 import logging
+import httpx
 
 logger = logging.getLogger(__name__)
 
-RESEND_API_KEY = os.environ.get("RESEND_API_KEY", "")
-FROM_EMAIL = os.environ.get("FROM_EMAIL", "MigRent <onboarding@resend.dev>")
+MAILJET_API_KEY = os.environ.get("MAILJET_API_KEY", "")
+MAILJET_SECRET_KEY = os.environ.get("MAILJET_SECRET_KEY", "")
+FROM_EMAIL = os.environ.get("FROM_EMAIL", "migrantau@gmail.com")
+FROM_NAME = os.environ.get("FROM_NAME", "MigRent")
 FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:3000")
 
 # Brand colors
@@ -79,23 +82,32 @@ def _details_box(rows: list[tuple[str, str]]) -> str:
 
 
 def _send_email(to: str, subject: str, html: str, text: str = ""):
-    """Send an HTML email via Resend with plain-text fallback."""
-    if not RESEND_API_KEY:
-        logger.warning("RESEND_API_KEY not set - skipping email to %s", to)
+    """Send an HTML email via Mailjet with plain-text fallback."""
+    if not MAILJET_API_KEY or not MAILJET_SECRET_KEY:
+        logger.warning("MAILJET keys not set - skipping email to %s", to)
         return
 
     try:
-        import resend
-        resend.api_key = RESEND_API_KEY
-        params = {
-            "from": FROM_EMAIL,
-            "to": [to],
-            "subject": subject,
-            "html": html,
+        payload = {
+            "Messages": [
+                {
+                    "From": {"Email": FROM_EMAIL, "Name": FROM_NAME},
+                    "To": [{"Email": to}],
+                    "Subject": subject,
+                    "HTMLPart": html,
+                }
+            ]
         }
         if text:
-            params["text"] = text
-        resend.Emails.send(params)
+            payload["Messages"][0]["TextPart"] = text
+
+        response = httpx.post(
+            "https://api.mailjet.com/v3.1/send",
+            json=payload,
+            auth=(MAILJET_API_KEY, MAILJET_SECRET_KEY),
+            timeout=10,
+        )
+        response.raise_for_status()
         logger.info("Email sent to %s: %s", to, subject)
     except Exception as e:
         logger.error("Failed to send email to %s: %s", to, e)
