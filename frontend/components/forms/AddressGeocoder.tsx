@@ -33,7 +33,7 @@ export default function AddressGeocoder({ onSelect, initialValue = "" }: Address
   const [loading, setLoading] = useState(false);
   const [stationLoading, setStationLoading] = useState(false);
   const [stationInfo, setStationInfo] = useState<{ name: string; minutes: number } | null>(null);
-  const debounceRef = useRef<ReturnType<typeof setTimeout>>();
+  const debounceRef = useRef<ReturnType<typeof setTimeout>>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   // Close dropdown on outside click
