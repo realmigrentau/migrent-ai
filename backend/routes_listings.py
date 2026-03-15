@@ -123,6 +123,7 @@ def search_listings(
     suburb: Optional[str] = None,
     postcode: Optional[str] = None,
     address: Optional[str] = None,
+    min_price: Optional[float] = None,
     max_price: Optional[float] = None,
     guests: Optional[int] = None,
     check_in: Optional[str] = None,
@@ -130,7 +131,12 @@ def search_listings(
     lat: Optional[float] = None,
     lng: Optional[float] = None,
     radius: Optional[float] = None,
-    limit: int = 50,
+    furnished: Optional[bool] = None,
+    bills_included: Optional[bool] = None,
+    gender_preference: Optional[str] = None,
+    instant_book: Optional[bool] = None,
+    sort: Optional[str] = None,
+    limit: int = 20,
     offset: int = 0,
 ):
     """Search listings with filters (public, no auth required)."""
@@ -144,6 +150,9 @@ def search_listings(
     sb = get_supabase_admin()
     query = sb.table("listings").select("*")
 
+    # Price filters
+    if min_price is not None:
+        query = query.gte("weekly_price", min_price)
     if max_price is not None:
         query = query.lte("weekly_price", max_price)
     if guests is not None:
@@ -156,6 +165,26 @@ def search_listings(
         query = query.eq("postcode", int(postcode))
     if address:
         query = query.ilike("address", f"%{address}%")
+
+    # Boolean filters
+    if furnished is True:
+        query = query.eq("furnished", True)
+    if bills_included is True:
+        query = query.eq("bills_included", True)
+    if instant_book is True:
+        query = query.eq("instant_book_enabled", True)
+
+    # Gender preference filter
+    if gender_preference == "female":
+        query = query.eq("gender_preference", "female")
+
+    # Sorting
+    if sort == "price_asc":
+        query = query.order("weekly_price", desc=False)
+    elif sort == "price_desc":
+        query = query.order("weekly_price", desc=True)
+    else:
+        query = query.order("created_at", desc=True)
 
     query = query.range(offset, offset + limit - 1)
     res = query.execute()
