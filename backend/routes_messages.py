@@ -3,6 +3,7 @@ Messaging endpoints for real-time chat between seeker and owner.
 Supports direct messages (from profiles) and listing-based messages.
 """
 
+import os
 import re
 import logging
 from fastapi import APIRouter, HTTPException, Header, Request
@@ -12,9 +13,10 @@ from typing import Optional
 from uuid import UUID
 
 from models import MessageCreate, MessageOut
-from db import get_supabase
+from db import get_supabase, get_supabase_admin
 from auth_utils import get_current_user
 from limiter import limiter
+from email_bookings import send_new_message_notification
 
 logger = logging.getLogger(__name__)
 
@@ -95,6 +97,44 @@ def send_message(
     result = sb.table("messages").insert(msg_data).execute()
     if not result.data:
         raise HTTPException(status_code=500, detail="Failed to send message")
+
+    # Send email notification to receiver (fire-and-forget)
+    try:
+        sb_admin = get_supabase_admin()
+        receiver_profile = sb_admin.table("profiles").select("name, preferred_name").eq("id", str(body.receiver_id)).execute()
+        receiver_user = sb_admin.auth.admin.get_user_by_id(str(body.receiver_id))
+        receiver_email = receiver_user.user.email if receiver_user and receiver_user.user else None
+
+        if receiver_email and receiver_profile.data:
+            sender_profile = sb_admin.table("profiles").select("name, preferred_name").eq("id", str(body.sender_id)).execute()
+            sender_name = "Someone"
+            if sender_profile.data:
+                sender_name = sender_profile.data[0].get("preferred_name") or sender_profile.data[0].get("name", "Someone")
+
+            recipient_name = receiver_profile.data[0].get("preferred_name") or receiver_profile.data[0].get("name", "there")
+
+            listing_title = None
+            if body.listing_id:
+                listing_res = sb_admin.table("listings").select("title, address").eq("id", str(body.listing_id)).execute()
+                if listing_res.data:
+                    listing_title = listing_res.data[0].get("title") or listing_res.data[0].get("address")
+
+            FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:3000")
+            if body.listing_id:
+                thread_url = f"{FRONTEND_URL}/messages?listing={body.listing_id}&user={body.sender_id}"
+            else:
+                thread_url = f"{FRONTEND_URL}/messages?user={body.sender_id}"
+
+            send_new_message_notification(
+                recipient_email=receiver_email,
+                recipient_name=recipient_name,
+                sender_name=sender_name,
+                message_preview=body.message_text[:300],
+                listing_title=listing_title,
+                thread_url=thread_url,
+            )
+    except Exception as e:
+        logger.warning("Failed to send message notification email: %s", e)
 
     return {
         "success": True,

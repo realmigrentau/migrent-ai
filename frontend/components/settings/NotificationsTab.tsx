@@ -12,8 +12,11 @@ import {
   Zap,
   Send,
   CheckCircle2,
+  Loader2,
+  AlertCircle,
 } from "lucide-react";
 import type { NotificationPrefs } from "../../hooks/useSettingsData";
+import { useNotifications } from "../../hooks/useNotifications";
 
 interface NotificationsTabProps {
   notifPrefs: NotificationPrefs;
@@ -27,11 +30,17 @@ export default function NotificationsTab({
   showMessage,
 }: NotificationsTabProps) {
   const [testSent, setTestSent] = useState(false);
+  const { sendTestEmail, sending } = useNotifications();
 
-  const handleTestEmail = () => {
-    setTestSent(true);
-    showMessage("Test email sent! Check your inbox 📬", "success");
-    setTimeout(() => setTestSent(false), 3000);
+  const handleTestEmail = async () => {
+    try {
+      await sendTestEmail();
+      setTestSent(true);
+      showMessage("Test email sent! Check your inbox.", "success");
+      setTimeout(() => setTestSent(false), 3000);
+    } catch (err: any) {
+      showMessage(err.message || "Failed to send test email", "error");
+    }
   };
 
   const emailPrefs: Array<{
@@ -218,7 +227,7 @@ export default function NotificationsTab({
       >
         <button
           onClick={handleTestEmail}
-          disabled={testSent}
+          disabled={testSent || sending}
           className={`
             flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium transition-all
             ${testSent
@@ -227,7 +236,12 @@ export default function NotificationsTab({
             }
           `}
         >
-          {testSent ? (
+          {sending ? (
+            <>
+              <Loader2 className="w-4 h-4 animate-spin" />
+              Sending...
+            </>
+          ) : testSent ? (
             <>
               <CheckCircle2 className="w-4 h-4" />
               Test Email Sent!
