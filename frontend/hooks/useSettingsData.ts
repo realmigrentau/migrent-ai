@@ -192,8 +192,10 @@ export function useSettingsData() {
 
       if (usesGoogle) {
         setGoogleConnected(true);
-        setIsGoogleOnlyUser(true);
-        setHasPassword(false);
+        // Check if user also has an email/password identity
+        const hasEmailIdentity = identityProviders.includes("email");
+        setIsGoogleOnlyUser(!hasEmailIdentity);
+        setHasPassword(hasEmailIdentity);
       }
     } catch { /* ignore */ }
   }, []);
@@ -315,6 +317,7 @@ export function useSettingsData() {
         }
         showMessage("Password set successfully! You can now use it to sign in and confirm actions.", "success");
         setHasPassword(true);
+        setIsGoogleOnlyUser(false);
         return true;
       } catch (err) {
         showMessage("Failed to set password", "error");
