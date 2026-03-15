@@ -1,10 +1,13 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import PhotoUploadZone from "./upload/PhotoUploadZone";
+import { UploadablePhoto } from "../hooks/usePhotoUpload";
 
 interface ListingFormProps {
   onSubmit: (data: ListingFormData) => void;
   loading?: boolean;
   initialData?: Partial<ListingFormData>;
+  userId?: string;
 }
 
 export interface ListingFormData {
@@ -53,6 +56,7 @@ export interface ListingFormData {
   couplesOk: boolean;
   // Photos
   photos: File[];
+  photoUrls: string[];
   // Rules
   noSmoking: boolean;
   quietHours: string;
@@ -73,11 +77,28 @@ const PLACE_TYPES = ["Entire place", "Private room", "Shared room", "Multiple ro
 const LAUNDRY_OPTIONS = ["In-unit", "Shared", "None"];
 const GENDER_OPTIONS = ["Any", "Female only", "Male only"];
 
-export default function ListingForm({ onSubmit, loading, initialData }: ListingFormProps) {
+export default function ListingForm({ onSubmit, loading, initialData, userId }: ListingFormProps) {
   const [step, setStep] = useState(0);
   const fileRef = useRef<HTMLInputElement>(null);
   const [photoPreviews, setPhotoPreviews] = useState<string[]>([]);
   const [highlightInput, setHighlightInput] = useState("");
+  const [photoCount, setPhotoCount] = useState(0);
+  const [photosUploaded, setPhotosUploaded] = useState(false);
+  const uploadZoneRef = useRef<{ triggerUpload: () => Promise<string[]> } | null>(null);
+
+  const handlePhotosChange = useCallback((photos: UploadablePhoto[]) => {
+    setPhotoCount(photos.length);
+    // Update previews for the side preview
+    setPhotoPreviews(photos.map((p) => p.preview));
+  }, []);
+
+  const handleUploadComplete = useCallback(
+    (urls: string[]) => {
+      update("photoUrls", urls);
+      setPhotosUploaded(true);
+    },
+    []
+  );
 
   const [form, setForm] = useState<ListingFormData>({
     suburb: "",
@@ -118,6 +139,7 @@ export default function ListingForm({ onSubmit, loading, initialData }: ListingF
     couplesOk: false,
     // Photos
     photos: [],
+    photoUrls: [],
     noSmoking: true,
     quietHours: "10pm-7am",
     tenantPrefs: "",
@@ -176,6 +198,9 @@ export default function ListingForm({ onSubmit, loading, initialData }: ListingF
       if (!form.title.trim()) errors.push("Title is required");
       if (form.description.trim().length < 10) errors.push("Description must be at least 10 characters");
       if (form.description.length > 5000) errors.push("Description cannot exceed 5000 characters");
+    }
+    if (s === 3) {
+      if (photoCount < 5) errors.push("Add at least 5 photos");
     }
     return errors;
   };
@@ -705,39 +730,14 @@ export default function ListingForm({ onSubmit, loading, initialData }: ListingF
                 <p className="text-sm text-slate-500 dark:text-slate-400">
                   Add photos to help seekers visualise the room. Drag and drop or click to upload.
                 </p>
-                <div
-                  onClick={() => fileRef.current?.click()}
-                  className="border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-xl p-8 text-center cursor-pointer hover:border-rose-400 dark:hover:border-rose-500/40 transition-colors"
-                >
-                  <svg className="w-10 h-10 mx-auto text-slate-400 dark:text-slate-500 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 16v-8m0 0l-3 3m3-3l3 3M3 16v2a2 2 0 002 2h14a2 2 0 002-2v-2" />
-                  </svg>
-                  <p className="text-sm text-slate-500 dark:text-slate-400">Click to upload or drag photos here</p>
-                  <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">JPG, PNG up to 5MB each</p>
-                  <input
-                    ref={fileRef}
-                    type="file"
-                    accept="image/*"
-                    multiple
-                    onChange={handlePhotos}
-                    className="hidden"
-                  />
-                </div>
-                {photoPreviews.length > 0 && (
-                  <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
-                    {photoPreviews.map((src, i) => (
-                      <div key={i} className="relative group aspect-square rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-800">
-                        <img src={src} alt={`Photo ${i + 1}`} className="w-full h-full object-cover" />
-                        <button
-                          onClick={() => removePhoto(i)}
-                          className="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-black/60 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-xs"
-                        >
-                          &times;
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                )}
+                <PhotoUploadZone
+                  bucket="listing-images"
+                  pathPrefix={userId || "anonymous"}
+                  maxFiles={20}
+                  minFiles={5}
+                  onPhotosChange={handlePhotosChange}
+                  onUploadComplete={handleUploadComplete}
+                />
               </>
             )}
 

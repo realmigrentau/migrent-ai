@@ -742,3 +742,13 @@ select.input-field {
 .wl-fab-pulse {
   animation: wl-fab-pulse 2s ease-in-out infinite;
 }
+
+/* Photo upload drop zone glow */
+@keyframes photo-drop-pulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(244, 63, 94, 0.2), inset 0 0 20px rgba(244, 63, 94, 0.05); }
+  50% { box-shadow: 0 0 40px rgba(244, 63, 94, 0.4), inset 0 0 30px rgba(244, 63, 94, 0.1); }
+}
+
+.photo-drop-glow {
+  animation: photo-drop-pulse 1.5s ease-in-out infinite;
+}

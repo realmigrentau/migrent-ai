@@ -1,51 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { useAuth } from "../../../hooks/useAuth";
 import ListingForm, { ListingFormData } from "../../../components/ListingForm";
 import { createListing } from "../../../lib/api";
-import { supabase } from "../../../lib/supabase";
-
-const LISTING_IMAGES_BUCKET = "listing-images";
-
-async function uploadListingPhotos(
-  files: File[],
-  userId: string
-): Promise<string[]> {
-  if (files.length === 0) return [];
-  const urls: string[] = [];
-  const timestamp = Date.now();
-
-  for (let i = 0; i < files.length; i++) {
-    const file = files[i];
-    const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
-    const filePath = `${userId}/${timestamp}-${i}.${ext}`;
-
-    const { error } = await supabase.storage
-      .from(LISTING_IMAGES_BUCKET)
-      .upload(filePath, file, {
-        cacheControl: "3600",
-        upsert: false,
-        contentType: file.type || "image/jpeg",
-      });
-
-    if (error) {
-      console.error(`Failed to upload photo ${i + 1}:`, error);
-      continue;
-    }
-
-    const { data: urlData } = supabase.storage
-      .from(LISTING_IMAGES_BUCKET)
-      .getPublicUrl(filePath);
-
-    if (urlData?.publicUrl) {
-      urls.push(urlData.publicUrl);
-    }
-  }
-
-  return urls;
-}
 
 export default function NewListing() {
   const { session, user, loading } = useAuth();
@@ -58,16 +17,8 @@ export default function NewListing() {
     setSubmitting(true);
     setError("");
 
-    // Upload photos first if any
-    let imageUrls: string[] = [];
-    if (data.photos && data.photos.length > 0) {
-      try {
-        imageUrls = await uploadListingPhotos(data.photos, user.id);
-      } catch (err) {
-        console.error("Photo upload failed:", err);
-        // Continue without photos - don't block listing creation
-      }
-    }
+    // Photos are already uploaded via PhotoUploadZone - use URLs directly
+    const imageUrls = data.photoUrls || [];
 
     const result = await createListing(session.access_token, {
       address: `${data.suburb}, ${data.postcode}`,
@@ -102,7 +53,6 @@ export default function NewListing() {
       weaponsOnProperty: data.weaponsOnProperty,
       weaponsExplanation: data.weaponsExplanation,
       otherSafetyDetails: data.otherSafetyDetails,
-      // Hosting fields
       availableFrom: data.availableFrom || undefined,
       availableTo: data.availableTo || undefined,
       instantBook: data.instantBook,
@@ -176,7 +126,7 @@ export default function NewListing() {
       )}
 
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-        <ListingForm onSubmit={handleSubmit} loading={submitting} />
+        <ListingForm onSubmit={handleSubmit} loading={submitting} userId={user?.id} />
       </motion.div>
     </div>
   );
