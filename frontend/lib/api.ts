@@ -117,6 +117,9 @@ export interface CreateListingPayload {
   neighbourhoodVibe?: string;
   genderPreference?: string;
   couplesOk?: boolean;
+  // Geocoding
+  latitude?: number | null;
+  longitude?: number | null;
 }
 
 /**
@@ -181,6 +184,9 @@ export async function createListing(
     if (payload.neighbourhoodVibe) body.neighbourhood_vibe = payload.neighbourhoodVibe;
     if (payload.genderPreference) body.gender_preference = payload.genderPreference;
     if (payload.couplesOk !== undefined) body.couples_ok = payload.couplesOk;
+    // Geocoding
+    if (payload.latitude != null) body.latitude = payload.latitude;
+    if (payload.longitude != null) body.longitude = payload.longitude;
 
     const res = await fetch(`${BASE_URL}/listings`, {
       method: "POST",

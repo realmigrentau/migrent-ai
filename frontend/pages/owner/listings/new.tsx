@@ -67,6 +67,8 @@ export default function NewListing() {
       neighbourhoodVibe: data.neighbourhoodVibe || undefined,
       genderPreference: data.genderPreference || undefined,
       couplesOk: data.couplesOk,
+      latitude: data.latitude,
+      longitude: data.longitude,
     });
 
     if (result && !result.error) {

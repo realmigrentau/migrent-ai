@@ -32,6 +32,8 @@ interface Listing {
   description: string;
   lat: number;
   lng: number;
+  stationName?: string;
+  stationWalkMin?: number;
 }
 
 // Calendar helper functions
@@ -66,6 +68,8 @@ function mapListingData(l: any): Listing {
     description: l.description || "",
     lat: l.lat || l.latitude || -33.88,
     lng: l.lng || l.longitude || 151.21,
+    stationName: l.nearest_transport?.split(" - ")[0] || undefined,
+    stationWalkMin: l.station_distance_min ?? undefined,
   };
 }
 
@@ -112,6 +116,7 @@ export default function SeekerSearch() {
   const [furnished, setFurnished] = useState(false);
   const [billsIncluded, setBillsIncluded] = useState(false);
   const [femaleOnly, setFemaleOnly] = useState(false);
+  const [nearStation, setNearStation] = useState(false);
   const [instantBook, setInstantBook] = useState(false);
 
   // Sort
@@ -178,11 +183,12 @@ export default function SeekerSearch() {
     if (furnished) params.furnished = "true";
     if (billsIncluded) params.bills_included = "true";
     if (femaleOnly) params.gender_preference = "female";
+    if (nearStation) params.near_station = "true";
     if (instantBook) params.instant_book = "true";
     if (sortBy !== "newest") params.sort = sortBy;
 
     return params;
-  }, [minPrice, maxPrice, adults, children, infants, searchType, userLocation, suburbName, postcode, nearAddress, checkInDate, checkOutDate, furnished, billsIncluded, femaleOnly, instantBook, sortBy]);
+  }, [minPrice, maxPrice, adults, children, infants, searchType, userLocation, suburbName, postcode, nearAddress, checkInDate, checkOutDate, furnished, billsIncluded, femaleOnly, nearStation, instantBook, sortBy]);
 
   // Main search function
   const doSearch = useCallback(async (resetResults = true) => {
@@ -234,7 +240,7 @@ export default function SeekerSearch() {
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
     };
-  }, [furnished, billsIncluded, femaleOnly, instantBook, sortBy]);
+  }, [furnished, billsIncluded, femaleOnly, nearStation, instantBook, sortBy]);
 
   // Load more
   const loadMore = async () => {
@@ -301,7 +307,7 @@ export default function SeekerSearch() {
     );
   };
 
-  const activeFilterCount = [furnished, billsIncluded, femaleOnly, instantBook, minPrice, maxPrice].filter(Boolean).length;
+  const activeFilterCount = [furnished, billsIncluded, femaleOnly, nearStation, instantBook, minPrice, maxPrice].filter(Boolean).length;
 
   const clearAllFilters = () => {
     setMinPrice("");
@@ -309,6 +315,7 @@ export default function SeekerSearch() {
     setFurnished(false);
     setBillsIncluded(false);
     setFemaleOnly(false);
+    setNearStation(false);
     setInstantBook(false);
     setSortBy("newest");
     setSuburbName("");
@@ -675,6 +682,7 @@ export default function SeekerSearch() {
             <FilterToggle active={furnished} onClick={() => setFurnished(!furnished)} label="Furnished" />
             <FilterToggle active={billsIncluded} onClick={() => setBillsIncluded(!billsIncluded)} label="Bills included" />
             <FilterToggle active={femaleOnly} onClick={() => setFemaleOnly(!femaleOnly)} label="Female only" />
+            <FilterToggle active={nearStation} onClick={() => setNearStation(!nearStation)} label="Near station" />
             <FilterToggle active={instantBook} onClick={() => setInstantBook(!instantBook)} label="Instant book" />
             {activeFilterCount > 0 && (
               <button
@@ -713,6 +721,7 @@ export default function SeekerSearch() {
                     <FilterToggle active={furnished} onClick={() => setFurnished(!furnished)} label="Furnished" />
                     <FilterToggle active={billsIncluded} onClick={() => setBillsIncluded(!billsIncluded)} label="Bills included" />
                     <FilterToggle active={femaleOnly} onClick={() => setFemaleOnly(!femaleOnly)} label="Female only" />
+                    <FilterToggle active={nearStation} onClick={() => setNearStation(!nearStation)} label="Near station" />
                     <FilterToggle active={instantBook} onClick={() => setInstantBook(!instantBook)} label="Instant book" />
                   </div>
                   {activeFilterCount > 0 && (
@@ -952,6 +961,15 @@ export default function SeekerSearch() {
                       <p className="text-xs text-slate-600 dark:text-slate-400 line-clamp-2">
                         {listing.description}
                       </p>
+
+                      {listing.stationName && listing.stationWalkMin != null && (
+                        <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400">
+                          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M8 7h8m-8 4h4m4-8H6a2 2 0 00-2 2v14l4-3h10a2 2 0 002-2V5a2 2 0 00-2-2z" />
+                          </svg>
+                          <span className="text-xs font-medium">{listing.stationWalkMin} min to {listing.stationName}</span>
+                        </div>
+                      )}
 
                       <Link
                         href={`/listing/${listing.id}`}

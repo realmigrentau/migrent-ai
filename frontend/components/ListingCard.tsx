@@ -10,6 +10,8 @@ interface ListingCardProps {
   matchScore?: number;
   avgRating?: number;
   reviewCount?: number;
+  stationName?: string;
+  stationWalkMin?: number;
 }
 
 export default function ListingCard({
@@ -21,6 +23,8 @@ export default function ListingCard({
   matchScore,
   avgRating,
   reviewCount,
+  stationName,
+  stationWalkMin,
 }: ListingCardProps) {
   return (
     <motion.div
@@ -47,6 +51,18 @@ export default function ListingCard({
       <p className="mt-3 text-sm text-slate-600 dark:text-slate-300 leading-relaxed line-clamp-2">
         {description}
       </p>
+
+      {/* Station pill */}
+      {stationName && stationWalkMin != null && (
+        <div className="mt-2 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-blue-50 dark:bg-blue-500/10 border border-blue-100 dark:border-blue-500/20">
+          <svg className="w-3.5 h-3.5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M8 7h8m-8 4h4m4-8H6a2 2 0 00-2 2v14l4-3h10a2 2 0 002-2V5a2 2 0 00-2-2z" />
+          </svg>
+          <span className="text-xs font-medium text-blue-700 dark:text-blue-300">
+            {stationWalkMin} min to {stationName}
+          </span>
+        </div>
+      )}
 
       {/* Rating badge + match score */}
       <div className="mt-3 flex items-center gap-3">

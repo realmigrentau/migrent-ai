@@ -2,6 +2,7 @@ import { useState, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import PhotoUploadZone from "./upload/PhotoUploadZone";
 import { UploadablePhoto } from "../hooks/usePhotoUpload";
+import AddressGeocoder from "./forms/AddressGeocoder";
 
 interface ListingFormProps {
   onSubmit: (data: ListingFormData) => void;
@@ -68,6 +69,11 @@ export interface ListingFormData {
   weaponsOnProperty: boolean;
   weaponsExplanation: string;
   otherSafetyDetails: string;
+  // Geocoding
+  latitude: number | null;
+  longitude: number | null;
+  nearestStation: string | null;
+  stationWalkMin: number | null;
 }
 
 const STEPS = ["Basics", "Details", "Hosting", "Photos", "Rules", "Safety"];
@@ -149,6 +155,11 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
     weaponsOnProperty: false,
     weaponsExplanation: "",
     otherSafetyDetails: "",
+    // Geocoding
+    latitude: null,
+    longitude: null,
+    nearestStation: null,
+    stationWalkMin: null,
     ...initialData,
   });
 
@@ -327,7 +338,20 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
               <>
                 <h3 className="text-lg font-bold text-slate-900 dark:text-white">Basics</h3>
 
-                {/* Location */}
+                {/* Address autocomplete with geocoding */}
+                <AddressGeocoder
+                  initialValue={form.suburb ? `${form.suburb}, ${form.postcode}` : ""}
+                  onSelect={(result) => {
+                    update("suburb", result.suburb);
+                    update("postcode", result.postcode);
+                    update("latitude", result.lat);
+                    update("longitude", result.lng);
+                    update("nearestStation", result.nearestStation);
+                    update("stationWalkMin", result.walkMinutes);
+                  }}
+                />
+
+                {/* Manual suburb/postcode override */}
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Suburb</label>

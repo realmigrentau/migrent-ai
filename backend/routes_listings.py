@@ -1,3 +1,5 @@
+import asyncio
+import logging
 from fastapi import APIRouter, HTTPException, Header
 from pydantic import BaseModel
 from typing import Optional
@@ -5,6 +7,9 @@ from models import ListingCreate
 from db import get_supabase, get_supabase_admin, SUPABASE_URL, SUPABASE_ANON_KEY
 from auth_utils import get_current_user
 from supabase import create_client
+from routes_geocode import geocode_and_find_station
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/listings", tags=["listings"])
 
@@ -39,7 +44,7 @@ def derive_city(postcode: int) -> Optional[str]:
 
 
 @router.post("")
-def create_listing(
+async def create_listing(
     listing: ListingCreate,
     authorization: str = Header(...),
 ):
@@ -63,6 +68,12 @@ def create_listing(
         "images": listing.images,
         "owner_id": str(user.id),
     }
+
+    # Add geocoding fields if provided by frontend
+    if listing.latitude is not None:
+        row["latitude"] = listing.latitude
+    if listing.longitude is not None:
+        row["longitude"] = listing.longitude
 
     # Add all extended fields if provided
     extended_fields = {
@@ -115,7 +126,29 @@ def create_listing(
     except Exception as e:
         raise HTTPException(status_code=500, detail="Failed to create listing")
 
-    return res.data[0] if res.data else row
+    created = res.data[0] if res.data else row
+
+    # Auto-geocode if lat/lng not provided by frontend
+    if not row.get("latitude") and created.get("id"):
+        try:
+            geo = await geocode_and_find_station(listing.address)
+            if geo.lat and geo.lng:
+                update_data = {
+                    "latitude": geo.lat,
+                    "longitude": geo.lng,
+                }
+                if geo.formatted_address:
+                    update_data["geocoded_address"] = geo.formatted_address
+                if geo.walk_time_minutes is not None:
+                    update_data["station_distance_min"] = geo.walk_time_minutes
+                if geo.nearest_station:
+                    update_data["nearest_transport"] = f"{geo.nearest_station} - {geo.walk_time_minutes} min walk"
+                sb.table("listings").update(update_data).eq("id", created["id"]).execute()
+                created.update(update_data)
+        except Exception as e:
+            logger.warning(f"Auto-geocode failed for listing {created.get('id')}: {e}")
+
+    return created
 
 
 @router.get("/search")
@@ -135,6 +168,7 @@ def search_listings(
     bills_included: Optional[bool] = None,
     gender_preference: Optional[str] = None,
     instant_book: Optional[bool] = None,
+    near_station: Optional[bool] = None,
     sort: Optional[str] = None,
     limit: int = 20,
     offset: int = 0,
@@ -177,6 +211,10 @@ def search_listings(
     # Gender preference filter
     if gender_preference == "female":
         query = query.eq("gender_preference", "female")
+
+    # Station proximity filter (within 15 min walk)
+    if near_station is True:
+        query = query.lte("station_distance_min", 15)
 
     # Sorting
     if sort == "price_asc":

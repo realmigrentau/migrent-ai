@@ -12,6 +12,7 @@ export interface FilterState {
   furnished: string;
   billsIncluded: string;
   femaleOnly: boolean;
+  nearStation: boolean;
   maxPrice: string;
   minRating: string;
 }
@@ -22,6 +23,7 @@ const defaultFilters: FilterState = {
   furnished: "",
   billsIncluded: "",
   femaleOnly: false,
+  nearStation: false,
   maxPrice: "",
   minRating: "",
 };
@@ -47,6 +49,7 @@ export default function SearchFilters({ onSearch, loading }: SearchFiltersProps)
     filters.furnished,
     filters.billsIncluded,
     filters.femaleOnly ? "yes" : "",
+    filters.nearStation ? "yes" : "",
     filters.maxPrice,
     filters.minRating,
   ].filter(Boolean).length;
@@ -164,6 +167,16 @@ export default function SearchFilters({ onSearch, loading }: SearchFiltersProps)
           Female-only
         </label>
 
+        <label className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={filters.nearStation}
+            onChange={(e) => update("nearStation", e.target.checked)}
+            className="w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-blue-500 focus:ring-blue-500"
+          />
+          Near station
+        </label>
+
         {activeCount > 0 && (
           <button
             onClick={handleReset}
@@ -260,6 +273,16 @@ export default function SearchFilters({ onSearch, loading }: SearchFiltersProps)
                     className="w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-rose-500 focus:ring-rose-500"
                   />
                   Female-only
+                </label>
+
+                <label className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={filters.nearStation}
+                    onChange={(e) => update("nearStation", e.target.checked)}
+                    className="w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-blue-500 focus:ring-blue-500"
+                  />
+                  Near station
                 </label>
 
                 <div className="flex gap-2">

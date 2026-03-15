@@ -77,6 +77,9 @@ class ListingCreate(BaseModel):
     neighbourhood_vibe: Optional[str] = None
     gender_preference: Optional[str] = None
     couples_ok: Optional[bool] = None
+    # Geocoding fields (set by frontend after address autocomplete)
+    latitude: Optional[float] = Field(None, ge=-90, le=90)
+    longitude: Optional[float] = Field(None, ge=-180, le=180)
 
 
 class ListingOut(BaseModel):
