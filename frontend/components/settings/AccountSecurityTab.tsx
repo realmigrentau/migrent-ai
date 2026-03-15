@@ -48,7 +48,7 @@ export default function AccountSecurityTab({
   showMessage,
 }: AccountSecurityTabProps) {
   const [currentPassword, setCurrentPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
+  const [newPw, setNewPw] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPasswords, setShowPasswords] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -74,18 +74,18 @@ export default function AccountSecurityTab({
   };
 
   const handleChangePassword = async () => {
-    if (newPassword !== confirmPassword) {
+    if (newPw !== confirmPassword) {
       showMessage("Passwords do not match", "error");
       return;
     }
-    if (newPassword.length < 6) {
+    if (newPw.length < 6) {
       showMessage("Password must be at least 6 characters", "error");
       return;
     }
-    const ok = await changePassword(newPassword);
+    const ok = await changePassword(newPw);
     if (ok) {
       setCurrentPassword("");
-      setNewPassword("");
+      setNewPw("");
       setConfirmPassword("");
     }
   };
@@ -228,8 +228,8 @@ export default function AccountSecurityTab({
           <input
             type={showPasswords ? "text" : "password"}
             placeholder="New password (min 6 characters)"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
+            value={newPw}
+            onChange={(e) => setNewPw(e.target.value)}
             className="input-field"
           />
           <input
@@ -250,7 +250,7 @@ export default function AccountSecurityTab({
             </button>
             <button
               onClick={handleChangePassword}
-              disabled={saving || !newPassword || !confirmPassword}
+              disabled={saving || !newPw || !confirmPassword}
               className="btn-primary py-2 px-5 rounded-xl text-sm disabled:opacity-50"
             >
               {saving ? "Updating..." : "Change password"}
