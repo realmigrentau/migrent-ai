@@ -149,7 +149,7 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
     noSmoking: true,
     quietHours: "10pm-7am",
     tenantPrefs: "",
-    minStay: "3 months",
+    minStay: "",
     securityCameras: false,
     securityCamerasLocation: "",
     weaponsOnProperty: false,
@@ -782,16 +782,13 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Minimum stay</label>
-                  <select
+                  <input
+                    type="text"
                     value={form.minStay}
                     onChange={(e) => update("minStay", e.target.value)}
+                    placeholder="e.g. 3 months, 6 weeks, flexible"
                     className="input-field"
-                  >
-                    <option value="1 month">1 month</option>
-                    <option value="3 months">3 months</option>
-                    <option value="6 months">6 months</option>
-                    <option value="12 months">12 months</option>
-                  </select>
+                  />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Tenant preferences</label>
