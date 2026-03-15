@@ -1558,3 +1558,60 @@ export async function getOwnerActivity(token: string, limit: number = 10) {
   if (!res.ok) throw new Error(`getOwnerActivity failed: ${res.status}`);
   return await res.json();
 }
+
+// ── Seeker Dashboard ──
+
+export async function getSeekerMetrics(token: string) {
+  const res = await fetch(`${BASE_URL}/seeker/metrics`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  if (!res.ok) throw new Error(`getSeekerMetrics failed: ${res.status}`);
+  return await res.json();
+}
+
+export async function getSeekerBookings(
+  token: string,
+  page: number = 1,
+  perPage: number = 20,
+  status?: string
+) {
+  const params = new URLSearchParams({
+    page: String(page),
+    per_page: String(perPage),
+  });
+  if (status) params.set("status", status);
+
+  const res = await fetch(`${BASE_URL}/seeker/bookings?${params}`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  if (!res.ok) throw new Error(`getSeekerBookings failed: ${res.status}`);
+  return await res.json();
+}
+
+export async function getSeekerWishlist(token: string) {
+  const res = await fetch(`${BASE_URL}/seeker/wishlist`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  if (!res.ok) throw new Error(`getSeekerWishlist failed: ${res.status}`);
+  return await res.json();
+}
+
+export async function getSeekerRecommended(token: string, limit: number = 4) {
+  const res = await fetch(`${BASE_URL}/seeker/recommended?limit=${limit}`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  if (!res.ok) throw new Error(`getSeekerRecommended failed: ${res.status}`);
+  return await res.json();
+}

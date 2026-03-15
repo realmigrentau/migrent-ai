@@ -1,37 +1,37 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { motion } from "framer-motion";
+import {
+  Search,
+  Settings,
+  Heart,
+  Star,
+  ArrowRight,
+} from "lucide-react";
 import DashboardLayout from "../../components/DashboardLayout";
 import { useDashboard } from "../../hooks/useDashboard";
-import ListingCard from "../../components/ListingCard";
-import { getMatches, createVerificationSession } from "../../lib/api";
+import { useSeekerData } from "../../hooks/useSeekerData";
 import { useBookings } from "../../hooks/useBookings";
-import SeekerBookingsTable from "../../components/bookings/SeekerBookingsTable";
+import SeekerMetrics from "../../components/dashboard/SeekerMetrics";
+import DashboardSeekerBookings from "../../components/dashboard/SeekerBookingsTable";
+import WishlistGrid from "../../components/dashboard/WishlistGrid";
+import RecommendedMatches from "../../components/dashboard/RecommendedMatches";
 
-/**
- * Seeker Hub (/dashboard/seeker)
- *
- * The main seeker-specific dashboard with:
- * - Quick search functionality
- * - Recent matches
- * - Profile verification
- * - Seeker-specific tips and info
- */
 export default function SeekerDashboard() {
   const router = useRouter();
   const { role, displayName, session, loading, setRole } = useDashboard();
-
-  const [postcode, setPostcode] = useState("");
-  const [matches, setMatches] = useState<any[]>([]);
-  const [searching, setSearching] = useState(false);
+  const { cancel } = useBookings("seeker");
   const {
+    metrics,
     bookings,
-    loading: loadingBookings,
-    cancel,
-  } = useBookings("seeker");
+    wishlist,
+    recommended,
+    loading: seekerLoading,
+    refetch,
+  } = useSeekerData();
 
-  // Set role to seeker only if user explicitly navigated here with a different role
+  // Set role to seeker if not already
   useEffect(() => {
     if (!loading && session && role && role !== "seeker") {
       setRole("seeker");
@@ -39,159 +39,73 @@ export default function SeekerDashboard() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loading, session]);
 
-  const handleSearch = async () => {
-    if (!postcode || !session) return;
-    setSearching(true);
-    const data = await getMatches(session.access_token, postcode);
-    setMatches(Array.isArray(data) ? data : data?.matches ?? []);
-    setSearching(false);
-  };
-
-  const handleVerify = async () => {
-    if (!session) return;
-    const data = await createVerificationSession(session.access_token, "basic");
-    if (data?.url) {
-      window.location.href = data.url;
-    }
+  const handleCancel = async (bookingId: string) => {
+    const result = await cancel(bookingId);
+    refetch();
+    return result;
   };
 
   return (
     <DashboardLayout>
       <div className="space-y-8">
-        {/* Header */}
-        <div>
-          <h1 className="text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white">
-            Seeker <span className="gradient-text">Hub</span>
-          </h1>
-          <p className="mt-2 text-slate-500 dark:text-slate-400">
-            Find your perfect room and manage your search
-          </p>
-        </div>
-
-        {/* Quick actions */}
-        <section className="grid sm:grid-cols-3 gap-4">
-          {[
-            {
-              href: "/seeker/search",
-              label: "Search Rooms",
-              desc: "Browse all listings",
-              icon: "M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z",
-            },
-            {
-              href: "/seeker/profile",
-              label: "My Profile",
-              desc: "Edit your tenant profile",
-              icon: "M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z",
-            },
-            {
-              href: "/seeker/saved",
-              label: "Saved & Apps",
-              desc: "Your saved rooms",
-              icon: "M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z",
-            },
-          ].map((card) => (
-            <motion.a
-              key={card.href}
-              href={card.href}
-              whileHover={{ y: -3, scale: 1.01 }}
-              transition={{ duration: 0.15 }}
-              className="card p-5 rounded-2xl hover:shadow-md dark:hover:shadow-2xl group cursor-pointer block"
-            >
-              <svg
-                className="w-8 h-8 text-rose-500 mb-3 group-hover:scale-110 transition-transform"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={1.5}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d={card.icon}
-                />
-              </svg>
-              <h3 className="font-bold text-slate-900 dark:text-white text-sm">
-                {card.label}
-              </h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                {card.desc}
-              </p>
-            </motion.a>
-          ))}
-        </section>
-
-        {/* Quick search */}
-        <section>
-          <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-4">
-            Quick Search
-          </h2>
-          <div className="card p-6 rounded-2xl">
-            <div className="flex flex-col sm:flex-row gap-3">
-              <input
-                type="text"
-                placeholder="Enter postcode (e.g. 2000)"
-                value={postcode}
-                onChange={(e) => setPostcode(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-                className="input-field flex-1"
-              />
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={handleSearch}
-                disabled={searching || !postcode}
-                className="btn-primary py-3 px-6 rounded-xl text-sm disabled:opacity-50 shrink-0"
-              >
-                {searching ? (
-                  <span className="flex items-center gap-2">
-                    <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    Searching...
-                  </span>
-                ) : (
-                  "Find Matches"
-                )}
-              </motion.button>
-            </div>
-            <p className="text-xs text-slate-400 dark:text-slate-500 mt-3">
-              Enter an Australian postcode to find rooms in that area
+        {/* 1. Welcome Banner */}
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="glass-card p-6 md:p-8 relative overflow-hidden"
+        >
+          <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-rose-500/10 to-indigo-500/10 rounded-full -translate-y-1/2 translate-x-1/2" />
+          <div className="relative">
+            <h1 className="text-2xl md:text-3xl font-black tracking-tight text-slate-900 dark:text-white">
+              Hi {displayName || "there"}{" "}
+              <span className="inline-block animate-pulse">&#128075;</span>{" "}
+              <span className="gradient-text">Welcome back</span>
+            </h1>
+            <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
+              {metrics ? (
+                <>
+                  {metrics.recommended > 0 && (
+                    <span className="font-medium text-indigo-500">
+                      {metrics.recommended} matches waiting
+                    </span>
+                  )}
+                  {metrics.recommended > 0 && metrics.pending_requests > 0 && (
+                    <span> | </span>
+                  )}
+                  {metrics.pending_requests > 0 && (
+                    <span className="font-medium text-amber-500">
+                      {metrics.pending_requests} booking request
+                      {metrics.pending_requests !== 1 ? "s" : ""} pending
+                    </span>
+                  )}
+                  {!metrics.recommended && !metrics.pending_requests && (
+                    <span>Find your perfect room and manage your search</span>
+                  )}
+                </>
+              ) : (
+                "Find your perfect room and manage your search"
+              )}
             </p>
+
+            {/* Quick search bar */}
+            <div className="mt-4 max-w-md">
+              <button
+                onClick={() => router.push("/seeker/search")}
+                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-400 hover:border-rose-300 dark:hover:border-rose-500/30 transition-colors text-left"
+              >
+                <Search className="w-4 h-4" />
+                <span className="text-sm">Search rooms by suburb or postcode...</span>
+              </button>
+            </div>
           </div>
+        </motion.div>
+
+        {/* 2. Metrics Row */}
+        <section>
+          <SeekerMetrics metrics={metrics} loading={seekerLoading} />
         </section>
 
-        {/* Search results */}
-        {matches.length > 0 && (
-          <section>
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold text-slate-900 dark:text-white">
-                Matches ({matches.length})
-              </h2>
-              <Link
-                href="/seeker/search"
-                className="text-sm text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 font-medium"
-              >
-                View all
-              </Link>
-            </div>
-            <div className="grid sm:grid-cols-2 gap-4">
-              {matches.slice(0, 4).map((m: any, i: number) => {
-                const l = m.listing || m;
-                return (
-                  <ListingCard
-                    key={i}
-                    address={l.address}
-                    city={l.city}
-                    postcode={l.postcode}
-                    weeklyPrice={l.weekly_price ?? l.weeklyPrice}
-                    description={l.description}
-                    matchScore={m.match_score ?? m.matchScore}
-                  />
-                );
-              })}
-            </div>
-          </section>
-        )}
-
-        {/* My Bookings */}
+        {/* 3. Bookings Section */}
         <section>
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-bold text-slate-900 dark:text-white">
@@ -199,79 +113,112 @@ export default function SeekerDashboard() {
             </h2>
             {bookings.length > 0 && (
               <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400">
-                {bookings.filter((b) => ["PENDING_OWNER", "OWNER_ACCEPTED"].includes(b.status)).length} active
+                {
+                  bookings.filter((b) =>
+                    ["PENDING_OWNER", "OWNER_ACCEPTED"].includes(b.status)
+                  ).length
+                }{" "}
+                active
               </span>
             )}
           </div>
-          <SeekerBookingsTable
+          <DashboardSeekerBookings
             bookings={bookings}
-            loading={loadingBookings}
-            onCancel={cancel}
+            loading={seekerLoading}
+            onCancel={handleCancel}
           />
         </section>
 
-        {/* Why MigRent */}
+        {/* 4. Saved Listings (Wishlist) */}
         <section>
-          <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-3">
-            Why use MigRent as a seeker
-          </h2>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mb-4 leading-relaxed">
-            MigRent is built for new migrants, students, and professionals. It
-            reduces the noise of random classifieds and offers optional
-            verification and clear rules so owners can trust you, even without
-            Australian rental history.
-          </p>
-          <div className="grid sm:grid-cols-2 gap-3">
-            {[
-              "Faster discovery and safer options vs random classifieds.",
-              "Built for new arrivals with limited rental history.",
-              "Verification and trust signals can help you stand out.",
-              "Completing matches on MigRent builds a stronger profile.",
-            ].map((text, i) => (
-              <div
-                key={i}
-                className="flex gap-2 items-start text-sm text-slate-600 dark:text-slate-300"
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+              <Heart className="w-5 h-5 text-rose-500" />
+              Saved Listings
+            </h2>
+            {wishlist.length > 0 && (
+              <Link
+                href="/seeker/wishlist"
+                className="text-sm text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 font-medium flex items-center gap-1"
               >
-                <span className="text-rose-500 mt-0.5 shrink-0">&#x2713;</span>
-                {text}
-              </div>
-            ))}
+                View all ({wishlist.length})
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            )}
           </div>
+          <WishlistGrid listings={wishlist} loading={seekerLoading} />
         </section>
 
-        {/* Profile verification */}
-        <section className="card p-6 rounded-2xl">
-          <div className="flex items-start gap-4">
-            <div className="w-12 h-12 rounded-xl bg-emerald-100 dark:bg-emerald-500/20 flex items-center justify-center shrink-0">
-              <svg
-                className="w-6 h-6 text-emerald-600 dark:text-emerald-400"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={1.5}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
-                />
-              </svg>
-            </div>
-            <div className="flex-1">
-              <h3 className="font-bold text-slate-900 dark:text-white mb-1">
-                Profile Verification
-              </h3>
-              <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">
-                Verification can help owners trust you more. It is optional, but
-                recommended. Complete a quick ID check via Stripe.
+        {/* 5. Recommended Matches */}
+        <section>
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                <Star className="w-5 h-5 text-indigo-500" />
+                Perfect for You
+              </h2>
+              <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
+                AI-suggested based on your preferences
               </p>
-              <button
-                onClick={handleVerify}
-                className="btn-primary py-2.5 px-5 rounded-xl text-sm hover:scale-[1.02] active:scale-[0.98] transition-transform"
-              >
-                Verify Profile
-              </button>
             </div>
+          </div>
+          <RecommendedMatches listings={recommended} loading={seekerLoading} />
+        </section>
+
+        {/* 6. Quick Actions */}
+        <section>
+          <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-4">
+            Quick Actions
+          </h2>
+          <div className="grid sm:grid-cols-3 gap-3">
+            {[
+              {
+                href: "/seeker/search",
+                label: "Find New Rooms",
+                desc: "Browse all available listings",
+                icon: <Search className="w-5 h-5" />,
+                color: "text-rose-500",
+                bg: "bg-rose-100 dark:bg-rose-500/20",
+              },
+              {
+                href: "/seeker/wishlist",
+                label: "Saved Searches",
+                desc: "Your collections and saved rooms",
+                icon: <Heart className="w-5 h-5" />,
+                color: "text-indigo-500",
+                bg: "bg-indigo-100 dark:bg-indigo-500/20",
+              },
+              {
+                href: "/account/settings",
+                label: "Settings",
+                desc: "Profile, verification, preferences",
+                icon: <Settings className="w-5 h-5" />,
+                color: "text-emerald-500",
+                bg: "bg-emerald-100 dark:bg-emerald-500/20",
+              },
+            ].map((action) => (
+              <motion.div
+                key={action.href}
+                whileHover={{ y: -3, scale: 1.01 }}
+                transition={{ duration: 0.15 }}
+              >
+                <Link href={action.href}>
+                  <div className="card p-5 rounded-2xl hover:shadow-md dark:hover:shadow-2xl group cursor-pointer">
+                    <div
+                      className={`w-10 h-10 rounded-xl ${action.bg} ${action.color} flex items-center justify-center mb-3 group-hover:scale-110 transition-transform`}
+                    >
+                      {action.icon}
+                    </div>
+                    <h3 className="font-bold text-slate-900 dark:text-white text-sm">
+                      {action.label}
+                    </h3>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                      {action.desc}
+                    </p>
+                  </div>
+                </Link>
+              </motion.div>
+            ))}
           </div>
         </section>
 
