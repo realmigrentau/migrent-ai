@@ -185,13 +185,13 @@ export function useSettingsData() {
       const {
         data: { user: authUser },
       } = await supabase.auth.getUser();
-      if (authUser?.app_metadata?.providers?.includes("google")) {
-        setGoogleConnected(true);
-      }
-      // Check if user is Google-only (no email/password login)
       const providers = authUser?.app_metadata?.providers || [];
       const provider = authUser?.app_metadata?.provider || "email";
-      if (provider === "google" && !providers.includes("email")) {
+      const identityProviders = (authUser?.identities || []).map((i: any) => i.provider);
+      const usesGoogle = providers.includes("google") || provider === "google" || identityProviders.includes("google");
+
+      if (usesGoogle) {
+        setGoogleConnected(true);
         setIsGoogleOnlyUser(true);
         setHasPassword(false);
       }
