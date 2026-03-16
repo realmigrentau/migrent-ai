@@ -1615,3 +1615,23 @@ export async function getSeekerRecommended(token: string, limit: number = 4) {
   if (!res.ok) throw new Error(`getSeekerRecommended failed: ${res.status}`);
   return await res.json();
 }
+
+/**
+ * Get suburb stats by slug (public, no auth).
+ * GET /suburb/{slug}/stats
+ */
+export async function getSuburbStats(slug: string) {
+  const res = await fetch(`${BASE_URL}/suburb/${encodeURIComponent(slug)}/stats`);
+  if (!res.ok) throw new Error(`getSuburbStats failed: ${res.status}`);
+  return await res.json();
+}
+
+/**
+ * List all suburbs (public, no auth).
+ * GET /suburb/
+ */
+export async function listSuburbs() {
+  const res = await fetch(`${BASE_URL}/suburb/`);
+  if (!res.ok) throw new Error(`listSuburbs failed: ${res.status}`);
+  return await res.json();
+}

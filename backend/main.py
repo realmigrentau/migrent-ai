@@ -28,6 +28,7 @@ from routes_bookings import router as bookings_router
 from routes_geocode import router as geocode_router
 from routes_owner import router as owner_router
 from routes_seeker import router as seeker_router
+from routes_suburbs import router as suburbs_router
 
 # ── Startup validation ──────────────────────────────────────
 REQUIRED_ENV = ["SUPABASE_URL", "SUPABASE_ANON_KEY", "STRIPE_SECRET_KEY", "STRIPE_WEBHOOK_SECRET"]
@@ -87,6 +88,7 @@ app.include_router(bookings_router)
 app.include_router(geocode_router)
 app.include_router(owner_router)
 app.include_router(seeker_router)
+app.include_router(suburbs_router)
 app.include_router(webhook_router)
 
 # Note: each router defines its own prefix (/auth, /listings, /matches, /deals)
