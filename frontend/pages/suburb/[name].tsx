@@ -247,13 +247,15 @@ export default function SuburbPage() {
             <div className="flex flex-wrap justify-center gap-4">
               <Link
                 href="/auth/register"
-                className="inline-flex items-center px-8 py-3 bg-white text-teal-700 font-semibold rounded-xl hover:bg-teal-50 transition-colors"
+                className="inline-flex items-center px-8 py-3 bg-white font-semibold rounded-xl hover:bg-teal-50 transition-colors"
+                style={{ color: "#0f766e" }}
               >
                 Sign Up Free
               </Link>
               <Link
                 href={`/listings?suburb=${encodeURIComponent(suburb.name)}`}
-                className="inline-flex items-center px-8 py-3 border-2 border-white/30 text-white font-semibold rounded-xl hover:bg-white/10 transition-colors"
+                className="inline-flex items-center px-8 py-3 border-2 border-white/30 font-semibold rounded-xl hover:bg-white/10 transition-colors"
+                style={{ color: "#ffffff" }}
               >
                 Browse Rooms
               </Link>

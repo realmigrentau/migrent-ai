@@ -604,6 +604,12 @@
       "desc": "Moving to a new country is stressful enough. Our multilingual support team is available around the clock via in-app chat to help with any issues — from booking problems to safety concerns.",
       "bullets": ["In-app live chat", "Multilingual agents", "Emergency escalation"]
     },
+    "suburbs": {
+      "title": "Suburb Reports",
+      "navDesc": "Data-rich suburb guides for renters",
+      "desc": "Explore detailed suburb profiles with rent data, safety scores, transport info, demographics, and liveability insights - everything you need to choose the right area.",
+      "bullets": ["Median rent and vacancy data", "Safety scores and demographics", "Transport and commute times", "Liveability pros and cons"]
+    },
     "cta": {
       "title": "Ready to get started?",
       "subtitle": "Join thousands of migrants and owners already using MigRent AI.",

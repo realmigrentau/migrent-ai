@@ -14,6 +14,7 @@ import {
   ShieldCheck,
   User,
   Briefcase,
+  Map,
 } from "lucide-react";
 
 interface SeekerViewProps {
@@ -146,6 +147,16 @@ export default function SeekerView({ loading, profile }: SeekerViewProps) {
           <Filter className="w-4 h-4" />
           Saved Filters
         </motion.button>
+        <Link href="/suburb/kellyville">
+          <motion.span
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
+            className="inline-flex items-center gap-2 bg-teal-50 dark:bg-teal-500/10 hover:bg-teal-100 dark:hover:bg-teal-500/20 text-teal-700 dark:text-teal-400 font-semibold px-4 py-2.5 rounded-xl text-sm transition-colors cursor-pointer"
+          >
+            <Map className="w-4 h-4" />
+            Suburb Reports
+          </motion.span>
+        </Link>
       </div>
 
       {/* Smart recommendations based on profile */}

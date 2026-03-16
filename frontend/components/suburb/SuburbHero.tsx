@@ -70,13 +70,15 @@ export default function SuburbHero({
         <div className="flex flex-wrap gap-4">
           <a
             href="#listings"
-            className="inline-flex items-center px-6 py-3 bg-white text-teal-700 font-semibold rounded-xl hover:bg-teal-50 transition-colors"
+            className="inline-flex items-center px-6 py-3 bg-white font-semibold rounded-xl hover:bg-teal-50 transition-colors"
+            style={{ color: "#0f766e" }}
           >
             View {listingsCount} Available Rooms
           </a>
           <a
             href="#stats"
-            className="inline-flex items-center px-6 py-3 border-2 border-white/30 text-white font-semibold rounded-xl hover:bg-white/10 transition-colors"
+            className="inline-flex items-center px-6 py-3 border-2 border-white/30 font-semibold rounded-xl hover:bg-white/10 transition-colors"
+            style={{ color: "#ffffff" }}
           >
             Suburb Stats
           </a>

@@ -208,6 +208,38 @@ function MockSupport() {
   );
 }
 
+function MockSuburbReport() {
+  return (
+    <div className="w-full h-full flex flex-col gap-3 p-6">
+      <div className="text-white/80 text-xs font-semibold uppercase tracking-wider mb-1">Kellyville Report</div>
+      <div className="grid grid-cols-2 gap-2">
+        {[
+          { label: "Median Rent", val: "$245/wk" },
+          { label: "Vacancy", val: "2.1%" },
+          { label: "Safety", val: "8.2/10" },
+          { label: "Migrant %", val: "28%" },
+        ].map((s) => (
+          <div key={s.label} className="bg-white/10 backdrop-blur-sm rounded-lg p-2.5 text-center">
+            <div className="text-white/90 text-sm font-bold">{s.val}</div>
+            <div className="text-white/50 text-[10px]">{s.label}</div>
+          </div>
+        ))}
+      </div>
+      <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 mt-1">
+        <div className="flex items-center gap-2 mb-2">
+          <div className="w-2 h-2 rounded-full bg-green-400" />
+          <span className="text-white/70 text-xs">Near Kellyville Station</span>
+        </div>
+        <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
+          <div className="h-full w-3/4 bg-gradient-to-r from-teal-400 to-emerald-400 rounded-full" />
+        </div>
+        <div className="text-white/40 text-[10px] mt-1">Transport Score: 7.8/10</div>
+      </div>
+      <div className="text-white/50 text-xs">47 verified rooms available</div>
+    </div>
+  );
+}
+
 const features = [
   {
     id: "ai-matching",
@@ -287,6 +319,20 @@ const features = [
     subline: "Help in your language, any time of day",
     MockUI: MockSupport,
     href: "/help",
+  },
+  {
+    id: "suburb-reports",
+    titleKey: "features.suburbs.title",
+    descKey: "features.suburbs.desc",
+    bulletsKey: "features.suburbs.bullets",
+    icon: "M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z",
+    color: "from-teal-500 to-emerald-500",
+    iconColor: "text-teal-500",
+    bgColor: "bg-teal-50 dark:bg-teal-500/10",
+    headline: "Data-rich suburb reports",
+    subline: "Know your suburb before you move",
+    MockUI: MockSuburbReport,
+    href: "/suburb/kellyville",
   },
 ];
 

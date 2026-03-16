@@ -99,7 +99,8 @@ export default function StationAutocomplete({
             if (suggestions.length > 0) setShowDropdown(true);
           }}
           placeholder={placeholder}
-          className="input-field pl-9 pr-8"
+          className="input-field"
+          style={{ paddingLeft: "2.5rem", paddingRight: "2rem" }}
         />
         {query && (
           <button

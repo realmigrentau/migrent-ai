@@ -79,6 +79,14 @@ export const navItems: NavItem[] = [
           descKey: "features.support.navDesc",
           color: "text-cyan-500",
         },
+        {
+          href: "/suburb/kellyville",
+          iconPath:
+            "M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z",
+          titleKey: "features.suburbs.title",
+          descKey: "features.suburbs.navDesc",
+          color: "text-teal-500",
+        },
       ],
     ],
   },
