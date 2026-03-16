@@ -1635,3 +1635,83 @@ export async function listSuburbs() {
   if (!res.ok) throw new Error(`listSuburbs failed: ${res.status}`);
   return await res.json();
 }
+
+// ── Stations ──────────────────────────────────────────────
+
+export interface Station {
+  id: string;
+  name: string;
+  lat: number;
+  lng: number;
+  city: string;
+  line?: string;
+}
+
+export interface NearbyStation extends Station {
+  distance_km: number;
+  walk_minutes: number;
+}
+
+/**
+ * Autocomplete station names.
+ * GET /stations/search?q=...&city=...
+ */
+export async function searchStations(
+  q: string,
+  city?: string,
+  limit = 10
+): Promise<Station[]> {
+  try {
+    const params = new URLSearchParams({ q, limit: String(limit) });
+    if (city) params.set("city", city);
+    const res = await fetch(`${BASE_URL}/stations/search?${params}`);
+    if (!res.ok) return [];
+    return await res.json();
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * Find stations near a lat/lng point.
+ * GET /stations/nearby?lat=X&lng=Y
+ */
+export async function nearbyStations(
+  lat: number,
+  lng: number,
+  radiusKm = 3,
+  limit = 5
+): Promise<NearbyStation[]> {
+  try {
+    const params = new URLSearchParams({
+      lat: String(lat),
+      lng: String(lng),
+      radius_km: String(radiusKm),
+      limit: String(limit),
+    });
+    const res = await fetch(`${BASE_URL}/stations/nearby?${params}`);
+    if (!res.ok) return [];
+    return await res.json();
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * List all stations (optionally filtered by city).
+ * GET /stations?city=Sydney
+ */
+export async function listStations(city?: string): Promise<Station[]> {
+  try {
+    const params = new URLSearchParams();
+    if (city) params.set("city", city);
+    const url = params.toString()
+      ? `${BASE_URL}/stations?${params}`
+      : `${BASE_URL}/stations`;
+    const res = await fetch(url);
+    if (!res.ok) return [];
+    return await res.json();
+  } catch {
+    return [];
+  }
+}

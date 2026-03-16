@@ -12,9 +12,17 @@ interface Listing {
   lng: number;
 }
 
+interface StationPin {
+  name: string;
+  lat: number;
+  lng: number;
+  line?: string;
+}
+
 interface ListingsMapProps {
   listings: Listing[];
   isDark: boolean;
+  stations?: StationPin[];
 }
 
 const MAPTILER_KEY = "eiixMn3GOYAD8j7Rfnvz";
@@ -24,10 +32,11 @@ function getStyleUrl(dark: boolean) {
   return `https://api.maptiler.com/maps/${style}/style.json?key=${MAPTILER_KEY}`;
 }
 
-export default function ListingsMap({ listings, isDark }: ListingsMapProps) {
+export default function ListingsMap({ listings, isDark, stations = [] }: ListingsMapProps) {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<maplibregl.Map | null>(null);
   const markersRef = useRef<maplibregl.Marker[]>([]);
+  const stationMarkersRef = useRef<maplibregl.Marker[]>([]);
   const mapReady = useRef(false);
 
   const addMarkers = (listingsToAdd: Listing[]) => {
@@ -72,6 +81,42 @@ export default function ListingsMap({ listings, isDark }: ListingsMapProps) {
     });
   };
 
+  const addStationMarkers = (stationsToAdd: StationPin[]) => {
+    if (!map.current) return;
+
+    stationMarkersRef.current.forEach((m) => m.remove());
+    stationMarkersRef.current = [];
+
+    stationsToAdd.forEach((station) => {
+      const el = document.createElement("div");
+      el.innerHTML = `<div style="width:24px;height:24px;border-radius:6px;background:#3b82f6;border:2px solid white;box-shadow:0 1px 4px rgba(0,0,0,0.25);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform 0.15s">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="1"><path d="M8 7h8m-8 4h4m4-8H6a2 2 0 00-2 2v14l4-3h10a2 2 0 002-2V5a2 2 0 00-2-2z"/></svg>
+      </div>`;
+
+      el.addEventListener("mouseenter", () => {
+        (el.firstElementChild as HTMLElement).style.transform = "scale(1.2)";
+      });
+      el.addEventListener("mouseleave", () => {
+        (el.firstElementChild as HTMLElement).style.transform = "scale(1)";
+      });
+
+      const popup = new maplibregl.Popup({ offset: 20, closeButton: false })
+        .setHTML(`
+          <div style="padding:4px;font-family:Inter,system-ui,sans-serif">
+            <p style="font-weight:700;font-size:12px;color:#3b82f6;margin:0">${station.name} Station</p>
+            ${station.line ? `<p style="font-size:10px;color:#64748b;margin:2px 0 0">${station.line}</p>` : ""}
+          </div>
+        `);
+
+      const marker = new maplibregl.Marker({ element: el })
+        .setLngLat([station.lng, station.lat])
+        .setPopup(popup)
+        .addTo(map.current!);
+
+      stationMarkersRef.current.push(marker);
+    });
+  };
+
   // Initialize map - recreate when theme changes to swap tile style
   useEffect(() => {
     if (!mapContainer.current) return;
@@ -83,6 +128,8 @@ export default function ListingsMap({ listings, isDark }: ListingsMapProps) {
     // Clean up previous map instance
     markersRef.current.forEach((m) => m.remove());
     markersRef.current = [];
+    stationMarkersRef.current.forEach((m) => m.remove());
+    stationMarkersRef.current = [];
     map.current?.remove();
     map.current = null;
     mapReady.current = false;
@@ -99,6 +146,7 @@ export default function ListingsMap({ listings, isDark }: ListingsMapProps) {
     map.current.on("load", () => {
       mapReady.current = true;
       addMarkers(listings);
+      addStationMarkers(stations);
     });
 
     return () => {
@@ -113,6 +161,12 @@ export default function ListingsMap({ listings, isDark }: ListingsMapProps) {
     if (!map.current || !mapReady.current) return;
     addMarkers(listings);
   }, [listings]);
+
+  // Update station markers when stations change
+  useEffect(() => {
+    if (!map.current || !mapReady.current) return;
+    addStationMarkers(stations);
+  }, [stations]);
 
   return <div ref={mapContainer} style={{ width: "100%", height: "100%" }} />;
 }

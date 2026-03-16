@@ -169,6 +169,8 @@ def search_listings(
     gender_preference: Optional[str] = None,
     instant_book: Optional[bool] = None,
     near_station: Optional[bool] = None,
+    max_station_min: Optional[int] = None,
+    station_name: Optional[str] = None,
     sort: Optional[str] = None,
     limit: int = 20,
     offset: int = 0,
@@ -212,9 +214,15 @@ def search_listings(
     if gender_preference == "female":
         query = query.eq("gender_preference", "female")
 
-    # Station proximity filter (within 15 min walk)
-    if near_station is True:
+    # Station proximity filter
+    if max_station_min is not None:
+        query = query.lte("station_distance_min", max_station_min)
+    elif near_station is True:
         query = query.lte("station_distance_min", 15)
+
+    # Filter by station name (partial match on nearest_transport)
+    if station_name:
+        query = query.ilike("nearest_transport", f"%{station_name}%")
 
     # Sorting
     if sort == "price_asc":

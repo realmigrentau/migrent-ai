@@ -4,7 +4,8 @@ import dynamic from "next/dynamic";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "../../hooks/useAuth";
 import { useTheme } from "../../hooks/useTheme";
-import { updateMyProfile, searchListings } from "../../lib/api";
+import { updateMyProfile, searchListings, Station, nearbyStations, NearbyStation } from "../../lib/api";
+import StationAutocomplete from "../../components/search/StationAutocomplete";
 
 const ListingsMap = dynamic(() => import("../../components/ListingsMap"), {
   ssr: false,
@@ -119,6 +120,11 @@ export default function SeekerSearch() {
   const [nearStation, setNearStation] = useState(false);
   const [instantBook, setInstantBook] = useState(false);
 
+  // Station search
+  const [selectedStation, setSelectedStation] = useState<Station | null>(null);
+  const [stationDistanceFilter, setStationDistanceFilter] = useState<"any" | "15" | "30">("any");
+  const [mapStations, setMapStations] = useState<{ name: string; lat: number; lng: number; line?: string }[]>([]);
+
   // Sort
   const [sortBy, setSortBy] = useState("newest");
 
@@ -183,12 +189,21 @@ export default function SeekerSearch() {
     if (furnished) params.furnished = "true";
     if (billsIncluded) params.bills_included = "true";
     if (femaleOnly) params.gender_preference = "female";
-    if (nearStation) params.near_station = "true";
     if (instantBook) params.instant_book = "true";
     if (sortBy !== "newest") params.sort = sortBy;
 
+    // Station filters
+    if (selectedStation) {
+      params.station_name = selectedStation.name;
+    }
+    if (stationDistanceFilter !== "any") {
+      params.max_station_min = stationDistanceFilter;
+    } else if (nearStation) {
+      params.near_station = "true";
+    }
+
     return params;
-  }, [minPrice, maxPrice, adults, children, infants, searchType, userLocation, suburbName, postcode, nearAddress, checkInDate, checkOutDate, furnished, billsIncluded, femaleOnly, nearStation, instantBook, sortBy]);
+  }, [minPrice, maxPrice, adults, children, infants, searchType, userLocation, suburbName, postcode, nearAddress, checkInDate, checkOutDate, furnished, billsIncluded, femaleOnly, nearStation, instantBook, sortBy, selectedStation, stationDistanceFilter]);
 
   // Main search function
   const doSearch = useCallback(async (resetResults = true) => {
@@ -230,6 +245,17 @@ export default function SeekerSearch() {
     doSearch(true);
   }, []);
 
+  // Fetch nearby stations for map when station is selected
+  useEffect(() => {
+    if (selectedStation) {
+      nearbyStations(selectedStation.lat, selectedStation.lng, 10, 20).then((nearby) => {
+        setMapStations(nearby.map((s) => ({ name: s.name, lat: s.lat, lng: s.lng, line: s.line })));
+      });
+    } else {
+      setMapStations([]);
+    }
+  }, [selectedStation]);
+
   // Debounced auto-search when filters change
   useEffect(() => {
     if (!searched) return;
@@ -240,7 +266,7 @@ export default function SeekerSearch() {
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
     };
-  }, [furnished, billsIncluded, femaleOnly, nearStation, instantBook, sortBy]);
+  }, [furnished, billsIncluded, femaleOnly, nearStation, instantBook, sortBy, selectedStation, stationDistanceFilter]);
 
   // Load more
   const loadMore = async () => {
@@ -307,7 +333,7 @@ export default function SeekerSearch() {
     );
   };
 
-  const activeFilterCount = [furnished, billsIncluded, femaleOnly, nearStation, instantBook, minPrice, maxPrice].filter(Boolean).length;
+  const activeFilterCount = [furnished, billsIncluded, femaleOnly, nearStation, instantBook, minPrice, maxPrice, selectedStation, stationDistanceFilter !== "any"].filter(Boolean).length;
 
   const clearAllFilters = () => {
     setMinPrice("");
@@ -317,6 +343,8 @@ export default function SeekerSearch() {
     setFemaleOnly(false);
     setNearStation(false);
     setInstantBook(false);
+    setSelectedStation(null);
+    setStationDistanceFilter("any");
     setSortBy("newest");
     setSuburbName("");
     setPostcode("");
@@ -566,6 +594,44 @@ export default function SeekerSearch() {
               placeholder="Enter address to search nearby"
               className="input-field"
             />
+          )}
+        </div>
+
+        {/* Station search */}
+        <div>
+          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+            Near a train station
+          </label>
+          <StationAutocomplete
+            value={selectedStation?.name || ""}
+            onSelect={(station) => {
+              setSelectedStation(station);
+              if (station) setStationDistanceFilter("15");
+            }}
+            onClear={() => {
+              setSelectedStation(null);
+              setStationDistanceFilter("any");
+            }}
+          />
+          {(selectedStation || stationDistanceFilter !== "any") && (
+            <div className="mt-2 flex flex-wrap gap-2">
+              <span className="text-xs text-slate-500 dark:text-slate-400 self-center mr-1">Walking distance:</span>
+              {(["15", "30", "any"] as const).map((val) => (
+                <button
+                  key={val}
+                  onClick={() => setStationDistanceFilter(val)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                    stationDistanceFilter === val
+                      ? val === "15"
+                        ? "bg-emerald-500 text-white shadow-sm"
+                        : "bg-rose-500 text-white shadow-sm"
+                      : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"
+                  }`}
+                >
+                  {val === "15" ? "< 15 min walk" : val === "30" ? "< 30 min walk" : "Any distance"}
+                </button>
+              ))}
+            </div>
           )}
         </div>
 
@@ -963,11 +1029,15 @@ export default function SeekerSearch() {
                       </p>
 
                       {listing.stationName && listing.stationWalkMin != null && (
-                        <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400">
+                        <div className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full ${
+                          listing.stationWalkMin <= 15
+                            ? "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+                            : "bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400"
+                        }`}>
                           <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M8 7h8m-8 4h4m4-8H6a2 2 0 00-2 2v14l4-3h10a2 2 0 002-2V5a2 2 0 00-2-2z" />
                           </svg>
-                          <span className="text-xs font-medium">{listing.stationWalkMin} min to {listing.stationName}</span>
+                          <span className="text-xs font-medium">{listing.stationWalkMin} min walk to {listing.stationName}</span>
                         </div>
                       )}
 
@@ -1012,7 +1082,7 @@ export default function SeekerSearch() {
           <div className="lg:col-span-2">
             <div className="sticky top-24 space-y-4">
               <div className="card rounded-2xl overflow-hidden aspect-[4/5]">
-                <ListingsMap listings={results} isDark={theme === "dark"} />
+                <ListingsMap listings={results} isDark={theme === "dark"} stations={mapStations} />
               </div>
 
               {saved.size > 0 && (
