@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "../../hooks/useAuth";
 import { useTheme } from "../../hooks/useTheme";
-import { updateMyProfile, searchListings, Station, nearbyStations, NearbyStation } from "../../lib/api";
+import { updateMyProfile, searchListings, Station, nearbyStations, NearbyStation, type VisaType } from "../../lib/api";
 import StationAutocomplete from "../../components/search/StationAutocomplete";
 
 const ListingsMap = dynamic(() => import("../../components/ListingsMap"), {
@@ -120,6 +120,9 @@ export default function SeekerSearch() {
   const [nearStation, setNearStation] = useState(false);
   const [instantBook, setInstantBook] = useState(false);
 
+  // Visa filter
+  const [visaFilter, setVisaFilter] = useState("");
+
   // Station search
   const [selectedStation, setSelectedStation] = useState<Station | null>(null);
   const [stationDistanceFilter, setStationDistanceFilter] = useState<"any" | "15" | "30">("any");
@@ -190,6 +193,7 @@ export default function SeekerSearch() {
     if (billsIncluded) params.bills_included = "true";
     if (femaleOnly) params.gender_preference = "female";
     if (instantBook) params.instant_book = "true";
+    if (visaFilter) params.visa_type = visaFilter;
     if (sortBy !== "newest") params.sort = sortBy;
 
     // Station filters
@@ -266,7 +270,7 @@ export default function SeekerSearch() {
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
     };
-  }, [furnished, billsIncluded, femaleOnly, nearStation, instantBook, sortBy, selectedStation, stationDistanceFilter]);
+  }, [furnished, billsIncluded, femaleOnly, nearStation, instantBook, sortBy, selectedStation, stationDistanceFilter, visaFilter]);
 
   // Load more
   const loadMore = async () => {
@@ -333,7 +337,7 @@ export default function SeekerSearch() {
     );
   };
 
-  const activeFilterCount = [furnished, billsIncluded, femaleOnly, nearStation, instantBook, minPrice, maxPrice, selectedStation, stationDistanceFilter !== "any"].filter(Boolean).length;
+  const activeFilterCount = [furnished, billsIncluded, femaleOnly, nearStation, instantBook, minPrice, maxPrice, selectedStation, stationDistanceFilter !== "any", visaFilter].filter(Boolean).length;
 
   const clearAllFilters = () => {
     setMinPrice("");
@@ -345,6 +349,7 @@ export default function SeekerSearch() {
     setInstantBook(false);
     setSelectedStation(null);
     setStationDistanceFilter("any");
+    setVisaFilter("");
     setSortBy("newest");
     setSuburbName("");
     setPostcode("");
@@ -737,6 +742,34 @@ export default function SeekerSearch() {
           <GuestCounter label="Children (2-17)" value={children} onDec={() => setChildren(Math.max(0, children - 1))} onInc={() => setChildren(children + 1)} />
           <GuestCounter label="Infants (0-2)" value={infants} onDec={() => setInfants(Math.max(0, infants - 1))} onInc={() => setInfants(infants + 1)} />
           <GuestCounter label="Pets" value={pets} onDec={() => setPets(Math.max(0, pets - 1))} onInc={() => setPets(pets + 1)} />
+        </div>
+
+        {/* Visa filter */}
+        <div>
+          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+            Visa type (for personalized results)
+          </label>
+          <div className="flex flex-wrap gap-2">
+            {[
+              { id: "", label: "All" },
+              { id: "student_500", label: "Student 500" },
+              { id: "skilled_482", label: "Skilled 482" },
+              { id: "whv_417", label: "Working Holiday" },
+              { id: "graduate_485", label: "Graduate 485" },
+            ].map((v) => (
+              <button
+                key={v.id}
+                onClick={() => setVisaFilter(visaFilter === v.id ? "" : v.id)}
+                className={`px-3.5 py-2 rounded-xl text-sm font-medium transition-all ${
+                  visaFilter === v.id
+                    ? "bg-indigo-500 text-white shadow-sm"
+                    : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"
+                }`}
+              >
+                {v.label}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Filter toggles - desktop */}

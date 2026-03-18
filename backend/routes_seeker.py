@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from fastapi import APIRouter, HTTPException, Header, Query
 from db import get_supabase_admin
 from auth_utils import get_current_user
+from routes_visa_matching import visa_match_score, VISA_TYPES
 
 logger = logging.getLogger(__name__)
 
@@ -204,13 +205,15 @@ def get_seeker_recommended(
     # Get seeker profile for preferences
     profile_res = (
         sb.table("profiles")
-        .select("preferred_location, max_budget, wishlist")
+        .select("preferred_location, max_budget, wishlist, visa_type")
         .eq("id", user_id)
         .execute()
     )
     wishlist_ids = []
-    if profile_res.data and profile_res.data[0].get("wishlist"):
-        wishlist_ids = profile_res.data[0]["wishlist"]
+    seeker_visa = None
+    if profile_res.data:
+        wishlist_ids = profile_res.data[0].get("wishlist") or []
+        seeker_visa = profile_res.data[0].get("visa_type")
 
     # Fetch recent active listings not owned by this seeker
     query = (
@@ -218,11 +221,12 @@ def get_seeker_recommended(
         .select(
             "id, title, address, city, suburb, postcode, weekly_price, "
             "images, description, place_type, furnished, bills_included, "
-            "nearest_transport, owner_id"
+            "nearest_transport, owner_id, uni_distance_km, cbd_distance_km, "
+            "near_uni, near_cbd, min_stay_weeks, station_distance_min"
         )
         .neq("owner_id", user_id)
         .order("created_at", desc=True)
-        .limit(limit + len(wishlist_ids))
+        .limit(limit + len(wishlist_ids) + 20)
     )
 
     res = query.execute()
@@ -231,7 +235,7 @@ def get_seeker_recommended(
     # Filter out already-saved listings
     recommended = [l for l in all_listings if l["id"] not in wishlist_ids][:limit]
 
-    # Enrich with owner data and compute a simple match score
+    # Enrich with owner data and compute match score (visa-aware if visa set)
     for listing in recommended:
         owner_res = (
             sb.table("profiles")
@@ -242,17 +246,32 @@ def get_seeker_recommended(
         if owner_res.data:
             listing["owner"] = owner_res.data[0]
 
-        # Simple match score based on available data
-        score = 70
-        if listing.get("furnished"):
-            score += 10
-        if listing.get("bills_included"):
-            score += 10
-        if listing.get("nearest_transport"):
-            score += 10
-        listing["match_score"] = min(score, 99)
+        # Use visa-aware scoring if seeker has a visa type
+        if seeker_visa and seeker_visa in VISA_TYPES:
+            listing["match_score"] = visa_match_score(listing, seeker_visa)
+            listing["visa_match"] = True
+        else:
+            # Fallback: simple match score
+            score = 70
+            if listing.get("furnished"):
+                score += 10
+            if listing.get("bills_included"):
+                score += 10
+            if listing.get("nearest_transport"):
+                score += 10
+            listing["match_score"] = min(score, 99)
+            listing["visa_match"] = False
 
     # Sort by match score descending
     recommended.sort(key=lambda x: x.get("match_score", 0), reverse=True)
 
-    return {"listings": recommended, "total": len(recommended)}
+    visa_label = None
+    if seeker_visa and seeker_visa in VISA_TYPES:
+        visa_label = VISA_TYPES[seeker_visa]["name"]
+
+    return {
+        "listings": recommended,
+        "total": len(recommended),
+        "visa_type": seeker_visa,
+        "visa_label": visa_label,
+    }

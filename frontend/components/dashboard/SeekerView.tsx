@@ -16,6 +16,7 @@ import {
   Briefcase,
   Map,
 } from "lucide-react";
+import VisaRecommendations from "./VisaRecommendations";
 
 interface SeekerViewProps {
   loading: boolean;
@@ -158,6 +159,9 @@ export default function SeekerView({ loading, profile }: SeekerViewProps) {
           </motion.span>
         </Link>
       </div>
+
+      {/* Visa-based recommendations */}
+      <VisaRecommendations />
 
       {/* Smart recommendations based on profile */}
       <div className="glass-card p-5">

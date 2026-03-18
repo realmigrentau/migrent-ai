@@ -1636,6 +1636,50 @@ export async function listSuburbs() {
   return await res.json();
 }
 
+// ── Visa Matching ─────────────────────────────────────────
+
+export interface VisaType {
+  id: string;
+  name: string;
+  uni_focus: boolean;
+  cbd_focus: boolean;
+  flexible: boolean;
+  duration_weeks: number;
+}
+
+export async function getVisaTypes(): Promise<VisaType[]> {
+  try {
+    const res = await fetch(`${BASE_URL}/visa/types`);
+    if (!res.ok) return [];
+    const data = await res.json();
+    return data.visa_types || [];
+  } catch {
+    return [];
+  }
+}
+
+export async function getVisaRecommended(token: string, limit: number = 12) {
+  const res = await fetch(`${BASE_URL}/visa/recommended?limit=${limit}`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  if (!res.ok) throw new Error(`getVisaRecommended failed: ${res.status}`);
+  return await res.json();
+}
+
+export async function getVisaScore(token: string, listingId: string) {
+  const res = await fetch(`${BASE_URL}/visa/score?listing_id=${listingId}`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  if (!res.ok) return null;
+  return await res.json();
+}
+
 // ── Stations ──────────────────────────────────────────────
 
 export interface Station {

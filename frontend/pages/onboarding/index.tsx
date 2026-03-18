@@ -6,7 +6,9 @@ import {
   getNearestStation,
   validateAddress,
   validatePhone,
+  updateMyProfile,
 } from "../../lib/api";
+import VisaSelector from "../../components/onboarding/VisaSelector";
 import { motion, AnimatePresence } from "framer-motion";
 
 // ── Types ─────────────────────────────────────────────────
@@ -77,6 +79,9 @@ export default function OnboardingPage() {
   const [suburbCity, setSuburbCity] = useState("");
   const [postcode, setPostcode] = useState("");
   const [phone, setPhone] = useState("");
+
+  // Visa type
+  const [visaType, setVisaType] = useState("");
 
   // Station lookup
   const [nearestStation, setNearestStation] = useState("");
@@ -234,6 +239,15 @@ export default function OnboardingPage() {
     });
 
     if (result) {
+      // Save visa type if selected
+      if (visaType) {
+        try {
+          await updateMyProfile(session!.access_token, { visa_type: visaType });
+        } catch (err) {
+          console.error("Failed to save visa type:", err);
+        }
+      }
+
       const role =
         user!.user_metadata?.user_type ||
         user!.user_metadata?.type ||
@@ -404,6 +418,20 @@ export default function OnboardingPage() {
                   )}
                 </div>
               </div>
+            </div>
+
+            {/* Divider */}
+            <div className="border-t border-slate-100 dark:border-slate-800 my-6 mx-6" />
+
+            {/* Section: Visa */}
+            <div className="px-6">
+              <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-5">
+                Visa type
+              </h2>
+              <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">
+                This helps us show rooms that best fit your situation - near your uni, workplace, or flexible for travel.
+              </p>
+              <VisaSelector value={visaType} onChange={setVisaType} />
             </div>
 
             {/* Divider */}

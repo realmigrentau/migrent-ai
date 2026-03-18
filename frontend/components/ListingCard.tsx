@@ -12,6 +12,8 @@ interface ListingCardProps {
   reviewCount?: number;
   stationName?: string;
   stationWalkMin?: number;
+  visaMatchLabel?: string;
+  visaMatchScore?: number;
 }
 
 export default function ListingCard({
@@ -25,6 +27,8 @@ export default function ListingCard({
   reviewCount,
   stationName,
   stationWalkMin,
+  visaMatchLabel,
+  visaMatchScore,
 }: ListingCardProps) {
   return (
     <motion.div
@@ -68,6 +72,18 @@ export default function ListingCard({
               : "text-blue-700 dark:text-blue-300"
           }`}>
             {stationWalkMin} min walk to {stationName}
+          </span>
+        </div>
+      )}
+
+      {/* Visa match badge */}
+      {visaMatchLabel && visaMatchScore !== undefined && visaMatchScore >= 70 && (
+        <div className="mt-2 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-200 dark:border-indigo-500/20">
+          <svg className="w-3.5 h-3.5 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+          </svg>
+          <span className="text-xs font-medium text-indigo-700 dark:text-indigo-300">
+            {visaMatchLabel} ({visaMatchScore}%)
           </span>
         </div>
       )}

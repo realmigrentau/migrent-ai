@@ -30,6 +30,7 @@ from routes_owner import router as owner_router
 from routes_seeker import router as seeker_router
 from routes_suburbs import router as suburbs_router
 from routes_stations import router as stations_router
+from routes_visa_matching import router as visa_matching_router
 
 # ── Startup validation ──────────────────────────────────────
 REQUIRED_ENV = ["SUPABASE_URL", "SUPABASE_ANON_KEY", "STRIPE_SECRET_KEY", "STRIPE_WEBHOOK_SECRET"]
@@ -91,6 +92,7 @@ app.include_router(owner_router)
 app.include_router(seeker_router)
 app.include_router(suburbs_router)
 app.include_router(stations_router)
+app.include_router(visa_matching_router)
 app.include_router(webhook_router)
 
 # Note: each router defines its own prefix (/auth, /listings, /matches, /deals)

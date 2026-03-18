@@ -138,6 +138,16 @@ export default function RecommendedMatches({ listings, loading }: Props) {
                         Verified
                       </span>
                     )}
+                    {(listing as any).visa_match && (listing as any).near_uni && (
+                      <span className="text-xs text-violet-500 flex items-center gap-1">
+                        Near uni
+                      </span>
+                    )}
+                    {(listing as any).visa_match && (listing as any).near_cbd && (
+                      <span className="text-xs text-blue-500 flex items-center gap-1">
+                        Near CBD
+                      </span>
+                    )}
                   </div>
                 </div>
               </div>
