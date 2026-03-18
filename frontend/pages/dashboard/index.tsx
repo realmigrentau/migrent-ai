@@ -159,7 +159,7 @@ export default function DashboardHome() {
               role={role}
               loading={dataLoading}
             />
-            <CommunityHighlights />
+            {role === "seeker" && <CommunityHighlights />}
           </div>
 
           {/* Role-specific view - right column */}

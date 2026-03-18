@@ -80,7 +80,7 @@ export const navItems: NavItem[] = [
           color: "text-cyan-500",
         },
         {
-          href: "/suburb/kellyville",
+          href: "/features#suburb-reports",
           iconPath:
             "M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z",
           titleKey: "features.suburbs.title",

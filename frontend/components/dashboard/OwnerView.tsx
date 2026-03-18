@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { ProfileData } from "../../hooks/useDashboardData";
+import CommunityHighlights from "./CommunityHighlights";
 import {
   Plus,
   Pause,
@@ -226,6 +227,9 @@ export default function OwnerView({ listings, loading, profile }: OwnerViewProps
           )}
         </div>
       )}
+
+      {/* Community section - below badges */}
+      <CommunityHighlights />
     </div>
   );
 }
