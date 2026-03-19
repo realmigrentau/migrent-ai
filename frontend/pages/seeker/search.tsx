@@ -980,11 +980,11 @@ export default function SeekerSearch() {
                       )}
 
                       {/* Price badge on photo */}
-                      <div className="absolute top-3 right-3 px-3 py-1.5 rounded-lg bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm shadow-sm">
-                        <span className="text-rose-600 dark:text-rose-400 font-bold text-sm">
+                      <div className="absolute top-3 right-3 px-4 py-2 rounded-xl bg-white dark:bg-slate-900 shadow-lg border border-slate-200 dark:border-slate-700">
+                        <span className="text-rose-600 dark:text-rose-400 font-black text-lg">
                           ${listing.weeklyPrice || listing.dailyPrice || 0}
                         </span>
-                        <span className="text-slate-500 dark:text-slate-400 text-xs">
+                        <span className="text-slate-600 dark:text-slate-300 text-sm font-medium">
                           {listing.dailyPrice && !listing.weeklyPrice ? "/day" : "/wk"}
                         </span>
                       </div>
