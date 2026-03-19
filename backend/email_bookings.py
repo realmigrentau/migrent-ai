@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 MAILJET_API_KEY = os.environ.get("MAILJET_API_KEY", "")
 MAILJET_SECRET_KEY = os.environ.get("MAILJET_SECRET_KEY", "")
-FROM_EMAIL = os.environ.get("FROM_EMAIL", "migrantau@gmail.com")
+FROM_EMAIL = os.environ.get("FROM_EMAIL", "migrentau@gmail.com")
 FROM_NAME = os.environ.get("FROM_NAME", "MigRent")
 FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:3000")
 
@@ -334,6 +334,138 @@ def send_booking_confirmed_to_both(
     )
 
     _send_email(seeker_email, f"Booking confirmed - {listing_title}", _email_layout(seeker_content), seeker_text)
+
+
+def send_listing_approved_to_owner(
+    owner_email: str,
+    owner_name: str,
+    listing_title: str,
+):
+    """Notify owner their listing has been approved and is now live."""
+    subject = f"Your listing '{listing_title}' is now live!"
+
+    content = f"""
+    <div style="background:#ecfdf5;border-radius:8px;padding:16px;text-align:center;margin:0 0 20px;">
+      <p style="color:#059669;font-size:18px;font-weight:700;margin:0;">Listing Approved</p>
+    </div>
+
+    <h2 style="font-size:24px;font-weight:bold;color:#1a1a1a;margin:0 0 16px;">Your Listing is Live!</h2>
+    <p style="font-size:15px;line-height:24px;color:#374151;margin:0 0 12px;">Hi {owner_name},</p>
+    <p style="font-size:15px;line-height:24px;color:#374151;margin:0 0 12px;">
+      Great news! Your listing <strong>{listing_title}</strong> has been reviewed and approved by our team.
+      It is now visible to seekers on MigRent.
+    </p>
+
+    {_details_box([
+        ("Listing", listing_title),
+        ("Status", "Live"),
+    ])}
+
+    {_button("View Your Listing", f"{FRONTEND_URL}/owner/listings")}
+
+    <p style="font-size:13px;color:#9ca3af;text-align:center;margin:8px 0 0;">
+      Seekers can now find and book your room.
+    </p>
+    """
+
+    text = (
+        f"Hi {owner_name},\n\n"
+        f"Your listing '{listing_title}' has been approved and is now live on MigRent!\n\n"
+        f"View your listings: {FRONTEND_URL}/owner/listings\n\n"
+        f"- The MigRent Team"
+    )
+
+    _send_email(owner_email, subject, _email_layout(content, f"Listing approved: {listing_title}"), text)
+
+
+def send_listing_rejected_to_owner(
+    owner_email: str,
+    owner_name: str,
+    listing_title: str,
+    reason: str,
+):
+    """Notify owner their listing was rejected with a reason."""
+    subject = f"Update on your listing '{listing_title}'"
+
+    content = f"""
+    <div style="background:#fef2f2;border-radius:8px;padding:16px;text-align:center;margin:0 0 20px;">
+      <p style="color:#dc2626;font-size:18px;font-weight:700;margin:0;">Listing Not Approved</p>
+    </div>
+
+    <h2 style="font-size:24px;font-weight:bold;color:#1a1a1a;margin:0 0 16px;">Listing Update</h2>
+    <p style="font-size:15px;line-height:24px;color:#374151;margin:0 0 12px;">Hi {owner_name},</p>
+    <p style="font-size:15px;line-height:24px;color:#374151;margin:0 0 12px;">
+      Unfortunately, your listing <strong>{listing_title}</strong> was not approved.
+    </p>
+
+    <div style="background:#fef3c7;border-radius:8px;padding:16px 20px;margin:16px 0;border-left:3px solid #f59e0b;">
+      <p style="font-size:14px;font-weight:600;color:#92400e;margin:0 0 8px;">Reason:</p>
+      <p style="font-size:14px;color:#92400e;margin:0;line-height:22px;">{reason}</p>
+    </div>
+
+    <p style="font-size:15px;line-height:24px;color:#374151;margin:16px 0 12px;">
+      You can update your listing and resubmit it for review.
+    </p>
+
+    {_button("Edit Your Listing", f"{FRONTEND_URL}/owner/listings")}
+
+    <p style="font-size:13px;color:#9ca3af;text-align:center;margin:8px 0 0;">
+      Need help? Contact our support team.
+    </p>
+    """
+
+    text = (
+        f"Hi {owner_name},\n\n"
+        f"Your listing '{listing_title}' was not approved.\n\n"
+        f"Reason: {reason}\n\n"
+        f"You can edit and resubmit: {FRONTEND_URL}/owner/listings\n\n"
+        f"- The MigRent Team"
+    )
+
+    _send_email(owner_email, subject, _email_layout(content), text)
+
+
+def send_listing_changes_requested_to_owner(
+    owner_email: str,
+    owner_name: str,
+    listing_title: str,
+    changes_needed: str,
+):
+    """Notify owner that changes are needed before their listing can go live."""
+    subject = f"Changes needed for your listing '{listing_title}'"
+
+    content = f"""
+    <div style="background:#fff7ed;border-radius:8px;padding:16px;text-align:center;margin:0 0 20px;">
+      <p style="color:#ea580c;font-size:18px;font-weight:700;margin:0;">Changes Requested</p>
+    </div>
+
+    <h2 style="font-size:24px;font-weight:bold;color:#1a1a1a;margin:0 0 16px;">Almost There!</h2>
+    <p style="font-size:15px;line-height:24px;color:#374151;margin:0 0 12px;">Hi {owner_name},</p>
+    <p style="font-size:15px;line-height:24px;color:#374151;margin:0 0 12px;">
+      Your listing <strong>{listing_title}</strong> needs a few changes before it can go live.
+    </p>
+
+    <div style="background:#eff6ff;border-radius:8px;padding:16px 20px;margin:16px 0;border-left:3px solid #3b82f6;">
+      <p style="font-size:14px;font-weight:600;color:#1e40af;margin:0 0 8px;">What to update:</p>
+      <p style="font-size:14px;color:#1e40af;margin:0;line-height:22px;">{changes_needed}</p>
+    </div>
+
+    <p style="font-size:15px;line-height:24px;color:#374151;margin:16px 0 12px;">
+      Once you make the changes, your listing will be re-reviewed quickly.
+    </p>
+
+    {_button("Edit Your Listing", f"{FRONTEND_URL}/owner/listings")}
+    """
+
+    text = (
+        f"Hi {owner_name},\n\n"
+        f"Your listing '{listing_title}' needs some changes before going live.\n\n"
+        f"Changes needed: {changes_needed}\n\n"
+        f"Edit your listing: {FRONTEND_URL}/owner/listings\n\n"
+        f"- The MigRent Team"
+    )
+
+    _send_email(owner_email, subject, _email_layout(content, f"Changes needed: {listing_title}"), text)
 
 
 def send_new_message_notification(

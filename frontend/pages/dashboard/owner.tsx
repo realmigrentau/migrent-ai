@@ -1,8 +1,10 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import Link from "next/link";
 import DashboardLayout from "../../components/DashboardLayout";
 import { useDashboard } from "../../hooks/useDashboard";
 import { useOwnerData } from "../../hooks/useOwnerData";
 import { useBookings } from "../../hooks/useBookings";
+import { getListings } from "../../lib/api";
 import OwnerMetricsCards from "../../components/dashboard/OwnerMetricsCards";
 import OwnerBookingsPipeline from "../../components/dashboard/OwnerBookingsPipeline";
 import ActivityTimeline from "../../components/dashboard/ActivityTimeline";
@@ -20,6 +22,8 @@ export default function OwnerDashboard() {
     refetch,
   } = useOwnerData();
 
+  const [pendingCount, setPendingCount] = useState(0);
+
   // Set role to owner if not already
   useEffect(() => {
     if (!loading && session && role && role !== "owner") {
@@ -27,6 +31,17 @@ export default function OwnerDashboard() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loading, session]);
+
+  // Check for pending listings
+  useEffect(() => {
+    if (!session) return;
+    getListings(session.access_token, true).then((data) => {
+      if (data && Array.isArray(data)) {
+        const pending = data.filter((l: any) => l.moderation_status === "pending_approval" || l.moderation_status === "changes_requested");
+        setPendingCount(pending.length);
+      }
+    }).catch(() => {});
+  }, [session]);
 
   const handleAccept = async (bookingId: string) => {
     const result = await respond(bookingId, "accept");
@@ -55,6 +70,33 @@ export default function OwnerDashboard() {
               : "Manage your listings and bookings"}
           </p>
         </div>
+
+        {/* Pending Approval Banner */}
+        {pendingCount > 0 && (
+          <div className="p-4 rounded-xl bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-amber-100 dark:bg-amber-500/20 flex items-center justify-center shrink-0">
+                <svg className="w-5 h-5 text-amber-600 dark:text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-semibold text-amber-800 dark:text-amber-300">
+                  {pendingCount} listing{pendingCount !== 1 ? "s" : ""} pending approval
+                </p>
+                <p className="text-xs text-amber-600 dark:text-amber-400 mt-0.5">
+                  Our team reviews new listings within 24 hours. You will be notified by email.
+                </p>
+              </div>
+              <Link
+                href="/owner/listings"
+                className="text-xs font-semibold text-amber-700 dark:text-amber-300 hover:underline whitespace-nowrap"
+              >
+                View listings
+              </Link>
+            </div>
+          </div>
+        )}
 
         {/* 1. Metrics Cards */}
         <section>

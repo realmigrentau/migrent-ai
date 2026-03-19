@@ -67,6 +67,7 @@ async def create_listing(
         "description": listing.description,
         "images": listing.images,
         "owner_id": str(user.id),
+        "moderation_status": "pending_approval",
     }
 
     # Add geocoding fields if provided by frontend
@@ -185,6 +186,9 @@ def search_listings(
 
     sb = get_supabase_admin()
     query = sb.table("listings").select("*")
+
+    # Only show approved listings in public search
+    query = query.eq("moderation_status", "approved")
 
     # Price filters
     if min_price is not None:
@@ -388,6 +392,9 @@ def list_listings(
     if owner and authorization:
         user = get_current_user(authorization)
         query = query.eq("owner_id", str(user.id))
+    else:
+        # Public listing - only show approved
+        query = query.eq("moderation_status", "approved")
 
     query = query.range(offset, offset + limit - 1)
 
