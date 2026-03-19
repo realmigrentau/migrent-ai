@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { ReviewBadge } from "./reviews/ReviewStats";
+import { BILLS_RANGE } from "../data/destinations";
 
 interface ListingCardProps {
   address: string;
@@ -14,6 +15,7 @@ interface ListingCardProps {
   stationWalkMin?: number;
   visaMatchLabel?: string;
   visaMatchScore?: number;
+  billsIncluded?: boolean;
 }
 
 export default function ListingCard({
@@ -29,7 +31,9 @@ export default function ListingCard({
   stationWalkMin,
   visaMatchLabel,
   visaMatchScore,
+  billsIncluded,
 }: ListingCardProps) {
+  const estimatedTotal = weeklyPrice + (billsIncluded ? 0 : BILLS_RANGE.default);
   return (
     <motion.div
       whileHover={{ y: -2 }}
@@ -44,11 +48,18 @@ export default function ListingCard({
             {postcode}
           </p>
         </div>
-        <div className="shrink-0 px-3 py-1.5 rounded-lg bg-rose-50 dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/20">
-          <span className="text-rose-600 dark:text-rose-400 font-bold text-sm">
-            ${weeklyPrice}
-          </span>
-          <span className="text-rose-400 dark:text-rose-500 text-xs">/wk</span>
+        <div className="shrink-0 text-right">
+          <div className="px-3 py-1.5 rounded-lg bg-rose-50 dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/20">
+            <span className="text-rose-600 dark:text-rose-400 font-bold text-sm">
+              ${weeklyPrice}
+            </span>
+            <span className="text-rose-400 dark:text-rose-500 text-xs">/wk</span>
+          </div>
+          {!billsIncluded && (
+            <p className="text-[10px] text-slate-400 mt-0.5">
+              ~${estimatedTotal}/wk total
+            </p>
+          )}
         </div>
       </div>
 

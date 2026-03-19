@@ -9,9 +9,11 @@ import {
   Zap,
   Sparkles,
   ArrowRight,
+  Calculator,
 } from "lucide-react";
 import Link from "next/link";
 import type { WishlistListing } from "../../hooks/useWishlist";
+import { BILLS_RANGE } from "../../data/destinations";
 
 interface CompareTableProps {
   listings: WishlistListing[];
@@ -129,6 +131,44 @@ export default function CompareTable({
                     )}
                   </div>
                 )}
+              </CompareRow>
+
+              {/* True Cost estimate (rent + bills if not included) */}
+              <CompareRow label="True Cost" listings={listings} highlight>
+                {(l) => {
+                  const billsExtra = l.billsIncluded ? 0 : BILLS_RANGE.default;
+                  const estimated = l.weeklyPrice + billsExtra;
+                  const lowestTrue = Math.min(
+                    ...listings.map((x) =>
+                      x.weeklyPrice + (x.billsIncluded ? 0 : BILLS_RANGE.default)
+                    )
+                  );
+                  return (
+                    <div>
+                      <div className="flex items-center gap-1.5">
+                        <Calculator className="w-3.5 h-3.5 text-emerald-500" />
+                        <span
+                          className={`text-sm font-bold ${
+                            estimated === lowestTrue
+                              ? "text-emerald-500"
+                              : "text-slate-700 dark:text-slate-200"
+                          }`}
+                        >
+                          ~${estimated}/wk
+                        </span>
+                        {estimated === lowestTrue && (
+                          <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                            Best
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-[10px] text-slate-400 mt-0.5">
+                        {l.billsIncluded ? "Bills included" : `+$${BILLS_RANGE.default} bills est.`}
+                        {" + transport"}
+                      </p>
+                    </div>
+                  );
+                }}
               </CompareRow>
 
               {/* Rating */}

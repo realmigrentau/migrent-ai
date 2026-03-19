@@ -22,6 +22,7 @@ import OwnerCard from "../../components/listings/OwnerCard";
 import KeyDetails from "../../components/listings/KeyDetails";
 import ReviewsSection from "../../components/listings/ReviewsSection";
 import SimilarListings from "../../components/listings/SimilarListings";
+import TrueCostBadge from "../../components/listings/TrueCostBadge";
 import SEOHead from "../../components/SEOHead";
 
 export default function ListingDetailPage() {
@@ -224,6 +225,14 @@ export default function ListingDetailPage() {
                   {listing.description}
                 </p>
               </div>
+
+              {/* True Cost Calculator */}
+              <TrueCostBadge
+                weeklyRent={listing.weekly_price}
+                billsIncluded={listing.bills_included}
+                listingLat={listing.lat}
+                listingLng={listing.lng}
+              />
 
               {/* Key Details (amenities, map, availability, rules) */}
               <KeyDetails listing={listing} />

@@ -1074,6 +1074,13 @@ export default function SeekerSearch() {
                         </div>
                       )}
 
+                      {/* True cost estimate */}
+                      {!listing.billsIncluded && (
+                        <p className="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium">
+                          ~${(listing.weeklyPrice || 0) + 50}/wk total with bills + transport
+                        </p>
+                      )}
+
                       <Link
                         href={`/listing/${listing.id}`}
                         className="btn-primary py-2 px-4 rounded-lg text-xs w-full text-center block"

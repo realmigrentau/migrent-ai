@@ -1,0 +1,253 @@
+import { useState, useMemo } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  ChevronDown,
+  ChevronUp,
+  Search,
+  X,
+  Zap,
+  Train,
+  Droplets,
+} from "lucide-react";
+import {
+  DESTINATIONS,
+  BILLS_RANGE,
+  calculateTrueCost,
+  getTransportCost,
+  type Destination,
+} from "../../data/destinations";
+
+interface TrueCostBadgeProps {
+  weeklyRent: number;
+  billsIncluded?: boolean;
+  listingLat?: number;
+  listingLng?: number;
+}
+
+export default function TrueCostBadge({
+  weeklyRent,
+  billsIncluded = false,
+  listingLat,
+  listingLng,
+}: TrueCostBadgeProps) {
+  const [open, setOpen] = useState(false);
+  const [destination, setDestination] = useState<Destination | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [billsEstimate, setBillsEstimate] = useState(BILLS_RANGE.default);
+
+  const filteredDestinations = useMemo(() => {
+    if (!searchQuery.trim()) return DESTINATIONS.slice(0, 8);
+    const q = searchQuery.toLowerCase();
+    return DESTINATIONS.filter(
+      (d) =>
+        d.name.toLowerCase().includes(q) ||
+        d.shortName.toLowerCase().includes(q)
+    );
+  }, [searchQuery]);
+
+  const result = useMemo(
+    () =>
+      calculateTrueCost({
+        weeklyRent,
+        billsIncluded,
+        billsEstimate,
+        listingLat,
+        listingLng,
+        destinationLat: destination?.lat,
+        destinationLng: destination?.lng,
+      }),
+    [weeklyRent, billsIncluded, billsEstimate, listingLat, listingLng, destination]
+  );
+
+  const transportInfo = useMemo(() => {
+    if (result.distanceKm === null) return null;
+    return getTransportCost(result.distanceKm);
+  }, [result.distanceKm]);
+
+  const hasExtras = result.bills > 0 || result.transport > 0;
+
+  const selectDest = (d: Destination) => {
+    setDestination(d);
+    setSearchQuery(d.shortName);
+    setShowDropdown(false);
+  };
+
+  return (
+    <div className="rounded-2xl border border-emerald-200 dark:border-emerald-500/20 bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/30 overflow-hidden">
+      {/* Collapsed header */}
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-full px-4 py-3.5 flex items-center justify-between transition-colors"
+      >
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shadow-sm">
+            <Zap className="w-4 h-4 text-white" />
+          </div>
+          <div className="text-left">
+            {!open ? (
+              <>
+                <p className="text-[11px] font-medium text-emerald-600 dark:text-emerald-400">
+                  What will this really cost you?
+                </p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                  Enter your uni/work - see true weekly cost
+                </p>
+              </>
+            ) : (
+              <p className="text-sm font-bold text-emerald-700 dark:text-emerald-300">
+                True Cost Calculator
+              </p>
+            )}
+          </div>
+        </div>
+        {open ? (
+          <ChevronUp className="w-4 h-4 text-emerald-500" />
+        ) : (
+          <ChevronDown className="w-4 h-4 text-emerald-500" />
+        )}
+      </button>
+
+      {/* Expanded panel */}
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="overflow-hidden"
+          >
+            <div className="px-4 pb-4 space-y-3">
+              {/* Destination search */}
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                    setShowDropdown(true);
+                    if (!e.target.value) setDestination(null);
+                  }}
+                  onFocus={() => setShowDropdown(true)}
+                  placeholder="Your uni or workplace"
+                  className="w-full pl-8 pr-8 py-2 rounded-xl border border-emerald-200 dark:border-emerald-700/50 bg-white dark:bg-slate-800/50 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
+                />
+                {destination && (
+                  <button
+                    onClick={() => {
+                      setDestination(null);
+                      setSearchQuery("");
+                    }}
+                    className="absolute right-3 top-1/2 -translate-y-1/2"
+                  >
+                    <X className="w-3.5 h-3.5 text-slate-400" />
+                  </button>
+                )}
+
+                <AnimatePresence>
+                  {showDropdown && !destination && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -4 }}
+                      className="absolute z-40 top-full mt-1 left-0 right-0 max-h-40 overflow-y-auto rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-xl"
+                    >
+                      {filteredDestinations.map((d) => (
+                        <button
+                          key={d.shortName}
+                          onClick={() => selectDest(d)}
+                          className="w-full text-left px-3 py-1.5 hover:bg-slate-50 dark:hover:bg-slate-700/50 flex items-center gap-2"
+                        >
+                          <span
+                            className={`w-5 h-5 rounded text-white text-[9px] font-bold flex items-center justify-center ${
+                              d.type === "university"
+                                ? "bg-indigo-500"
+                                : d.type === "cbd"
+                                ? "bg-rose-500"
+                                : "bg-amber-500"
+                            }`}
+                          >
+                            {d.type === "university" ? "U" : d.type === "cbd" ? "C" : "H"}
+                          </span>
+                          <div>
+                            <p className="text-xs font-medium text-slate-900 dark:text-white">
+                              {d.shortName}
+                            </p>
+                            <p className="text-[10px] text-slate-400 leading-tight">
+                              {d.name}
+                            </p>
+                          </div>
+                        </button>
+                      ))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
+              {/* Bills slider */}
+              {!billsIncluded && (
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400 flex items-center gap-1">
+                      <Droplets className="w-3 h-3" />
+                      Bills
+                    </span>
+                    <span className="text-xs font-bold text-slate-700 dark:text-slate-200">
+                      ${billsEstimate}/wk
+                    </span>
+                  </div>
+                  <input
+                    type="range"
+                    min={BILLS_RANGE.min}
+                    max={BILLS_RANGE.max}
+                    value={billsEstimate}
+                    onChange={(e) => setBillsEstimate(Number(e.target.value))}
+                    className="w-full h-1.5 rounded-full appearance-none cursor-pointer bg-emerald-200 dark:bg-emerald-900/50 accent-emerald-500"
+                  />
+                </div>
+              )}
+
+              {/* Result breakdown */}
+              <div className="rounded-xl bg-white/60 dark:bg-slate-800/40 p-3 space-y-1.5">
+                <div className="flex justify-between text-xs">
+                  <span className="text-slate-500 dark:text-slate-400">Rent</span>
+                  <span className="font-semibold text-slate-700 dark:text-slate-200">${result.rent}</span>
+                </div>
+                <div className="flex justify-between text-xs">
+                  <span className="text-slate-500 dark:text-slate-400">Bills</span>
+                  <span className="font-semibold text-slate-700 dark:text-slate-200">
+                    {billsIncluded ? "Included" : `$${result.bills}`}
+                  </span>
+                </div>
+                <div className="flex justify-between text-xs">
+                  <span className="text-slate-500 dark:text-slate-400 flex items-center gap-1">
+                    <Train className="w-3 h-3" />
+                    Transport
+                    {result.distanceKm !== null && (
+                      <span className="text-[10px] text-slate-400">
+                        ({Math.round(result.distanceKm)}km)
+                      </span>
+                    )}
+                  </span>
+                  <span className="font-semibold text-slate-700 dark:text-slate-200">
+                    {destination ? `$${result.transport}` : "-"}
+                  </span>
+                </div>
+                <div className="flex justify-between pt-1.5 border-t border-slate-200/60 dark:border-slate-700/60">
+                  <span className="text-sm font-bold text-slate-900 dark:text-white">
+                    True Cost
+                  </span>
+                  <span className="text-sm font-black text-emerald-600 dark:text-emerald-400">
+                    ${result.trueCost}/wk
+                  </span>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
