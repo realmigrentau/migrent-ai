@@ -6,7 +6,9 @@ Uses service role key to bypass RLS for admin operations.
 """
 
 import logging
+from datetime import datetime, timedelta, timezone
 from fastapi import APIRouter, HTTPException, Header, Query
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from typing import Optional
 from db import get_supabase_admin
@@ -26,10 +28,23 @@ def _require_admin(authorization: str):
     """Validate token and check admin role. Returns (user, profile)."""
     user = get_current_user(authorization)
     user_id = str(user.id)
+    logger.info(f"[Admin] Checking admin access for user {user_id}")
 
     sb = get_supabase_admin()
-    profile_res = sb.table("profiles").select("id, is_admin, name, email").eq("id", user_id).execute()
-    if not profile_res.data or not profile_res.data[0].get("is_admin"):
+    try:
+        profile_res = sb.table("profiles").select("id, is_admin, name, email").eq("id", user_id).execute()
+    except Exception as e:
+        logger.error(f"[Admin] Failed to query profiles: {e}")
+        raise HTTPException(status_code=500, detail="Failed to check admin status")
+
+    if not profile_res.data:
+        logger.warning(f"[Admin] No profile found for user {user_id}")
+        raise HTTPException(status_code=403, detail="Admin access required")
+
+    is_admin = profile_res.data[0].get("is_admin", False)
+    logger.info(f"[Admin] User {user_id} is_admin={is_admin}")
+
+    if not is_admin:
         raise HTTPException(status_code=403, detail="Admin access required")
 
     return user, profile_res.data[0]
@@ -55,6 +70,16 @@ def get_pending_listings(
     """Get all listings pending moderation."""
     _require_admin(authorization)
 
+    try:
+        return _fetch_pending(suburb, sort, limit, offset)
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"[Admin] Failed to get pending listings: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to load pending listings: {str(e)}")
+
+
+def _fetch_pending(suburb, sort, limit, offset):
     sb = get_supabase_admin()
     query = sb.table("listings").select(
         "id, title, address, suburb, postcode, city, weekly_price, images, "
@@ -194,7 +219,7 @@ def approve_listing(
         "moderation_status": "approved",
         "moderation_notes": body.notes,
         "moderator_id": admin_id,
-        "moderated_at": "now()",
+        "moderated_at": datetime.now(timezone.utc).isoformat(),
     }).eq("id", listing_id).execute()
 
     # Audit log
@@ -251,7 +276,7 @@ def reject_listing(
         "moderation_reason": body.reason,
         "moderation_notes": body.notes,
         "moderator_id": admin_id,
-        "moderated_at": "now()",
+        "moderated_at": datetime.now(timezone.utc).isoformat(),
     }).eq("id", listing_id).execute()
 
     # Audit log
@@ -309,7 +334,7 @@ def request_changes(
         "moderation_status": "changes_requested",
         "moderation_notes": body.notes,
         "moderator_id": admin_id,
-        "moderated_at": "now()",
+        "moderated_at": datetime.now(timezone.utc).isoformat(),
     }).eq("id", listing_id).execute()
 
     # Audit log
@@ -345,42 +370,48 @@ def get_admin_stats(authorization: str = Header(...)):
     """Get moderation dashboard statistics."""
     _require_admin(authorization)
 
-    sb = get_supabase_admin()
+    twenty_four_hours_ago = (datetime.now(timezone.utc) - timedelta(hours=24)).isoformat()
 
-    # Pending count
-    pending_res = sb.table("listings").select("id", count="exact").eq("moderation_status", "pending_approval").execute()
-    pending = pending_res.count or 0
+    try:
+        sb = get_supabase_admin()
 
-    # Approved today
-    approved_res = sb.table("admin_audit_log").select("id", count="exact").eq("action", "approve").gte("created_at", "now() - interval '24 hours'").execute()
-    approved_today = approved_res.count or 0
+        # Pending count
+        pending_res = sb.table("listings").select("id", count="exact").eq("moderation_status", "pending_approval").execute()
+        pending = pending_res.count or 0
 
-    # Rejected today
-    rejected_res = sb.table("admin_audit_log").select("id", count="exact").eq("action", "reject").gte("created_at", "now() - interval '24 hours'").execute()
-    rejected_today = rejected_res.count or 0
+        # Approved today
+        approved_res = sb.table("admin_audit_log").select("id", count="exact").eq("action", "approve").gte("created_at", twenty_four_hours_ago).execute()
+        approved_today = approved_res.count or 0
 
-    # Changes requested today
-    changes_res = sb.table("admin_audit_log").select("id", count="exact").eq("action", "request_changes").gte("created_at", "now() - interval '24 hours'").execute()
-    changes_today = changes_res.count or 0
+        # Rejected today
+        rejected_res = sb.table("admin_audit_log").select("id", count="exact").eq("action", "reject").gte("created_at", twenty_four_hours_ago).execute()
+        rejected_today = rejected_res.count or 0
 
-    # Total listings
-    total_res = sb.table("listings").select("id", count="exact").execute()
-    total_listings = total_res.count or 0
+        # Changes requested today
+        changes_res = sb.table("admin_audit_log").select("id", count="exact").eq("action", "request_changes").gte("created_at", twenty_four_hours_ago).execute()
+        changes_today = changes_res.count or 0
 
-    # Approval rate (all time)
-    all_approved = sb.table("admin_audit_log").select("id", count="exact").eq("action", "approve").execute()
-    all_rejected = sb.table("admin_audit_log").select("id", count="exact").eq("action", "reject").execute()
-    total_reviewed = (all_approved.count or 0) + (all_rejected.count or 0)
-    approval_rate = round(((all_approved.count or 0) / total_reviewed * 100) if total_reviewed > 0 else 100)
+        # Total listings
+        total_res = sb.table("listings").select("id", count="exact").execute()
+        total_listings = total_res.count or 0
 
-    return {
-        "pending": pending,
-        "approved_today": approved_today,
-        "rejected_today": rejected_today,
-        "changes_requested_today": changes_today,
-        "total_listings": total_listings,
-        "approval_rate": approval_rate,
-    }
+        # Approval rate (all time)
+        all_approved = sb.table("admin_audit_log").select("id", count="exact").eq("action", "approve").execute()
+        all_rejected = sb.table("admin_audit_log").select("id", count="exact").eq("action", "reject").execute()
+        total_reviewed = (all_approved.count or 0) + (all_rejected.count or 0)
+        approval_rate = round(((all_approved.count or 0) / total_reviewed * 100) if total_reviewed > 0 else 100)
+
+        return {
+            "pending": pending,
+            "approved_today": approved_today,
+            "rejected_today": rejected_today,
+            "changes_requested_today": changes_today,
+            "total_listings": total_listings,
+            "approval_rate": approval_rate,
+        }
+    except Exception as e:
+        logger.error(f"[Admin] Failed to get stats: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to load stats: {str(e)}")
 
 
 @router.get("/activity")
