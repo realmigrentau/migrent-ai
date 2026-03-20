@@ -1759,3 +1759,28 @@ export async function listStations(city?: string): Promise<Station[]> {
     return [];
   }
 }
+
+
+/**
+ * Subscribe to push notifications.
+ * POST /notifications/subscribe
+ */
+export async function subscribeToNotifications(
+  token: string,
+  fcmToken: string
+): Promise<boolean> {
+  try {
+    const res = await fetch(`${BASE_URL}/notifications/subscribe`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ fcm_token: fcmToken }),
+    });
+    if (!res.ok) return false;
+    return true;
+  } catch {
+    return false;
+  }
+}

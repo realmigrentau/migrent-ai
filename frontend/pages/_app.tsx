@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import type { AppProps } from "next/app";
 import { AnimatePresence, motion } from "framer-motion";
 import { HCaptchaProvider } from "@hcaptcha/react-hcaptcha/hooks";
@@ -11,6 +12,15 @@ import "../styles/globals.css";
 const ADMIN_PATH = process.env.NEXT_PUBLIC_ADMIN_PATH || "/mazda.asgt22779412.sara-admin";
 
 export default function App({ Component, pageProps, router }: AppProps) {
+  // Register service worker for PWA + push notifications
+  useEffect(() => {
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/service-worker.js").catch((err) => {
+        console.warn("Service worker registration failed:", err);
+      });
+    }
+  }, []);
+
   const isAdmin = router.pathname.startsWith(ADMIN_PATH);
   const isDashboard = router.pathname.startsWith("/dashboard");
 

@@ -10,6 +10,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import DashboardLayout from "../../components/DashboardLayout";
+import EnableNotificationsCard from "../../components/notifications/EnableNotificationsCard";
 import { useDashboard } from "../../hooks/useDashboard";
 import { useSeekerData } from "../../hooks/useSeekerData";
 import { useBookings } from "../../hooks/useBookings";
@@ -48,6 +49,9 @@ export default function SeekerDashboard() {
   return (
     <DashboardLayout>
       <div className="space-y-8">
+        {/* Notification opt-in */}
+        {session && <EnableNotificationsCard token={session.access_token} />}
+
         {/* 1. Welcome Banner */}
         <motion.div
           initial={{ opacity: 0, y: -10 }}

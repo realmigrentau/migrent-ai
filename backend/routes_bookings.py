@@ -12,6 +12,7 @@ from email_bookings import (
     send_booking_declined_to_seeker,
     send_booking_confirmed_to_both,
 )
+from notifications import send_push_to_user
 
 router = APIRouter(prefix="/bookings", tags=["bookings"])
 
@@ -207,6 +208,18 @@ def create_booking(
         except Exception:
             pass  # Email failure should not block booking creation
 
+        # Push notification to owner
+        try:
+            listing_title = listing.get("title") or listing.get("address", "your listing")
+            send_push_to_user(
+                user_id=owner_id,
+                title=f"New booking request for {listing_title}",
+                body=f"Someone wants to book your place!",
+                url=f"{FRONTEND_URL}/dashboard/owner",
+            )
+        except Exception:
+            pass
+
     return result
 
 
@@ -304,6 +317,17 @@ def respond_to_booking(
                     checkout_url=session.url,
                     booking_id=booking_id,
                 )
+        except Exception:
+            pass
+
+        # Push notification to seeker
+        try:
+            send_push_to_user(
+                user_id=booking["seeker_id"],
+                title="Booking approved!",
+                body=f"Your booking for {listing_title} has been accepted. Complete payment to confirm.",
+                url=f"{FRONTEND_URL}/dashboard/seeker",
+            )
         except Exception:
             pass
 

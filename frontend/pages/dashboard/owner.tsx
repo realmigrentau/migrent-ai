@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import DashboardLayout from "../../components/DashboardLayout";
+import EnableNotificationsCard from "../../components/notifications/EnableNotificationsCard";
 import { useDashboard } from "../../hooks/useDashboard";
 import { useOwnerData } from "../../hooks/useOwnerData";
 import { useBookings } from "../../hooks/useBookings";
@@ -58,6 +59,9 @@ export default function OwnerDashboard() {
   return (
     <DashboardLayout>
       <div className="space-y-8">
+        {/* Notification opt-in */}
+        {session && <EnableNotificationsCard token={session.access_token} />}
+
         {/* Header */}
         <div>
           <h1 className="text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white">

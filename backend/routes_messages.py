@@ -17,6 +17,7 @@ from db import get_supabase, get_supabase_admin
 from auth_utils import get_current_user
 from limiter import limiter
 from email_bookings import send_new_message_notification
+from notifications import send_push_to_user
 
 logger = logging.getLogger(__name__)
 
@@ -135,6 +136,29 @@ def send_message(
             )
     except Exception as e:
         logger.warning("Failed to send message notification email: %s", e)
+
+    # Push notification to receiver (fire-and-forget)
+    try:
+        sb_admin_push = get_supabase_admin()
+        sender_prof = sb_admin_push.table("profiles").select("name, preferred_name").eq("id", str(body.sender_id)).execute()
+        push_sender_name = "Someone"
+        if sender_prof.data:
+            push_sender_name = sender_prof.data[0].get("preferred_name") or sender_prof.data[0].get("name", "Someone")
+
+        FRONTEND = os.environ.get("FRONTEND_URL", "http://localhost:3000")
+        if body.listing_id:
+            push_url = f"{FRONTEND}/messages?listing={body.listing_id}&user={body.sender_id}"
+        else:
+            push_url = f"{FRONTEND}/messages?user={body.sender_id}"
+
+        send_push_to_user(
+            user_id=str(body.receiver_id),
+            title=f"New message from {push_sender_name}",
+            body=body.message_text[:100],
+            url=push_url,
+        )
+    except Exception as e:
+        logger.warning("Failed to send push notification: %s", e)
 
     return {
         "success": True,
