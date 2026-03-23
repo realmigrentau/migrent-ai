@@ -83,6 +83,19 @@ def enrich_mentors_with_profiles(sb, mentors: list) -> list:
     return mentors
 
 
+# -- GET /mentors/debug - Debug endpoint --
+
+@router.get("/debug")
+def debug_mentors():
+    """Debug endpoint to check if mentors table works."""
+    try:
+        sb = get_supabase_admin()
+        res = sb.table("mentors").select("id, suburb, active").limit(5).execute()
+        return {"ok": True, "count": len(res.data or []), "sample": res.data or []}
+    except Exception as e:
+        return {"ok": False, "error": str(e)}
+
+
 # -- GET /mentors - Browse mentors --
 
 @router.get("")
@@ -109,11 +122,7 @@ def list_mentors(
         mentors = enrich_mentors_with_profiles(sb, res.data or [])
         return {"mentors": mentors, "count": len(mentors)}
     except Exception as e:
-        error_msg = str(e)
-        logger.error(f"Failed to list mentors: {error_msg}")
-        # If table doesn't exist yet, return empty instead of 500
-        if "relation" in error_msg and "does not exist" in error_msg:
-            return {"mentors": [], "count": 0}
+        logger.error(f"Failed to list mentors: {e}")
         return {"mentors": [], "count": 0}
 
 
