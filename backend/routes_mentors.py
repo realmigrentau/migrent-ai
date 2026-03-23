@@ -83,19 +83,6 @@ def enrich_mentors_with_profiles(sb, mentors: list) -> list:
     return mentors
 
 
-# -- GET /mentors/debug - Debug endpoint --
-
-@router.get("/debug")
-def debug_mentors():
-    """Debug endpoint to check if mentors table works."""
-    try:
-        sb = get_supabase_admin()
-        res = sb.table("mentors").select("id, suburb, active").limit(5).execute()
-        return {"ok": True, "count": len(res.data or []), "sample": res.data or []}
-    except Exception as e:
-        return {"ok": False, "error": str(e)}
-
-
 # -- GET /mentors - Browse mentors --
 
 @router.get("")
