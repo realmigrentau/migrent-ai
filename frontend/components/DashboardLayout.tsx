@@ -20,6 +20,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Users,
+  Map,
 } from "lucide-react";
 
 interface DashboardLayoutProps {
@@ -109,8 +110,9 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         { href: "/dashboard/owner", label: "Owner Hub", icon: <Building2 className="w-5 h-5" /> },
         { href: "/owner/listings/new", label: "Post Room", icon: <Plus className="w-5 h-5" /> },
         { href: "/owner/listings", label: "Listings", icon: <ListOrdered className="w-5 h-5" /> },
-        { href: "/dashboard/owner-profile", label: "Profile", icon: <User className="w-5 h-5" /> },
         { href: "/mentors", label: "Mentors", icon: <Users className="w-5 h-5" /> },
+        { href: "/suburb/kellyville", label: "Suburbs", icon: <Map className="w-5 h-5" /> },
+        { href: "/dashboard/owner-profile", label: "Profile", icon: <User className="w-5 h-5" /> },
         { href: "/messages", label: "Messages", icon: <MessageCircle className="w-5 h-5" /> },
         { href: "/guides", label: "Help Centre", icon: <HelpCircle className="w-5 h-5" /> },
         { href: "/account/settings", label: "Settings", icon: <Settings className="w-5 h-5" /> },
@@ -123,8 +125,9 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         { href: "/dashboard/seeker", label: "Seeker Hub", icon: <Search className="w-5 h-5" /> },
         { href: "/seeker/search", label: "Search", icon: <Search className="w-5 h-5" /> },
         { href: "/seeker/wishlist", label: "Saved", icon: <Heart className="w-5 h-5" /> },
-        { href: "/dashboard/seeker-profile", label: "Profile", icon: <User className="w-5 h-5" /> },
         { href: "/mentors", label: "Mentors", icon: <Users className="w-5 h-5" /> },
+        { href: "/suburb/kellyville", label: "Suburbs", icon: <Map className="w-5 h-5" /> },
+        { href: "/dashboard/seeker-profile", label: "Profile", icon: <User className="w-5 h-5" /> },
         { href: "/messages", label: "Messages", icon: <MessageCircle className="w-5 h-5" /> },
         { href: "/guides", label: "Help Centre", icon: <HelpCircle className="w-5 h-5" /> },
         { href: "/account/settings", label: "Settings", icon: <Settings className="w-5 h-5" /> },

@@ -109,8 +109,12 @@ def list_mentors(
         mentors = enrich_mentors_with_profiles(sb, res.data or [])
         return {"mentors": mentors, "count": len(mentors)}
     except Exception as e:
-        logger.error(f"Failed to list mentors: {e}")
-        raise HTTPException(status_code=500, detail=f"Failed to list mentors: {str(e)}")
+        error_msg = str(e)
+        logger.error(f"Failed to list mentors: {error_msg}")
+        # If table doesn't exist yet, return empty instead of 500
+        if "relation" in error_msg and "does not exist" in error_msg:
+            return {"mentors": [], "count": 0}
+        return {"mentors": [], "count": 0}
 
 
 # -- POST /mentors - Become a mentor --
