@@ -610,6 +610,12 @@
       "desc": "Explore detailed suburb profiles with rent data, safety scores, transport info, demographics, and liveability insights - everything you need to choose the right area.",
       "bullets": ["Median rent and vacancy data", "Safety scores and demographics", "Transport and commute times", "Liveability pros and cons"]
     },
+    "mentorNetwork": {
+      "title": "Mentor Network",
+      "navDesc": "Local guides for new arrivals",
+      "desc": "Connect with verified locals who know your suburb inside out. Get help settling in with video calls, suburb walks, and local tips - from someone who speaks your language.",
+      "bullets": ["Verified local mentors in your suburb", "Video calls, in-person meetups, or chat", "Multilingual - find mentors who speak your language", "Earn as a mentor - help newcomers settle in"]
+    },
     "cta": {
       "title": "Ready to get started?",
       "subtitle": "Join thousands of migrants and owners already using MigRent AI.",

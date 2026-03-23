@@ -13,6 +13,7 @@ import {
   Eye,
   Trophy,
   Home,
+  Users,
 } from "lucide-react";
 
 interface OwnerViewProps {
@@ -227,6 +228,24 @@ export default function OwnerView({ listings, loading, profile }: OwnerViewProps
           )}
         </div>
       )}
+
+      {/* Mentor Network CTA */}
+      <Link href="/mentors">
+        <motion.div
+          whileHover={{ y: -2 }}
+          className="glass-card p-6 text-center hover-glow cursor-pointer"
+        >
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-rose-500 to-pink-500 flex items-center justify-center mx-auto mb-4">
+            <Users className="w-7 h-7 text-white" />
+          </div>
+          <h3 className="font-bold text-slate-900 dark:text-white mb-1">
+            Mentor Network
+          </h3>
+          <p className="text-sm text-slate-500 dark:text-slate-400 max-w-xs mx-auto">
+            Help new arrivals settle into your suburb. Earn $20-30 per session as a local guide.
+          </p>
+        </motion.div>
+      </Link>
 
       {/* Community section - below badges */}
       <CommunityHighlights />

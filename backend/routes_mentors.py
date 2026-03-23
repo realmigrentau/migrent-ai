@@ -80,31 +80,6 @@ def list_mentors(
     return {"mentors": res.data or [], "count": len(res.data or [])}
 
 
-# -- GET /mentors/{id} - Mentor profile --
-
-@router.get("/{mentor_id}")
-def get_mentor(mentor_id: str):
-    sb = get_supabase_admin()
-
-    res = sb.table("mentors").select(
-        "*, profiles!mentors_user_id_fkey(name, custom_pfp, verified, about_me)"
-    ).eq("id", mentor_id).execute()
-
-    if not res.data:
-        raise HTTPException(status_code=404, detail="Mentor not found")
-
-    mentor = res.data[0]
-
-    # Get reviews
-    reviews_res = sb.table("mentor_reviews").select(
-        "*, profiles!mentor_reviews_seeker_id_fkey(name, custom_pfp)"
-    ).eq("mentor_id", mentor_id).order("created_at", desc=True).limit(10).execute()
-
-    mentor["reviews"] = reviews_res.data or []
-
-    return mentor
-
-
 # -- POST /mentors - Become a mentor --
 
 @router.post("")
@@ -139,6 +114,26 @@ def create_mentor(
     return {"mentor": res.data[0]}
 
 
+# -- IMPORTANT: Static routes MUST come before /{mentor_id} --
+
+
+# -- GET /mentors/me/profile - Get own mentor profile --
+
+@router.get("/me/profile")
+def get_my_mentor_profile(
+    authorization: str = Header(...),
+):
+    user = get_current_user(authorization)
+    user_id = str(user.id)
+    sb = get_supabase_admin()
+
+    res = sb.table("mentors").select("*").eq("user_id", user_id).execute()
+    if not res.data:
+        return {"mentor": None}
+
+    return {"mentor": res.data[0]}
+
+
 # -- PATCH /mentors/me - Update mentor profile --
 
 @router.patch("/me")
@@ -159,23 +154,6 @@ def update_mentor(
         raise HTTPException(status_code=400, detail="No fields to update")
 
     res = sb.table("mentors").update(updates).eq("user_id", user_id).execute()
-    return {"mentor": res.data[0]}
-
-
-# -- GET /mentors/me/profile - Get own mentor profile --
-
-@router.get("/me/profile")
-def get_my_mentor_profile(
-    authorization: str = Header(...),
-):
-    user = get_current_user(authorization)
-    user_id = str(user.id)
-    sb = get_supabase_admin()
-
-    res = sb.table("mentors").select("*").eq("user_id", user_id).execute()
-    if not res.data:
-        return {"mentor": None}
-
     return {"mentor": res.data[0]}
 
 
@@ -405,3 +383,28 @@ def stripe_onboard(
         return {"url": link.url}
     except Exception:
         raise HTTPException(status_code=500, detail="Failed to create onboarding link")
+
+
+# -- GET /mentors/{mentor_id} - Mentor profile (MUST be last - catches all) --
+
+@router.get("/{mentor_id}")
+def get_mentor(mentor_id: str):
+    sb = get_supabase_admin()
+
+    res = sb.table("mentors").select(
+        "*, profiles!mentors_user_id_fkey(name, custom_pfp, verified, about_me)"
+    ).eq("id", mentor_id).execute()
+
+    if not res.data:
+        raise HTTPException(status_code=404, detail="Mentor not found")
+
+    mentor = res.data[0]
+
+    # Get reviews
+    reviews_res = sb.table("mentor_reviews").select(
+        "*, profiles!mentor_reviews_seeker_id_fkey(name, custom_pfp)"
+    ).eq("mentor_id", mentor_id).order("created_at", desc=True).limit(10).execute()
+
+    mentor["reviews"] = reviews_res.data or []
+
+    return mentor

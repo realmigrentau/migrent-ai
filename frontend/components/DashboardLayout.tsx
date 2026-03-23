@@ -110,6 +110,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         { href: "/owner/listings/new", label: "Post Room", icon: <Plus className="w-5 h-5" /> },
         { href: "/owner/listings", label: "Listings", icon: <ListOrdered className="w-5 h-5" /> },
         { href: "/dashboard/owner-profile", label: "Profile", icon: <User className="w-5 h-5" /> },
+        { href: "/mentors", label: "Mentors", icon: <Users className="w-5 h-5" /> },
         { href: "/messages", label: "Messages", icon: <MessageCircle className="w-5 h-5" /> },
         { href: "/guides", label: "Help Centre", icon: <HelpCircle className="w-5 h-5" /> },
         { href: "/account/settings", label: "Settings", icon: <Settings className="w-5 h-5" /> },

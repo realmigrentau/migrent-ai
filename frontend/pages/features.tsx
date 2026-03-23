@@ -208,6 +208,34 @@ function MockSupport() {
   );
 }
 
+function MockMentorNetwork() {
+  return (
+    <div className="w-full h-full flex flex-col gap-3 p-6">
+      <div className="text-white/80 text-xs font-semibold uppercase tracking-wider mb-1">Local Mentors</div>
+      {[
+        { name: "Priya S.", suburb: "Kellyville", lang: "Hindi", rate: "$25" },
+        { name: "Wei L.", suburb: "Chatswood", lang: "Mandarin", rate: "$30" },
+        { name: "Sarah M.", suburb: "Parramatta", lang: "Arabic", rate: "$20" },
+      ].map((m, i) => (
+        <div key={i} className="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-xl p-3">
+          <div className="w-10 h-10 rounded-lg bg-white/15 flex items-center justify-center text-white font-bold text-xs shrink-0">
+            {m.name.charAt(0)}
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="text-white/90 text-xs font-semibold">{m.name}</div>
+            <div className="text-white/50 text-[10px]">{m.suburb} - {m.lang}</div>
+          </div>
+          <span className="text-xs font-bold text-white/80 bg-white/15 px-2.5 py-1 rounded-full">{m.rate}</span>
+        </div>
+      ))}
+      <div className="flex items-center gap-2 mt-1">
+        <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+        <span className="text-white/60 text-xs">47 mentors in Sydney</span>
+      </div>
+    </div>
+  );
+}
+
 function MockSuburbReport() {
   return (
     <div className="w-full h-full flex flex-col gap-3 p-6">
@@ -333,6 +361,20 @@ const features = [
     subline: "Know your suburb before you move",
     MockUI: MockSuburbReport,
     href: "/suburb/kellyville",
+  },
+  {
+    id: "mentor-network",
+    titleKey: "features.mentorNetwork.title",
+    descKey: "features.mentorNetwork.desc",
+    bulletsKey: "features.mentorNetwork.bullets",
+    icon: "M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z",
+    color: "from-pink-500 to-rose-500",
+    iconColor: "text-pink-500",
+    bgColor: "bg-pink-50 dark:bg-pink-500/10",
+    headline: "Local mentors for new arrivals",
+    subline: "Verified locals help you settle in your suburb",
+    MockUI: MockMentorNetwork,
+    href: "/mentors",
   },
 ];
 
