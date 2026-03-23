@@ -610,6 +610,12 @@
       "desc": "Explore detailed suburb profiles with rent data, safety scores, transport info, demographics, and liveability insights - everything you need to choose the right area.",
       "bullets": ["Median rent and vacancy data", "Safety scores and demographics", "Transport and commute times", "Liveability pros and cons"]
     },
+    "stationFinder": {
+      "title": "Station Finder",
+      "navDesc": "Walk time to nearest station",
+      "desc": "Every listing shows the nearest train or metro station with walk time and distance - auto-calculated so you know exactly how far your commute is before you move.",
+      "bullets": ["Auto-detected nearest stations", "Walk time and distance for each listing", "Metro, train, and bus coverage", "Commute score for every room"]
+    },
     "mentorNetwork": {
       "title": "Mentor Network",
       "navDesc": "Local guides for new arrivals",

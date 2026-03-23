@@ -1,4 +1,5 @@
 import os
+import logging
 import stripe
 from fastapi import APIRouter, HTTPException, Header, Query
 from pydantic import BaseModel, Field
@@ -6,6 +7,8 @@ from typing import Optional
 from db import get_supabase_admin
 from auth_utils import get_current_user
 from notifications import send_push_to_user
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/mentors", tags=["mentors"])
 
@@ -24,7 +27,7 @@ class MentorCreate(BaseModel):
     languages: list[str] = Field(default=["English"])
     bio: Optional[str] = Field(None, max_length=2000)
     specialties: list[str] = Field(default=[])
-    hourly_rate: int = Field(2500, ge=1500, le=10000)  # cents AUD, $15-$100
+    hourly_rate: int = Field(2500, ge=1500, le=10000)
 
 
 class MentorUpdate(BaseModel):
@@ -53,6 +56,33 @@ class ReviewCreate(BaseModel):
     comment: Optional[str] = Field(None, max_length=1000)
 
 
+# -- Helper: enrich mentors with profile data --
+
+def enrich_mentors_with_profiles(sb, mentors: list) -> list:
+    """Fetch profile data for a list of mentors and attach it."""
+    if not mentors:
+        return mentors
+
+    user_ids = [m["user_id"] for m in mentors]
+    profiles_res = sb.table("profiles").select(
+        "id, name, custom_pfp, verified"
+    ).in_("id", user_ids).execute()
+
+    profile_map = {}
+    for p in (profiles_res.data or []):
+        profile_map[p["id"]] = p
+
+    for mentor in mentors:
+        profile = profile_map.get(mentor["user_id"], {})
+        mentor["profiles"] = {
+            "name": profile.get("name", "Mentor"),
+            "custom_pfp": profile.get("custom_pfp"),
+            "verified": profile.get("verified", False),
+        }
+
+    return mentors
+
+
 # -- GET /mentors - Browse mentors --
 
 @router.get("")
@@ -62,22 +92,25 @@ def list_mentors(
     limit: int = Query(20, ge=1, le=50),
     offset: int = Query(0, ge=0),
 ):
-    sb = get_supabase_admin()
+    try:
+        sb = get_supabase_admin()
 
-    query = sb.table("mentors").select(
-        "*, profiles!mentors_user_id_fkey(name, custom_pfp, verified)"
-    ).eq("active", True).order("rating", desc=True)
+        query = sb.table("mentors").select("*").eq("active", True).order("rating", desc=True)
 
-    if suburb:
-        query = query.ilike("suburb", f"%{suburb}%")
+        if suburb:
+            query = query.ilike("suburb", f"%{suburb}%")
 
-    if language:
-        query = query.contains("languages", [language])
+        if language:
+            query = query.contains("languages", [language])
 
-    query = query.range(offset, offset + limit - 1)
-    res = query.execute()
+        query = query.range(offset, offset + limit - 1)
+        res = query.execute()
 
-    return {"mentors": res.data or [], "count": len(res.data or [])}
+        mentors = enrich_mentors_with_profiles(sb, res.data or [])
+        return {"mentors": mentors, "count": len(mentors)}
+    except Exception as e:
+        logger.error(f"Failed to list mentors: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to list mentors: {str(e)}")
 
 
 # -- POST /mentors - Become a mentor --
@@ -91,7 +124,6 @@ def create_mentor(
     user_id = str(user.id)
     sb = get_supabase_admin()
 
-    # Check if already a mentor
     existing = sb.table("mentors").select("id").eq("user_id", user_id).execute()
     if existing.data:
         raise HTTPException(status_code=400, detail="You are already registered as a mentor")
@@ -108,7 +140,8 @@ def create_mentor(
 
     try:
         res = sb.table("mentors").insert(mentor_row).execute()
-    except Exception:
+    except Exception as e:
+        logger.error(f"Failed to create mentor: {e}")
         raise HTTPException(status_code=500, detail="Failed to create mentor profile")
 
     return {"mentor": res.data[0]}
@@ -168,7 +201,6 @@ def create_session(
     user_id = str(user.id)
     sb = get_supabase_admin()
 
-    # Get mentor
     mentor_res = sb.table("mentors").select("*").eq("id", body.mentor_id).execute()
     if not mentor_res.data:
         raise HTTPException(status_code=404, detail="Mentor not found")
@@ -181,7 +213,7 @@ def create_session(
     if not mentor["active"]:
         raise HTTPException(status_code=400, detail="This mentor is not currently available")
 
-    amount = mentor["hourly_rate"]  # cents
+    amount = mentor["hourly_rate"]
     platform_fee = int(amount * PLATFORM_FEE_PERCENT / 100)
     mentor_payout = amount - platform_fee
 
@@ -201,7 +233,8 @@ def create_session(
 
     try:
         res = sb.table("mentor_sessions").insert(session_row).execute()
-    except Exception:
+    except Exception as e:
+        logger.error(f"Failed to create session: {e}")
         raise HTTPException(status_code=500, detail="Failed to create session")
 
     session_data = res.data[0]
@@ -237,7 +270,8 @@ def create_session(
 
         session_data["checkout_url"] = checkout.url
 
-    except Exception:
+    except Exception as e:
+        logger.error(f"Stripe checkout failed: {e}")
         raise HTTPException(status_code=500, detail="Payment processing failed")
 
     # Push notification to mentor
@@ -268,18 +302,17 @@ def get_my_sessions(
     sb = get_supabase_admin()
 
     if role == "mentor":
-        # Get mentor id first
         mentor_res = sb.table("mentors").select("id").eq("user_id", user_id).execute()
         if not mentor_res.data:
             return {"sessions": []}
         mentor_id = mentor_res.data[0]["id"]
-        res = sb.table("mentor_sessions").select(
-            "*, profiles!mentor_sessions_seeker_id_fkey(name, custom_pfp)"
-        ).eq("mentor_id", mentor_id).order("created_at", desc=True).execute()
+        res = sb.table("mentor_sessions").select("*").eq(
+            "mentor_id", mentor_id
+        ).order("created_at", desc=True).execute()
     else:
-        res = sb.table("mentor_sessions").select(
-            "*, mentors!mentor_sessions_mentor_id_fkey(suburb, languages, user_id, profiles!mentors_user_id_fkey(name, custom_pfp))"
-        ).eq("seeker_id", user_id).order("created_at", desc=True).execute()
+        res = sb.table("mentor_sessions").select("*").eq(
+            "seeker_id", user_id
+        ).order("created_at", desc=True).execute()
 
     return {"sessions": res.data or []}
 
@@ -295,7 +328,6 @@ def create_review(
     user_id = str(user.id)
     sb = get_supabase_admin()
 
-    # Verify session exists and user was the seeker
     session_res = sb.table("mentor_sessions").select("*").eq("id", body.session_id).execute()
     if not session_res.data:
         raise HTTPException(status_code=404, detail="Session not found")
@@ -351,7 +383,6 @@ def stripe_onboard(
 
     mentor = mentor_res.data[0]
 
-    # Create or retrieve Stripe Connect account
     if mentor.get("stripe_account_id"):
         account_id = mentor["stripe_account_id"]
     else:
@@ -372,7 +403,6 @@ def stripe_onboard(
         except Exception:
             raise HTTPException(status_code=500, detail="Failed to create Stripe account")
 
-    # Create onboarding link
     try:
         link = stripe.AccountLink.create(
             account=account_id,
@@ -385,26 +415,44 @@ def stripe_onboard(
         raise HTTPException(status_code=500, detail="Failed to create onboarding link")
 
 
-# -- GET /mentors/{mentor_id} - Mentor profile (MUST be last - catches all) --
+# -- GET /mentors/{mentor_id} - Mentor profile (MUST be last) --
 
 @router.get("/{mentor_id}")
 def get_mentor(mentor_id: str):
     sb = get_supabase_admin()
 
-    res = sb.table("mentors").select(
-        "*, profiles!mentors_user_id_fkey(name, custom_pfp, verified, about_me)"
-    ).eq("id", mentor_id).execute()
+    res = sb.table("mentors").select("*").eq("id", mentor_id).execute()
 
     if not res.data:
         raise HTTPException(status_code=404, detail="Mentor not found")
 
     mentor = res.data[0]
 
-    # Get reviews
-    reviews_res = sb.table("mentor_reviews").select(
-        "*, profiles!mentor_reviews_seeker_id_fkey(name, custom_pfp)"
-    ).eq("mentor_id", mentor_id).order("created_at", desc=True).limit(10).execute()
+    # Get profile
+    profile_res = sb.table("profiles").select(
+        "id, name, custom_pfp, verified, about_me"
+    ).eq("id", mentor["user_id"]).execute()
+    if profile_res.data:
+        mentor["profiles"] = profile_res.data[0]
+    else:
+        mentor["profiles"] = {"name": "Mentor", "custom_pfp": None, "verified": False, "about_me": None}
 
-    mentor["reviews"] = reviews_res.data or []
+    # Get reviews
+    reviews_res = sb.table("mentor_reviews").select("*").eq(
+        "mentor_id", mentor_id
+    ).order("created_at", desc=True).limit(10).execute()
+
+    # Enrich reviews with profile names
+    review_list = reviews_res.data or []
+    if review_list:
+        seeker_ids = [r["seeker_id"] for r in review_list]
+        seeker_profiles = sb.table("profiles").select(
+            "id, name, custom_pfp"
+        ).in_("id", seeker_ids).execute()
+        sp_map = {p["id"]: p for p in (seeker_profiles.data or [])}
+        for r in review_list:
+            r["profiles"] = sp_map.get(r["seeker_id"], {"name": "Anonymous", "custom_pfp": None})
+
+    mentor["reviews"] = review_list
 
     return mentor

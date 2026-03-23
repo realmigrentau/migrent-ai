@@ -208,6 +208,40 @@ function MockSupport() {
   );
 }
 
+function MockStationFinder() {
+  return (
+    <div className="w-full h-full flex flex-col gap-3 p-6">
+      <div className="text-white/80 text-xs font-semibold uppercase tracking-wider mb-1">Nearest Stations</div>
+      {[
+        { name: "Kellyville Station", dist: "450m", walk: "6 min", line: "Metro NW" },
+        { name: "Bella Vista Station", dist: "1.2km", walk: "15 min", line: "Metro NW" },
+        { name: "Castle Hill Station", dist: "2.1km", walk: "26 min", line: "Metro NW" },
+      ].map((s, i) => (
+        <div key={i} className="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-xl p-3">
+          <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${
+            i === 0 ? "bg-emerald-400/20" : "bg-white/15"
+          }`}>
+            <svg className={`w-5 h-5 ${i === 0 ? "text-emerald-300" : "text-white/60"}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+            </svg>
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="text-white/90 text-xs font-semibold">{s.name}</div>
+            <div className="text-white/50 text-[10px]">{s.line} - {s.walk} walk</div>
+          </div>
+          <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${
+            i === 0 ? "bg-emerald-400/20 text-emerald-200" : "bg-white/10 text-white/60"
+          }`}>{s.dist}</span>
+        </div>
+      ))}
+      <div className="flex items-center gap-2 mt-1">
+        <div className="w-2 h-2 rounded-full bg-emerald-400" />
+        <span className="text-white/60 text-xs">Auto-calculated for every listing</span>
+      </div>
+    </div>
+  );
+}
+
 function MockMentorNetwork() {
   return (
     <div className="w-full h-full flex flex-col gap-3 p-6">
@@ -361,6 +395,20 @@ const features = [
     subline: "Know your suburb before you move",
     MockUI: MockSuburbReport,
     href: "/suburb/kellyville",
+  },
+  {
+    id: "station-finder",
+    titleKey: "features.stationFinder.title",
+    descKey: "features.stationFinder.desc",
+    bulletsKey: "features.stationFinder.bullets",
+    icon: "M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z",
+    color: "from-emerald-500 to-green-500",
+    iconColor: "text-emerald-500",
+    bgColor: "bg-emerald-50 dark:bg-emerald-500/10",
+    headline: "Nearest station for every room",
+    subline: "Walk time and distance auto-calculated",
+    MockUI: MockStationFinder,
+    href: "/seeker/search",
   },
   {
     id: "mentor-network",
