@@ -19,6 +19,7 @@ import {
   HelpCircle,
   ChevronLeft,
   ChevronRight,
+  Users,
 } from "lucide-react";
 
 interface DashboardLayoutProps {
@@ -122,6 +123,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         { href: "/seeker/search", label: "Search", icon: <Search className="w-5 h-5" /> },
         { href: "/seeker/wishlist", label: "Saved", icon: <Heart className="w-5 h-5" /> },
         { href: "/dashboard/seeker-profile", label: "Profile", icon: <User className="w-5 h-5" /> },
+        { href: "/mentors", label: "Mentors", icon: <Users className="w-5 h-5" /> },
         { href: "/messages", label: "Messages", icon: <MessageCircle className="w-5 h-5" /> },
         { href: "/guides", label: "Help Centre", icon: <HelpCircle className="w-5 h-5" /> },
         { href: "/account/settings", label: "Settings", icon: <Settings className="w-5 h-5" /> },

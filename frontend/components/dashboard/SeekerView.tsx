@@ -15,6 +15,7 @@ import {
   User,
   Briefcase,
   Map,
+  Users,
 } from "lucide-react";
 import VisaRecommendations from "./VisaRecommendations";
 
@@ -246,6 +247,24 @@ export default function SeekerView({ loading, profile }: SeekerViewProps) {
           </div>
         </div>
       )}
+
+      {/* Mentor CTA */}
+      <Link href="/mentors">
+        <motion.div
+          whileHover={{ y: -2 }}
+          className="glass-card p-6 text-center hover-glow cursor-pointer"
+        >
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-rose-500 to-pink-500 flex items-center justify-center mx-auto mb-4">
+            <Users className="w-7 h-7 text-white" />
+          </div>
+          <h3 className="font-bold text-slate-900 dark:text-white mb-1">
+            First week? Get a local mentor
+          </h3>
+          <p className="text-sm text-slate-500 dark:text-slate-400 max-w-xs mx-auto">
+            Connect with verified locals who help you settle in - suburb walks, local tips, and more
+          </p>
+        </motion.div>
+      </Link>
 
       {/* Quick search prompt */}
       <Link href="/seeker/search">

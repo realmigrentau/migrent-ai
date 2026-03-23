@@ -1784,3 +1784,101 @@ export async function subscribeToNotifications(
     return false;
   }
 }
+
+// ── Mentor Network ──────────────────────────────────────────
+
+export async function getMentors(params?: { suburb?: string; language?: string }) {
+  try {
+    const query = new URLSearchParams();
+    if (params?.suburb) query.set("suburb", params.suburb);
+    if (params?.language) query.set("language", params.language);
+    const res = await fetch(`${BASE_URL}/mentors?${query.toString()}`);
+    if (!res.ok) return null;
+    return await res.json();
+  } catch {
+    return null;
+  }
+}
+
+export async function getMentor(mentorId: string) {
+  try {
+    const res = await fetch(`${BASE_URL}/mentors/${mentorId}`);
+    if (!res.ok) return null;
+    return await res.json();
+  } catch {
+    return null;
+  }
+}
+
+export async function createMentor(token: string, data: {
+  suburb: string;
+  postcode?: number;
+  languages: string[];
+  bio?: string;
+  specialties?: string[];
+  hourly_rate: number;
+}) {
+  try {
+    const res = await fetch(`${BASE_URL}/mentors`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) return null;
+    return await res.json();
+  } catch {
+    return null;
+  }
+}
+
+export async function bookMentorSession(token: string, data: {
+  mentor_id: string;
+  suburb: string;
+  preferred_language?: string;
+  session_type: string;
+  scheduled_at?: string;
+  notes?: string;
+}) {
+  try {
+    const res = await fetch(`${BASE_URL}/mentors/sessions`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) return null;
+    return await res.json();
+  } catch {
+    return null;
+  }
+}
+
+export async function getMyMentorProfile(token: string) {
+  try {
+    const res = await fetch(`${BASE_URL}/mentors/me/profile`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!res.ok) return null;
+    return await res.json();
+  } catch {
+    return null;
+  }
+}
+
+export async function startMentorStripeOnboarding(token: string) {
+  try {
+    const res = await fetch(`${BASE_URL}/mentors/stripe-onboard`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!res.ok) return null;
+    return await res.json();
+  } catch {
+    return null;
+  }
+}
