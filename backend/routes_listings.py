@@ -55,6 +55,14 @@ async def create_listing(
     if user_type and user_type != "owner":
         raise HTTPException(status_code=403, detail="Only owners can create listings")
 
+    # Gate: Owner must be fully verified (email + phone + govt ID)
+    from routes_owner_verification import check_owner_verified
+    if not check_owner_verified(str(user.id)):
+        raise HTTPException(
+            status_code=403,
+            detail="You must complete identity verification before listing a room. Go to Settings > Verification to get verified.",
+        )
+
     city = listing.city or derive_city(listing.postcode)
 
     sb = get_supabase_admin()

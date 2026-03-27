@@ -1882,3 +1882,114 @@ export async function startMentorStripeOnboarding(token: string) {
     return null;
   }
 }
+
+// ─── Owner Verification API ──────────────────────────────────────
+
+export async function getOwnerVerificationStatus(token: string) {
+  try {
+    const res = await fetch(`${BASE_URL}/owner-verification/status`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!res.ok) return null;
+    return await res.json();
+  } catch {
+    return null;
+  }
+}
+
+export async function sendPhoneOTP(token: string, phone: string) {
+  try {
+    const res = await fetch(`${BASE_URL}/owner-verification/phone/send-otp`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ phone }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail || "Failed to send OTP");
+    return data;
+  } catch (err: any) {
+    return { error: err.message || "Failed to send OTP" };
+  }
+}
+
+export async function verifyPhoneOTP(token: string, code: string) {
+  try {
+    const res = await fetch(`${BASE_URL}/owner-verification/phone/verify-otp`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ code }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail || "Verification failed");
+    return data;
+  } catch (err: any) {
+    return { error: err.message || "Verification failed" };
+  }
+}
+
+export async function uploadGovernmentID(token: string, file: File, documentType: string) {
+  try {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("document_type", documentType);
+
+    const res = await fetch(`${BASE_URL}/owner-verification/id/upload`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
+      body: formData,
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail || "Upload failed");
+    return data;
+  } catch (err: any) {
+    return { error: err.message || "Upload failed" };
+  }
+}
+
+export async function getAdminPendingIDs(token: string) {
+  try {
+    const res = await fetch(`${BASE_URL}/owner-verification/admin/pending-ids`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!res.ok) return null;
+    return await res.json();
+  } catch {
+    return null;
+  }
+}
+
+export async function getAdminIDDocumentUrl(token: string, userId: string) {
+  try {
+    const res = await fetch(`${BASE_URL}/owner-verification/admin/id-document-url/${userId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!res.ok) return null;
+    return await res.json();
+  } catch {
+    return null;
+  }
+}
+
+export async function reviewOwnerID(token: string, userId: string, action: "approve" | "reject", reason?: string) {
+  try {
+    const res = await fetch(`${BASE_URL}/owner-verification/admin/review-id/${userId}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ action, reason }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail || "Review failed");
+    return data;
+  } catch (err: any) {
+    return { error: err.message || "Review failed" };
+  }
+}
