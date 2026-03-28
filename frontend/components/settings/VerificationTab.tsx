@@ -55,7 +55,7 @@ export default function VerificationTab({
   startIdVerification,
   showMessage,
 }: VerificationTabProps) {
-  const { session } = useAuth();
+  const { session, user } = useAuth();
   const [ownerStatus, setOwnerStatus] = useState<OwnerVerificationStatus | null>(null);
   const [loadingStatus, setLoadingStatus] = useState(true);
 
@@ -73,7 +73,11 @@ export default function VerificationTab({
   const [dragOver, setDragOver] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const isOwner = profile?.role === "owner";
+  const userMeta = user?.user_metadata || {};
+  const isOwner =
+    profile?.role === "owner" ||
+    userMeta.user_type === "owner" ||
+    userMeta.type === "owner";
 
   // Fetch owner verification status
   const fetchStatus = useCallback(async () => {
