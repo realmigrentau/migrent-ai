@@ -137,30 +137,49 @@ def send_phone_otp(body: PhoneOTPRequest, authorization: str = Header(...)):
         "phone_otp_expires_at": expires_at,
     }).eq("user_id", str(user.id)).execute()
 
-    # V1: Send OTP via email (fallback until Twilio is set up)
-    # When TWILIO_SID is configured, this will switch to SMS
-    twilio_sid = os.environ.get("TWILIO_SID", "")
-    if twilio_sid:
-        # Future: send SMS via Twilio
-        logger.info(f"[Verify] Would send SMS to {phone} (Twilio not implemented yet)")
+    # Send OTP via SMS (Twilio)
+    twilio_sid = os.environ.get("TWILIO_ACCOUNT_SID", "") or os.environ.get("TWILIO_SID", "")
+    twilio_token = os.environ.get("TWILIO_AUTH_TOKEN", "")
+    twilio_from = os.environ.get("TWILIO_PHONE_NUMBER", "")
+    sms_sent = False
 
-    # Always send via email as backup/primary for V1
-    try:
-        owner_name = ""
-        profile_res = sb.table("profiles").select("name, preferred_name").eq("id", str(user.id)).execute()
-        if profile_res.data:
-            owner_name = profile_res.data[0].get("preferred_name") or profile_res.data[0].get("name") or ""
+    if twilio_sid and twilio_token and twilio_from:
+        try:
+            from twilio.rest import Client as TwilioClient
+            twilio_client = TwilioClient(twilio_sid, twilio_token)
+            twilio_client.messages.create(
+                body=f"Your MigRent verification code is: {otp_code}\n\nThis code expires in 10 minutes. Do not share it.",
+                from_=twilio_from,
+                to=phone,
+            )
+            sms_sent = True
+            logger.info(f"[Verify] SMS sent to {phone}")
+        except Exception as e:
+            logger.error(f"[Verify] Twilio SMS failed: {e}")
 
-        send_phone_otp_email(
-            to_email=user.email,
-            owner_name=owner_name or "there",
-            otp_code=otp_code,
-            phone=phone,
-        )
-    except Exception as e:
-        logger.error(f"[Verify] Failed to send OTP email: {e}")
+    if not sms_sent:
+        # Fallback: send via email if Twilio not configured or failed
+        try:
+            owner_name = ""
+            profile_res = sb.table("profiles").select("name, preferred_name").eq("id", str(user.id)).execute()
+            if profile_res.data:
+                owner_name = profile_res.data[0].get("preferred_name") or profile_res.data[0].get("name") or ""
 
-    return {"message": f"Verification code sent to your email ({user.email}). Check your inbox.", "expires_in_minutes": OTP_EXPIRY_MINUTES}
+            send_phone_otp_email(
+                to_email=user.email,
+                owner_name=owner_name or "there",
+                otp_code=otp_code,
+                phone=phone,
+            )
+        except Exception as e:
+            logger.error(f"[Verify] Failed to send OTP email fallback: {e}")
+            raise HTTPException(status_code=500, detail="Failed to send verification code. Please try again.")
+
+    if sms_sent:
+        masked = phone[:4] + "***" + phone[-3:]
+        return {"message": f"Verification code sent to {masked} via SMS. Check your messages.", "method": "sms", "expires_in_minutes": OTP_EXPIRY_MINUTES}
+    else:
+        return {"message": f"Verification code sent to your email ({user.email}). Check your inbox.", "method": "email", "expires_in_minutes": OTP_EXPIRY_MINUTES}
 
 
 class VerifyOTPRequest(BaseModel):

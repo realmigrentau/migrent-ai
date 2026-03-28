@@ -114,7 +114,7 @@ export default function VerificationTab({
       showMessage(result.error, "error");
     } else {
       setOtpSent(true);
-      showMessage(result.message || "Code sent to your email!", "success");
+      showMessage(result.message || "Code sent to your phone!", "success");
     }
   };
 
@@ -304,7 +304,7 @@ export default function VerificationTab({
                 ) : !otpSent ? (
                   <div className="mt-3 space-y-3">
                     <p className="text-xs text-slate-500 dark:text-slate-400">
-                      Enter your Australian mobile number. We will send a verification code to your email.
+                      Enter your Australian mobile number. We will send a verification code via SMS to your phone.
                     </p>
                     <div className="flex gap-2">
                       <div className="flex-1">
@@ -329,7 +329,7 @@ export default function VerificationTab({
                 ) : (
                   <div className="mt-3 space-y-3">
                     <p className="text-xs text-slate-500 dark:text-slate-400">
-                      Enter the 6-digit code sent to your email. Code expires in 10 minutes.
+                      Enter the 6-digit code sent to your phone via SMS. Code expires in 10 minutes.
                     </p>
                     <div className="flex gap-2">
                       <input
