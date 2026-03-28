@@ -3,9 +3,10 @@ import { motion } from "framer-motion";
 
 interface SignInButtonProps {
   redirectTo?: string;
+  disabled?: boolean;
 }
 
-export default function SignInButton({ redirectTo }: SignInButtonProps) {
+export default function SignInButton({ redirectTo, disabled }: SignInButtonProps) {
   const handleGoogleSignIn = async () => {
     await supabase.auth.signInWithOAuth({
       provider: "google",
@@ -15,10 +16,11 @@ export default function SignInButton({ redirectTo }: SignInButtonProps) {
 
   return (
     <motion.button
-      whileHover={{ scale: 1.01 }}
-      whileTap={{ scale: 0.99 }}
+      whileHover={disabled ? {} : { scale: 1.01 }}
+      whileTap={disabled ? {} : { scale: 0.99 }}
       onClick={handleGoogleSignIn}
-      className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all duration-200"
+      disabled={disabled}
+      className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
     >
       <svg width="18" height="18" viewBox="0 0 24 24">
         <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" />

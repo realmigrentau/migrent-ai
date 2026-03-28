@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import { supabase } from "../../lib/supabase";
 import { useAuth } from "../../hooks/useAuth";
+import ConsentCheckboxes from "../../components/legal/ConsentCheckboxes";
 import { motion } from "framer-motion";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
@@ -22,10 +23,19 @@ export default function MagicLinkSignup() {
   const [loading, setLoading] = useState(false);
   const pollingIdRef = useRef<string>("");
   const pollIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const [consents, setConsents] = useState({
+    facilitator: false,
+    terms: false,
+    rentalLaws: false,
+    indemnity: false,
+  });
+  const [consentError, setConsentError] = useState("");
+
+  const allConsented = consents.facilitator && consents.terms && consents.rentalLaws && consents.indemnity;
 
   // Redirect if already logged in
   useEffect(() => {
-    if (session) router.push("/onboarding");
+    if (session) router.push("/dashboard");
   }, [session, router]);
 
   // Poll for cross-device login when in "sent" state
@@ -48,7 +58,7 @@ export default function MagicLinkSignup() {
             refresh_token: data.refresh_token,
           });
           if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
-          router.push("/onboarding");
+          router.push("/dashboard");
         } else if (data.status === "expired") {
           if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
         }
@@ -73,8 +83,13 @@ export default function MagicLinkSignup() {
 
   const handleSendLink = async () => {
     setMsg("");
+    setConsentError("");
     if (!email) {
       setMsg("Please enter your email address.");
+      return;
+    }
+    if (!allConsented) {
+      setConsentError("You must accept all legal acknowledgements to create an account.");
       return;
     }
     setLoading(true);
@@ -88,6 +103,10 @@ export default function MagicLinkSignup() {
       options: {
         shouldCreateUser: true,
         emailRedirectTo: `${window.location.origin}/auth/callback?polling_id=${pollingId}`,
+        data: {
+          type: "seeker",
+          legal_accepted_at: new Date().toISOString(),
+        },
       },
     });
     if (error) {
@@ -126,7 +145,7 @@ export default function MagicLinkSignup() {
             <p className="text-slate-500 dark:text-slate-400 text-sm mt-2">
               {sent
                 ? "Check your inbox for the magic link."
-                : "Enter your email and we\u2019ll send you a sign-up link."}
+                : "Enter your email and we'll send you a sign-up link."}
             </p>
           </div>
 
@@ -178,6 +197,12 @@ export default function MagicLinkSignup() {
                   onKeyDown={(e) => e.key === "Enter" && handleSendLink()}
                 />
               </div>
+
+              <ConsentCheckboxes
+                consents={consents}
+                onChange={(c) => { setConsents(c); setConsentError(""); }}
+                error={consentError}
+              />
 
               <motion.button
                 whileHover={{ scale: 1.02 }}

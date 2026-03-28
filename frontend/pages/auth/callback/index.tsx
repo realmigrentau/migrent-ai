@@ -7,6 +7,38 @@ import { motion } from "framer-motion";
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
 
 /**
+ * Send welcome + legal reminder emails for new signups (best-effort).
+ */
+async function sendWelcomeEmails(email: string, userName: string, userRole: string) {
+  try {
+    await fetch("/api/emails/welcome-suite", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, userName, userRole }),
+    });
+  } catch {
+    // Best-effort - don't block the auth flow
+  }
+}
+
+/**
+ * Store legal_accepted_at in the user's profile (best-effort).
+ */
+async function storeLegalAcceptance(accessToken: string) {
+  try {
+    await fetch(`${API_BASE}/auth/store-legal-acceptance`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+  } catch {
+    // Best-effort
+  }
+}
+
+/**
  * After magic link verification, store session tokens in the backend
  * so the original device (e.g. laptop) can pick them up via polling.
  */
@@ -52,7 +84,22 @@ export default function AuthCallback() {
         if (pollingId && session.access_token && session.refresh_token) {
           await storeCrossDeviceTokens(pollingId, session.access_token, session.refresh_token);
         }
-        router.replace("/onboarding");
+        // Store legal acceptance and send welcome emails for new users
+        const meta = session.user?.user_metadata;
+        if (meta?.legal_accepted_at) {
+          await storeLegalAcceptance(session.access_token);
+        }
+        // Send welcome emails (best-effort, only on first callback)
+        const welcomeKey = "migrent_welcome_sent";
+        if (!localStorage.getItem(welcomeKey)) {
+          localStorage.setItem(welcomeKey, "1");
+          sendWelcomeEmails(
+            session.user?.email || "",
+            meta?.full_name || meta?.name || session.user?.email?.split("@")[0] || "there",
+            meta?.type || "seeker"
+          );
+        }
+        router.replace("/dashboard");
         return;
       }
 
@@ -63,7 +110,21 @@ export default function AuthCallback() {
           if (pollingId && session.access_token && session.refresh_token) {
             await storeCrossDeviceTokens(pollingId, session.access_token, session.refresh_token);
           }
-          router.replace("/onboarding");
+          // Store legal acceptance and send welcome emails for new users
+          const meta = session.user?.user_metadata;
+          if (meta?.legal_accepted_at) {
+            await storeLegalAcceptance(session.access_token);
+          }
+          const welcomeKey = "migrent_welcome_sent";
+          if (!localStorage.getItem(welcomeKey)) {
+            localStorage.setItem(welcomeKey, "1");
+            sendWelcomeEmails(
+              session.user?.email || "",
+              meta?.full_name || meta?.name || session.user?.email?.split("@")[0] || "there",
+              meta?.type || "seeker"
+            );
+          }
+          router.replace("/dashboard");
         }
       });
 

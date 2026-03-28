@@ -21,10 +21,11 @@ import ReviewReminder from "../emails/ReviewReminder";
 import WelcomeEmail from "../emails/WelcomeEmail";
 import PasswordReset from "../emails/PasswordReset";
 import AccountAlert from "../emails/AccountAlert";
+import LegalReminderEmail from "../emails/LegalReminderEmail";
 
 const MAILJET_API_KEY = process.env.MAILJET_API_KEY || "";
 const MAILJET_SECRET_KEY = process.env.MAILJET_SECRET_KEY || "";
-const FROM_EMAIL = process.env.FROM_EMAIL || "migrantau@gmail.com";
+const FROM_EMAIL = process.env.FROM_EMAIL || "migrentau@gmail.com";
 const FROM_NAME = process.env.FROM_NAME || "MigRent";
 
 export interface SendEmailOptions {
@@ -157,4 +158,8 @@ export const emailTemplates = {
     viewCount?: number;
     message?: string;
   }) => createElement(AccountAlert, props),
+
+  legalReminder: (props: {
+    userName: string;
+  }) => createElement(LegalReminderEmail, props),
 };

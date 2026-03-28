@@ -5,6 +5,7 @@ import { useHCaptcha } from "@hcaptcha/react-hcaptcha/hooks";
 import { supabase } from "../../lib/supabase";
 import { useAuth } from "../../hooks/useAuth";
 import SignInButton from "../../components/SignInButton";
+import MicrosoftSignInButton from "../../components/MicrosoftSignInButton";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 
@@ -19,8 +20,8 @@ export default function SignIn() {
   const { executeInstance, resetInstance } = useHCaptcha() ?? {};
 
   // Get redirect URL from query params (e.g., /signin?redirect=/dashboard)
-  // Default to /onboarding if coming from signup flow
-  const redirectUrl = typeof router.query.redirect === "string" ? router.query.redirect : "/onboarding";
+  // Default to /dashboard for returning users
+  const redirectUrl = typeof router.query.redirect === "string" ? router.query.redirect : "/dashboard";
 
   useEffect(() => {
     if (session) {
@@ -145,6 +146,8 @@ export default function SignIn() {
             </div>
 
             <SignInButton redirectTo={typeof window !== "undefined" ? window.location.origin : undefined} />
+
+            <MicrosoftSignInButton redirectTo={typeof window !== "undefined" ? window.location.origin : undefined} />
 
             <Link
               href="/magic-link-login"

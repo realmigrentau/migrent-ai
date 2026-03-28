@@ -5,6 +5,7 @@ import { useHCaptcha } from "@hcaptcha/react-hcaptcha/hooks";
 import { supabase } from "../../lib/supabase";
 import { useAuth } from "../../hooks/useAuth";
 import SignInButton from "../../components/SignInButton";
+import MicrosoftSignInButton from "../../components/MicrosoftSignInButton";
 import ConsentCheckboxes from "../../components/legal/ConsentCheckboxes";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
@@ -26,8 +27,10 @@ export default function SignUp() {
   const [consentError, setConsentError] = useState("");
   const { executeInstance, resetInstance } = useHCaptcha() ?? {};
 
+  const allConsented = consents.facilitator && consents.terms && consents.rentalLaws && consents.indemnity;
+
   if (session) {
-    router.push("/onboarding");
+    router.push("/dashboard");
     return null;
   }
 
@@ -42,7 +45,7 @@ export default function SignUp() {
       setMsg(t("auth.passwordMinLength"));
       return;
     }
-    if (!consents.facilitator || !consents.terms || !consents.rentalLaws || !consents.indemnity) {
+    if (!allConsented) {
       setConsentError("You must accept all legal acknowledgements to create an account.");
       return;
     }
@@ -60,7 +63,10 @@ export default function SignUp() {
         email,
         password,
         options: {
-          data: { type: "seeker" },
+          data: {
+            type: "seeker",
+            legal_accepted_at: new Date().toISOString(),
+          },
           ...(captchaToken ? { captchaToken } : {}),
         },
       });
@@ -164,7 +170,21 @@ export default function SignUp() {
               </div>
             </div>
 
-            <SignInButton redirectTo={typeof window !== "undefined" ? window.location.origin : undefined} />
+            {!allConsented && (
+              <p className="text-xs text-center text-amber-600 dark:text-amber-400">
+                Please accept all legal acknowledgements above before using social sign-up.
+              </p>
+            )}
+
+            <SignInButton
+              redirectTo={typeof window !== "undefined" ? window.location.origin : undefined}
+              disabled={!allConsented}
+            />
+
+            <MicrosoftSignInButton
+              redirectTo={typeof window !== "undefined" ? window.location.origin : undefined}
+              disabled={!allConsented}
+            />
 
             <Link
               href="/magic-link-signup"

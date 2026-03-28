@@ -105,6 +105,13 @@ async function sendEmailByType(type: string, to: string, data: any) {
       template = emailTemplates.accountAlert(data);
       break;
 
+    case "legal_reminder":
+      subject = "Review your MigRent terms and policies";
+      template = emailTemplates.legalReminder({
+        userName: data.userName || "there",
+      });
+      break;
+
     default:
       throw new Error(`Unknown email type: ${type}`);
   }
