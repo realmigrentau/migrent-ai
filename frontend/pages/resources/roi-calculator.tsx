@@ -5,6 +5,7 @@ import Head from "next/head";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
 import Breadcrumb from "../../components/content/Breadcrumb";
 import { getAllSuburbs } from "../../data/suburbs";
+import OwnerGuard from "../../components/OwnerGuard";
 
 const roomTypes = ["single", "double", "ensuite", "studio"] as const;
 type RoomType = (typeof roomTypes)[number];
@@ -62,6 +63,11 @@ export default function ROICalculator() {
             { label: "ROI Calculator" },
           ]}
         />
+
+        <OwnerGuard
+          teaserTitle="Owner ROI Calculator"
+          teaserDescription="Sign up as a property owner to calculate your return on investment and estimate rental income by suburb."
+        >
 
         {/* Hero */}
         <motion.div
@@ -296,6 +302,8 @@ export default function ROICalculator() {
             </motion.span>
           </Link>
         </motion.div>
+
+        </OwnerGuard>
       </div>
     </>
   );

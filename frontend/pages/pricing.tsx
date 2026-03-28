@@ -8,6 +8,7 @@ import EarningsCalculator from "../components/pricing/EarningsCalculator";
 import ComparisonTable from "../components/pricing/ComparisonTable";
 import PricingFAQ from "../components/pricing/PricingFAQ";
 import TestimonialCarousel from "../components/pricing/TestimonialCarousel";
+import OwnerGuard from "../components/OwnerGuard";
 
 export default function Pricing() {
   return (
@@ -27,7 +28,12 @@ export default function Pricing() {
         <div className="h-20" />
         <div className="space-y-20">
           <PricingTables />
-          <EarningsCalculator />
+          <OwnerGuard
+            teaserTitle="Owner Earnings Calculator"
+            teaserDescription="Sign up as a property owner to estimate your rental earnings with our interactive calculator."
+          >
+            <EarningsCalculator />
+          </OwnerGuard>
           <ComparisonTable />
           <TestimonialCarousel />
           <PricingFAQ />
