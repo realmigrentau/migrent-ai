@@ -73,15 +73,16 @@ export default function VerificationTab({
   const [dragOver, setDragOver] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // Detect owner from multiple sources
   const userMeta = user?.user_metadata || {};
-  const isOwner =
+  const isOwnerHint =
     profile?.role === "owner" ||
     userMeta.user_type === "owner" ||
     userMeta.type === "owner";
 
-  // Fetch owner verification status
+  // Always try to fetch verification status - the API creates a record for any user
   const fetchStatus = useCallback(async () => {
-    if (!session?.access_token || !isOwner) {
+    if (!session?.access_token) {
       setLoadingStatus(false);
       return;
     }
@@ -89,11 +90,11 @@ export default function VerificationTab({
       const data = await getOwnerVerificationStatus(session.access_token);
       if (data) setOwnerStatus(data);
     } catch {
-      // ignore
+      // ignore - user may not have a record yet
     } finally {
       setLoadingStatus(false);
     }
-  }, [session?.access_token, isOwner]);
+  }, [session?.access_token]);
 
   useEffect(() => {
     fetchStatus();
@@ -184,8 +185,9 @@ export default function VerificationTab({
   const { percentage, steps } = verificationProgress;
   const isSuperhost = (profile?.average_rating || 0) >= 4.8 && (profile?.reviews_count || 0) >= 10;
 
-  // For non-owner profiles, show the original general verification
-  if (!isOwner) {
+  // Show owner verification stepper if we got status back from API, or if user is detected as owner
+  // Show generic profile view only for non-owners who have no verification record
+  if (!ownerStatus && !isOwnerHint) {
     return (
       <div className="space-y-6">
         <GlassCard delay={0.05} gradient="emerald">
