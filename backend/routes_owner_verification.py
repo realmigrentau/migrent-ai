@@ -111,7 +111,7 @@ class PhoneOTPRequest(BaseModel):
 
 @router.post("/phone/send-otp")
 def send_phone_otp(body: PhoneOTPRequest, authorization: str = Header(...)):
-    """Send a 6-digit OTP code to the owner's phone via email (V1 - no Twilio yet)."""
+    """Send a verification code to the owner's phone via Twilio Verify SMS."""
     user = get_current_user(authorization)
     sb = get_supabase_admin()
 
@@ -125,46 +125,46 @@ def send_phone_otp(body: PhoneOTPRequest, authorization: str = Header(...)):
     if record.get("phone_verified"):
         raise HTTPException(status_code=400, detail="Phone already verified")
 
-    # Generate OTP
-    otp_code = "".join([str(random.randint(0, 9)) for _ in range(OTP_LENGTH)])
-    otp_hash = _hash_otp(otp_code)
-    expires_at = (datetime.now(timezone.utc) + timedelta(minutes=OTP_EXPIRY_MINUTES)).isoformat()
-
-    # Store hashed OTP
+    # Store the phone number
     sb.table("owner_verification").update({
         "phone": phone,
-        "phone_otp_code": otp_hash,
-        "phone_otp_expires_at": expires_at,
     }).eq("user_id", str(user.id)).execute()
 
-    # Send OTP via SMS (Twilio)
-    twilio_sid = os.environ.get("TWILIO_ACCOUNT_SID", "") or os.environ.get("TWILIO_SID", "")
+    # Send OTP via Twilio Verify API (no phone number purchase needed)
+    twilio_sid = os.environ.get("TWILIO_ACCOUNT_SID", "")
     twilio_token = os.environ.get("TWILIO_AUTH_TOKEN", "")
-    twilio_from = os.environ.get("TWILIO_PHONE_NUMBER", "")
-    sms_sent = False
+    verify_sid = os.environ.get("TWILIO_VERIFY_SERVICE_SID", "")
 
-    if twilio_sid and twilio_token and twilio_from:
+    if twilio_sid and twilio_token and verify_sid:
         try:
             from twilio.rest import Client as TwilioClient
             twilio_client = TwilioClient(twilio_sid, twilio_token)
-            twilio_client.messages.create(
-                body=f"Your MigRent verification code is: {otp_code}\n\nThis code expires in 10 minutes. Do not share it.",
-                from_=twilio_from,
+            verification = twilio_client.verify.v2.services(verify_sid).verifications.create(
                 to=phone,
+                channel="sms",
             )
-            sms_sent = True
-            logger.info(f"[Verify] SMS sent to {phone}")
+            logger.info(f"[Verify] Twilio Verify SMS sent to {phone}, status={verification.status}")
+            masked = phone[:4] + "***" + phone[-3:]
+            return {"message": f"Verification code sent to {masked} via SMS. Check your messages.", "method": "sms"}
         except Exception as e:
-            logger.error(f"[Verify] Twilio SMS failed: {e}")
+            logger.error(f"[Verify] Twilio Verify failed: {e}")
+            raise HTTPException(status_code=500, detail=f"Failed to send SMS. Please try again. ({e})")
+    else:
+        # Fallback: send via email if Twilio not configured
+        otp_code = "".join([str(random.randint(0, 9)) for _ in range(OTP_LENGTH)])
+        otp_hash = _hash_otp(otp_code)
+        expires_at = (datetime.now(timezone.utc) + timedelta(minutes=OTP_EXPIRY_MINUTES)).isoformat()
 
-    if not sms_sent:
-        # Fallback: send via email if Twilio not configured or failed
+        sb.table("owner_verification").update({
+            "phone_otp_code": otp_hash,
+            "phone_otp_expires_at": expires_at,
+        }).eq("user_id", str(user.id)).execute()
+
         try:
             owner_name = ""
             profile_res = sb.table("profiles").select("name, preferred_name").eq("id", str(user.id)).execute()
             if profile_res.data:
                 owner_name = profile_res.data[0].get("preferred_name") or profile_res.data[0].get("name") or ""
-
             send_phone_otp_email(
                 to_email=user.email,
                 owner_name=owner_name or "there",
@@ -175,11 +175,7 @@ def send_phone_otp(body: PhoneOTPRequest, authorization: str = Header(...)):
             logger.error(f"[Verify] Failed to send OTP email fallback: {e}")
             raise HTTPException(status_code=500, detail="Failed to send verification code. Please try again.")
 
-    if sms_sent:
-        masked = phone[:4] + "***" + phone[-3:]
-        return {"message": f"Verification code sent to {masked} via SMS. Check your messages.", "method": "sms", "expires_in_minutes": OTP_EXPIRY_MINUTES}
-    else:
-        return {"message": f"Verification code sent to your email ({user.email}). Check your inbox.", "method": "email", "expires_in_minutes": OTP_EXPIRY_MINUTES}
+        return {"message": f"Verification code sent to your email ({user.email}). Check your inbox.", "method": "email"}
 
 
 class VerifyOTPRequest(BaseModel):
@@ -188,7 +184,7 @@ class VerifyOTPRequest(BaseModel):
 
 @router.post("/phone/verify-otp")
 def verify_phone_otp(body: VerifyOTPRequest, authorization: str = Header(...)):
-    """Verify the 6-digit OTP code for phone verification."""
+    """Verify the OTP code for phone verification."""
     user = get_current_user(authorization)
     sb = get_supabase_admin()
 
@@ -197,20 +193,44 @@ def verify_phone_otp(body: VerifyOTPRequest, authorization: str = Header(...)):
     if record.get("phone_verified"):
         raise HTTPException(status_code=400, detail="Phone already verified")
 
-    stored_hash = record.get("phone_otp_code")
-    expires_at = record.get("phone_otp_expires_at")
+    phone = record.get("phone")
+    if not phone:
+        raise HTTPException(status_code=400, detail="No phone number found. Please request a new code.")
 
-    if not stored_hash or not expires_at:
-        raise HTTPException(status_code=400, detail="No OTP sent. Please request a new code.")
+    # Try Twilio Verify API first
+    twilio_sid = os.environ.get("TWILIO_ACCOUNT_SID", "")
+    twilio_token = os.environ.get("TWILIO_AUTH_TOKEN", "")
+    verify_sid = os.environ.get("TWILIO_VERIFY_SERVICE_SID", "")
 
-    # Check expiry
-    expiry_time = datetime.fromisoformat(expires_at.replace("Z", "+00:00"))
-    if datetime.now(timezone.utc) > expiry_time:
-        raise HTTPException(status_code=400, detail="Code expired. Please request a new one.")
+    if twilio_sid and twilio_token and verify_sid:
+        try:
+            from twilio.rest import Client as TwilioClient
+            twilio_client = TwilioClient(twilio_sid, twilio_token)
+            verification_check = twilio_client.verify.v2.services(verify_sid).verification_checks.create(
+                to=phone,
+                code=body.code.strip(),
+            )
+            if verification_check.status != "approved":
+                raise HTTPException(status_code=400, detail="Invalid code. Please try again.")
+        except HTTPException:
+            raise
+        except Exception as e:
+            logger.error(f"[Verify] Twilio Verify check failed: {e}")
+            raise HTTPException(status_code=400, detail="Verification failed. Please try again.")
+    else:
+        # Fallback: check against stored hash
+        stored_hash = record.get("phone_otp_code")
+        expires_at = record.get("phone_otp_expires_at")
 
-    # Verify code
-    if _hash_otp(body.code.strip()) != stored_hash:
-        raise HTTPException(status_code=400, detail="Invalid code. Please try again.")
+        if not stored_hash or not expires_at:
+            raise HTTPException(status_code=400, detail="No OTP sent. Please request a new code.")
+
+        expiry_time = datetime.fromisoformat(expires_at.replace("Z", "+00:00"))
+        if datetime.now(timezone.utc) > expiry_time:
+            raise HTTPException(status_code=400, detail="Code expired. Please request a new one.")
+
+        if _hash_otp(body.code.strip()) != stored_hash:
+            raise HTTPException(status_code=400, detail="Invalid code. Please try again.")
 
     # Mark phone as verified
     sb.table("owner_verification").update({
