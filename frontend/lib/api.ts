@@ -1897,42 +1897,6 @@ export async function getOwnerVerificationStatus(token: string) {
   }
 }
 
-export async function sendPhoneOTP(token: string, phone: string) {
-  try {
-    const res = await fetch(`${BASE_URL}/owner-verification/phone/send-otp`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ phone }),
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.detail || "Failed to send OTP");
-    return data;
-  } catch (err: any) {
-    return { error: err.message || "Failed to send OTP" };
-  }
-}
-
-export async function verifyPhoneOTP(token: string, code: string) {
-  try {
-    const res = await fetch(`${BASE_URL}/owner-verification/phone/verify-otp`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ code }),
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.detail || "Verification failed");
-    return data;
-  } catch (err: any) {
-    return { error: err.message || "Verification failed" };
-  }
-}
-
 export async function uploadGovernmentID(token: string, file: File, documentType: string) {
   try {
     const formData = new FormData();

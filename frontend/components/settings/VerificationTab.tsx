@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import GlassCard, { StatusBadge, ProgressRing } from "../ui/GlassCard";
 import {
   Mail,
-  Phone,
   Shield,
   Star,
   CheckCircle2,
@@ -21,8 +20,6 @@ import {
 import type { ProfileData } from "../../hooks/useSettingsData";
 import {
   getOwnerVerificationStatus,
-  sendPhoneOTP,
-  verifyPhoneOTP,
   uploadGovernmentID,
 } from "../../lib/api";
 import { useAuth } from "../../hooks/useAuth";
@@ -40,8 +37,6 @@ interface VerificationTabProps {
 
 interface OwnerVerificationStatus {
   email_verified: boolean;
-  phone: string | null;
-  phone_verified: boolean;
   id_document_type: string | null;
   id_status: string;
   id_rejection_reason: string | null;
@@ -59,13 +54,6 @@ export default function VerificationTab({
   const [ownerStatus, setOwnerStatus] = useState<OwnerVerificationStatus | null>(null);
   const [loadingStatus, setLoadingStatus] = useState(true);
 
-  // Phone OTP state
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [otpSent, setOtpSent] = useState(false);
-  const [otpCode, setOtpCode] = useState("");
-  const [sendingOTP, setSendingOTP] = useState(false);
-  const [verifyingOTP, setVerifyingOTP] = useState(false);
-
   // ID Upload state
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [docType, setDocType] = useState("passport");
@@ -80,7 +68,7 @@ export default function VerificationTab({
     userMeta.user_type === "owner" ||
     userMeta.type === "owner";
 
-  // Always try to fetch verification status - the API creates a record for any user
+  // Always try to fetch verification status
   const fetchStatus = useCallback(async () => {
     if (!session?.access_token) {
       setLoadingStatus(false);
@@ -90,7 +78,7 @@ export default function VerificationTab({
       const data = await getOwnerVerificationStatus(session.access_token);
       if (data) setOwnerStatus(data);
     } catch {
-      // ignore - user may not have a record yet
+      // ignore
     } finally {
       setLoadingStatus(false);
     }
@@ -99,38 +87,6 @@ export default function VerificationTab({
   useEffect(() => {
     fetchStatus();
   }, [fetchStatus]);
-
-  // Phone OTP handlers
-  const handleSendOTP = async () => {
-    if (!session?.access_token) return;
-    const formatted = phoneNumber.startsWith("+61") ? phoneNumber : `+61${phoneNumber.replace(/^0/, "")}`;
-    if (!/^\+61\d{9}$/.test(formatted)) {
-      showMessage("Enter a valid AU number: 04XXXXXXXX or +61XXXXXXXXX", "error");
-      return;
-    }
-    setSendingOTP(true);
-    const result = await sendPhoneOTP(session.access_token, formatted);
-    setSendingOTP(false);
-    if (result.error) {
-      showMessage(result.error, "error");
-    } else {
-      setOtpSent(true);
-      showMessage(result.message || "Code sent to your phone!", "success");
-    }
-  };
-
-  const handleVerifyOTP = async () => {
-    if (!session?.access_token || !otpCode.trim()) return;
-    setVerifyingOTP(true);
-    const result = await verifyPhoneOTP(session.access_token, otpCode.trim());
-    setVerifyingOTP(false);
-    if (result.error) {
-      showMessage(result.error, "error");
-    } else {
-      showMessage("Phone verified!", "success");
-      fetchStatus();
-    }
-  };
 
   // ID Upload handlers
   const handleFileDrop = (e: React.DragEvent) => {
@@ -172,20 +128,18 @@ export default function VerificationTab({
     }
   };
 
-  // Compute verification steps for owner
+  // Compute verification steps
   const emailDone = ownerStatus?.email_verified ?? true;
-  const phoneDone = ownerStatus?.phone_verified ?? false;
   const idStatus = ownerStatus?.id_status ?? "not_submitted";
   const idDone = idStatus === "approved";
   const fullyVerified = ownerStatus?.fully_verified ?? false;
 
-  const completedSteps = [emailDone, phoneDone, idDone].filter(Boolean).length;
-  const ownerProgress = Math.round((completedSteps / 3) * 100);
+  const completedSteps = [emailDone, idDone].filter(Boolean).length;
+  const ownerProgress = Math.round((completedSteps / 2) * 100);
 
   const { percentage, steps } = verificationProgress;
   const isSuperhost = (profile?.average_rating || 0) >= 4.8 && (profile?.reviews_count || 0) >= 10;
 
-  // Show owner verification stepper if we got status back from API, or if user is detected as owner
   // Show generic profile view only for non-owners who have no verification record
   if (!ownerStatus && !isOwnerHint) {
     return (
@@ -234,7 +188,7 @@ export default function VerificationTab({
     );
   }
 
-  // ─── OWNER VERIFICATION STEPPER ────────────────────────────────
+  // ─── OWNER VERIFICATION STEPPER (2 steps: Email + ID) ──────────
   return (
     <div className="space-y-6">
       {/* Overall Progress */}
@@ -244,16 +198,16 @@ export default function VerificationTab({
             progress={ownerProgress}
             size={100}
             strokeWidth={8}
-            color={fullyVerified ? "emerald" : ownerProgress >= 66 ? "indigo" : "rose"}
+            color={fullyVerified ? "emerald" : ownerProgress >= 50 ? "indigo" : "rose"}
           />
           <div className="text-center sm:text-left flex-1">
             <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-1">
-              {fullyVerified ? "Fully Verified - You Can List Rooms!" : `Owner Verification - ${completedSteps}/3 Steps Done`}
+              {fullyVerified ? "Fully Verified - You Can List Rooms!" : `Owner Verification - ${completedSteps}/2 Steps Done`}
             </h2>
             <p className="text-sm text-slate-600 dark:text-slate-400">
               {fullyVerified
                 ? "All verification steps are complete. You can now create listings."
-                : "Complete all 3 steps below to list rooms on MigRent. This keeps our community safe."}
+                : "Complete both steps below to list rooms on MigRent. This keeps our community safe."}
             </p>
           </div>
         </div>
@@ -283,88 +237,8 @@ export default function VerificationTab({
             </div>
           </GlassCard>
 
-          {/* STEP 2: Phone OTP */}
+          {/* STEP 2: Government ID Upload */}
           <GlassCard delay={0.15}>
-            <div className="flex items-start gap-4">
-              <div className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-md shrink-0 mt-0.5 ${phoneDone ? "bg-gradient-to-br from-emerald-400 to-teal-500" : "bg-slate-200 dark:bg-slate-700"}`}>
-                {phoneDone ? <CheckCircle2 className="w-5 h-5 text-white" /> : <Phone className="w-5 h-5 text-slate-500" />}
-              </div>
-              <div className="flex-1">
-                <div className="flex items-center gap-2 mb-1">
-                  <p className="text-sm font-semibold text-slate-900 dark:text-white">Step 2: Phone Verification</p>
-                  {phoneDone ? (
-                    <StatusBadge status="verified" label="Verified" />
-                  ) : (
-                    <StatusBadge status="action" label="Required" />
-                  )}
-                </div>
-
-                {phoneDone ? (
-                  <p className="text-xs text-slate-500 dark:text-slate-400">
-                    Phone {ownerStatus?.phone || ""} verified
-                  </p>
-                ) : !otpSent ? (
-                  <div className="mt-3 space-y-3">
-                    <p className="text-xs text-slate-500 dark:text-slate-400">
-                      Enter your Australian mobile number. We will send a verification code via SMS to your phone.
-                    </p>
-                    <div className="flex gap-2">
-                      <div className="flex-1">
-                        <input
-                          type="tel"
-                          value={phoneNumber}
-                          onChange={(e) => setPhoneNumber(e.target.value)}
-                          placeholder="04XX XXX XXX"
-                          className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none"
-                        />
-                      </div>
-                      <button
-                        onClick={handleSendOTP}
-                        disabled={sendingOTP || !phoneNumber.trim()}
-                        className="btn-primary py-2.5 px-5 rounded-xl text-sm font-medium flex items-center gap-1.5 shrink-0 disabled:opacity-50"
-                      >
-                        {sendingOTP ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
-                        Send Code
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="mt-3 space-y-3">
-                    <p className="text-xs text-slate-500 dark:text-slate-400">
-                      Enter the 6-digit code sent to your phone via SMS. Code expires in 10 minutes.
-                    </p>
-                    <div className="flex gap-2">
-                      <input
-                        type="text"
-                        value={otpCode}
-                        onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
-                        placeholder="Enter 6-digit code"
-                        maxLength={6}
-                        className="flex-1 px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm text-slate-900 dark:text-white text-center tracking-[0.3em] font-mono text-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none"
-                      />
-                      <button
-                        onClick={handleVerifyOTP}
-                        disabled={verifyingOTP || otpCode.length !== 6}
-                        className="btn-primary py-2.5 px-5 rounded-xl text-sm font-medium flex items-center gap-1.5 shrink-0 disabled:opacity-50"
-                      >
-                        {verifyingOTP ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
-                        Verify
-                      </button>
-                    </div>
-                    <button
-                      onClick={() => { setOtpSent(false); setOtpCode(""); }}
-                      className="text-xs text-rose-500 hover:underline"
-                    >
-                      Resend code
-                    </button>
-                  </div>
-                )}
-              </div>
-            </div>
-          </GlassCard>
-
-          {/* STEP 3: Government ID Upload */}
-          <GlassCard delay={0.2}>
             <div className="flex items-start gap-4">
               <div className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-md shrink-0 mt-0.5 ${idDone ? "bg-gradient-to-br from-amber-400 to-orange-500" : idStatus === "pending" ? "bg-gradient-to-br from-blue-400 to-blue-500" : "bg-slate-200 dark:bg-slate-700"}`}>
                 {idDone ? (
@@ -377,7 +251,7 @@ export default function VerificationTab({
               </div>
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-1">
-                  <p className="text-sm font-semibold text-slate-900 dark:text-white">Step 3: Government ID</p>
+                  <p className="text-sm font-semibold text-slate-900 dark:text-white">Step 2: Government ID</p>
                   {idDone ? (
                     <StatusBadge status="verified" label="Approved" />
                   ) : idStatus === "pending" ? (
@@ -516,7 +390,7 @@ export default function VerificationTab({
                 You are a Verified Owner!
               </h3>
               <p className="text-sm text-emerald-600 dark:text-emerald-400 mb-4">
-                All 3 verification steps are complete. You can now list rooms on MigRent.
+                Both verification steps are complete. You can now list rooms on MigRent.
               </p>
               <a
                 href="/owner/listings/new"
@@ -532,7 +406,7 @@ export default function VerificationTab({
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
+            transition={{ delay: 0.25 }}
             className="grid grid-cols-3 gap-3"
           >
             <div className="backdrop-blur-xl bg-blue-50/80 dark:bg-blue-500/10 rounded-xl p-3 text-center border border-blue-100 dark:border-blue-500/20">
@@ -557,7 +431,7 @@ export default function VerificationTab({
           </motion.div>
 
           {/* Superhost Badge */}
-          <GlassCard delay={0.35} gradient={isSuperhost ? "amber" : "none"}>
+          <GlassCard delay={0.3} gradient={isSuperhost ? "amber" : "none"}>
             <div className="flex items-center gap-4">
               <div className={`w-16 h-16 rounded-2xl flex items-center justify-center ${isSuperhost ? "bg-gradient-to-br from-yellow-400 to-amber-500 shadow-lg" : "bg-slate-100 dark:bg-slate-800 border-2 border-dashed border-slate-300 dark:border-slate-600"}`}>
                 <Star className={`w-8 h-8 ${isSuperhost ? "text-white" : "text-slate-400 dark:text-slate-500"}`} />
@@ -573,7 +447,7 @@ export default function VerificationTab({
             </div>
           </GlassCard>
 
-          <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="text-center py-3">
+          <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }} className="text-center py-3">
             <p className="text-xs text-slate-400 dark:text-slate-500 italic">
               Verified owners get 3x more bookings and appear higher in search results
             </p>

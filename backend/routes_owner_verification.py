@@ -1,23 +1,19 @@
 """
 Owner verification endpoints.
 
-3-step flow: Email verified (Supabase Auth) -> Phone OTP -> Government ID upload.
-Owners must complete all 3 steps before they can list rooms.
+2-step flow: Email verified (Supabase Auth) -> Government ID upload + admin review.
+Owners must complete both steps before they can list rooms.
 """
 
 import os
-import re
-import random
-import hashlib
 import logging
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timezone
 from fastapi import APIRouter, HTTPException, Header, UploadFile, File, Form
 from pydantic import BaseModel
 from typing import Optional
 from db import get_supabase_admin
 from auth_utils import get_current_user
 from email_verification import (
-    send_phone_otp_email,
     send_id_approved_email,
     send_id_rejected_email,
     send_founder_id_review_alert,
@@ -27,20 +23,8 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/owner-verification", tags=["owner-verification"])
 
-SUPABASE_URL = os.environ.get("SUPABASE_URL", "")
-SUPABASE_SERVICE_ROLE_KEY = os.environ.get("SUPABASE_SERVICE_ROLE_KEY", "")
-
-# OTP settings
-OTP_LENGTH = 6
-OTP_EXPIRY_MINUTES = 10
-
 # Founder email for ID review alerts
 FOUNDER_EMAIL = os.environ.get("FOUNDER_EMAIL", "migrentau@gmail.com")
-
-
-def _hash_otp(code: str) -> str:
-    """Hash OTP code for storage."""
-    return hashlib.sha256(code.encode()).hexdigest()
 
 
 def _get_or_create_verification(sb, user_id: str, user_email: str) -> dict:
@@ -65,10 +49,9 @@ def _get_or_create_verification(sb, user_id: str, user_email: str) -> dict:
 
 
 def _check_fully_verified(sb, user_id: str, record: dict) -> bool:
-    """Check if all 3 steps are complete and update fully_verified flag."""
+    """Check if both steps are complete and update fully_verified flag."""
     is_fully = (
         record.get("email_verified", False)
-        and record.get("phone_verified", False)
         and record.get("id_status") == "approved"
     )
     if is_fully != record.get("fully_verified", False):
@@ -94,162 +77,11 @@ def get_verification_status(authorization: str = Header(...)):
 
     return {
         "email_verified": record.get("email_verified", False),
-        "phone": record.get("phone"),
-        "phone_verified": record.get("phone_verified", False),
         "id_document_type": record.get("id_document_type"),
         "id_status": record.get("id_status", "not_submitted"),
         "id_rejection_reason": record.get("id_rejection_reason"),
         "fully_verified": record.get("fully_verified", False),
     }
-
-
-# ─── PHONE OTP ───────────────────────────────────────────────────
-
-class PhoneOTPRequest(BaseModel):
-    phone: str  # AU format: +61...
-
-
-@router.post("/phone/send-otp")
-def send_phone_otp(body: PhoneOTPRequest, authorization: str = Header(...)):
-    """Send a verification code to the owner's phone via Twilio Verify SMS."""
-    user = get_current_user(authorization)
-    sb = get_supabase_admin()
-
-    # Validate AU phone format
-    phone = body.phone.strip()
-    if not re.match(r"^\+61\d{9}$", phone):
-        raise HTTPException(status_code=400, detail="Please enter a valid Australian phone number (+61XXXXXXXXX)")
-
-    record = _get_or_create_verification(sb, str(user.id), user.email)
-
-    if record.get("phone_verified"):
-        raise HTTPException(status_code=400, detail="Phone already verified")
-
-    # Store the phone number
-    sb.table("owner_verification").update({
-        "phone": phone,
-    }).eq("user_id", str(user.id)).execute()
-
-    # Send OTP via Twilio Verify API (no phone number purchase needed)
-    twilio_sid = os.environ.get("TWILIO_ACCOUNT_SID", "")
-    twilio_token = os.environ.get("TWILIO_AUTH_TOKEN", "")
-    verify_sid = os.environ.get("TWILIO_VERIFY_SERVICE_SID", "")
-
-    if twilio_sid and twilio_token and verify_sid:
-        try:
-            from twilio.rest import Client as TwilioClient
-            twilio_client = TwilioClient(twilio_sid, twilio_token)
-            verification = twilio_client.verify.v2.services(verify_sid).verifications.create(
-                to=phone,
-                channel="sms",
-            )
-            logger.info(f"[Verify] Twilio Verify SMS sent to {phone}, status={verification.status}")
-            masked = phone[:4] + "***" + phone[-3:]
-            return {"message": f"Verification code sent to {masked} via SMS. Check your messages.", "method": "sms"}
-        except Exception as e:
-            logger.error(f"[Verify] Twilio Verify failed: {e}")
-            raise HTTPException(status_code=500, detail=f"Failed to send SMS. Please try again. ({e})")
-    else:
-        # Fallback: send via email if Twilio not configured
-        otp_code = "".join([str(random.randint(0, 9)) for _ in range(OTP_LENGTH)])
-        otp_hash = _hash_otp(otp_code)
-        expires_at = (datetime.now(timezone.utc) + timedelta(minutes=OTP_EXPIRY_MINUTES)).isoformat()
-
-        sb.table("owner_verification").update({
-            "phone_otp_code": otp_hash,
-            "phone_otp_expires_at": expires_at,
-        }).eq("user_id", str(user.id)).execute()
-
-        try:
-            owner_name = ""
-            profile_res = sb.table("profiles").select("name, preferred_name").eq("id", str(user.id)).execute()
-            if profile_res.data:
-                owner_name = profile_res.data[0].get("preferred_name") or profile_res.data[0].get("name") or ""
-            send_phone_otp_email(
-                to_email=user.email,
-                owner_name=owner_name or "there",
-                otp_code=otp_code,
-                phone=phone,
-            )
-        except Exception as e:
-            logger.error(f"[Verify] Failed to send OTP email fallback: {e}")
-            raise HTTPException(status_code=500, detail="Failed to send verification code. Please try again.")
-
-        return {"message": f"Verification code sent to your email ({user.email}). Check your inbox.", "method": "email"}
-
-
-class VerifyOTPRequest(BaseModel):
-    code: str
-
-
-@router.post("/phone/verify-otp")
-def verify_phone_otp(body: VerifyOTPRequest, authorization: str = Header(...)):
-    """Verify the OTP code for phone verification."""
-    user = get_current_user(authorization)
-    sb = get_supabase_admin()
-
-    record = _get_or_create_verification(sb, str(user.id), user.email)
-
-    if record.get("phone_verified"):
-        raise HTTPException(status_code=400, detail="Phone already verified")
-
-    phone = record.get("phone")
-    if not phone:
-        raise HTTPException(status_code=400, detail="No phone number found. Please request a new code.")
-
-    # Try Twilio Verify API first
-    twilio_sid = os.environ.get("TWILIO_ACCOUNT_SID", "")
-    twilio_token = os.environ.get("TWILIO_AUTH_TOKEN", "")
-    verify_sid = os.environ.get("TWILIO_VERIFY_SERVICE_SID", "")
-
-    if twilio_sid and twilio_token and verify_sid:
-        try:
-            from twilio.rest import Client as TwilioClient
-            twilio_client = TwilioClient(twilio_sid, twilio_token)
-            verification_check = twilio_client.verify.v2.services(verify_sid).verification_checks.create(
-                to=phone,
-                code=body.code.strip(),
-            )
-            if verification_check.status != "approved":
-                raise HTTPException(status_code=400, detail="Invalid code. Please try again.")
-        except HTTPException:
-            raise
-        except Exception as e:
-            logger.error(f"[Verify] Twilio Verify check failed: {e}")
-            raise HTTPException(status_code=400, detail="Verification failed. Please try again.")
-    else:
-        # Fallback: check against stored hash
-        stored_hash = record.get("phone_otp_code")
-        expires_at = record.get("phone_otp_expires_at")
-
-        if not stored_hash or not expires_at:
-            raise HTTPException(status_code=400, detail="No OTP sent. Please request a new code.")
-
-        expiry_time = datetime.fromisoformat(expires_at.replace("Z", "+00:00"))
-        if datetime.now(timezone.utc) > expiry_time:
-            raise HTTPException(status_code=400, detail="Code expired. Please request a new one.")
-
-        if _hash_otp(body.code.strip()) != stored_hash:
-            raise HTTPException(status_code=400, detail="Invalid code. Please try again.")
-
-    # Mark phone as verified
-    sb.table("owner_verification").update({
-        "phone_verified": True,
-        "phone_verified_at": datetime.now(timezone.utc).isoformat(),
-        "phone_otp_code": None,
-        "phone_otp_expires_at": None,
-    }).eq("user_id", str(user.id)).execute()
-
-    # Also update main profile phone
-    sb.table("profiles").update({
-        "phone": record.get("phone"),
-    }).eq("id", str(user.id)).execute()
-
-    # Check if now fully verified
-    record["phone_verified"] = True
-    _check_fully_verified(sb, str(user.id), record)
-
-    return {"message": "Phone verified successfully!", "phone_verified": True}
 
 
 # ─── GOVERNMENT ID UPLOAD ────────────────────────────────────────
@@ -356,7 +188,7 @@ def get_pending_ids(authorization: str = Header(...)):
     # Enrich with owner profiles
     user_ids = [s["user_id"] for s in submissions]
     if user_ids:
-        profiles_res = sb.table("profiles").select("id, name, preferred_name, email, custom_pfp, phone").in_("id", user_ids).execute()
+        profiles_res = sb.table("profiles").select("id, name, preferred_name, email, custom_pfp").in_("id", user_ids).execute()
         profile_map = {p["id"]: p for p in (profiles_res.data or [])}
         for sub in submissions:
             profile = profile_map.get(sub["user_id"], {})

@@ -132,11 +132,7 @@ export default function NewListing() {
               Email verification (already done)
             </div>
             <div className="flex items-center gap-3 text-sm text-slate-600 dark:text-slate-300">
-              <span className="w-6 h-6 rounded-full bg-blue-100 dark:bg-blue-500/10 flex items-center justify-center text-xs font-bold text-blue-600">2</span>
-              Verify your phone number
-            </div>
-            <div className="flex items-center gap-3 text-sm text-slate-600 dark:text-slate-300">
-              <span className="w-6 h-6 rounded-full bg-amber-100 dark:bg-amber-500/10 flex items-center justify-center text-xs font-bold text-amber-600">3</span>
+              <span className="w-6 h-6 rounded-full bg-amber-100 dark:bg-amber-500/10 flex items-center justify-center text-xs font-bold text-amber-600">2</span>
               Upload a government ID for review
             </div>
           </div>

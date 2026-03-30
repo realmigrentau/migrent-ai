@@ -70,25 +70,6 @@ def _send(to: str, subject: str, html: str):
         logger.error("Failed to send verification email to %s: %s", to, e)
 
 
-def send_phone_otp_email(to_email: str, owner_name: str, otp_code: str, phone: str):
-    """Send the 6-digit OTP code via email."""
-    content = f"""
-    <h2 style="font-size:24px;font-weight:bold;color:#1a1a1a;margin:0 0 16px;">Phone Verification Code</h2>
-    <p style="font-size:15px;line-height:24px;color:#374151;margin:0 0 12px;">Hi {owner_name},</p>
-    <p style="font-size:15px;line-height:24px;color:#374151;margin:0 0 20px;">
-      Use the code below to verify your phone number ({phone}):
-    </p>
-
-    <div style="background:#f3f4f6;border-radius:12px;padding:24px;text-align:center;margin:16px 0;">
-      <p style="font-size:36px;font-weight:bold;letter-spacing:8px;color:#1a1a1a;margin:0;">{otp_code}</p>
-    </div>
-
-    <p style="font-size:13px;color:#9ca3af;text-align:center;margin:16px 0 0;">
-      This code expires in 10 minutes. Do not share it with anyone.
-    </p>
-    """
-    _send(to_email, f"Your MigRent verification code: {otp_code}", _email_layout(content))
-
 
 def send_id_approved_email(to_email: str, owner_name: str, fully_verified: bool):
     """Notify owner their government ID was approved."""
