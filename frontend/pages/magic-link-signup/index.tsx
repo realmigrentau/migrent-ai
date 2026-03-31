@@ -112,7 +112,19 @@ export default function MagicLinkSignup() {
     if (error) {
       setMsg(error.message);
     } else {
-      setSent(true);
+      // Also send a verification code for anti-bot verification
+      try {
+        await fetch(`${API_BASE}/codes/send-signup-code`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email }),
+        });
+      } catch {
+        // Best-effort
+      }
+      // Redirect to code entry page
+      router.push(`/verify-email?email=${encodeURIComponent(email)}`);
+      return;
     }
     setLoading(false);
   };

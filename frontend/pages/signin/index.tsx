@@ -9,6 +9,8 @@ import SignInButton from "../../components/SignInButton";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
+
 export default function SignIn() {
   const { t } = useTranslation();
   const router = useRouter();
@@ -35,9 +37,47 @@ export default function SignIn() {
 
   const handleLogin = async () => {
     setMsg("");
+    if (!email || !password) {
+      setMsg(t("auth.enterEmailPassword"));
+      return;
+    }
     setLoading(true);
 
     try {
+      // Check if user has 2FA enabled
+      const twoFaRes = await fetch(`${API_BASE}/codes/2fa-status?email=${encodeURIComponent(email)}`);
+      const twoFaData = await twoFaRes.json();
+
+      if (twoFaData.two_factor_enabled) {
+        // Validate password first (try sign in, then sign out to not create a session yet)
+        const { error: pwError } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+
+        if (pwError) {
+          setMsg(pwError.message);
+          setLoading(false);
+          return;
+        }
+
+        // Password is valid - sign out immediately, then do 2FA flow
+        await supabase.auth.signOut();
+
+        // Send 2FA code
+        await fetch(`${API_BASE}/codes/send-2fa-code`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email }),
+        });
+
+        // Redirect to 2FA verification page
+        const params = new URLSearchParams({ email, p: password });
+        router.push(`/verify-2fa?${params.toString()}`);
+        return;
+      }
+
+      // No 2FA - normal sign in
       let captchaToken: string | undefined;
 
       if (executeInstance) {

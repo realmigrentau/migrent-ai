@@ -5,10 +5,11 @@ import { useHCaptcha } from "@hcaptcha/react-hcaptcha/hooks";
 import { supabase } from "../../lib/supabase";
 import { useAuth } from "../../hooks/useAuth";
 import SignInButton from "../../components/SignInButton";
-
 import ConsentCheckboxes from "../../components/legal/ConsentCheckboxes";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
+
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
 
 export default function SignUp() {
   const { t } = useTranslation();
@@ -74,7 +75,19 @@ export default function SignUp() {
       if (error) {
         setMsg(error.message);
       } else {
-        setMsg(t("auth.checkEmail"));
+        // Send verification code via our backend
+        try {
+          await fetch(`${API_BASE}/codes/send-signup-code`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email }),
+          });
+        } catch {
+          // Code sending is best-effort
+        }
+        // Redirect to code entry page
+        router.push(`/verify-email?email=${encodeURIComponent(email)}`);
+        return;
       }
     } catch {
       setMsg(t("auth.verificationFailed"));

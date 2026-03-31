@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import GlassCard, { StatusBadge } from "../ui/GlassCard";
 import {
@@ -13,10 +13,13 @@ import {
   Copy,
   Check,
   Shield,
+  ShieldCheck,
   Key,
   AlertTriangle,
 } from "lucide-react";
 import type { ProfileData, SessionInfo } from "../../hooks/useSettingsData";
+
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
 
 interface AccountSecurityTabProps {
   user: any;
@@ -56,6 +59,18 @@ export default function AccountSecurityTab({
   const [copied, setCopied] = useState(false);
   const [setPasswordValue, setSetPasswordValue] = useState("");
   const [setPasswordConfirm, setSetPasswordConfirm] = useState("");
+  const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
+  const [twoFactorLoading, setTwoFactorLoading] = useState(false);
+
+  // Load 2FA status
+  useEffect(() => {
+    if (user?.email) {
+      fetch(`${API_BASE}/codes/2fa-status?email=${encodeURIComponent(user.email)}`)
+        .then((r) => r.json())
+        .then((d) => setTwoFactorEnabled(d.two_factor_enabled || false))
+        .catch(() => {});
+    }
+  }, [user?.email]);
 
   const handleSetPassword = async () => {
     if (setPasswordValue.length < 6) {
@@ -293,6 +308,91 @@ export default function AccountSecurityTab({
               <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Magic Link</span>
             </div>
             <StatusBadge status="verified" label="Available" />
+          </div>
+        </div>
+      </GlassCard>
+
+      {/* Two-Factor Authentication */}
+      <GlassCard delay={0.22} gradient="emerald">
+        <div className="flex items-start gap-4">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-green-500 flex items-center justify-center shadow-lg shrink-0">
+            <ShieldCheck className="w-5 h-5 text-white" />
+          </div>
+          <div className="flex-1">
+            <div className="flex items-center justify-between mb-1">
+              <div>
+                <h3 className="font-bold text-slate-900 dark:text-white">Two-Factor Authentication</h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400">
+                  Add an extra layer of security. When enabled, you will receive a 6-digit code via email every time you sign in.
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-4 flex items-center justify-between p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/30">
+              <div className="flex items-center gap-3">
+                <Mail className="w-5 h-5 text-emerald-500" />
+                <div>
+                  <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Email verification code</span>
+                  <p className="text-xs text-slate-400 dark:text-slate-500">Sent to {user?.email}</p>
+                </div>
+              </div>
+
+              <button
+                onClick={async () => {
+                  setTwoFactorLoading(true);
+                  try {
+                    // Need auth token to toggle
+                    const { data: { session } } = await (await import("../../lib/supabase")).supabase.auth.getSession();
+                    if (!session) {
+                      showMessage("Please sign in again", "error");
+                      return;
+                    }
+                    const res = await fetch(`${API_BASE}/codes/toggle-2fa`, {
+                      method: "POST",
+                      headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${session.access_token}`,
+                      },
+                      body: JSON.stringify({ enabled: !twoFactorEnabled }),
+                    });
+                    if (res.ok) {
+                      setTwoFactorEnabled(!twoFactorEnabled);
+                      showMessage(
+                        !twoFactorEnabled
+                          ? "Two-factor authentication enabled"
+                          : "Two-factor authentication disabled",
+                        "success"
+                      );
+                    } else {
+                      showMessage("Failed to update 2FA setting", "error");
+                    }
+                  } catch {
+                    showMessage("Failed to update 2FA setting", "error");
+                  } finally {
+                    setTwoFactorLoading(false);
+                  }
+                }}
+                disabled={twoFactorLoading}
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors shrink-0 ${
+                  twoFactorEnabled
+                    ? "bg-emerald-500"
+                    : "bg-slate-300 dark:bg-slate-600"
+                } ${twoFactorLoading ? "opacity-50" : ""}`}
+              >
+                <span
+                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                    twoFactorEnabled ? "translate-x-6" : "translate-x-1"
+                  }`}
+                />
+              </button>
+            </div>
+
+            {twoFactorEnabled && (
+              <p className="text-xs text-emerald-600 dark:text-emerald-400 mt-2 flex items-center gap-1">
+                <Check className="w-3 h-3" />
+                2FA is active. A code will be sent to your email on each sign-in.
+              </p>
+            )}
           </div>
         </div>
       </GlassCard>
