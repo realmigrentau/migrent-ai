@@ -5,7 +5,7 @@ import { useHCaptcha } from "@hcaptcha/react-hcaptcha/hooks";
 import { supabase } from "../../lib/supabase";
 import { useAuth } from "../../hooks/useAuth";
 import SignInButton from "../../components/SignInButton";
-import MicrosoftSignInButton from "../../components/MicrosoftSignInButton";
+
 import ConsentCheckboxes from "../../components/legal/ConsentCheckboxes";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
@@ -177,11 +177,6 @@ export default function SignUp() {
             )}
 
             <SignInButton
-              redirectTo={typeof window !== "undefined" ? window.location.origin : undefined}
-              disabled={!allConsented}
-            />
-
-            <MicrosoftSignInButton
               redirectTo={typeof window !== "undefined" ? window.location.origin : undefined}
               disabled={!allConsented}
             />

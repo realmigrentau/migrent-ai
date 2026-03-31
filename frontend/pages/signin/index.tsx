@@ -5,7 +5,7 @@ import { useHCaptcha } from "@hcaptcha/react-hcaptcha/hooks";
 import { supabase } from "../../lib/supabase";
 import { useAuth } from "../../hooks/useAuth";
 import SignInButton from "../../components/SignInButton";
-import MicrosoftSignInButton from "../../components/MicrosoftSignInButton";
+
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 
@@ -146,8 +146,6 @@ export default function SignIn() {
             </div>
 
             <SignInButton redirectTo={typeof window !== "undefined" ? window.location.origin : undefined} />
-
-            <MicrosoftSignInButton redirectTo={typeof window !== "undefined" ? window.location.origin : undefined} />
 
             <Link
               href="/magic-link-login"
