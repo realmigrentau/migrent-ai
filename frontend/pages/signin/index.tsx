@@ -19,6 +19,7 @@ export default function SignIn() {
   const [password, setPassword] = useState("");
   const [msg, setMsg] = useState("");
   const [loading, setLoading] = useState(false);
+  const [pending2FA, setPending2FA] = useState(false);
   const { executeInstance, resetInstance } = useHCaptcha() ?? {};
 
   // Get redirect URL from query params (e.g., /signin?redirect=/dashboard)
@@ -26,12 +27,12 @@ export default function SignIn() {
   const redirectUrl = typeof router.query.redirect === "string" ? router.query.redirect : "/dashboard";
 
   useEffect(() => {
-    if (session) {
+    if (session && !pending2FA) {
       router.push(redirectUrl);
     }
-  }, [session, redirectUrl, router]);
+  }, [session, redirectUrl, router, pending2FA]);
 
-  if (session) {
+  if (session && !pending2FA) {
     return null;
   }
 
@@ -49,27 +50,35 @@ export default function SignIn() {
       const twoFaData = await twoFaRes.json();
 
       if (twoFaData.two_factor_enabled) {
-        // Validate password first (try sign in, then sign out to not create a session yet)
-        const { error: pwError } = await supabase.auth.signInWithPassword({
-          email,
-          password,
+        // Validate password via backend API (does NOT create a client-side session)
+        const loginRes = await fetch(`${API_BASE}/auth/login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
         });
 
-        if (pwError) {
-          setMsg(pwError.message);
+        if (!loginRes.ok) {
+          const loginData = await loginRes.json().catch(() => ({}));
+          setMsg(loginData.detail || "Invalid email or password");
           setLoading(false);
           return;
         }
 
-        // Password is valid - sign out immediately, then do 2FA flow
-        await supabase.auth.signOut();
+        // Password is valid - send 2FA code (no client session was created)
+        setPending2FA(true);
 
-        // Send 2FA code
-        await fetch(`${API_BASE}/codes/send-2fa-code`, {
+        const codeRes = await fetch(`${API_BASE}/codes/send-2fa-code`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email }),
         });
+
+        if (!codeRes.ok) {
+          setMsg("Failed to send 2FA code. Please try again.");
+          setPending2FA(false);
+          setLoading(false);
+          return;
+        }
 
         // Redirect to 2FA verification page
         const params = new URLSearchParams({ email, p: password });

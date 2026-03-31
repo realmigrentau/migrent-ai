@@ -46,10 +46,11 @@ def _email_layout(content: str) -> str:
 </html>"""
 
 
-def _send(to: str, subject: str, html: str):
+def _send(to: str, subject: str, html: str) -> bool:
+    """Send email via Mailjet. Returns True if sent, raises on failure."""
     if not MAILJET_API_KEY or not MAILJET_SECRET_KEY:
-        logger.warning("MAILJET keys not set - skipping email to %s", to)
-        return
+        logger.error("MAILJET keys not set - cannot send email to %s", to)
+        raise RuntimeError("Email service not configured")
     try:
         response = httpx.post(
             "https://api.mailjet.com/v3.1/send",
@@ -64,8 +65,11 @@ def _send(to: str, subject: str, html: str):
             auth=(MAILJET_API_KEY, MAILJET_SECRET_KEY),
             timeout=10,
         )
-        response.raise_for_status()
+        if not response.is_success:
+            logger.error("Mailjet error for %s: %s %s", to, response.status_code, response.text)
+            raise RuntimeError(f"Email service returned {response.status_code}")
         logger.info("Verification code email sent to %s", to)
+        return True
     except Exception as e:
         logger.error("Failed to send verification code email to %s: %s", to, e)
 

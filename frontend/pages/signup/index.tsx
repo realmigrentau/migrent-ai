@@ -77,13 +77,21 @@ export default function SignUp() {
       } else {
         // Send verification code via our backend
         try {
-          await fetch(`${API_BASE}/codes/send-signup-code`, {
+          const codeRes = await fetch(`${API_BASE}/codes/send-signup-code`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email }),
           });
-        } catch {
-          // Code sending is best-effort
+          if (!codeRes.ok) {
+            const codeData = await codeRes.json().catch(() => ({}));
+            setMsg(codeData.detail || "Failed to send verification code. Please try again.");
+            setLoading(false);
+            return;
+          }
+        } catch (err) {
+          setMsg("Could not send verification code. Please check your internet and try again.");
+          setLoading(false);
+          return;
         }
         // Redirect to code entry page
         router.push(`/verify-email?email=${encodeURIComponent(email)}`);

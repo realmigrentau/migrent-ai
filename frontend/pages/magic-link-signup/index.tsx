@@ -112,15 +112,23 @@ export default function MagicLinkSignup() {
     if (error) {
       setMsg(error.message);
     } else {
-      // Also send a verification code for anti-bot verification
+      // Send a verification code for anti-bot verification
       try {
-        await fetch(`${API_BASE}/codes/send-signup-code`, {
+        const codeRes = await fetch(`${API_BASE}/codes/send-signup-code`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email }),
         });
+        if (!codeRes.ok) {
+          const codeData = await codeRes.json().catch(() => ({}));
+          setMsg(codeData.detail || "Failed to send verification code. Please try again.");
+          setLoading(false);
+          return;
+        }
       } catch {
-        // Best-effort
+        setMsg("Could not send verification code. Please check your internet and try again.");
+        setLoading(false);
+        return;
       }
       // Redirect to code entry page
       router.push(`/verify-email?email=${encodeURIComponent(email)}`);

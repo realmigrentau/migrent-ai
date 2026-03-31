@@ -82,7 +82,11 @@ def send_signup_code(request: Request, body: SendCodeRequest):
         raise HTTPException(status_code=500, detail="Failed to generate verification code")
 
     # Send email
-    send_signup_verification_code(body.email, code)
+    try:
+        send_signup_verification_code(body.email, code)
+    except Exception as e:
+        logger.exception("Failed to send signup verification email")
+        raise HTTPException(status_code=500, detail="Failed to send verification email. Please try again.")
 
     return {"status": "sent", "expires_in_minutes": 10}
 
@@ -180,7 +184,11 @@ def send_2fa_code_endpoint(request: Request, body: SendCodeRequest):
         logger.exception("Failed to store 2FA code")
         raise HTTPException(status_code=500, detail="Failed to generate 2FA code")
 
-    send_2fa_code(body.email, code)
+    try:
+        send_2fa_code(body.email, code)
+    except Exception as e:
+        logger.exception("Failed to send 2FA email")
+        raise HTTPException(status_code=500, detail="Failed to send 2FA code. Please try again.")
 
     return {"status": "sent", "expires_in_minutes": 5}
 
