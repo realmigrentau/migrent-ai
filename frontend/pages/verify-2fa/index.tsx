@@ -114,10 +114,10 @@ export default function Verify2FAPage() {
     setError("");
 
     try {
-      const res = await fetch(`${API_BASE}/codes/send-2fa-code`, {
+      const res = await fetch("/api/emails/send-code", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email, purpose: "2fa" }),
       });
 
       if (res.ok) {
@@ -125,8 +125,8 @@ export default function Verify2FAPage() {
         setCode(["", "", "", "", "", ""]);
         inputRefs.current[0]?.focus();
       } else {
-        const data = await res.json();
-        setError(data.detail || "Failed to resend code.");
+        const data = await res.json().catch(() => ({}));
+        setError(data.error || "Failed to resend code.");
       }
     } catch {
       setError("Failed to resend code.");

@@ -75,16 +75,16 @@ export default function SignUp() {
       if (error) {
         setMsg(error.message);
       } else {
-        // Send verification code via our backend
+        // Send verification code via frontend API (with backend fallback)
         try {
-          const codeRes = await fetch(`${API_BASE}/codes/send-signup-code`, {
+          const codeRes = await fetch("/api/emails/send-code", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email }),
+            body: JSON.stringify({ email, purpose: "signup" }),
           });
           if (!codeRes.ok) {
             const codeData = await codeRes.json().catch(() => ({}));
-            setMsg(codeData.detail || "Failed to send verification code. Please try again.");
+            setMsg(codeData.error || "Failed to send verification code. Please try again.");
             setLoading(false);
             return;
           }

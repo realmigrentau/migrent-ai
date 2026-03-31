@@ -111,3 +111,20 @@ app.include_router(webhook_router)
 @app.api_route("/", methods=["GET", "HEAD"])
 def health():
     return {"status": "ok"}
+
+
+@app.get("/debug/email-config")
+def debug_email_config():
+    """Debug endpoint to check email configuration (no secrets exposed)."""
+    mailjet_key = os.environ.get("MAILJET_API_KEY", "")
+    mailjet_secret = os.environ.get("MAILJET_SECRET_KEY", "")
+    service_role = os.environ.get("SUPABASE_SERVICE_ROLE_KEY", "")
+    return {
+        "mailjet_api_key_set": bool(mailjet_key),
+        "mailjet_api_key_prefix": mailjet_key[:4] + "..." if len(mailjet_key) > 4 else "NOT SET",
+        "mailjet_secret_key_set": bool(mailjet_secret),
+        "supabase_service_role_key_set": bool(service_role),
+        "from_email": os.environ.get("FROM_EMAIL", "NOT SET"),
+        "from_name": os.environ.get("FROM_NAME", "NOT SET"),
+        "frontend_url": os.environ.get("FRONTEND_URL", "NOT SET"),
+    }

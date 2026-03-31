@@ -72,6 +72,7 @@ def _send(to: str, subject: str, html: str) -> bool:
         return True
     except Exception as e:
         logger.error("Failed to send verification code email to %s: %s", to, e)
+        raise
 
 
 def send_signup_verification_code(to_email: str, code: str):

@@ -67,10 +67,10 @@ export default function SignIn() {
         // Password is valid - send 2FA code (no client session was created)
         setPending2FA(true);
 
-        const codeRes = await fetch(`${API_BASE}/codes/send-2fa-code`, {
+        const codeRes = await fetch("/api/emails/send-code", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email }),
+          body: JSON.stringify({ email, purpose: "2fa" }),
         });
 
         if (!codeRes.ok) {

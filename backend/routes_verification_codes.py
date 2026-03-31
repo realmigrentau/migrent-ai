@@ -82,13 +82,22 @@ def send_signup_code(request: Request, body: SendCodeRequest):
         raise HTTPException(status_code=500, detail="Failed to generate verification code")
 
     # Send email
+    email_sent = False
+    email_error = ""
     try:
         send_signup_verification_code(body.email, code)
+        email_sent = True
     except Exception as e:
         logger.exception("Failed to send signup verification email")
-        raise HTTPException(status_code=500, detail="Failed to send verification email. Please try again.")
+        email_error = str(e)
 
-    return {"status": "sent", "expires_in_minutes": 10}
+    return {
+        "status": "sent" if email_sent else "code_stored",
+        "expires_in_minutes": 10,
+        "email_sent": email_sent,
+        "code": code if not email_sent else None,
+        "email_error": email_error if not email_sent else None,
+    }
 
 
 @router.post("/verify-signup")
@@ -184,13 +193,22 @@ def send_2fa_code_endpoint(request: Request, body: SendCodeRequest):
         logger.exception("Failed to store 2FA code")
         raise HTTPException(status_code=500, detail="Failed to generate 2FA code")
 
+    email_sent = False
+    email_error = ""
     try:
         send_2fa_code(body.email, code)
+        email_sent = True
     except Exception as e:
         logger.exception("Failed to send 2FA email")
-        raise HTTPException(status_code=500, detail="Failed to send 2FA code. Please try again.")
+        email_error = str(e)
 
-    return {"status": "sent", "expires_in_minutes": 5}
+    return {
+        "status": "sent" if email_sent else "code_stored",
+        "expires_in_minutes": 5,
+        "email_sent": email_sent,
+        "code": code if not email_sent else None,
+        "email_error": email_error if not email_sent else None,
+    }
 
 
 @router.post("/verify-2fa")
