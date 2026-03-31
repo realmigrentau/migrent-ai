@@ -9,8 +9,6 @@ import SignInButton from "../../components/SignInButton";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
-
 export default function SignIn() {
   const { t } = useTranslation();
   const router = useRouter();
@@ -19,7 +17,6 @@ export default function SignIn() {
   const [password, setPassword] = useState("");
   const [msg, setMsg] = useState("");
   const [loading, setLoading] = useState(false);
-  const [pending2FA, setPending2FA] = useState(false);
   const { executeInstance, resetInstance } = useHCaptcha() ?? {};
 
   // Get redirect URL from query params (e.g., /signin?redirect=/dashboard)
@@ -27,12 +24,12 @@ export default function SignIn() {
   const redirectUrl = typeof router.query.redirect === "string" ? router.query.redirect : "/dashboard";
 
   useEffect(() => {
-    if (session && !pending2FA) {
+    if (session) {
       router.push(redirectUrl);
     }
-  }, [session, redirectUrl, router, pending2FA]);
+  }, [session, redirectUrl, router]);
 
-  if (session && !pending2FA) {
+  if (session) {
     return null;
   }
 
@@ -45,48 +42,6 @@ export default function SignIn() {
     setLoading(true);
 
     try {
-      // Check if user has 2FA enabled
-      const twoFaRes = await fetch(`${API_BASE}/codes/2fa-status?email=${encodeURIComponent(email)}`);
-      const twoFaData = await twoFaRes.json();
-
-      if (twoFaData.two_factor_enabled) {
-        // Validate password via backend API (does NOT create a client-side session)
-        const loginRes = await fetch(`${API_BASE}/auth/login`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password }),
-        });
-
-        if (!loginRes.ok) {
-          const loginData = await loginRes.json().catch(() => ({}));
-          setMsg(loginData.detail || "Invalid email or password");
-          setLoading(false);
-          return;
-        }
-
-        // Password is valid - send 2FA code (no client session was created)
-        setPending2FA(true);
-
-        const codeRes = await fetch("/api/emails/send-code", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, purpose: "2fa" }),
-        });
-
-        if (!codeRes.ok) {
-          setMsg("Failed to send 2FA code. Please try again.");
-          setPending2FA(false);
-          setLoading(false);
-          return;
-        }
-
-        // Redirect to 2FA verification page
-        const params = new URLSearchParams({ email, p: password });
-        router.push(`/verify-2fa?${params.toString()}`);
-        return;
-      }
-
-      // No 2FA - normal sign in
       let captchaToken: string | undefined;
 
       if (executeInstance) {

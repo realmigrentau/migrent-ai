@@ -9,8 +9,6 @@ import ConsentCheckboxes from "../../components/legal/ConsentCheckboxes";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
-
 export default function SignUp() {
   const { t } = useTranslation();
   const router = useRouter();
@@ -75,27 +73,7 @@ export default function SignUp() {
       if (error) {
         setMsg(error.message);
       } else {
-        // Send verification code via frontend API (with backend fallback)
-        try {
-          const codeRes = await fetch("/api/emails/send-code", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email, purpose: "signup" }),
-          });
-          if (!codeRes.ok) {
-            const codeData = await codeRes.json().catch(() => ({}));
-            setMsg(codeData.error || "Failed to send verification code. Please try again.");
-            setLoading(false);
-            return;
-          }
-        } catch (err) {
-          setMsg("Could not send verification code. Please check your internet and try again.");
-          setLoading(false);
-          return;
-        }
-        // Redirect to code entry page
-        router.push(`/verify-email?email=${encodeURIComponent(email)}`);
-        return;
+        router.push("/onboarding");
       }
     } catch {
       setMsg(t("auth.verificationFailed"));
