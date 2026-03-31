@@ -35,7 +35,7 @@ export default function MagicLinkSignup() {
 
   // Redirect if already logged in
   useEffect(() => {
-    if (session) router.push("/dashboard");
+    if (session) router.push("/onboarding");
   }, [session, router]);
 
   // Poll for cross-device login when in "sent" state
@@ -58,7 +58,7 @@ export default function MagicLinkSignup() {
             refresh_token: data.refresh_token,
           });
           if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
-          router.push("/dashboard");
+          router.push("/onboarding");
         } else if (data.status === "expired") {
           if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
         }

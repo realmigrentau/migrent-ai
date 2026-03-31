@@ -30,7 +30,7 @@ export default function SignUp() {
   const allConsented = consents.facilitator && consents.terms && consents.rentalLaws && consents.indemnity;
 
   if (session) {
-    router.push("/dashboard");
+    router.push("/onboarding");
     return null;
   }
 

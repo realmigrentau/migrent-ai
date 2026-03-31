@@ -3,8 +3,22 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import { supabase } from "../../../lib/supabase";
 import { motion } from "framer-motion";
+import type { Session } from "@supabase/supabase-js";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
+
+/**
+ * Check if the user account was created recently (within 5 minutes).
+ * New signups get sent to /onboarding, returning users to /dashboard.
+ */
+function isNewUser(session: Session): boolean {
+  const createdAt = session.user?.created_at;
+  if (!createdAt) return false;
+  const created = new Date(createdAt).getTime();
+  const now = Date.now();
+  const fiveMinutes = 5 * 60 * 1000;
+  return now - created < fiveMinutes;
+}
 
 /**
  * Send welcome + legal reminder emails for new signups (best-effort).
@@ -62,6 +76,45 @@ async function storeCrossDeviceTokens(
   }
 }
 
+/**
+ * Handle post-auth tasks (cross-device tokens, legal acceptance, welcome emails)
+ * and redirect to the right page.
+ */
+async function handleSession(
+  session: Session,
+  pollingId: string | null,
+  router: ReturnType<typeof useRouter>
+) {
+  // Store cross-device tokens if needed
+  if (pollingId && session.access_token && session.refresh_token) {
+    await storeCrossDeviceTokens(pollingId, session.access_token, session.refresh_token);
+  }
+
+  // Store legal acceptance for new users
+  const meta = session.user?.user_metadata;
+  if (meta?.legal_accepted_at) {
+    await storeLegalAcceptance(session.access_token);
+  }
+
+  // Send welcome emails only once (first callback ever)
+  const welcomeKey = "migrent_welcome_sent";
+  if (!localStorage.getItem(welcomeKey)) {
+    localStorage.setItem(welcomeKey, "1");
+    sendWelcomeEmails(
+      session.user?.email || "",
+      meta?.full_name || meta?.name || session.user?.email?.split("@")[0] || "there",
+      meta?.type || "seeker"
+    );
+  }
+
+  // New signup -> onboarding, returning user -> dashboard
+  if (isNewUser(session)) {
+    router.replace("/onboarding");
+  } else {
+    router.replace("/dashboard");
+  }
+}
+
 export default function AuthCallback() {
   const router = useRouter();
   const [error, setError] = useState("");
@@ -80,26 +133,7 @@ export default function AuthCallback() {
       }
 
       if (session) {
-        // If there's a polling_id, store tokens so the other device can auto-login
-        if (pollingId && session.access_token && session.refresh_token) {
-          await storeCrossDeviceTokens(pollingId, session.access_token, session.refresh_token);
-        }
-        // Store legal acceptance and send welcome emails for new users
-        const meta = session.user?.user_metadata;
-        if (meta?.legal_accepted_at) {
-          await storeLegalAcceptance(session.access_token);
-        }
-        // Send welcome emails (best-effort, only on first callback)
-        const welcomeKey = "migrent_welcome_sent";
-        if (!localStorage.getItem(welcomeKey)) {
-          localStorage.setItem(welcomeKey, "1");
-          sendWelcomeEmails(
-            session.user?.email || "",
-            meta?.full_name || meta?.name || session.user?.email?.split("@")[0] || "there",
-            meta?.type || "seeker"
-          );
-        }
-        router.replace("/dashboard");
+        await handleSession(session, pollingId, router);
         return;
       }
 
@@ -107,24 +141,7 @@ export default function AuthCallback() {
       const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
         if (session) {
           subscription.unsubscribe();
-          if (pollingId && session.access_token && session.refresh_token) {
-            await storeCrossDeviceTokens(pollingId, session.access_token, session.refresh_token);
-          }
-          // Store legal acceptance and send welcome emails for new users
-          const meta = session.user?.user_metadata;
-          if (meta?.legal_accepted_at) {
-            await storeLegalAcceptance(session.access_token);
-          }
-          const welcomeKey = "migrent_welcome_sent";
-          if (!localStorage.getItem(welcomeKey)) {
-            localStorage.setItem(welcomeKey, "1");
-            sendWelcomeEmails(
-              session.user?.email || "",
-              meta?.full_name || meta?.name || session.user?.email?.split("@")[0] || "there",
-              meta?.type || "seeker"
-            );
-          }
-          router.replace("/dashboard");
+          await handleSession(session, pollingId, router);
         }
       });
 
