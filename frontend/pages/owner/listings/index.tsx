@@ -279,6 +279,9 @@ export default function OwnerListings() {
                     <td className="py-3 px-5 text-slate-600 dark:text-slate-300">{l.applicants ?? 0}</td>
                     <td className="py-3 px-5">
                       <div className="flex gap-3 justify-end">
+                        <Link href={`/owner/listings/edit/${l.id}`} className="text-xs text-blue-500 hover:text-blue-600 font-semibold transition-colors">
+                          Edit
+                        </Link>
                         <Link href={`/listing/${l.id}`} className="text-xs text-slate-500 hover:text-rose-500 font-semibold transition-colors">
                           View
                         </Link>
@@ -323,8 +326,11 @@ export default function OwnerListings() {
                   <span>{l.applicants ?? 0} applicants</span>
                 </div>
                 <div className="flex gap-2 mt-3 pt-3 border-t border-slate-100 dark:border-slate-800">
+                  <Link href={`/owner/listings/edit/${l.id}`} className="py-2 px-4 rounded-lg text-xs flex-1 text-center border border-blue-200 dark:border-blue-500/20 text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-500/10 transition-colors font-semibold">
+                    Edit
+                  </Link>
                   <Link href={`/listing/${l.id}`} className="btn-primary py-2 px-4 rounded-lg text-xs flex-1 text-center">
-                    View details
+                    View
                   </Link>
                   <button
                     onClick={() => openDeleteModal(l)}

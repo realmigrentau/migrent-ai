@@ -223,6 +223,103 @@ export async function createListing(
 }
 
 /**
+ * Update an existing listing.
+ * PATCH /listings/{id}
+ */
+export async function updateListing(
+  token: string,
+  listingId: string,
+  payload: Partial<CreateListingPayload>
+) {
+  try {
+    const body: Record<string, any> = {};
+
+    // Map camelCase payload to snake_case for backend
+    const fieldMap: Record<string, string> = {
+      address: "address",
+      suburb: "suburb",
+      postcode: "postcode",
+      weeklyPrice: "weekly_price",
+      description: "description",
+      images: "images",
+      title: "title",
+      propertyType: "property_type",
+      placeType: "place_type",
+      maxGuests: "max_guests",
+      bedrooms: "bedrooms",
+      beds: "beds",
+      bathrooms: "bathrooms",
+      bathroomType: "bathroom_type",
+      whoElseLivesHere: "who_else_lives_here",
+      totalOtherPeople: "total_other_people",
+      furnished: "furnished",
+      billsIncluded: "bills_included",
+      parking: "parking",
+      highlights: "highlights",
+      weeklyDiscount: "weekly_discount",
+      monthlyDiscount: "monthly_discount",
+      bond: "bond",
+      noSmoking: "no_smoking",
+      quietHours: "quiet_hours",
+      tenantPrefs: "tenant_prefs",
+      minStay: "min_stay",
+      securityCameras: "security_cameras",
+      securityCamerasLocation: "security_cameras_location",
+      weaponsOnProperty: "weapons_on_property",
+      weaponsExplanation: "weapons_explanation",
+      otherSafetyDetails: "other_safety_details",
+      availableFrom: "available_from",
+      availableTo: "available_to",
+      instantBook: "instant_book",
+      internetIncluded: "internet_included",
+      internetSpeed: "internet_speed",
+      petsAllowed: "pets_allowed",
+      petDetails: "pet_details",
+      airConditioning: "air_conditioning",
+      laundry: "laundry",
+      dishwasher: "dishwasher",
+      nearestTransport: "nearest_transport",
+      neighbourhoodVibe: "neighbourhood_vibe",
+      genderPreference: "gender_preference",
+      couplesOk: "couples_ok",
+      latitude: "latitude",
+      longitude: "longitude",
+    };
+
+    for (const [camel, snake] of Object.entries(fieldMap)) {
+      if (camel in payload && (payload as any)[camel] !== undefined) {
+        let val = (payload as any)[camel];
+        if (camel === "postcode") val = Number(val);
+        body[snake] = val;
+      }
+    }
+
+    if (Object.keys(body).length === 0) {
+      return { error: "No fields to update" };
+    }
+
+    const res = await fetch(`${BASE_URL}/listings/${listingId}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (!res.ok) {
+      const errData = await res.json().catch(() => ({}));
+      throw new Error(errData.detail || `Update failed: ${res.status}`);
+    }
+
+    return await res.json();
+  } catch (err: any) {
+    console.error("updateListing error:", err);
+    return { error: err.message || "Failed to update listing" };
+  }
+}
+
+/**
  * Get listings (optionally filtered for the current owner).
  * GET /listings
  */

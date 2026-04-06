@@ -3,7 +3,7 @@ import logging
 from fastapi import APIRouter, HTTPException, Header
 from pydantic import BaseModel
 from typing import Optional
-from models import ListingCreate
+from models import ListingCreate, ListingUpdate
 from db import get_supabase, get_supabase_admin, SUPABASE_URL, SUPABASE_ANON_KEY
 from auth_utils import get_current_user
 from supabase import create_client
@@ -408,6 +408,47 @@ def list_listings(
 
     res = query.execute()
     return res.data
+
+
+@router.patch("/{listing_id}")
+def update_listing(
+    listing_id: str,
+    body: ListingUpdate,
+    authorization: str = Header(...),
+):
+    """Update a listing. Only the owner can update their own listing."""
+    user = get_current_user(authorization)
+    user_id = str(user.id)
+
+    sb = get_supabase_admin()
+
+    # Verify listing exists and belongs to this user
+    listing_res = sb.table("listings").select("id, owner_id").eq("id", listing_id).execute()
+    if not listing_res.data:
+        raise HTTPException(status_code=404, detail="Listing not found")
+    if listing_res.data[0]["owner_id"] != user_id:
+        raise HTTPException(status_code=403, detail="You can only edit your own listings")
+
+    # Extract only fields that were explicitly sent
+    updates = body.model_dump(exclude_unset=True)
+    if not updates:
+        raise HTTPException(status_code=400, detail="No fields to update")
+
+    # Derive city from postcode if postcode changed
+    if "postcode" in updates and "city" not in updates:
+        derived = derive_city(updates["postcode"])
+        if derived:
+            updates["city"] = derived
+
+    try:
+        sb.table("listings").update(updates).eq("id", listing_id).execute()
+    except Exception as e:
+        logger.exception("Failed to update listing")
+        raise HTTPException(status_code=500, detail="Failed to update listing")
+
+    # Return the full updated listing
+    result = sb.table("listings").select("*").eq("id", listing_id).execute()
+    return result.data[0] if result.data else updates
 
 
 class DeleteListingRequest(BaseModel):

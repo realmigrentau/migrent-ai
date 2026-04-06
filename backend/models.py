@@ -82,6 +82,60 @@ class ListingCreate(BaseModel):
     longitude: Optional[float] = Field(None, ge=-180, le=180)
 
 
+class ListingUpdate(BaseModel):
+    """All listing fields are optional for partial updates."""
+    address: Optional[str] = Field(None, min_length=5, max_length=300)
+    suburb: Optional[str] = Field(None, max_length=100)
+    postcode: Optional[int] = Field(None, ge=800, le=9999)
+    city: Optional[str] = Field(None, max_length=100)
+    weekly_price: Optional[float] = Field(None, gt=0, le=50000)
+    description: Optional[str] = Field(None, min_length=10, max_length=5000)
+    images: Optional[list[str]] = Field(None, max_length=20)
+    title: Optional[str] = Field(None, max_length=80)
+    property_type: Optional[str] = None
+    place_type: Optional[str] = None
+    max_guests: Optional[int] = Field(None, ge=1, le=20)
+    bedrooms: Optional[int] = Field(None, ge=1, le=10)
+    beds: Optional[int] = Field(None, ge=1, le=20)
+    bathrooms: Optional[int] = Field(None, ge=1, le=5)
+    bathroom_type: Optional[str] = None
+    who_else_lives_here: Optional[str] = None
+    total_other_people: Optional[str] = None
+    furnished: Optional[bool] = None
+    bills_included: Optional[bool] = None
+    parking: Optional[bool] = None
+    highlights: Optional[list[str]] = None
+    weekly_discount: Optional[float] = Field(None, ge=0, le=50)
+    monthly_discount: Optional[float] = Field(None, ge=0, le=70)
+    bond: Optional[str] = None
+    no_smoking: Optional[bool] = None
+    quiet_hours: Optional[str] = None
+    tenant_prefs: Optional[str] = None
+    min_stay: Optional[str] = None
+    security_cameras: Optional[bool] = None
+    security_cameras_location: Optional[str] = None
+    weapons_on_property: Optional[bool] = None
+    weapons_explanation: Optional[str] = None
+    other_safety_details: Optional[str] = None
+    available_from: Optional[str] = None
+    available_to: Optional[str] = None
+    instant_book: Optional[bool] = None
+    internet_included: Optional[bool] = None
+    internet_speed: Optional[str] = None
+    pets_allowed: Optional[bool] = None
+    pet_details: Optional[str] = None
+    air_conditioning: Optional[bool] = None
+    laundry: Optional[str] = None
+    dishwasher: Optional[bool] = None
+    nearest_transport: Optional[str] = None
+    neighbourhood_vibe: Optional[str] = None
+    gender_preference: Optional[str] = None
+    couples_ok: Optional[bool] = None
+    latitude: Optional[float] = Field(None, ge=-90, le=90)
+    longitude: Optional[float] = Field(None, ge=-180, le=180)
+    is_active: Optional[bool] = None
+
+
 class ListingOut(BaseModel):
     id: str
     address: str
