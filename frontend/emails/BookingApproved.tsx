@@ -14,7 +14,7 @@ interface BookingApprovedProps {
   checkIn: string;
   checkOut: string;
   checkoutUrl: string;
-  totalFees: string;
+  totalFees?: string;
 }
 
 export default function BookingApproved({
@@ -23,7 +23,7 @@ export default function BookingApproved({
   checkIn = "2026-04-01",
   checkOut = "2026-05-01",
   checkoutUrl = "#",
-  totalFees = "$118.00",
+  totalFees = "$0.00",
 }: BookingApprovedProps) {
   return (
     <EmailLayout preview={`Your booking for ${listingTitle} was approved - pay to confirm`}>

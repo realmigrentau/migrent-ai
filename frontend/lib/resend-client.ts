@@ -109,7 +109,7 @@ export const emailTemplates = {
     checkOut: string;
     checkoutUrl: string;
     totalFees?: string;
-  }) => createElement(BookingApproved, { totalFees: "$118.00", ...props }),
+  }) => createElement(BookingApproved, props),
 
   bookingDeclined: (props: {
     seekerName: string;

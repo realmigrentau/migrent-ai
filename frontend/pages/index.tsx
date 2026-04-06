@@ -15,7 +15,6 @@ import {
   ListPlus,
   Users,
   Handshake,
-  Star,
   Phone,
   Lock,
   ArrowRight,
@@ -84,11 +83,7 @@ export default function Home() {
     { icon: Handshake, title: t("home.ownerStep3"), desc: t("home.ownerStep3Desc") },
   ];
 
-  const testimonials = [
-    { name: t("home.t1Name"), role: t("home.t1Role"), quote: t("home.t1Quote"), rating: 5, avatar: "P" },
-    { name: t("home.t2Name"), role: t("home.t2Role"), quote: t("home.t2Quote"), rating: 5, avatar: "D" },
-    { name: t("home.t3Name"), role: t("home.t3Role"), quote: t("home.t3Quote"), rating: 5, avatar: "M" },
-  ];
+  // Testimonials removed - will be added back when real user reviews are available
 
   const trustItems = [
     { icon: BadgeCheck, title: t("home.trust1Title"), desc: t("home.trust1Desc") },
@@ -342,32 +337,32 @@ export default function Home() {
         </div>
       </section>
 
-      {/* SECTION 6 · SOCIAL PROOF */}
+      {/* SECTION 6 · TRUST HIGHLIGHTS */}
       <section className="py-20 md:py-28 bg-slate-50/80 dark:bg-slate-900/50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-14">
             <p className="text-sm font-semibold text-rose-500 dark:text-rose-400 uppercase tracking-wider mb-3">{t("home.testimonialsBadge")}</p>
             <h2 className="text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white">
-              {t("home.testimonialsTitle")} <span className="gradient-text">{t("home.testimonialsAccent")}</span>
+              Built for <span className="gradient-text">trust</span>
             </h2>
+            <p className="mt-4 text-slate-500 dark:text-slate-400 max-w-lg mx-auto text-sm">
+              Everything you need to rent with confidence in Australia.
+            </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-3 gap-6">
-            {testimonials.map((item, i) => (
-              <motion.div key={i} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1, duration: 0.5 }} className="card p-6 rounded-2xl">
-                <div className="flex items-center gap-1 mb-4">
-                  {Array.from({ length: item.rating }).map((_, si) => (
-                    <Star key={si} className="w-4 h-4 fill-amber-400 text-amber-400" />
-                  ))}
+          <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-6">
+            {[
+              { icon: ShieldCheck, label: "Verified profiles", desc: "Identity checks for hosts and seekers", color: "from-emerald-400 to-teal-500" },
+              { icon: Sparkles, label: "AI matching", desc: "Find rooms by visa, budget, and location", color: "from-indigo-400 to-violet-500" },
+              { icon: HomeIcon, label: "Real listings only", desc: "Every listing is reviewed before going live", color: "from-amber-400 to-orange-500" },
+              { icon: Handshake, label: "Secure payments", desc: "Stripe-powered with no hidden fees", color: "from-pink-400 to-rose-500" },
+            ].map((item, i) => (
+              <motion.div key={item.label} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1, duration: 0.5 }} className="card p-6 rounded-2xl text-center">
+                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${item.color} flex items-center justify-center mx-auto mb-4 shadow-lg`}>
+                  <item.icon className="w-6 h-6 text-white" />
                 </div>
-                <p className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed mb-6">&ldquo;{item.quote}&rdquo;</p>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-rose-400 to-violet-500 flex items-center justify-center text-white font-bold text-sm">{item.avatar}</div>
-                  <div>
-                    <p className="text-sm font-semibold text-slate-900 dark:text-white">{item.name}</p>
-                    <p className="text-xs text-slate-400 dark:text-slate-500">{item.role}</p>
-                  </div>
-                </div>
+                <p className="text-sm font-bold text-slate-900 dark:text-white mb-1">{item.label}</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">{item.desc}</p>
               </motion.div>
             ))}
           </div>
