@@ -35,6 +35,7 @@ from routes_admin import router as admin_router
 from routes_notifications import router as notifications_router
 from routes_mentors import router as mentors_router
 from routes_owner_verification import router as owner_verification_router
+from routes_notification_center import router as notification_center_router
 
 # ── Startup validation ──────────────────────────────────────
 REQUIRED_ENV = ["SUPABASE_URL", "SUPABASE_ANON_KEY", "STRIPE_SECRET_KEY", "STRIPE_WEBHOOK_SECRET"]
@@ -101,6 +102,7 @@ app.include_router(admin_router)
 app.include_router(notifications_router)
 app.include_router(mentors_router)
 app.include_router(owner_verification_router)
+app.include_router(notification_center_router)
 app.include_router(webhook_router)
 
 # Note: each router defines its own prefix (/auth, /listings, /matches, /deals)

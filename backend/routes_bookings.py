@@ -13,6 +13,7 @@ from email_bookings import (
     send_booking_confirmed_to_both,
 )
 from notifications import send_push_to_user
+from notification_service import notify
 
 router = APIRouter(prefix="/bookings", tags=["bookings"])
 
@@ -220,6 +221,23 @@ def create_booking(
         except Exception:
             pass
 
+        # In-app notification for owner
+        try:
+            listing_title = listing.get("title") or listing.get("address", "your listing")
+            notify(
+                user_id=owner_id,
+                event="booking_request_created",
+                title=f"New booking request",
+                body=f"{seeker_name} wants to book {listing_title}",
+                cta_url="/dashboard/owner",
+                entity_type="booking",
+                entity_id=booking_id,
+                recipient_email=owner_email,
+                recipient_name=owner_name,
+            )
+        except Exception:
+            pass
+
     return result
 
 
@@ -331,6 +349,22 @@ def respond_to_booking(
         except Exception:
             pass
 
+        # In-app notification for seeker
+        try:
+            notify(
+                user_id=booking["seeker_id"],
+                event="booking_approved",
+                title="Booking approved!",
+                body=f"Your booking for {listing_title} has been accepted. Complete payment to confirm.",
+                cta_url="/dashboard/seeker",
+                entity_type="booking",
+                entity_id=booking_id,
+                recipient_email=seeker_email,
+                recipient_name=seeker_name,
+            )
+        except Exception:
+            pass
+
         return {
             "booking_id": booking_id,
             "status": BookingStatus.owner_accepted.value,
@@ -359,6 +393,20 @@ def respond_to_booking(
                     seeker_name=seeker_name,
                     listing_title=listing_title,
                 )
+        except Exception:
+            pass
+
+        # In-app notification for seeker
+        try:
+            notify(
+                user_id=booking["seeker_id"],
+                event="booking_declined",
+                title="Booking not approved",
+                body=f"Your booking request for {listing_title} was declined.",
+                cta_url="/seeker/search",
+                entity_type="booking",
+                entity_id=booking_id,
+            )
         except Exception:
             pass
 

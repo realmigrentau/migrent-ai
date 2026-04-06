@@ -18,6 +18,7 @@ from email_verification import (
     send_id_rejected_email,
     send_founder_id_review_alert,
 )
+from notification_service import notify
 
 logger = logging.getLogger(__name__)
 
@@ -297,6 +298,20 @@ def review_id_submission(
         except Exception:
             pass
 
+        # In-app notification
+        try:
+            notify(
+                user_id=user_id,
+                event="verification_status_changed",
+                title="ID verification approved",
+                body="Your government ID has been verified. You can now list rooms on MigRent.",
+                cta_url="/owner/listings/new",
+                entity_type="verification",
+                entity_id=user_id,
+            )
+        except Exception:
+            pass
+
         return {"message": "ID approved", "fully_verified": is_fully}
 
     else:  # reject
@@ -323,6 +338,20 @@ def review_id_submission(
                 "target_id": user_id,
                 "reason": body.reason,
             }).execute()
+        except Exception:
+            pass
+
+        # In-app notification
+        try:
+            notify(
+                user_id=user_id,
+                event="verification_status_changed",
+                title="ID verification update",
+                body=f"Your ID was not approved. {body.reason or 'Please re-upload a clearer photo.'}",
+                cta_url="/account/settings",
+                entity_type="verification",
+                entity_id=user_id,
+            )
         except Exception:
             pass
 

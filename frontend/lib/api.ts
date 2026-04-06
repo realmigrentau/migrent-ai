@@ -1957,3 +1957,101 @@ export async function reviewOwnerID(token: string, userId: string, action: "appr
     return { error: err.message || "Review failed" };
   }
 }
+
+// ── Notification Center ─────────────────────────────────────
+
+export interface Notification {
+  id: string;
+  user_id: string;
+  type: string;
+  title: string;
+  body: string;
+  cta_url: string;
+  entity_type: string | null;
+  entity_id: string | null;
+  is_read: boolean;
+  delivery_channel: string;
+  metadata: Record<string, any>;
+  created_at: string;
+}
+
+export async function getNotifications(
+  token: string,
+  params: { limit?: number; offset?: number; type?: string; unread_only?: boolean } = {}
+): Promise<{ notifications: Notification[]; count: number } | null> {
+  try {
+    const query = new URLSearchParams();
+    if (params.limit) query.set("limit", String(params.limit));
+    if (params.offset) query.set("offset", String(params.offset));
+    if (params.type && params.type !== "all") query.set("type", params.type);
+    if (params.unread_only) query.set("unread_only", "true");
+
+    const res = await fetch(`${BASE_URL}/notification-center?${query.toString()}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!res.ok) throw new Error(`Failed: ${res.status}`);
+    return await res.json();
+  } catch (err) {
+    console.error("getNotifications error:", err);
+    return null;
+  }
+}
+
+export async function getUnreadCount(token: string): Promise<number> {
+  try {
+    const res = await fetch(`${BASE_URL}/notification-center/unread-count`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!res.ok) return 0;
+    const data = await res.json();
+    return data.unread_count || 0;
+  } catch {
+    return 0;
+  }
+}
+
+export async function markNotificationsRead(token: string, notificationIds: string[]) {
+  try {
+    const res = await fetch(`${BASE_URL}/notification-center/mark-read`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ notification_ids: notificationIds }),
+    });
+    if (!res.ok) throw new Error(`Failed: ${res.status}`);
+    return await res.json();
+  } catch (err) {
+    console.error("markNotificationsRead error:", err);
+    return null;
+  }
+}
+
+export async function markAllNotificationsRead(token: string) {
+  try {
+    const res = await fetch(`${BASE_URL}/notification-center/mark-all-read`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!res.ok) throw new Error(`Failed: ${res.status}`);
+    return await res.json();
+  } catch (err) {
+    console.error("markAllNotificationsRead error:", err);
+    return null;
+  }
+}
+
+export async function deleteNotification(token: string, notificationId: string) {
+  try {
+    const res = await fetch(`${BASE_URL}/notification-center/${notificationId}`, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!res.ok) throw new Error(`Failed: ${res.status}`);
+    return await res.json();
+  } catch (err) {
+    console.error("deleteNotification error:", err);
+    return null;
+  }
+}

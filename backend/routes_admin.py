@@ -18,6 +18,7 @@ from email_bookings import (
     send_listing_rejected_to_owner,
     send_listing_changes_requested_to_owner,
 )
+from notification_service import notify
 
 logger = logging.getLogger(__name__)
 
@@ -263,6 +264,20 @@ def approve_listing(
             except Exception as e:
                 logger.error(f"Failed to send approval email: {e}")
 
+            # In-app notification
+            try:
+                notify(
+                    user_id=owner_id,
+                    event="listing_published",
+                    title="Your listing is live!",
+                    body=f"Your listing '{listing.get('title') or 'Your listing'}' has been approved and is now visible to seekers.",
+                    cta_url="/owner/listings",
+                    entity_type="listing",
+                    entity_id=listing_id,
+                )
+            except Exception:
+                pass
+
     return {"message": "Listing approved", "listing_id": listing_id}
 
 
@@ -322,6 +337,20 @@ def reject_listing(
             except Exception as e:
                 logger.error(f"Failed to send rejection email: {e}")
 
+            # In-app notification
+            try:
+                notify(
+                    user_id=owner_id,
+                    event="listing_rejected",
+                    title="Listing not approved",
+                    body=f"Your listing '{listing.get('title') or 'Your listing'}' was not approved. Reason: {body.reason}",
+                    cta_url="/owner/listings",
+                    entity_type="listing",
+                    entity_id=listing_id,
+                )
+            except Exception:
+                pass
+
     return {"message": "Listing rejected", "listing_id": listing_id}
 
 
@@ -378,6 +407,20 @@ def request_changes(
                 )
             except Exception as e:
                 logger.error(f"Failed to send changes requested email: {e}")
+
+            # In-app notification
+            try:
+                notify(
+                    user_id=owner_id,
+                    event="listing_changes_requested",
+                    title="Changes needed for your listing",
+                    body=f"Your listing '{listing.get('title') or 'Your listing'}' needs updates before it can go live.",
+                    cta_url="/owner/listings",
+                    entity_type="listing",
+                    entity_id=listing_id,
+                )
+            except Exception:
+                pass
 
     return {"message": "Changes requested", "listing_id": listing_id}
 

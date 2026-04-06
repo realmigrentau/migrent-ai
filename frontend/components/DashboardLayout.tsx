@@ -21,7 +21,10 @@ import {
   ChevronRight,
   Users,
   Map,
+  Bell,
 } from "lucide-react";
+import NotificationBell from "./notifications/NotificationBell";
+import { useNotificationCenter } from "../hooks/useNotificationCenter";
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -42,6 +45,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     useOnboarding();
 
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const { unreadCount } = useNotificationCenter();
 
   const isOwner = role === "owner";
 
@@ -267,8 +271,13 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
               })}
             </nav>
 
+            {/* Notification bell */}
+            <div className="mt-3 pt-3 border-t border-slate-200/50 dark:border-slate-700/50">
+              <NotificationBell unreadCount={unreadCount} collapsed={sidebarCollapsed} />
+            </div>
+
             {/* Sign out */}
-            <div className="mt-4 pt-4 border-t border-slate-200/50 dark:border-slate-700/50">
+            <div className="mt-2 pt-2 border-t border-slate-200/50 dark:border-slate-700/50">
               <button
                 onClick={signOut}
                 className={`flex items-center gap-3 rounded-xl text-sm font-medium text-slate-500 dark:text-slate-400 hover:bg-red-50 dark:hover:bg-red-500/10 hover:text-red-600 dark:hover:text-red-400 transition-all w-full ${
@@ -301,6 +310,11 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         <main className="flex-1 min-w-0 lg:pl-6">
           {children}
         </main>
+      </div>
+
+      {/* Mobile notification bell - floating */}
+      <div className="lg:hidden fixed top-4 right-4 z-50">
+        <NotificationBell unreadCount={unreadCount} collapsed={true} />
       </div>
 
       {/* Mobile bottom nav */}

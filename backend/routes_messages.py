@@ -18,6 +18,7 @@ from auth_utils import get_current_user
 from limiter import limiter
 from email_bookings import send_new_message_notification
 from notifications import send_push_to_user
+from notification_service import notify
 
 logger = logging.getLogger(__name__)
 
@@ -159,6 +160,32 @@ def send_message(
         )
     except Exception as e:
         logger.warning("Failed to send push notification: %s", e)
+
+    # In-app notification for receiver
+    try:
+        FRONTEND = os.environ.get("FRONTEND_URL", "http://localhost:3000")
+        if body.listing_id:
+            notif_url = f"/messages?listing={body.listing_id}&user={body.sender_id}"
+        else:
+            notif_url = f"/messages?user={body.sender_id}"
+
+        sb_notif = get_supabase_admin()
+        sender_prof_n = sb_notif.table("profiles").select("name, preferred_name").eq("id", str(body.sender_id)).execute()
+        notif_sender = "Someone"
+        if sender_prof_n.data:
+            notif_sender = sender_prof_n.data[0].get("preferred_name") or sender_prof_n.data[0].get("name", "Someone")
+
+        notify(
+            user_id=str(body.receiver_id),
+            event="message_received",
+            title=f"New message from {notif_sender}",
+            body=body.message_text[:150],
+            cta_url=notif_url,
+            entity_type="message",
+            entity_id=str(body.listing_id) if body.listing_id else None,
+        )
+    except Exception:
+        pass
 
     return {
         "success": True,
