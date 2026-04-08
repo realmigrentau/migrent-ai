@@ -5,6 +5,8 @@
  * Uses calm, fair, professional language. No public shaming.
  */
 
+import { ReactElement } from "react";
+
 interface ModerationStatusBannerProps {
   status: string;
   moderationNotes?: string | null;
@@ -18,7 +20,7 @@ const STATUS_CONFIG: Record<string, {
   textColor: string;
   title: string;
   description: string;
-  icon: JSX.Element;
+  icon: ReactElement;
 }> = {
   pending_approval: {
     bg: "bg-amber-50 dark:bg-amber-500/10",
