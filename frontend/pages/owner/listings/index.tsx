@@ -29,6 +29,10 @@ const STATUS_STYLES: Record<string, string> = {
   rejected: "bg-red-100 dark:bg-red-500/10 text-red-600 dark:text-red-400 border-red-200 dark:border-red-500/20",
   paused: "bg-amber-100 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-200 dark:border-amber-500/20",
   draft: "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700",
+  flagged: "bg-orange-100 dark:bg-orange-500/10 text-orange-600 dark:text-orange-400 border-orange-200 dark:border-orange-500/20",
+  hidden: "bg-orange-100 dark:bg-orange-500/10 text-orange-600 dark:text-orange-400 border-orange-200 dark:border-orange-500/20",
+  delete_requested: "bg-red-100 dark:bg-red-500/10 text-red-600 dark:text-red-400 border-red-200 dark:border-red-500/20",
+  deleted: "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700",
 };
 
 const STATUS_LABELS: Record<string, string> = {
@@ -39,6 +43,10 @@ const STATUS_LABELS: Record<string, string> = {
   active: "Active",
   paused: "Paused",
   draft: "Draft",
+  flagged: "Under Review",
+  hidden: "Under Review",
+  delete_requested: "Under Review",
+  deleted: "Removed",
 };
 
 export default function OwnerListings() {

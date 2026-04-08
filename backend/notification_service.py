@@ -47,6 +47,9 @@ DELIVERY_RULES = {
     "listing_published":            {"in_app": True, "email": True,  "push": False},
     "listing_rejected":             {"in_app": True, "email": True,  "push": False},
     "listing_changes_requested":    {"in_app": True, "email": True,  "push": False},
+    "listing_flagged":              {"in_app": True, "email": True,  "push": False},
+    "listing_hidden":               {"in_app": True, "email": True,  "push": False},
+    "listing_removed":              {"in_app": True, "email": True,  "push": False},
 }
 
 # Friendly labels for notification types (used in UI grouping)
@@ -64,6 +67,9 @@ NOTIFICATION_TYPE_LABELS = {
     "listing_published": "Listings",
     "listing_rejected": "Listings",
     "listing_changes_requested": "Listings",
+    "listing_flagged": "Listings",
+    "listing_hidden": "Listings",
+    "listing_removed": "Listings",
 }
 
 

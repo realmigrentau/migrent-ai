@@ -147,7 +147,7 @@ def _fetch_pending(suburb, sort, limit, offset):
 @router.get("/listings")
 def get_all_moderated_listings(
     authorization: str = Header(...),
-    status: Optional[str] = Query(None, regex="^(pending_approval|approved|rejected|changes_requested)$"),
+    status: Optional[str] = Query(None, regex="^(pending_approval|approved|rejected|changes_requested|flagged|hidden|delete_requested|deleted)$"),
     limit: int = Query(50, ge=1, le=100),
     offset: int = Query(0, ge=0),
 ):

@@ -6,6 +6,7 @@ import { useAuth } from "../../../../hooks/useAuth";
 import ListingForm, { ListingFormData } from "../../../../components/ListingForm";
 import { getListingById, updateListing } from "../../../../lib/api";
 import { DollarSign, ArrowLeft, AlertTriangle } from "lucide-react";
+import ModerationStatusBanner from "../../../../components/listings/ModerationStatusBanner";
 
 export default function EditListing() {
   const { session, user, loading: authLoading } = useAuth();
@@ -227,6 +228,15 @@ export default function EditListing() {
           Update your listing details. Changes will be saved to your listing.
         </p>
       </motion.div>
+
+      {/* Moderation Status Banner */}
+      {listing && (
+        <ModerationStatusBanner
+          status={listing.moderation_status}
+          moderationNotes={listing.moderation_notes}
+          moderationReason={listing.moderation_reason}
+        />
+      )}
 
       {/* Custom Price Callout */}
       <motion.div

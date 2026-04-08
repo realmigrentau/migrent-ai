@@ -468,6 +468,98 @@ def send_listing_changes_requested_to_owner(
     _send_email(owner_email, subject, _email_layout(content, f"Changes needed: {listing_title}"), text)
 
 
+def send_listing_under_review_to_owner(
+    owner_email: str,
+    owner_name: str,
+    listing_title: str,
+):
+    """Notify owner their listing is under additional review (flagged by spam detection)."""
+    subject = f"Your listing '{listing_title}' is under review"
+
+    content = f"""
+    <div style="background:#fff7ed;border-radius:8px;padding:16px;text-align:center;margin:0 0 20px;">
+      <p style="color:#ea580c;font-size:18px;font-weight:700;margin:0;">Under Review</p>
+    </div>
+
+    <h2 style="font-size:24px;font-weight:bold;color:#1a1a1a;margin:0 0 16px;">Listing Under Review</h2>
+    <p style="font-size:15px;line-height:24px;color:#374151;margin:0 0 12px;">Hi {owner_name},</p>
+    <p style="font-size:15px;line-height:24px;color:#374151;margin:0 0 12px;">
+      Your listing <strong>{listing_title}</strong> is currently under additional review by our team.
+      This is a routine part of our quality and safety process - it does not mean there is a problem.
+    </p>
+
+    <div style="background:#eff6ff;border-radius:8px;padding:16px 20px;margin:16px 0;border-left:3px solid #3b82f6;">
+      <p style="font-size:14px;font-weight:600;color:#1e40af;margin:0 0 8px;">What happens next?</p>
+      <p style="font-size:13px;color:#1e40af;margin:0 0 4px;line-height:20px;">- Our team will review your listing shortly</p>
+      <p style="font-size:13px;color:#1e40af;margin:0 0 4px;line-height:20px;">- You will receive an email once the review is complete</p>
+      <p style="font-size:13px;color:#1e40af;margin:0;line-height:20px;">- If changes are needed, we will let you know exactly what to update</p>
+    </div>
+
+    {_button("View Your Listings", f"{FRONTEND_URL}/owner/listings")}
+
+    <p style="font-size:13px;color:#9ca3af;text-align:center;margin:8px 0 0;">
+      If you have questions, please contact our support team.
+    </p>
+    """
+
+    text = (
+        f"Hi {owner_name},\n\n"
+        f"Your listing '{listing_title}' is currently under additional review.\n"
+        f"This is routine - our team will review it shortly.\n\n"
+        f"View your listings: {FRONTEND_URL}/owner/listings\n\n"
+        f"- The MigRent Team"
+    )
+
+    _send_email(owner_email, subject, _email_layout(content, f"Listing under review: {listing_title}"), text)
+
+
+def send_listing_removed_to_owner(
+    owner_email: str,
+    owner_name: str,
+    listing_title: str,
+    reason: str,
+):
+    """Notify owner their listing has been removed after founder review."""
+    subject = f"Your listing '{listing_title}' has been removed"
+
+    content = f"""
+    <div style="background:#fef2f2;border-radius:8px;padding:16px;text-align:center;margin:0 0 20px;">
+      <p style="color:#dc2626;font-size:18px;font-weight:700;margin:0;">Listing Removed</p>
+    </div>
+
+    <h2 style="font-size:24px;font-weight:bold;color:#1a1a1a;margin:0 0 16px;">Listing Update</h2>
+    <p style="font-size:15px;line-height:24px;color:#374151;margin:0 0 12px;">Hi {owner_name},</p>
+    <p style="font-size:15px;line-height:24px;color:#374151;margin:0 0 12px;">
+      After review, your listing <strong>{listing_title}</strong> has been removed from MigRent.
+    </p>
+
+    <div style="background:#fef3c7;border-radius:8px;padding:16px 20px;margin:16px 0;border-left:3px solid #f59e0b;">
+      <p style="font-size:14px;font-weight:600;color:#92400e;margin:0 0 8px;">Reason:</p>
+      <p style="font-size:14px;color:#92400e;margin:0;line-height:22px;">{reason}</p>
+    </div>
+
+    <p style="font-size:15px;line-height:24px;color:#374151;margin:16px 0 12px;">
+      If you believe this was a mistake, please contact our support team and we will be happy to review.
+    </p>
+
+    {_button("Contact Support", f"{FRONTEND_URL}/support")}
+
+    <p style="font-size:13px;color:#9ca3af;text-align:center;margin:8px 0 0;">
+      All moderation decisions are reviewed by a real person on our team.
+    </p>
+    """
+
+    text = (
+        f"Hi {owner_name},\n\n"
+        f"Your listing '{listing_title}' has been removed.\n\n"
+        f"Reason: {reason}\n\n"
+        f"If you believe this was a mistake, contact support: {FRONTEND_URL}/support\n\n"
+        f"- The MigRent Team"
+    )
+
+    _send_email(owner_email, subject, _email_layout(content), text)
+
+
 def send_new_message_notification(
     recipient_email: str,
     recipient_name: str,

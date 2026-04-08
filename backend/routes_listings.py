@@ -8,6 +8,7 @@ from db import get_supabase, get_supabase_admin, SUPABASE_URL, SUPABASE_ANON_KEY
 from auth_utils import get_current_user
 from supabase import create_client
 from routes_geocode import geocode_and_find_station
+from spam_detection import calculate_spam_score, apply_spam_result, notify_founder_spam
 
 logger = logging.getLogger(__name__)
 
@@ -156,6 +157,51 @@ async def create_listing(
                 created.update(update_data)
         except Exception as e:
             logger.warning(f"Auto-geocode failed for listing {created.get('id')}: {e}")
+
+    # Run spam detection on the new listing
+    if created.get("id"):
+        try:
+            spam_result = calculate_spam_score(
+                title=listing.title,
+                description=listing.description,
+                images=listing.images,
+                weekly_price=listing.weekly_price,
+                owner_id=str(user.id),
+                suburb=listing.suburb,
+                listing_id=created["id"],
+            )
+            apply_spam_result(created["id"], spam_result, str(user.id))
+            created["spam_score"] = spam_result["spam_score"]
+            created["spam_reasons"] = spam_result["reasons"]
+
+            # Notify founder if flagged or hidden
+            if spam_result["action"] in ("flag", "hide"):
+                # Get owner name for the email
+                owner_name = "Unknown"
+                try:
+                    profile_res = sb.table("profiles").select("name").eq("id", str(user.id)).execute()
+                    if profile_res.data:
+                        owner_name = profile_res.data[0].get("name", "Unknown")
+                except Exception:
+                    pass
+                notify_founder_spam(created["id"], spam_result, listing.title, owner_name)
+
+                # Notify owner that listing is under extra review
+                if spam_result["action"] == "hide":
+                    try:
+                        from email_bookings import send_listing_under_review_to_owner
+                        owner_profile = sb.table("profiles").select("name, email").eq("id", str(user.id)).execute()
+                        if owner_profile.data:
+                            op = owner_profile.data[0]
+                            send_listing_under_review_to_owner(
+                                owner_email=op.get("email", ""),
+                                owner_name=op.get("name", "there"),
+                                listing_title=listing.title or "Your listing",
+                            )
+                    except Exception as e:
+                        logger.warning(f"Failed to send review email to owner: {e}")
+        except Exception as e:
+            logger.warning(f"Spam detection failed for listing {created.get('id')}: {e}")
 
     return created
 
@@ -400,6 +446,8 @@ def list_listings(
     if owner and authorization:
         user = get_current_user(authorization)
         query = query.eq("owner_id", str(user.id))
+        # Exclude permanently deleted listings even for owner
+        query = query.neq("moderation_status", "deleted")
     else:
         # Public listing - only show approved
         query = query.eq("moderation_status", "approved")
@@ -445,6 +493,43 @@ def update_listing(
     except Exception as e:
         logger.exception("Failed to update listing")
         raise HTTPException(status_code=500, detail="Failed to update listing")
+
+    # Re-run spam detection if content fields changed
+    content_fields = {"title", "description", "images", "weekly_price", "address", "suburb"}
+    if content_fields & set(updates.keys()):
+        try:
+            full_listing = sb.table("listings").select("*").eq("id", listing_id).execute()
+            if full_listing.data:
+                fl = full_listing.data[0]
+                spam_result = calculate_spam_score(
+                    title=fl.get("title"),
+                    description=fl.get("description", ""),
+                    images=fl.get("images", []),
+                    weekly_price=fl.get("weekly_price", 0),
+                    owner_id=user_id,
+                    suburb=fl.get("suburb"),
+                    listing_id=listing_id,
+                )
+                # Update spam fields but don't auto-change status on edits
+                # (owner may be fixing issues - let admin re-review)
+                sb.table("listings").update({
+                    "spam_score": spam_result["spam_score"],
+                    "spam_reasons": spam_result["reasons"],
+                    "content_hash": spam_result["content_hash"],
+                }).eq("id", listing_id).execute()
+
+                # Record the edit event
+                sb.table("moderation_events").insert({
+                    "listing_id": listing_id,
+                    "actor_id": user_id,
+                    "actor_type": "owner",
+                    "event_type": "owner_edited",
+                    "spam_score": spam_result["spam_score"],
+                    "reasons": spam_result["reasons"],
+                    "notes": f"Owner edited fields: {', '.join(updates.keys())}",
+                }).execute()
+        except Exception as e:
+            logger.warning(f"Spam rescan failed for listing {listing_id}: {e}")
 
     # Return the full updated listing
     result = sb.table("listings").select("*").eq("id", listing_id).execute()
