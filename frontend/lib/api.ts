@@ -342,15 +342,18 @@ export async function getListings(token: string, ownerOnly = false) {
 }
 
 /**
- * Search listings with filters (public, no auth required).
+ * Search listings with filters.
+ * Pass token for personalised "best match" scoring.
  * GET /listings/search
  */
-export async function searchListings(params: Record<string, string>) {
+export async function searchListings(params: Record<string, string>, token?: string) {
   try {
     const queryString = new URLSearchParams(params).toString();
+    const headers: Record<string, string> = { "Content-Type": "application/json" };
+    if (token) headers["Authorization"] = `Bearer ${token}`;
     const res = await fetch(`${BASE_URL}/listings/search?${queryString}`, {
       method: "GET",
-      headers: { "Content-Type": "application/json" },
+      headers,
     });
     if (!res.ok) throw new Error(`searchListings failed: ${res.status}`);
     return await res.json();

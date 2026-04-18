@@ -9,6 +9,7 @@ from auth_utils import get_current_user
 from supabase import create_client
 from routes_geocode import geocode_and_find_station
 from spam_detection import calculate_spam_score, apply_spam_result, notify_founder_spam
+from matching_engine import calculate_match_score, generate_match_reasons
 
 logger = logging.getLogger(__name__)
 
@@ -210,6 +211,7 @@ async def create_listing(
 def search_listings(
     suburb: Optional[str] = None,
     postcode: Optional[str] = None,
+    state: Optional[str] = None,
     address: Optional[str] = None,
     min_price: Optional[float] = None,
     max_price: Optional[float] = None,
@@ -226,11 +228,21 @@ def search_listings(
     near_station: Optional[bool] = None,
     max_station_min: Optional[int] = None,
     station_name: Optional[str] = None,
+    property_type: Optional[str] = None,
+    place_type: Optional[str] = None,
+    available_from: Optional[str] = None,
+    min_stay: Optional[str] = None,
+    verified_owner: Optional[bool] = None,
+    pets_allowed: Optional[bool] = None,
+    parking: Optional[bool] = None,
+    air_conditioning: Optional[bool] = None,
+    couples_ok: Optional[bool] = None,
     sort: Optional[str] = None,
     limit: int = 20,
     offset: int = 0,
+    authorization: Optional[str] = Header(None),
 ):
-    """Search listings with filters (public, no auth required)."""
+    """Search listings with filters. Pass Authorization header for personalised match scores."""
     if limit < 1:
         limit = 1
     if limit > 100:
@@ -259,6 +271,27 @@ def search_listings(
         query = query.eq("postcode", int(postcode))
     if address:
         query = query.ilike("address", f"%{address}%")
+    if state:
+        # Map state abbreviation to city for filtering
+        state_city_map = {
+            "NSW": ["Sydney"],
+            "VIC": ["Melbourne"],
+            "QLD": ["Brisbane"],
+            "WA": ["Perth"],
+            "SA": ["Adelaide"],
+            "TAS": ["Hobart"],
+            "ACT": ["Canberra"],
+            "NT": ["Darwin"],
+        }
+        cities = state_city_map.get(state.upper(), [])
+        if cities:
+            query = query.in_("city", cities)
+
+    # Property type filters
+    if property_type:
+        query = query.eq("property_type", property_type)
+    if place_type:
+        query = query.eq("place_type", place_type)
 
     # Boolean filters
     if furnished is True:
@@ -267,10 +300,31 @@ def search_listings(
         query = query.eq("bills_included", True)
     if instant_book is True:
         query = query.eq("instant_book_enabled", True)
+    if pets_allowed is True:
+        query = query.eq("pets_allowed", True)
+    if parking is True:
+        query = query.eq("parking", True)
+    if air_conditioning is True:
+        query = query.eq("air_conditioning", True)
+    if couples_ok is True:
+        query = query.eq("couples_ok", True)
 
     # Gender preference filter
     if gender_preference == "female":
         query = query.eq("gender_preference", "female")
+
+    # Available from date filter
+    if available_from:
+        query = query.lte("available_from", available_from)
+
+    # Min stay filter
+    if min_stay:
+        query = query.eq("min_stay", min_stay)
+
+    # Verified owner filter - join check via owner profile
+    if verified_owner is True:
+        # We filter in-memory after fetch since Supabase doesn't support cross-table filters easily
+        pass  # handled below after fetch
 
     # Station proximity filter
     if max_station_min is not None:
@@ -283,6 +337,7 @@ def search_listings(
         query = query.ilike("nearest_transport", f"%{station_name}%")
 
     # Sorting
+    best_match_sort = sort == "best_match"
     if sort == "price_asc":
         query = query.order("weekly_price", desc=False)
     elif sort == "price_desc":
@@ -290,9 +345,60 @@ def search_listings(
     else:
         query = query.order("created_at", desc=True)
 
-    query = query.range(offset, offset + limit - 1)
+    # For best_match or verified_owner, fetch a larger batch to sort/filter in memory
+    if best_match_sort:
+        fetch_limit = min(limit * 10, 200)  # cap at 200 for V1
+        query = query.range(0, fetch_limit - 1)
+    elif verified_owner:
+        fetch_limit = limit * 3
+        query = query.range(offset, offset + fetch_limit - 1)
+    else:
+        query = query.range(offset, offset + limit - 1)
+
     res = query.execute()
-    return res.data
+    results = res.data or []
+
+    # Post-fetch: verified owner filter
+    if verified_owner is True and results:
+        owner_ids = list({r["owner_id"] for r in results if r.get("owner_id")})
+        if owner_ids:
+            profiles_res = (
+                sb.table("profiles")
+                .select("id, identity_verified")
+                .in_("id", owner_ids)
+                .eq("identity_verified", True)
+                .execute()
+            )
+            verified_ids = {p["id"] for p in (profiles_res.data or [])}
+            results = [r for r in results if r.get("owner_id") in verified_ids]
+        if not best_match_sort:
+            results = results[:limit]
+
+    # Best match scoring and sorting
+    if best_match_sort:
+        seeker_profile = {}
+        if authorization:
+            try:
+                user = get_current_user(authorization)
+                profile_res = (
+                    sb.table("profiles")
+                    .select("suburb_city, preferred_suburbs, budget_min, budget_max, move_in_date, visa_type")
+                    .eq("id", str(user.id))
+                    .execute()
+                )
+                if profile_res.data:
+                    seeker_profile = profile_res.data[0]
+            except Exception:
+                pass
+
+        for r in results:
+            r["match_score"] = calculate_match_score(r, seeker_profile)
+            r["match_reasons"] = generate_match_reasons(r, seeker_profile)
+
+        results.sort(key=lambda x: x["match_score"], reverse=True)
+        results = results[offset: offset + limit]
+
+    return results
 
 
 @router.get("/{listing_id}")

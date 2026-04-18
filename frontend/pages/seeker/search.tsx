@@ -1,10 +1,10 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, Fragment } from "react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "../../hooks/useAuth";
 import { useTheme } from "../../hooks/useTheme";
-import { updateMyProfile, searchListings, Station, nearbyStations, NearbyStation, type VisaType } from "../../lib/api";
+import { updateMyProfile, searchListings, Station, nearbyStations, NearbyStation } from "../../lib/api";
 import StationAutocomplete from "../../components/search/StationAutocomplete";
 
 const ListingsMap = dynamic(() => import("../../components/ListingsMap"), {
@@ -24,6 +24,7 @@ interface Listing {
   dailyPrice?: number;
   weeklyPrice?: number;
   roomType: string;
+  propertyType?: string;
   furnished: boolean;
   billsIncluded: boolean;
   verified: boolean;
@@ -35,9 +36,17 @@ interface Listing {
   lng: number;
   stationName?: string;
   stationWalkMin?: number;
+  availableFrom?: string;
+  minStay?: string;
+  petsAllowed?: boolean;
+  parking?: boolean;
+  airConditioning?: boolean;
+  couplesOk?: boolean;
+  matchScore?: number;
+  matchReasons?: string[];
 }
 
-// Calendar helper functions
+// Calendar helpers
 const MONTH_NAMES = [
   "January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December"
@@ -60,6 +69,7 @@ function mapListingData(l: any): Listing {
     dailyPrice: l.daily_price ?? l.dailyPrice,
     weeklyPrice: l.weekly_price ?? l.weeklyPrice,
     roomType: l.place_type || l.room_type || l.roomType || "private",
+    propertyType: l.property_type || undefined,
     furnished: l.furnished ?? false,
     billsIncluded: l.bills_included ?? l.billsIncluded ?? false,
     verified: l.verified ?? false,
@@ -71,7 +81,76 @@ function mapListingData(l: any): Listing {
     lng: l.lng || l.longitude || 151.21,
     stationName: l.nearest_transport?.split(" - ")[0] || undefined,
     stationWalkMin: l.station_distance_min ?? undefined,
+    availableFrom: l.available_from || undefined,
+    minStay: l.min_stay || undefined,
+    petsAllowed: l.pets_allowed ?? false,
+    parking: l.parking ?? false,
+    airConditioning: l.air_conditioning ?? false,
+    couplesOk: l.couples_ok ?? false,
+    matchScore: l.match_score ?? undefined,
+    matchReasons: l.match_reasons ?? [],
   };
+}
+
+// Filter chip - shown when a filter is active
+function FilterChip({ label, onRemove }: { label: string; onRemove: () => void }) {
+  return (
+    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-500/20">
+      {label}
+      <button onClick={onRemove} className="ml-0.5 hover:text-rose-800 dark:hover:text-rose-300 transition-colors">
+        <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </span>
+  );
+}
+
+// Collapsible filter section
+function FilterSection({ title, children, defaultOpen = true }: { title: string; children: React.ReactNode; defaultOpen?: boolean }) {
+  const [open, setOpen] = useState(defaultOpen);
+  return (
+    <div className="border-b border-slate-100 dark:border-slate-800 pb-4">
+      <button
+        onClick={() => setOpen(!open)}
+        className="flex items-center justify-between w-full text-sm font-semibold text-slate-800 dark:text-slate-200 mb-2"
+      >
+        {title}
+        <svg className={`w-4 h-4 transition-transform ${open ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+      <AnimatePresence initial={false}>
+        {open && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.15 }}
+            className="overflow-hidden"
+          >
+            {children}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+// Toggle pill
+function TogglePill({ active, onClick, label }: { active: boolean; onClick: () => void; label: string }) {
+  return (
+    <button
+      onClick={onClick}
+      className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+        active
+          ? "bg-rose-500 text-white shadow-sm"
+          : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"
+      }`}
+    >
+      {label}
+    </button>
+  );
 }
 
 export default function SeekerSearch() {
@@ -86,7 +165,7 @@ export default function SeekerSearch() {
   const [offset, setOffset] = useState(0);
   const PAGE_SIZE = 20;
 
-  // Location states
+  // Location
   const [searchType, setSearchType] = useState<"nearMe" | "suburb" | "postcode" | "address">("suburb");
   const [suburbName, setSuburbName] = useState("");
   const [postcode, setPostcode] = useState("");
@@ -95,7 +174,7 @@ export default function SeekerSearch() {
   const [locationLoading, setLocationLoading] = useState(false);
   const [locationError, setLocationError] = useState("");
 
-  // Calendar states
+  // Calendar
   const [showCalendar, setShowCalendar] = useState(false);
   const [calendarMonth, setCalendarMonth] = useState(new Date().getMonth());
   const [calendarYear, setCalendarYear] = useState(new Date().getFullYear());
@@ -103,27 +182,36 @@ export default function SeekerSearch() {
   const [checkOutDate, setCheckOutDate] = useState<Date | null>(null);
   const calendarRef = useRef<HTMLDivElement>(null);
 
-  // Guest states
+  // Guests
   const [adults, setAdults] = useState(1);
   const [children, setChildren] = useState(0);
   const [infants, setInfants] = useState(0);
   const [pets, setPets] = useState(0);
 
-  // Price inputs (user-typed, no upper limit)
+  // Price
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
 
-  // Filter toggles
+  // Property filters
+  const [placeType, setPlaceType] = useState("");
+  const [propertyType, setPropertyType] = useState("");
+
+  // Amenity toggles
   const [furnished, setFurnished] = useState(false);
   const [billsIncluded, setBillsIncluded] = useState(false);
   const [femaleOnly, setFemaleOnly] = useState(false);
   const [nearStation, setNearStation] = useState(false);
   const [instantBook, setInstantBook] = useState(false);
+  const [petsAllowed, setPetsAllowed] = useState(false);
+  const [parkingFilter, setParkingFilter] = useState(false);
+  const [airConFilter, setAirConFilter] = useState(false);
+  const [couplesOk, setCouplesOk] = useState(false);
+  const [verifiedOwner, setVerifiedOwner] = useState(false);
 
-  // Visa filter
-  const [visaFilter, setVisaFilter] = useState("");
+  // Min stay
+  const [minStay, setMinStay] = useState("");
 
-  // Station search
+  // Station
   const [selectedStation, setSelectedStation] = useState<Station | null>(null);
   const [stationDistanceFilter, setStationDistanceFilter] = useState<"any" | "15" | "30">("any");
   const [mapStations, setMapStations] = useState<{ name: string; lat: number; lng: number; line?: string }[]>([]);
@@ -131,16 +219,13 @@ export default function SeekerSearch() {
   // Sort
   const [sortBy, setSortBy] = useState("newest");
 
-  // Map toggle
+  // UI toggles
   const [showMap, setShowMap] = useState(true);
-
-  // Mobile filters
   const [showMobileFilters, setShowMobileFilters] = useState(false);
 
-  // Debounce timer
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Close calendar when clicking outside
+  // Close calendar on outside click
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (calendarRef.current && !calendarRef.current.contains(event.target as Node)) {
@@ -151,19 +236,18 @@ export default function SeekerSearch() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Load wishlist from localStorage on mount
+  // Load wishlist
   useEffect(() => {
     const saved_listings = localStorage.getItem("wishlist");
     if (saved_listings) {
-      try {
-        setSaved(new Set(JSON.parse(saved_listings)));
-      } catch (err) {
-        console.error("Failed to load wishlist:", err);
-      }
+      try { setSaved(new Set(JSON.parse(saved_listings))); } catch {}
     }
   }, []);
 
-  // Build search params from current state
+  // Whether to use best-match mode (requires auth)
+  const isBestMatch = sortBy === "best_match";
+
+  // Build params
   const buildParams = useCallback((pageOffset = 0): Record<string, string> => {
     const params: Record<string, string> = {
       limit: String(PAGE_SIZE),
@@ -189,17 +273,29 @@ export default function SeekerSearch() {
     if (checkInDate) params.check_in = checkInDate.toISOString().split("T")[0];
     if (checkOutDate) params.check_out = checkOutDate.toISOString().split("T")[0];
 
+    // Property type filters
+    if (placeType) params.place_type = placeType;
+    if (propertyType) params.property_type = propertyType;
+
+    // Boolean filters
     if (furnished) params.furnished = "true";
     if (billsIncluded) params.bills_included = "true";
     if (femaleOnly) params.gender_preference = "female";
     if (instantBook) params.instant_book = "true";
-    if (visaFilter) params.visa_type = visaFilter;
+    if (petsAllowed) params.pets_allowed = "true";
+    if (parkingFilter) params.parking = "true";
+    if (airConFilter) params.air_conditioning = "true";
+    if (couplesOk) params.couples_ok = "true";
+    if (verifiedOwner) params.verified_owner = "true";
+
+    // Min stay
+    if (minStay) params.min_stay = minStay;
+
+    // Sort
     if (sortBy !== "newest") params.sort = sortBy;
 
-    // Station filters
-    if (selectedStation) {
-      params.station_name = selectedStation.name;
-    }
+    // Station
+    if (selectedStation) params.station_name = selectedStation.name;
     if (stationDistanceFilter !== "any") {
       params.max_station_min = stationDistanceFilter;
     } else if (nearStation) {
@@ -207,9 +303,9 @@ export default function SeekerSearch() {
     }
 
     return params;
-  }, [minPrice, maxPrice, adults, children, infants, searchType, userLocation, suburbName, postcode, nearAddress, checkInDate, checkOutDate, furnished, billsIncluded, femaleOnly, nearStation, instantBook, sortBy, selectedStation, stationDistanceFilter]);
+  }, [minPrice, maxPrice, adults, children, infants, searchType, userLocation, suburbName, postcode, nearAddress, checkInDate, checkOutDate, placeType, propertyType, furnished, billsIncluded, femaleOnly, nearStation, instantBook, petsAllowed, parkingFilter, airConFilter, couplesOk, verifiedOwner, minStay, sortBy, selectedStation, stationDistanceFilter]);
 
-  // Main search function
+  // Search
   const doSearch = useCallback(async (resetResults = true) => {
     if (resetResults) {
       setSearching(true);
@@ -220,7 +316,8 @@ export default function SeekerSearch() {
     try {
       const pageOffset = resetResults ? 0 : offset;
       const params = buildParams(pageOffset);
-      const data = await searchListings(params);
+      const token = isBestMatch && session?.access_token ? session.access_token : undefined;
+      const data = await searchListings(params, token);
 
       if (data && Array.isArray(data)) {
         const mapped = data.map(mapListingData);
@@ -242,14 +339,12 @@ export default function SeekerSearch() {
       setSearching(false);
       setLoadingMore(false);
     }
-  }, [buildParams, offset]);
+  }, [buildParams, offset, isBestMatch, session]);
 
-  // Load all listings on page load
-  useEffect(() => {
-    doSearch(true);
-  }, []);
+  // Initial load
+  useEffect(() => { doSearch(true); }, []);
 
-  // Fetch nearby stations for map when station is selected
+  // Nearby stations for map
   useEffect(() => {
     if (selectedStation) {
       nearbyStations(selectedStation.lat, selectedStation.lng, 10, 20).then((nearby) => {
@@ -260,17 +355,13 @@ export default function SeekerSearch() {
     }
   }, [selectedStation]);
 
-  // Debounced auto-search when filters change
+  // Auto-search on filter change (debounced)
   useEffect(() => {
     if (!searched) return;
     if (debounceRef.current) clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(() => {
-      doSearch(true);
-    }, 300);
-    return () => {
-      if (debounceRef.current) clearTimeout(debounceRef.current);
-    };
-  }, [furnished, billsIncluded, femaleOnly, nearStation, instantBook, sortBy, selectedStation, stationDistanceFilter, visaFilter]);
+    debounceRef.current = setTimeout(() => { doSearch(true); }, 300);
+    return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
+  }, [furnished, billsIncluded, femaleOnly, nearStation, instantBook, petsAllowed, parkingFilter, airConFilter, couplesOk, verifiedOwner, sortBy, selectedStation, stationDistanceFilter, placeType, propertyType, minStay]);
 
   // Load more
   const loadMore = async () => {
@@ -279,35 +370,26 @@ export default function SeekerSearch() {
     setLoadingMore(true);
     try {
       const params = buildParams(newOffset);
-      const data = await searchListings(params);
+      const token = isBestMatch && session?.access_token ? session.access_token : undefined;
+      const data = await searchListings(params, token);
       if (data && Array.isArray(data)) {
-        const mapped = data.map(mapListingData);
-        setResults((prev) => [...prev, ...mapped]);
+        setResults((prev) => [...prev, ...data.map(mapListingData)]);
         setHasMore(data.length === PAGE_SIZE);
       } else {
         setHasMore(false);
       }
-    } catch (err) {
-      console.error("Load more failed:", err);
-    } finally {
-      setLoadingMore(false);
-    }
+    } catch { setHasMore(false); }
+    finally { setLoadingMore(false); }
   };
 
   const toggleSave = (id: string) => {
     const newSaved = new Set(saved);
-    if (newSaved.has(id)) {
-      newSaved.delete(id);
-    } else {
-      newSaved.add(id);
-    }
+    if (newSaved.has(id)) newSaved.delete(id);
+    else newSaved.add(id);
     setSaved(newSaved);
     localStorage.setItem("wishlist", JSON.stringify(Array.from(newSaved)));
-
     if (session && user?.id) {
-      updateMyProfile(session.access_token, {
-        wishlist: Array.from(newSaved),
-      });
+      updateMyProfile(session.access_token, { wishlist: Array.from(newSaved) });
     }
   };
 
@@ -320,66 +402,63 @@ export default function SeekerSearch() {
     setLocationError("");
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        const { latitude, longitude } = position.coords;
-        setUserLocation({ lat: latitude, lng: longitude });
+        setUserLocation({ lat: position.coords.latitude, lng: position.coords.longitude });
         setSearchType("nearMe");
         setLocationLoading(false);
       },
       (error) => {
-        console.error("Geolocation error:", error);
-        setLocationError(
-          error.code === 1
-            ? "Location access denied. Please enable location permissions."
-            : "Unable to get your location. Please try again."
-        );
+        setLocationError(error.code === 1 ? "Location access denied. Please enable location permissions." : "Unable to get your location. Please try again.");
         setLocationLoading(false);
       }
     );
   };
 
-  const activeFilterCount = [furnished, billsIncluded, femaleOnly, nearStation, instantBook, minPrice, maxPrice, selectedStation, stationDistanceFilter !== "any", visaFilter].filter(Boolean).length;
+  // Active filters for chips
+  const activeFilters: { label: string; clear: () => void }[] = [];
+  if (furnished) activeFilters.push({ label: "Furnished", clear: () => setFurnished(false) });
+  if (billsIncluded) activeFilters.push({ label: "Bills included", clear: () => setBillsIncluded(false) });
+  if (femaleOnly) activeFilters.push({ label: "Female only", clear: () => setFemaleOnly(false) });
+  if (nearStation) activeFilters.push({ label: "Near station", clear: () => setNearStation(false) });
+  if (instantBook) activeFilters.push({ label: "Instant book", clear: () => setInstantBook(false) });
+  if (petsAllowed) activeFilters.push({ label: "Pets allowed", clear: () => setPetsAllowed(false) });
+  if (parkingFilter) activeFilters.push({ label: "Parking", clear: () => setParkingFilter(false) });
+  if (airConFilter) activeFilters.push({ label: "Air conditioning", clear: () => setAirConFilter(false) });
+  if (couplesOk) activeFilters.push({ label: "Couples OK", clear: () => setCouplesOk(false) });
+  if (verifiedOwner) activeFilters.push({ label: "Verified owner", clear: () => setVerifiedOwner(false) });
+  if (minPrice) activeFilters.push({ label: `Min $${minPrice}/wk`, clear: () => setMinPrice("") });
+  if (maxPrice) activeFilters.push({ label: `Max $${maxPrice}/wk`, clear: () => setMaxPrice("") });
+  if (placeType) activeFilters.push({ label: placeType, clear: () => setPlaceType("") });
+  if (propertyType) activeFilters.push({ label: propertyType, clear: () => setPropertyType("") });
+  if (minStay) activeFilters.push({ label: `Min stay: ${minStay}`, clear: () => setMinStay("") });
+  if (selectedStation) activeFilters.push({ label: `Near ${selectedStation.name}`, clear: () => { setSelectedStation(null); setStationDistanceFilter("any"); } });
+  if (stationDistanceFilter !== "any" && !selectedStation) activeFilters.push({ label: `< ${stationDistanceFilter} min walk`, clear: () => setStationDistanceFilter("any") });
+  if (suburbName) activeFilters.push({ label: suburbName, clear: () => setSuburbName("") });
+  if (postcode) activeFilters.push({ label: `Postcode ${postcode}`, clear: () => setPostcode("") });
 
   const clearAllFilters = () => {
-    setMinPrice("");
-    setMaxPrice("");
-    setFurnished(false);
-    setBillsIncluded(false);
-    setFemaleOnly(false);
-    setNearStation(false);
-    setInstantBook(false);
-    setSelectedStation(null);
-    setStationDistanceFilter("any");
-    setVisaFilter("");
+    setMinPrice(""); setMaxPrice("");
+    setFurnished(false); setBillsIncluded(false); setFemaleOnly(false);
+    setNearStation(false); setInstantBook(false);
+    setPetsAllowed(false); setParkingFilter(false); setAirConFilter(false);
+    setCouplesOk(false); setVerifiedOwner(false);
+    setSelectedStation(null); setStationDistanceFilter("any");
+    setPlaceType(""); setPropertyType(""); setMinStay("");
     setSortBy("newest");
-    setSuburbName("");
-    setPostcode("");
-    setNearAddress("");
-    setCheckInDate(null);
-    setCheckOutDate(null);
-    setAdults(1);
-    setChildren(0);
-    setInfants(0);
-    setPets(0);
+    setSuburbName(""); setPostcode(""); setNearAddress("");
+    setCheckInDate(null); setCheckOutDate(null);
+    setAdults(1); setChildren(0); setInfants(0); setPets(0);
   };
 
-  // Calendar date selection
+  // Calendar
   const handleDateClick = (day: number) => {
     const clickedDate = new Date(calendarYear, calendarMonth, day);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const today = new Date(); today.setHours(0, 0, 0, 0);
     if (clickedDate < today) return;
-
     if (!checkInDate || (checkInDate && checkOutDate)) {
-      setCheckInDate(clickedDate);
-      setCheckOutDate(null);
+      setCheckInDate(clickedDate); setCheckOutDate(null);
     } else {
-      if (clickedDate > checkInDate) {
-        setCheckOutDate(clickedDate);
-        setShowCalendar(false);
-      } else {
-        setCheckInDate(clickedDate);
-        setCheckOutDate(null);
-      }
+      if (clickedDate > checkInDate) { setCheckOutDate(clickedDate); setShowCalendar(false); }
+      else { setCheckInDate(clickedDate); setCheckOutDate(null); }
     }
   };
 
@@ -398,302 +477,164 @@ export default function SeekerSearch() {
 
   const formatDateRange = () => {
     if (!checkInDate) return "Select dates";
-    const options: Intl.DateTimeFormatOptions = { day: "numeric", month: "short" };
-    const checkInStr = checkInDate.toLocaleDateString("en-AU", options);
-    if (!checkOutDate) return `${checkInStr} - ?`;
-    const checkOutStr = checkOutDate.toLocaleDateString("en-AU", options);
-    return `${checkInStr} - ${checkOutStr}`;
+    const opts: Intl.DateTimeFormatOptions = { day: "numeric", month: "short" };
+    const s = checkInDate.toLocaleDateString("en-AU", opts);
+    if (!checkOutDate) return `${s} - ?`;
+    return `${s} - ${checkOutDate.toLocaleDateString("en-AU", opts)}`;
   };
 
-  const goToPrevMonth = () => {
-    if (calendarMonth === 0) {
-      setCalendarMonth(11);
-      setCalendarYear(calendarYear - 1);
-    } else {
-      setCalendarMonth(calendarMonth - 1);
-    }
-  };
-
-  const goToNextMonth = () => {
-    if (calendarMonth === 11) {
-      setCalendarMonth(0);
-      setCalendarYear(calendarYear + 1);
-    } else {
-      setCalendarMonth(calendarMonth + 1);
-    }
-  };
+  const goToPrevMonth = () => { if (calendarMonth === 0) { setCalendarMonth(11); setCalendarYear(calendarYear - 1); } else setCalendarMonth(calendarMonth - 1); };
+  const goToNextMonth = () => { if (calendarMonth === 11) { setCalendarMonth(0); setCalendarYear(calendarYear + 1); } else setCalendarMonth(calendarMonth + 1); };
 
   const renderCalendar = () => {
     const daysInMonth = getDaysInMonth(calendarYear, calendarMonth);
     const firstDay = getFirstDayOfMonth(calendarYear, calendarMonth);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
+    const today = new Date(); today.setHours(0, 0, 0, 0);
     const days = [];
-    for (let i = 0; i < firstDay; i++) {
-      days.push(<div key={`empty-${i}`} className="w-10 h-10" />);
-    }
+    for (let i = 0; i < firstDay; i++) days.push(<div key={`empty-${i}`} className="w-10 h-10" />);
     for (let day = 1; day <= daysInMonth; day++) {
       const date = new Date(calendarYear, calendarMonth, day);
       const isPast = date < today;
       const selected = isDateSelected(day);
       const inRange = isDateInRange(day);
-
       days.push(
-        <button
-          key={day}
-          onClick={() => handleDateClick(day)}
-          disabled={isPast}
+        <button key={day} onClick={() => handleDateClick(day)} disabled={isPast}
           className={`w-10 h-10 rounded-full text-sm font-medium transition-all ${
-            isPast
-              ? "text-slate-300 dark:text-slate-600 cursor-not-allowed"
-              : selected === "start" || selected === "end"
-              ? "bg-rose-500 text-white"
-              : inRange
-              ? "bg-rose-100 dark:bg-rose-500/20 text-rose-600 dark:text-rose-400"
-              : "text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+            isPast ? "text-slate-300 dark:text-slate-600 cursor-not-allowed"
+            : selected ? "bg-rose-500 text-white"
+            : inRange ? "bg-rose-100 dark:bg-rose-500/20 text-rose-600 dark:text-rose-400"
+            : "text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
           }`}
-        >
-          {day}
-        </button>
+        >{day}</button>
       );
     }
     return days;
   };
 
-  // Filter toggle button component
-  const FilterToggle = ({ active, onClick, label }: { active: boolean; onClick: () => void; label: string }) => (
-    <button
-      onClick={onClick}
-      className={`px-3.5 py-2 rounded-xl text-sm font-medium transition-all ${
-        active
-          ? "bg-rose-500 text-white shadow-sm"
-          : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"
-      }`}
-    >
-      {label}
-    </button>
-  );
-
-  // Guest counter component
+  // Guest counter
   const GuestCounter = ({ label, value, onDec, onInc, min = 0 }: { label: string; value: number; onDec: () => void; onInc: () => void; min?: number }) => (
-    <div>
-      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-        {label}
-      </label>
+    <div className="flex items-center justify-between">
+      <span className="text-xs text-slate-600 dark:text-slate-300">{label}</span>
       <div className="flex items-center gap-2">
-        <button onClick={onDec} disabled={value <= min} className="btn-secondary px-3 py-2 rounded-lg text-lg disabled:opacity-30">-</button>
-        <span className="text-sm font-semibold w-8 text-center text-slate-900 dark:text-white">{value}</span>
-        <button onClick={onInc} className="btn-secondary px-3 py-2 rounded-lg text-lg">+</button>
+        <button onClick={onDec} disabled={value <= min} className="w-7 h-7 rounded-full border border-slate-200 dark:border-slate-700 flex items-center justify-center text-sm disabled:opacity-30 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">-</button>
+        <span className="text-xs font-semibold w-5 text-center text-slate-900 dark:text-white">{value}</span>
+        <button onClick={onInc} className="w-7 h-7 rounded-full border border-slate-200 dark:border-slate-700 flex items-center justify-center text-sm hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">+</button>
       </div>
     </div>
   );
 
-  return (
-    <div className="space-y-6">
-      {/* Header */}
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-        <h1 className="text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white">
-          Find a <span className="gradient-text">Room</span>
-        </h1>
-        <p className="text-sm text-slate-500 dark:text-slate-400 mt-2">
-          Search real listings by location, price, and preferences.
-        </p>
-      </motion.div>
-
-      {/* Search bar + filters card */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1 }}
-        className="card rounded-2xl p-6 space-y-5"
-      >
-        {/* Location search type tabs */}
-        <div>
-          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-            Search by location
-          </label>
-          <div className="flex flex-wrap gap-2 mb-3">
-            <button
-              onClick={handleUseLocation}
-              className={`px-4 py-2 rounded-xl text-sm font-medium transition-all flex items-center gap-2 ${
-                searchType === "nearMe"
-                  ? "bg-rose-500 text-white"
-                  : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"
-              }`}
-            >
-              {locationLoading ? (
-                <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-              ) : (
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-              )}
+  // --- FILTER SIDEBAR CONTENT (shared between desktop sidebar and mobile drawer) ---
+  const filterContent = (
+    <div className="space-y-4">
+      {/* Location */}
+      <FilterSection title="Location" defaultOpen={true}>
+        <div className="space-y-3">
+          <div className="flex flex-wrap gap-1.5">
+            <button onClick={handleUseLocation}
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 ${searchType === "nearMe" ? "bg-rose-500 text-white" : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"}`}>
+              {locationLoading ? <span className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" /> :
+                <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>}
               Near me
             </button>
-            <button
-              onClick={() => setSearchType("suburb")}
-              className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
-                searchType === "suburb"
-                  ? "bg-rose-500 text-white"
-                  : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"
-              }`}
-            >
-              Suburb
-            </button>
-            <button
-              onClick={() => setSearchType("postcode")}
-              className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
-                searchType === "postcode"
-                  ? "bg-rose-500 text-white"
-                  : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"
-              }`}
-            >
-              Postcode
-            </button>
-            <button
-              onClick={() => setSearchType("address")}
-              className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
-                searchType === "address"
-                  ? "bg-rose-500 text-white"
-                  : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"
-              }`}
-            >
-              Near address
-            </button>
+            {(["suburb", "postcode", "address"] as const).map((t) => (
+              <button key={t} onClick={() => setSearchType(t)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all capitalize ${searchType === t ? "bg-rose-500 text-white" : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"}`}>
+                {t === "address" ? "Address" : t === "suburb" ? "Suburb" : "Postcode"}
+              </button>
+            ))}
           </div>
-
           {searchType === "nearMe" && userLocation && (
-            <p className="text-sm text-emerald-600 dark:text-emerald-400 flex items-center gap-2">
-              <span>&#10003;</span> Using your current location
-            </p>
+            <p className="text-xs text-emerald-600 dark:text-emerald-400 flex items-center gap-1"><span>&#10003;</span> Using your location</p>
           )}
-          {searchType === "nearMe" && locationError && (
-            <p className="text-sm text-red-500">{locationError}</p>
-          )}
+          {searchType === "nearMe" && locationError && <p className="text-xs text-red-500">{locationError}</p>}
           {searchType === "suburb" && (
-            <input
-              type="text"
-              value={suburbName}
-              onChange={(e) => setSuburbName(e.target.value)}
-              placeholder="e.g. Kellyville, Parramatta, Blacktown..."
-              className="input-field"
-            />
+            <input type="text" value={suburbName} onChange={(e) => setSuburbName(e.target.value)} placeholder="e.g. Kellyville, Parramatta..." className="input-field text-sm" />
           )}
           {searchType === "postcode" && (
-            <input
-              type="text"
-              value={postcode}
-              onChange={(e) => setPostcode(e.target.value)}
-              placeholder="e.g. 2155, 2150, 2148..."
-              className="input-field"
-              maxLength={4}
-            />
+            <input type="text" value={postcode} onChange={(e) => setPostcode(e.target.value)} placeholder="e.g. 2155" className="input-field text-sm" maxLength={4} />
           )}
           {searchType === "address" && (
-            <input
-              type="text"
-              value={nearAddress}
-              onChange={(e) => setNearAddress(e.target.value)}
-              placeholder="Enter address to search nearby"
-              className="input-field"
-            />
+            <input type="text" value={nearAddress} onChange={(e) => setNearAddress(e.target.value)} placeholder="Enter address" className="input-field text-sm" />
           )}
         </div>
+      </FilterSection>
 
-        {/* Station search */}
-        <div>
-          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-            Near a train station
-          </label>
-          <StationAutocomplete
-            value={selectedStation?.name || ""}
-            onSelect={(station) => {
-              setSelectedStation(station);
-              if (station) setStationDistanceFilter("15");
-            }}
-            onClear={() => {
-              setSelectedStation(null);
-              setStationDistanceFilter("any");
-            }}
-          />
-          {(selectedStation || stationDistanceFilter !== "any") && (
-            <div className="mt-2 flex flex-wrap gap-2">
-              <span className="text-xs text-slate-500 dark:text-slate-400 self-center mr-1">Walking distance:</span>
-              {(["15", "30", "any"] as const).map((val) => (
-                <button
-                  key={val}
-                  onClick={() => setStationDistanceFilter(val)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                    stationDistanceFilter === val
-                      ? val === "15"
-                        ? "bg-emerald-500 text-white shadow-sm"
-                        : "bg-rose-500 text-white shadow-sm"
-                      : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"
-                  }`}
-                >
-                  {val === "15" ? "< 15 min walk" : val === "30" ? "< 30 min walk" : "Any distance"}
-                </button>
-              ))}
-            </div>
-          )}
+      {/* Price */}
+      <FilterSection title="Price range ($/week)" defaultOpen={true}>
+        <div className="flex gap-2">
+          <div className="relative flex-1">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none">$</span>
+            <input type="number" value={minPrice} onChange={(e) => setMinPrice(e.target.value)} placeholder="Min" min="0" className="input-field text-sm" style={{ paddingLeft: "1.75rem" }} />
+          </div>
+          <span className="flex items-center text-slate-400 text-xs">-</span>
+          <div className="relative flex-1">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none">$</span>
+            <input type="number" value={maxPrice} onChange={(e) => setMaxPrice(e.target.value)} placeholder="Max" min="0" className="input-field text-sm" style={{ paddingLeft: "1.75rem" }} />
+          </div>
         </div>
+      </FilterSection>
 
-        {/* Dates */}
+      {/* Room type */}
+      <FilterSection title="Room type" defaultOpen={true}>
+        <div className="flex flex-wrap gap-1.5">
+          {[
+            { value: "", label: "All" },
+            { value: "private", label: "Private room" },
+            { value: "shared", label: "Shared room" },
+            { value: "entire", label: "Entire place" },
+          ].map((opt) => (
+            <TogglePill key={opt.value} active={placeType === opt.value} onClick={() => setPlaceType(placeType === opt.value ? "" : opt.value)} label={opt.label} />
+          ))}
+        </div>
+      </FilterSection>
+
+      {/* Property type */}
+      <FilterSection title="Property type" defaultOpen={false}>
+        <div className="flex flex-wrap gap-1.5">
+          {[
+            { value: "", label: "All" },
+            { value: "house", label: "House" },
+            { value: "apartment", label: "Apartment" },
+            { value: "unit", label: "Unit" },
+            { value: "studio", label: "Studio" },
+            { value: "granny_flat", label: "Granny flat" },
+            { value: "townhouse", label: "Townhouse" },
+          ].map((opt) => (
+            <TogglePill key={opt.value} active={propertyType === opt.value} onClick={() => setPropertyType(propertyType === opt.value ? "" : opt.value)} label={opt.label} />
+          ))}
+        </div>
+      </FilterSection>
+
+      {/* Dates */}
+      <FilterSection title="Available dates" defaultOpen={false}>
         <div className="relative" ref={calendarRef}>
-          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-            When are you staying?
-          </label>
-          <button
-            onClick={() => setShowCalendar(!showCalendar)}
-            className="input-field text-left flex items-center justify-between"
-          >
-            <span className={checkInDate ? "text-slate-900 dark:text-white" : "text-slate-400 dark:text-slate-500"}>
-              {formatDateRange()}
-            </span>
-            <svg className="w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
+          <button onClick={() => setShowCalendar(!showCalendar)} className="input-field text-sm text-left flex items-center justify-between w-full">
+            <span className={checkInDate ? "text-slate-900 dark:text-white" : "text-slate-400 dark:text-slate-500"}>{formatDateRange()}</span>
+            <svg className="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
           </button>
-
           <AnimatePresence>
             {showCalendar && (
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                className="absolute z-50 mt-2 p-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-xl w-full max-w-sm"
-              >
+              <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
+                className="absolute z-50 mt-2 p-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-xl w-full max-w-sm">
                 <div className="flex items-center justify-between mb-4">
-                  <button onClick={goToPrevMonth} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors">
-                    <svg className="w-5 h-5 text-slate-600 dark:text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                    </svg>
+                  <button onClick={goToPrevMonth} className="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
+                    <svg className="w-4 h-4 text-slate-600 dark:text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
                   </button>
-                  <h3 className="font-bold text-slate-900 dark:text-white">
-                    {MONTH_NAMES[calendarMonth]} {calendarYear}
-                  </h3>
-                  <button onClick={goToNextMonth} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors">
-                    <svg className="w-5 h-5 text-slate-600 dark:text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
+                  <h3 className="font-bold text-sm text-slate-900 dark:text-white">{MONTH_NAMES[calendarMonth]} {calendarYear}</h3>
+                  <button onClick={goToNextMonth} className="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
+                    <svg className="w-4 h-4 text-slate-600 dark:text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
                   </button>
                 </div>
                 <div className="grid grid-cols-7 gap-1 mb-2">
-                  {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map((day) => (
-                    <div key={day} className="w-10 h-8 flex items-center justify-center text-xs font-semibold text-slate-500 dark:text-slate-400">
-                      {day}
-                    </div>
+                  {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map((d) => (
+                    <div key={d} className="w-10 h-8 flex items-center justify-center text-xs font-semibold text-slate-500 dark:text-slate-400">{d}</div>
                   ))}
                 </div>
                 <div className="grid grid-cols-7 gap-1">{renderCalendar()}</div>
                 {checkInDate && (
-                  <div className="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700">
-                    <p className="text-sm text-slate-600 dark:text-slate-300">
-                      {checkOutDate
-                        ? `${Math.ceil((checkOutDate.getTime() - checkInDate.getTime()) / (1000 * 60 * 60 * 24))} nights selected`
-                        : "Select check-out date"}
+                  <div className="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700">
+                    <p className="text-xs text-slate-600 dark:text-slate-300">
+                      {checkOutDate ? `${Math.ceil((checkOutDate.getTime() - checkInDate.getTime()) / 86400000)} nights` : "Select check-out"}
                     </p>
                   </div>
                 )}
@@ -701,172 +642,182 @@ export default function SeekerSearch() {
             )}
           </AnimatePresence>
         </div>
+      </FilterSection>
 
-        {/* Price inputs - user typed, no upper limit */}
-        <div>
-          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-            Price range ($/week)
-          </label>
-          <div className="flex gap-3">
-            <div className="relative flex-1">
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium pointer-events-none">$</span>
-              <input
-                type="number"
-                value={minPrice}
-                onChange={(e) => setMinPrice(e.target.value)}
-                placeholder="Min"
-                min="0"
-                className="input-field"
-                style={{ paddingLeft: "2.5rem" }}
-              />
-            </div>
-            <span className="flex items-center text-slate-400">-</span>
-            <div className="relative flex-1">
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium pointer-events-none">$</span>
-              <input
-                type="number"
-                value={maxPrice}
-                onChange={(e) => setMaxPrice(e.target.value)}
-                placeholder="Max (no limit)"
-                min="0"
-                className="input-field"
-                style={{ paddingLeft: "2.5rem" }}
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Guests */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      {/* Guests */}
+      <FilterSection title="Guests" defaultOpen={false}>
+        <div className="space-y-2.5">
           <GuestCounter label="Adults (18+)" value={adults} onDec={() => setAdults(Math.max(1, adults - 1))} onInc={() => setAdults(adults + 1)} min={1} />
           <GuestCounter label="Children (2-17)" value={children} onDec={() => setChildren(Math.max(0, children - 1))} onInc={() => setChildren(children + 1)} />
           <GuestCounter label="Infants (0-2)" value={infants} onDec={() => setInfants(Math.max(0, infants - 1))} onInc={() => setInfants(infants + 1)} />
           <GuestCounter label="Pets" value={pets} onDec={() => setPets(Math.max(0, pets - 1))} onInc={() => setPets(pets + 1)} />
         </div>
+      </FilterSection>
 
-        {/* Visa filter */}
-        <div>
-          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-            Visa type (for personalized results)
-          </label>
-          <div className="flex flex-wrap gap-2">
-            {[
-              { id: "", label: "All" },
-              { id: "student_500", label: "Student 500" },
-              { id: "skilled_482", label: "Skilled 482" },
-              { id: "whv_417", label: "Working Holiday" },
-              { id: "graduate_485", label: "Graduate 485" },
-            ].map((v) => (
-              <button
-                key={v.id}
-                onClick={() => setVisaFilter(visaFilter === v.id ? "" : v.id)}
-                className={`px-3.5 py-2 rounded-xl text-sm font-medium transition-all ${
-                  visaFilter === v.id
-                    ? "bg-indigo-500 text-white shadow-sm"
-                    : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"
-                }`}
-              >
-                {v.label}
-              </button>
-            ))}
-          </div>
+      {/* Station */}
+      <FilterSection title="Near a station" defaultOpen={false}>
+        <div className="space-y-2">
+          <StationAutocomplete
+            value={selectedStation?.name || ""}
+            onSelect={(station) => { setSelectedStation(station); if (station) setStationDistanceFilter("15"); }}
+            onClear={() => { setSelectedStation(null); setStationDistanceFilter("any"); }}
+          />
+          {(selectedStation || stationDistanceFilter !== "any") && (
+            <div className="flex flex-wrap gap-1.5">
+              <span className="text-[11px] text-slate-500 dark:text-slate-400 self-center mr-0.5">Walk:</span>
+              {(["15", "30", "any"] as const).map((val) => (
+                <button key={val} onClick={() => setStationDistanceFilter(val)}
+                  className={`px-2.5 py-1 rounded-lg text-[11px] font-medium transition-all ${stationDistanceFilter === val ? "bg-emerald-500 text-white shadow-sm" : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"}`}>
+                  {val === "15" ? "< 15 min" : val === "30" ? "< 30 min" : "Any"}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
+      </FilterSection>
 
-        {/* Filter toggles - desktop */}
-        <div className="hidden md:block">
-          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-            Filters
-          </label>
-          <div className="flex flex-wrap gap-2">
-            <FilterToggle active={furnished} onClick={() => setFurnished(!furnished)} label="Furnished" />
-            <FilterToggle active={billsIncluded} onClick={() => setBillsIncluded(!billsIncluded)} label="Bills included" />
-            <FilterToggle active={femaleOnly} onClick={() => setFemaleOnly(!femaleOnly)} label="Female only" />
-            <FilterToggle active={nearStation} onClick={() => setNearStation(!nearStation)} label="Near station" />
-            <FilterToggle active={instantBook} onClick={() => setInstantBook(!instantBook)} label="Instant book" />
-            {activeFilterCount > 0 && (
-              <button
-                onClick={clearAllFilters}
-                className="px-3.5 py-2 text-sm text-rose-500 hover:text-rose-600 underline underline-offset-2 transition-colors"
-              >
-                Clear all
-              </button>
-            )}
-          </div>
+      {/* Min stay */}
+      <FilterSection title="Minimum stay" defaultOpen={false}>
+        <div className="flex flex-wrap gap-1.5">
+          {[
+            { value: "", label: "Any" },
+            { value: "1 week", label: "1 week" },
+            { value: "2 weeks", label: "2 weeks" },
+            { value: "1 month", label: "1 month" },
+            { value: "3 months", label: "3 months" },
+            { value: "6 months", label: "6 months" },
+          ].map((opt) => (
+            <TogglePill key={opt.value} active={minStay === opt.value} onClick={() => setMinStay(minStay === opt.value ? "" : opt.value)} label={opt.label} />
+          ))}
         </div>
+      </FilterSection>
 
-        {/* Mobile filters toggle */}
-        <div className="md:hidden">
-          <button
-            onClick={() => setShowMobileFilters(!showMobileFilters)}
-            className="btn-secondary py-2.5 px-4 rounded-xl text-sm w-full flex items-center justify-center gap-2"
-          >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-            </svg>
-            Filters{activeFilterCount > 0 ? ` (${activeFilterCount})` : ""}
-          </button>
-
-          <AnimatePresence>
-            {showMobileFilters && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: "auto", opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.2 }}
-                className="overflow-hidden"
-              >
-                <div className="pt-4 space-y-3">
-                  <div className="flex flex-wrap gap-2">
-                    <FilterToggle active={furnished} onClick={() => setFurnished(!furnished)} label="Furnished" />
-                    <FilterToggle active={billsIncluded} onClick={() => setBillsIncluded(!billsIncluded)} label="Bills included" />
-                    <FilterToggle active={femaleOnly} onClick={() => setFemaleOnly(!femaleOnly)} label="Female only" />
-                    <FilterToggle active={nearStation} onClick={() => setNearStation(!nearStation)} label="Near station" />
-                    <FilterToggle active={instantBook} onClick={() => setInstantBook(!instantBook)} label="Instant book" />
-                  </div>
-                  {activeFilterCount > 0 && (
-                    <button
-                      onClick={clearAllFilters}
-                      className="text-sm text-rose-500 hover:text-rose-600 underline underline-offset-2"
-                    >
-                      Clear all filters
-                    </button>
-                  )}
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+      {/* Amenities & features */}
+      <FilterSection title="Amenities & features" defaultOpen={true}>
+        <div className="flex flex-wrap gap-1.5">
+          <TogglePill active={furnished} onClick={() => setFurnished(!furnished)} label="Furnished" />
+          <TogglePill active={billsIncluded} onClick={() => setBillsIncluded(!billsIncluded)} label="Bills included" />
+          <TogglePill active={instantBook} onClick={() => setInstantBook(!instantBook)} label="Instant book" />
+          <TogglePill active={petsAllowed} onClick={() => setPetsAllowed(!petsAllowed)} label="Pets allowed" />
+          <TogglePill active={parkingFilter} onClick={() => setParkingFilter(!parkingFilter)} label="Parking" />
+          <TogglePill active={airConFilter} onClick={() => setAirConFilter(!airConFilter)} label="Air con" />
+          <TogglePill active={couplesOk} onClick={() => setCouplesOk(!couplesOk)} label="Couples OK" />
+          <TogglePill active={nearStation} onClick={() => setNearStation(!nearStation)} label="Near station" />
         </div>
+      </FilterSection>
 
-        {/* Sort + Search button row */}
-        <div className="flex flex-col sm:flex-row gap-3">
-          <select
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
-            className="input-field w-full sm:w-auto"
-          >
-            <option value="newest">Sort: Newest first</option>
-            <option value="price_asc">Sort: Price low to high</option>
-            <option value="price_desc">Sort: Price high to low</option>
-          </select>
-
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={() => doSearch(true)}
-            disabled={searching}
-            className="btn-primary px-8 py-3 rounded-xl text-sm font-bold flex-1 sm:flex-none"
-          >
-            {searching ? (
-              <span className="flex items-center justify-center gap-2">
-                <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                Searching...
-              </span>
-            ) : (
-              "Search rooms"
-            )}
-          </motion.button>
+      {/* Preferences */}
+      <FilterSection title="Preferences" defaultOpen={false}>
+        <div className="flex flex-wrap gap-1.5">
+          <TogglePill active={femaleOnly} onClick={() => setFemaleOnly(!femaleOnly)} label="Female only" />
+          <TogglePill active={verifiedOwner} onClick={() => setVerifiedOwner(!verifiedOwner)} label="Verified owner" />
         </div>
+      </FilterSection>
+
+      {/* Search button in sidebar */}
+      <motion.button
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
+        onClick={() => { doSearch(true); setShowMobileFilters(false); }}
+        disabled={searching}
+        className="btn-primary w-full py-3 rounded-xl text-sm font-bold"
+      >
+        {searching ? (
+          <span className="flex items-center justify-center gap-2">
+            <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+            Searching...
+          </span>
+        ) : "Search rooms"}
+      </motion.button>
+    </div>
+  );
+
+  return (
+    <div className="space-y-5">
+      {/* Header */}
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+        <h1 className="text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white">
+          Find a <span className="gradient-text">Room</span>
+        </h1>
+        <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+          Search real listings by location, price, and preferences.
+        </p>
       </motion.div>
+
+      {/* Mobile: filter button + sort */}
+      <div className="lg:hidden flex gap-2">
+        <button
+          onClick={() => setShowMobileFilters(true)}
+          className="btn-secondary py-2.5 px-4 rounded-xl text-sm flex-1 flex items-center justify-center gap-2"
+        >
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+          </svg>
+          Filters{activeFilters.length > 0 ? ` (${activeFilters.length})` : ""}
+        </button>
+        <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} className="input-field text-sm w-auto">
+          {session && <option value="best_match">Best match</option>}
+          <option value="newest">Newest</option>
+          <option value="price_asc">Price: Low-High</option>
+          <option value="price_desc">Price: High-Low</option>
+        </select>
+      </div>
+
+      {/* Mobile filter drawer */}
+      <AnimatePresence>
+        {showMobileFilters && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/40 z-40 lg:hidden"
+              onClick={() => setShowMobileFilters(false)}
+            />
+            <motion.div
+              initial={{ x: "-100%" }} animate={{ x: 0 }} exit={{ x: "-100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+              className="fixed inset-y-0 left-0 w-[85vw] max-w-sm bg-white dark:bg-slate-900 z-50 overflow-y-auto shadow-2xl lg:hidden"
+            >
+              <div className="sticky top-0 bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 px-5 py-4 flex items-center justify-between z-10">
+                <h2 className="font-bold text-lg text-slate-900 dark:text-white">Filters</h2>
+                <div className="flex items-center gap-3">
+                  {activeFilters.length > 0 && (
+                    <button onClick={clearAllFilters} className="text-xs text-rose-500 hover:text-rose-600 font-medium">Clear all</button>
+                  )}
+                  <button onClick={() => setShowMobileFilters(false)} className="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
+                    <svg className="w-5 h-5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <div className="px-5 py-4">
+                {filterContent}
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* Active filter chips */}
+      {activeFilters.length > 0 && (
+        <motion.div initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} className="flex flex-wrap gap-1.5 items-center">
+          {activeFilters.map((f, i) => (
+            <FilterChip key={i} label={f.label} onRemove={f.clear} />
+          ))}
+          <button onClick={clearAllFilters} className="text-xs text-rose-500 hover:text-rose-600 font-medium ml-1">
+            Clear all
+          </button>
+        </motion.div>
+      )}
+
+      {/* Best match header description */}
+      {isBestMatch && session && searched && !searching && results.length > 0 && (
+        <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+          className="text-xs text-slate-500 dark:text-slate-400 -mt-2">
+          Listings ranked by how well they fit your saved preferences. Scores are based on location, budget, and features - not guesswork.
+          {" "}<Link href="/seeker/profile" className="text-rose-500 hover:underline font-medium">Update your preferences</Link>
+        </motion.p>
+      )}
 
       {/* Results header */}
       {searched && !searching && (
@@ -874,275 +825,259 @@ export default function SeekerSearch() {
           <p className="text-sm font-medium text-slate-600 dark:text-slate-400">
             {results.length === 0 ? "No rooms found" : `${results.length}${hasMore ? "+" : ""} rooms found`}
           </p>
-          <button
-            onClick={() => setShowMap(!showMap)}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
-          >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              {showMap ? (
-                <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
-              ) : (
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-              )}
-            </svg>
-            {showMap ? "Hide map" : "Show map"}
-          </button>
+          <div className="flex items-center gap-2">
+            {/* Desktop sort */}
+            <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} className="input-field text-xs w-auto hidden lg:block">
+              {session && <option value="best_match">Best match</option>}
+              <option value="newest">Newest</option>
+              <option value="price_asc">Price: Low-High</option>
+              <option value="price_desc">Price: High-Low</option>
+            </select>
+            <button
+              onClick={() => setShowMap(!showMap)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+            >
+              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                {showMap ? (
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+                ) : (
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                )}
+              </svg>
+              {showMap ? "Hide map" : "Map"}
+            </button>
+          </div>
         </div>
       )}
 
-      {/* Results grid + map */}
-      <div className={`grid gap-6 ${showMap ? "lg:grid-cols-5" : "lg:grid-cols-1"}`}>
-        {/* Listing cards */}
-        <div className={`space-y-4 ${showMap ? "lg:col-span-3" : ""}`}>
-          {searching ? (
-            <div className={`grid gap-4 ${showMap ? "grid-cols-1" : "grid-cols-1 md:grid-cols-2 xl:grid-cols-3"}`}>
-              {[1, 2, 3, 4, 5, 6].map((i) => (
-                <div key={i} className="card p-4 rounded-2xl space-y-3">
-                  <div className="w-full aspect-[16/10] rounded-xl shimmer" />
-                  <div className="space-y-2">
-                    <div className="h-4 w-3/4 rounded shimmer" />
-                    <div className="h-3 w-1/2 rounded shimmer" />
-                    <div className="flex gap-2">
-                      <div className="h-6 w-16 rounded-full shimmer" />
-                      <div className="h-6 w-20 rounded-full shimmer" />
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : results.length === 0 ? (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="card p-10 rounded-2xl text-center"
-            >
-              <svg
-                className="w-16 h-16 mx-auto text-slate-200 dark:text-slate-700 mb-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={1}
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-              <h3 className="font-bold text-lg text-slate-900 dark:text-white mb-2">
-                No rooms match your search
-              </h3>
-              <p className="text-sm text-slate-500 dark:text-slate-400 mb-4 max-w-md mx-auto">
-                Try adjusting your filters or searching a different area. Popular suburbs include Kellyville, Parramatta, and Blacktown.
-              </p>
-              <div className="flex flex-wrap justify-center gap-2">
-                {["Kellyville", "Parramatta", "Blacktown", "Liverpool"].map((s) => (
-                  <button
-                    key={s}
-                    onClick={() => {
-                      setSearchType("suburb");
-                      setSuburbName(s);
-                      clearAllFilters();
-                      setSuburbName(s);
-                      setSearchType("suburb");
-                      setTimeout(() => doSearch(true), 100);
-                    }}
-                    className="px-3 py-1.5 rounded-full text-sm bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-500/20 transition-colors"
-                  >
-                    {s}
-                  </button>
-                ))}
+      {/* Main layout: sidebar + results + map */}
+      <div className="flex gap-6">
+        {/* Desktop sidebar */}
+        <aside className="hidden lg:block w-72 shrink-0">
+          <div className="sticky top-24 card rounded-2xl p-5 max-h-[calc(100vh-7rem)] overflow-y-auto space-y-1">
+            {filterContent}
+          </div>
+        </aside>
+
+        {/* Results area */}
+        <div className="flex-1 min-w-0">
+
+          {/* Best match prompts */}
+          {isBestMatch && !session && (
+            <motion.div initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }}
+              className="mb-4 p-4 rounded-xl border border-rose-200 dark:border-rose-500/30 bg-rose-50 dark:bg-rose-500/10 flex items-start gap-3">
+              <svg className="w-5 h-5 text-rose-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+              <div>
+                <p className="text-sm font-semibold text-rose-700 dark:text-rose-400">Sign in for personalised matches</p>
+                <p className="text-xs text-rose-600/80 dark:text-rose-400/70 mt-0.5">Add your budget and suburb to your profile and we will rank listings that suit you first.</p>
               </div>
             </motion.div>
-          ) : (
-            <>
-              <div className={`grid gap-4 ${showMap ? "grid-cols-1" : "grid-cols-1 md:grid-cols-2 xl:grid-cols-3"}`}>
-                {results.map((listing, i) => (
-                  <motion.div
-                    key={listing.id}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: Math.min(i * 0.03, 0.3) }}
-                    whileHover={{ y: -2 }}
-                    className="card rounded-2xl overflow-hidden group"
-                  >
-                    {/* Photo */}
-                    <div className="relative w-full aspect-[16/10] bg-slate-100 dark:bg-slate-800 overflow-hidden">
-                      {listing.photos && listing.photos.length > 0 ? (
-                        <img
-                          src={listing.photos[0]}
-                          alt={listing.address}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                          loading="lazy"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center">
-                          <svg className="w-10 h-10 text-slate-300 dark:text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
-                          </svg>
-                        </div>
-                      )}
-
-                      {/* Price badge on photo */}
-                      <div className="absolute top-3 right-3 px-4 py-2 rounded-xl bg-white dark:bg-slate-900 shadow-lg border border-slate-200 dark:border-slate-700">
-                        <span className="text-rose-600 dark:text-rose-400 font-black text-lg">
-                          ${listing.weeklyPrice || listing.dailyPrice || 0}
-                        </span>
-                        <span className="text-slate-600 dark:text-slate-300 text-sm font-medium">
-                          {listing.dailyPrice && !listing.weeklyPrice ? "/day" : "/wk"}
-                        </span>
-                      </div>
-
-                      {/* Save button on photo */}
-                      <button
-                        onClick={(e) => {
-                          e.preventDefault();
-                          toggleSave(listing.id);
-                        }}
-                        className="absolute top-3 left-3 w-8 h-8 rounded-full bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm flex items-center justify-center transition-all hover:scale-110"
-                      >
-                        <svg
-                          className={`w-4 h-4 ${saved.has(listing.id) ? "text-rose-500 fill-rose-500" : "text-slate-600 dark:text-slate-300"}`}
-                          fill={saved.has(listing.id) ? "currentColor" : "none"}
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                          strokeWidth={2}
-                        >
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                        </svg>
-                      </button>
-
-                      {/* Instant book badge */}
-                      {listing.instantBook && (
-                        <div className="absolute bottom-3 left-3 px-2 py-1 rounded-md bg-emerald-500/90 backdrop-blur-sm text-white text-xs font-semibold flex items-center gap-1">
-                          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                          </svg>
-                          Instant
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Card body */}
-                    <div className="p-4 space-y-2.5">
-                      <div>
-                        <h3 className="font-bold text-slate-900 dark:text-white text-sm truncate">
-                          {listing.address}
-                        </h3>
-                        <p className="text-xs text-slate-500 dark:text-slate-400">
-                          {listing.suburb}{listing.postcode ? `, ${listing.postcode}` : ""}
-                        </p>
-                      </div>
-
-                      {/* Filter pills */}
-                      <div className="flex flex-wrap gap-1.5">
-                        <span className="px-2 py-0.5 rounded-full text-xs bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 capitalize">
-                          {listing.roomType}
-                        </span>
-                        {listing.furnished && (
-                          <span className="px-2 py-0.5 rounded-full text-xs bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400">
-                            Furnished
-                          </span>
-                        )}
-                        {listing.billsIncluded && (
-                          <span className="px-2 py-0.5 rounded-full text-xs bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400">
-                            Bills incl.
-                          </span>
-                        )}
-                        {listing.verified && (
-                          <span className="px-2 py-0.5 rounded-full text-xs bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
-                            &#10003; Verified
-                          </span>
-                        )}
-                        {listing.genderPreference === "female" && (
-                          <span className="px-2 py-0.5 rounded-full text-xs bg-pink-50 dark:bg-pink-500/10 text-pink-600 dark:text-pink-400">
-                            Female only
-                          </span>
-                        )}
-                      </div>
-
-                      <p className="text-xs text-slate-600 dark:text-slate-400 line-clamp-2">
-                        {listing.description}
-                      </p>
-
-                      {listing.stationName && listing.stationWalkMin != null && (
-                        <div className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full ${
-                          listing.stationWalkMin <= 15
-                            ? "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
-                            : "bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400"
-                        }`}>
-                          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M8 7h8m-8 4h4m4-8H6a2 2 0 00-2 2v14l4-3h10a2 2 0 002-2V5a2 2 0 00-2-2z" />
-                          </svg>
-                          <span className="text-xs font-medium">{listing.stationWalkMin} min walk to {listing.stationName}</span>
-                        </div>
-                      )}
-
-                      {/* True cost estimate */}
-                      {!listing.billsIncluded && (
-                        <p className="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium">
-                          ~${(listing.weeklyPrice || 0) + 50}/wk total with bills + transport
-                        </p>
-                      )}
-
-                      <Link
-                        href={`/listing/${listing.id}`}
-                        className="btn-primary py-2 px-4 rounded-lg text-xs w-full text-center block"
-                      >
-                        View details
-                      </Link>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-
-              {/* Load more */}
-              {hasMore && (
-                <div className="text-center pt-4">
-                  <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={loadMore}
-                    disabled={loadingMore}
-                    className="btn-secondary px-8 py-3 rounded-xl text-sm font-semibold"
-                  >
-                    {loadingMore ? (
-                      <span className="flex items-center justify-center gap-2">
-                        <span className="w-4 h-4 border-2 border-rose-500/30 border-t-rose-500 rounded-full animate-spin" />
-                        Loading...
-                      </span>
-                    ) : (
-                      "Load more rooms"
-                    )}
-                  </motion.button>
-                </div>
-              )}
-            </>
           )}
-        </div>
 
-        {/* Map sidebar */}
-        {showMap && (
-          <div className="lg:col-span-2">
-            <div className="sticky top-24 space-y-4">
-              <div className="card rounded-2xl overflow-hidden aspect-[4/5]">
-                <ListingsMap listings={results} isDark={theme === "dark"} stations={mapStations} />
-              </div>
+          <div className={`grid gap-6 ${showMap ? "xl:grid-cols-5" : ""}`}>
+            {/* Listing cards */}
+            <div className={showMap ? "xl:col-span-3" : ""}>
+              {searching ? (
+                <div className={`grid gap-4 ${showMap ? "grid-cols-1" : "grid-cols-1 md:grid-cols-2 xl:grid-cols-3"}`}>
+                  {[1, 2, 3, 4, 5, 6].map((i) => (
+                    <div key={i} className="card p-4 rounded-2xl space-y-3">
+                      <div className="w-full aspect-[16/10] rounded-xl shimmer" />
+                      <div className="space-y-2">
+                        <div className="h-4 w-3/4 rounded shimmer" />
+                        <div className="h-3 w-1/2 rounded shimmer" />
+                        <div className="flex gap-2"><div className="h-6 w-16 rounded-full shimmer" /><div className="h-6 w-20 rounded-full shimmer" /></div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : results.length === 0 ? (
+                /* No results state */
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="card p-10 rounded-2xl text-center">
+                  <svg className="w-16 h-16 mx-auto text-slate-200 dark:text-slate-700 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                  <h3 className="font-bold text-lg text-slate-900 dark:text-white mb-2">No rooms match your search</h3>
+                  <p className="text-sm text-slate-500 dark:text-slate-400 mb-6 max-w-md mx-auto">
+                    Try removing some filters or searching a different area.
+                  </p>
 
-              {saved.size > 0 && (
-                <Link href="/seeker/wishlist" className="card p-4 rounded-2xl block">
-                  <p className="text-sm font-bold text-slate-900 dark:text-white">
-                    Wishlist
-                  </p>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">
-                    {saved.size} saved items
-                  </p>
-                  <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800">
-                    <button className="text-xs text-rose-500 hover:text-rose-600 font-semibold">
-                      View all &rarr;
-                    </button>
+                  {/* Recovery actions */}
+                  <div className="space-y-4">
+                    {activeFilters.length > 0 && (
+                      <button
+                        onClick={() => { clearAllFilters(); setTimeout(() => doSearch(true), 100); }}
+                        className="btn-primary px-6 py-2.5 rounded-xl text-sm font-semibold"
+                      >
+                        Clear all filters and search again
+                      </button>
+                    )}
+                    <div>
+                      <p className="text-xs text-slate-400 mb-2">Popular suburbs:</p>
+                      <div className="flex flex-wrap justify-center gap-2">
+                        {["Kellyville", "Parramatta", "Blacktown", "Liverpool", "Chatswood", "Bankstown"].map((s) => (
+                          <button key={s}
+                            onClick={() => {
+                              clearAllFilters();
+                              setSearchType("suburb");
+                              setSuburbName(s);
+                              setTimeout(() => doSearch(true), 100);
+                            }}
+                            className="px-3 py-1.5 rounded-full text-xs bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-500/20 transition-colors">
+                            {s}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
                   </div>
-                </Link>
+                </motion.div>
+              ) : (
+                <>
+                  <div className={`grid gap-4 ${showMap ? "grid-cols-1" : "grid-cols-1 md:grid-cols-2 xl:grid-cols-3"}`}>
+                    {results.map((listing, i) => (
+                      <motion.div key={listing.id}
+                        initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: Math.min(i * 0.03, 0.3) }}
+                        whileHover={{ y: -2 }}
+                        className="card rounded-2xl overflow-hidden group">
+                        {/* Photo */}
+                        <div className="relative w-full aspect-[16/10] bg-slate-100 dark:bg-slate-800 overflow-hidden">
+                          {listing.photos?.length > 0 ? (
+                            <img src={listing.photos[0]} alt={listing.address}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center">
+                              <svg className="w-10 h-10 text-slate-300 dark:text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+                              </svg>
+                            </div>
+                          )}
+                          {/* Price badge */}
+                          <div className="absolute top-3 right-3 px-3 py-1.5 rounded-xl bg-white dark:bg-slate-900 shadow-lg border border-slate-200 dark:border-slate-700">
+                            <span className="text-rose-600 dark:text-rose-400 font-black text-base">${listing.weeklyPrice || listing.dailyPrice || 0}</span>
+                            <span className="text-slate-600 dark:text-slate-300 text-xs font-medium">{listing.dailyPrice && !listing.weeklyPrice ? "/day" : "/wk"}</span>
+                          </div>
+                          {/* Save */}
+                          <button onClick={(e) => { e.preventDefault(); toggleSave(listing.id); }}
+                            className="absolute top-3 left-3 w-8 h-8 rounded-full bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm flex items-center justify-center transition-all hover:scale-110">
+                            <svg className={`w-4 h-4 ${saved.has(listing.id) ? "text-rose-500 fill-rose-500" : "text-slate-600 dark:text-slate-300"}`}
+                              fill={saved.has(listing.id) ? "currentColor" : "none"} viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                            </svg>
+                          </button>
+                          {/* Instant book badge */}
+                          {listing.instantBook && (
+                            <div className="absolute bottom-3 left-3 px-2 py-1 rounded-md bg-emerald-500/90 backdrop-blur-sm text-white text-xs font-semibold flex items-center gap-1">
+                              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                              Instant
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Card body */}
+                        <div className="p-4 space-y-2">
+                          <div>
+                            <h3 className="font-bold text-slate-900 dark:text-white text-sm truncate">{listing.address}</h3>
+                            <p className="text-xs text-slate-500 dark:text-slate-400">{listing.suburb}{listing.postcode ? `, ${listing.postcode}` : ""}</p>
+                          </div>
+                          {/* Tags */}
+                          <div className="flex flex-wrap gap-1">
+                            <span className="px-2 py-0.5 rounded-full text-[11px] bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 capitalize">{listing.roomType}</span>
+                            {listing.furnished && <span className="px-2 py-0.5 rounded-full text-[11px] bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400">Furnished</span>}
+                            {listing.billsIncluded && <span className="px-2 py-0.5 rounded-full text-[11px] bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400">Bills incl.</span>}
+                            {listing.verified && <span className="px-2 py-0.5 rounded-full text-[11px] bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">&#10003; Verified</span>}
+                            {listing.genderPreference === "female" && <span className="px-2 py-0.5 rounded-full text-[11px] bg-pink-50 dark:bg-pink-500/10 text-pink-600 dark:text-pink-400">Female only</span>}
+                            {listing.petsAllowed && <span className="px-2 py-0.5 rounded-full text-[11px] bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400">Pets OK</span>}
+                            {listing.parking && <span className="px-2 py-0.5 rounded-full text-[11px] bg-cyan-50 dark:bg-cyan-500/10 text-cyan-600 dark:text-cyan-400">Parking</span>}
+                          </div>
+
+                          {/* Match score + reasons (only shown in Best match sort) */}
+                          {isBestMatch && listing.matchScore !== undefined && (
+                            <div className="pt-1 space-y-1.5">
+                              <div className="flex items-center gap-2">
+                                <div className="flex-1 h-1.5 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
+                                  <div
+                                    className={`h-full rounded-full transition-all ${listing.matchScore >= 80 ? "bg-rose-500" : listing.matchScore >= 60 ? "bg-amber-400" : "bg-slate-400"}`}
+                                    style={{ width: `${listing.matchScore}%` }}
+                                  />
+                                </div>
+                                <span className={`text-[11px] font-semibold whitespace-nowrap ${listing.matchScore >= 80 ? "text-rose-600 dark:text-rose-400" : listing.matchScore >= 60 ? "text-amber-600 dark:text-amber-400" : "text-slate-500"}`}>
+                                  {listing.matchScore >= 80 ? "Strong match" : listing.matchScore >= 60 ? "Good match" : "Possible match"}
+                                </span>
+                              </div>
+                              {listing.matchReasons && listing.matchReasons.length > 0 && (
+                                <div className="flex flex-wrap gap-1">
+                                  {listing.matchReasons.map((reason, ri) => (
+                                    <span key={ri} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400">
+                                      <svg className="w-2.5 h-2.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                                      {reason}
+                                    </span>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          )}
+                          <p className="text-xs text-slate-600 dark:text-slate-400 line-clamp-2">{listing.description}</p>
+                          {listing.stationName && listing.stationWalkMin != null && (
+                            <div className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full ${
+                              listing.stationWalkMin <= 15
+                                ? "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+                                : "bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400"
+                            }`}>
+                              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M8 7h8m-8 4h4m4-8H6a2 2 0 00-2 2v14l4-3h10a2 2 0 002-2V5a2 2 0 00-2-2z" /></svg>
+                              <span className="text-xs font-medium">{listing.stationWalkMin} min to {listing.stationName}</span>
+                            </div>
+                          )}
+                          {!listing.billsIncluded && (
+                            <p className="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium">~${(listing.weeklyPrice || 0) + 50}/wk total with bills + transport</p>
+                          )}
+                          <Link href={`/listing/${listing.id}`} className="btn-primary py-2 px-4 rounded-lg text-xs w-full text-center block">
+                            View details
+                          </Link>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+
+                  {/* Load more */}
+                  {hasMore && (
+                    <div className="text-center pt-6">
+                      <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
+                        onClick={loadMore} disabled={loadingMore}
+                        className="btn-secondary px-8 py-3 rounded-xl text-sm font-semibold">
+                        {loadingMore ? (
+                          <span className="flex items-center justify-center gap-2">
+                            <span className="w-4 h-4 border-2 border-rose-500/30 border-t-rose-500 rounded-full animate-spin" />
+                            Loading...
+                          </span>
+                        ) : "Load more rooms"}
+                      </motion.button>
+                    </div>
+                  )}
+                </>
               )}
             </div>
+
+            {/* Map */}
+            {showMap && (
+              <div className="hidden xl:block xl:col-span-2">
+                <div className="sticky top-24 space-y-4">
+                  <div className="card rounded-2xl overflow-hidden aspect-[4/5]">
+                    <ListingsMap listings={results} isDark={theme === "dark"} stations={mapStations} />
+                  </div>
+                  {saved.size > 0 && (
+                    <Link href="/seeker/wishlist" className="card p-4 rounded-2xl block">
+                      <p className="text-sm font-bold text-slate-900 dark:text-white">Wishlist</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">{saved.size} saved items</p>
+                      <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800">
+                        <span className="text-xs text-rose-500 hover:text-rose-600 font-semibold">View all &rarr;</span>
+                      </div>
+                    </Link>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
-        )}
+        </div>
       </div>
     </div>
   );
