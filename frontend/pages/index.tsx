@@ -125,57 +125,56 @@ export default function Home() {
       </Head>
 
       {/* SECTION 1 · HERO */}
-      <section className="relative overflow-hidden pt-20 pb-16 md:pt-28 md:pb-24">
-        <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-rose-400/15 dark:bg-rose-500/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 right-1/4 w-[600px] h-[600px] bg-violet-400/10 dark:bg-violet-500/8 rounded-full blur-3xl" />
-        <div className="absolute top-1/3 right-10 w-[300px] h-[300px] bg-blue-400/10 dark:bg-blue-500/8 rounded-full blur-3xl" />
+      <section className="relative overflow-hidden pt-20 pb-20 md:pt-28 md:pb-28">
+        <div className="absolute top-0 left-1/4 w-[480px] h-[480px] bg-rose-300/10 dark:bg-rose-500/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 right-1/4 w-[520px] h-[520px] bg-violet-300/8 dark:bg-violet-500/5 rounded-full blur-3xl" />
 
         <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 text-center">
-          <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-rose-50 dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/20 text-xs font-medium text-rose-600 dark:text-rose-400 mb-8">
+          <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-50 dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/20 text-xs font-medium text-rose-700 dark:text-rose-400 mb-8">
               <span className="pulse-dot" />
               {t("home.badge")}
             </div>
 
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tight leading-[1.1]">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-semibold tracking-tight leading-[1.05] text-slate-900 dark:text-white">
               <span className="gradient-text">{t("home.headline1")}</span>{" "}
-              <span className="text-slate-900 dark:text-white">{t("home.headline2")}</span>
+              <span>{t("home.headline2")}</span>
             </h1>
 
-            <p className="mt-6 text-lg md:text-xl text-slate-500 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
+            <p className="mt-6 text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
               {t("home.subtitle")}
             </p>
 
-            <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="mt-10 flex flex-col sm:flex-row gap-3 justify-center">
               <Link href={session ? "/dashboard" : "/for-seekers"}>
-                <motion.span whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.98 }} className="inline-flex items-center gap-2 btn-primary text-base px-8 py-4 rounded-xl">
+                <motion.span whileTap={{ scale: 0.98 }} className="inline-flex items-center gap-2 btn-primary text-[15px] px-6 h-12 rounded-xl">
                   {t("home.seekerCta")}
                   <ArrowRight className="w-4 h-4" />
                 </motion.span>
               </Link>
               <Link href={session ? "/owner/dashboard" : "/for-owners"}>
-                <motion.span whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.98 }} className="inline-flex items-center gap-2 btn-secondary text-base px-8 py-4 rounded-xl">
+                <motion.span whileTap={{ scale: 0.98 }} className="inline-flex items-center gap-2 btn-secondary text-[15px] px-6 h-12 rounded-xl">
                   {t("home.ownerCta")}
                   <ArrowRight className="w-4 h-4" />
                 </motion.span>
               </Link>
             </div>
 
-            <div className="mt-4 flex items-center justify-center gap-6 text-sm">
-              <Link href="/pricing" className="text-slate-400 dark:text-slate-500 hover:text-rose-500 dark:hover:text-rose-400 transition-colors">
+            <div className="mt-5 flex items-center justify-center gap-5 text-sm">
+              <Link href="/pricing" className="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
                 {t("home.viewPricing")}
               </Link>
               <span className="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-600" />
-              <Link href="/about" className="text-slate-400 dark:text-slate-500 hover:text-rose-500 dark:hover:text-rose-400 transition-colors">
+              <Link href="/about" className="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
                 {t("home.learnMore")}
               </Link>
             </div>
 
-            <div className="mt-12 flex flex-wrap items-center justify-center gap-3 sm:gap-5">
+            <div className="mt-14 flex flex-wrap items-center justify-center gap-2">
               {trustBadges.map((badge, i) => (
-                <div key={i} className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/60 dark:bg-white/5 border border-slate-200/50 dark:border-slate-700/50 backdrop-blur-sm">
-                  <badge.icon className="w-4 h-4 text-emerald-500" />
-                  <span className="text-xs font-medium text-slate-600 dark:text-slate-300">{badge.label}</span>
+                <div key={i} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/70 dark:bg-white/5 border border-slate-200/70 dark:border-slate-800 backdrop-blur-sm">
+                  <badge.icon className="w-3.5 h-3.5 text-emerald-600" />
+                  <span className="text-xs font-medium text-slate-700 dark:text-slate-300">{badge.label}</span>
                 </div>
               ))}
             </div>
@@ -187,7 +186,7 @@ export default function Home() {
       <section className="py-16 border-y border-slate-100 dark:border-slate-800/50">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 text-center mb-8">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
-            <h2 className="text-2xl md:text-3xl font-black tracking-tight text-slate-900 dark:text-white">
+            <h2 className="text-2xl md:text-3xl font-semibold tracking-tight text-slate-900 dark:text-white">
               {t("home.marqueeTitle")} <span className="gradient-text">{t("home.marqueeAccent")}</span>
             </h2>
             <p className="mt-3 text-slate-500 dark:text-slate-400 max-w-lg mx-auto">{t("home.marqueeSubtitle")}</p>
@@ -202,8 +201,8 @@ export default function Home() {
       <section className="py-20 md:py-28">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-14">
-            <p className="text-sm font-semibold text-rose-500 dark:text-rose-400 uppercase tracking-wider mb-3">{t("home.whyBadge")}</p>
-            <h2 className="text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-rose-700 dark:text-rose-400 mb-3">{t("home.whyBadge")}</p>
+            <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white">
               {t("home.whyTitle")} <span className="gradient-text">{t("home.whyAccent")}</span>
             </h2>
           </motion.div>
@@ -212,12 +211,12 @@ export default function Home() {
             {features.map((feature, i) => {
               const c = colorMap[feature.color];
               return (
-                <motion.div key={i} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1, duration: 0.5 }} whileHover={{ y: -6 }} className="card p-6 rounded-2xl group hover:shadow-lg transition-all">
-                  <div className={`w-12 h-12 rounded-xl ${c.bg} border ${c.border} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
-                    <feature.icon className={`w-6 h-6 ${c.icon}`} />
+                <motion.div key={i} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08, duration: 0.4 }} whileHover={{ y: -2 }} className="card p-6 rounded-2xl group transition-colors">
+                  <div className={`w-11 h-11 rounded-xl ${c.bg} flex items-center justify-center mb-4 transition-colors`}>
+                    <feature.icon className={`w-5 h-5 ${c.icon}`} />
                   </div>
-                  <h3 className="text-slate-900 dark:text-white font-bold mb-2">{feature.title}</h3>
-                  <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">{feature.desc}</p>
+                  <h3 className="text-slate-900 dark:text-white font-semibold mb-1.5 tracking-tight">{feature.title}</h3>
+                  <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">{feature.desc}</p>
                 </motion.div>
               );
             })}
@@ -229,8 +228,8 @@ export default function Home() {
       <section className="py-20 md:py-28 bg-gradient-to-b from-slate-50 to-white dark:from-slate-900/80 dark:to-slate-950">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-14">
-            <p className="text-sm font-semibold text-rose-500 dark:text-rose-400 uppercase tracking-wider mb-3">{t("home.howBadge")}</p>
-            <h2 className="text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-rose-700 dark:text-rose-400 mb-3">{t("home.howBadge")}</p>
+            <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white">
               {t("home.howTitle")} <span className="gradient-text">{t("home.howAccent")}</span>
             </h2>
           </motion.div>
@@ -257,7 +256,7 @@ export default function Home() {
                 ))}
               </div>
               <Link href="/for-seekers">
-                <motion.span whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }} className="inline-flex items-center gap-2 mt-8 btn-primary text-sm px-6 py-3 rounded-xl">
+                <motion.span whileTap={{ scale: 0.98 }} className="inline-flex items-center gap-2 mt-8 btn-primary text-sm px-6 h-11 rounded-xl">
                   {t("home.startSearching")}
                   <ArrowRight className="w-4 h-4" />
                 </motion.span>
@@ -285,7 +284,7 @@ export default function Home() {
                 ))}
               </div>
               <Link href="/for-owners">
-                <motion.span whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }} className="inline-flex items-center gap-2 mt-8 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold text-sm px-6 py-3 rounded-xl hover:shadow-lg hover:shadow-blue-500/25 transition-shadow">
+                <motion.span whileTap={{ scale: 0.98 }} className="inline-flex items-center gap-2 mt-8 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm px-6 h-11 rounded-xl transition-colors">
                   {t("home.listYourRoom")}
                   <ArrowRight className="w-4 h-4" />
                 </motion.span>
@@ -299,8 +298,8 @@ export default function Home() {
       <section className="py-20 md:py-28">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-14">
-            <p className="text-sm font-semibold text-rose-500 dark:text-rose-400 uppercase tracking-wider mb-3">{t("home.storiesBadge")}</p>
-            <h2 className="text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-rose-700 dark:text-rose-400 mb-3">{t("home.storiesBadge")}</p>
+            <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white">
               {t("home.storiesTitle")} <span className="gradient-text">{t("home.storiesAccent")}</span> {t("home.storiesEnd")}
             </h2>
           </motion.div>
@@ -341,8 +340,8 @@ export default function Home() {
       <section className="py-20 md:py-28 bg-slate-50/80 dark:bg-slate-900/50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-14">
-            <p className="text-sm font-semibold text-rose-500 dark:text-rose-400 uppercase tracking-wider mb-3">{t("home.testimonialsBadge")}</p>
-            <h2 className="text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-rose-700 dark:text-rose-400 mb-3">{t("home.testimonialsBadge")}</p>
+            <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white">
               Built for <span className="gradient-text">trust</span>
             </h2>
             <p className="mt-4 text-slate-500 dark:text-slate-400 max-w-lg mx-auto text-sm">
@@ -357,12 +356,12 @@ export default function Home() {
               { icon: HomeIcon, label: "Real listings only", desc: "Every listing is reviewed before going live", color: "from-amber-400 to-orange-500" },
               { icon: Handshake, label: "Secure payments", desc: "Stripe-powered with no hidden fees", color: "from-pink-400 to-rose-500" },
             ].map((item, i) => (
-              <motion.div key={item.label} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1, duration: 0.5 }} className="card p-6 rounded-2xl text-center">
-                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${item.color} flex items-center justify-center mx-auto mb-4 shadow-lg`}>
-                  <item.icon className="w-6 h-6 text-white" />
+              <motion.div key={item.label} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08, duration: 0.4 }} className="card p-6 rounded-2xl text-center">
+                <div className="w-11 h-11 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center mx-auto mb-4">
+                  <item.icon className="w-5 h-5 text-slate-700 dark:text-slate-300" />
                 </div>
-                <p className="text-sm font-bold text-slate-900 dark:text-white mb-1">{item.label}</p>
-                <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">{item.desc}</p>
+                <p className="text-sm font-semibold text-slate-900 dark:text-white mb-1 tracking-tight">{item.label}</p>
+                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">{item.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -384,8 +383,8 @@ export default function Home() {
       <section className="py-20 md:py-28">
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-14">
-            <p className="text-sm font-semibold text-emerald-500 dark:text-emerald-400 uppercase tracking-wider mb-3">{t("home.safetyBadge")}</p>
-            <h2 className="text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-emerald-700 dark:text-emerald-400 mb-3">{t("home.safetyBadge")}</p>
+            <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white">
               {t("home.safetyTitle")} <span className="gradient-text">{t("home.safetyAccent")}</span>
             </h2>
             <p className="mt-4 text-slate-500 dark:text-slate-400 max-w-2xl mx-auto">{t("home.safetySubtitle")}</p>
@@ -393,12 +392,12 @@ export default function Home() {
 
           <div className="grid md:grid-cols-3 gap-6">
             {trustItems.map((item, i) => (
-              <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1, duration: 0.5 }} className="text-center card p-8 rounded-2xl">
-                <div className="w-14 h-14 rounded-2xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-100 dark:border-emerald-500/20 flex items-center justify-center mx-auto mb-5">
-                  <item.icon className="w-7 h-7 text-emerald-500" />
+              <motion.div key={i} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08, duration: 0.4 }} className="text-center card p-8 rounded-2xl">
+                <div className="w-12 h-12 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center mx-auto mb-5">
+                  <item.icon className="w-6 h-6 text-emerald-600" />
                 </div>
-                <h3 className="font-bold text-slate-900 dark:text-white mb-2">{item.title}</h3>
-                <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">{item.desc}</p>
+                <h3 className="font-semibold text-slate-900 dark:text-white mb-2 tracking-tight">{item.title}</h3>
+                <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">{item.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -412,17 +411,17 @@ export default function Home() {
 
         <div className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 text-center">
           <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
-            <h2 className="text-3xl md:text-5xl font-black tracking-tight text-white leading-tight">{t("home.ctaTitle")}</h2>
-            <p className="mt-4 text-lg text-white/80 max-w-xl mx-auto">{t("home.ctaSubtitle")}</p>
-            <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
+            <h2 className="text-3xl md:text-5xl font-semibold tracking-tight text-white leading-[1.1]">{t("home.ctaTitle")}</h2>
+            <p className="mt-4 text-lg text-white/85 max-w-xl mx-auto leading-relaxed">{t("home.ctaSubtitle")}</p>
+            <div className="mt-10 flex flex-col sm:flex-row gap-3 justify-center">
               <Link href={session ? "/dashboard" : "/signup"}>
-                <motion.span whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.98 }} className="inline-flex items-center gap-2 bg-white text-rose-600 font-bold px-8 py-4 rounded-xl hover:shadow-xl transition-shadow text-base">
+                <motion.span whileTap={{ scale: 0.98 }} className="inline-flex items-center gap-2 bg-white text-rose-600 font-semibold px-6 h-12 rounded-xl hover:bg-slate-50 transition-colors text-[15px]">
                   {t("home.getStarted")}
                   <ArrowRight className="w-4 h-4" />
                 </motion.span>
               </Link>
               <Link href="/faq">
-                <motion.span whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.98 }} className="inline-flex items-center gap-2 bg-white/10 border border-white/20 text-white font-semibold px-8 py-4 rounded-xl hover:bg-white/20 transition-colors text-base">
+                <motion.span whileTap={{ scale: 0.98 }} className="inline-flex items-center gap-2 bg-white/10 border border-white/25 text-white font-semibold px-6 h-12 rounded-xl hover:bg-white/15 transition-colors text-[15px]">
                   {t("home.helpCentre")}
                 </motion.span>
               </Link>
