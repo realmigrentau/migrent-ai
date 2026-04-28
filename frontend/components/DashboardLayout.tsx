@@ -118,7 +118,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         { href: "/suburb/kellyville", label: "Suburbs", icon: <Map className="w-5 h-5" /> },
         { href: "/dashboard/owner-profile", label: "Profile", icon: <User className="w-5 h-5" /> },
         { href: "/messages", label: "Messages", icon: <MessageCircle className="w-5 h-5" /> },
-        { href: "/guides", label: "Help Centre", icon: <HelpCircle className="w-5 h-5" /> },
+        { href: "/help", label: "Help Centre", icon: <HelpCircle className="w-5 h-5" /> },
         { href: "/account/settings", label: "Settings", icon: <Settings className="w-5 h-5" /> },
       ];
     }
@@ -133,7 +133,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         { href: "/suburb/kellyville", label: "Suburbs", icon: <Map className="w-5 h-5" /> },
         { href: "/dashboard/seeker-profile", label: "Profile", icon: <User className="w-5 h-5" /> },
         { href: "/messages", label: "Messages", icon: <MessageCircle className="w-5 h-5" /> },
-        { href: "/guides", label: "Help Centre", icon: <HelpCircle className="w-5 h-5" /> },
+        { href: "/help", label: "Help Centre", icon: <HelpCircle className="w-5 h-5" /> },
         { href: "/account/settings", label: "Settings", icon: <Settings className="w-5 h-5" /> },
       ];
     }
@@ -141,7 +141,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     return [
       ...common,
       { href: "/messages", label: "Messages", icon: <MessageCircle className="w-5 h-5" /> },
-      { href: "/guides", label: "Help Centre", icon: <HelpCircle className="w-5 h-5" /> },
+      { href: "/help", label: "Help Centre", icon: <HelpCircle className="w-5 h-5" /> },
       { href: "/account/settings", label: "Settings", icon: <Settings className="w-5 h-5" /> },
     ];
   };
@@ -154,7 +154,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         { href: "/owner/listings", label: "Listings", icon: <ListOrdered className="w-5 h-5" /> },
         { href: "/dashboard/owner-profile", label: "Profile", icon: <User className="w-5 h-5" /> },
         { href: "/messages", label: "Messages", icon: <MessageCircle className="w-5 h-5" /> },
-        { href: "/guides", label: "Support", icon: <HelpCircle className="w-5 h-5" /> },
+        { href: "/help", label: "Support", icon: <HelpCircle className="w-5 h-5" /> },
       ];
     }
 
@@ -163,7 +163,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       { href: "/seeker/search", label: "Search", icon: <Search className="w-5 h-5" /> },
       { href: "/dashboard/seeker-profile", label: "Profile", icon: <User className="w-5 h-5" /> },
       { href: "/messages", label: "Messages", icon: <MessageCircle className="w-5 h-5" /> },
-      { href: "/guides", label: "Support", icon: <HelpCircle className="w-5 h-5" /> },
+      { href: "/help", label: "Support", icon: <HelpCircle className="w-5 h-5" /> },
     ];
   };
 
