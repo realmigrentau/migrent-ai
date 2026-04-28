@@ -180,15 +180,15 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             sidebarCollapsed ? "w-[72px]" : "w-64"
           }`}
         >
-          <div className="glass-card p-4 rounded-2xl sticky top-24 overflow-hidden">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800 p-4 rounded-2xl sticky top-24 overflow-hidden">
             {/* User info */}
             {!sidebarCollapsed && (
-              <div className="flex items-center gap-3 mb-5 pb-5 border-b border-slate-200/50 dark:border-slate-700/50">
+              <div className="flex items-center gap-3 mb-5 pb-5 border-b border-slate-200/70 dark:border-slate-800">
                 <div
-                  className={`w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-sm overflow-hidden shrink-0 ${
+                  className={`w-10 h-10 rounded-xl flex items-center justify-center text-white font-semibold text-sm overflow-hidden shrink-0 ${
                     profilePhoto
                       ? ""
-                      : "bg-gradient-to-br from-indigo-500 to-pink-500"
+                      : isOwner ? "bg-indigo-600" : "bg-rose-600"
                   }`}
                 >
                   {profilePhoto ? (
@@ -207,8 +207,8 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                   </p>
                   <p className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
                     <span
-                      className={`w-2 h-2 rounded-full ${
-                        isOwner ? "bg-indigo-500" : "bg-pink-500"
+                      className={`w-1.5 h-1.5 rounded-full ${
+                        isOwner ? "bg-indigo-500" : "bg-rose-500"
                       }`}
                     />
                     <span className="capitalize">{role || "No role"}</span>
@@ -219,12 +219,12 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
             {/* Collapsed: just avatar */}
             {sidebarCollapsed && (
-              <div className="flex justify-center mb-4 pb-4 border-b border-slate-200/50 dark:border-slate-700/50">
+              <div className="flex justify-center mb-4 pb-4 border-b border-slate-200/70 dark:border-slate-800">
                 <div
-                  className={`w-9 h-9 rounded-xl flex items-center justify-center text-white font-bold text-xs overflow-hidden ${
+                  className={`w-9 h-9 rounded-xl flex items-center justify-center text-white font-semibold text-xs overflow-hidden ${
                     profilePhoto
                       ? ""
-                      : "bg-gradient-to-br from-indigo-500 to-pink-500"
+                      : isOwner ? "bg-indigo-600" : "bg-rose-600"
                   }`}
                 >
                   {profilePhoto ? (
@@ -272,12 +272,12 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             </nav>
 
             {/* Notification bell */}
-            <div className="mt-3 pt-3 border-t border-slate-200/50 dark:border-slate-700/50">
+            <div className="mt-3 pt-3 border-t border-slate-200/70 dark:border-slate-800">
               <NotificationBell unreadCount={unreadCount} collapsed={sidebarCollapsed} />
             </div>
 
             {/* Sign out */}
-            <div className="mt-2 pt-2 border-t border-slate-200/50 dark:border-slate-700/50">
+            <div className="mt-2 pt-2 border-t border-slate-200/70 dark:border-slate-800">
               <button
                 onClick={signOut}
                 className={`flex items-center gap-3 rounded-xl text-sm font-medium text-slate-500 dark:text-slate-400 hover:bg-red-50 dark:hover:bg-red-500/10 hover:text-red-600 dark:hover:text-red-400 transition-all w-full ${
@@ -318,7 +318,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       </div>
 
       {/* Mobile bottom nav */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/90 dark:bg-slate-950/90 backdrop-blur-xl border-t border-slate-200 dark:border-slate-800 pb-safe-bottom">
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 dark:bg-slate-950/95 backdrop-blur-xl border-t border-slate-200/70 dark:border-slate-800 pb-safe-bottom">
         <div className="flex items-center justify-around px-2 py-2">
           {mobileNavItems.map((item) => {
             const isActive =

@@ -36,20 +36,20 @@ export default function Layout({ children }: { children: ReactNode }) {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+      <footer className="border-t border-slate-200/70 dark:border-slate-800 bg-white dark:bg-slate-950">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-10">
             {/* Brand column */}
             <div className="col-span-2 md:col-span-1">
-              <Link href="/" className="flex items-center gap-2 group mb-4">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-rose-500 to-rose-600 flex items-center justify-center text-white font-black text-sm group-hover:scale-110 transition-transform">
+              <Link href="/" className="flex items-center gap-2 group mb-5">
+                <div className="w-8 h-8 rounded-lg bg-rose-600 flex items-center justify-center text-white font-bold text-sm transition-transform group-hover:scale-105">
                   M
                 </div>
-                <span className="text-lg font-black tracking-tight text-slate-900 dark:text-white">
-                  Mig<span className="text-rose-500">Rent</span>
+                <span className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white">
+                  Mig<span className="text-rose-600">Rent</span>
                 </span>
               </Link>
-              <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed mb-4">
+              <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-4 max-w-xs">
                 {t("footer.tagline")}
               </p>
               <p className="text-xs text-slate-400 dark:text-slate-500">
@@ -59,63 +59,57 @@ export default function Layout({ children }: { children: ReactNode }) {
 
             {/* Company */}
             <div>
-              <h4 className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white mb-4">{t("footer.company")}</h4>
-              <ul className="space-y-2.5">
-                <li><Link href="/about" className="text-sm text-slate-500 dark:text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors">{t("footer.about")}</Link></li>
-                <li><Link href="/careers" className="text-sm text-slate-500 dark:text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors">{t("footer.careers")}</Link></li>
-                <li><Link href="/press" className="text-sm text-slate-500 dark:text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors">{t("footer.press")}</Link></li>
-                <li><Link href="/for-owners" className="text-sm text-slate-500 dark:text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors">{t("footer.forOwners")}</Link></li>
-                <li><Link href="/for-seekers" className="text-sm text-slate-500 dark:text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors">{t("footer.forSeekers")}</Link></li>
+              <h4 className="eyebrow mb-4">{t("footer.company")}</h4>
+              <ul className="space-y-3">
+                <li><Link href="/about" className="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">{t("footer.about")}</Link></li>
+                <li><Link href="/careers" className="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">{t("footer.careers")}</Link></li>
+                <li><Link href="/press" className="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">{t("footer.press")}</Link></li>
+                <li><Link href="/for-owners" className="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">{t("footer.forOwners")}</Link></li>
+                <li><Link href="/for-seekers" className="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">{t("footer.forSeekers")}</Link></li>
               </ul>
             </div>
 
             {/* Trust & Safety */}
             <div>
-              <h4 className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white mb-4">{t("footer.trustSafety")}</h4>
-              <ul className="space-y-2.5">
-                <li><Link href="/safety-verification" className="text-sm text-slate-500 dark:text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors">{t("footer.safetyVerification")}</Link></li>
-                <li><Link href="/rules-community-guidelines" className="text-sm text-slate-500 dark:text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors">{t("footer.communityGuidelines")}</Link></li>
-                <li><Link href="/safety-reporting" className="text-sm text-slate-500 dark:text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors">Safety &amp; Reporting</Link></li>
-                <li><Link href="/anti-discrimination" className="text-sm text-slate-500 dark:text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors">Fair Housing</Link></li>
-                <li><Link href="/support-disputes" className="text-sm text-slate-500 dark:text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors">Disputes</Link></li>
+              <h4 className="eyebrow mb-4">{t("footer.trustSafety")}</h4>
+              <ul className="space-y-3">
+                <li><Link href="/safety-verification" className="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">{t("footer.safetyVerification")}</Link></li>
+                <li><Link href="/rules-community-guidelines" className="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">{t("footer.communityGuidelines")}</Link></li>
+                <li><Link href="/safety-reporting" className="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">Safety &amp; Reporting</Link></li>
+                <li><Link href="/anti-discrimination" className="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">Fair Housing</Link></li>
+                <li><Link href="/support-disputes" className="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">Disputes</Link></li>
               </ul>
             </div>
 
             {/* Support */}
             <div>
-              <h4 className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white mb-4">{t("footer.support")}</h4>
-              <ul className="space-y-2.5">
-                <li><Link href="/faq" className="text-sm text-slate-500 dark:text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors">{t("footer.faq")}</Link></li>
-                <li><Link href="/contact" className="text-sm text-slate-500 dark:text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors">{t("footer.contact")}</Link></li>
-                <li><Link href="/pricing" className="text-sm text-slate-500 dark:text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors">{t("footer.pricing")}</Link></li>
-                <li><Link href="/rental-laws" className="text-sm text-slate-500 dark:text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors">Rental Laws</Link></li>
-                <li><Link href="/code-of-conduct" className="text-sm text-slate-500 dark:text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors">STRA Code</Link></li>
+              <h4 className="eyebrow mb-4">{t("footer.support")}</h4>
+              <ul className="space-y-3">
+                <li><Link href="/faq" className="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">{t("footer.faq")}</Link></li>
+                <li><Link href="/contact" className="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">{t("footer.contact")}</Link></li>
+                <li><Link href="/pricing" className="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">{t("footer.pricing")}</Link></li>
+                <li><Link href="/rental-laws" className="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">Rental Laws</Link></li>
+                <li><Link href="/code-of-conduct" className="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">STRA Code</Link></li>
               </ul>
             </div>
           </div>
 
           {/* Legal links */}
-          <div className="mt-10 pt-6 border-t border-slate-200/50 dark:border-slate-800/50 space-y-4">
-            <div className="flex flex-wrap items-center justify-center gap-x-1 gap-y-1 text-xs text-slate-400 dark:text-slate-500">
-              <Link href="/terms-of-service" className="hover:text-rose-500 dark:hover:text-rose-400 transition-colors">{t("footer.termsOfService")}</Link>
-              <span className="mx-1">-</span>
-              <Link href="/privacy-policy" className="hover:text-rose-500 dark:hover:text-rose-400 transition-colors">{t("footer.privacyPolicy")}</Link>
-              <span className="mx-1">-</span>
-              <Link href="/disclaimer" className="hover:text-rose-500 dark:hover:text-rose-400 transition-colors">Disclaimer</Link>
-              <span className="mx-1">-</span>
-              <Link href="/no-agency" className="hover:text-rose-500 dark:hover:text-rose-400 transition-colors">No Agency</Link>
-              <span className="mx-1">-</span>
-              <Link href="/cookie-policy" className="hover:text-rose-500 dark:hover:text-rose-400 transition-colors">Cookies</Link>
-              <span className="mx-1">-</span>
-              <Link href="/abn-terms" className="hover:text-rose-500 dark:hover:text-rose-400 transition-colors">ABN Details</Link>
-              <span className="mx-1">-</span>
-              <Link href="/contact-legal" className="hover:text-rose-500 dark:hover:text-rose-400 transition-colors">Legal Contact</Link>
+          <div className="mt-12 pt-8 border-t border-slate-200/70 dark:border-slate-800/70 space-y-4">
+            <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-slate-500 dark:text-slate-500">
+              <Link href="/terms-of-service" className="hover:text-slate-900 dark:hover:text-white transition-colors">{t("footer.termsOfService")}</Link>
+              <Link href="/privacy-policy" className="hover:text-slate-900 dark:hover:text-white transition-colors">{t("footer.privacyPolicy")}</Link>
+              <Link href="/disclaimer" className="hover:text-slate-900 dark:hover:text-white transition-colors">Disclaimer</Link>
+              <Link href="/no-agency" className="hover:text-slate-900 dark:hover:text-white transition-colors">No Agency</Link>
+              <Link href="/cookie-policy" className="hover:text-slate-900 dark:hover:text-white transition-colors">Cookies</Link>
+              <Link href="/abn-terms" className="hover:text-slate-900 dark:hover:text-white transition-colors">ABN Details</Link>
+              <Link href="/contact-legal" className="hover:text-slate-900 dark:hover:text-white transition-colors">Legal Contact</Link>
             </div>
             <div className="flex flex-col items-center gap-2 text-center">
-              <p className="text-xs text-slate-400 dark:text-slate-500">
+              <p className="text-xs text-slate-500 dark:text-slate-500">
                 {t("footer.copyright", { year: new Date().getFullYear() })} ABN: 22 669 566 941.
               </p>
-              <p className="text-xs text-slate-400 dark:text-slate-500 max-w-lg">
+              <p className="text-xs text-slate-400 dark:text-slate-600 max-w-lg leading-relaxed">
                 {t("footer.disclaimer")}
               </p>
             </div>
