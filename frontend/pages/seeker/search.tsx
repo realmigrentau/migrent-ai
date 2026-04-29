@@ -736,10 +736,10 @@ export default function SeekerSearch() {
     <div className="space-y-5">
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-        <h1 className="text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white">
-          Find a <span className="gradient-text">Room</span>
+        <h1 className="text-2xl md:text-3xl font-semibold tracking-tight text-slate-900 dark:text-white">
+          Find a Room
         </h1>
-        <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+        <p className="text-[15px] text-slate-600 dark:text-slate-400 mt-1.5">
           Search real listings by location, price, and preferences.
         </p>
       </motion.div>
@@ -952,13 +952,13 @@ export default function SeekerSearch() {
                             </div>
                           )}
                           {/* Price badge */}
-                          <div className="absolute top-3 right-3 px-3 py-1.5 rounded-xl bg-white dark:bg-slate-900 shadow-lg border border-slate-200 dark:border-slate-700">
-                            <span className="text-rose-600 dark:text-rose-400 font-black text-base">${listing.weeklyPrice || listing.dailyPrice || 0}</span>
-                            <span className="text-slate-600 dark:text-slate-300 text-xs font-medium">{listing.dailyPrice && !listing.weeklyPrice ? "/day" : "/wk"}</span>
+                          <div className="absolute top-3 right-3 px-2.5 py-1 rounded-lg bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm border border-slate-200/70 dark:border-slate-800">
+                            <span className="text-slate-900 dark:text-white font-semibold text-sm tabular-nums">${listing.weeklyPrice || listing.dailyPrice || 0}</span>
+                            <span className="text-slate-500 dark:text-slate-400 text-xs">{listing.dailyPrice && !listing.weeklyPrice ? "/day" : "/wk"}</span>
                           </div>
                           {/* Save */}
                           <button onClick={(e) => { e.preventDefault(); toggleSave(listing.id); }}
-                            className="absolute top-3 left-3 w-8 h-8 rounded-full bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm flex items-center justify-center transition-all hover:scale-110">
+                            className="absolute top-3 left-3 w-8 h-8 rounded-full bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm flex items-center justify-center transition-colors hover:bg-white dark:hover:bg-slate-900">
                             <svg className={`w-4 h-4 ${saved.has(listing.id) ? "text-rose-500 fill-rose-500" : "text-slate-600 dark:text-slate-300"}`}
                               fill={saved.has(listing.id) ? "currentColor" : "none"} viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                               <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />

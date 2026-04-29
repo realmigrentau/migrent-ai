@@ -54,53 +54,48 @@ export default function SeekerDashboard() {
 
         {/* 1. Welcome Banner */}
         <motion.div
-          initial={{ opacity: 0, y: -10 }}
+          initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
-          className="glass-card p-6 md:p-8 relative overflow-hidden"
+          className="bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800 rounded-2xl p-6 md:p-8"
         >
-          <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-rose-500/10 to-indigo-500/10 rounded-full -translate-y-1/2 translate-x-1/2" />
-          <div className="relative">
-            <h1 className="text-2xl md:text-3xl font-black tracking-tight text-slate-900 dark:text-white">
-              Hi {displayName || "there"}{" "}
-              <span className="inline-block animate-pulse">&#128075;</span>{" "}
-              <span className="gradient-text">Welcome back</span>
-            </h1>
-            <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
-              {metrics ? (
-                <>
-                  {metrics.recommended > 0 && (
-                    <span className="font-medium text-indigo-500">
-                      {metrics.recommended} matches waiting
-                    </span>
-                  )}
-                  {metrics.recommended > 0 && metrics.pending_requests > 0 && (
-                    <span> | </span>
-                  )}
-                  {metrics.pending_requests > 0 && (
-                    <span className="font-medium text-amber-500">
-                      {metrics.pending_requests} booking request
-                      {metrics.pending_requests !== 1 ? "s" : ""} pending
-                    </span>
-                  )}
-                  {!metrics.recommended && !metrics.pending_requests && (
-                    <span>Find your perfect room and manage your search</span>
-                  )}
-                </>
-              ) : (
-                "Find your perfect room and manage your search"
-              )}
-            </p>
+          <h1 className="text-2xl md:text-3xl font-semibold tracking-tight text-slate-900 dark:text-white">
+            Hi {displayName || "there"} <span className="inline-block">&#128075;</span>
+          </h1>
+          <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
+            {metrics ? (
+              <>
+                {metrics.recommended > 0 && (
+                  <span className="font-medium text-indigo-600 dark:text-indigo-400">
+                    {metrics.recommended} matches waiting
+                  </span>
+                )}
+                {metrics.recommended > 0 && metrics.pending_requests > 0 && (
+                  <span className="text-slate-400"> &middot; </span>
+                )}
+                {metrics.pending_requests > 0 && (
+                  <span className="font-medium text-amber-600 dark:text-amber-400">
+                    {metrics.pending_requests} booking request
+                    {metrics.pending_requests !== 1 ? "s" : ""} pending
+                  </span>
+                )}
+                {!metrics.recommended && !metrics.pending_requests && (
+                  <span>Find your perfect room and manage your search</span>
+                )}
+              </>
+            ) : (
+              "Find your perfect room and manage your search"
+            )}
+          </p>
 
-            {/* Quick search bar */}
-            <div className="mt-4 max-w-md">
-              <button
-                onClick={() => router.push("/seeker/search")}
-                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-400 hover:border-rose-300 dark:hover:border-rose-500/30 transition-colors text-left"
-              >
-                <Search className="w-4 h-4" />
-                <span className="text-sm">Search rooms by suburb or postcode...</span>
-              </button>
-            </div>
+          {/* Quick search bar */}
+          <div className="mt-5 max-w-md">
+            <button
+              onClick={() => router.push("/seeker/search")}
+              className="w-full flex items-center gap-3 px-4 h-11 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200/70 dark:border-slate-800 text-slate-500 hover:border-slate-300 dark:hover:border-slate-700 transition-colors text-left"
+            >
+              <Search className="w-4 h-4" />
+              <span className="text-sm">Search rooms by suburb or postcode...</span>
+            </button>
           </div>
         </motion.div>
 
@@ -112,7 +107,7 @@ export default function SeekerDashboard() {
         {/* 3. Bookings Section */}
         <section>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold text-slate-900 dark:text-white">
+            <h2 className="text-xl font-semibold tracking-tight text-slate-900 dark:text-white">
               My Bookings
             </h2>
             {bookings.length > 0 && (
@@ -136,7 +131,7 @@ export default function SeekerDashboard() {
         {/* 4. Saved Listings (Wishlist) */}
         <section>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <h2 className="text-xl font-semibold tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
               <Heart className="w-5 h-5 text-rose-500" />
               Saved Listings
             </h2>
@@ -157,7 +152,7 @@ export default function SeekerDashboard() {
         <section>
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+              <h2 className="text-xl font-semibold tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
                 <Star className="w-5 h-5 text-indigo-500" />
                 Perfect for You
               </h2>
@@ -171,7 +166,7 @@ export default function SeekerDashboard() {
 
         {/* 6. Quick Actions */}
         <section>
-          <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-4">
+          <h2 className="text-xl font-semibold tracking-tight text-slate-900 dark:text-white mb-4">
             Quick Actions
           </h2>
           <div className="grid sm:grid-cols-3 gap-3">
@@ -181,42 +176,42 @@ export default function SeekerDashboard() {
                 label: "Find New Rooms",
                 desc: "Browse all available listings",
                 icon: <Search className="w-5 h-5" />,
-                color: "text-rose-500",
-                bg: "bg-rose-100 dark:bg-rose-500/20",
+                color: "text-rose-600",
+                bg: "bg-rose-50 dark:bg-rose-500/10",
               },
               {
                 href: "/seeker/wishlist",
                 label: "Saved Searches",
                 desc: "Your collections and saved rooms",
                 icon: <Heart className="w-5 h-5" />,
-                color: "text-indigo-500",
-                bg: "bg-indigo-100 dark:bg-indigo-500/20",
+                color: "text-indigo-600",
+                bg: "bg-indigo-50 dark:bg-indigo-500/10",
               },
               {
                 href: "/account/settings",
                 label: "Settings",
                 desc: "Profile, verification, preferences",
                 icon: <Settings className="w-5 h-5" />,
-                color: "text-emerald-500",
-                bg: "bg-emerald-100 dark:bg-emerald-500/20",
+                color: "text-emerald-600",
+                bg: "bg-emerald-50 dark:bg-emerald-500/10",
               },
             ].map((action) => (
               <motion.div
                 key={action.href}
-                whileHover={{ y: -3, scale: 1.01 }}
+                whileHover={{ y: -1 }}
                 transition={{ duration: 0.15 }}
               >
                 <Link href={action.href}>
-                  <div className="card p-5 rounded-2xl hover:shadow-md dark:hover:shadow-2xl group cursor-pointer">
+                  <div className="card p-5 rounded-2xl group cursor-pointer transition-colors">
                     <div
-                      className={`w-10 h-10 rounded-xl ${action.bg} ${action.color} flex items-center justify-center mb-3 group-hover:scale-110 transition-transform`}
+                      className={`w-10 h-10 rounded-xl ${action.bg} ${action.color} flex items-center justify-center mb-3`}
                     >
                       {action.icon}
                     </div>
-                    <h3 className="font-bold text-slate-900 dark:text-white text-sm">
+                    <h3 className="font-semibold text-slate-900 dark:text-white text-sm tracking-tight">
                       {action.label}
                     </h3>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                    <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
                       {action.desc}
                     </p>
                   </div>

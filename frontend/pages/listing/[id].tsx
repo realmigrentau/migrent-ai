@@ -122,7 +122,7 @@ export default function ListingDetailPage() {
     return (
       <div className="min-h-screen bg-white dark:bg-slate-950 flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">
+          <h1 className="text-2xl font-semibold tracking-tight text-slate-900 dark:text-white mb-2">
             Listing not found
           </h1>
           <Link
@@ -180,7 +180,7 @@ export default function ListingDetailPage() {
               </div>
             </div>
             <div className="hidden sm:block">
-              <span className="text-lg font-black text-slate-900 dark:text-white">
+              <span className="text-lg font-semibold text-slate-900 dark:text-white tabular-nums">
                 ${listing.weekly_price}
                 <span className="text-xs font-normal text-slate-400">/wk</span>
               </span>
@@ -199,7 +199,7 @@ export default function ListingDetailPage() {
 
           {/* Title + address */}
           <div className="mt-6">
-            <h1 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white">
+            <h1 className="text-2xl md:text-3xl font-semibold tracking-tight text-slate-900 dark:text-white">
               {listing.title || listing.address}
             </h1>
             <div className="flex items-center gap-2 mt-2 text-sm text-slate-500 dark:text-slate-400">
@@ -218,7 +218,7 @@ export default function ListingDetailPage() {
             <div className="lg:col-span-2 space-y-8">
               {/* Description */}
               <div>
-                <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-2">
+                <h2 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white mb-2">
                   About this place
                 </h2>
                 <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-line">
@@ -310,7 +310,7 @@ export default function ListingDetailPage() {
                     className="card p-6 rounded-2xl text-center border border-emerald-200 dark:border-emerald-500/30"
                   >
                     <CheckCircle className="w-12 h-12 mx-auto text-emerald-500 mb-3" />
-                    <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">
+                    <h3 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white mb-2">
                       Request sent!
                     </h3>
                     <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">
@@ -376,7 +376,7 @@ export default function ListingDetailPage() {
           <div className="fixed bottom-0 left-0 right-0 z-40 lg:hidden bg-white/95 dark:bg-slate-950/95 backdrop-blur-lg border-t border-slate-200 dark:border-slate-800 px-4 py-3 safe-area-pb">
             <div className="flex items-center justify-between gap-4">
               <div>
-                <span className="text-lg font-black text-slate-900 dark:text-white">
+                <span className="text-lg font-semibold text-slate-900 dark:text-white tabular-nums">
                   ${listing.weekly_price}
                 </span>
                 <span className="text-sm text-slate-500 dark:text-slate-400">

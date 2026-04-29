@@ -64,11 +64,10 @@ export default function OwnerDashboard() {
 
         {/* Header */}
         <div>
-          <h1 className="text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white">
-            Owner{" "}
-            <span className="gradient-text-accent">Dashboard</span>
+          <h1 className="text-2xl md:text-3xl font-semibold tracking-tight text-slate-900 dark:text-white">
+            Owner Dashboard
           </h1>
-          <p className="mt-2 text-slate-500 dark:text-slate-400">
+          <p className="mt-2 text-[15px] text-slate-600 dark:text-slate-400">
             {displayName
               ? `Welcome back, ${displayName}`
               : "Manage your listings and bookings"}
@@ -110,11 +109,11 @@ export default function OwnerDashboard() {
         {/* 2. Bookings Pipeline */}
         <section>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold text-slate-900 dark:text-white">
+            <h2 className="text-xl font-semibold tracking-tight text-slate-900 dark:text-white">
               Bookings Pipeline
             </h2>
             {metrics && metrics.pending_requests > 0 && (
-              <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 animate-pulse">
+              <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-200/70 dark:border-amber-500/20">
                 {metrics.pending_requests} awaiting response
               </span>
             )}
@@ -129,7 +128,7 @@ export default function OwnerDashboard() {
 
         {/* 3. Recent Activity */}
         <section>
-          <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-4">
+          <h2 className="text-xl font-semibold tracking-tight text-slate-900 dark:text-white mb-4">
             Recent Activity
           </h2>
           <div className="card rounded-xl">
@@ -139,7 +138,7 @@ export default function OwnerDashboard() {
 
         {/* 4. Quick Actions */}
         <section>
-          <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-4">
+          <h2 className="text-xl font-semibold tracking-tight text-slate-900 dark:text-white mb-4">
             Quick Actions
           </h2>
           <QuickActions />
@@ -147,7 +146,7 @@ export default function OwnerDashboard() {
 
         {/* 5. Earnings Chart */}
         <section>
-          <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-4">
+          <h2 className="text-xl font-semibold tracking-tight text-slate-900 dark:text-white mb-4">
             Earnings Overview
           </h2>
           <EarningsChart bookings={bookings} />
