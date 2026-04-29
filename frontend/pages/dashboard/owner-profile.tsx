@@ -49,8 +49,8 @@ export default function OwnerProfilePage() {
     <DashboardLayout>
       <div className="max-w-2xl mx-auto space-y-8">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-          <h1 className="text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white">
-            Owner <span className="gradient-text-accent">Profile</span>
+          <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white">
+            Owner Profile
           </h1>
           <p className="text-sm text-slate-500 dark:text-slate-400 mt-2">
             Your profile is shown to seekers when they view your listings.
@@ -89,7 +89,7 @@ export default function OwnerProfilePage() {
           transition={{ delay: 0.08 }}
           className="card p-6 rounded-2xl space-y-4"
         >
-          <h2 className="text-lg font-bold text-slate-900 dark:text-white">Badges</h2>
+          <h2 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white">Badges</h2>
           <p className="text-sm text-slate-500 dark:text-slate-400">Earn badges as you host on MigRent.</p>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
             {OWNER_BADGES.map((badge) => {
@@ -104,7 +104,7 @@ export default function OwnerProfilePage() {
                   }`}
                 >
                   <div className="text-2xl mb-1.5">{badge.icon}</div>
-                  <h4 className={`text-sm font-bold ${earned ? "text-blue-600 dark:text-blue-400" : "text-slate-400 dark:text-slate-500"}`}>
+                  <h4 className={`text-sm font-semibold ${earned ? "text-blue-600 dark:text-blue-400" : "text-slate-400 dark:text-slate-500"}`}>
                     {badge.label}
                   </h4>
                   <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 leading-tight">{badge.desc}</p>

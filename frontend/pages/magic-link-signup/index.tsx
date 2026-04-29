@@ -121,26 +121,19 @@ export default function MagicLinkSignup() {
 
   return (
     <div className="min-h-[70vh] flex items-center justify-center px-4">
-      {/* Floating shapes */}
-      <div className="fixed top-20 left-20 w-96 h-96 bg-rose-500/10 dark:bg-rose-500/5 rounded-full blur-3xl" />
-      <div className="fixed bottom-20 right-20 w-96 h-96 bg-blue-500/10 dark:bg-blue-500/5 rounded-full blur-3xl" />
-
       <motion.div
-        initial={{ opacity: 0, y: 30, scale: 0.96 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        transition={{ duration: 0.5 }}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
         className="relative w-full max-w-md"
       >
-        <div className="card p-8 rounded-2xl">
-          {/* Top accent */}
-          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-rose-400/50 to-transparent rounded-t-2xl" />
-
+        <div className="bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800 p-8 rounded-2xl">
           <div className="text-center mb-8">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-rose-500 to-rose-600 flex items-center justify-center text-white font-black text-lg mx-auto mb-4">
+            <div className="w-12 h-12 rounded-xl bg-rose-600 flex items-center justify-center text-white font-semibold text-lg mx-auto mb-4">
               M
             </div>
-            <h1 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">
-              Sign up to <span className="gradient-text">MigRent</span>
+            <h1 className="text-2xl font-semibold tracking-tight text-slate-900 dark:text-white">
+              Sign up to MigRent
             </h1>
             <p className="text-slate-500 dark:text-slate-400 text-sm mt-2">
               {sent
@@ -176,14 +169,12 @@ export default function MagicLinkSignup() {
                 </div>
               </div>
 
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+              <button
                 onClick={() => { setSent(false); setMsg(""); pollingIdRef.current = ""; }}
-                className="w-full btn-secondary py-3 rounded-xl text-sm"
+                className="w-full btn-secondary py-2.5 rounded-[10px] text-sm"
               >
                 Send again with a different email
-              </motion.button>
+              </button>
             </motion.div>
           ) : (
             <div className="space-y-4">
@@ -204,13 +195,10 @@ export default function MagicLinkSignup() {
                 error={consentError}
               />
 
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+              <button
                 onClick={handleSendLink}
                 disabled={loading}
-                className="w-full py-3 rounded-xl text-sm font-semibold text-white disabled:opacity-50"
-                style={{ background: "linear-gradient(135deg, #f43f5e, #e11d48)" }}
+                className="w-full h-10 rounded-[10px] text-sm font-semibold text-white bg-rose-600 hover:bg-rose-700 disabled:opacity-50 transition-colors"
               >
                 {loading ? (
                   <span className="flex items-center justify-center gap-2">
@@ -220,7 +208,7 @@ export default function MagicLinkSignup() {
                 ) : (
                   "Send magic link"
                 )}
-              </motion.button>
+              </button>
 
               <p className="text-center text-sm text-slate-500 dark:text-slate-400">
                 Already have an account?{" "}

@@ -20,7 +20,7 @@ export default function PricingHero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white leading-tight">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-semibold text-white leading-tight tracking-tight">
               Simple pricing.
               <br />
               <span className="text-yellow-300">Start listing free.</span>
@@ -37,11 +37,11 @@ export default function PricingHero() {
             className="flex items-center justify-center gap-4 mt-10"
           >
             <div className="bg-white/20 backdrop-blur-sm rounded-2xl px-6 py-4 text-center border border-white/15">
-              <div className="text-3xl sm:text-4xl font-black text-white">$99</div>
+              <div className="text-3xl sm:text-4xl font-bold text-white">$99</div>
               <div className="text-xs text-white/60 font-medium mt-1">Owners</div>
             </div>
             <div className="bg-white/20 backdrop-blur-sm rounded-2xl px-6 py-4 text-center border border-white/15">
-              <div className="text-3xl sm:text-4xl font-black text-yellow-300">Free</div>
+              <div className="text-3xl sm:text-4xl font-bold text-yellow-300">Free</div>
               <div className="text-xs text-white/60 font-medium mt-1">Seekers</div>
             </div>
           </motion.div>
@@ -75,14 +75,10 @@ export default function PricingHero() {
             className="mt-8"
           >
             <Link href="/signup">
-              <motion.span
-                whileHover={{ scale: 1.04 }}
-                whileTap={{ scale: 0.98 }}
-                className="inline-flex items-center gap-2 bg-white text-indigo-600 text-sm px-8 py-3.5 rounded-xl font-bold shadow-lg hover:shadow-xl transition-shadow"
-              >
+              <span className="inline-flex items-center gap-2 bg-white text-slate-900 text-sm px-8 py-3.5 rounded-xl font-semibold hover:bg-slate-50 transition-colors">
                 <Sparkles className="w-4 h-4" />
                 Start Listing Free
-              </motion.span>
+              </span>
             </Link>
           </motion.div>
         </div>

@@ -151,12 +151,12 @@ export default function SettingsPage() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="backdrop-blur-xl bg-white/90 dark:bg-slate-900/90 border border-white/20 dark:border-slate-700/50 rounded-2xl shadow-2xl p-8 text-center max-w-md mx-4"
+          className="bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800 rounded-2xl p-8 text-center max-w-md mx-4"
         >
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-rose-400 to-indigo-500 flex items-center justify-center mx-auto mb-4 shadow-lg">
+          <div className="w-16 h-16 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center mx-auto mb-4">
             <span className="text-2xl">🔒</span>
           </div>
-          <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Sign in required</h2>
+          <h2 className="text-xl font-semibold tracking-tight text-slate-900 dark:text-white mb-2">Sign in required</h2>
           <p className="text-sm text-slate-500 dark:text-slate-400 mb-6">
             Sign in to access your account settings and personalise your experience.
           </p>

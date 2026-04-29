@@ -67,7 +67,7 @@ export default function NotificationsPage() {
           className="flex items-center justify-between mb-6"
         >
           <div>
-            <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
+            <h1 className="text-2xl font-semibold tracking-tight text-slate-900 dark:text-white">
               Notifications
             </h1>
             <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
@@ -128,7 +128,7 @@ export default function NotificationsPage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.1 }}
-          className="backdrop-blur-xl bg-white/90 dark:bg-slate-900/90 border border-white/20 dark:border-slate-700/50 rounded-2xl shadow-lg overflow-hidden"
+          className="bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800 rounded-2xl overflow-hidden"
         >
           {loading ? (
             <div className="flex flex-col items-center justify-center py-16">

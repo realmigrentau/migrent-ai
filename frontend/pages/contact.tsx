@@ -48,8 +48,8 @@ export default function Contact() {
               </svg>
             </div>
             <div>
-              <h1 className="text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white">
-                {t("contact.title")} <span className="gradient-text">{t("contact.titleAccent")}</span>
+              <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white">
+                {t("contact.title")} {t("contact.titleAccent")}
               </h1>
               <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">{t("contact.subtitle")}</p>
             </div>
@@ -65,7 +65,7 @@ export default function Contact() {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
               </div>
-              <h3 className="font-bold text-slate-900 dark:text-white text-sm mb-1">{t("contact.emailTitle")}</h3>
+              <h3 className="font-semibold text-slate-900 dark:text-white text-sm mb-1">{t("contact.emailTitle")}</h3>
               <a href="https://mail.google.com/mail/?view=cm&fs=1&to=migrentau@gmail.com" target="_blank" rel="noopener noreferrer" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 text-sm underline underline-offset-2 transition-colors">
                 migrentau@gmail.com
               </a>
@@ -76,7 +76,7 @@ export default function Contact() {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
-              <h3 className="font-bold text-slate-900 dark:text-white text-sm mb-1">{t("contact.responseTitle")}</h3>
+              <h3 className="font-semibold text-slate-900 dark:text-white text-sm mb-1">{t("contact.responseTitle")}</h3>
               <p className="text-sm text-slate-500 dark:text-slate-400">{t("contact.responseValue")}</p>
             </div>
             <div className="card p-5 rounded-2xl text-center">
@@ -85,7 +85,7 @@ export default function Contact() {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
-              <h3 className="font-bold text-slate-900 dark:text-white text-sm mb-1">{t("contact.faqTitle")}</h3>
+              <h3 className="font-semibold text-slate-900 dark:text-white text-sm mb-1">{t("contact.faqTitle")}</h3>
               <Link href="/faq" className="text-amber-500 hover:text-amber-600 dark:hover:text-amber-400 text-sm underline underline-offset-2 transition-colors">
                 {t("contact.faqLink")}
               </Link>
@@ -94,9 +94,8 @@ export default function Contact() {
 
           {/* Contact Form */}
           <section className="space-y-4">
-            <h2 className="text-xl font-bold text-slate-900 dark:text-white">{t("contact.formTitle")}</h2>
-            <form onSubmit={handleSubmit} className="card p-6 rounded-2xl space-y-4 relative">
-              <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-rose-400/50 to-transparent" />
+            <h2 className="text-xl font-semibold tracking-tight text-slate-900 dark:text-white">{t("contact.formTitle")}</h2>
+            <form onSubmit={handleSubmit} className="card p-6 rounded-2xl space-y-4">
               <div className="grid sm:grid-cols-2 gap-4">
                 <input
                   type="text"
@@ -140,14 +139,12 @@ export default function Contact() {
                 required
                 className="input-field"
               />
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+              <button
                 type="submit"
-                className="btn-primary py-3 px-6 rounded-xl text-sm"
+                className="btn-primary py-2.5 px-6 rounded-[10px] text-sm"
               >
                 {t("contact.sendButton")}
-              </motion.button>
+              </button>
               {status && (
                 <motion.p
                   initial={{ opacity: 0, y: -10 }}
@@ -166,7 +163,7 @@ export default function Contact() {
 
           {/* Business Details */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">{t("contact.businessTitle")}</h2>
+            <h2 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white">{t("contact.businessTitle")}</h2>
             <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-1">
               <p className="font-semibold text-slate-800 dark:text-slate-200">MigRent AI</p>
               <p>ABN: 22 669 566 941</p>
