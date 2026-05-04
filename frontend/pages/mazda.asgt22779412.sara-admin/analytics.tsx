@@ -32,7 +32,7 @@ export default function AdminAnalytics() {
   return (
     <AdminLayout>
       <div className="mb-8">
-        <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">
+        <h1 className="text-2xl sm:text-3xl font-semibold text-slate-900 dark:text-white">
           Platform <span className="gradient-text">Analytics</span>
         </h1>
         <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
@@ -148,7 +148,7 @@ export default function AdminAnalytics() {
               className="card p-5 rounded-2xl"
             >
               <p className="text-xs text-slate-500 dark:text-slate-400">Total Users</p>
-              <p className="text-2xl font-black text-slate-900 dark:text-white mt-1">
+              <p className="text-2xl font-semibold text-slate-900 dark:text-white mt-1">
                 {signupFunnel.find((s) => s.stage === "Signed up")?.count || 0}
               </p>
             </motion.div>
@@ -159,7 +159,7 @@ export default function AdminAnalytics() {
               className="card p-5 rounded-2xl"
             >
               <p className="text-xs text-slate-500 dark:text-slate-400">Verified Users</p>
-              <p className="text-2xl font-black text-slate-900 dark:text-white mt-1">
+              <p className="text-2xl font-semibold text-slate-900 dark:text-white mt-1">
                 {signupFunnel.find((s) => s.stage === "Verified")?.count || 0}
               </p>
             </motion.div>
@@ -170,7 +170,7 @@ export default function AdminAnalytics() {
               className="card p-5 rounded-2xl"
             >
               <p className="text-xs text-slate-500 dark:text-slate-400">Active Listings</p>
-              <p className="text-2xl font-black text-slate-900 dark:text-white mt-1">
+              <p className="text-2xl font-semibold text-slate-900 dark:text-white mt-1">
                 {signupFunnel.find((s) => s.stage === "Active listing/search")?.count || 0}
               </p>
             </motion.div>

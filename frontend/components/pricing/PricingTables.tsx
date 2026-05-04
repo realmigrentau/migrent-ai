@@ -37,16 +37,21 @@ const seekerVerifiedFeatures = [
   "Enhanced profile visibility",
 ];
 
-function FeatureItem({ text, color }: { text: string; color: "indigo" | "pink" | "emerald" }) {
+function FeatureItem({ text, color }: { text: string; color: "blue" | "rose" | "emerald" }) {
   const colorClasses = {
-    indigo: "text-indigo-500",
-    pink: "text-pink-500",
+    blue: "text-blue-500",
+    rose: "text-rose-500",
     emerald: "text-emerald-500",
+  };
+  const bgClasses = {
+    blue: "bg-blue-50 dark:bg-blue-500/20",
+    rose: "bg-rose-50 dark:bg-rose-500/20",
+    emerald: "bg-emerald-100 dark:bg-emerald-500/20",
   };
 
   return (
     <li className="flex items-start gap-2.5 text-sm text-slate-600 dark:text-slate-300">
-      <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${color === "indigo" ? "bg-indigo-100 dark:bg-indigo-500/20" : color === "pink" ? "bg-pink-100 dark:bg-pink-500/20" : "bg-emerald-100 dark:bg-emerald-500/20"}`}>
+      <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${bgClasses[color]}`}>
         <Check className={`w-3 h-3 ${colorClasses[color]}`} strokeWidth={3} />
       </div>
       {text}
@@ -63,8 +68,8 @@ export default function PricingTables() {
         viewport={{ once: true }}
         className="text-center mb-12"
       >
-        <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 dark:text-white">
-          Choose your <span className="gradient-text-indigo">plan</span>
+        <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-slate-900 dark:text-white">
+          Choose your plan
         </h2>
         <p className="mt-3 text-slate-500 dark:text-slate-400 text-sm max-w-lg mx-auto">
           Transparent pricing for owners and seekers. No subscription traps, ever.
@@ -78,20 +83,17 @@ export default function PricingTables() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.1 }}
-          className="glass-card hover-glow p-8 rounded-2xl border-t-4 border-t-indigo-500 relative group"
+          className="card p-8 rounded-2xl border-t-2 border-t-blue-500 relative"
         >
-          {/* Decorative gradient corner */}
-          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-indigo-500/10 to-transparent rounded-bl-full" />
-
-          <div className="absolute top-4 right-4 flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-100 dark:bg-indigo-500/20">
-            <Crown className="w-3 h-3 text-indigo-500" />
-            <span className="text-xs font-semibold text-indigo-600 dark:text-indigo-400">
+          <div className="absolute top-4 right-4 flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-500/20 border border-blue-100 dark:border-blue-500/30">
+            <Crown className="w-3 h-3 text-blue-500" />
+            <span className="text-xs font-semibold text-blue-600 dark:text-blue-400">
               Property Owners
             </span>
           </div>
 
           <div className="mb-2">
-            <h3 className="text-xl font-bold text-slate-900 dark:text-white">
+            <h3 className="text-xl font-semibold text-slate-900 dark:text-white">
               Pay-Per-Match
             </h3>
             <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
@@ -99,9 +101,9 @@ export default function PricingTables() {
             </p>
           </div>
 
-          <div className="my-6 pb-6 border-b border-indigo-100 dark:border-indigo-500/10">
+          <div className="my-6 pb-6 border-b border-slate-100 dark:border-slate-800">
             <div className="flex items-baseline gap-1">
-              <span className="text-5xl font-black gradient-text-indigo">$99</span>
+              <span className="text-5xl font-bold text-blue-600 dark:text-blue-400">$99</span>
               <span className="text-sm font-medium text-slate-400 dark:text-slate-500">AUD</span>
             </div>
             <p className="text-xs text-emerald-600 dark:text-emerald-400 font-medium mt-2">
@@ -111,18 +113,15 @@ export default function PricingTables() {
 
           <ul className="space-y-3 mb-8">
             {ownerFeatures.map((feature) => (
-              <FeatureItem key={feature} text={feature} color="indigo" />
+              <FeatureItem key={feature} text={feature} color="blue" />
             ))}
           </ul>
 
-          <Link href="/signup">
-            <motion.span
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="block w-full text-center py-3.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-indigo-500 to-indigo-600 text-white hover:shadow-lg hover:shadow-indigo-500/25 transition-all"
-            >
-              Start Listing Free
-            </motion.span>
+          <Link
+            href="/signup"
+            className="block w-full text-center py-2.5 rounded-[10px] text-sm font-semibold bg-blue-600 hover:bg-blue-700 text-white transition-colors"
+          >
+            Start Listing Free
           </Link>
         </motion.div>
 
@@ -134,28 +133,25 @@ export default function PricingTables() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
-            className="glass-card hover-glow p-8 rounded-2xl border-t-4 border-t-pink-500 relative group"
+            className="card p-8 rounded-2xl border-t-2 border-t-rose-500 relative"
           >
-            {/* Decorative gradient corner */}
-            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-pink-500/10 to-transparent rounded-bl-full" />
-
-            <div className="absolute top-4 right-4 flex items-center gap-1.5 px-3 py-1 rounded-full bg-pink-100 dark:bg-pink-500/20">
-              <Zap className="w-3 h-3 text-pink-500" />
-              <span className="text-xs font-semibold text-pink-600 dark:text-pink-400">
+            <div className="absolute top-4 right-4 flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-50 dark:bg-rose-500/20 border border-rose-100 dark:border-rose-500/30">
+              <Zap className="w-3 h-3 text-rose-500" />
+              <span className="text-xs font-semibold text-rose-600 dark:text-rose-400">
                 Seekers
               </span>
             </div>
 
             <div className="mb-2">
-              <h3 className="text-xl font-bold text-slate-900 dark:text-white">Free Forever</h3>
+              <h3 className="text-xl font-semibold text-slate-900 dark:text-white">Free Forever</h3>
               <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
                 Search, apply, and book - completely free
               </p>
             </div>
 
-            <div className="my-6 pb-6 border-b border-pink-100 dark:border-pink-500/10">
+            <div className="my-6 pb-6 border-b border-slate-100 dark:border-slate-800">
               <div className="flex items-baseline gap-1">
-                <span className="text-5xl font-black gradient-text">$0</span>
+                <span className="text-5xl font-bold text-rose-500">$0</span>
               </div>
               <p className="text-xs text-slate-400 dark:text-slate-500 font-medium mt-2">
                 No credit card required &bull; No limits
@@ -164,18 +160,15 @@ export default function PricingTables() {
 
             <ul className="space-y-3 mb-8">
               {seekerFreeFeatures.map((feature) => (
-                <FeatureItem key={feature} text={feature} color="pink" />
+                <FeatureItem key={feature} text={feature} color="rose" />
               ))}
             </ul>
 
-            <Link href="/signup">
-              <motion.span
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="block w-full text-center py-3.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-pink-500 to-pink-600 text-white hover:shadow-lg hover:shadow-pink-500/25 transition-all"
-              >
-                Start Searching Free
-              </motion.span>
+            <Link
+              href="/signup"
+              className="block w-full text-center py-2.5 rounded-[10px] text-sm font-semibold bg-rose-600 hover:bg-rose-700 text-white transition-colors"
+            >
+              Start Searching Free
             </Link>
           </motion.div>
 
@@ -185,16 +178,16 @@ export default function PricingTables() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.3 }}
-            className="glass-card hover-glow p-6 rounded-2xl border border-emerald-200 dark:border-emerald-500/20 relative group"
+            className="card p-6 rounded-2xl border border-emerald-200 dark:border-emerald-500/20 relative"
           >
-            <div className="absolute -top-3 left-6 px-3 py-1 rounded-full bg-emerald-500 text-white text-xs font-bold flex items-center gap-1">
+            <div className="absolute -top-3 left-6 px-3 py-1 rounded-full bg-emerald-500 text-white text-xs font-semibold flex items-center gap-1">
               <Star className="w-3 h-3" fill="currentColor" />
               Popular
             </div>
 
             <div className="flex items-start justify-between mt-2">
               <div>
-                <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+                <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
                   Verified Seeker Badge
                 </h3>
                 <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
@@ -202,7 +195,7 @@ export default function PricingTables() {
                 </p>
               </div>
               <div className="text-right">
-                <span className="text-3xl font-black text-slate-900 dark:text-white">$19</span>
+                <span className="text-3xl font-bold text-slate-900 dark:text-white">$19</span>
                 <p className="text-xs text-emerald-600 dark:text-emerald-400 font-medium">
                   One-time
                 </p>
@@ -218,14 +211,11 @@ export default function PricingTables() {
               ))}
             </div>
 
-            <Link href="/signup" className="mt-5 block">
-              <motion.span
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="block w-full text-center py-3 rounded-xl text-sm font-semibold bg-gradient-to-r from-emerald-500 to-emerald-600 text-white hover:shadow-lg hover:shadow-emerald-500/25 transition-all"
-              >
-                Get Verified - $19
-              </motion.span>
+            <Link
+              href="/signup"
+              className="mt-5 block w-full text-center py-2.5 rounded-[10px] text-sm font-semibold bg-emerald-600 hover:bg-emerald-700 text-white transition-colors"
+            >
+              Get Verified - $19
             </Link>
           </motion.div>
         </div>

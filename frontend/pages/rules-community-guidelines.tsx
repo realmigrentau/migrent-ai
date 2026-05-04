@@ -20,8 +20,8 @@ export default function RulesCommunityGuidelines() {
               </svg>
             </div>
             <div>
-              <h1 className="text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white">
-                Community <span className="gradient-text">Guidelines</span>
+              <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white">
+                Community Guidelines
               </h1>
               <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Rules for a safe and fair community</p>
             </div>

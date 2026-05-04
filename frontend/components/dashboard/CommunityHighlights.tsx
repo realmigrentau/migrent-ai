@@ -48,7 +48,7 @@ export default function CommunityHighlights() {
 
   if (loading) {
     return (
-      <div className="glass-card p-5">
+      <div className="card p-5">
         <Skeleton className="w-40 h-5 mb-4" />
         <div className="space-y-3">
           {[...Array(3)].map((_, i) => (
@@ -75,7 +75,7 @@ export default function CommunityHighlights() {
   const activeList = activeTab === "listers" ? listers : members;
 
   return (
-    <div className="glass-card p-5">
+    <div className="card p-5">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">

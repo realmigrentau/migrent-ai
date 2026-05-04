@@ -99,7 +99,7 @@ export default function MentorsPage() {
         </motion.div>
 
         {/* Search */}
-        <form onSubmit={handleSearch} className="glass-card p-4">
+        <form onSubmit={handleSearch} className="card p-4">
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="flex-1 relative">
               <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
@@ -200,7 +200,7 @@ export default function MentorsPage() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="glass-card p-8 text-center"
+            className="card p-8 text-center"
           >
             <div className="w-14 h-14 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center mx-auto mb-4">
               <Users className="w-7 h-7 text-slate-400" />
@@ -226,7 +226,7 @@ export default function MentorsPage() {
         )}
 
         {/* How it works */}
-        <div className="glass-card p-6">
+        <div className="card p-6">
           <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-indigo-500" />
             How It Works

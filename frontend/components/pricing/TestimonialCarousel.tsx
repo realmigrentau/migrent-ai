@@ -41,8 +41,8 @@ export default function TestimonialCarousel() {
         viewport={{ once: true }}
         className="text-center mb-10"
       >
-        <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 dark:text-white">
-          Built for <span className="gradient-text-indigo">trust</span>
+        <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-slate-900 dark:text-white">
+          Built for trust
         </h2>
         <p className="mt-3 text-slate-500 dark:text-slate-400 text-sm max-w-lg mx-auto">
           Everything you need to rent with confidence in Australia.
@@ -57,12 +57,12 @@ export default function TestimonialCarousel() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 + i * 0.08 }}
-            className="glass-card hover-glow p-6 rounded-xl"
+            className="card p-6 rounded-xl"
           >
             <div className={`w-10 h-10 rounded-xl ${item.bg} flex items-center justify-center mb-3`}>
               <item.icon className={`w-5 h-5 ${item.color}`} />
             </div>
-            <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-1">
+            <h3 className="text-sm font-semibold text-slate-900 dark:text-white mb-1">
               {item.label}
             </h3>
             <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">

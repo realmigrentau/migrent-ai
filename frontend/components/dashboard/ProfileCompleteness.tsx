@@ -28,7 +28,7 @@ function Skeleton({ className = "" }: { className?: string }) {
 export default function ProfileCompleteness({ profile, role, loading }: ProfileCompletenessProps) {
   if (loading) {
     return (
-      <div className="glass-card p-5 space-y-4">
+      <div className="card p-5 space-y-4">
         <Skeleton className="w-40 h-5" />
         <Skeleton className="w-full h-3 rounded-full" />
         <div className="grid grid-cols-3 gap-3">
@@ -46,7 +46,7 @@ export default function ProfileCompleteness({ profile, role, loading }: ProfileC
   const isComplete = profile.completionPercent === 100;
 
   return (
-    <div className="glass-card p-5 space-y-5">
+    <div className="card p-5 space-y-5">
       {/* Header + progress */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">

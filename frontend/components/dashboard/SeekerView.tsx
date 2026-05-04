@@ -165,7 +165,7 @@ export default function SeekerView({ loading, profile }: SeekerViewProps) {
       <VisaRecommendations />
 
       {/* Smart recommendations based on profile */}
-      <div className="glass-card p-5">
+      <div className="card p-5">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
             <Sparkles className="w-4 h-4 text-indigo-500" />
@@ -211,7 +211,7 @@ export default function SeekerView({ loading, profile }: SeekerViewProps) {
 
       {/* Seeker preferences snapshot (if they have budget/suburbs set) */}
       {profile && (profile.budgetMin || profile.preferredSuburbs) && (
-        <div className="glass-card p-5">
+        <div className="card p-5">
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-sm font-bold text-slate-900 dark:text-white">Your Preferences</h2>
             <Link
@@ -252,7 +252,7 @@ export default function SeekerView({ loading, profile }: SeekerViewProps) {
       <Link href="/mentors">
         <motion.div
           whileHover={{ y: -2 }}
-          className="glass-card p-6 text-center hover-glow cursor-pointer"
+          className="card p-6 text-center cursor-pointer"
         >
           <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-rose-500 to-pink-500 flex items-center justify-center mx-auto mb-4">
             <Users className="w-7 h-7 text-white" />
@@ -270,7 +270,7 @@ export default function SeekerView({ loading, profile }: SeekerViewProps) {
       <Link href="/seeker/search">
         <motion.div
           whileHover={{ y: -2 }}
-          className="glass-card p-6 text-center hover-glow cursor-pointer"
+          className="card p-6 text-center cursor-pointer"
         >
           <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-pink-500 flex items-center justify-center mx-auto mb-4">
             <Search className="w-7 h-7 text-white" />

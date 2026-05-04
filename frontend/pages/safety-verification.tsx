@@ -20,8 +20,8 @@ export default function SafetyVerification() {
               </svg>
             </div>
             <div>
-              <h1 className="text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white">
-                Safety &amp; <span className="gradient-text">Verification</span>
+              <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white">
+                Safety &amp; Verification
               </h1>
               <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Your safety is our top priority</p>
             </div>

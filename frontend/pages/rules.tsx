@@ -51,8 +51,8 @@ export default function Rules() {
         animate={{ opacity: 1, y: 0 }}
         className="mb-8"
       >
-        <h1 className="text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white">
-          Platform <span className="gradient-text">Rules</span>
+        <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white">
+          Platform Rules
         </h1>
         <p className="text-slate-500 dark:text-slate-400 mt-2 text-sm">Guidelines for a safe and fair community</p>
       </motion.div>

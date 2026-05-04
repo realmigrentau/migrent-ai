@@ -35,8 +35,8 @@ export default function Press() {
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-violet-50 dark:bg-violet-500/10 border border-violet-100 dark:border-violet-500/20 text-xs font-medium text-violet-600 dark:text-violet-400 mb-6">
               {t("press.badge")}
             </div>
-            <h1 className="text-4xl sm:text-5xl font-black tracking-tight leading-tight">
-              <span className="gradient-text">{t("press.headline1")}</span>{" "}
+            <h1 className="text-4xl sm:text-5xl font-semibold tracking-tight leading-tight">
+              {t("press.headline1")}{" "}
               <span className="text-slate-900 dark:text-white">{t("press.headline2")}</span>
             </h1>
             <p className="mt-6 text-lg text-slate-500 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
@@ -50,7 +50,7 @@ export default function Press() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {stats.map((stat, i) => (
               <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="card p-4 rounded-2xl text-center">
-                <p className="text-2xl font-black text-rose-500">{stat.value}</p>
+                <p className="text-2xl font-semibold text-rose-500">{stat.value}</p>
                 <p className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white mt-1">{stat.label}</p>
                 <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{stat.detail}</p>
               </motion.div>
@@ -86,7 +86,7 @@ export default function Press() {
 
         {/* Milestones */}
         <section className="max-w-3xl mx-auto">
-          <h2 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white mb-6 text-center">
+          <h2 className="text-2xl font-semibold tracking-tight text-slate-900 dark:text-white mb-6 text-center">
             {t("press.milestonesTitle")}
           </h2>
           <div className="space-y-3">
@@ -121,7 +121,7 @@ export default function Press() {
 
         {/* Testimonials */}
         <section className="max-w-3xl mx-auto">
-          <h2 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white mb-6 text-center">
+          <h2 className="text-2xl font-semibold tracking-tight text-slate-900 dark:text-white mb-6 text-center">
             {t("press.userSayTitle")}
           </h2>
           <div className="grid sm:grid-cols-2 gap-4">
@@ -143,7 +143,7 @@ export default function Press() {
         {/* Press Contact */}
         <section className="max-w-3xl mx-auto pb-8">
           <div className="card p-8 rounded-2xl bg-gradient-to-br from-violet-50 to-violet-100/50 dark:from-violet-500/10 dark:to-violet-600/5 border-violet-200 dark:border-violet-500/20 text-center">
-            <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-3">{t("press.ctaTitle")}</h2>
+            <h2 className="text-2xl font-semibold text-slate-900 dark:text-white mb-3">{t("press.ctaTitle")}</h2>
             <p className="text-sm text-slate-600 dark:text-slate-300 mb-6 max-w-md mx-auto">{t("press.ctaSubtitle")}</p>
             <a href="https://mail.google.com/mail/?view=cm&fs=1&to=migrentau@gmail.com&su=Press%20Enquiry%20-%20MigRent%20AI" target="_blank" rel="noopener noreferrer">
               <motion.span whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }} className="inline-block btn-primary text-sm px-8 py-3 rounded-xl">

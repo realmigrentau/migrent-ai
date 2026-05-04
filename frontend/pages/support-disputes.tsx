@@ -20,8 +20,8 @@ export default function SupportDisputes() {
               </svg>
             </div>
             <div>
-              <h1 className="text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white">
-                Dispute <span className="gradient-text">Resolution</span>
+              <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white">
+                Dispute Resolution
               </h1>
               <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Last updated: March 2026</p>
             </div>

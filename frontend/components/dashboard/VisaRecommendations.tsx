@@ -78,7 +78,7 @@ export default function VisaRecommendations() {
 
   if (loading) {
     return (
-      <div className="glass-card p-5">
+      <div className="card p-5">
         <div className="shimmer h-5 w-48 rounded mb-4" />
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {[1, 2, 3].map((i) => (
@@ -98,7 +98,7 @@ export default function VisaRecommendations() {
   if (listings.length === 0) return null;
 
   return (
-    <div className="glass-card p-5">
+    <div className="card p-5">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
           {visaType && VISA_ICONS[visaType]}

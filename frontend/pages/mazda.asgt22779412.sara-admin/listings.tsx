@@ -75,7 +75,7 @@ export default function AdminListings() {
   return (
     <AdminLayout>
       <div className="mb-8">
-        <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">
+        <h1 className="text-2xl sm:text-3xl font-semibold text-slate-900 dark:text-white">
           Listing <span className="gradient-text">Management</span>
         </h1>
         <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
@@ -104,7 +104,7 @@ export default function AdminListings() {
                 className="card p-4 rounded-xl"
               >
                 <p className="text-xs text-slate-500 dark:text-slate-400">{stat.label}</p>
-                <p className={`text-2xl font-black ${stat.color}`}>{stat.count}</p>
+                <p className={`text-2xl font-semibold ${stat.color}`}>{stat.count}</p>
               </motion.div>
             ))}
           </div>

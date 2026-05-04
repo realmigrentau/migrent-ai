@@ -96,7 +96,7 @@ export default function AdminUsers() {
   return (
     <AdminLayout>
       <div className="mb-8">
-        <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">
+        <h1 className="text-2xl sm:text-3xl font-semibold text-slate-900 dark:text-white">
           User <span className="gradient-text">Management</span>
         </h1>
         <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">

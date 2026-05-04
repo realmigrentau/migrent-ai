@@ -80,7 +80,7 @@ export default function AdminOverview() {
     <AdminLayout>
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">
+        <h1 className="text-2xl sm:text-3xl font-semibold text-slate-900 dark:text-white">
           Dashboard <span className="gradient-text">Overview</span>
         </h1>
         <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
@@ -103,7 +103,7 @@ export default function AdminOverview() {
                 {card.icon}
               </div>
             </div>
-            <p className="text-2xl font-black text-slate-900 dark:text-white">{card.value}</p>
+            <p className="text-2xl font-semibold text-slate-900 dark:text-white">{card.value}</p>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{card.label}</p>
             <p className="text-xs text-emerald-500 mt-1">{card.change}</p>
           </motion.div>

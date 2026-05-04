@@ -5,12 +5,8 @@ import { Sparkles, Shield, CheckCircle, Clock } from "lucide-react";
 export default function PricingHero() {
   return (
     <section className="relative overflow-hidden min-h-[70vh] flex items-center">
-      {/* Gradient background - full width */}
-      <div className="absolute inset-0 gradient-indigo-pink" />
-      {/* Decorative white orbs */}
-      <div className="absolute top-0 right-0 -translate-y-1/4 translate-x-1/4 w-96 h-96 bg-white/10 rounded-full blur-3xl" />
-      <div className="absolute bottom-0 left-0 translate-y-1/4 -translate-x-1/4 w-72 h-72 bg-white/10 rounded-full blur-3xl" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-white/5 rounded-full blur-3xl" />
+      {/* Solid dark background */}
+      <div className="absolute inset-0 bg-slate-900" />
 
       <div className="relative z-10 w-full max-w-5xl mx-auto px-6 sm:px-10 py-16 sm:py-24">
         {/* Centered layout */}
@@ -36,12 +32,12 @@ export default function PricingHero() {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="flex items-center justify-center gap-4 mt-10"
           >
-            <div className="bg-white/20 backdrop-blur-sm rounded-2xl px-6 py-4 text-center border border-white/15">
+            <div className="bg-white/10 rounded-2xl px-6 py-4 text-center border border-white/10">
               <div className="text-3xl sm:text-4xl font-bold text-white">$99</div>
               <div className="text-xs text-white/60 font-medium mt-1">Owners</div>
             </div>
-            <div className="bg-white/20 backdrop-blur-sm rounded-2xl px-6 py-4 text-center border border-white/15">
-              <div className="text-3xl sm:text-4xl font-bold text-yellow-300">Free</div>
+            <div className="bg-white/10 rounded-2xl px-6 py-4 text-center border border-white/10">
+              <div className="text-3xl sm:text-4xl font-bold text-white">Free</div>
               <div className="text-xs text-white/60 font-medium mt-1">Seekers</div>
             </div>
           </motion.div>
@@ -74,11 +70,12 @@ export default function PricingHero() {
             transition={{ duration: 0.5, delay: 0.3 }}
             className="mt-8"
           >
-            <Link href="/signup">
-              <span className="inline-flex items-center gap-2 bg-white text-slate-900 text-sm px-8 py-3.5 rounded-xl font-semibold hover:bg-slate-50 transition-colors">
-                <Sparkles className="w-4 h-4" />
-                Start Listing Free
-              </span>
+            <Link
+              href="/signup"
+              className="inline-flex items-center gap-2 bg-white text-slate-900 text-sm px-8 py-2.5 rounded-[10px] font-semibold hover:bg-slate-100 transition-colors"
+            >
+              <Sparkles className="w-4 h-4" />
+              Start Listing Free
             </Link>
           </motion.div>
         </div>

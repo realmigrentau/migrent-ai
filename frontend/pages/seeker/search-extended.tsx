@@ -130,8 +130,8 @@ export default function SeekerSearchExtended() {
   return (
     <div className="space-y-6">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-        <h1 className="text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white">
-          Find a <span className="gradient-text">Room</span>
+        <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white">
+          Find a Room
         </h1>
         <p className="text-sm text-slate-500 dark:text-slate-400 mt-2">
           Search by destination, dates, and group size.

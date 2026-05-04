@@ -85,8 +85,8 @@ export default function OwnerSetupPage() {
               </svg>
             </div>
 
-            <h1 className="text-2xl font-black text-slate-900 dark:text-white mb-2">
-              Become an <span className="gradient-text-accent">Owner</span>
+            <h1 className="text-2xl font-semibold text-slate-900 dark:text-white mb-2">
+              Become an Owner
             </h1>
             <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed mb-8">
               List your rooms, find verified tenants, and manage everything in one place.
@@ -148,7 +148,7 @@ export default function OwnerSetupPage() {
               Back
             </button>
 
-            <h2 className="text-xl font-black text-slate-900 dark:text-white mb-1">
+            <h2 className="text-xl font-semibold text-slate-900 dark:text-white mb-1">
               Set up your owner profile
             </h2>
             <p className="text-sm text-slate-500 dark:text-slate-400 mb-6">

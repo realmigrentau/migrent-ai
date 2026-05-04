@@ -22,8 +22,8 @@ export default function PaymentCancelled() {
           </svg>
         </div>
 
-        <h1 className="text-2xl md:text-3xl font-black tracking-tight text-slate-900 dark:text-white">
-          Payment <span className="gradient-text">Cancelled</span>
+        <h1 className="text-2xl md:text-3xl font-semibold tracking-tight text-slate-900 dark:text-white">
+          Payment Cancelled
         </h1>
 
         <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed max-w-md mx-auto">
@@ -32,23 +32,11 @@ export default function PaymentCancelled() {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
-          <Link href="/dashboard">
-            <motion.span
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="btn-primary py-3 px-6 rounded-xl text-sm inline-block"
-            >
-              Seeker Dashboard
-            </motion.span>
+          <Link href="/dashboard" className="btn-primary py-2.5 px-6 rounded-[10px] text-sm inline-block">
+            Seeker Dashboard
           </Link>
-          <Link href="/owner/dashboard">
-            <motion.span
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="btn-primary py-3 px-6 rounded-xl text-sm inline-block"
-            >
-              Owner Dashboard
-            </motion.span>
+          <Link href="/owner/dashboard" className="btn-secondary py-2.5 px-6 rounded-[10px] text-sm inline-block">
+            Owner Dashboard
           </Link>
         </div>
       </motion.div>

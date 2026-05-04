@@ -29,7 +29,7 @@ export default function HeroSection({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.15 }}
-      className="relative overflow-hidden rounded-2xl gradient-indigo-pink p-6 md:p-8"
+      className="relative overflow-hidden rounded-2xl bg-slate-900 dark:bg-slate-800 p-6 md:p-8"
     >
       {/* Background pattern */}
       <div className="absolute inset-0 opacity-10">
@@ -64,7 +64,7 @@ export default function HeroSection({
 
             <div>
               <h1
-                className="text-2xl md:text-3xl font-black text-white tracking-tight"
+                className="text-2xl md:text-3xl font-semibold text-white tracking-tight"
               >
                 Welcome back, {displayName || "there"}{" "}
                 <Sparkles className="inline w-6 h-6 text-yellow-300" />
@@ -131,15 +131,10 @@ export default function HeroSection({
         {/* CTA */}
         <Link
           href={isOwner ? "/owner/listings/new" : "/seeker/search"}
+          className="inline-flex items-center gap-2 bg-white text-slate-900 font-semibold px-5 py-2.5 rounded-[10px] text-sm hover:bg-slate-100 transition-colors"
         >
-          <motion.span
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
-            className="inline-flex items-center gap-2 bg-white text-indigo-600 font-bold px-5 py-2.5 rounded-xl text-sm shadow-lg hover:shadow-xl transition-shadow cursor-pointer"
-          >
-            <Plus className="w-4 h-4" />
-            {isOwner ? "List a Room" : "Search Rooms"}
-          </motion.span>
+          <Plus className="w-4 h-4" />
+          {isOwner ? "List a Room" : "Search Rooms"}
         </Link>
       </div>
     </motion.div>
@@ -149,7 +144,7 @@ export default function HeroSection({
 function StatPill({ label, value }: { label: string; value: string; delay?: number }) {
   return (
     <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-lg px-3 py-1.5">
-      <span className="text-white font-bold text-sm">{value}</span>
+      <span className="text-white font-semibold text-sm">{value}</span>
       <span className="text-white/70 text-xs">{label}</span>
     </div>
   );

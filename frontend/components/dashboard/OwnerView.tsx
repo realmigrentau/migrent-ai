@@ -60,7 +60,7 @@ export default function OwnerView({ listings, loading, profile }: OwnerViewProps
       </div>
 
       {/* Listings Table */}
-      <div className="glass-card overflow-hidden">
+      <div className="card overflow-hidden">
         <div className="p-4 md:p-5 border-b border-slate-200 dark:border-slate-700/50">
           <div className="flex items-center justify-between">
             <h2 className="text-base font-bold text-slate-900 dark:text-white">
@@ -184,7 +184,7 @@ export default function OwnerView({ listings, loading, profile }: OwnerViewProps
 
       {/* Owner profile snapshot: badges + properties */}
       {profile && (profile.badges.length > 0 || profile.roomsOwned > 0 || profile.propertiesOwned > 0) && (
-        <div className="glass-card p-5 space-y-4">
+        <div className="card p-5 space-y-4">
           {/* Properties counter */}
           {(profile.roomsOwned > 0 || profile.propertiesOwned > 0) && (
             <div className="flex items-center gap-4">
@@ -233,7 +233,7 @@ export default function OwnerView({ listings, loading, profile }: OwnerViewProps
       <Link href="/mentors">
         <motion.div
           whileHover={{ y: -2 }}
-          className="glass-card p-6 text-center hover-glow cursor-pointer"
+          className="card p-6 text-center cursor-pointer"
         >
           <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-rose-500 to-pink-500 flex items-center justify-center mx-auto mb-4">
             <Users className="w-7 h-7 text-white" />

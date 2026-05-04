@@ -36,7 +36,7 @@ function SliderInput({
         step={step}
         value={value}
         onChange={(e) => onChange(Number(e.target.value))}
-        className="w-full h-2 rounded-full appearance-none cursor-pointer bg-slate-200 dark:bg-slate-700 accent-indigo-500"
+        className="w-full h-2 rounded-full appearance-none cursor-pointer bg-slate-200 dark:bg-slate-700 accent-rose-500"
       />
       <div className="flex justify-between text-xs text-slate-400 mt-1">
         <span>{unit === "$" ? `$${min}` : `${min}${unit}`}</span>
@@ -77,7 +77,7 @@ function StatCard({
       <div className={`w-10 h-10 rounded-xl ${bgClasses[color]} flex items-center justify-center mx-auto mb-2`}>
         <Icon className="w-5 h-5" />
       </div>
-      <div className="text-2xl font-black text-slate-900 dark:text-white">
+      <div className="text-2xl font-semibold text-slate-900 dark:text-white">
         {value}
       </div>
       <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">
@@ -98,14 +98,14 @@ export default function EarningsCalculator() {
         viewport={{ once: true }}
         className="text-center mb-10"
       >
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-200 dark:border-indigo-500/20 mb-4">
-          <Calculator className="w-3.5 h-3.5 text-indigo-500" />
-          <span className="text-xs font-semibold text-indigo-600 dark:text-indigo-400">
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-rose-50 dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/20 mb-4">
+          <Calculator className="w-3.5 h-3.5 text-rose-500" />
+          <span className="text-xs font-semibold text-rose-600 dark:text-rose-400">
             Interactive Calculator
           </span>
         </div>
-        <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 dark:text-white">
-          Owner <span className="gradient-text-indigo">Earnings</span> Calculator
+        <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-slate-900 dark:text-white">
+          Owner Earnings Calculator
         </h2>
         <p className="mt-3 text-slate-500 dark:text-slate-400 text-sm max-w-lg mx-auto">
           See how much you could earn renting on MigRent. Adjust the sliders to match your property.
@@ -117,13 +117,9 @@ export default function EarningsCalculator() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ delay: 0.1 }}
-        className="glass-card hover-glow rounded-2xl p-6 sm:p-8 relative overflow-hidden"
+        className="card rounded-2xl p-6 sm:p-8"
       >
-        {/* Decorative gradient blurs */}
-        <div className="absolute -top-20 -right-20 w-40 h-40 bg-indigo-500/10 rounded-full blur-3xl" />
-        <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-pink-500/10 rounded-full blur-3xl" />
-
-        <div className="relative grid lg:grid-cols-2 gap-8">
+        <div className="grid lg:grid-cols-2 gap-8">
           {/* Sliders */}
           <div className="space-y-8">
             <SliderInput
@@ -190,7 +186,7 @@ export default function EarningsCalculator() {
                   Your Annual Take-Home
                 </span>
               </div>
-              <div className="text-4xl font-black text-emerald-700 dark:text-emerald-300">
+              <div className="text-4xl font-semibold text-emerald-700 dark:text-emerald-300">
                 ${outputs.annualTakeHome.toLocaleString()}
               </div>
               <div className="text-sm text-emerald-600 dark:text-emerald-400 mt-1">

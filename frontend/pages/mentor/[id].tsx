@@ -154,7 +154,7 @@ export default function MentorProfilePage() {
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          className="glass-card p-6"
+          className="card p-6"
         >
           <div className="flex flex-col sm:flex-row items-start gap-5">
             {/* Avatar */}
@@ -222,7 +222,7 @@ export default function MentorProfilePage() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="glass-card p-6"
+            className="card p-6"
           >
             <h2 className="text-base font-bold text-slate-900 dark:text-white mb-3">About {name}</h2>
             <p className="text-sm text-slate-600 dark:text-slate-300 whitespace-pre-line leading-relaxed">
@@ -237,7 +237,7 @@ export default function MentorProfilePage() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.15 }}
-            className="glass-card p-6"
+            className="card p-6"
           >
             <h2 className="text-base font-bold text-slate-900 dark:text-white mb-3">Can Help With</h2>
             <div className="flex flex-wrap gap-2">
@@ -258,7 +258,7 @@ export default function MentorProfilePage() {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="glass-card p-6 space-y-4"
+          className="card p-6 space-y-4"
         >
           <h2 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
             <Calendar className="w-5 h-5 text-indigo-500" />
@@ -355,7 +355,7 @@ export default function MentorProfilePage() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.25 }}
-            className="glass-card p-6"
+            className="card p-6"
           >
             <h2 className="text-base font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
               <Star className="w-5 h-5 text-amber-500" />

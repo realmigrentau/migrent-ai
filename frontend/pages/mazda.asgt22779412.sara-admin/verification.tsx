@@ -98,7 +98,7 @@ export default function VerificationAdmin() {
     <AdminLayout>
       <div className="max-w-5xl mx-auto px-4 py-8">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-          <h1 className="text-3xl font-black tracking-tight text-slate-900 dark:text-white mb-2">
+          <h1 className="text-3xl font-semibold tracking-tight text-slate-900 dark:text-white mb-2">
             Owner ID <span className="text-rose-500">Verification</span>
           </h1>
           <p className="text-sm text-slate-500 dark:text-slate-400 mb-8">

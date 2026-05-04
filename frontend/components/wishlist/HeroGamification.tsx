@@ -58,8 +58,8 @@ export default function HeroGamification({
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
         <div className="space-y-1">
           <div className="flex items-center gap-3">
-            <h1 className="text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white">
-              My <span className="gradient-text">Wishlist</span>
+            <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white">
+              My Wishlist
             </h1>
             <motion.div
               initial={{ scale: 0, rotate: -20 }}
@@ -162,7 +162,7 @@ export default function HeroGamification({
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="text-lg font-black text-slate-900 dark:text-white"
+              className="text-lg font-semibold text-slate-900 dark:text-white"
             >
               {stats.total}
             </motion.p>
@@ -176,7 +176,7 @@ export default function HeroGamification({
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="text-lg font-black text-slate-900 dark:text-white"
+              className="text-lg font-semibold text-slate-900 dark:text-white"
             >
               {stats.priceDrops}
             </motion.p>
@@ -190,7 +190,7 @@ export default function HeroGamification({
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="text-lg font-black text-slate-900 dark:text-white"
+              className="text-lg font-semibold text-slate-900 dark:text-white"
             >
               {stats.ownerReplies}
             </motion.p>

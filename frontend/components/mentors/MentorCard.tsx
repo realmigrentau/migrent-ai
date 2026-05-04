@@ -40,7 +40,7 @@ export default function MentorCard({
       transition={{ delay: index * 0.05 }}
     >
       <Link href={`/mentor/${id}`}>
-        <div className="glass-card p-5 hover:shadow-lg transition-all cursor-pointer group">
+        <div className="card p-5 hover:shadow-lg transition-all cursor-pointer group">
           <div className="flex items-start gap-4">
             {/* Avatar */}
             <div className="w-14 h-14 rounded-2xl overflow-hidden shrink-0 bg-gradient-to-br from-indigo-500 to-pink-500 flex items-center justify-center">

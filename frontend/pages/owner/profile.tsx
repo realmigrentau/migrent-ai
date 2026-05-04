@@ -148,8 +148,8 @@ export default function OwnerProfilePage() {
   return (
     <div className="max-w-2xl mx-auto space-y-8">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-        <h1 className="text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white">
-          Owner <span className="gradient-text-accent">Profile</span>
+        <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white">
+          Owner Profile
         </h1>
         <p className="text-sm text-slate-500 dark:text-slate-400 mt-2">
           Your profile is shown to seekers when they view your listings.

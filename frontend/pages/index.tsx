@@ -137,7 +137,7 @@ export default function Home() {
             </div>
 
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-semibold tracking-tight leading-[1.05] text-slate-900 dark:text-white">
-              <span className="gradient-text">{t("home.headline1")}</span>{" "}
+              {t("home.headline1")}{" "}
               <span>{t("home.headline2")}</span>
             </h1>
 
@@ -187,7 +187,7 @@ export default function Home() {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 text-center mb-8">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
             <h2 className="text-2xl md:text-3xl font-semibold tracking-tight text-slate-900 dark:text-white">
-              {t("home.marqueeTitle")} <span className="gradient-text">{t("home.marqueeAccent")}</span>
+              {t("home.marqueeTitle")} {t("home.marqueeAccent")}
             </h2>
             <p className="mt-3 text-slate-500 dark:text-slate-400 max-w-lg mx-auto">{t("home.marqueeSubtitle")}</p>
           </motion.div>
@@ -203,7 +203,7 @@ export default function Home() {
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-14">
             <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-rose-700 dark:text-rose-400 mb-3">{t("home.whyBadge")}</p>
             <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white">
-              {t("home.whyTitle")} <span className="gradient-text">{t("home.whyAccent")}</span>
+              {t("home.whyTitle")} {t("home.whyAccent")}
             </h2>
           </motion.div>
 
@@ -230,7 +230,7 @@ export default function Home() {
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-14">
             <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-rose-700 dark:text-rose-400 mb-3">{t("home.howBadge")}</p>
             <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white">
-              {t("home.howTitle")} <span className="gradient-text">{t("home.howAccent")}</span>
+              {t("home.howTitle")} {t("home.howAccent")}
             </h2>
           </motion.div>
 
@@ -300,7 +300,7 @@ export default function Home() {
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-14">
             <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-rose-700 dark:text-rose-400 mb-3">{t("home.storiesBadge")}</p>
             <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white">
-              {t("home.storiesTitle")} <span className="gradient-text">{t("home.storiesAccent")}</span> {t("home.storiesEnd")}
+              {t("home.storiesTitle")} {t("home.storiesAccent")} {t("home.storiesEnd")}
             </h2>
           </motion.div>
 
@@ -342,7 +342,7 @@ export default function Home() {
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-14">
             <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-rose-700 dark:text-rose-400 mb-3">{t("home.testimonialsBadge")}</p>
             <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white">
-              Built for <span className="gradient-text">trust</span>
+              Built for trust
             </h2>
             <p className="mt-4 text-slate-500 dark:text-slate-400 max-w-lg mx-auto text-sm">
               Everything you need to rent with confidence in Australia.
@@ -385,7 +385,7 @@ export default function Home() {
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-14">
             <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-emerald-700 dark:text-emerald-400 mb-3">{t("home.safetyBadge")}</p>
             <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white">
-              {t("home.safetyTitle")} <span className="gradient-text">{t("home.safetyAccent")}</span>
+              {t("home.safetyTitle")} {t("home.safetyAccent")}
             </h2>
             <p className="mt-4 text-slate-500 dark:text-slate-400 max-w-2xl mx-auto">{t("home.safetySubtitle")}</p>
           </motion.div>

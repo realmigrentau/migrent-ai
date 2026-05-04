@@ -111,8 +111,8 @@ export default function OwnerDashboard() {
   return (
     <div className="space-y-10">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-        <h1 className="text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white">
-          Owner <span className="gradient-text-accent">Dashboard</span>
+        <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white">
+          Owner Dashboard
         </h1>
       </motion.div>
 

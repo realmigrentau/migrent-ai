@@ -279,7 +279,7 @@ export default function BecomeMentorPage() {
             { icon: <Users className="w-5 h-5" />, label: "Help your community", color: "text-indigo-500" },
             { icon: <Star className="w-5 h-5" />, label: "Build your reputation", color: "text-amber-500" },
           ].map((item) => (
-            <div key={item.label} className="glass-card p-3 text-center">
+            <div key={item.label} className="card p-3 text-center">
               <div className={`${item.color} mx-auto mb-1`}>{item.icon}</div>
               <p className="text-xs font-medium text-slate-700 dark:text-slate-300">{item.label}</p>
             </div>
@@ -311,7 +311,7 @@ export default function BecomeMentorPage() {
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="glass-card p-6 space-y-4"
+            className="card p-6 space-y-4"
           >
             <h2 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
               <MapPin className="w-5 h-5 text-indigo-500" />
@@ -365,7 +365,7 @@ export default function BecomeMentorPage() {
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="glass-card p-6 space-y-5"
+            className="card p-6 space-y-5"
           >
             <h2 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
               <Globe className="w-5 h-5 text-indigo-500" />
@@ -443,7 +443,7 @@ export default function BecomeMentorPage() {
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="glass-card p-6 space-y-4"
+            className="card p-6 space-y-4"
           >
             <h2 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
               <Sparkles className="w-5 h-5 text-indigo-500" />

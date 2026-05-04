@@ -52,7 +52,7 @@ export default function AdminSupport() {
     <AdminLayout>
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">
+        <h1 className="text-2xl sm:text-3xl font-semibold text-slate-900 dark:text-white">
           Customer <span className="gradient-text">Support</span>
         </h1>
         <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
@@ -646,7 +646,7 @@ function AnalyticsTab({ token }: { token: string }) {
             <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${card.color} flex items-center justify-center text-white text-xs font-bold mb-2`}>
               {typeof card.value === "number" ? (card.value > 99 ? "99+" : card.value) : "~"}
             </div>
-            <p className="text-xl font-black text-slate-900 dark:text-white">{card.value}</p>
+            <p className="text-xl font-semibold text-slate-900 dark:text-white">{card.value}</p>
             <p className="text-xs text-slate-400 mt-0.5">{card.label}</p>
           </motion.div>
         ))}
@@ -711,7 +711,7 @@ function AnalyticsTab({ token }: { token: string }) {
             return (
               <div key={p} className="text-center p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50">
                 <div className={`w-3 h-3 rounded-full ${priorityDots[p]} mx-auto mb-2`} />
-                <p className="text-2xl font-black text-slate-900 dark:text-white">{count}</p>
+                <p className="text-2xl font-semibold text-slate-900 dark:text-white">{count}</p>
                 <p className="text-xs text-slate-400 capitalize">{p}</p>
               </div>
             );

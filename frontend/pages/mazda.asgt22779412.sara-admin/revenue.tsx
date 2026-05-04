@@ -105,7 +105,7 @@ export default function AdminRevenue() {
   return (
     <AdminLayout>
       <div className="mb-8">
-        <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">
+        <h1 className="text-2xl sm:text-3xl font-semibold text-slate-900 dark:text-white">
           Revenue <span className="gradient-text">Dashboard</span>
         </h1>
         <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
@@ -127,7 +127,7 @@ export default function AdminRevenue() {
               className="card p-5 rounded-2xl"
             >
               <p className="text-xs text-slate-500 dark:text-slate-400">Total Revenue</p>
-              <p className="text-2xl font-black text-slate-900 dark:text-white">${totalRevenue.toLocaleString()}</p>
+              <p className="text-2xl font-semibold text-slate-900 dark:text-white">${totalRevenue.toLocaleString()}</p>
               <p className="text-xs text-emerald-500 mt-1">AUD</p>
             </motion.div>
             <motion.div
@@ -137,7 +137,7 @@ export default function AdminRevenue() {
               className="card p-5 rounded-2xl"
             >
               <p className="text-xs text-slate-500 dark:text-slate-400">Completed Payments</p>
-              <p className="text-2xl font-black text-slate-900 dark:text-white">{completedCount}</p>
+              <p className="text-2xl font-semibold text-slate-900 dark:text-white">{completedCount}</p>
               <p className="text-xs text-emerald-500 mt-1">of {payments.length} total</p>
             </motion.div>
             <motion.div
@@ -147,7 +147,7 @@ export default function AdminRevenue() {
               className="card p-5 rounded-2xl"
             >
               <p className="text-xs text-slate-500 dark:text-slate-400">Avg. Payment</p>
-              <p className="text-2xl font-black text-slate-900 dark:text-white">${avgPayment}</p>
+              <p className="text-2xl font-semibold text-slate-900 dark:text-white">${avgPayment}</p>
               <p className="text-xs text-slate-400 mt-1">per transaction</p>
             </motion.div>
           </div>

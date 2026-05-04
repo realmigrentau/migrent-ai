@@ -48,7 +48,7 @@ export default function RecentActivity({ activity, loading }: RecentActivityProp
 
   if (loading) {
     return (
-      <div className="glass-card p-5">
+      <div className="card p-5">
         <Skeleton className="w-32 h-6 mb-4" />
         <div className="space-y-3">
           {[...Array(4)].map((_, i) => (
@@ -67,7 +67,7 @@ export default function RecentActivity({ activity, loading }: RecentActivityProp
 
   if (activity.length === 0) {
     return (
-      <div className="glass-card p-8 text-center">
+      <div className="card p-8 text-center">
         <Sparkles className="w-10 h-10 text-indigo-400 mx-auto mb-3" />
         <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">
           No activity yet
@@ -80,7 +80,7 @@ export default function RecentActivity({ activity, loading }: RecentActivityProp
   }
 
   return (
-    <div className="glass-card p-5" ref={containerRef}>
+    <div className="card p-5" ref={containerRef}>
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-base font-bold text-slate-900 dark:text-white">
           Recent Activity

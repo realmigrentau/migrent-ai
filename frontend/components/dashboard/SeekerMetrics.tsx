@@ -55,7 +55,7 @@ export default function SeekerMetrics({ metrics, loading }: Props) {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 + i * 0.05 }}
-          className="glass-card hover-glow p-4 md:p-5 cursor-default"
+          className="card p-4 md:p-5 cursor-default"
         >
           {loading ? (
             <div className="space-y-3">
