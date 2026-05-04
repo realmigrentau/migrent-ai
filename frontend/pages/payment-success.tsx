@@ -160,9 +160,9 @@ export default function PaymentSuccess() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
-          className="text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white"
+          className="text-3xl md:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white"
         >
-          Deal <span className="gradient-text">Confirmed!</span>
+          Deal Confirmed!
         </motion.h1>
 
         <motion.p
@@ -201,23 +201,11 @@ export default function PaymentSuccess() {
           transition={{ delay: 1.2 }}
           className="flex flex-col sm:flex-row gap-3 justify-center pt-2"
         >
-          <Link href="/dashboard">
-            <motion.span
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="btn-primary py-3 px-6 rounded-xl text-sm inline-block"
-            >
-              View deal
-            </motion.span>
+          <Link href="/dashboard" className="btn-primary py-2.5 px-6 rounded-[10px] text-sm inline-block">
+            View deal
           </Link>
-          <Link href="/seeker/search">
-            <motion.span
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="btn-secondary py-3 px-6 rounded-xl text-sm inline-block"
-            >
-              Browse more rooms
-            </motion.span>
+          <Link href="/seeker/search" className="btn-secondary py-2.5 px-6 rounded-[10px] text-sm inline-block">
+            Browse more rooms
           </Link>
         </motion.div>
       </motion.div>

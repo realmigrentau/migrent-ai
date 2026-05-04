@@ -194,10 +194,10 @@ export default function MessagesPage() {
           animate={{ opacity: 1, y: 0 }}
           className="max-w-sm w-full text-center"
         >
-          <div className="w-20 h-20 mx-auto rounded-2xl bg-gradient-to-br from-indigo-500 to-emerald-500 flex items-center justify-center mb-6 rotate-3 shadow-xl shadow-indigo-500/20">
+          <div className="w-20 h-20 mx-auto rounded-2xl bg-indigo-600 flex items-center justify-center mb-6">
             <MessageCircle className="w-10 h-10 text-white" />
           </div>
-          <h2 className="text-xl font-black text-slate-900 dark:text-white mb-2">
+          <h2 className="text-xl font-semibold tracking-tight text-slate-900 dark:text-white mb-2">
             Sign in to Messages
           </h2>
           <p className="text-sm text-slate-500 dark:text-slate-400 mb-6">
@@ -414,7 +414,7 @@ function WelcomeScreen() {
           </motion.div>
         </div>
 
-        <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-3">
+        <h2 className="text-2xl font-semibold tracking-tight text-slate-900 dark:text-white mb-3">
           Your Messages
         </h2>
         <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed mb-8 max-w-sm mx-auto">

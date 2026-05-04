@@ -147,8 +147,8 @@ export default function FAQ() {
               </svg>
             </div>
             <div>
-              <h1 className="text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white">
-                {t("faq.title")} <span className="gradient-text">{t("faq.titleAccent")}</span>
+              <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white">
+                {t("faq.title")} {t("faq.titleAccent")}
               </h1>
               <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">{faqCategories.reduce((sum, cat) => sum + cat.items.length, 0)}+ {t("faq.countSuffix")}</p>
             </div>
@@ -169,7 +169,7 @@ export default function FAQ() {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="space-y-10">
           {filteredCategories.map((category) => (
             <section key={category.title} className="space-y-3">
-              <h2 className="text-xl font-bold text-slate-900 dark:text-white">{category.title}</h2>
+              <h2 className="text-xl font-semibold tracking-tight text-slate-900 dark:text-white">{category.title}</h2>
               <div className="space-y-2">
                 {category.items.map((item, i) => (
                   <FAQItem key={i} q={item.q} a={item.a} />

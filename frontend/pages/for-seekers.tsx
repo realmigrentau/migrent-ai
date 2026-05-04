@@ -47,23 +47,18 @@ export default function ForSeekers() {
               <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
               {t("forSeekers.badge")}
             </div>
-            <h1 className="text-4xl sm:text-5xl font-black tracking-tight leading-tight">
-              <span className="gradient-text">{t("forSeekers.headline1")}</span>{" "}
-              <span className="text-slate-900 dark:text-white">{t("forSeekers.headline2")}</span>
+            <h1 className="text-4xl sm:text-5xl font-semibold tracking-tight leading-tight text-slate-900 dark:text-white">
+              {t("forSeekers.headline1")} {t("forSeekers.headline2")}
             </h1>
             <p className="mt-6 text-lg text-slate-500 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
               {t("forSeekers.subtitle")}
             </p>
             <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/dashboard">
-                <motion.span whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }} className="inline-block btn-primary text-base px-8 py-3.5 rounded-xl">
-                  {t("forSeekers.startSearching")}
-                </motion.span>
+              <Link href="/dashboard" className="inline-block btn-primary text-sm px-8 py-2.5 rounded-[10px]">
+                {t("forSeekers.startSearching")}
               </Link>
-              <Link href="/pricing">
-                <motion.span whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }} className="inline-block btn-secondary text-base px-8 py-3.5 rounded-xl">
-                  {t("forSeekers.viewPricing")}
-                </motion.span>
+              <Link href="/pricing" className="inline-block btn-secondary text-sm px-8 py-2.5 rounded-[10px]">
+                {t("forSeekers.viewPricing")}
               </Link>
             </div>
           </motion.div>
@@ -71,8 +66,8 @@ export default function ForSeekers() {
 
         {/* How It Works */}
         <section className="max-w-3xl mx-auto">
-          <motion.h2 initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0} variants={fadeUp} className="text-3xl font-black tracking-tight text-slate-900 dark:text-white mb-8 text-center">
-            {t("forSeekers.howTitle")} <span className="gradient-text">{t("forSeekers.howAccent")}</span>
+          <motion.h2 initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0} variants={fadeUp} className="text-3xl font-semibold tracking-tight text-slate-900 dark:text-white mb-8 text-center">
+            {t("forSeekers.howTitle")} {t("forSeekers.howAccent")}
           </motion.h2>
           <div className="space-y-4">
             {steps.map((step, i) => (
@@ -85,7 +80,7 @@ export default function ForSeekers() {
                 <div>
                   <div className="flex items-center gap-2 mb-1">
                     <span className="text-xs font-bold text-rose-400 dark:text-rose-500/70">{step.num}</span>
-                    <h3 className="font-bold text-slate-900 dark:text-white text-sm">{step.title}</h3>
+                    <h3 className="font-semibold text-slate-900 dark:text-white text-sm">{step.title}</h3>
                   </div>
                   <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">{step.desc}</p>
                 </div>
@@ -96,8 +91,8 @@ export default function ForSeekers() {
 
         {/* Benefits */}
         <section className="max-w-3xl mx-auto">
-          <h2 className="text-3xl font-black tracking-tight text-slate-900 dark:text-white mb-8 text-center">
-            {t("forSeekers.benefitsTitle")} <span className="gradient-text">{t("forSeekers.benefitsAccent")}</span>
+          <h2 className="text-3xl font-semibold tracking-tight text-slate-900 dark:text-white mb-8 text-center">
+            {t("forSeekers.benefitsTitle")} {t("forSeekers.benefitsAccent")}
           </h2>
           <div className="grid sm:grid-cols-2 gap-4">
             {benefits.map((item, i) => (
@@ -115,7 +110,7 @@ export default function ForSeekers() {
         {/* Search Filters Showcase */}
         <section className="max-w-3xl mx-auto">
           <div className="card p-6 rounded-2xl space-y-4">
-            <h2 className="text-xl font-bold text-slate-900 dark:text-white">{t("forSeekers.filtersTitle")}</h2>
+            <h2 className="text-xl font-semibold tracking-tight text-slate-900 dark:text-white">{t("forSeekers.filtersTitle")}</h2>
             <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
               <p>{t("forSeekers.filtersIntro")}</p>
               <div className="grid sm:grid-cols-2 gap-3">
@@ -144,12 +139,10 @@ export default function ForSeekers() {
         {/* CTA */}
         <section className="max-w-3xl mx-auto pb-8">
           <div className="card p-8 rounded-2xl bg-gradient-to-br from-rose-50 to-rose-100/50 dark:from-rose-500/10 dark:to-rose-600/5 border-rose-200 dark:border-rose-500/20 text-center">
-            <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-3">{t("forSeekers.ctaTitle")}</h2>
+            <h2 className="text-2xl font-semibold tracking-tight text-slate-900 dark:text-white mb-3">{t("forSeekers.ctaTitle")}</h2>
             <p className="text-sm text-slate-600 dark:text-slate-300 mb-6 max-w-md mx-auto">{t("forSeekers.ctaSubtitle")}</p>
-            <Link href="/dashboard">
-              <motion.span whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }} className="inline-block btn-primary text-base px-8 py-3.5 rounded-xl">
-                {t("forSeekers.ctaCta")}
-              </motion.span>
+            <Link href="/dashboard" className="inline-block btn-primary text-sm px-8 py-2.5 rounded-[10px]">
+              {t("forSeekers.ctaCta")}
             </Link>
           </div>
         </section>

@@ -45,10 +45,8 @@ export default function About() {
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-rose-50 dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/20 text-xs font-medium text-rose-600 dark:text-rose-400 mb-6">
               {t("about.badge")}
             </div>
-            <h1 className="text-4xl sm:text-5xl font-black tracking-tight leading-tight">
-              <span className="text-slate-900 dark:text-white">{t("about.headline1")}</span>{" "}
-              <span className="gradient-text">{t("about.headlineAccent")}</span>{" "}
-              <span className="text-slate-900 dark:text-white">{t("about.headline2")}</span>
+            <h1 className="text-4xl sm:text-5xl font-semibold tracking-tight leading-tight text-slate-900 dark:text-white">
+              {t("about.headline1")} {t("about.headlineAccent")} {t("about.headline2")}
             </h1>
             <p className="mt-6 text-lg text-slate-500 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
               {t("about.subtitle")}
@@ -61,7 +59,7 @@ export default function About() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {stats.map((stat, i) => (
               <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="card p-4 rounded-2xl text-center">
-                <p className="text-2xl font-black text-rose-500">{stat.value}</p>
+                <p className="text-2xl font-bold text-rose-500">{stat.value}</p>
                 <p className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white mt-1">{stat.label}</p>
                 <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{stat.detail}</p>
               </motion.div>
@@ -72,8 +70,8 @@ export default function About() {
         {/* The Story */}
         <section className="max-w-3xl mx-auto">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} className="card p-6 md:p-8 rounded-2xl space-y-5">
-            <motion.h2 custom={0} variants={fadeUp} className="text-2xl font-black text-slate-900 dark:text-white">
-              {t("about.storyTitle")} <span className="gradient-text">{t("about.storyAccent")}</span>
+            <motion.h2 custom={0} variants={fadeUp} className="text-2xl font-semibold tracking-tight text-slate-900 dark:text-white">
+              {t("about.storyTitle")} {t("about.storyAccent")}
             </motion.h2>
             <motion.div custom={1} variants={fadeUp} className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-4">
               <p>
@@ -95,7 +93,7 @@ export default function About() {
         {/* Mission */}
         <section className="max-w-3xl mx-auto">
           <div className="card p-6 md:p-8 rounded-2xl bg-gradient-to-br from-rose-50 to-rose-100/50 dark:from-rose-500/10 dark:to-rose-600/5 border-rose-200 dark:border-rose-500/20 space-y-4">
-            <h2 className="text-xl font-black text-slate-900 dark:text-white">{t("about.missionTitle")}</h2>
+            <h2 className="text-xl font-semibold tracking-tight text-slate-900 dark:text-white">{t("about.missionTitle")}</h2>
             <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
               {t("about.missionText")}
             </p>
@@ -104,8 +102,8 @@ export default function About() {
 
         {/* Values */}
         <section className="max-w-3xl mx-auto">
-          <h2 className="text-3xl font-black tracking-tight text-slate-900 dark:text-white mb-8 text-center">
-            {t("about.valuesTitle")} <span className="gradient-text">{t("about.valuesAccent")}</span>
+          <h2 className="text-3xl font-semibold tracking-tight text-slate-900 dark:text-white mb-8 text-center">
+            {t("about.valuesTitle")} {t("about.valuesAccent")}
           </h2>
           <div className="grid sm:grid-cols-2 gap-4">
             {values.map((item, i) => (
@@ -115,7 +113,7 @@ export default function About() {
                     <path strokeLinecap="round" strokeLinejoin="round" d={item.icon} />
                   </svg>
                 </div>
-                <h3 className="font-bold text-slate-900 dark:text-white text-sm mb-1">{item.title}</h3>
+                <h3 className="font-semibold text-slate-900 dark:text-white text-sm mb-1">{item.title}</h3>
                 <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">{item.desc}</p>
               </motion.div>
             ))}
@@ -125,7 +123,7 @@ export default function About() {
         {/* How It Works Quick */}
         <section className="max-w-3xl mx-auto">
           <div className="card p-6 rounded-2xl space-y-4">
-            <h2 className="text-xl font-bold text-slate-900 dark:text-white">{t("about.howTitle")}</h2>
+            <h2 className="text-xl font-semibold tracking-tight text-slate-900 dark:text-white">{t("about.howTitle")}</h2>
             <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
               <p>{t("about.howDesc")}</p>
               <div className="grid sm:grid-cols-2 gap-3">
@@ -147,7 +145,7 @@ export default function About() {
         {/* Business Details */}
         <section className="max-w-3xl mx-auto">
           <div className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">{t("about.businessTitle")}</h2>
+            <h2 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white">{t("about.businessTitle")}</h2>
             <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-1">
               <div className="grid sm:grid-cols-2 gap-4">
                 <div>
@@ -191,18 +189,14 @@ export default function About() {
         {/* CTA */}
         <section className="max-w-3xl mx-auto pb-8">
           <div className="card p-8 rounded-2xl bg-gradient-to-br from-rose-50 via-white to-blue-50 dark:from-rose-500/10 dark:via-slate-900 dark:to-blue-500/10 text-center">
-            <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-3">{t("about.ctaTitle")}</h2>
+            <h2 className="text-2xl font-semibold tracking-tight text-slate-900 dark:text-white mb-3">{t("about.ctaTitle")}</h2>
             <p className="text-sm text-slate-600 dark:text-slate-300 mb-6">{t("about.ctaSubtitle")}</p>
             <div className="flex gap-3 justify-center flex-col sm:flex-row">
-              <Link href="/dashboard">
-                <motion.span whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }} className="inline-block btn-primary text-sm px-8 py-3 rounded-xl">
-                  {t("about.seekerCta")}
-                </motion.span>
+              <Link href="/dashboard" className="inline-block btn-primary text-sm px-8 py-2.5 rounded-[10px]">
+                {t("about.seekerCta")}
               </Link>
-              <Link href="/owner/dashboard">
-                <motion.span whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }} className="inline-block btn-secondary text-sm px-8 py-3 rounded-xl">
-                  {t("about.ownerCta")}
-                </motion.span>
+              <Link href="/owner/dashboard" className="inline-block btn-secondary text-sm px-8 py-2.5 rounded-[10px]">
+                {t("about.ownerCta")}
               </Link>
             </div>
           </div>

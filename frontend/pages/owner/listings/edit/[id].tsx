@@ -221,8 +221,8 @@ export default function EditListing() {
           <span>/</span>
           <span className="text-slate-900 dark:text-white font-medium">Edit listing</span>
         </div>
-        <h1 className="text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white">
-          Edit <span className="gradient-text-accent">Listing</span>
+        <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white">
+          Edit Listing
         </h1>
         <p className="text-sm text-slate-500 dark:text-slate-400 mt-2">
           Update your listing details. Changes will be saved to your listing.

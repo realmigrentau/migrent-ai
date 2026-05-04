@@ -22,7 +22,7 @@ export default function BookingSuccessPage() {
           </motion.div>
 
           <div>
-            <h1 className="text-2xl font-black text-slate-900 dark:text-white">
+            <h1 className="text-2xl font-semibold tracking-tight text-slate-900 dark:text-white">
               Booking Confirmed!
             </h1>
             <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">

@@ -156,8 +156,8 @@ export default function NewListing() {
           <span>/</span>
           <span className="text-slate-900 dark:text-white font-medium">New listing</span>
         </div>
-        <h1 className="text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white">
-          Post a <span className="gradient-text-accent">Room</span>
+        <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white">
+          Post a Room
         </h1>
         <p className="text-sm text-slate-500 dark:text-slate-400 mt-2">
           Complete the steps below to list your room for free.

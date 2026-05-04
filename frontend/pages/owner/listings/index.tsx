@@ -179,7 +179,7 @@ export default function OwnerListings() {
   if (!session)
     return (
       <div className="card p-8 rounded-2xl text-center max-w-md mx-auto mt-12">
-        <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Sign in required</h2>
+        <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">Sign in required</h2>
         <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">
           Sign in as an owner to manage your listings.
         </p>
@@ -194,8 +194,8 @@ export default function OwnerListings() {
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white">
-              My <span className="gradient-text-accent">Listings</span>
+            <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white">
+              My Listings
             </h1>
             <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
               {listings.length} listing{listings.length !== 1 ? "s" : ""}
@@ -243,7 +243,7 @@ export default function OwnerListings() {
           <svg className="w-12 h-12 mx-auto text-slate-300 dark:text-slate-600 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
           </svg>
-          <h3 className="font-bold text-slate-900 dark:text-white mb-1">No listings yet</h3>
+          <h3 className="font-semibold text-slate-900 dark:text-white mb-1">No listings yet</h3>
           <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">
             Create your first listing to start receiving applicants.
           </p>
@@ -377,7 +377,7 @@ export default function OwnerListings() {
                         <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                       </svg>
                     </div>
-                    <h3 className="text-lg font-bold text-slate-900 dark:text-white">Delete this listing?</h3>
+                    <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Delete this listing?</h3>
                     <p className="text-sm text-slate-500 dark:text-slate-400 mt-2">
                       Are you sure you want to delete <span className="font-semibold text-slate-700 dark:text-slate-300">{deleteTarget.title || deleteTarget.address}</span>?
                       This action cannot be undone.
@@ -406,7 +406,7 @@ export default function OwnerListings() {
                         <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                       </svg>
                     </div>
-                    <h3 className="text-lg font-bold text-slate-900 dark:text-white">Confirm your identity</h3>
+                    <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Confirm your identity</h3>
                     <p className="text-sm text-slate-500 dark:text-slate-400 mt-2">
                       Enter your password or sign in with Google to confirm deletion.
                     </p>
