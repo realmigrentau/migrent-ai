@@ -415,6 +415,22 @@ export default function MegaNavbar() {
                           </svg>
                           {t("nav.settings")}
                         </Link>
+                        <Link
+                          href="/account/settings/keyboard"
+                          onClick={() => setAccountOpen(false)}
+                          className="flex items-center justify-between gap-3 px-4 py-3 text-sm text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors"
+                        >
+                          <span className="flex items-center gap-3">
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                              <rect x="2" y="6" width="20" height="12" rx="2" />
+                              <path strokeLinecap="round" d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M7 14h10" />
+                            </svg>
+                            Keyboard shortcuts
+                          </span>
+                          <kbd className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-mono text-[10px] font-semibold text-slate-600 dark:text-slate-300">
+                            ?
+                          </kbd>
+                        </Link>
                       </div>
                     </motion.div>
                   )}

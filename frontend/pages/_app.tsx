@@ -5,6 +5,7 @@ import { HCaptchaProvider } from "@hcaptcha/react-hcaptcha/hooks";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import Layout from "../components/Layout";
 import SEOHead from "../components/SEOHead";
+import ShortcutProvider from "../components/shortcuts/ShortcutProvider";
 import { HCAPTCHA_SITE_KEY } from "../lib/recaptcha";
 import "../lib/i18n";
 import "../styles/globals.css";
@@ -48,6 +49,7 @@ export default function App({ Component, pageProps, router }: AppProps) {
     <>
       <SEOHead />
       {inner}
+      <ShortcutProvider />
       <SpeedInsights />
     </>
   );

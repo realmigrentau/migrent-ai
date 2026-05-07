@@ -56,40 +56,8 @@ export default function DashboardHome() {
     }
   }, [isAuthenticated, profileLoading]);
 
-  // Keyboard shortcuts
-  useEffect(() => {
-    function handleKeyDown(e: KeyboardEvent) {
-      if (
-        e.target instanceof HTMLInputElement ||
-        e.target instanceof HTMLTextAreaElement ||
-        e.target instanceof HTMLSelectElement
-      ) {
-        return;
-      }
-
-      switch (e.key.toLowerCase()) {
-        case "l":
-          router.push("/owner/listings/new");
-          break;
-        case "s":
-          router.push("/seeker/search");
-          break;
-        case "n":
-          router.push("/messages");
-          break;
-        case "p":
-          router.push(
-            role === "owner"
-              ? "/dashboard/owner-profile"
-              : "/dashboard/seeker-profile"
-          );
-          break;
-      }
-    }
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [router, role]);
+  // Keyboard shortcuts are handled globally via ShortcutProvider.
+  // Press ? to see what's available.
 
   const handleRoleToggle = useCallback(
     async (newRole: "seeker" | "owner") => {
@@ -198,21 +166,12 @@ export default function DashboardHome() {
         </div>
 
         {/* Keyboard shortcuts hint */}
-        <div className="hidden lg:flex items-center justify-center gap-4 py-4 text-xs text-slate-400 dark:text-slate-500">
-          <span>Keyboard shortcuts:</span>
-          {[
-            { key: "L", label: "New Listing" },
-            { key: "S", label: "Search" },
-            { key: "N", label: "Messages" },
-            { key: "P", label: "Profile" },
-          ].map((shortcut) => (
-            <span key={shortcut.key} className="flex items-center gap-1.5">
-              <kbd className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-mono text-[10px] font-semibold">
-                {shortcut.key}
-              </kbd>
-              {shortcut.label}
-            </span>
-          ))}
+        <div className="hidden lg:flex items-center justify-center gap-2 py-4 text-xs text-slate-400 dark:text-slate-500">
+          <span>Press</span>
+          <kbd className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-mono text-[10px] font-semibold">
+            ?
+          </kbd>
+          <span>for keyboard shortcuts</span>
         </div>
       </div>
     </DashboardLayout>

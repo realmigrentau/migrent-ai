@@ -96,6 +96,7 @@ export default function OwnerCard({
       {/* Message button */}
       <Link
         href={`/dashboard/messages?listing=${listingId}&to=${ownerId}`}
+        data-shortcut-target="contact-owner"
         className="mt-4 w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl border border-slate-200 dark:border-slate-700 text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
       >
         <MessageCircle className="w-4 h-4" />

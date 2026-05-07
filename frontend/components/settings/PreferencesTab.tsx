@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import Link from "next/link";
+import { motion } from "framer-motion";
 import GlassCard, { ToggleSwitch } from "../ui/GlassCard";
 import {
   Moon,
@@ -15,6 +16,7 @@ import {
   X,
   Check,
   Save,
+  ChevronRight,
 } from "lucide-react";
 
 interface PreferencesTabProps {
@@ -72,24 +74,12 @@ export default function PreferencesTab({
   const [language, setLanguage] = useState(profile?.preferred_language || "en");
   const [timezone, setTimezone] = useState(profile?.timezone || "Australia/Sydney");
   const [region, setRegion] = useState("sydney");
-  const [showShortcuts, setShowShortcuts] = useState(false);
-
   const handleSave = async () => {
     await updateProfile({
       preferred_language: language,
       timezone: timezone,
     });
   };
-
-  const shortcuts = [
-    { keys: ["⌘", "K"], action: "Quick Search" },
-    { keys: ["⌘", "B"], action: "Toggle Sidebar" },
-    { keys: ["⌘", ","], action: "Open Settings" },
-    { keys: ["⌘", "D"], action: "Toggle Dark Mode" },
-    { keys: ["⌘", "N"], action: "New Listing" },
-    { keys: ["Esc"], action: "Close Modal" },
-    { keys: ["⌘", "/"], action: "Show Shortcuts" },
-  ];
 
   return (
     <div className="space-y-6">
@@ -244,60 +234,21 @@ export default function PreferencesTab({
 
       {/* Keyboard Shortcuts */}
       <GlassCard delay={0.2}>
-        <div className="flex items-start gap-4">
+        <Link
+          href="/account/settings/keyboard"
+          className="flex items-center gap-4 group"
+        >
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-lg shrink-0">
             <Keyboard className="w-5 h-5 text-white" />
           </div>
-          <div className="flex-1">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="font-bold text-slate-900 dark:text-white">Keyboard Shortcuts</h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400">Navigate faster with hotkeys</p>
-              </div>
-              <button
-                onClick={() => setShowShortcuts(!showShortcuts)}
-                className="text-xs text-rose-500 hover:text-rose-600 font-medium"
-              >
-                {showShortcuts ? "Hide" : "Show All"}
-              </button>
-            </div>
+          <div className="flex-1 min-w-0">
+            <h3 className="font-bold text-slate-900 dark:text-white">Keyboard Shortcuts</h3>
+            <p className="text-xs text-slate-500 dark:text-slate-400">
+              Manage shortcuts and view the cheatsheet
+            </p>
           </div>
-        </div>
-
-        <AnimatePresence>
-          {showShortcuts && (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              className="overflow-hidden"
-            >
-              <div className="ml-14 mt-4 space-y-2">
-                {shortcuts.map((shortcut, i) => (
-                  <motion.div
-                    key={shortcut.action}
-                    initial={{ opacity: 0, x: -8 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.03 }}
-                    className="flex items-center justify-between py-1.5"
-                  >
-                    <span className="text-sm text-slate-600 dark:text-slate-400">{shortcut.action}</span>
-                    <div className="flex items-center gap-1">
-                      {shortcut.keys.map((key, j) => (
-                        <kbd
-                          key={j}
-                          className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[11px] font-mono text-slate-600 dark:text-slate-300 shadow-sm"
-                        >
-                          {key}
-                        </kbd>
-                      ))}
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+          <ChevronRight className="w-5 h-5 text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-200 transition-colors" />
+        </Link>
       </GlassCard>
 
       {/* Save Preferences */}
