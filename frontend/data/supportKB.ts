@@ -722,36 +722,92 @@ export function getAllCategories(): KBCategory[] {
   return Array.from(cats) as KBCategory[];
 }
 
-export function searchArticles(query: string): KBArticle[] {
-  const normalizedQuery = query.toLowerCase().trim();
-  if (!normalizedQuery) return [];
+// ─────────────────────────────────────────────────────────────
+// Synonym map - expands the user's query so casual phrasing
+// still finds the right article. Keep entries lowercase.
+// ─────────────────────────────────────────────────────────────
+const SYNONYMS: Record<string, string[]> = {
+  bond: ["deposit", "security deposit", "rental bond"],
+  deposit: ["bond", "security deposit"],
+  rent: ["weekly rent", "price", "cost"],
+  refund: ["money back", "cancel refund", "return"],
+  cancel: ["cancellation", "withdraw", "refund"],
+  verify: ["verification", "id check", "kyc", "verified"],
+  id: ["identity", "document", "passport", "license"],
+  visa: ["student visa", "working visa", "migrant"],
+  scam: ["fraud", "fake", "report", "suspicious"],
+  unsafe: ["danger", "harassment", "safety", "report"],
+  host: ["owner", "landlord"],
+  seeker: ["tenant", "renter", "student"],
+  booking: ["reservation", "request to book"],
+  payment: ["pay", "stripe", "charge", "billing"],
+  payout: ["earnings", "withdraw", "bank transfer"],
+  lease: ["tenancy", "agreement", "contract"],
+  inspection: ["viewing", "tour"],
+  pet: ["pets", "dog", "cat", "animal"],
+  bills: ["utilities", "electricity", "gas", "internet", "wifi"],
+};
 
-  const queryWords = normalizedQuery.split(/\s+/);
+function expandQuery(words: string[]): string[] {
+  const expanded = new Set(words);
+  for (const w of words) {
+    const syns = SYNONYMS[w];
+    if (syns) syns.forEach((s) => s.split(/\s+/).forEach((t) => expanded.add(t)));
+  }
+  return Array.from(expanded);
+}
 
-  // Score each article by relevance
+export interface ScoredArticle {
+  article: KBArticle;
+  score: number;
+  /** 0-1 normalised confidence vs the best possible match. */
+  confidence: number;
+}
+
+/**
+ * Search the knowledge base. Returns scored results so the UI
+ * can render a confidence note and decide when to escalate.
+ *
+ * NOTE: This is intentionally a grounded retrieval, NOT an LLM.
+ * We only return content authored in this file. No paraphrasing,
+ * no generation, no hallucination risk.
+ */
+export function searchArticlesScored(query: string, limit = 4): ScoredArticle[] {
+  const normalized = query.toLowerCase().trim();
+  if (!normalized) return [];
+
+  const rawWords = normalized.split(/\s+/).filter((w) => w.length > 1);
+  const words = expandQuery(rawWords);
+
   const scored = articles.map((article) => {
     const questionLower = article.question.toLowerCase();
     const answerLower = article.answer.toLowerCase();
     const keywordsJoined = article.keywords.join(" ").toLowerCase();
 
     let score = 0;
-
-    for (const word of queryWords) {
-      // Exact keyword match (highest weight)
+    for (const word of words) {
       if (article.keywords.some((k) => k.toLowerCase() === word)) score += 10;
-      // Keyword contains the word
       else if (keywordsJoined.includes(word)) score += 5;
-      // Question contains the word
       if (questionLower.includes(word)) score += 3;
-      // Answer contains the word
       if (answerLower.includes(word)) score += 1;
     }
+
+    // Bonus when the full phrase appears verbatim.
+    if (normalized.length > 4 && questionLower.includes(normalized)) score += 8;
 
     return { article, score };
   });
 
-  return scored
-    .filter((s) => s.score > 0)
-    .sort((a, b) => b.score - a.score)
-    .map((s) => s.article);
+  const filtered = scored.filter((s) => s.score > 0).sort((a, b) => b.score - a.score);
+  const top = filtered.slice(0, limit);
+  const best = top[0]?.score ?? 0;
+
+  // Reasonable saturation point so a single strong hit reads as high confidence.
+  const ceiling = Math.max(15, best);
+  return top.map((s) => ({ ...s, confidence: Math.min(1, s.score / ceiling) }));
+}
+
+/** Back-compat wrapper used by older callers. */
+export function searchArticles(query: string): KBArticle[] {
+  return searchArticlesScored(query, 10).map((s) => s.article);
 }
