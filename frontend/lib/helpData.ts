@@ -1235,16 +1235,67 @@ export function getCategoryBySlug(slug: string): StaticHelpCategory | undefined 
   return HELP_CATEGORIES.find((c) => c.slug === slug);
 }
 
+// Lightweight synonyms so casual phrasing finds the right article.
+// Mirrors the assistant widget's vocabulary - keep them in sync.
+const HELP_SYNONYMS: Record<string, string[]> = {
+  bond: ["deposit", "security"],
+  deposit: ["bond"],
+  verify: ["verification", "id", "kyc"],
+  verification: ["verify", "id", "kyc"],
+  host: ["owner", "landlord"],
+  owner: ["host", "landlord"],
+  tenant: ["seeker", "renter"],
+  seeker: ["tenant", "renter"],
+  book: ["booking", "reserve"],
+  booking: ["book", "reserve"],
+  pay: ["payment", "stripe"],
+  payment: ["pay", "stripe"],
+  lease: ["tenancy"],
+  tenancy: ["lease"],
+  wifi: ["internet", "bills"],
+  scam: ["fraud", "report"],
+  unsafe: ["safety", "danger"],
+  photo: ["photos", "image", "picture"],
+  flatmate: ["share", "housemate", "roommate"],
+};
+
+function expandHelpQuery(words: string[]): string[] {
+  const out = new Set(words);
+  for (const w of words) {
+    const syns = HELP_SYNONYMS[w];
+    if (syns) syns.forEach((s) => out.add(s));
+  }
+  return Array.from(out);
+}
+
 export function searchArticles(query: string): StaticHelpArticle[] {
-  const q = query.toLowerCase().trim();
-  if (!q) return HELP_ARTICLES;
-  return HELP_ARTICLES.filter(
-    (a) =>
-      a.title.toLowerCase().includes(q) ||
-      a.summary.toLowerCase().includes(q) ||
-      a.tags.some((t) => t.toLowerCase().includes(q)) ||
-      a.categoryName.toLowerCase().includes(q)
-  );
+  const normalized = query.toLowerCase().trim();
+  if (!normalized) return HELP_ARTICLES;
+  const rawWords = normalized.split(/\s+/).filter((w) => w.length > 1);
+  const words = expandHelpQuery(rawWords);
+
+  const scored = HELP_ARTICLES.map((a) => {
+    const title = a.title.toLowerCase();
+    const summary = a.summary.toLowerCase();
+    const tags = a.tags.map((t) => t.toLowerCase()).join(" ");
+    const categoryName = a.categoryName.toLowerCase();
+
+    let score = 0;
+    for (const word of words) {
+      if (a.tags.some((t) => t.toLowerCase() === word)) score += 8;
+      else if (tags.includes(word)) score += 4;
+      if (title.includes(word)) score += 5;
+      if (categoryName.includes(word)) score += 2;
+      if (summary.includes(word)) score += 1;
+    }
+    if (title.includes(normalized)) score += 6;
+    return { article: a, score };
+  });
+
+  return scored
+    .filter((s) => s.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .map((s) => s.article);
 }
 
 export function getFeaturedArticles(role: "seeker" | "owner" | null): StaticHelpArticle[] {

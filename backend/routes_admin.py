@@ -522,3 +522,101 @@ def get_recent_activity(
     except Exception as e:
         logger.warning(f"[Admin] Activity query failed (table may not exist): {e}")
         return {"activities": []}
+
+
+# ──────────────────────────────────────────────────────────────
+# Assistant logs - content improvement loop
+# ──────────────────────────────────────────────────────────────
+@router.get("/assistant-logs")
+def list_assistant_logs(
+    authorization: str = Header(...),
+    limit: int = Query(50, ge=1, le=200),
+    confidence: Optional[str] = Query(None, pattern="^(high|medium|low|none)$"),
+    only_unhelpful: bool = Query(False),
+    only_safety: bool = Query(False),
+):
+    """List recent assistant queries for review."""
+    _require_admin(authorization)
+    sb = get_supabase_admin()
+    try:
+        q = sb.table("assistant_logs").select(
+            "id, query, top_article_id, confidence, helpful, safety_flag, legal_flag, emergency_flag, escalated, created_at"
+        ).order("created_at", desc=True).limit(limit)
+        if confidence:
+            q = q.eq("confidence", confidence)
+        if only_unhelpful:
+            q = q.eq("helpful", False)
+        if only_safety:
+            q = q.eq("safety_flag", True)
+        res = q.execute()
+        return {"logs": res.data or []}
+    except Exception as e:
+        logger.warning(f"[Admin] assistant_logs query failed (table may not exist yet): {e}")
+        return {"logs": []}
+
+
+@router.get("/assistant-stats")
+def get_assistant_stats(authorization: str = Header(...)):
+    """Aggregate stats for the assistant dashboard."""
+    _require_admin(authorization)
+    sb = get_supabase_admin()
+    seven_days_ago = (datetime.now(timezone.utc) - timedelta(days=7)).isoformat()
+
+    def _count(filters: dict) -> int:
+        try:
+            q = sb.table("assistant_logs").select("id", count="exact").gte("created_at", seven_days_ago)
+            for k, v in filters.items():
+                q = q.eq(k, v)
+            res = q.execute()
+            return res.count or 0
+        except Exception:
+            return 0
+
+    total = _count({})
+    high = _count({"confidence": "high"})
+    medium = _count({"confidence": "medium"})
+    low = _count({"confidence": "low"})
+    none = _count({"confidence": "none"})
+    helpful_yes = _count({"helpful": True})
+    helpful_no = _count({"helpful": False})
+    safety = _count({"safety_flag": True})
+    legal = _count({"legal_flag": True})
+    emergency = _count({"emergency_flag": True})
+    escalated = _count({"escalated": True})
+
+    # Top failed queries (low / none confidence) in last 7 days
+    top_failed: list = []
+    try:
+        res = sb.table("assistant_logs").select("query").in_(
+            "confidence", ["low", "none"]
+        ).gte("created_at", seven_days_ago).limit(500).execute()
+        counts: dict = {}
+        for row in res.data or []:
+            key = (row.get("query") or "").strip().lower()
+            if not key:
+                continue
+            counts[key] = counts.get(key, 0) + 1
+        top_failed = sorted(
+            [{"query": k, "count": v} for k, v in counts.items()],
+            key=lambda x: x["count"],
+            reverse=True,
+        )[:15]
+    except Exception as e:
+        logger.warning(f"[Admin] top_failed query failed: {e}")
+
+    helpful_total = helpful_yes + helpful_no
+    helpful_rate = round((helpful_yes / helpful_total * 100) if helpful_total > 0 else 0)
+
+    return {
+        "window_days": 7,
+        "total": total,
+        "by_confidence": {"high": high, "medium": medium, "low": low, "none": none},
+        "helpful_yes": helpful_yes,
+        "helpful_no": helpful_no,
+        "helpful_rate": helpful_rate,
+        "safety": safety,
+        "legal": legal,
+        "emergency": emergency,
+        "escalated": escalated,
+        "top_failed": top_failed,
+    }
