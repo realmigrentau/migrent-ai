@@ -414,6 +414,35 @@ export async function submitSupportRequest(data: {
   }
 }
 
+/**
+ * Best-effort log of an assistant interaction. Fire-and-forget:
+ * the assistant must keep working even if logging is offline.
+ */
+export interface AssistantLogPayload {
+  query: string;
+  top_article_id?: string;
+  confidence: "high" | "medium" | "low" | "none";
+  helpful?: boolean;
+  safety_flag?: boolean;
+  legal_flag?: boolean;
+  emergency_flag?: boolean;
+  escalated?: boolean;
+  user_id?: string;
+}
+
+export function logAssistantQuery(payload: AssistantLogPayload): void {
+  try {
+    fetch(`${BASE_URL}/support/assistant-log`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+      keepalive: true,
+    }).catch(() => {});
+  } catch {
+    // Never throw from logging.
+  }
+}
+
 // ── Deal endpoints ──────────────────────────────────────────
 
 export interface CreateDealPayload {

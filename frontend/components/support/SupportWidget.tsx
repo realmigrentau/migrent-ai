@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect, useMemo } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useAuth } from "../../hooks/useAuth";
-import { createTicket } from "../../lib/api";
-import { searchArticlesScored, type KBArticle, type ScoredArticle } from "../../data/supportKB";
+import { createTicket, logAssistantQuery } from "../../lib/api";
+import { searchArticlesScored, helpSlugForArticle, type KBArticle, type ScoredArticle } from "../../data/supportKB";
 
 type Tab = "chat" | "contact";
 
@@ -92,9 +92,19 @@ export default function SupportWidget() {
   const [open, setOpen] = useState(false);
   const [tab, setTab] = useState<Tab>("chat");
 
-  const [messages, setMessages] = useState<ChatMessage[]>([
-    { id: newId(), role: "system", kind: "welcome" },
-  ]);
+  const [messages, setMessages] = useState<ChatMessage[]>(() => {
+    if (typeof window === "undefined") return [{ id: newId(), role: "system", kind: "welcome" }];
+    try {
+      const raw = window.localStorage.getItem("migrent_assistant_chat");
+      if (raw) {
+        const parsed = JSON.parse(raw) as ChatMessage[];
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch {
+      /* ignore */
+    }
+    return [{ id: newId(), role: "system", kind: "welcome" }];
+  });
   const [chatInput, setChatInput] = useState("");
   const [typing, setTyping] = useState(false);
   const [unhelpfulStreak, setUnhelpfulStreak] = useState(0);
@@ -113,6 +123,25 @@ export default function SupportWidget() {
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, typing]);
+
+  // Persist chat (cap to last 40 messages so storage stays small).
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      const trimmed = messages.slice(-40);
+      window.localStorage.setItem("migrent_assistant_chat", JSON.stringify(trimmed));
+    } catch {
+      /* ignore */
+    }
+  }, [messages]);
+
+  function clearChat() {
+    setMessages([{ id: newId(), role: "system", kind: "welcome" }]);
+    setUnhelpfulStreak(0);
+    if (typeof window !== "undefined") {
+      try { window.localStorage.removeItem("migrent_assistant_chat"); } catch { /* ignore */ }
+    }
+  }
 
   function handleSuggested(prompt: string) {
     setChatInput(prompt);
@@ -165,15 +194,43 @@ export default function SupportWidget() {
       const lowQuality = confidence === "none" || confidence === "low";
       const nextStreak = lowQuality ? unhelpfulStreak + 1 : 0;
       setUnhelpfulStreak(nextStreak);
-      if (nextStreak >= 2) {
+      const willEscalate = nextStreak >= 2;
+      if (willEscalate) {
         setMessages((prev) => [...prev, { id: newId(), role: "system", kind: "escalation" }]);
         setUnhelpfulStreak(0);
       }
+
+      // Fire-and-forget logging for the content improvement loop.
+      logAssistantQuery({
+        query: userMsg,
+        top_article_id: results[0]?.article.id,
+        confidence,
+        safety_flag: triggers.safety,
+        legal_flag: triggers.legal,
+        emergency_flag: triggers.emergency,
+        escalated: willEscalate,
+        user_id: session?.user?.id,
+      });
+
       setTyping(false);
     }, 450);
   }
 
   function handleFeedback(msgId: string, helpful: boolean) {
+    // Log helpful/unhelpful for the content loop.
+    const msg = messages.find((m) => m.id === msgId);
+    if (msg && msg.role === "assistant") {
+      logAssistantQuery({
+        query: msg.query,
+        top_article_id: msg.results[0]?.article.id,
+        confidence: msg.confidence,
+        helpful,
+        safety_flag: !!msg.safety,
+        legal_flag: !!msg.legal,
+        emergency_flag: !!msg.emergency,
+        user_id: session?.user?.id,
+      });
+    }
     if (!helpful) {
       setUnhelpfulStreak((s) => s + 1);
       setMessages((prev) => {
@@ -277,6 +334,15 @@ export default function SupportWidget() {
                     Grounded in our Help Center. Not legal advice.
                   </p>
                 </div>
+                {tab === "chat" && messages.length > 1 && (
+                  <button
+                    onClick={clearChat}
+                    className="text-rose-100 hover:text-white text-[11px] underline underline-offset-2"
+                    aria-label="Clear chat"
+                  >
+                    Clear
+                  </button>
+                )}
               </div>
             </div>
 
@@ -576,13 +642,30 @@ function SuggestedPromptChips({ prompts, onPick }: { prompts: string[]; onPick: 
 }
 
 function SourceCard({ article, onPick }: { article: KBArticle; onPick: (q: string) => void }) {
-  return (
-    <button
-      onClick={() => onPick(article.question)}
-      className="w-full text-left px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-rose-300 dark:hover:border-rose-700 transition-colors"
-    >
-      <div className="text-[10px] uppercase tracking-wide text-rose-500 font-semibold">{article.category}</div>
+  const slug = helpSlugForArticle(article.id);
+  const className =
+    "w-full text-left px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-rose-300 dark:hover:border-rose-700 transition-colors block";
+
+  const body = (
+    <>
+      <div className="text-[10px] uppercase tracking-wide text-rose-500 font-semibold flex items-center justify-between">
+        <span>{article.category}</span>
+        {slug && <span className="text-slate-400 normal-case tracking-normal">Open article →</span>}
+      </div>
       <div className="text-xs font-medium text-slate-800 dark:text-slate-200 leading-snug mt-0.5">{article.question}</div>
+    </>
+  );
+
+  if (slug) {
+    return (
+      <a href={`/help/${slug}`} target="_blank" rel="noopener noreferrer" className={className}>
+        {body}
+      </a>
+    );
+  }
+  return (
+    <button onClick={() => onPick(article.question)} className={className}>
+      {body}
     </button>
   );
 }
