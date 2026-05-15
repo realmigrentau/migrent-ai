@@ -1,46 +1,68 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
-import Head from "next/head";
 import { ArrowRight, MessageCircle, Calculator } from "lucide-react";
-import PricingHero from "../components/pricing/PricingHero";
 import PricingTables from "../components/pricing/PricingTables";
 import EarningsCalculator from "../components/pricing/EarningsCalculator";
 import ComparisonTable from "../components/pricing/ComparisonTable";
 import PricingFAQ from "../components/pricing/PricingFAQ";
 import TestimonialCarousel from "../components/pricing/TestimonialCarousel";
 import OwnerGuard from "../components/OwnerGuard";
+import PolicyLayout from "../components/legal/PolicyLayout";
+
+const toc = [
+  { id: "plans", label: "Plans" },
+  { id: "calculator", label: "Worked example" },
+  { id: "comparison", label: "Comparison" },
+  { id: "testimonials", label: "What users say" },
+  { id: "faq", label: "FAQ" },
+  { id: "get-started", label: "Get started" },
+];
 
 export default function Pricing() {
   return (
-    <>
-      <Head>
-        <title>Pricing | MigRent AI</title>
-        <meta
-          name="description"
-          content="MigRent AI pricing - AUD $99 one-time owner fee per property match, seekers browse free. No subscriptions, no rent commissions, no hidden fees."
-        />
-      </Head>
-
-      <div className="pb-12">
-        <div className="-mt-6">
-          <PricingHero />
-        </div>
-        <div className="h-20" />
-        <div className="space-y-20">
+    <PolicyLayout
+      family="pricing"
+      eyebrow="Pricing"
+      title="Simple, transparent pricing"
+      lede="AUD $99 one-time owner fee per property match. Seekers browse free. No subscriptions, no rent commissions, no hidden fees."
+      metaTitle="Pricing | MigRent AI"
+      metaDescription="MigRent AI pricing - AUD $99 one-time owner fee per property match, seekers browse free. No subscriptions, no rent commissions, no hidden fees."
+      toc={toc}
+      related={[
+        { href: "/about", label: "About MigRent", description: "Our story and mission" },
+        { href: "/faq", label: "FAQ", description: "Common pricing questions" },
+        { href: "/contact", label: "Contact sales", description: "Talk to a real human" },
+        { href: "/terms-of-service", label: "Terms of Service", description: "Fees and payment terms" },
+      ]}
+    >
+      <div className="space-y-20">
+        <section id="plans" className="scroll-mt-24">
           <PricingTables />
+        </section>
+
+        <div id="calculator" className="scroll-mt-24">
           <OwnerGuard
             teaserTitle="Owner Earnings Calculator"
             teaserDescription="Sign up as a property owner to estimate your rental earnings with our interactive calculator."
           >
             <EarningsCalculator />
           </OwnerGuard>
-          <ComparisonTable />
-          <TestimonialCarousel />
-          <PricingFAQ />
         </div>
 
+        <section id="comparison" className="scroll-mt-24">
+          <ComparisonTable />
+        </section>
+
+        <section id="testimonials" className="scroll-mt-24">
+          <TestimonialCarousel />
+        </section>
+
+        <section id="faq" className="scroll-mt-24">
+          <PricingFAQ />
+        </section>
+
         {/* Bottom CTA */}
-        <section className="max-w-4xl mx-auto px-4">
+        <section id="get-started" className="max-w-4xl mx-auto px-4 scroll-mt-24">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -80,6 +102,6 @@ export default function Pricing() {
           </motion.div>
         </section>
       </div>
-    </>
+    </PolicyLayout>
   );
 }

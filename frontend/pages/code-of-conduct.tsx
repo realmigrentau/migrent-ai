@@ -1,132 +1,131 @@
 import Link from "next/link";
-import { motion } from "framer-motion";
-import Head from "next/head";
+import PolicyLayout from "../components/legal/PolicyLayout";
+import PolicySection from "../components/legal/PolicySection";
+import Callout from "../components/legal/Callout";
+import DisclaimerCard from "../components/legal/DisclaimerCard";
+
+const toc = [
+  { id: "about", label: "About the NSW STRA Code" },
+  { id: "host", label: "Host (owner) obligations" },
+  { id: "guest", label: "Guest (seeker) obligations" },
+  { id: "platform", label: "Booking platform obligations" },
+  { id: "penalties", label: "Penalties for non-compliance" },
+  { id: "other-states", label: "Other states" },
+];
+
+const accent = "text-rose-500 hover:text-rose-600 underline underline-offset-2";
 
 export default function CodeOfConduct() {
   return (
-    <>
-      <Head>
-        <title>NSW STRA Code of Conduct | MigRent AI</title>
-        <meta name="description" content="Summary of the NSW Short-Term Rental Accommodation Code of Conduct and how it applies to MigRent users." />
-      </Head>
+    <PolicyLayout
+      family="legal"
+      eyebrow="Legal"
+      title="STRA Code of Conduct"
+      lede="A plain-English summary of the NSW Short-Term Rental Accommodation Code of Conduct, and how it applies to hosts, guests, and platforms like MigRent."
+      lastUpdated="March 2026"
+      metaTitle="NSW STRA Code of Conduct | MigRent AI"
+      metaDescription="Summary of the NSW Short-Term Rental Accommodation Code of Conduct and how it applies to MigRent users."
+      toc={toc}
+      disclaimer={
+        <DisclaimerCard title="This is general information, not legal advice">
+          <p>
+            This page is a summary of the NSW STRA Code of Conduct for informational purposes only and does not constitute legal advice. Laws and regulations may change. Always check the official state tenancy authority (NSW Fair Trading and the NSW Government STRA pages) before acting.
+          </p>
+        </DisclaimerCard>
+      }
+      related={[
+        { href: "/rental-laws", label: "Australian Rental Laws", description: "State-by-state guide to rental rules" },
+        { href: "/rules-community-guidelines", label: "Community Guidelines", description: "How we expect MigRent users to behave" },
+        { href: "/safety-reporting", label: "Report a violation", description: "Flag a listing that breaches the code" },
+        { href: "/terms-of-service", label: "Terms of Service", description: "Your responsibilities on the platform" },
+      ]}
+    >
+      <PolicySection
+        id="about"
+        title="About the NSW STRA Code"
+        summary="A mandatory code under NSW Fair Trading Regulation that applies to hosts, guests, and booking platforms."
+      >
+        <p>New South Wales has a mandatory Code of Conduct for Short-Term Rental Accommodation (STRA) under the Fair Trading Regulation. This code applies to hosts, guests, and booking platforms operating in NSW.</p>
+        <p>This page is a <strong>summary only</strong>. For the full official code, visit the <a href="https://www.nsw.gov.au/housing-and-construction/short-term-rental-accommodation" target="_blank" rel="noopener noreferrer" className={accent}>NSW Government STRA page</a>.</p>
+        <p>MigRent is an introduction service. While some listings on MigRent may fall under STRA regulations, we inform all users of their obligations under the code.</p>
+      </PolicySection>
 
-      <div className="max-w-3xl mx-auto space-y-10">
-        {/* Hero */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-100 dark:border-emerald-500/20 flex items-center justify-center">
-              <svg className="w-5 h-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
-              </svg>
-            </div>
-            <div>
-              <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white">
-                STRA Code of Conduct
-              </h1>
-              <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Last updated: March 2026</p>
-            </div>
-          </div>
-        </motion.div>
+      <PolicySection
+        id="host"
+        title="Host (owner) obligations"
+        summary="Register, follow fire-safety rules, cap guests, notify neighbours, and respond to complaints."
+      >
+        <p>If your listing qualifies as STRA in NSW, as a host you must:</p>
+        <ul className="list-disc list-inside space-y-1.5">
+          <li><strong>Register on the NSW STRA Register</strong> before listing your property</li>
+          <li><strong>Fire safety:</strong> Ensure working smoke alarms on every level, provide a fire extinguisher, and display evacuation information</li>
+          <li><strong>Maximum guests:</strong> Do not exceed the number of guests specified in your registration</li>
+          <li><strong>Neighbour notification:</strong> Notify immediate neighbours that the property is used for STRA and provide a contact number for complaints</li>
+          <li><strong>House rules:</strong> Provide written house rules to guests covering noise, parking, waste disposal, and use of common areas</li>
+          <li><strong>Complaints handling:</strong> Respond to noise or nuisance complaints within a reasonable time</li>
+          <li><strong>Day limits:</strong> 180 days per year maximum in Greater Sydney (when host is not present). Unlimited if host is present.</li>
+          <li><strong>Insurance:</strong> Consider appropriate insurance cover for STRA activity</li>
+        </ul>
+        <Callout variant="warning" title="Two strikes rule">
+          Hosts (and guests) can be excluded from the STRA Register for serious or repeated breaches. Exclusion prevents you from listing or booking STRA across NSW.
+        </Callout>
+      </PolicySection>
 
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="space-y-8">
-          {/* Introduction */}
-          <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">About the NSW STRA Code</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
-              <p>New South Wales has a mandatory Code of Conduct for Short-Term Rental Accommodation (STRA) under the Fair Trading Regulation. This code applies to hosts, guests, and booking platforms operating in NSW.</p>
-              <p>This page is a <strong>summary only</strong>. For the full official code, visit the <a href="https://www.nsw.gov.au/housing-and-construction/short-term-rental-accommodation" target="_blank" rel="noopener noreferrer" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">NSW Government STRA page</a>.</p>
-              <p>MigRent is an introduction service. While some listings on MigRent may fall under STRA regulations, we inform all users of their obligations under the code.</p>
-            </div>
-          </section>
+      <PolicySection
+        id="guest"
+        title="Guest (seeker) obligations"
+        summary="Follow house rules, respect quiet hours, stay within guest limits, and look after the property."
+      >
+        <p>As a guest staying in STRA in NSW, you must:</p>
+        <ul className="list-disc list-inside space-y-1.5">
+          <li><strong>Follow house rules:</strong> Comply with all house rules provided by the host</li>
+          <li><strong>Noise:</strong> Avoid unreasonable noise, especially between 10pm and 8am</li>
+          <li><strong>Guest numbers:</strong> Do not exceed the maximum number of guests allowed</li>
+          <li><strong>Property care:</strong> Treat the property with reasonable care and report any damage</li>
+          <li><strong>Waste:</strong> Dispose of waste properly according to local council requirements</li>
+          <li><strong>Neighbours:</strong> Respect the neighbourhood and the quiet enjoyment of neighbours</li>
+        </ul>
+      </PolicySection>
 
-          {/* Host Obligations */}
-          <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">Host (Owner) Obligations</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
-              <p>If your listing qualifies as STRA in NSW, as a host you must:</p>
-              <ul className="list-disc list-inside space-y-1.5">
-                <li><strong>Register on the NSW STRA Register</strong> before listing your property</li>
-                <li><strong>Fire safety:</strong> Ensure working smoke alarms on every level, provide a fire extinguisher, and display evacuation information</li>
-                <li><strong>Maximum guests:</strong> Do not exceed the number of guests specified in your registration</li>
-                <li><strong>Neighbour notification:</strong> Notify immediate neighbours that the property is used for STRA and provide a contact number for complaints</li>
-                <li><strong>House rules:</strong> Provide written house rules to guests covering noise, parking, waste disposal, and use of common areas</li>
-                <li><strong>Complaints handling:</strong> Respond to noise or nuisance complaints within a reasonable time</li>
-                <li><strong>Day limits:</strong> 180 days per year maximum in Greater Sydney (when host is not present). Unlimited if host is present.</li>
-                <li><strong>Insurance:</strong> Consider appropriate insurance cover for STRA activity</li>
-              </ul>
-            </div>
-          </section>
+      <PolicySection
+        id="platform"
+        title="Booking platform obligations"
+        summary="Platforms must verify registration numbers, accept reports, and cooperate with NSW Fair Trading."
+      >
+        <p>Under the NSW STRA framework, booking platforms must:</p>
+        <ul className="list-disc list-inside space-y-1.5">
+          <li>Verify that hosts display a valid STRA registration number (where applicable)</li>
+          <li>Provide mechanisms for reporting code violations</li>
+          <li>Cooperate with NSW Fair Trading investigations</li>
+          <li>Remove listings upon government direction for serious or repeated violations</li>
+        </ul>
+        <p>MigRent complies with these obligations. If you believe a listing violates the STRA Code of Conduct, please <Link href="/safety-reporting" className={accent}>report it here</Link>.</p>
+      </PolicySection>
 
-          {/* Guest Obligations */}
-          <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">Guest (Seeker) Obligations</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
-              <p>As a guest staying in STRA in NSW, you must:</p>
-              <ul className="list-disc list-inside space-y-1.5">
-                <li><strong>Follow house rules:</strong> Comply with all house rules provided by the host</li>
-                <li><strong>Noise:</strong> Avoid unreasonable noise, especially between 10pm and 8am</li>
-                <li><strong>Guest numbers:</strong> Do not exceed the maximum number of guests allowed</li>
-                <li><strong>Property care:</strong> Treat the property with reasonable care and report any damage</li>
-                <li><strong>Waste:</strong> Dispose of waste properly according to local council requirements</li>
-                <li><strong>Neighbours:</strong> Respect the neighbourhood and the quiet enjoyment of neighbours</li>
-              </ul>
-            </div>
-          </section>
+      <PolicySection
+        id="penalties"
+        title="Penalties for non-compliance"
+        summary="Penalty notices, exclusion from the STRA Register, and on MigRent, listing removal or account suspension."
+      >
+        <p>Failure to comply with the NSW STRA Code of Conduct may result in:</p>
+        <ul className="list-disc list-inside space-y-1.5">
+          <li>Penalty notices from NSW Fair Trading</li>
+          <li>Exclusion from the STRA Register (which prevents listing)</li>
+          <li>On MigRent: listing removal and account suspension</li>
+        </ul>
+        <Callout variant="critical" title="Serious breaches">
+          Repeated or serious breaches (such as exceeding guest limits, fire-safety failures, or ignoring noise complaints) can lead to immediate removal from the STRA Register and corresponding action on MigRent.
+        </Callout>
+      </PolicySection>
 
-          {/* Platform Obligations */}
-          <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">Booking Platform Obligations</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
-              <p>Under the NSW STRA framework, booking platforms must:</p>
-              <ul className="list-disc list-inside space-y-1.5">
-                <li>Verify that hosts display a valid STRA registration number (where applicable)</li>
-                <li>Provide mechanisms for reporting code violations</li>
-                <li>Cooperate with NSW Fair Trading investigations</li>
-                <li>Remove listings upon government direction for serious or repeated violations</li>
-              </ul>
-              <p>MigRent complies with these obligations. If you believe a listing violates the STRA Code of Conduct, please <Link href="/safety-reporting" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">report it here</Link>.</p>
-            </div>
-          </section>
-
-          {/* Penalties */}
-          <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">Penalties for Non-Compliance</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
-              <p>Failure to comply with the NSW STRA Code of Conduct may result in:</p>
-              <ul className="list-disc list-inside space-y-1.5">
-                <li>Penalty notices from NSW Fair Trading</li>
-                <li>Exclusion from the STRA Register (which prevents listing)</li>
-                <li>On MigRent: listing removal and account suspension</li>
-              </ul>
-            </div>
-          </section>
-
-          {/* Other States */}
-          <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">Other States</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
-              <p>This page focuses on NSW as it has the most comprehensive STRA framework. Other states have varying levels of STRA regulation. See our <Link href="/rental-laws" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">Australian Rental Laws Guide</Link> for an overview of each state.</p>
-              <p>Regardless of your state, MigRent expects all users to comply with local laws and our <Link href="/rules-community-guidelines" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">Community Guidelines</Link>.</p>
-            </div>
-          </section>
-
-          {/* Legal Disclaimer */}
-          <div className="card-subtle p-4 rounded-xl text-xs text-slate-400 dark:text-slate-500 leading-relaxed">
-            <p>This is a summary of the NSW STRA Code of Conduct for informational purposes only. It does not constitute legal advice. For the official code, visit nsw.gov.au. Laws and regulations may change - always verify current requirements. Last reviewed: March 2026.</p>
-          </div>
-
-          {/* CTA */}
-          <div className="card p-6 rounded-2xl bg-gradient-to-br from-emerald-50 to-emerald-100/50 dark:from-emerald-500/10 dark:to-emerald-600/5 border-emerald-200 dark:border-emerald-500/20 text-center">
-            <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Report a code violation?</h3>
-            <p className="text-sm text-slate-600 dark:text-slate-300 mb-4">Help us maintain a safe and compliant community.</p>
-            <Link href="/safety-reporting">
-              <motion.span whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }} className="inline-block btn-primary text-sm px-6 py-2.5 rounded-xl">
-                Report an Issue
-              </motion.span>
-            </Link>
-          </div>
-        </motion.div>
-      </div>
-    </>
+      <PolicySection
+        id="other-states"
+        title="Other states"
+        summary="NSW has the most developed STRA rules; other states rely on a mix of state and council regulation."
+      >
+        <p>This page focuses on NSW as it has the most comprehensive STRA framework. Other states have varying levels of STRA regulation. See our <Link href="/rental-laws" className={accent}>Australian Rental Laws Guide</Link> for an overview of each state.</p>
+        <p>Regardless of your state, MigRent expects all users to comply with local laws and our <Link href="/rules-community-guidelines" className={accent}>Community Guidelines</Link>.</p>
+      </PolicySection>
+    </PolicyLayout>
   );
 }

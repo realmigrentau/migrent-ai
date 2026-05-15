@@ -2,7 +2,7 @@ import Link from "next/link";
 import { useState, FormEvent, useMemo } from "react";
 import { submitSupportRequest } from "../lib/api";
 import { motion } from "framer-motion";
-import Head from "next/head";
+import PolicyLayout from "../components/legal/PolicyLayout";
 
 type Role = "seeker" | "owner" | "other";
 
@@ -28,6 +28,8 @@ const CATEGORIES: { value: EnquiryCategory; label: string; helper: string }[] = 
   { value: "PARTNERSHIPS", label: "Partnerships or business", helper: "We reply within 3 to 5 business days." },
   { value: "GENERAL", label: "Something else", helper: "We'll route it to the right person." },
 ];
+
+const accent = "text-rose-500 hover:text-rose-600 underline underline-offset-2";
 
 export default function Contact() {
   const [name, setName] = useState("");
@@ -78,33 +80,21 @@ export default function Contact() {
   };
 
   return (
-    <>
-      <Head>
-        <title>Contact MigRent | Real humans, real answers</title>
-        <meta
-          name="description"
-          content="Get in touch with MigRent. Email support, contact form, safety reporting, legal escalation, and partnerships - all in one place."
-        />
-      </Head>
-
-      <div className="max-w-5xl mx-auto space-y-14">
-        {/* HERO */}
-        <motion.section initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
-          <div className="flex flex-col items-start gap-4">
-            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 text-emerald-700 dark:text-emerald-400 text-xs font-medium">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              Support online - replies within 24h on weekdays
-            </span>
-            <h1 className="text-4xl md:text-5xl font-semibold tracking-tight text-slate-900 dark:text-white">
-              Contact MigRent
-            </h1>
-            <p className="text-base md:text-lg text-slate-600 dark:text-slate-400 max-w-2xl leading-relaxed">
-              Real humans. Real answers. Whether you're a seeker, an owner, or someone with a legal or safety concern -
-              this page sorts you to the right place in seconds.
-            </p>
-          </div>
-        </motion.section>
-
+    <PolicyLayout
+      family="support"
+      eyebrow="Contact"
+      title="Contact MigRent"
+      lede="Real humans. Real answers. Whether you're a seeker, an owner, or someone with a legal or safety concern - this page sorts you to the right place in seconds."
+      metaTitle="Contact MigRent | Real humans, real answers"
+      metaDescription="Get in touch with MigRent. Email support, contact form, safety reporting, legal escalation, and partnerships - all in one place."
+      related={[
+        { href: "/faq", label: "Help center", description: "Browse common questions" },
+        { href: "/contact-legal", label: "Legal Contact", description: "Privacy, DMCA, arbitration" },
+        { href: "/about", label: "About MigRent", description: "Our story and team" },
+        { href: "/pricing", label: "Pricing", description: "Simple, flat fees" },
+      ]}
+    >
+      <div className="space-y-14">
         {/* QUICK ROUTE GRID */}
         <section className="grid sm:grid-cols-3 gap-4">
           <a href="#contact-form" className="card p-6 rounded-2xl text-left hover:border-rose-200 dark:hover:border-rose-500/30 transition-colors block">
@@ -185,7 +175,7 @@ export default function Contact() {
                 href="https://mail.google.com/mail/?view=cm&fs=1&to=migrentau@gmail.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2"
+                className={accent}
               >
                 migrentau@gmail.com
               </a>
@@ -467,7 +457,7 @@ export default function Contact() {
                   href="https://mail.google.com/mail/?view=cm&fs=1&to=migrentau@gmail.com"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2"
+                  className={accent}
                 >
                   migrentau@gmail.com
                 </a>
@@ -489,7 +479,7 @@ export default function Contact() {
         </section>
 
         {/* FOOTER REINFORCEMENT */}
-        <div className="text-center text-sm text-slate-500 dark:text-slate-400 pb-4">
+        <div className="text-center text-sm text-slate-500 dark:text-slate-400">
           Still stuck? Email us anytime at{" "}
           <a
             href="https://mail.google.com/mail/?view=cm&fs=1&to=migrentau@gmail.com"
@@ -502,6 +492,6 @@ export default function Contact() {
           .
         </div>
       </div>
-    </>
+    </PolicyLayout>
   );
 }

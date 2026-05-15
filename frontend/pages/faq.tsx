@@ -1,8 +1,10 @@
 import Link from "next/link";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import Head from "next/head";
 import { useTranslation } from "react-i18next";
+import PolicyLayout from "../components/legal/PolicyLayout";
+
+const accent = "text-rose-500 hover:text-rose-600 underline underline-offset-2";
 
 function FAQItem({ q, a }: { q: string; a: string }) {
   const [open, setOpen] = useState(false);
@@ -130,72 +132,64 @@ export default function FAQ() {
     ),
   })).filter((cat) => cat.items.length > 0);
 
+  const totalCount = faqCategories.reduce((sum, cat) => sum + cat.items.length, 0);
+
   return (
-    <>
-      <Head>
-        <title>FAQ | MigRent AI</title>
-        <meta name="description" content="Frequently asked questions about MigRent AI - payments, listings, verification, accounts, and more." />
-      </Head>
-
-      <div className="max-w-3xl mx-auto space-y-10">
-        {/* Hero */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-500/10 border border-amber-100 dark:border-amber-500/20 flex items-center justify-center">
-              <svg className="w-5 h-5 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            <div>
-              <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white">
-                {t("faq.title")} {t("faq.titleAccent")}
-              </h1>
-              <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">{faqCategories.reduce((sum, cat) => sum + cat.items.length, 0)}+ {t("faq.countSuffix")}</p>
-            </div>
-          </div>
-
-          {/* Search */}
-          <div className="mt-6">
-            <input
-              type="text"
-              placeholder={t("faq.searchPlaceholder")}
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="input-field"
-            />
-          </div>
-        </motion.div>
-
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="space-y-10">
-          {filteredCategories.map((category) => (
-            <section key={category.title} className="space-y-3">
-              <h2 className="text-xl font-semibold tracking-tight text-slate-900 dark:text-white">{category.title}</h2>
-              <div className="space-y-2">
-                {category.items.map((item, i) => (
-                  <FAQItem key={i} q={item.q} a={item.a} />
-                ))}
-              </div>
-            </section>
-          ))}
-
-          {filteredCategories.length === 0 && (
-            <div className="text-center py-12">
-              <p className="text-slate-500 dark:text-slate-400 text-sm">{t("faq.noResults")} <Link href="/contact" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">{t("faq.contactUs")}</Link>.</p>
-            </div>
-          )}
-
-          {/* CTA */}
-          <div className="card p-6 rounded-2xl bg-gradient-to-br from-amber-50 to-amber-100/50 dark:from-amber-500/10 dark:to-amber-600/5 border-amber-200 dark:border-amber-500/20 text-center">
-            <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">{t("faq.stillTitle")}</h3>
-            <p className="text-sm text-slate-600 dark:text-slate-300 mb-4">{t("faq.stillSubtitle")}</p>
-            <Link href="/contact">
-              <motion.span whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }} className="inline-block btn-primary text-sm px-6 py-2.5 rounded-xl">
-                {t("faq.stillCta")}
-              </motion.span>
-            </Link>
-          </div>
-        </motion.div>
+    <PolicyLayout
+      family="support"
+      eyebrow="Help center"
+      title={`${t("faq.title")} ${t("faq.titleAccent")}`}
+      lede={`Answers to common questions about MigRent. ${totalCount}+ topics covering payments, listings, verification, accounts, and safety.`}
+      metaTitle="FAQ | MigRent AI"
+      metaDescription="Frequently asked questions about MigRent AI - payments, listings, verification, accounts, and more."
+      related={[
+        { href: "/contact", label: "Contact support", description: "Talk to a real human" },
+        { href: "/help", label: "Help center", description: "Guides and how-tos" },
+        { href: "/pricing", label: "Pricing", description: "Simple, flat fees" },
+        { href: "/about", label: "About MigRent", description: "Our story and mission" },
+      ]}
+    >
+      <div className="mb-2">
+        <input
+          type="text"
+          placeholder={t("faq.searchPlaceholder")}
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="input-field"
+        />
       </div>
-    </>
+
+      <div className="space-y-10">
+        {filteredCategories.map((category) => (
+          <section key={category.title} className="space-y-3">
+            <h2 className="text-xl font-semibold tracking-tight text-slate-900 dark:text-white">{category.title}</h2>
+            <div className="space-y-2">
+              {category.items.map((item, i) => (
+                <FAQItem key={i} q={item.q} a={item.a} />
+              ))}
+            </div>
+          </section>
+        ))}
+
+        {filteredCategories.length === 0 && (
+          <div className="text-center py-12">
+            <p className="text-slate-500 dark:text-slate-400 text-sm">
+              {t("faq.noResults")}{" "}
+              <Link href="/contact" className={accent}>{t("faq.contactUs")}</Link>.
+            </p>
+          </div>
+        )}
+
+        <div className="card p-6 rounded-2xl bg-gradient-to-br from-amber-50 to-amber-100/50 dark:from-amber-500/10 dark:to-amber-600/5 border-amber-200 dark:border-amber-500/20 text-center">
+          <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">{t("faq.stillTitle")}</h3>
+          <p className="text-sm text-slate-600 dark:text-slate-300 mb-4">{t("faq.stillSubtitle")}</p>
+          <Link href="/contact">
+            <motion.span whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }} className="inline-block btn-primary text-sm px-6 py-2.5 rounded-xl">
+              {t("faq.stillCta")}
+            </motion.span>
+          </Link>
+        </div>
+      </div>
+    </PolicyLayout>
   );
 }
