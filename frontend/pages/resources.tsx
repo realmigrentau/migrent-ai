@@ -239,7 +239,7 @@ const resources = [
     headline: "Developer API Docs",
     subline: "Build integrations on the MigRent platform",
     MockUI: MockAPIDocs,
-    href: "/resources/api-docs",
+    href: "/developers",
     bullets: [
       "RESTful API with JSON responses",
       "OAuth 2.0 authentication",
