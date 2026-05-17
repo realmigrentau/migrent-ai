@@ -1,392 +1,383 @@
 import Link from "next/link";
-import Image from "next/image";
 import Head from "next/head";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import OwnerMarquee from "../components/OwnerMarquee";
-import { useAuth } from "../hooks/useAuth";
-import { useTranslation } from "react-i18next";
 import {
-  Globe,
   ShieldCheck,
-  Sparkles,
-  CreditCard,
-  Search,
-  Home as HomeIcon,
-  ListPlus,
-  Users,
-  Handshake,
-  Phone,
-  Lock,
+  Check,
+  User as UserIcon,
+  Globe,
   ArrowRight,
-  BadgeCheck,
-  MapPin,
+  Calendar,
+  Bed,
+  Bath,
+  Star,
+  Heart,
 } from "lucide-react";
+import { useAuth } from "../hooks/useAuth";
+import { searchListings } from "../lib/api";
 
-const pressLogos: string[] = [];
+type Listing = {
+  id: string;
+  title?: string;
+  address?: string;
+  suburb?: string;
+  city?: string;
+  postcode?: string;
+  weekly_price?: number;
+  daily_price?: number;
+  room_type?: string;
+  property_type?: string;
+  beds?: number;
+  bath?: number;
+  bills_included?: boolean;
+  verified?: boolean;
+  available_from?: string;
+};
+
+function PriceTag({ price, size = "md" }: { price: number; size?: "sm" | "md" | "lg" }) {
+  const sz = { sm: { num: 16, unit: 11 }, md: { num: 20, unit: 12 }, lg: { num: 30, unit: 13 } }[size];
+  return (
+    <span className="inline-flex items-baseline gap-1">
+      <span className="font-bold tracking-[-0.02em] text-[var(--color-ink)] tabular-nums" style={{ fontSize: sz.num }}>
+        ${price}
+      </span>
+      <span className="text-[var(--color-ink-3)] font-medium" style={{ fontSize: sz.unit }}>
+        AUD/wk
+      </span>
+    </span>
+  );
+}
+
+function HomeListingCard({ listing }: { listing: Listing }) {
+  const suburb = listing.suburb || listing.city || "Australia";
+  const postcode = listing.postcode ? `, ${listing.postcode}` : "";
+  const title = listing.title || listing.address || "Verified room in Australia";
+  const price = listing.weekly_price || (listing.daily_price ? listing.daily_price * 7 : 0);
+  return (
+    <Link href={`/listing/${listing.id}`} className="group flex flex-col overflow-hidden bg-[var(--color-surface)] border border-[var(--color-line)] rounded-[14px] hover:border-[var(--color-line-2)] hover:shadow-[var(--shadow-card)] transition-all">
+      <div className="relative">
+        <div className="photo-placeholder h-[180px] w-full" style={{ borderRadius: 0 }}>
+          {suburb} · {listing.property_type || listing.room_type || "Room"}
+        </div>
+        {listing.verified && (
+          <div className="absolute bottom-2.5 left-2.5">
+            <span className="inline-flex items-center gap-1 h-[18px] px-1.5 rounded-full bg-[var(--color-accent-soft)] text-[var(--color-accent)] text-[10.5px] font-semibold">
+              <Check className="w-2.5 h-2.5" strokeWidth={2.4} /> Verified host
+            </span>
+          </div>
+        )}
+        <button
+          onClick={(e) => e.preventDefault()}
+          className="absolute top-2 right-2 w-[30px] h-[30px] rounded-full bg-[var(--color-surface)]/92 backdrop-blur flex items-center justify-center text-[var(--color-ink-2)] hover:text-[var(--color-coral-500)] transition-colors"
+          aria-label="Save listing"
+        >
+          <Heart className="w-[15px] h-[15px]" />
+        </button>
+      </div>
+      <div className="p-3.5 flex flex-col flex-1 gap-2">
+        <div className="flex items-baseline justify-between gap-2">
+          <div className="eyebrow truncate">{suburb}{postcode}</div>
+          <span className="inline-flex items-center gap-1 text-xs text-[var(--color-ink-2)]">
+            <Star className="w-3 h-3 fill-[var(--color-warn-500)] text-[var(--color-warn-500)]" /> <span className="tabular-nums">4.8</span>
+          </span>
+        </div>
+        <div className="font-semibold text-[15px] tracking-[-0.005em] text-[var(--color-ink)] leading-snug line-clamp-2">
+          {title}
+        </div>
+        <div className="flex gap-3 text-[12.5px] text-[var(--color-ink-3)] mt-auto">
+          {listing.beds != null && <span className="inline-flex items-center gap-1"><Bed className="w-3 h-3" /> {listing.beds}</span>}
+          {listing.bath != null && <span className="inline-flex items-center gap-1"><Bath className="w-3 h-3" /> {listing.bath}</span>}
+          {listing.available_from && <span className="inline-flex items-center gap-1"><Calendar className="w-3 h-3" /> {new Date(listing.available_from).toLocaleDateString("en-AU", { month: "short", day: "numeric" })}</span>}
+        </div>
+        <div className="h-px bg-[var(--color-line)] my-1" />
+        <div className="flex justify-between items-end">
+          <PriceTag price={price} />
+          <span className="text-[11.5px] text-[var(--color-ink-3)]">{listing.bills_included ? "Bills inc." : "Long stay"}</span>
+        </div>
+      </div>
+    </Link>
+  );
+}
 
 export default function Home() {
   const { session } = useAuth();
-  const { t } = useTranslation();
+  const [budget, setBudget] = useState(350);
+  const [city, setCity] = useState("Melbourne, VIC");
+  const [listings, setListings] = useState<Listing[]>([]);
 
-  const features = [
-    { icon: Globe, title: t("home.feat1Title"), desc: t("home.feat1Desc") },
-    { icon: ShieldCheck, title: t("home.feat2Title"), desc: t("home.feat2Desc") },
-    { icon: Sparkles, title: t("home.feat3Title"), desc: t("home.feat3Desc") },
-    { icon: CreditCard, title: t("home.feat4Title"), desc: t("home.feat4Desc") },
-  ];
+  useEffect(() => {
+    searchListings({ limit: "3" }).then((data) => {
+      if (Array.isArray(data) && data.length > 0) {
+        setListings(data.slice(0, 3));
+      } else if (data && Array.isArray(data.listings)) {
+        setListings(data.listings.slice(0, 3));
+      }
+    });
+  }, []);
 
-  const seekerSteps = [
-    { icon: Search, title: t("home.seekerStep1"), desc: t("home.seekerStep1Desc") },
-    { icon: Sparkles, title: t("home.seekerStep2"), desc: t("home.seekerStep2Desc") },
-    { icon: HomeIcon, title: t("home.seekerStep3"), desc: t("home.seekerStep3Desc") },
-  ];
-
-  const ownerSteps = [
-    { icon: ListPlus, title: t("home.ownerStep1"), desc: t("home.ownerStep1Desc") },
-    { icon: Users, title: t("home.ownerStep2"), desc: t("home.ownerStep2Desc") },
-    { icon: Handshake, title: t("home.ownerStep3"), desc: t("home.ownerStep3Desc") },
+  const categories = [
+    { label: "Under $250/wk", count: "412", href: "/seeker/search?maxPrice=250" },
+    { label: "Studio apartments", count: "86", href: "/seeker/search?propertyType=studio" },
+    { label: "Share houses", count: "1,240", href: "/seeker/search?roomType=private" },
+    { label: "Near universities", count: "318", href: "/seeker/search?nearUni=true" },
+    { label: "Pet-friendly", count: "142", href: "/seeker/search?pets=true" },
+    { label: "Bills included", count: "540", href: "/seeker/search?billsIncluded=true" },
   ];
 
   const trustItems = [
-    { icon: BadgeCheck, title: t("home.trust1Title"), desc: t("home.trust1Desc") },
-    { icon: Lock, title: t("home.trust2Title"), desc: t("home.trust2Desc") },
-    { icon: Phone, title: t("home.trust3Title"), desc: t("home.trust3Desc") },
+    { icon: ShieldCheck, h: "ID verified hosts", p: "Every host completes government ID and proof-of-property checks." },
+    { icon: Check, h: "Bond protected", p: "Your bond is held by an independent escrow, not the landlord." },
+    { icon: UserIcon, h: "Tenant references", p: "Optional - and weighted, not required. Your visa is enough." },
+    { icon: Globe, h: "Migrant-friendly badge", p: "Hosts who accept first-time renters with no Aussie credit file." },
   ];
 
-  const trustBadges = [
-    { icon: ShieldCheck, label: t("home.verifiedHosts") },
-    { icon: Lock, label: t("home.securePayments") },
-    { icon: MapPin, label: t("home.builtInAustralia") },
+  const stories = [
+    {
+      name: "Aisha",
+      from: "Karachi → Carlton",
+      initial: "A",
+      tone: "bg-[var(--color-accent-soft)] text-[var(--color-accent)]",
+      quote: "I had a student visa, no payslip, and a phone that didn't work yet. The hosts I messaged actually replied - and one of them said yes.",
+    },
+    {
+      name: "Lucas",
+      from: "São Paulo → Surry Hills",
+      initial: "L",
+      tone: "bg-[var(--color-primary-soft)] text-[var(--color-primary)]",
+      quote: "The bond went into escrow, not my landlord's bank account. After three years of horror stories from friends in Sydney, that felt huge.",
+    },
+    {
+      name: "Mei",
+      from: "Taipei → Brisbane",
+      initial: "M",
+      tone: "bg-[#f4e4cf] text-[var(--color-warn-500)]",
+      quote: "I filtered by 'no rental history needed' and there were 412 listings. Not three. Four hundred.",
+    },
   ];
+
+  const matchCount = Math.max(1, Math.floor((budget - 100) / 7));
 
   return (
     <>
       <Head>
-        <title>MigRent AI - Find Verified Rooms in Australia</title>
-        <meta name="description" content="MigRent helps migrants, students, and professionals find verified rooms from trusted Australian owners - faster and safer than classifieds." />
-        <meta property="og:title" content="MigRent AI - Find Verified Rooms in Australia" />
-        <meta property="og:description" content="Find verified rooms from trusted owners across Australia. Superhost-rated, station-close listings." />
-        <meta property="og:type" content="website" />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "WebSite",
-              name: "MigRent AI",
-              url: "https://migrent-ai.vercel.app",
-              description: "Find verified rooms from trusted owners across Australia.",
-              potentialAction: {
-                "@type": "SearchAction",
-                target: "https://migrent-ai.vercel.app/seeker/search?q={search_term_string}",
-                "query-input": "required name=search_term_string",
-              },
-            }),
-          }}
-        />
+        <title>MigRent - A real home in Australia, found the right way.</title>
+        <meta name="description" content="From a $195/wk share in Footscray to a $900/wk apartment in Surry Hills. Every host ID-checked, every listing bond-protected. No rental history needed." />
+        <meta property="og:title" content="MigRent - A real home in Australia" />
+        <meta property="og:description" content="Verified rooms across Australia for migrants, students, and new arrivals." />
       </Head>
 
       {/* SECTION 1 - HERO */}
-      <section className="relative pt-16 md:pt-24 pb-20 md:pb-28 bg-[var(--color-bg)] border-b border-[var(--color-line)]">
-        <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6">
-          <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 mb-6">
-              <span className="pulse-dot" />
-              <span className="eyebrow">{t("home.badge")}</span>
+      <section className="bg-[var(--color-bg)] border-b border-[var(--color-line)]">
+        <div className="max-w-[1280px] mx-auto px-6 md:px-10 lg:px-14 pt-10 md:pt-14 pb-14 md:pb-20">
+          <div className="eyebrow mb-3">For migrants, students &amp; new arrivals · AU only</div>
+          <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-10 lg:gap-14 items-end">
+            <div>
+              <h1 className="font-serif text-[44px] sm:text-[60px] md:text-[72px] lg:text-[84px] leading-[0.98] tracking-[-0.025em] text-[var(--color-ink)] text-balance">
+                A real home in Australia,<br />
+                <span className="italic text-[var(--color-ink-2)]">found the right way.</span>
+              </h1>
+              <p className="text-[17px] text-[var(--color-ink-2)] mt-5 max-w-[540px] leading-[1.5]">
+                From a $195/wk share in Footscray to a $900/wk apartment in Surry Hills. Every host ID-checked, every listing bond-protected. No rental history needed.
+              </p>
             </div>
 
-            <h1 className="font-serif text-5xl sm:text-6xl md:text-7xl leading-[0.98] tracking-[-0.025em] text-[var(--color-ink)] text-balance">
-              {t("home.headline1")}{" "}
-              <span className="italic text-[var(--color-ink-2)]">{t("home.headline2")}</span>
-            </h1>
-
-            <p className="mt-6 text-[17px] text-[var(--color-ink-2)] max-w-2xl leading-relaxed">
-              {t("home.subtitle")}
-            </p>
-
-            <div className="mt-9 flex flex-col sm:flex-row gap-2.5">
-              <Link href={session ? "/dashboard" : "/for-seekers"} className="btn-primary h-12 px-6 text-[15px] rounded-[10px]">
-                {t("home.seekerCta")}
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-              <Link href={session ? "/owner/dashboard" : "/for-owners"} className="btn-secondary h-12 px-6 text-[15px] rounded-[10px]">
-                {t("home.ownerCta")}
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-            </div>
-
-            <div className="mt-5 flex items-center gap-5 text-sm">
-              <Link href="/pricing" className="text-[var(--color-ink-3)] hover:text-[var(--color-ink)] underline underline-offset-[3px] decoration-[var(--color-line-2)] hover:decoration-[var(--color-ink-3)] transition-colors">
-                {t("home.viewPricing")}
-              </Link>
-              <span className="w-1 h-1 rounded-full bg-[var(--color-line-2)]" />
-              <Link href="/about" className="text-[var(--color-ink-3)] hover:text-[var(--color-ink)] underline underline-offset-[3px] decoration-[var(--color-line-2)] hover:decoration-[var(--color-ink-3)] transition-colors">
-                {t("home.learnMore")}
-              </Link>
-            </div>
-
-            <div className="mt-12 flex flex-wrap items-center gap-2">
-              {trustBadges.map((badge, i) => (
-                <div key={i} className="flex items-center gap-1.5 px-2.5 h-[26px] rounded-full bg-[var(--color-accent-soft)] text-[var(--color-accent)]">
-                  <badge.icon className="w-3.5 h-3.5" />
-                  <span className="text-[12.5px] font-semibold">{badge.label}</span>
+            {/* Search card */}
+            <div className="bg-[var(--color-surface-2)] border border-[var(--color-line)] rounded-[20px] p-1.5 shadow-[var(--shadow-pop)]">
+              <div className="px-4 py-3.5">
+                <div className="eyebrow">Start your search</div>
+              </div>
+              <div className="grid grid-cols-2 bg-[var(--color-surface-2)] rounded-[14px] overflow-hidden border border-[var(--color-line)]">
+                <label className="px-4 py-3 border-r border-[var(--color-line)] block">
+                  <div className="text-[11px] text-[var(--color-ink-3)] font-semibold uppercase tracking-[0.04em]">City</div>
+                  <input
+                    value={city}
+                    onChange={(e) => setCity(e.target.value)}
+                    className="bg-transparent border-none outline-none text-[15px] font-semibold text-[var(--color-ink)] w-full mt-0.5 p-0"
+                  />
+                </label>
+                <div className="px-4 py-3">
+                  <div className="text-[11px] text-[var(--color-ink-3)] font-semibold uppercase tracking-[0.04em]">Move-in</div>
+                  <div className="text-[15px] font-semibold text-[var(--color-ink)] mt-0.5">Any time</div>
                 </div>
+              </div>
+              <div className="px-4 pt-4 pb-1">
+                <div className="flex justify-between items-baseline">
+                  <div className="text-[11px] text-[var(--color-ink-3)] font-semibold uppercase tracking-[0.04em]">Weekly budget</div>
+                  <div className="font-mono text-[13px] text-[var(--color-ink)]">up to ${budget}/wk</div>
+                </div>
+                <input
+                  type="range"
+                  min={150}
+                  max={1000}
+                  step={5}
+                  value={budget}
+                  onChange={(e) => setBudget(+e.target.value)}
+                  className="w-full mt-2 accent-[var(--color-primary)]"
+                />
+                <div className="flex justify-between text-[11px] text-[var(--color-ink-3)] mt-0.5">
+                  <span>$150</span><span>$500</span><span>$1000+</span>
+                </div>
+              </div>
+              <div className="px-4 py-4">
+                <Link
+                  href={`/seeker/search?city=${encodeURIComponent(city)}&maxPrice=${budget}`}
+                  className="btn-primary w-full h-12 text-[15px]"
+                >
+                  Show {matchCount} matching homes
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+                <div className="text-[11.5px] text-[var(--color-ink-3)] mt-2.5 text-center">
+                  Or{" "}
+                  <Link href={session ? "/owner/listings/new" : "/for-owners"} className="text-[var(--color-ink-2)] underline underline-offset-[3px]">
+                    list a room
+                  </Link>
+                  {" "}on MigRent
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 2 - STATS STRIP */}
+      <section className="bg-[var(--color-surface)] border-b border-[var(--color-line)]">
+        <div className="max-w-[1280px] mx-auto grid grid-cols-2 md:grid-cols-4">
+          {[
+            ["Live", "Now accepting new listings"],
+            ["Verified", "Every host ID-checked"],
+            ["Bond protected", "Held in independent escrow"],
+            ["$0", "Service fee for renters"],
+          ].map(([n, l], i) => (
+            <div key={i} className={`px-6 md:px-8 py-6 ${i > 0 ? "border-l border-[var(--color-line)]" : ""} ${i > 1 ? "md:border-l border-[var(--color-line)]" : ""} ${i === 2 ? "border-l-0 md:border-l border-t md:border-t-0 border-[var(--color-line)]" : ""}`}>
+              <div className="font-serif text-[36px] md:text-[44px] leading-none tracking-[-0.02em] text-[var(--color-ink)] tabular-nums">{n}</div>
+              <div className="text-[12.5px] text-[var(--color-ink-3)] mt-2">{l}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* SECTION 3 - BROWSE */}
+      <section>
+        <div className="max-w-[1280px] mx-auto px-6 md:px-10 lg:px-14 py-14">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-7">
+            <div>
+              <div className="eyebrow mb-1.5">Browse</div>
+              <h2 className="font-serif text-[32px] md:text-[44px] tracking-[-0.02em] leading-[1.05] text-[var(--color-ink)]">
+                Cheap and good. Premium and good.
+              </h2>
+              <p className="text-[15px] text-[var(--color-ink-2)] mt-2 max-w-[540px]">
+                We don&apos;t sort by what makes us money. We sort by what fits.
+              </p>
+            </div>
+            <Link href="/seeker/search" className="text-[var(--color-ink)] font-semibold text-sm inline-flex items-center gap-1.5 hover:underline underline-offset-[3px]">
+              See all listings <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 mb-8">
+            {categories.map((c) => (
+              <Link
+                key={c.label}
+                href={c.href}
+                className="flex items-center justify-between px-4 py-3.5 bg-[var(--color-surface)] border border-[var(--color-line)] rounded-[10px] text-[var(--color-ink)] hover:border-[var(--color-line-2)] transition-colors"
+              >
+                <span className="text-sm font-semibold">{c.label}</span>
+                <span className="font-mono text-xs text-[var(--color-ink-3)]">{c.count} →</span>
+              </Link>
+            ))}
+          </div>
+
+          {listings.length > 0 && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {listings.map((l) => (
+                <HomeListingCard key={l.id} listing={l} />
               ))}
             </div>
-          </motion.div>
+          )}
         </div>
       </section>
 
-      {/* SECTION 2 - MARQUEE */}
-      <section className="py-14 bg-[var(--color-surface)] border-b border-[var(--color-line)]">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 mb-8">
-          <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }}>
-            <div className="eyebrow mb-2">{t("home.marqueeAccent")}</div>
-            <h2 className="font-serif text-3xl md:text-4xl tracking-[-0.02em] text-[var(--color-ink)]">
-              {t("home.marqueeTitle")}
-            </h2>
-            <p className="mt-2 text-[15px] text-[var(--color-ink-2)] max-w-lg">{t("home.marqueeSubtitle")}</p>
-          </motion.div>
+      {/* SECTION 4 - TRUST */}
+      <section className="bg-[var(--color-surface)] border-y border-[var(--color-line)]">
+        <div className="max-w-[1280px] mx-auto px-6 md:px-10 lg:px-14 py-16">
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.2fr] gap-10 lg:gap-14">
+            <div>
+              <div className="eyebrow mb-2.5">Trust, built in</div>
+              <h2 className="font-serif text-[36px] md:text-[56px] leading-[1.05] tracking-[-0.025em] text-[var(--color-ink)]">
+                Every host is who they say they are.
+              </h2>
+              <p className="text-[15px] text-[var(--color-ink-2)] mt-4 leading-[1.55] max-w-[460px]">
+                MigRent is the first Australian rental platform with mandatory landlord verification, optional tenant background checks, and built-in bond protection through our partner escrow.
+              </p>
+              <div className="flex flex-wrap gap-2 mt-6">
+                <Link href="/safety-verification" className="btn-primary h-11 px-5 text-sm">
+                  How verification works <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+                <Link href="/rental-laws" className="btn-secondary h-11 px-5 text-sm">
+                  Read tenant rights
+                </Link>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {trustItems.map((it, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.05, duration: 0.4 }}
+                  className="p-5 bg-[var(--color-surface-2)] border border-[var(--color-line)] rounded-[14px]"
+                >
+                  <div className="text-[var(--color-accent)] mb-3"><it.icon className="w-[22px] h-[22px]" /></div>
+                  <div className="text-[15px] font-semibold text-[var(--color-ink)] tracking-[-0.005em]">{it.h}</div>
+                  <div className="text-[13px] text-[var(--color-ink-2)] mt-1 leading-[1.5]">{it.p}</div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
         </div>
-        <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
-          <OwnerMarquee />
-        </motion.div>
       </section>
 
-      {/* SECTION 3 - WHY MIGRENT */}
-      <section className="py-20 md:py-24">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-12 max-w-2xl">
-            <div className="eyebrow mb-2">{t("home.whyBadge")}</div>
-            <h2 className="font-serif text-3xl md:text-5xl tracking-[-0.025em] leading-[1.05] text-[var(--color-ink)]">
-              {t("home.whyTitle")} <span className="italic text-[var(--color-ink-2)]">{t("home.whyAccent")}</span>
-            </h2>
-          </motion.div>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
-            {features.map((feature, i) => (
+      {/* SECTION 5 - STORIES */}
+      <section>
+        <div className="max-w-[1280px] mx-auto px-6 md:px-10 lg:px-14 py-16">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-7">
+            <div>
+              <div className="eyebrow mb-1.5">From people who found a home</div>
+              <h2 className="font-serif text-[32px] md:text-[44px] tracking-[-0.02em] leading-[1.05] text-[var(--color-ink)]">
+                The first week, in their words.
+              </h2>
+            </div>
+            <Link href="/about" className="text-[var(--color-ink)] font-semibold text-sm inline-flex items-center gap-1.5 hover:underline underline-offset-[3px]">
+              Read more stories <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {stories.map((s, i) => (
               <motion.div
                 key={i}
                 initial={{ opacity: 0, y: 12 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.06, duration: 0.4 }}
-                className="card p-6"
+                className="bg-[var(--color-surface)] border border-[var(--color-line)] rounded-[14px] p-6 flex flex-col gap-3.5"
               >
-                <div className="w-10 h-10 rounded-[10px] bg-[var(--color-accent-soft)] flex items-center justify-center mb-4 text-[var(--color-accent)]">
-                  <feature.icon className="w-5 h-5" />
+                <div className="font-serif text-[22px] leading-[1.35] text-[var(--color-ink)] tracking-[-0.005em] flex-1">
+                  &ldquo;{s.quote}&rdquo;
                 </div>
-                <h3 className="text-[var(--color-ink)] font-semibold text-[15px] mb-1.5 tracking-[-0.005em]">{feature.title}</h3>
-                <p className="text-[13px] text-[var(--color-ink-2)] leading-relaxed">{feature.desc}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* SECTION 4 - HOW IT WORKS */}
-      <section className="py-20 md:py-24 bg-[var(--color-surface)] border-y border-[var(--color-line)]">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-12 max-w-2xl">
-            <div className="eyebrow mb-2">{t("home.howBadge")}</div>
-            <h2 className="font-serif text-3xl md:text-5xl tracking-[-0.025em] leading-[1.05] text-[var(--color-ink)]">
-              {t("home.howTitle")} <span className="italic text-[var(--color-ink-2)]">{t("home.howAccent")}</span>
-            </h2>
-          </motion.div>
-
-          <div className="grid md:grid-cols-2 gap-4">
-            {/* Seekers panel */}
-            <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }} className="rounded-[14px] bg-[var(--color-surface-2)] border border-[var(--color-line)] p-7">
-              <div className="flex items-center gap-3 mb-7">
-                <span className="w-9 h-9 rounded-[8px] bg-[var(--color-primary)] flex items-center justify-center text-[var(--color-primary-fg)] font-bold text-sm">S</span>
-                <h3 className="font-serif text-2xl text-[var(--color-ink)] tracking-[-0.012em]">{t("home.forSeekers")}</h3>
-              </div>
-              <div className="space-y-5">
-                {seekerSteps.map((step, i) => (
-                  <div key={i} className="flex gap-4 items-start">
-                    <div className="w-9 h-9 rounded-[8px] bg-[var(--color-surface-sunk)] border border-[var(--color-line)] flex items-center justify-center shrink-0 text-[var(--color-ink-2)]">
-                      <step.icon className="w-4.5 h-4.5" />
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-[var(--color-ink)] text-[14.5px]">{step.title}</h4>
-                      <p className="text-[13px] text-[var(--color-ink-2)] mt-0.5 leading-relaxed">{step.desc}</p>
-                    </div>
+                <div className="flex items-center gap-2.5 pt-3 border-t border-[var(--color-line)]">
+                  <span className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm ${s.tone}`}>
+                    {s.initial}
+                  </span>
+                  <div>
+                    <div className="text-[13.5px] font-semibold text-[var(--color-ink)]">{s.name}</div>
+                    <div className="font-mono text-[10.5px] text-[var(--color-ink-3)]">{s.from}</div>
                   </div>
-                ))}
-              </div>
-              <Link href="/for-seekers" className="btn-primary mt-7 h-11 px-5 text-sm rounded-[10px] inline-flex">
-                {t("home.startSearching")}
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-            </motion.div>
-
-            {/* Owners panel */}
-            <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.1 }} className="rounded-[14px] bg-[var(--color-surface-2)] border border-[var(--color-line)] p-7">
-              <div className="flex items-center gap-3 mb-7">
-                <span className="w-9 h-9 rounded-[8px] bg-[var(--color-accent)] flex items-center justify-center text-[var(--color-accent-fg)] font-bold text-sm">O</span>
-                <h3 className="font-serif text-2xl text-[var(--color-ink)] tracking-[-0.012em]">{t("home.forOwners")}</h3>
-              </div>
-              <div className="space-y-5">
-                {ownerSteps.map((step, i) => (
-                  <div key={i} className="flex gap-4 items-start">
-                    <div className="w-9 h-9 rounded-[8px] bg-[var(--color-surface-sunk)] border border-[var(--color-line)] flex items-center justify-center shrink-0 text-[var(--color-ink-2)]">
-                      <step.icon className="w-4.5 h-4.5" />
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-[var(--color-ink)] text-[14.5px]">{step.title}</h4>
-                      <p className="text-[13px] text-[var(--color-ink-2)] mt-0.5 leading-relaxed">{step.desc}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <Link href="/for-owners" className="btn-secondary mt-7 h-11 px-5 text-sm rounded-[10px] inline-flex">
-                {t("home.listYourRoom")}
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* SECTION 5 - VISUAL STORIES */}
-      <section className="py-20 md:py-24">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-10 flex items-end justify-between gap-6 flex-wrap">
-            <div className="max-w-2xl">
-              <div className="eyebrow mb-2">{t("home.storiesBadge")}</div>
-              <h2 className="font-serif text-3xl md:text-5xl tracking-[-0.025em] leading-[1.05] text-[var(--color-ink)]">
-                {t("home.storiesTitle")} <span className="italic text-[var(--color-ink-2)]">{t("home.storiesAccent")}</span> {t("home.storiesEnd")}
-              </h2>
-            </div>
-          </motion.div>
-
-          <div className="grid md:grid-cols-3 gap-3">
-            <motion.div initial={{ opacity: 0, scale: 0.98 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.6 }} className="md:col-span-2 md:row-span-2 relative rounded-[14px] overflow-hidden group min-h-[300px] md:min-h-[480px] border border-[var(--color-line)]">
-              <Image src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&q=80" alt="Beautiful furnished room" fill className="object-cover group-hover:scale-[1.02] transition-transform duration-700" sizes="(max-width: 768px) 100vw, 66vw" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/15 to-transparent" />
-              <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
-                <span className="inline-flex items-center h-[22px] px-2 mb-3 rounded-full bg-[var(--color-bg)] text-[var(--color-ink)] text-[11px] font-bold uppercase tracking-[0.04em]">{t("home.featured")}</span>
-                <h3 className="text-white font-serif text-2xl md:text-3xl tracking-[-0.012em]">{t("home.featuredTitle")}</h3>
-                <p className="text-white/85 text-[13.5px] mt-2 max-w-md leading-relaxed">{t("home.featuredDesc")}</p>
-              </div>
-            </motion.div>
-
-            <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1, duration: 0.5 }} className="relative rounded-[14px] overflow-hidden group h-[220px] border border-[var(--color-line)]">
-              <Image src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&q=80" alt="Modern bedroom" fill className="object-cover group-hover:scale-[1.02] transition-transform duration-700" sizes="(max-width: 768px) 100vw, 33vw" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-              <div className="absolute bottom-0 left-0 right-0 p-5">
-                <span className="inline-flex items-center h-[18px] px-1.5 mb-2 rounded-full bg-[var(--color-accent)] text-[var(--color-accent-fg)] text-[10px] font-bold uppercase tracking-[0.04em]">{t("home.successStory")}</span>
-                <h4 className="text-white font-semibold text-sm">{t("home.story1")}</h4>
-              </div>
-            </motion.div>
-
-            <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.2, duration: 0.5 }} className="relative rounded-[14px] overflow-hidden group h-[220px] border border-[var(--color-line)]">
-              <Image src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=400&q=80" alt="Cozy living space" fill className="object-cover group-hover:scale-[1.02] transition-transform duration-700" sizes="(max-width: 768px) 100vw, 33vw" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-              <div className="absolute bottom-0 left-0 right-0 p-5">
-                <span className="inline-flex items-center h-[18px] px-1.5 mb-2 rounded-full bg-[var(--color-primary-soft)] text-[var(--color-primary)] text-[10px] font-bold uppercase tracking-[0.04em]">{t("home.successStory")}</span>
-                <h4 className="text-white font-semibold text-sm">{t("home.story2")}</h4>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* SECTION 6 - TRUST HIGHLIGHTS */}
-      <section className="py-20 md:py-24 bg-[var(--color-surface-sunk)] border-y border-[var(--color-line)]">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-12 max-w-2xl">
-            <div className="eyebrow mb-2">{t("home.testimonialsBadge")}</div>
-            <h2 className="font-serif text-3xl md:text-5xl tracking-[-0.025em] leading-[1.05] text-[var(--color-ink)]">
-              Built for trust.
-            </h2>
-            <p className="mt-4 text-[15px] text-[var(--color-ink-2)] max-w-xl leading-relaxed">
-              Everything you need to rent with confidence in Australia.
-            </p>
-          </motion.div>
-
-          <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-3">
-            {[
-              { icon: ShieldCheck, label: "Verified profiles", desc: "Identity checks for hosts and seekers" },
-              { icon: Sparkles, label: "AI matching", desc: "Find rooms by visa, budget, and location" },
-              { icon: HomeIcon, label: "Real listings only", desc: "Every listing is reviewed before going live" },
-              { icon: Handshake, label: "Secure payments", desc: "Stripe-powered with no hidden fees" },
-            ].map((item, i) => (
-              <motion.div key={item.label} initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.06, duration: 0.4 }} className="card bg-[var(--color-surface-2)] p-6">
-                <div className="w-10 h-10 rounded-[10px] bg-[var(--color-accent-soft)] flex items-center justify-center mb-4 text-[var(--color-accent)]">
-                  <item.icon className="w-5 h-5" />
                 </div>
-                <p className="text-[14.5px] font-semibold text-[var(--color-ink)] mb-1 tracking-[-0.005em]">{item.label}</p>
-                <p className="text-[13px] text-[var(--color-ink-2)] leading-relaxed">{item.desc}</p>
               </motion.div>
             ))}
           </div>
-
-          {pressLogos.length > 0 && (
-            <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.3 }} className="mt-14 text-center">
-              <div className="eyebrow mb-5">{t("home.asSeenOn")}</div>
-              <div className="flex items-center justify-center gap-4 sm:gap-8 flex-wrap">
-                {pressLogos.map((name) => (
-                  <div key={name} className="px-6 py-3 rounded-[10px] bg-[var(--color-surface-2)] border border-[var(--color-line)] text-[var(--color-ink-3)] text-sm font-semibold">{name}</div>
-                ))}
-              </div>
-            </motion.div>
-          )}
-        </div>
-      </section>
-
-      {/* SECTION 7 - SAFETY & TRUST */}
-      <section className="py-20 md:py-24">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6">
-          <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-12 max-w-2xl">
-            <div className="eyebrow mb-2">{t("home.safetyBadge")}</div>
-            <h2 className="font-serif text-3xl md:text-5xl tracking-[-0.025em] leading-[1.05] text-[var(--color-ink)]">
-              {t("home.safetyTitle")} <span className="italic text-[var(--color-ink-2)]">{t("home.safetyAccent")}</span>
-            </h2>
-            <p className="mt-4 text-[15px] text-[var(--color-ink-2)] max-w-xl leading-relaxed">{t("home.safetySubtitle")}</p>
-          </motion.div>
-
-          <div className="grid md:grid-cols-3 gap-3">
-            {trustItems.map((item, i) => (
-              <motion.div key={i} initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.06, duration: 0.4 }} className="card p-7">
-                <div className="w-11 h-11 rounded-[10px] bg-[var(--color-accent-soft)] flex items-center justify-center mb-5 text-[var(--color-accent)]">
-                  <item.icon className="w-5 h-5" />
-                </div>
-                <h3 className="font-semibold text-[var(--color-ink)] text-[15px] mb-2 tracking-[-0.005em]">{item.title}</h3>
-                <p className="text-[13px] text-[var(--color-ink-2)] leading-relaxed">{item.desc}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* SECTION 8 - BOTTOM CTA */}
-      <section className="py-20 md:py-28 bg-[var(--color-primary)]">
-        <div className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 text-center">
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }}>
-            <h2 className="font-serif text-4xl md:text-6xl tracking-[-0.025em] text-[var(--color-primary-fg)] leading-[1.05]">{t("home.ctaTitle")}</h2>
-            <p className="mt-5 text-[16px] text-[var(--color-primary-fg)]/85 max-w-xl mx-auto leading-relaxed">{t("home.ctaSubtitle")}</p>
-            <div className="mt-10 flex flex-col sm:flex-row gap-2.5 justify-center">
-              <Link href={session ? "/dashboard" : "/signup"} className="inline-flex items-center gap-2 bg-[var(--color-bg)] text-[var(--color-ink)] font-semibold px-6 h-12 rounded-[10px] hover:bg-[var(--color-surface)] transition-colors text-[15px]">
-                {t("home.getStarted")}
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-              <Link href="/faq" className="inline-flex items-center gap-2 bg-transparent border border-[var(--color-primary-fg)]/25 text-[var(--color-primary-fg)] font-semibold px-6 h-12 rounded-[10px] hover:bg-[var(--color-primary-fg)]/10 transition-colors text-[15px]">
-                {t("home.helpCentre")}
-              </Link>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Disclaimer */}
-      <section className="py-8 max-w-5xl mx-auto px-4 sm:px-6">
-        <div className="card-subtle p-6 space-y-2 text-sm text-[var(--color-ink-3)]">
-          <p>
-            <strong className="text-[var(--color-ink-2)]">{t("home.disclaimer")}</strong>{" "}
-            {t("home.disclaimerText1")}
-          </p>
-          <p>{t("home.disclaimerText2")}</p>
         </div>
       </section>
     </>

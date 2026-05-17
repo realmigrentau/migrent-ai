@@ -42,86 +42,78 @@ export default function Layout({ children }: { children: ReactNode }) {
 
       {/* Footer */}
       <footer className="border-t border-[var(--color-line)] bg-[var(--color-surface-sunk)]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-10">
+        <div className="max-w-[1280px] mx-auto px-6 md:px-10 lg:px-14 pt-12 pb-6">
+          <div className="grid grid-cols-2 md:grid-cols-[1.4fr_1fr_1fr_1fr_1fr] gap-8">
             {/* Brand column */}
             <div className="col-span-2 md:col-span-1">
-              <Link href="/" className="inline-flex items-center gap-2.5 group mb-5 text-[var(--color-ink)]">
+              <Link href="/" className="inline-flex items-center gap-2.5 mb-3 text-[var(--color-ink)]">
                 <Logo size={28} />
-                <span className="font-serif text-[22px] leading-none tracking-[-0.012em]">
+                <span className="font-serif text-[24px] leading-none tracking-[-0.012em]">
                   MigRent
                 </span>
-                <span className="eyebrow ml-0.5 mt-0.5">AU</span>
               </Link>
-              <p className="text-sm text-[var(--color-ink-2)] leading-relaxed mb-4 max-w-xs">
-                {t("footer.tagline")}
+              <p className="text-[13px] text-[var(--color-ink-2)] leading-[1.5] max-w-[280px]">
+                Made in Naarm / Melbourne. For everyone who&apos;s renting in Australia for the first time.
               </p>
-              <p className="text-xs text-[var(--color-ink-3)] font-mono">
-                ABN 22 669 566 941
-              </p>
+            </div>
+
+            {/* Renters */}
+            <div>
+              <h4 className="eyebrow mb-2.5">Renters</h4>
+              <ul className="space-y-1.5">
+                <li><Link href="/seeker/search" className="text-[13px] text-[var(--color-ink-2)] hover:text-[var(--color-ink)] transition-colors">Search</Link></li>
+                <li><Link href="/for-seekers" className="text-[13px] text-[var(--color-ink-2)] hover:text-[var(--color-ink)] transition-colors">How it works</Link></li>
+                <li><Link href="/guides" className="text-[13px] text-[var(--color-ink-2)] hover:text-[var(--color-ink)] transition-colors">Guides</Link></li>
+                <li><Link href="/rental-laws" className="text-[13px] text-[var(--color-ink-2)] hover:text-[var(--color-ink)] transition-colors">Tenant rights</Link></li>
+              </ul>
+            </div>
+
+            {/* Hosts */}
+            <div>
+              <h4 className="eyebrow mb-2.5">Hosts</h4>
+              <ul className="space-y-1.5">
+                <li><Link href="/for-owners" className="text-[13px] text-[var(--color-ink-2)] hover:text-[var(--color-ink)] transition-colors">List a room</Link></li>
+                <li><Link href="/safety-verification" className="text-[13px] text-[var(--color-ink-2)] hover:text-[var(--color-ink)] transition-colors">Verification</Link></li>
+                <li><Link href="/pricing" className="text-[13px] text-[var(--color-ink-2)] hover:text-[var(--color-ink)] transition-colors">Pricing</Link></li>
+                <li><Link href="/become-mentor" className="text-[13px] text-[var(--color-ink-2)] hover:text-[var(--color-ink)] transition-colors">Become a mentor</Link></li>
+              </ul>
             </div>
 
             {/* Company */}
             <div>
-              <h4 className="eyebrow mb-4">{t("footer.company")}</h4>
-              <ul className="space-y-3">
-                <li><Link href="/about" className="text-sm text-[var(--color-ink-2)] hover:text-[var(--color-ink)] transition-colors">{t("footer.about")}</Link></li>
-                <li><Link href="/careers" className="text-sm text-[var(--color-ink-2)] hover:text-[var(--color-ink)] transition-colors">{t("footer.careers")}</Link></li>
-                <li><Link href="/press" className="text-sm text-[var(--color-ink-2)] hover:text-[var(--color-ink)] transition-colors">{t("footer.press")}</Link></li>
-                <li><Link href="/for-owners" className="text-sm text-[var(--color-ink-2)] hover:text-[var(--color-ink)] transition-colors">{t("footer.forOwners")}</Link></li>
-                <li><Link href="/for-seekers" className="text-sm text-[var(--color-ink-2)] hover:text-[var(--color-ink)] transition-colors">{t("footer.forSeekers")}</Link></li>
+              <h4 className="eyebrow mb-2.5">Company</h4>
+              <ul className="space-y-1.5">
+                <li><Link href="/about" className="text-[13px] text-[var(--color-ink-2)] hover:text-[var(--color-ink)] transition-colors">About</Link></li>
+                <li><Link href="/press" className="text-[13px] text-[var(--color-ink-2)] hover:text-[var(--color-ink)] transition-colors">Press</Link></li>
+                <li><Link href="/careers" className="text-[13px] text-[var(--color-ink-2)] hover:text-[var(--color-ink)] transition-colors">Careers</Link></li>
+                <li><Link href="/contact" className="text-[13px] text-[var(--color-ink-2)] hover:text-[var(--color-ink)] transition-colors">Contact</Link></li>
               </ul>
             </div>
 
-            {/* Trust & Safety */}
+            {/* Legal */}
             <div>
-              <h4 className="eyebrow mb-4">{t("footer.trustSafety")}</h4>
-              <ul className="space-y-3">
-                <li><Link href="/safety-verification" className="text-sm text-[var(--color-ink-2)] hover:text-[var(--color-ink)] transition-colors">{t("footer.safetyVerification")}</Link></li>
-                <li><Link href="/rules-community-guidelines" className="text-sm text-[var(--color-ink-2)] hover:text-[var(--color-ink)] transition-colors">{t("footer.communityGuidelines")}</Link></li>
-                <li><Link href="/safety-reporting" className="text-sm text-[var(--color-ink-2)] hover:text-[var(--color-ink)] transition-colors">Safety &amp; Reporting</Link></li>
-                <li><Link href="/anti-discrimination" className="text-sm text-[var(--color-ink-2)] hover:text-[var(--color-ink)] transition-colors">Fair Housing</Link></li>
-                <li><Link href="/support-disputes" className="text-sm text-[var(--color-ink-2)] hover:text-[var(--color-ink)] transition-colors">Disputes</Link></li>
-              </ul>
-            </div>
-
-            {/* Support */}
-            <div>
-              <h4 className="eyebrow mb-4">{t("footer.support")}</h4>
-              <ul className="space-y-3">
-                <li><Link href="/faq" className="text-sm text-[var(--color-ink-2)] hover:text-[var(--color-ink)] transition-colors">{t("footer.faq")}</Link></li>
-                <li><Link href="/contact" className="text-sm text-[var(--color-ink-2)] hover:text-[var(--color-ink)] transition-colors">{t("footer.contact")}</Link></li>
-                <li><Link href="/pricing" className="text-sm text-[var(--color-ink-2)] hover:text-[var(--color-ink)] transition-colors">{t("footer.pricing")}</Link></li>
-                <li><Link href="/rental-laws" className="text-sm text-[var(--color-ink-2)] hover:text-[var(--color-ink)] transition-colors">Rental Laws</Link></li>
-                <li><Link href="/code-of-conduct" className="text-sm text-[var(--color-ink-2)] hover:text-[var(--color-ink)] transition-colors">STRA Code</Link></li>
+              <h4 className="eyebrow mb-2.5">Legal</h4>
+              <ul className="space-y-1.5">
+                <li><Link href="/terms-of-service" className="text-[13px] text-[var(--color-ink-2)] hover:text-[var(--color-ink)] transition-colors">Terms</Link></li>
+                <li><Link href="/privacy-policy" className="text-[13px] text-[var(--color-ink-2)] hover:text-[var(--color-ink)] transition-colors">Privacy</Link></li>
+                <li><Link href="/safety-reporting" className="text-[13px] text-[var(--color-ink-2)] hover:text-[var(--color-ink)] transition-colors">Bond protection</Link></li>
+                <li><Link href="/code-of-conduct" className="text-[13px] text-[var(--color-ink-2)] hover:text-[var(--color-ink)] transition-colors">Code of conduct</Link></li>
               </ul>
             </div>
           </div>
 
-          {/* Legal links */}
-          <div className="mt-12 pt-8 border-t border-[var(--color-line)] space-y-4">
-            <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-3 text-xs text-[var(--color-ink-3)]">
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-                <Link href="/terms-of-service" className="hover:text-[var(--color-ink)] transition-colors">{t("footer.termsOfService")}</Link>
-                <Link href="/privacy-policy" className="hover:text-[var(--color-ink)] transition-colors">{t("footer.privacyPolicy")}</Link>
-                <Link href="/disclaimer" className="hover:text-[var(--color-ink)] transition-colors">Disclaimer</Link>
-                <Link href="/no-agency" className="hover:text-[var(--color-ink)] transition-colors">No Agency</Link>
-                <Link href="/cookie-policy" className="hover:text-[var(--color-ink)] transition-colors">Cookies</Link>
-                <Link href="/abn-terms" className="hover:text-[var(--color-ink)] transition-colors">ABN Details</Link>
-                <Link href="/contact-legal" className="hover:text-[var(--color-ink)] transition-colors">Legal Contact</Link>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="font-mono text-[11px]">AUD $</span>
-                <span className="font-mono text-[11px]">English</span>
-              </div>
+          {/* Bottom bar */}
+          <div className="flex flex-col md:flex-row justify-between items-center gap-3 pt-5 mt-8 border-t border-[var(--color-line)]">
+            <div className="font-mono text-[11.5px] text-[var(--color-ink-3)] uppercase tracking-[0.02em]">
+              © {new Date().getFullYear()} MIGRENT PTY LTD · ABN 22 669 566 941
             </div>
-            <div className="flex flex-col items-center gap-2 text-center">
-              <p className="text-xs text-[var(--color-ink-3)] font-mono">
-                {t("footer.copyright", { year: new Date().getFullYear() })} ABN 22 669 566 941
-              </p>
-              <p className="text-xs text-[var(--color-ink-3)] max-w-lg leading-relaxed">
-                {t("footer.disclaimer")}
-              </p>
+            <div className="flex items-center gap-4 text-[11.5px] text-[var(--color-ink-3)]">
+              <span>Australia (English)</span>
+              <span>AUD $</span>
+              <span className="inline-flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-accent)]" />
+                All systems operational
+              </span>
             </div>
           </div>
         </div>
