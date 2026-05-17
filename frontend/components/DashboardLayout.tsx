@@ -102,49 +102,84 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     );
   }
 
-  // Navigation items
-  const getNavItems = (currentRole: UserRole): NavItem[] => {
-    const common: NavItem[] = [
-      { href: "/dashboard", label: "Dashboard", icon: <LayoutDashboard className="w-5 h-5" /> },
-    ];
+  // Navigation groups (Renting / Communicate / Account)
+  type NavGroup = { title: string; items: NavItem[] };
 
+  const getNavGroups = (currentRole: UserRole): NavGroup[] => {
     if (currentRole === "owner") {
       return [
-        ...common,
-        { href: "/dashboard/owner", label: "Owner Hub", icon: <Building2 className="w-5 h-5" /> },
-        { href: "/owner/listings/new", label: "Post Room", icon: <Plus className="w-5 h-5" /> },
-        { href: "/owner/listings", label: "Listings", icon: <ListOrdered className="w-5 h-5" /> },
-        { href: "/mentors", label: "Mentors", icon: <Users className="w-5 h-5" /> },
-        { href: "/suburb/kellyville", label: "Suburbs", icon: <Map className="w-5 h-5" /> },
-        { href: "/dashboard/owner-profile", label: "Profile", icon: <User className="w-5 h-5" /> },
-        { href: "/messages", label: "Messages", icon: <MessageCircle className="w-5 h-5" /> },
-        { href: "/help", label: "Help Centre", icon: <HelpCircle className="w-5 h-5" /> },
-        { href: "/account/settings", label: "Settings", icon: <Settings className="w-5 h-5" /> },
+        {
+          title: "Hosting",
+          items: [
+            { href: "/dashboard", label: "Overview", icon: <LayoutDashboard className="w-[18px] h-[18px]" /> },
+            { href: "/dashboard/owner", label: "Owner Hub", icon: <Building2 className="w-[18px] h-[18px]" /> },
+            { href: "/owner/listings", label: "Listings", icon: <ListOrdered className="w-[18px] h-[18px]" /> },
+            { href: "/owner/listings/new", label: "Post a room", icon: <Plus className="w-[18px] h-[18px]" /> },
+          ],
+        },
+        {
+          title: "Communicate",
+          items: [
+            { href: "/messages", label: "Messages", icon: <MessageCircle className="w-[18px] h-[18px]" /> },
+            { href: "/mentors", label: "Mentors", icon: <Users className="w-[18px] h-[18px]" /> },
+          ],
+        },
+        {
+          title: "Account",
+          items: [
+            { href: "/dashboard/owner-profile", label: "Profile", icon: <User className="w-[18px] h-[18px]" /> },
+            { href: "/help", label: "Help Centre", icon: <HelpCircle className="w-[18px] h-[18px]" /> },
+            { href: "/account/settings", label: "Settings", icon: <Settings className="w-[18px] h-[18px]" /> },
+          ],
+        },
       ];
     }
 
     if (currentRole === "seeker") {
       return [
-        ...common,
-        { href: "/dashboard/seeker", label: "Seeker Hub", icon: <Search className="w-5 h-5" /> },
-        { href: "/seeker/search", label: "Search", icon: <Search className="w-5 h-5" /> },
-        { href: "/seeker/wishlist", label: "Saved", icon: <Heart className="w-5 h-5" /> },
-        { href: "/mentors", label: "Mentors", icon: <Users className="w-5 h-5" /> },
-        { href: "/suburb/kellyville", label: "Suburbs", icon: <Map className="w-5 h-5" /> },
-        { href: "/dashboard/seeker-profile", label: "Profile", icon: <User className="w-5 h-5" /> },
-        { href: "/messages", label: "Messages", icon: <MessageCircle className="w-5 h-5" /> },
-        { href: "/help", label: "Help Centre", icon: <HelpCircle className="w-5 h-5" /> },
-        { href: "/account/settings", label: "Settings", icon: <Settings className="w-5 h-5" /> },
+        {
+          title: "Renting",
+          items: [
+            { href: "/dashboard", label: "Overview", icon: <LayoutDashboard className="w-[18px] h-[18px]" /> },
+            { href: "/seeker/search", label: "Search", icon: <Search className="w-[18px] h-[18px]" /> },
+            { href: "/seeker/wishlist", label: "Saved listings", icon: <Heart className="w-[18px] h-[18px]" /> },
+            { href: "/suburb/kellyville", label: "Suburbs", icon: <Map className="w-[18px] h-[18px]" /> },
+          ],
+        },
+        {
+          title: "Communicate",
+          items: [
+            { href: "/messages", label: "Messages", icon: <MessageCircle className="w-[18px] h-[18px]" /> },
+            { href: "/mentors", label: "Mentors", icon: <Users className="w-[18px] h-[18px]" /> },
+          ],
+        },
+        {
+          title: "Account",
+          items: [
+            { href: "/dashboard/seeker-profile", label: "Profile", icon: <User className="w-[18px] h-[18px]" /> },
+            { href: "/help", label: "Help Centre", icon: <HelpCircle className="w-[18px] h-[18px]" /> },
+            { href: "/account/settings", label: "Settings", icon: <Settings className="w-[18px] h-[18px]" /> },
+          ],
+        },
       ];
     }
 
     return [
-      ...common,
-      { href: "/messages", label: "Messages", icon: <MessageCircle className="w-5 h-5" /> },
-      { href: "/help", label: "Help Centre", icon: <HelpCircle className="w-5 h-5" /> },
-      { href: "/account/settings", label: "Settings", icon: <Settings className="w-5 h-5" /> },
+      {
+        title: "Account",
+        items: [
+          { href: "/dashboard", label: "Overview", icon: <LayoutDashboard className="w-[18px] h-[18px]" /> },
+          { href: "/messages", label: "Messages", icon: <MessageCircle className="w-[18px] h-[18px]" /> },
+          { href: "/help", label: "Help Centre", icon: <HelpCircle className="w-[18px] h-[18px]" /> },
+          { href: "/account/settings", label: "Settings", icon: <Settings className="w-[18px] h-[18px]" /> },
+        ],
+      },
     ];
   };
+
+  // Flattened for legacy code paths if needed
+  const getNavItems = (currentRole: UserRole): NavItem[] =>
+    getNavGroups(currentRole).flatMap((g) => g.items);
 
   // Mobile bottom nav items (5 max)
   const getMobileNav = (currentRole: UserRole): NavItem[] => {
@@ -167,9 +202,12 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     ];
   };
 
+  const navGroups = getNavGroups(role);
   const navItems = getNavItems(role);
   const mobileNavItems = getMobileNav(role);
   const currentPath = router.pathname;
+
+  void navItems; // keep the helper exported for any future consumers
 
   return (
     <div className="min-h-screen pb-20 lg:pb-0">
@@ -240,35 +278,44 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
               </div>
             )}
 
-            {/* Navigation */}
-            <nav className="space-y-0.5">
-              {navItems.map((item) => {
-                const isActive =
-                  currentPath === item.href ||
-                  (item.href !== "/dashboard" && currentPath.startsWith(item.href));
-                return (
-                  <Link key={item.href} href={item.href}>
-                    <motion.div
-                      whileHover={{ x: 2 }}
-                      className={`flex items-center gap-3 rounded-[8px] text-[13.5px] transition-colors cursor-pointer ${
-                        sidebarCollapsed
-                          ? "justify-center px-2 py-2.5"
-                          : "px-3 py-2"
-                      } ${
-                        isActive
-                          ? "bg-[var(--color-surface-sunk)] text-[var(--color-ink)] font-semibold"
-                          : "text-[var(--color-ink-2)] font-medium hover:bg-[var(--color-surface-sunk)] hover:text-[var(--color-ink)]"
-                      }`}
-                      title={sidebarCollapsed ? item.label : undefined}
-                    >
-                      <span className={isActive ? "text-[var(--color-ink)]" : "text-[var(--color-ink-3)]"}>
-                        {item.icon}
-                      </span>
-                      {!sidebarCollapsed && item.label}
-                    </motion.div>
-                  </Link>
-                );
-              })}
+            {/* Navigation - grouped */}
+            <nav className="flex flex-col gap-4">
+              {navGroups.map((group) => (
+                <div key={group.title}>
+                  {!sidebarCollapsed && (
+                    <div className="eyebrow px-3 mb-1.5">{group.title}</div>
+                  )}
+                  <div className="flex flex-col gap-0.5">
+                    {group.items.map((item) => {
+                      const isActive =
+                        currentPath === item.href ||
+                        (item.href !== "/dashboard" && currentPath.startsWith(item.href));
+                      return (
+                        <Link key={item.href} href={item.href}>
+                          <motion.div
+                            whileHover={{ x: 1 }}
+                            className={`flex items-center gap-2.5 rounded-[8px] text-[13.5px] transition-colors cursor-pointer ${
+                              sidebarCollapsed
+                                ? "justify-center px-2 py-2"
+                                : "px-3 py-[7px]"
+                            } ${
+                              isActive
+                                ? "bg-[var(--color-surface-sunk)] text-[var(--color-ink)] font-semibold"
+                                : "text-[var(--color-ink-2)] font-medium hover:bg-[var(--color-surface-sunk)] hover:text-[var(--color-ink)]"
+                            }`}
+                            title={sidebarCollapsed ? item.label : undefined}
+                          >
+                            <span className={isActive ? "text-[var(--color-ink)]" : "text-[var(--color-ink-3)]"}>
+                              {item.icon}
+                            </span>
+                            {!sidebarCollapsed && item.label}
+                          </motion.div>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
             </nav>
 
             {/* Notification bell */}

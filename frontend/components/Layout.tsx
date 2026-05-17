@@ -32,8 +32,8 @@ export default function Layout({ children }: { children: ReactNode }) {
       {/* Sticky navbar */}
       <MegaNavbar />
 
-      {/* Spacer for floating navbar */}
-      <div className="h-20" />
+      {/* Spacer for sticky navbar */}
+      <div className="h-[60px]" />
 
       {/* Page content */}
       <main className={`flex-1 ${isFullWidth ? "w-full" : "max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8"}`}>

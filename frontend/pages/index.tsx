@@ -2,6 +2,7 @@ import Link from "next/link";
 import Head from "next/head";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import {
   ShieldCheck,
   Check,
@@ -16,6 +17,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 import { searchListings } from "../lib/api";
+import OwnerMarquee from "../components/OwnerMarquee";
 
 type Listing = {
   id: string;
@@ -102,6 +104,7 @@ function HomeListingCard({ listing }: { listing: Listing }) {
 
 export default function Home() {
   const { session } = useAuth();
+  const { t } = useTranslation();
   const [budget, setBudget] = useState(350);
   const [city, setCity] = useState("Melbourne, VIC");
   const [listings, setListings] = useState<Listing[]>([]);
@@ -174,11 +177,11 @@ export default function Home() {
           <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-10 lg:gap-14 items-end">
             <div>
               <h1 className="font-serif text-[44px] sm:text-[60px] md:text-[72px] lg:text-[84px] leading-[0.98] tracking-[-0.025em] text-[var(--color-ink)] text-balance">
-                A real home in Australia,<br />
-                <span className="italic text-[var(--color-ink-2)]">found the right way.</span>
+                {t("home.headline1")},<br />
+                <span className="italic text-[var(--color-ink-2)]">{t("home.headline2")}.</span>
               </h1>
               <p className="text-[17px] text-[var(--color-ink-2)] mt-5 max-w-[540px] leading-[1.5]">
-                From a $195/wk share in Footscray to a $900/wk apartment in Surry Hills. Every host ID-checked, every listing bond-protected. No rental history needed.
+                {t("home.subtitle")}
               </p>
             </div>
 
@@ -240,6 +243,20 @@ export default function Home() {
         </div>
       </section>
 
+      {/* SECTION 1B - OWNER MARQUEE */}
+      <section className="py-12 bg-[var(--color-surface)] border-b border-[var(--color-line)]">
+        <div className="max-w-[1280px] mx-auto px-6 md:px-10 lg:px-14 mb-6">
+          <div className="eyebrow mb-2">{t("home.marqueeAccent")}</div>
+          <h2 className="font-serif text-2xl md:text-3xl tracking-[-0.02em] text-[var(--color-ink)]">
+            {t("home.marqueeTitle")}
+          </h2>
+          <p className="mt-1 text-[14px] text-[var(--color-ink-2)] max-w-[540px]">
+            {t("home.marqueeSubtitle")}
+          </p>
+        </div>
+        <OwnerMarquee />
+      </section>
+
       {/* SECTION 2 - STATS STRIP */}
       <section className="bg-[var(--color-surface)] border-b border-[var(--color-line)]">
         <div className="max-w-[1280px] mx-auto grid grid-cols-2 md:grid-cols-4">
@@ -264,10 +281,10 @@ export default function Home() {
             <div>
               <div className="eyebrow mb-1.5">Browse</div>
               <h2 className="font-serif text-[32px] md:text-[44px] tracking-[-0.02em] leading-[1.05] text-[var(--color-ink)]">
-                Cheap and good. Premium and good.
+                {t("home.whyTitle")} <span className="italic text-[var(--color-ink-2)]">{t("home.whyAccent")}</span>
               </h2>
               <p className="text-[15px] text-[var(--color-ink-2)] mt-2 max-w-[540px]">
-                We don&apos;t sort by what makes us money. We sort by what fits.
+                Sorted by what fits, not by what makes us money.
               </p>
             </div>
             <Link href="/seeker/search" className="text-[var(--color-ink)] font-semibold text-sm inline-flex items-center gap-1.5 hover:underline underline-offset-[3px]">
