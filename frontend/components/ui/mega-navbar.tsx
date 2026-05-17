@@ -5,7 +5,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "../../hooks/useTheme";
 import { useAuth } from "../../hooks/useAuth";
-import { useLanguage } from "../../hooks/useLanguage";
 import { navItems, type NavLinkDropdown } from "../../lib/navData";
 import { Logo } from "./Logo";
 
@@ -14,17 +13,14 @@ export default function MegaNavbar() {
   const { t } = useTranslation();
   const { theme, toggle, mounted } = useTheme();
   const { session } = useAuth();
-  const { currentLanguage, changeLanguage, languages } = useLanguage();
 
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [mobileExpanded, setMobileExpanded] = useState<string | null>(null);
-  const [langOpen, setLangOpen] = useState(false);
 
   const accountRef = useRef<HTMLDivElement>(null);
-  const langRef = useRef<HTMLDivElement>(null);
   const navRef = useRef<HTMLUListElement>(null);
   const hoverTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -43,9 +39,6 @@ export default function MegaNavbar() {
       if (accountRef.current && !accountRef.current.contains(e.target as Node)) {
         setAccountOpen(false);
       }
-      if (langRef.current && !langRef.current.contains(e.target as Node)) {
-        setLangOpen(false);
-      }
       if (navRef.current && !navRef.current.contains(e.target as Node)) {
         setOpenDropdown(null);
       }
@@ -60,7 +53,6 @@ export default function MegaNavbar() {
       if (e.key === "Escape") {
         setOpenDropdown(null);
         setAccountOpen(false);
-        setLangOpen(false);
       }
     };
     document.addEventListener("keydown", handleKey);
@@ -78,7 +70,6 @@ export default function MegaNavbar() {
     setMobileOpen(false);
     setOpenDropdown(null);
     setMobileExpanded(null);
-    setLangOpen(false);
   }, [router.pathname]);
 
   // Desktop hover handlers with delay to prevent flicker
@@ -246,64 +237,6 @@ export default function MegaNavbar() {
               </li>
             );
           })}
-
-          {/* Language selector */}
-          <li>
-            <div ref={langRef} className="relative">
-              <button
-                onClick={() => setLangOpen(!langOpen)}
-                className="px-3 py-2 rounded-[6px] text-[13.5px] font-medium bg-transparent border-0 outline-none appearance-none text-[var(--color-ink-2)] hover:text-[var(--color-ink)] hover:bg-[var(--color-surface-sunk)] transition-colors duration-150 inline-flex items-center gap-1.5"
-              >
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
-                </svg>
-                {currentLanguage.flag} {currentLanguage.label}
-                <svg
-                  className={`w-3 h-3 transition-transform ${langOpen ? "rotate-180" : ""}`}
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2.5}
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
-              <AnimatePresence>
-                {langOpen && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 8, scale: 0.95 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: 8, scale: 0.95 }}
-                    transition={{ duration: 0.15 }}
-                    className="absolute right-0 mt-2 w-48 rounded-[10px] bg-[var(--color-surface-2)] border border-[var(--color-line)] shadow-[var(--shadow-pop)] overflow-hidden z-50"
-                  >
-                    {languages.map((lang) => (
-                      <button
-                        key={lang.code}
-                        onClick={() => {
-                          changeLanguage(lang.code);
-                          setLangOpen(false);
-                        }}
-                        className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-colors ${
-                          lang.code === currentLanguage.code
-                            ? "bg-[var(--color-surface-sunk)] text-[var(--color-ink)] font-semibold"
-                            : "text-[var(--color-ink-2)] hover:bg-[var(--color-surface-sunk)]"
-                        }`}
-                      >
-                        <span className="text-base">{lang.flag}</span>
-                        {lang.label}
-                        {lang.code === currentLanguage.code && (
-                          <svg className="w-4 h-4 ml-auto text-[var(--color-accent)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                          </svg>
-                        )}
-                      </button>
-                    ))}
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-          </li>
 
           {/* Theme toggle */}
           {mounted && (
@@ -563,66 +496,6 @@ export default function MegaNavbar() {
                   </div>
                 );
               })}
-
-              {/* Language selector in mobile */}
-              <div className="border-t border-[var(--color-line)] pt-2 mt-2">
-                <button
-                  onClick={() => setMobileExpanded(mobileExpanded === "language" ? null : "language")}
-                  className="w-full flex items-center justify-between px-3 py-2.5 rounded-[8px] text-sm font-medium text-[var(--color-ink-2)] hover:bg-[var(--color-surface-sunk)] transition-colors"
-                >
-                  <span className="flex items-center gap-2">
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
-                    </svg>
-                    {currentLanguage.flag} {currentLanguage.label}
-                  </span>
-                  <svg
-                    className={`w-4 h-4 transition-transform duration-200 ${mobileExpanded === "language" ? "rotate-180" : ""}`}
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
-                <AnimatePresence>
-                  {mobileExpanded === "language" && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.2 }}
-                      className="overflow-hidden"
-                    >
-                      <div className="pl-3 pb-2 space-y-0.5">
-                        {languages.map((lang) => (
-                          <button
-                            key={lang.code}
-                            onClick={() => {
-                              changeLanguage(lang.code);
-                              setMobileExpanded(null);
-                            }}
-                            className={`w-full flex items-center gap-3 px-3 py-2 rounded-[8px] text-sm transition-colors ${
-                              lang.code === currentLanguage.code
-                                ? "text-[var(--color-ink)] font-semibold bg-[var(--color-surface-sunk)]"
-                                : "text-[var(--color-ink-2)] hover:bg-[var(--color-surface-sunk)]"
-                            }`}
-                          >
-                            <span className="text-base">{lang.flag}</span>
-                            {lang.label}
-                            {lang.code === currentLanguage.code && (
-                              <svg className="w-4 h-4 ml-auto text-[var(--color-accent)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                              </svg>
-                            )}
-                          </button>
-                        ))}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
 
               {/* Account section */}
               {session ? (

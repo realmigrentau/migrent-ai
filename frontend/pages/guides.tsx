@@ -157,18 +157,16 @@ export default function Guides() {
             transition={{ duration: 0.8 }}
             className="relative z-10 max-w-3xl mx-auto"
           >
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 dark:bg-blue-500/10 border border-blue-100 dark:border-blue-500/20 text-xs font-medium text-blue-600 dark:text-blue-400 mb-6">
-              <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-              {t("guides.heroBadge")}
+            <div className="inline-flex items-center gap-2 mb-6">
+              <span className="w-2 h-2 rounded-full bg-[var(--color-accent)] animate-pulse" />
+              <span className="eyebrow">{t("guides.heroBadge")}</span>
             </div>
 
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight leading-tight">
-              <span className="bg-gradient-to-r from-[var(--color-primary)] via-teal-500 to-green-500 bg-clip-text text-transparent">
-                Guides & How-Tos
-              </span>
+            <h1 className="font-serif text-[44px] sm:text-[60px] md:text-[80px] leading-[0.98] tracking-[-0.025em] text-[var(--color-ink)]">
+              Guides <span className="italic text-[var(--color-ink-2)]">& How-Tos</span>
             </h1>
 
-            <p className="mt-6 text-lg md:text-xl text-slate-500 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
+            <p className="mt-6 text-lg md:text-xl text-[var(--color-ink-2)] max-w-2xl mx-auto leading-relaxed">
               {t("guides.heroSubtitle")}
             </p>
 
@@ -332,7 +330,7 @@ export default function Guides() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="rounded-2xl bg-gradient-to-r from-[var(--color-primary)] via-teal-500 to-green-500 p-[1px]"
+            className="rounded-2xl bg-[var(--color-line-2)] p-[1px]"
           >
             <div className="rounded-2xl bg-white dark:bg-slate-900 p-8 md:p-10 flex flex-col md:flex-row items-center gap-6">
               <div className="w-14 h-14 rounded-2xl bg-blue-50 dark:bg-blue-500/10 flex items-center justify-center shrink-0">

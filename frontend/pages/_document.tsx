@@ -26,6 +26,10 @@ export default function Document() {
                   if (t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
                     document.documentElement.classList.add('dark');
                   }
+                  var p = localStorage.getItem('migrent_palette');
+                  if (p && p !== 'sky' && ['sand','cloud','mint','blush','paper'].indexOf(p) !== -1) {
+                    document.documentElement.setAttribute('data-palette', p);
+                  }
                 } catch(e) {}
               })();
             `,

@@ -10,18 +10,18 @@
    ══════════════════════════════════════════════════════════════ */
 
 @theme {
-  /* ── Primary: deep midnight navy ── */
-  --color-primary-50: #eef2f8;
-  --color-primary-100: #dde4ee;
-  --color-primary-200: #b4c1d8;
-  --color-primary-400: #4a6488;
-  --color-primary-500: #1a3454;
-  --color-primary-600: #0e2237;
-  --color-primary-700: #081626;
-  --color-primary-900: #050d18;
+  /* ── Primary: deep blue (Sky palette default) ── */
+  --color-primary-50: #eaf0f8;
+  --color-primary-100: #d4dfee;
+  --color-primary-200: #b6c4d8;
+  --color-primary-400: #4a6e96;
+  --color-primary-500: #265d96;
+  --color-primary-600: #1c4a7a;
+  --color-primary-700: #143761;
+  --color-primary-900: #0a1d35;
   --color-primary: var(--color-primary-600);
-  --color-primary-soft: #e2e7ee;
-  --color-primary-fg: #faf6e8;
+  --color-primary-soft: #d4dfee;
+  --color-primary-fg: #f2f6fb;
 
   /* ── Accent: eucalyptus (trust, verified, success) ── */
   --color-accent-50: #f1f5f2;
@@ -59,23 +59,23 @@
   --color-warn-500: #b86b21;
   --color-warn-600: #9a5818;
 
-  /* ── Ink + surfaces (light) ── */
-  --color-ink: #14181c;          /* primary text */
-  --color-ink-2: #44494f;        /* body */
-  --color-ink-muted: #6f7480;    /* muted */
-  --color-ink-3: #6f7480;
-  --color-ink-4: #9aa0a8;        /* placeholder */
+  /* ── Ink + surfaces (light - Sky palette default) ── */
+  --color-ink: #0f1d2e;          /* primary text */
+  --color-ink-2: #3a4658;        /* body */
+  --color-ink-muted: #6a7585;    /* muted */
+  --color-ink-3: #6a7585;
+  --color-ink-4: #95a0b1;        /* placeholder */
 
-  --color-bg: #f5f1e8;           /* warm sand canvas */
-  --color-surface: #fbf8f0;      /* paper */
+  --color-bg: #e6edf6;           /* light blue canvas */
+  --color-surface: #f2f6fb;      /* paper */
   --color-surface-2: #ffffff;    /* elevated */
-  --color-surface-muted: #efeadd;
-  --color-surface-warm: #f5f1e8;
-  --color-surface-sunk: #efeadd;
+  --color-surface-muted: #dde6f2;
+  --color-surface-warm: #e6edf6;
+  --color-surface-sunk: #dde6f2;
 
-  --color-line: #e7e0cf;         /* warm hairline */
-  --color-line-2: #d6cdb6;       /* stronger divider */
-  --color-hairline: #e7e0cf;     /* legacy alias */
+  --color-line: #d3deeb;         /* light blue hairline */
+  --color-line-2: #b6c4d8;       /* stronger divider */
+  --color-hairline: #d3deeb;     /* legacy alias */
 
   /* ── Status (verified/info/danger) ── */
   --color-danger-50: #f7e6e3;
@@ -117,8 +117,125 @@
 }
 
 /* ══════════════════════════════════════════════════════════════
+   LIGHT PALETTE OVERLAYS
+   Apply via [data-palette="sand|cloud|mint|sky|blush|paper"] on <html>.
+   The default (no attribute) is Sky.
+   These only override the surface/ink/primary tokens; the rest stays.
+   ══════════════════════════════════════════════════════════════ */
+
+html[data-palette="sand"] {
+  --color-bg: #f5f1e8;
+  --color-surface: #fbf8f0;
+  --color-surface-2: #ffffff;
+  --color-surface-muted: #efeadd;
+  --color-surface-warm: #f5f1e8;
+  --color-surface-sunk: #efeadd;
+  --color-ink: #14181c;
+  --color-ink-2: #44494f;
+  --color-ink-3: #6f7480;
+  --color-ink-4: #9aa0a8;
+  --color-line: #e7e0cf;
+  --color-line-2: #d6cdb6;
+  --color-hairline: #e7e0cf;
+  --color-primary: #0e2237;
+  --color-primary-500: #1a3454;
+  --color-primary-600: #0e2237;
+  --color-primary-700: #081626;
+  --color-primary-fg: #faf6e8;
+  --color-primary-soft: #e2e7ee;
+}
+
+html[data-palette="cloud"] {
+  --color-bg: #eff2f6;
+  --color-surface: #f7f9fc;
+  --color-surface-2: #ffffff;
+  --color-surface-muted: #e6eaf0;
+  --color-surface-warm: #eff2f6;
+  --color-surface-sunk: #e6eaf0;
+  --color-ink: #0f172a;
+  --color-ink-2: #3d4759;
+  --color-ink-3: #6a7383;
+  --color-ink-4: #95a0b1;
+  --color-line: #dfe4ec;
+  --color-line-2: #c8d0db;
+  --color-hairline: #dfe4ec;
+  --color-primary: #1e3a5f;
+  --color-primary-500: #2a4d78;
+  --color-primary-600: #1e3a5f;
+  --color-primary-700: #142a47;
+  --color-primary-fg: #f4f7fb;
+  --color-primary-soft: #dce4ef;
+}
+
+html[data-palette="mint"] {
+  --color-bg: #e8f0ea;
+  --color-surface: #f3f8f4;
+  --color-surface-2: #ffffff;
+  --color-surface-muted: #dde7df;
+  --color-surface-warm: #e8f0ea;
+  --color-surface-sunk: #dde7df;
+  --color-ink: #142019;
+  --color-ink-2: #3b4a40;
+  --color-ink-3: #6a786f;
+  --color-ink-4: #95a39a;
+  --color-line: #d4dfd6;
+  --color-line-2: #b9c8bd;
+  --color-hairline: #d4dfd6;
+  --color-primary: #1f5538;
+  --color-primary-500: #2a6b48;
+  --color-primary-600: #1f5538;
+  --color-primary-700: #154028;
+  --color-primary-fg: #f3f8f4;
+  --color-primary-soft: #d6e4da;
+}
+
+html[data-palette="blush"] {
+  --color-bg: #f4e7e3;
+  --color-surface: #faf1ee;
+  --color-surface-2: #ffffff;
+  --color-surface-muted: #ecdcd6;
+  --color-surface-warm: #f4e7e3;
+  --color-surface-sunk: #ecdcd6;
+  --color-ink: #2a1818;
+  --color-ink-2: #54393b;
+  --color-ink-3: #836666;
+  --color-ink-4: #ab9292;
+  --color-line: #e6d0c9;
+  --color-line-2: #d2b4ab;
+  --color-hairline: #e6d0c9;
+  --color-primary: #6b2c3a;
+  --color-primary-500: #8a3a4c;
+  --color-primary-600: #6b2c3a;
+  --color-primary-700: #51202b;
+  --color-primary-fg: #faf1ee;
+  --color-primary-soft: #ead2cf;
+}
+
+html[data-palette="paper"] {
+  --color-bg: #f4f4f2;
+  --color-surface: #fafaf9;
+  --color-surface-2: #ffffff;
+  --color-surface-muted: #e9e9e6;
+  --color-surface-warm: #f4f4f2;
+  --color-surface-sunk: #e9e9e6;
+  --color-ink: #18181b;
+  --color-ink-2: #3f3f46;
+  --color-ink-3: #71717a;
+  --color-ink-4: #9ca3af;
+  --color-line: #e3e3e0;
+  --color-line-2: #c8c8c4;
+  --color-hairline: #e3e3e0;
+  --color-primary: #18181b;
+  --color-primary-500: #2a2a2e;
+  --color-primary-600: #18181b;
+  --color-primary-700: #0a0a0c;
+  --color-primary-fg: #fafaf9;
+  --color-primary-soft: #e3e3e0;
+}
+
+/* ══════════════════════════════════════════════════════════════
    DARK THEME OVERRIDES
-   Activated via .dark on <html>.
+   Activated via .dark on <html>. Overrides any palette.
    ══════════════════════════════════════════════════════════════ */
 
 .dark {
