@@ -120,7 +120,7 @@ export default function AdminDataTable<T extends Record<string, any>>({
                   onClick={() => col.sortable !== false && handleSort(col.key)}
                   className={`px-3 py-3 font-semibold text-slate-600 dark:text-slate-300 ${
                     col.sortable !== false
-                      ? "cursor-pointer hover:text-rose-500 select-none"
+                      ? "cursor-pointer hover:text-[var(--color-primary)] select-none"
                       : ""
                   }`}
                 >

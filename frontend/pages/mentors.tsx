@@ -76,7 +76,7 @@ export default function MentorsPage() {
           animate={{ opacity: 1, y: 0 }}
           className="text-center space-y-4"
         >
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500 to-pink-500 flex items-center justify-center mx-auto">
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center mx-auto">
             <Users className="w-8 h-8 text-white" />
           </div>
           <h1 className="text-3xl font-bold text-slate-900 dark:text-white">
@@ -90,7 +90,7 @@ export default function MentorsPage() {
             <motion.span
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
-              className="inline-flex items-center gap-2 bg-rose-600 hover:bg-rose-700 text-white font-semibold px-5 py-2.5 rounded-xl text-sm transition-colors cursor-pointer mt-2"
+              className="inline-flex items-center gap-2 bg-[var(--color-primary)] hover:bg-[var(--color-primary-500)] text-white font-semibold px-5 py-2.5 rounded-xl text-sm transition-colors cursor-pointer mt-2"
             >
               <Heart className="w-4 h-4" />
               Become a Mentor
@@ -108,13 +108,13 @@ export default function MentorsPage() {
                 value={suburb}
                 onChange={(e) => setSuburb(e.target.value)}
                 placeholder="Search by suburb (e.g. Kellyville)"
-                className="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
+                className="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-[var(--color-ink)]/30 focus:border-transparent outline-none"
               />
             </div>
             <select
               value={language}
               onChange={(e) => setLanguage(e.target.value)}
-              className="px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
+              className="px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-[var(--color-ink)]/30 focus:border-transparent outline-none"
             >
               <option value="">All Languages</option>
               {popularLanguages.map((lang) => (
@@ -128,7 +128,7 @@ export default function MentorsPage() {
               type="submit"
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
-              className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-6 py-2.5 rounded-xl text-sm transition-colors flex items-center gap-2 justify-center"
+              className="bg-[var(--color-primary)] hover:bg-[var(--color-primary-500)] text-white font-semibold px-6 py-2.5 rounded-xl text-sm transition-colors flex items-center gap-2 justify-center"
             >
               <Search className="w-4 h-4" />
               Search
@@ -146,7 +146,7 @@ export default function MentorsPage() {
               onClick={() => { setSuburb(s); setSearchSuburb(s); }}
               className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
                 searchSuburb === s
-                  ? "bg-indigo-600 text-white"
+                  ? "bg-[var(--color-primary)] text-white"
                   : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"
               }`}
             >
@@ -158,7 +158,7 @@ export default function MentorsPage() {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => { setSuburb(""); setSearchSuburb(""); setLanguage(""); }}
-              className="px-3 py-1.5 rounded-full text-xs font-medium bg-rose-100 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400"
+              className="px-3 py-1.5 rounded-full text-xs font-medium bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 text-[var(--color-primary)] dark:text-[var(--color-primary)]"
             >
               Clear filters
             </motion.button>
@@ -216,7 +216,7 @@ export default function MentorsPage() {
             <Link href="/become-mentor">
               <motion.span
                 whileHover={{ scale: 1.03 }}
-                className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-5 py-2.5 rounded-xl text-sm transition-colors cursor-pointer"
+                className="inline-flex items-center gap-2 bg-[var(--color-primary)] hover:bg-[var(--color-primary-500)] text-white font-semibold px-5 py-2.5 rounded-xl text-sm transition-colors cursor-pointer"
               >
                 Become a Mentor
                 <ChevronRight className="w-4 h-4" />
@@ -228,7 +228,7 @@ export default function MentorsPage() {
         {/* How it works */}
         <div className="card p-6">
           <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-indigo-500" />
+            <Sparkles className="w-5 h-5 text-[var(--color-primary)]" />
             How It Works
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -238,7 +238,7 @@ export default function MentorsPage() {
               { step: "3", title: "Settle In Faster", desc: "Get local tips, suburb walks, and community connections" },
             ].map((item) => (
               <div key={item.step} className="text-center space-y-2">
-                <div className="w-10 h-10 rounded-full bg-indigo-100 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mx-auto font-bold text-sm">
+                <div className="w-10 h-10 rounded-full bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/20 text-[var(--color-primary)] dark:text-[var(--color-primary)] flex items-center justify-center mx-auto font-bold text-sm">
                   {item.step}
                 </div>
                 <h3 className="font-semibold text-sm text-slate-900 dark:text-white">{item.title}</h3>

@@ -57,7 +57,7 @@ export default function TicketPage() {
         <h1 className="text-xl font-bold text-slate-900 dark:text-white mb-2">
           {error || "Ticket not found"}
         </h1>
-        <Link href="/support/tickets" className="text-rose-500 hover:text-rose-600 font-medium text-sm">
+        <Link href="/support/tickets" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] font-medium text-sm">
           Back to tickets
         </Link>
       </div>
@@ -73,7 +73,7 @@ export default function TicketPage() {
       <div className="max-w-3xl mx-auto">
         {/* Breadcrumb */}
         <nav className="flex items-center gap-2 text-sm text-slate-400 mb-6">
-          <Link href="/support/tickets" className="hover:text-rose-500 transition-colors">My Tickets</Link>
+          <Link href="/support/tickets" className="hover:text-[var(--color-primary)] transition-colors">My Tickets</Link>
           <span>/</span>
           <span className="text-slate-600 dark:text-slate-300 font-mono">{ticket.id.slice(0, 8)}</span>
         </nav>

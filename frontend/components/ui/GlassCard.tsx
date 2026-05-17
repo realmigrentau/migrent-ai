@@ -13,11 +13,11 @@ interface GlassCardProps {
 
 const gradientBorders: Record<string, string> = {
   none: "",
-  rose: "border-rose-200/50 dark:border-rose-500/20",
-  indigo: "border-indigo-200/50 dark:border-indigo-500/20",
-  emerald: "border-emerald-200/50 dark:border-emerald-500/20",
+  rose: "border-[var(--color-primary-soft)]/50 dark:border-[var(--color-primary-soft)]",
+  indigo: "border-[var(--color-primary-soft)]/50 dark:border-[var(--color-primary-soft)]",
+  emerald: "border-[var(--color-accent-soft)]/50 dark:border-[var(--color-accent-soft)]",
   amber: "border-amber-200/50 dark:border-amber-500/20",
-  "pink-indigo": "border-pink-200/50 dark:border-indigo-500/20",
+  "pink-indigo": "border-[var(--color-primary-soft)]/50 dark:border-[var(--color-primary-soft)]",
 };
 
 const paddingMap: Record<string, string> = {
@@ -69,11 +69,11 @@ export function StatusBadge({
 }) {
   const styles: Record<string, string> = {
     verified:
-      "bg-emerald-100 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/30",
+      "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/15 text-[var(--color-accent)] dark:text-[var(--color-accent)] border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)]",
     pending:
       "bg-amber-100 dark:bg-amber-500/15 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-500/30",
     action:
-      "bg-rose-100 dark:bg-rose-500/15 text-rose-700 dark:text-rose-400 border-rose-200 dark:border-rose-500/30",
+      "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/15 text-[var(--color-primary)] dark:text-[var(--color-primary)] border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)]",
     info: "bg-blue-100 dark:bg-blue-500/15 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-500/30",
     inactive:
       "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700",
@@ -112,9 +112,9 @@ export function ProgressRing({
   const offset = circumference - (progress / 100) * circumference;
 
   const colors: Record<string, string> = {
-    rose: "stroke-rose-500",
-    emerald: "stroke-emerald-500",
-    indigo: "stroke-indigo-500",
+    rose: "stroke-[var(--color-primary)]",
+    emerald: "stroke-[var(--color-accent)]",
+    indigo: "stroke-[var(--color-primary)]",
   };
 
   return (
@@ -171,7 +171,7 @@ export function ToggleSwitch({
       onClick={() => onChange(!enabled)}
       className={`
         relative inline-flex ${sizeClasses} items-center rounded-full transition-colors duration-200
-        ${enabled ? "bg-rose-500" : "bg-slate-300 dark:bg-slate-600"}
+        ${enabled ? "bg-[var(--color-primary)]" : "bg-slate-300 dark:bg-slate-600"}
       `}
     >
       <span

@@ -23,10 +23,10 @@ export default function Careers() {
       <div className="space-y-16">
         {/* Hero */}
         <section className="relative text-center py-16 overflow-hidden">
-          <div className="absolute top-10 left-10 w-72 h-72 bg-rose-500/10 dark:bg-rose-500/5 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute top-10 left-10 w-72 h-72 bg-[var(--color-primary)]/10 dark:bg-[var(--color-primary)]/5 rounded-full blur-3xl animate-pulse" />
           <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="relative z-10 max-w-3xl mx-auto">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-rose-50 dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/20 text-xs font-medium text-rose-600 dark:text-rose-400 mb-6">
-              <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 border border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)] text-xs font-medium text-[var(--color-primary)] dark:text-[var(--color-primary)] mb-6">
+              <span className="w-2 h-2 rounded-full bg-[var(--color-primary)] animate-pulse" />
               {t("careers.badge")}
             </div>
             <h1 className="text-4xl sm:text-5xl font-semibold tracking-tight leading-tight">
@@ -47,8 +47,8 @@ export default function Careers() {
           <div className="grid sm:grid-cols-2 gap-4">
             {values.map((item, i) => (
               <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="card p-5 rounded-2xl">
-                <div className="w-10 h-10 rounded-xl bg-rose-50 dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/20 flex items-center justify-center mb-3">
-                  <svg className="w-5 h-5 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <div className="w-10 h-10 rounded-xl bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 border border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)] flex items-center justify-center mb-3">
+                  <svg className="w-5 h-5 text-[var(--color-primary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d={item.icon} />
                   </svg>
                 </div>
@@ -86,7 +86,7 @@ export default function Careers() {
                   <h3 className="font-bold text-slate-900 dark:text-white text-sm">{t("careers.volunteerTitle")}</h3>
                   <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{t("careers.volunteerMeta")}</p>
                 </div>
-                <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-500/10 text-xs font-semibold text-emerald-600 dark:text-emerald-400 shrink-0">
+                <span className="px-2.5 py-0.5 rounded-full bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 text-xs font-semibold text-[var(--color-accent)] dark:text-[var(--color-accent)] shrink-0">
                   {t("careers.volunteerOpen")}
                 </span>
               </div>
@@ -105,7 +105,7 @@ export default function Careers() {
 
         {/* CTA */}
         <section className="max-w-3xl mx-auto pb-8">
-          <div className="card p-8 rounded-2xl bg-gradient-to-br from-rose-50 to-rose-100/50 dark:from-rose-500/10 dark:to-rose-600/5 border-rose-200 dark:border-rose-500/20 text-center">
+          <div className="card p-8 rounded-2xl bg-gradient-to-br from-[var(--color-primary-soft)] to-[var(--color-primary-soft)]/50 dark:from-[var(--color-primary)]/10 dark:to-[var(--color-primary)]/5 border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)] text-center">
             <h2 className="text-2xl font-semibold text-slate-900 dark:text-white mb-3">{t("careers.ctaTitle")}</h2>
             <p className="text-sm text-slate-600 dark:text-slate-300 mb-6 max-w-md mx-auto">{t("careers.ctaSubtitle")}</p>
             <a href="https://mail.google.com/mail/?view=cm&fs=1&to=migrentau@gmail.com&su=Careers%20at%20MigRent%20AI" target="_blank" rel="noopener noreferrer">

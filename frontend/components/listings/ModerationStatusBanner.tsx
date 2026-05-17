@@ -36,10 +36,10 @@ const STATUS_CONFIG: Record<string, {
     ),
   },
   approved: {
-    bg: "bg-emerald-50 dark:bg-emerald-500/10",
-    border: "border-emerald-200 dark:border-emerald-500/20",
-    iconColor: "text-emerald-500",
-    textColor: "text-emerald-800 dark:text-emerald-300",
+    bg: "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10",
+    border: "border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)]",
+    iconColor: "text-[var(--color-accent)]",
+    textColor: "text-emerald-800 dark:text-[var(--color-accent)]",
     title: "Live",
     description: "Your listing is approved and visible to seekers.",
     icon: (

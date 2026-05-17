@@ -202,7 +202,7 @@ export default function SeekerProfilePage() {
   if (loading || loadingProfile)
     return (
       <div className="flex items-center justify-center py-20">
-        <div className="w-8 h-8 border-2 border-rose-300 dark:border-rose-500/30 border-t-rose-500 rounded-full animate-spin" />
+        <div className="w-8 h-8 border-2 border-[var(--color-line-2)] dark:border-[var(--color-primary-soft)] border-t-[var(--color-ink)] rounded-full animate-spin" />
       </div>
     );
 
@@ -241,7 +241,7 @@ export default function SeekerProfilePage() {
           <div className="relative group">
             <div
               onClick={() => fileRef.current?.click()}
-              className="w-20 h-20 rounded-full bg-gradient-to-br from-rose-400 to-rose-600 flex items-center justify-center text-white font-bold text-3xl shrink-0 cursor-pointer overflow-hidden ring-2 ring-white dark:ring-slate-800 shadow-lg"
+              className="w-20 h-20 rounded-full bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center text-white font-bold text-3xl shrink-0 cursor-pointer overflow-hidden ring-2 ring-white dark:ring-slate-800 shadow-lg"
             >
               {profile.profilePhoto ? (
                 <img src={profile.profilePhoto} alt="Profile" className="w-full h-full object-cover" />
@@ -284,7 +284,7 @@ export default function SeekerProfilePage() {
             )}
             {/* Useless skill fun badge */}
             {profile.uselessSkill && (
-              <span className="inline-block mt-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-200 dark:border-purple-500/20">
+              <span className="inline-block mt-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary-soft)]0/10 text-[var(--color-primary)] dark:text-[var(--color-primary)] border border-[var(--color-primary-soft)] dark:border-[var(--color-primary)]/20">
                 {profile.uselessSkill}
               </span>
             )}
@@ -344,10 +344,10 @@ export default function SeekerProfilePage() {
                 disabled={!active && profile.interests.length >= 5}
                 className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
                   active
-                    ? "bg-rose-500 text-white shadow-sm"
+                    ? "bg-[var(--color-primary)] text-white shadow-sm"
                     : profile.interests.length >= 5
                     ? "bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 border border-slate-200 dark:border-slate-700 cursor-not-allowed"
-                    : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-rose-300 dark:hover:border-rose-500/30"
+                    : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-[var(--color-line-2)] dark:hover:border-[var(--color-primary)]/30"
                 }`}
               >
                 {active ? "✓ " : ""}{item}
@@ -375,18 +375,18 @@ export default function SeekerProfilePage() {
                 key={badge.id}
                 className={`relative p-4 rounded-xl border text-center transition-all ${
                   earned
-                    ? "bg-rose-50 dark:bg-rose-500/10 border-rose-200 dark:border-rose-500/20"
+                    ? "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)]"
                     : "bg-slate-50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 opacity-50"
                 }`}
               >
                 <div className="text-2xl mb-1.5">{badge.icon}</div>
-                <h4 className={`text-sm font-bold ${earned ? "text-rose-600 dark:text-rose-400" : "text-slate-400 dark:text-slate-500"}`}>
+                <h4 className={`text-sm font-bold ${earned ? "text-[var(--color-primary)] dark:text-[var(--color-primary)]" : "text-slate-400 dark:text-slate-500"}`}>
                   {badge.label}
                 </h4>
                 <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">{badge.desc}</p>
                 {earned && (
                   <div className="absolute top-2 right-2">
-                    <span className="text-emerald-500 text-xs font-bold">✓</span>
+                    <span className="text-[var(--color-accent)] text-xs font-bold">✓</span>
                   </div>
                 )}
                 {!earned && (
@@ -411,7 +411,7 @@ export default function SeekerProfilePage() {
       >
         <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">Verification status</h3>
         <div className="flex flex-wrap gap-2">
-          <span className="px-3 py-1.5 rounded-full text-xs font-semibold bg-emerald-100 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20">
+          <span className="px-3 py-1.5 rounded-full text-xs font-semibold bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 text-[var(--color-accent)] dark:text-[var(--color-accent)] border border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)]">
             ✓ Email verified
           </span>
           <span className="px-3 py-1.5 rounded-full text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
@@ -555,8 +555,8 @@ export default function SeekerProfilePage() {
                 onClick={() => toggleLifestyle(item)}
                 className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
                   active
-                    ? "bg-rose-500 text-white"
-                    : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-rose-300 dark:hover:border-rose-500/30"
+                    ? "bg-[var(--color-primary)] text-white"
+                    : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-[var(--color-line-2)] dark:hover:border-[var(--color-primary)]/30"
                 }`}
               >
                 {active ? "✓ " : ""}{item}
@@ -604,7 +604,7 @@ export default function SeekerProfilePage() {
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="text-sm text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 p-3 rounded-xl"
+          className="text-sm text-[var(--color-accent)] dark:text-[var(--color-accent)] bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 border border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)] p-3 rounded-xl"
         >
           Profile saved successfully.
         </motion.p>

@@ -88,7 +88,7 @@ export default function ReviewCarousel({ reviews, reviewsCount, averageRating, l
 
                 {/* Reviewer */}
                 <div className="flex items-center gap-3 mt-4 pt-3 border-t border-slate-100 dark:border-slate-800">
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-rose-400 to-rose-600 flex items-center justify-center overflow-hidden">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center overflow-hidden">
                     {review.reviewer_photo ? (
                       <img src={review.reviewer_photo} alt="" className="w-full h-full object-cover" />
                     ) : (
@@ -114,7 +114,7 @@ export default function ReviewCarousel({ reviews, reviewsCount, averageRating, l
               <div
                 key={i}
                 className={`w-1.5 h-1.5 rounded-full transition-colors ${
-                  i === currentIndex ? "bg-rose-500" : "bg-slate-200 dark:bg-slate-700"
+                  i === currentIndex ? "bg-[var(--color-primary)]" : "bg-slate-200 dark:bg-slate-700"
                 }`}
               />
             ))}

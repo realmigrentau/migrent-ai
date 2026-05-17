@@ -106,7 +106,7 @@ export default function MagicLinkLogin() {
       >
         <div className="bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800 p-8 rounded-2xl">
           <div className="text-center mb-8">
-            <div className="w-12 h-12 rounded-xl bg-rose-600 flex items-center justify-center text-white font-semibold text-lg mx-auto mb-4">
+            <div className="w-12 h-12 rounded-xl bg-[var(--color-primary)] flex items-center justify-center text-white font-semibold text-lg mx-auto mb-4">
               M
             </div>
             <h1 className="text-2xl font-semibold tracking-tight text-slate-900 dark:text-white">
@@ -125,19 +125,19 @@ export default function MagicLinkLogin() {
               animate={{ opacity: 1, y: 0 }}
               className="space-y-4"
             >
-              <div className="bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 rounded-xl p-4 text-center">
-                <div className="w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-500/20 flex items-center justify-center mx-auto mb-3">
-                  <svg className="w-5 h-5 text-emerald-600 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <div className="bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 border border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)] rounded-xl p-4 text-center">
+                <div className="w-10 h-10 rounded-full bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/20 flex items-center justify-center mx-auto mb-3">
+                  <svg className="w-5 h-5 text-[var(--color-accent)] dark:text-[var(--color-accent)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                   </svg>
                 </div>
-                <p className="text-sm font-semibold text-emerald-700 dark:text-emerald-300">
+                <p className="text-sm font-semibold text-[var(--color-accent)] dark:text-[var(--color-accent)]">
                   Login link sent to
                 </p>
-                <p className="text-sm text-emerald-600 dark:text-emerald-400 font-mono mt-1">
+                <p className="text-sm text-[var(--color-accent)] dark:text-[var(--color-accent)] font-mono mt-1">
                   {email}
                 </p>
-                <p className="text-xs text-emerald-500 dark:text-emerald-500 mt-2">
+                <p className="text-xs text-[var(--color-accent)] dark:text-[var(--color-accent)] mt-2">
                   Click the link in the email to sign in. No password needed.
                 </p>
                 <div className="flex items-center justify-center gap-2 mt-3 text-xs text-slate-400 dark:text-slate-500">
@@ -169,7 +169,7 @@ export default function MagicLinkLogin() {
               <button
                 onClick={handleSendLink}
                 disabled={loading}
-                className="w-full h-10 rounded-[10px] text-sm font-semibold text-white bg-rose-600 hover:bg-rose-700 disabled:opacity-50 transition-colors"
+                className="w-full h-10 rounded-[10px] text-sm font-semibold text-white bg-[var(--color-primary)] hover:bg-[var(--color-primary-500)] disabled:opacity-50 transition-colors"
               >
                 {loading ? (
                   <span className="flex items-center justify-center gap-2">
@@ -183,7 +183,7 @@ export default function MagicLinkLogin() {
 
               <p className="text-center text-sm text-slate-500 dark:text-slate-400">
                 Don&apos;t have an account?{" "}
-                <Link href="/magic-link-signup" className="text-rose-500 hover:text-rose-600 font-semibold transition-colors">
+                <Link href="/magic-link-signup" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] font-semibold transition-colors">
                   Sign up with magic link
                 </Link>
               </p>

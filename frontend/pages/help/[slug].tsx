@@ -45,10 +45,10 @@ const CATEGORY_ICONS: Record<string, React.ReactNode> = {
 
 const TYPE_BADGE: Record<string, { label: string; color: string }> = {
   guide: { label: "Step-by-step guide", color: "bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400" },
-  faq: { label: "Quick answer", color: "bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-emerald-400" },
+  faq: { label: "Quick answer", color: "bg-[var(--color-accent-soft)] text-[var(--color-accent)] dark:bg-emerald-900/20 dark:text-[var(--color-accent)]" },
   troubleshoot: { label: "Troubleshooting", color: "bg-amber-50 text-amber-600 dark:bg-amber-900/20 dark:text-amber-400" },
-  policy: { label: "Policy & Legal", color: "bg-purple-50 text-purple-600 dark:bg-purple-900/20 dark:text-purple-400" },
-  safety: { label: "Safety", color: "bg-rose-50 text-rose-600 dark:bg-rose-900/20 dark:text-rose-400" },
+  policy: { label: "Policy & Legal", color: "bg-[var(--color-primary-soft)] text-[var(--color-primary)] dark:bg-primary-900/20 dark:text-[var(--color-primary)]" },
+  safety: { label: "Safety", color: "bg-[var(--color-primary-soft)] text-[var(--color-primary)] dark:bg-rose-900/20 dark:text-[var(--color-primary)]" },
 };
 
 const AUDIENCE_LABEL: Record<string, string> = {
@@ -80,7 +80,7 @@ function renderBody(body: string) {
         <ul key={i} className="space-y-1.5 my-3">
           {items.map((line, j) => (
             <li key={j} className="flex items-start gap-2 text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-              <CheckCircle2 className="w-4 h-4 text-indigo-500 shrink-0 mt-0.5" />
+              <CheckCircle2 className="w-4 h-4 text-[var(--color-primary)] shrink-0 mt-0.5" />
               <span>{line.replace(/^- /, "")}</span>
             </li>
           ))}
@@ -100,9 +100,9 @@ function RelatedArticleRow({ article }: { article: StaticHelpArticle }) {
   return (
     <Link href={`/help/${article.slug}`}>
       <div className="group flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer">
-        <BookOpen className="w-4 h-4 text-slate-400 group-hover:text-indigo-500 transition-colors shrink-0 mt-0.5" />
+        <BookOpen className="w-4 h-4 text-slate-400 group-hover:text-[var(--color-primary)] transition-colors shrink-0 mt-0.5" />
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium text-slate-700 dark:text-slate-200 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors leading-snug">
+          <p className="text-sm font-medium text-slate-700 dark:text-slate-200 group-hover:text-[var(--color-primary)] dark:group-hover:text-[var(--color-primary)] transition-colors leading-snug">
             {article.title}
           </p>
           <p className="text-[11px] text-slate-400 mt-0.5 flex items-center gap-1">
@@ -110,7 +110,7 @@ function RelatedArticleRow({ article }: { article: StaticHelpArticle }) {
             {article.readingTime} min
           </p>
         </div>
-        <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-indigo-400 transition-colors shrink-0" />
+        <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-[var(--color-primary)] transition-colors shrink-0" />
       </div>
     </Link>
   );
@@ -145,7 +145,7 @@ export default function HelpArticlePage() {
           </p>
           <Link
             href="/help"
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-semibold transition-colors"
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-[var(--color-primary)] hover:bg-[var(--color-primary-500)] text-white rounded-xl text-sm font-semibold transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to Help Center
@@ -173,7 +173,7 @@ export default function HelpArticlePage() {
           <div>
             {/* Breadcrumb */}
             <nav className="flex items-center gap-1.5 text-xs text-slate-400 mb-6 flex-wrap">
-              <Link href="/help" className="hover:text-indigo-500 transition-colors font-medium">
+              <Link href="/help" className="hover:text-[var(--color-primary)] transition-colors font-medium">
                 Help Center
               </Link>
               <ChevronRight className="w-3 h-3" />
@@ -181,7 +181,7 @@ export default function HelpArticlePage() {
                 <>
                   <Link
                     href={`/help/category/${article.category}`}
-                    className="hover:text-indigo-500 transition-colors font-medium"
+                    className="hover:text-[var(--color-primary)] transition-colors font-medium"
                   >
                     {article.categoryName}
                   </Link>
@@ -256,22 +256,22 @@ export default function HelpArticlePage() {
                     <div className="flex items-center justify-center gap-3">
                       <button
                         onClick={() => setVoted(true)}
-                        className="flex items-center gap-2 px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 text-sm text-slate-600 dark:text-slate-300 transition-colors font-medium"
+                        className="flex items-center gap-2 px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-emerald-400 hover:bg-[var(--color-accent-soft)] dark:hover:bg-emerald-900/20 text-sm text-slate-600 dark:text-slate-300 transition-colors font-medium"
                       >
-                        <ThumbsUp className="w-4 h-4 text-emerald-500" />
+                        <ThumbsUp className="w-4 h-4 text-[var(--color-accent)]" />
                         Yes, helpful
                       </button>
                       <button
                         onClick={() => setVoted(false)}
-                        className="flex items-center gap-2 px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-rose-400 hover:bg-rose-50 dark:hover:bg-rose-900/20 text-sm text-slate-600 dark:text-slate-300 transition-colors font-medium"
+                        className="flex items-center gap-2 px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-[var(--color-line-2)] hover:bg-[var(--color-primary-soft)] dark:hover:bg-rose-900/20 text-sm text-slate-600 dark:text-slate-300 transition-colors font-medium"
                       >
-                        <ThumbsDown className="w-4 h-4 text-rose-500" />
+                        <ThumbsDown className="w-4 h-4 text-[var(--color-primary)]" />
                         Not helpful
                       </button>
                     </div>
                   </>
                 ) : voted ? (
-                  <div className="flex items-center justify-center gap-2 text-emerald-600 dark:text-emerald-400">
+                  <div className="flex items-center justify-center gap-2 text-[var(--color-accent)] dark:text-[var(--color-accent)]">
                     <CheckCircle2 className="w-5 h-5" />
                     <span className="font-medium text-sm">Thanks for your feedback!</span>
                   </div>
@@ -282,7 +282,7 @@ export default function HelpArticlePage() {
                     </p>
                     <Link
                       href="/support/tickets"
-                      className="inline-flex items-center gap-1.5 text-sm text-indigo-600 dark:text-indigo-400 hover:underline font-medium"
+                      className="inline-flex items-center gap-1.5 text-sm text-[var(--color-primary)] dark:text-[var(--color-primary)] hover:underline font-medium"
                     >
                       Contact support for faster help
                     </Link>
@@ -291,7 +291,7 @@ export default function HelpArticlePage() {
               </div>
 
               {/* Bottom escalation */}
-              <div className="mt-6 p-5 rounded-2xl bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-indigo-900/20 dark:to-blue-900/20 border border-indigo-100 dark:border-indigo-900/40">
+              <div className="mt-6 p-5 rounded-2xl bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-primary-900/20 dark:to-blue-900/20 border border-[var(--color-primary-soft)] dark:border-primary-900/40">
                 <h3 className="font-bold text-slate-900 dark:text-white text-sm mb-1">
                   Still need help with this?
                 </h3>
@@ -301,7 +301,7 @@ export default function HelpArticlePage() {
                 <div className="flex flex-wrap gap-2">
                   <Link
                     href="/support/tickets"
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-semibold transition-colors"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-primary)] hover:bg-[var(--color-primary-500)] text-white rounded-lg text-xs font-semibold transition-colors"
                   >
                     <MessageCircle className="w-3.5 h-3.5" />
                     Submit a request
@@ -320,7 +320,7 @@ export default function HelpArticlePage() {
               <div className="mt-6">
                 <Link
                   href="/help"
-                  className="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors font-medium"
+                  className="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] transition-colors font-medium"
                 >
                   <ArrowLeft className="w-4 h-4" />
                   Back to Help Center
@@ -348,7 +348,7 @@ export default function HelpArticlePage() {
                   <div className="p-3">
                     <Link
                       href={`/help/category/${category.slug}`}
-                      className="flex items-center justify-between text-xs font-medium text-indigo-600 dark:text-indigo-400 hover:underline"
+                      className="flex items-center justify-between text-xs font-medium text-[var(--color-primary)] dark:text-[var(--color-primary)] hover:underline"
                     >
                       See all articles in this category
                       <ChevronRight className="w-3.5 h-3.5" />
@@ -381,7 +381,7 @@ export default function HelpArticlePage() {
                 </p>
                 <Link
                   href="/support/tickets"
-                  className="flex items-center justify-center gap-2 w-full px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold transition-colors"
+                  className="flex items-center justify-center gap-2 w-full px-4 py-2.5 bg-[var(--color-primary)] hover:bg-[var(--color-primary-500)] text-white rounded-xl text-xs font-semibold transition-colors"
                 >
                   <MessageCircle className="w-3.5 h-3.5" />
                   Get help

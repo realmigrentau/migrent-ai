@@ -35,7 +35,7 @@ const stats = (props: StatsCardsProps) => [
     label: "Migrant Population",
     value: `${props.migrantPct}%`,
     icon: Users,
-    color: "text-purple-400",
+    color: "text-[var(--color-primary)]",
     bgColor: "bg-purple-400/10",
   },
   {
@@ -49,8 +49,8 @@ const stats = (props: StatsCardsProps) => [
     label: "Walkability",
     value: props.walkabilityScore ? `${props.walkabilityScore}/10` : "N/A",
     icon: Footprints,
-    color: "text-pink-400",
-    bgColor: "bg-pink-400/10",
+    color: "text-[var(--color-primary)]",
+    bgColor: "bg-primary-soft",
   },
 ];
 

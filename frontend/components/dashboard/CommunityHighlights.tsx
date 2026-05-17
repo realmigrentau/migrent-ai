@@ -79,7 +79,7 @@ export default function CommunityHighlights() {
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-          <Users className="w-4 h-4 text-indigo-500" />
+          <Users className="w-4 h-4 text-[var(--color-primary)]" />
           Community
         </h2>
       </div>
@@ -91,7 +91,7 @@ export default function CommunityHighlights() {
             onClick={() => setActiveTab("listers")}
             className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-colors ${
               activeTab === "listers"
-                ? "bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 shadow-sm"
+                ? "bg-white dark:bg-slate-700 text-[var(--color-primary)] dark:text-[var(--color-primary)] shadow-sm"
                 : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
             }`}
           >
@@ -102,7 +102,7 @@ export default function CommunityHighlights() {
             onClick={() => setActiveTab("members")}
             className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-colors ${
               activeTab === "members"
-                ? "bg-white dark:bg-slate-700 text-pink-600 dark:text-pink-400 shadow-sm"
+                ? "bg-white dark:bg-slate-700 text-[var(--color-primary)] dark:text-[var(--color-primary)] shadow-sm"
                 : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
             }`}
           >
@@ -149,7 +149,7 @@ export default function CommunityHighlights() {
 
                 {/* Avatar */}
                 <div className={`w-9 h-9 rounded-xl flex items-center justify-center text-white font-bold text-sm overflow-hidden shrink-0 ${
-                  profile.custom_pfp ? "" : "bg-gradient-to-br from-indigo-500 to-pink-500"
+                  profile.custom_pfp ? "" : "bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary)]"
                 }`}>
                   {profile.custom_pfp ? (
                     <img src={profile.custom_pfp} alt="" className="w-full h-full object-cover" />
@@ -160,7 +160,7 @@ export default function CommunityHighlights() {
 
                 {/* Info */}
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-slate-800 dark:text-slate-100 truncate group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                  <p className="text-sm font-semibold text-slate-800 dark:text-slate-100 truncate group-hover:text-[var(--color-primary)] dark:group-hover:text-[var(--color-primary)] transition-colors">
                     {displayName}
                   </p>
                   <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
@@ -179,13 +179,13 @@ export default function CommunityHighlights() {
                 )}
 
                 {activeTab === "listers" && profile.listing_count && (
-                  <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-500/20 shrink-0">
+                  <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 text-[var(--color-primary)] dark:text-[var(--color-primary)] border border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)] shrink-0">
                     <Building2 className="w-2.5 h-2.5" />
                     {profile.listing_count}
                   </span>
                 )}
 
-                <ChevronRight className="w-3.5 h-3.5 text-slate-300 dark:text-slate-600 group-hover:text-indigo-500 transition-colors shrink-0" />
+                <ChevronRight className="w-3.5 h-3.5 text-slate-300 dark:text-slate-600 group-hover:text-[var(--color-primary)] transition-colors shrink-0" />
               </Link>
             </div>
           );

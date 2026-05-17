@@ -48,7 +48,7 @@ const colorMap: Record<string, { dot: string; icon: string }> = {
   },
   success: {
     dot: "bg-emerald-400",
-    icon: "text-emerald-500 bg-emerald-50 dark:bg-emerald-500/10",
+    icon: "text-[var(--color-accent)] bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10",
   },
   declined: {
     dot: "bg-red-400",

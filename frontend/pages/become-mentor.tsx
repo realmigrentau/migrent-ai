@@ -154,7 +154,7 @@ export default function BecomeMentorPage() {
   if (checkingExisting) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
-        <div className="w-10 h-10 border-2 border-indigo-300 border-t-indigo-500 rounded-full animate-spin" />
+        <div className="w-10 h-10 border-2 border-[var(--color-line-2)] border-t-[var(--color-ink)] rounded-full animate-spin" />
       </div>
     );
   }
@@ -167,8 +167,8 @@ export default function BecomeMentorPage() {
           <title>Mentor Dashboard - MigRent</title>
         </Head>
         <div className="max-w-2xl mx-auto px-4 py-12 text-center space-y-6">
-          <div className="w-16 h-16 rounded-2xl bg-emerald-100 dark:bg-emerald-500/20 flex items-center justify-center mx-auto">
-            <CheckCircle2 className="w-8 h-8 text-emerald-600 dark:text-emerald-400" />
+          <div className="w-16 h-16 rounded-2xl bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/20 flex items-center justify-center mx-auto">
+            <CheckCircle2 className="w-8 h-8 text-[var(--color-accent)] dark:text-[var(--color-accent)]" />
           </div>
           <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
             You are a registered mentor
@@ -183,7 +183,7 @@ export default function BecomeMentorPage() {
                 whileTap={{ scale: 0.97 }}
                 onClick={startStripeOnboarding}
                 disabled={loading}
-                className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-6 py-2.5 rounded-xl text-sm transition-colors disabled:opacity-50"
+                className="bg-[var(--color-primary)] hover:bg-[var(--color-primary-500)] text-white font-semibold px-6 py-2.5 rounded-xl text-sm transition-colors disabled:opacity-50"
               >
                 <DollarSign className="w-4 h-4 inline mr-1" />
                 {loading ? "Loading..." : "Set Up Payouts"}
@@ -214,7 +214,7 @@ export default function BecomeMentorPage() {
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ type: "spring", stiffness: 200 }}
-            className="w-20 h-20 rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center mx-auto"
+            className="w-20 h-20 rounded-2xl bg-gradient-to-br from-[var(--color-accent)] to-teal-500 flex items-center justify-center mx-auto"
           >
             <CheckCircle2 className="w-10 h-10 text-white" />
           </motion.div>
@@ -229,7 +229,7 @@ export default function BecomeMentorPage() {
               whileHover={{ scale: 1.03 }}
               onClick={startStripeOnboarding}
               disabled={loading}
-              className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-6 py-2.5 rounded-xl text-sm transition-colors disabled:opacity-50"
+              className="bg-[var(--color-primary)] hover:bg-[var(--color-primary-500)] text-white font-semibold px-6 py-2.5 rounded-xl text-sm transition-colors disabled:opacity-50"
             >
               <DollarSign className="w-4 h-4 inline mr-1" />
               {loading ? "Loading..." : "Set Up Payouts (Stripe)"}
@@ -261,7 +261,7 @@ export default function BecomeMentorPage() {
           animate={{ opacity: 1, y: 0 }}
           className="text-center space-y-3"
         >
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-rose-500 to-pink-500 flex items-center justify-center mx-auto">
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center mx-auto">
             <Heart className="w-8 h-8 text-white" />
           </div>
           <h1 className="text-3xl font-bold text-slate-900 dark:text-white">
@@ -275,8 +275,8 @@ export default function BecomeMentorPage() {
         {/* Benefits */}
         <div className="grid grid-cols-3 gap-3">
           {[
-            { icon: <DollarSign className="w-5 h-5" />, label: "Earn $20-30/session", color: "text-emerald-500" },
-            { icon: <Users className="w-5 h-5" />, label: "Help your community", color: "text-indigo-500" },
+            { icon: <DollarSign className="w-5 h-5" />, label: "Earn $20-30/session", color: "text-[var(--color-accent)]" },
+            { icon: <Users className="w-5 h-5" />, label: "Help your community", color: "text-[var(--color-primary)]" },
             { icon: <Star className="w-5 h-5" />, label: "Build your reputation", color: "text-amber-500" },
           ].map((item) => (
             <div key={item.label} className="card p-3 text-center">
@@ -293,14 +293,14 @@ export default function BecomeMentorPage() {
               <div
                 className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${
                   step >= s
-                    ? "bg-indigo-600 text-white"
+                    ? "bg-[var(--color-primary)] text-white"
                     : "bg-slate-200 dark:bg-slate-700 text-slate-500"
                 }`}
               >
                 {step > s ? <CheckCircle2 className="w-4 h-4" /> : s}
               </div>
               {s < 3 && (
-                <div className={`flex-1 h-0.5 rounded ${step > s ? "bg-indigo-600" : "bg-slate-200 dark:bg-slate-700"}`} />
+                <div className={`flex-1 h-0.5 rounded ${step > s ? "bg-[var(--color-primary)]" : "bg-slate-200 dark:bg-slate-700"}`} />
               )}
             </div>
           ))}
@@ -314,7 +314,7 @@ export default function BecomeMentorPage() {
             className="card p-6 space-y-4"
           >
             <h2 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-              <MapPin className="w-5 h-5 text-indigo-500" />
+              <MapPin className="w-5 h-5 text-[var(--color-primary)]" />
               Your Location
             </h2>
 
@@ -327,7 +327,7 @@ export default function BecomeMentorPage() {
                 value={suburb}
                 onChange={(e) => setSuburb(e.target.value)}
                 placeholder="e.g. Kellyville"
-                className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
+                className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-[var(--color-ink)]/30 focus:border-transparent outline-none"
               />
             </div>
 
@@ -341,7 +341,7 @@ export default function BecomeMentorPage() {
                 onChange={(e) => setPostcode(e.target.value)}
                 placeholder="e.g. 2155"
                 maxLength={4}
-                className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
+                className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-[var(--color-ink)]/30 focus:border-transparent outline-none"
               />
             </div>
 
@@ -352,7 +352,7 @@ export default function BecomeMentorPage() {
                 if (!suburb.trim()) { alert("Please enter your suburb"); return; }
                 setStep(2);
               }}
-              className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-xl text-sm transition-colors flex items-center justify-center gap-2"
+              className="w-full bg-[var(--color-primary)] hover:bg-[var(--color-primary-500)] text-white font-semibold py-3 rounded-xl text-sm transition-colors flex items-center justify-center gap-2"
             >
               Continue
               <ArrowRight className="w-4 h-4" />
@@ -368,7 +368,7 @@ export default function BecomeMentorPage() {
             className="card p-6 space-y-5"
           >
             <h2 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-              <Globe className="w-5 h-5 text-indigo-500" />
+              <Globe className="w-5 h-5 text-[var(--color-primary)]" />
               Languages & Expertise
             </h2>
 
@@ -383,7 +383,7 @@ export default function BecomeMentorPage() {
                     onClick={() => toggleLanguage(lang)}
                     className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
                       languages.includes(lang)
-                        ? "bg-indigo-600 text-white"
+                        ? "bg-[var(--color-primary)] text-white"
                         : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200"
                     }`}
                   >
@@ -404,7 +404,7 @@ export default function BecomeMentorPage() {
                     onClick={() => toggleSpecialty(spec)}
                     className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
                       specialties.includes(spec)
-                        ? "bg-emerald-600 text-white"
+                        ? "bg-[var(--color-accent)] text-white"
                         : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200"
                     }`}
                   >
@@ -429,7 +429,7 @@ export default function BecomeMentorPage() {
                   if (languages.length === 0) { alert("Please select at least one language"); return; }
                   setStep(3);
                 }}
-                className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-xl text-sm transition-colors flex items-center justify-center gap-2"
+                className="flex-1 bg-[var(--color-primary)] hover:bg-[var(--color-primary-500)] text-white font-semibold py-3 rounded-xl text-sm transition-colors flex items-center justify-center gap-2"
               >
                 Continue
                 <ArrowRight className="w-4 h-4" />
@@ -446,7 +446,7 @@ export default function BecomeMentorPage() {
             className="card p-6 space-y-4"
           >
             <h2 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-indigo-500" />
+              <Sparkles className="w-5 h-5 text-[var(--color-primary)]" />
               About You & Pricing
             </h2>
 
@@ -460,7 +460,7 @@ export default function BecomeMentorPage() {
                 placeholder="e.g. I've lived in Kellyville for 10 years. I know every cafe, park, and shortcut. Originally from India, I speak Hindi and English fluently."
                 rows={4}
                 maxLength={2000}
-                className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none resize-none"
+                className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-[var(--color-ink)]/30 focus:border-transparent outline-none resize-none"
               />
             </div>
 
@@ -475,9 +475,9 @@ export default function BecomeMentorPage() {
                   max={100}
                   value={hourlyRate}
                   onChange={(e) => setHourlyRate(parseInt(e.target.value))}
-                  className="flex-1 accent-indigo-600"
+                  className="flex-1 accent-[var(--color-primary)]"
                 />
-                <div className="bg-rose-600 text-white font-bold text-lg px-4 py-1.5 rounded-xl min-w-[80px] text-center">
+                <div className="bg-[var(--color-primary)] text-white font-bold text-lg px-4 py-1.5 rounded-xl min-w-[80px] text-center">
                   ${hourlyRate}
                 </div>
               </div>
@@ -500,7 +500,7 @@ export default function BecomeMentorPage() {
                 whileTap={{ scale: 0.98 }}
                 onClick={handleSubmit}
                 disabled={loading}
-                className="flex-1 bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-700 hover:to-pink-700 text-white font-semibold py-3 rounded-xl text-sm transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                className="flex-1 bg-gradient-to-r from-[var(--color-primary)] to-pink-600 hover:from-rose-700 hover:to-pink-700 text-white font-semibold py-3 rounded-xl text-sm transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 {loading ? (
                   <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />

@@ -17,8 +17,8 @@ const cards = [
     label: "Saved Listings",
     icon: <Heart className="w-5 h-5" />,
     format: (v: number) => String(v),
-    color: "text-rose-600 dark:text-rose-400",
-    iconBg: "bg-rose-100 dark:bg-rose-500/20",
+    color: "text-[var(--color-primary)] dark:text-[var(--color-primary)]",
+    iconBg: "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/20",
   },
   {
     key: "pending_requests" as const,
@@ -33,16 +33,16 @@ const cards = [
     label: "Confirmed Bookings",
     icon: <CheckCircle className="w-5 h-5" />,
     format: (v: number) => String(v),
-    color: "text-emerald-600 dark:text-emerald-400",
-    iconBg: "bg-emerald-100 dark:bg-emerald-500/20",
+    color: "text-[var(--color-accent)] dark:text-[var(--color-accent)]",
+    iconBg: "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/20",
   },
   {
     key: "recommended" as const,
     label: "Recommended",
     icon: <Star className="w-5 h-5" />,
     format: (v: number) => String(v),
-    color: "text-indigo-600 dark:text-indigo-400",
-    iconBg: "bg-indigo-100 dark:bg-indigo-500/20",
+    color: "text-[var(--color-primary)] dark:text-[var(--color-primary)]",
+    iconBg: "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/20",
   },
 ];
 

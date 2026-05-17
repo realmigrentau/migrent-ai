@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import { cn } from '@/lib/cn';
 
-type Tone = 'info' | 'success' | 'warning' | 'danger';
+type Tone = 'info' | 'success' | 'warning' | 'danger' | 'neutral';
 
 interface BannerProps {
   tone?: Tone;
@@ -13,11 +13,32 @@ interface BannerProps {
   className?: string;
 }
 
-const toneMap: Record<Tone, string> = {
-  info: 'bg-sky-50 border-sky-200/70 text-sky-900',
-  success: 'bg-emerald-50 border-emerald-200/70 text-emerald-900',
-  warning: 'bg-amber-50 border-amber-200/70 text-amber-900',
-  danger: 'bg-rose-50 border-rose-200/70 text-rose-900',
+const toneMap: Record<Tone, { bg: string; border: string; fg: string }> = {
+  info: {
+    bg: 'bg-[#dde4ec] dark:bg-[#182230]',
+    border: 'border-l-[var(--color-info-500)]',
+    fg: 'text-[var(--color-info-500)]',
+  },
+  success: {
+    bg: 'bg-[var(--color-accent-soft)]',
+    border: 'border-l-[var(--color-accent)]',
+    fg: 'text-[var(--color-accent)]',
+  },
+  warning: {
+    bg: 'bg-[#f4e4cf] dark:bg-[#2c1e10]',
+    border: 'border-l-[var(--color-warn-500)]',
+    fg: 'text-[var(--color-warn-500)]',
+  },
+  danger: {
+    bg: 'bg-[#f1d8d4] dark:bg-[#2b1614]',
+    border: 'border-l-[var(--color-danger-500)]',
+    fg: 'text-[var(--color-danger-500)]',
+  },
+  neutral: {
+    bg: 'bg-[var(--color-surface-sunk)]',
+    border: 'border-l-[var(--color-line-2)]',
+    fg: 'text-[var(--color-ink)]',
+  },
 };
 
 export function Banner({
@@ -29,25 +50,33 @@ export function Banner({
   onDismiss,
   className,
 }: BannerProps) {
+  const t = toneMap[tone];
   return (
     <div
       className={cn(
-        'flex items-start gap-3 rounded-xl border px-4 py-3',
-        toneMap[tone],
+        'flex items-start gap-3 rounded-[6px] border-l-[3px] px-3.5 py-2.5',
+        t.bg,
+        t.border,
         className
       )}
     >
-      {icon && <span className="flex-shrink-0 mt-0.5">{icon}</span>}
+      {icon && <span className={cn('flex-shrink-0 mt-0.5', t.fg)}>{icon}</span>}
       <div className="flex-1 min-w-0">
-        {title && <div className="text-sm font-semibold">{title}</div>}
-        {children && <div className="text-sm leading-relaxed">{children}</div>}
+        {title && (
+          <div className="text-[13.5px] font-semibold text-[var(--color-ink)]">{title}</div>
+        )}
+        {children && (
+          <div className={cn('text-[13px] leading-relaxed text-[var(--color-ink-2)]', title ? 'mt-0.5' : null)}>
+            {children}
+          </div>
+        )}
       </div>
       {action && <div className="flex-shrink-0">{action}</div>}
       {onDismiss && (
         <button
           type="button"
           onClick={onDismiss}
-          className="flex-shrink-0 -mr-1 -mt-1 p-1 rounded-md hover:bg-black/5 transition-colors"
+          className="flex-shrink-0 -mr-1 -mt-1 p-1 rounded-md text-[var(--color-ink-3)] hover:bg-black/5 transition-colors"
           aria-label="Dismiss"
         >
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

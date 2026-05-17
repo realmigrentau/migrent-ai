@@ -78,8 +78,8 @@ export default function DealForm({ onSubmit, loading, listingTitle, weeklyPrice 
 
       {/* Stay estimate */}
       {weeksEstimate && weeklyPrice && (
-        <div className="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20">
-          <p className="text-sm text-emerald-700 dark:text-emerald-400">
+        <div className="p-3 rounded-xl bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 border border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)]">
+          <p className="text-sm text-[var(--color-accent)] dark:text-[var(--color-accent)]">
             ~{weeksEstimate} week{weeksEstimate !== 1 ? "s" : ""} &middot; Est. total rent: <span className="font-bold">AUD ${(weeksEstimate * weeklyPrice).toLocaleString()}</span>
           </p>
         </div>
@@ -92,7 +92,7 @@ export default function DealForm({ onSubmit, loading, listingTitle, weeklyPrice 
           <button
             type="button"
             onClick={() => update("numberOfGuests", Math.max(1, form.numberOfGuests - 1))}
-            className="w-8 h-8 rounded-full border border-slate-300 dark:border-slate-600 flex items-center justify-center text-slate-500 hover:border-rose-400 hover:text-rose-500 transition-colors"
+            className="w-8 h-8 rounded-full border border-slate-300 dark:border-slate-600 flex items-center justify-center text-slate-500 hover:border-[var(--color-line-2)] hover:text-[var(--color-primary)] transition-colors"
           >
             -
           </button>
@@ -100,7 +100,7 @@ export default function DealForm({ onSubmit, loading, listingTitle, weeklyPrice 
           <button
             type="button"
             onClick={() => update("numberOfGuests", Math.min(20, form.numberOfGuests + 1))}
-            className="w-8 h-8 rounded-full border border-slate-300 dark:border-slate-600 flex items-center justify-center text-slate-500 hover:border-rose-400 hover:text-rose-500 transition-colors"
+            className="w-8 h-8 rounded-full border border-slate-300 dark:border-slate-600 flex items-center justify-center text-slate-500 hover:border-[var(--color-line-2)] hover:text-[var(--color-primary)] transition-colors"
           >
             +
           </button>

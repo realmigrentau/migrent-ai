@@ -96,7 +96,7 @@ export default function PreferencesTab({
       {/* Theme */}
       <GlassCard delay={0.05}>
         <div className="flex items-start gap-4 mb-4">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center shadow-lg shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center shadow-lg shrink-0">
             <Palette className="w-5 h-5 text-white" />
           </div>
           <div>
@@ -110,7 +110,7 @@ export default function PreferencesTab({
             {(
               [
                 { value: "light", label: "Light", icon: Sun, gradient: "from-amber-300 to-yellow-400" },
-                { value: "dark", label: "Dark", icon: Moon, gradient: "from-indigo-500 to-purple-600" },
+                { value: "dark", label: "Dark", icon: Moon, gradient: "from-[var(--color-primary)] to-[var(--color-primary)]" },
                 { value: "auto", label: "Auto", icon: Monitor, gradient: "from-slate-400 to-slate-500" },
               ] as const
             ).map((option) => {
@@ -131,7 +131,7 @@ export default function PreferencesTab({
                   className={`
                     flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all
                     ${isActive
-                      ? "border-rose-400 dark:border-rose-500 bg-rose-50/50 dark:bg-rose-500/10 shadow-md"
+                      ? "border-[var(--color-line-2)] dark:border-[var(--color-primary)] bg-[var(--color-primary-soft)]/50 dark:bg-[var(--color-primary)]/10 shadow-md"
                       : "border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600"
                     }
                     ${option.value === "auto" ? "opacity-50 cursor-not-allowed" : ""}
@@ -141,7 +141,7 @@ export default function PreferencesTab({
                     <Icon className="w-5 h-5 text-white" />
                   </div>
                   <span className="text-xs font-medium text-slate-700 dark:text-slate-300">{option.label}</span>
-                  {isActive && <Check className="w-3.5 h-3.5 text-rose-500" />}
+                  {isActive && <Check className="w-3.5 h-3.5 text-[var(--color-primary)]" />}
                 </button>
               );
             })}
@@ -170,7 +170,7 @@ export default function PreferencesTab({
                 className={`
                   flex items-center gap-2 px-3 py-2.5 rounded-xl text-xs font-medium border transition-all
                   ${language === lang.code
-                    ? "border-rose-400 dark:border-rose-500 bg-rose-50 dark:bg-rose-500/10 text-rose-700 dark:text-rose-400"
+                    ? "border-[var(--color-line-2)] dark:border-[var(--color-primary)] bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 text-[var(--color-primary)] dark:text-[var(--color-primary)]"
                     : "border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-slate-300 dark:hover:border-slate-600"
                   }
                 `}
@@ -186,7 +186,7 @@ export default function PreferencesTab({
       {/* Region & Timezone */}
       <GlassCard delay={0.15}>
         <div className="flex items-start gap-4 mb-4">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shadow-lg shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--color-accent)] to-teal-500 flex items-center justify-center shadow-lg shrink-0">
             <MapPin className="w-5 h-5 text-white" />
           </div>
           <div>
@@ -206,7 +206,7 @@ export default function PreferencesTab({
                   className={`
                     flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium border transition-all
                     ${region === r.value
-                      ? "border-rose-400 bg-rose-50 dark:bg-rose-500/10 text-rose-700 dark:text-rose-400"
+                      ? "border-[var(--color-line-2)] bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 text-[var(--color-primary)] dark:text-[var(--color-primary)]"
                       : "border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-slate-300"
                     }
                   `}
@@ -256,7 +256,7 @@ export default function PreferencesTab({
               </div>
               <button
                 onClick={() => setShowShortcuts(!showShortcuts)}
-                className="text-xs text-rose-500 hover:text-rose-600 font-medium"
+                className="text-xs text-[var(--color-primary)] hover:text-[var(--color-primary)] font-medium"
               >
                 {showShortcuts ? "Hide" : "Show All"}
               </button>
@@ -310,7 +310,7 @@ export default function PreferencesTab({
         <button
           onClick={handleSave}
           disabled={saving}
-          className="w-full btn-primary py-3.5 rounded-2xl text-sm font-semibold flex items-center justify-center gap-2 shadow-xl shadow-rose-500/20 disabled:opacity-50"
+          className="w-full btn-primary py-3.5 rounded-2xl text-sm font-semibold flex items-center justify-center gap-2 shadow-xl shadow-[var(--color-primary)]/20 disabled:opacity-50"
         >
           <Save className="w-4 h-4" />
           {saving ? "Saving..." : "Save Preferences"}

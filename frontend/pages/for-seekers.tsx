@@ -41,10 +41,10 @@ export default function ForSeekers() {
       <div className="space-y-16">
         {/* Hero */}
         <section className="relative text-center py-16 overflow-hidden">
-          <div className="absolute top-10 left-10 w-72 h-72 bg-rose-500/10 dark:bg-rose-500/5 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute top-10 left-10 w-72 h-72 bg-[var(--color-primary)]/10 dark:bg-[var(--color-primary)]/5 rounded-full blur-3xl animate-pulse" />
           <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="relative z-10 max-w-3xl mx-auto">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-rose-50 dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/20 text-xs font-medium text-rose-600 dark:text-rose-400 mb-6">
-              <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 border border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)] text-xs font-medium text-[var(--color-primary)] dark:text-[var(--color-primary)] mb-6">
+              <span className="w-2 h-2 rounded-full bg-[var(--color-primary)] animate-pulse" />
               {t("forSeekers.badge")}
             </div>
             <h1 className="text-4xl sm:text-5xl font-semibold tracking-tight leading-tight text-slate-900 dark:text-white">
@@ -72,14 +72,14 @@ export default function ForSeekers() {
           <div className="space-y-4">
             {steps.map((step, i) => (
               <motion.div key={step.num} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i} variants={fadeUp} className="card p-5 rounded-2xl flex gap-4 items-start">
-                <div className="w-10 h-10 rounded-xl bg-rose-50 dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/20 flex items-center justify-center shrink-0">
-                  <svg className="w-5 h-5 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <div className="w-10 h-10 rounded-xl bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 border border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)] flex items-center justify-center shrink-0">
+                  <svg className="w-5 h-5 text-[var(--color-primary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d={step.icon} />
                   </svg>
                 </div>
                 <div>
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="text-xs font-bold text-rose-400 dark:text-rose-500/70">{step.num}</span>
+                    <span className="text-xs font-bold text-[var(--color-primary)] dark:text-[var(--color-primary)]/70">{step.num}</span>
                     <h3 className="font-semibold text-slate-900 dark:text-white text-sm">{step.title}</h3>
                   </div>
                   <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">{step.desc}</p>
@@ -97,7 +97,7 @@ export default function ForSeekers() {
           <div className="grid sm:grid-cols-2 gap-4">
             {benefits.map((item, i) => (
               <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} whileHover={{ y: -4 }} className="card-subtle p-5 rounded-xl group hover:shadow-md dark:hover:bg-white/[0.06] transition-all">
-                <div className="w-10 h-10 rounded-xl bg-rose-50 dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/20 flex items-center justify-center text-rose-500 dark:text-rose-400 font-bold text-sm mb-3 group-hover:border-rose-300 dark:group-hover:border-rose-400/40 transition-colors">
+                <div className="w-10 h-10 rounded-xl bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 border border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)] flex items-center justify-center text-[var(--color-primary)] dark:text-[var(--color-primary)] font-bold text-sm mb-3 group-hover:border-[var(--color-line-2)] dark:group-hover:border-[var(--color-line-2)]/40 transition-colors">
                   {item.icon}
                 </div>
                 <h3 className="text-slate-900 dark:text-white font-semibold text-sm">{item.title}</h3>
@@ -125,7 +125,7 @@ export default function ForSeekers() {
                   t("forSeekers.filter8"),
                 ].map((filter) => (
                   <div key={filter} className="flex items-center gap-2 card-subtle p-3 rounded-lg">
-                    <svg className="w-4 h-4 text-rose-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <svg className="w-4 h-4 text-[var(--color-primary)] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                     </svg>
                     <span className="text-sm">{filter}</span>
@@ -138,7 +138,7 @@ export default function ForSeekers() {
 
         {/* CTA */}
         <section className="max-w-3xl mx-auto pb-8">
-          <div className="card p-8 rounded-2xl bg-gradient-to-br from-rose-50 to-rose-100/50 dark:from-rose-500/10 dark:to-rose-600/5 border-rose-200 dark:border-rose-500/20 text-center">
+          <div className="card p-8 rounded-2xl bg-gradient-to-br from-[var(--color-primary-soft)] to-[var(--color-primary-soft)]/50 dark:from-[var(--color-primary)]/10 dark:to-[var(--color-primary)]/5 border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)] text-center">
             <h2 className="text-2xl font-semibold tracking-tight text-slate-900 dark:text-white mb-3">{t("forSeekers.ctaTitle")}</h2>
             <p className="text-sm text-slate-600 dark:text-slate-300 mb-6 max-w-md mx-auto">{t("forSeekers.ctaSubtitle")}</p>
             <Link href="/dashboard" className="inline-block btn-primary text-sm px-8 py-2.5 rounded-[10px]">

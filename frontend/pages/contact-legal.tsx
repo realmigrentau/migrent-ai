@@ -37,7 +37,7 @@ export default function ContactLegal() {
               <div className="card-subtle p-4 rounded-xl space-y-2">
                 <p className="font-semibold text-slate-800 dark:text-slate-200 text-base">MigRent AI - Legal</p>
                 <p><strong>ABN:</strong> 22 669 566 941</p>
-                <p><strong>Email:</strong> <a href="mailto:migrentau@gmail.com" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">migrentau@gmail.com</a></p>
+                <p><strong>Email:</strong> <a href="mailto:migrentau@gmail.com" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">migrentau@gmail.com</a></p>
                 <p><strong>Subject line for legal matters:</strong> &quot;Legal Notice&quot; or &quot;Arbitration&quot;</p>
                 <p><strong>Location:</strong> Sydney, New South Wales, Australia</p>
               </div>
@@ -113,7 +113,7 @@ export default function ContactLegal() {
           <section className="card p-6 rounded-2xl space-y-3">
             <h2 className="text-lg font-bold text-slate-900 dark:text-white">Arbitration Process</h2>
             <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
-              <p>As set out in our <Link href="/terms-of-service" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">Terms of Service</Link> (section 13) and <Link href="/support-disputes" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">Dispute Resolution</Link> page, disputes that cannot be resolved through direct communication or MigRent mediation are subject to binding arbitration.</p>
+              <p>As set out in our <Link href="/terms-of-service" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">Terms of Service</Link> (section 13) and <Link href="/support-disputes" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">Dispute Resolution</Link> page, disputes that cannot be resolved through direct communication or MigRent mediation are subject to binding arbitration.</p>
               <div className="card-subtle p-4 rounded-xl space-y-2">
                 <h3 className="font-semibold text-slate-800 dark:text-slate-200">Arbitration Details</h3>
                 <ul className="list-disc list-inside space-y-1.5">
@@ -126,7 +126,7 @@ export default function ContactLegal() {
                   <li><strong>Costs:</strong> Each party bears their own costs unless the arbitrator orders otherwise</li>
                 </ul>
               </div>
-              <p>Before commencing arbitration, parties must have completed Steps 1 and 2 of the dispute resolution process (direct resolution and MigRent mediation). See <Link href="/support-disputes" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">full dispute resolution process</Link>.</p>
+              <p>Before commencing arbitration, parties must have completed Steps 1 and 2 of the dispute resolution process (direct resolution and MigRent mediation). See <Link href="/support-disputes" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">full dispute resolution process</Link>.</p>
             </div>
           </section>
 
@@ -135,7 +135,7 @@ export default function ContactLegal() {
             <h2 className="text-lg font-bold text-slate-900 dark:text-white">About ACICA</h2>
             <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
               <p>The Australian Centre for International Commercial Arbitration (ACICA) is Australia&apos;s leading international arbitration institution. It provides neutral, efficient, and cost-effective dispute resolution services.</p>
-              <p>For more information about ACICA and its rules, visit <a href="https://acica.org.au" target="_blank" rel="noopener noreferrer" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">acica.org.au</a>.</p>
+              <p>For more information about ACICA and its rules, visit <a href="https://acica.org.au" target="_blank" rel="noopener noreferrer" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">acica.org.au</a>.</p>
             </div>
           </section>
 
@@ -145,13 +145,13 @@ export default function ContactLegal() {
             <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
               <p>For reference, our complete legal documentation:</p>
               <ul className="space-y-2">
-                <li><Link href="/terms-of-service" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">Terms of Service</Link></li>
-                <li><Link href="/privacy-policy" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">Privacy Policy</Link></li>
-                <li><Link href="/disclaimer" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">Platform Disclaimer</Link></li>
-                <li><Link href="/no-agency" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">No Agency Disclosure</Link></li>
-                <li><Link href="/anti-discrimination" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">Fair Housing Policy</Link></li>
-                <li><Link href="/cookie-policy" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">Cookie Policy</Link></li>
-                <li><Link href="/abn-terms" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">ABN &amp; Business Details</Link></li>
+                <li><Link href="/terms-of-service" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">Terms of Service</Link></li>
+                <li><Link href="/privacy-policy" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">Privacy Policy</Link></li>
+                <li><Link href="/disclaimer" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">Platform Disclaimer</Link></li>
+                <li><Link href="/no-agency" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">No Agency Disclosure</Link></li>
+                <li><Link href="/anti-discrimination" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">Fair Housing Policy</Link></li>
+                <li><Link href="/cookie-policy" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">Cookie Policy</Link></li>
+                <li><Link href="/abn-terms" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">ABN &amp; Business Details</Link></li>
               </ul>
             </div>
           </section>

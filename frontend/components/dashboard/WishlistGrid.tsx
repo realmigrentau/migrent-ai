@@ -80,19 +80,19 @@ export default function WishlistGrid({ listings, loading, onUnsave }: Props) {
                 }}
                 className="absolute top-2 right-2 w-8 h-8 rounded-full bg-white/90 dark:bg-slate-900/90 flex items-center justify-center hover:scale-110 transition-transform"
               >
-                <Heart className="w-4 h-4 text-rose-500 fill-rose-500" />
+                <Heart className="w-4 h-4 text-[var(--color-primary)] fill-[var(--color-coral-500)]" />
               </button>
             )}
 
             {/* Badges */}
             <div className="absolute bottom-2 left-2 flex gap-1.5">
               {listing.furnished && (
-                <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-indigo-500/90 text-white">
+                <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-[var(--color-primary)]/90 text-white">
                   Furnished
                 </span>
               )}
               {listing.bills_included && (
-                <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-emerald-500/90 text-white">
+                <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-[var(--color-accent-soft)]0/90 text-white">
                   Bills incl.
                 </span>
               )}
@@ -114,7 +114,7 @@ export default function WishlistGrid({ listings, loading, onUnsave }: Props) {
                   </p>
                 </div>
                 <div className="text-right shrink-0">
-                  <p className="text-sm font-bold text-rose-600 dark:text-rose-400">
+                  <p className="text-sm font-bold text-[var(--color-primary)] dark:text-[var(--color-primary)]">
                     ${listing.weekly_price}/wk
                   </p>
                 </div>
@@ -146,7 +146,7 @@ export default function WishlistGrid({ listings, loading, onUnsave }: Props) {
           href="/seeker/wishlist"
           className="card rounded-xl p-6 flex flex-col items-center justify-center text-center hover:shadow-md transition-shadow border border-dashed border-slate-300 dark:border-slate-600"
         >
-          <Sparkles className="w-8 h-8 text-rose-400 mb-2" />
+          <Sparkles className="w-8 h-8 text-[var(--color-primary)] mb-2" />
           <p className="text-sm font-medium text-slate-600 dark:text-slate-300">
             View all {listings.length} saved
           </p>

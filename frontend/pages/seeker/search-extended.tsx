@@ -372,11 +372,11 @@ export default function SeekerSearchExtended() {
                           {listing.suburb}, {listing.postcode}
                         </p>
                       </div>
-                      <div className="shrink-0 px-2.5 py-1 rounded-lg bg-rose-50 dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/20">
-                        <span className="text-rose-600 dark:text-rose-400 font-bold text-sm">
+                      <div className="shrink-0 px-2.5 py-1 rounded-lg bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 border border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)]">
+                        <span className="text-[var(--color-primary)] dark:text-[var(--color-primary)] font-bold text-sm">
                           AUD ${listing.weeklyPrice}
                         </span>
-                        <span className="text-rose-400 dark:text-rose-500 text-xs">
+                        <span className="text-[var(--color-primary)] dark:text-[var(--color-primary)] text-xs">
                           /wk
                         </span>
                       </div>
@@ -397,7 +397,7 @@ export default function SeekerSearchExtended() {
                         </span>
                       )}
                       {listing.verified && (
-                        <span className="px-2 py-0.5 rounded-full text-xs bg-emerald-100 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                        <span className="px-2 py-0.5 rounded-full text-xs bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 text-[var(--color-accent)] dark:text-[var(--color-accent)]">
                           ✓ Verified
                         </span>
                       )}
@@ -420,7 +420,7 @@ export default function SeekerSearchExtended() {
                     onClick={() => toggleSave(listing.id)}
                     className={`py-2 px-4 rounded-lg text-xs font-semibold transition-all ${
                       saved.has(listing.id)
-                        ? "bg-rose-50 dark:bg-rose-500/10 text-rose-500 border border-rose-200 dark:border-rose-500/20"
+                        ? "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 text-[var(--color-primary)] border border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)]"
                         : "btn-secondary"
                     }`}
                   >
@@ -478,7 +478,7 @@ export default function SeekerSearchExtended() {
                   {saved.size} saved items
                 </p>
                 <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800">
-                  <button className="text-xs text-rose-500 hover:text-rose-600 font-semibold">
+                  <button className="text-xs text-[var(--color-primary)] hover:text-[var(--color-primary)] font-semibold">
                     View all →
                   </button>
                 </div>

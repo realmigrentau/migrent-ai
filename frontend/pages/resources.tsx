@@ -64,7 +64,7 @@ function MockCalculator() {
           initial={{ width: 0 }}
           animate={{ width: "52%" }}
           transition={{ duration: 2, ease: "easeOut", repeat: Infinity, repeatType: "reverse" }}
-          className="h-full bg-gradient-to-r from-green-400 to-emerald-400 rounded-full"
+          className="h-full bg-gradient-to-r from-green-400 to-[var(--color-accent)] rounded-full"
         />
       </div>
       <div className="text-white/40 text-[10px]">Based on Sydney metro averages</div>
@@ -118,7 +118,7 @@ function MockDiscord() {
           <div className="flex items-center gap-2">
             <div className="w-5 h-5 rounded-full bg-white/15 shrink-0" />
             <div>
-              <span className="text-indigo-300 text-[10px] font-medium">{item.user}: </span>
+              <span className="text-[var(--color-primary)] text-[10px] font-medium">{item.user}: </span>
               <span className="text-white/70 text-[10px]">{item.msg}</span>
             </div>
           </div>
@@ -197,9 +197,9 @@ const resources = [
     titleKey: "resources.blog.title",
     descKey: "resources.blog.desc",
     icon: "M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z",
-    color: "from-rose-500 to-pink-500",
-    iconColor: "text-rose-500",
-    bgColor: "bg-rose-50 dark:bg-rose-500/10",
+    color: "from-[var(--color-primary)] to-[var(--color-primary)]",
+    iconColor: "text-[var(--color-primary)]",
+    bgColor: "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10",
     headline: "MigRent Blog",
     subline: "Tips, news, and migrant community stories",
     MockUI: MockBlog,
@@ -215,7 +215,7 @@ const resources = [
     titleKey: "resources.calculator.title",
     descKey: "resources.calculator.desc",
     icon: "M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z",
-    color: "from-green-500 to-emerald-500",
+    color: "from-green-500 to-[var(--color-accent)]",
     iconColor: "text-green-500",
     bgColor: "bg-green-50 dark:bg-green-500/10",
     headline: "Owner ROI Calculator",
@@ -233,7 +233,7 @@ const resources = [
     titleKey: "resources.apiDocs.title",
     descKey: "resources.apiDocs.desc",
     icon: "M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4",
-    color: "from-blue-500 to-indigo-500",
+    color: "from-[var(--color-primary)] to-[var(--color-primary)]",
     iconColor: "text-blue-500",
     bgColor: "bg-blue-50 dark:bg-blue-500/10",
     headline: "Developer API Docs",
@@ -251,9 +251,9 @@ const resources = [
     titleKey: "resources.discord.title",
     descKey: "resources.discord.desc",
     icon: "M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z",
-    color: "from-indigo-500 to-purple-500",
-    iconColor: "text-indigo-500",
-    bgColor: "bg-indigo-50 dark:bg-indigo-500/10",
+    color: "from-[var(--color-primary)] to-[var(--color-primary)]",
+    iconColor: "text-[var(--color-primary)]",
+    bgColor: "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10",
     headline: "Join MigRent Discord",
     subline: "Connect with thousands of migrants and hosts",
     MockUI: MockDiscord,
@@ -315,9 +315,9 @@ export default function Resources() {
       <div className="space-y-24">
         {/* ── Hero ───────────────────────────────────────────────── */}
         <section className="relative text-center py-20 overflow-hidden">
-          <div className="absolute top-0 left-1/4 w-96 h-96 bg-purple-500/15 dark:bg-purple-500/8 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute top-0 left-1/4 w-96 h-96 bg-[var(--color-primary-soft)]0/15 dark:bg-[var(--color-primary-soft)]0/8 rounded-full blur-3xl animate-pulse" />
           <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-cyan-500/12 dark:bg-cyan-500/6 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "1s" }} />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-violet-400/5 dark:bg-violet-600/5 rounded-full blur-3xl" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-violet-400/5 dark:bg-[var(--color-primary)]/5 rounded-full blur-3xl" />
 
           <motion.div
             initial={{ opacity: 0, y: 40 }}
@@ -325,13 +325,13 @@ export default function Resources() {
             transition={{ duration: 0.8 }}
             className="relative z-10 max-w-3xl mx-auto"
           >
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-purple-50 dark:bg-purple-500/10 border border-purple-100 dark:border-purple-500/20 text-xs font-medium text-purple-600 dark:text-purple-400 mb-6">
-              <span className="w-2 h-2 rounded-full bg-purple-500 animate-pulse" />
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary-soft)]0/10 border border-purple-100 dark:border-[var(--color-primary)]/20 text-xs font-medium text-[var(--color-primary)] dark:text-[var(--color-primary)] mb-6">
+              <span className="w-2 h-2 rounded-full bg-[var(--color-primary-soft)]0 animate-pulse" />
               {t("resources.heroBadge")}
             </div>
 
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight leading-tight">
-              <span className="bg-gradient-to-r from-purple-500 via-violet-500 to-cyan-500 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-[var(--color-primary)] via-[var(--color-primary)] to-cyan-500 bg-clip-text text-transparent">
                 Resources for MigRent
               </span>
               <br />
@@ -464,7 +464,7 @@ export default function Resources() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="rounded-2xl bg-gradient-to-r from-purple-500 via-violet-500 to-cyan-500 p-[1px]"
+            className="rounded-2xl bg-gradient-to-r from-[var(--color-primary)] via-[var(--color-primary)] to-cyan-500 p-[1px]"
           >
             <div className="rounded-2xl bg-white dark:bg-slate-900 p-8 md:p-10">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
@@ -481,7 +481,7 @@ export default function Resources() {
                     viewport={{ once: true }}
                     transition={{ delay: si * 0.1, duration: 0.5 }}
                   >
-                    <div className="text-2xl md:text-3xl font-black bg-gradient-to-r from-purple-500 to-cyan-500 bg-clip-text text-transparent">
+                    <div className="text-2xl md:text-3xl font-black bg-gradient-to-r from-[var(--color-primary)] to-cyan-500 bg-clip-text text-transparent">
                       {stat.value}
                     </div>
                     <div className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-medium">{stat.label}</div>

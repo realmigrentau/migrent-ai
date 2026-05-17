@@ -54,25 +54,25 @@ export default function CookiePolicy() {
                   <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                     <tr>
                       <td className="py-2.5 px-3 font-mono text-xs">sb-*-auth-token</td>
-                      <td className="py-2.5 px-3"><span className="px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs font-medium">Essential</span></td>
+                      <td className="py-2.5 px-3"><span className="px-2 py-0.5 rounded-full bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/20 text-[var(--color-accent)] dark:text-[var(--color-accent)] text-xs font-medium">Essential</span></td>
                       <td className="py-2.5 px-3">Supabase authentication session</td>
                       <td className="py-2.5 px-3">Session</td>
                     </tr>
                     <tr>
                       <td className="py-2.5 px-3 font-mono text-xs">theme</td>
-                      <td className="py-2.5 px-3"><span className="px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs font-medium">Essential</span></td>
+                      <td className="py-2.5 px-3"><span className="px-2 py-0.5 rounded-full bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/20 text-[var(--color-accent)] dark:text-[var(--color-accent)] text-xs font-medium">Essential</span></td>
                       <td className="py-2.5 px-3">Dark mode / light mode preference</td>
                       <td className="py-2.5 px-3">1 year</td>
                     </tr>
                     <tr>
                       <td className="py-2.5 px-3 font-mono text-xs">i18nextLng</td>
-                      <td className="py-2.5 px-3"><span className="px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs font-medium">Essential</span></td>
+                      <td className="py-2.5 px-3"><span className="px-2 py-0.5 rounded-full bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/20 text-[var(--color-accent)] dark:text-[var(--color-accent)] text-xs font-medium">Essential</span></td>
                       <td className="py-2.5 px-3">Language preference</td>
                       <td className="py-2.5 px-3">1 year</td>
                     </tr>
                     <tr>
                       <td className="py-2.5 px-3 font-mono text-xs">migrent_session_cache</td>
-                      <td className="py-2.5 px-3"><span className="px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs font-medium">Essential</span></td>
+                      <td className="py-2.5 px-3"><span className="px-2 py-0.5 rounded-full bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/20 text-[var(--color-accent)] dark:text-[var(--color-accent)] text-xs font-medium">Essential</span></td>
                       <td className="py-2.5 px-3">Cached session for faster page loads</td>
                       <td className="py-2.5 px-3">Session</td>
                     </tr>
@@ -132,7 +132,7 @@ export default function CookiePolicy() {
 
           {/* Legal Disclaimer */}
           <div className="card-subtle p-4 rounded-xl text-xs text-slate-400 dark:text-slate-500 leading-relaxed">
-            <p>For more information about how we handle your data, see our <Link href="/privacy-policy" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">Privacy Policy</Link>. Last reviewed: March 2026.</p>
+            <p>For more information about how we handle your data, see our <Link href="/privacy-policy" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">Privacy Policy</Link>. Last reviewed: March 2026.</p>
           </div>
 
           {/* CTA */}

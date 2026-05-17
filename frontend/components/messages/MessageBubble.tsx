@@ -104,7 +104,7 @@ export default function MessageBubble({
           <div className="w-7 mr-2 shrink-0">
             {isLastInGroup && (
               <div className={`w-7 h-7 rounded-full flex items-center justify-center overflow-hidden mt-auto ${
-                otherUserAvatar ? "bg-slate-200 dark:bg-slate-700" : "bg-gradient-to-br from-indigo-500 to-emerald-500"
+                otherUserAvatar ? "bg-slate-200 dark:bg-slate-700" : "bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-accent)]"
               }`}>
                 {otherUserAvatar ? (
                   <img src={otherUserAvatar} alt="" className="w-full h-full object-cover" />
@@ -163,7 +163,7 @@ export default function MessageBubble({
             <div
               className={`text-[11px] px-3 py-1.5 mb-0.5 rounded-t-2xl border-l-2 ${
                 isMine
-                  ? "bg-indigo-500/10 border-indigo-400 text-indigo-300 ml-auto"
+                  ? "bg-[var(--color-primary)]/10 border-[var(--color-line-2)] text-[var(--color-primary)] ml-auto"
                   : "bg-slate-100 dark:bg-slate-800 border-emerald-400 text-slate-500 dark:text-slate-400"
               }`}
             >
@@ -198,7 +198,7 @@ export default function MessageBubble({
               rel="noopener noreferrer"
               className={`flex items-center gap-3 px-4 py-3 rounded-2xl mb-0.5 transition-all hover:shadow-md ${
                 isMine
-                  ? "bg-gradient-to-r from-indigo-500 to-indigo-600 text-white"
+                  ? "bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary)] text-white"
                   : "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700"
               }`}
             >
@@ -224,7 +224,7 @@ export default function MessageBubble({
             <div
               className={`rounded-2xl px-4 py-2.5 ${
                 isMine
-                  ? `bg-gradient-to-br from-indigo-500 to-indigo-600 text-white shadow-md shadow-indigo-500/20 ${
+                  ? `bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary)] text-white shadow-md shadow-[var(--color-primary)]/20 ${
                       isLastInGroup ? "rounded-br-md" : ""
                     }`
                   : `bg-white dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-700/50 shadow-sm ${
@@ -269,7 +269,7 @@ export default function MessageBubble({
               minute: "2-digit",
             })}
             {isMine && message.read_at && (
-              <span className="ml-1 text-indigo-400 inline-flex items-center">
+              <span className="ml-1 text-[var(--color-primary)] inline-flex items-center">
                 <CheckCheck className="w-3 h-3" />
               </span>
             )}

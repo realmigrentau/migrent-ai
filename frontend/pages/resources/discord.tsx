@@ -38,8 +38,8 @@ const benefits = [
     title: "Direct Support",
     desc: "Get help from MigRent staff and experienced community members any time of day.",
     icon: "M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z",
-    color: "text-purple-500",
-    bgColor: "bg-purple-50 dark:bg-purple-500/10",
+    color: "text-[var(--color-primary)]",
+    bgColor: "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary-soft)]0/10",
   },
 ];
 
@@ -86,12 +86,12 @@ export default function Discord() {
           transition={{ duration: 0.5 }}
           className="text-center mb-16"
         >
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-100 dark:border-indigo-500/20 text-xs font-medium text-indigo-600 dark:text-indigo-400 mb-4">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 border border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)] text-xs font-medium text-[var(--color-primary)] dark:text-[var(--color-primary)] mb-4">
             <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
             2,847 members online
           </div>
           <h1 className="text-3xl md:text-5xl font-black tracking-tight text-slate-900 dark:text-white">
-            Join the <span className="bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-transparent">MigRent Community</span>
+            Join the <span className="bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary)] bg-clip-text text-transparent">MigRent Community</span>
           </h1>
           <p className="mt-4 text-lg text-slate-500 dark:text-slate-400 max-w-xl mx-auto">
             Connect with thousands of migrants and hosts. Get housing tips, share experiences, and find support.
@@ -153,8 +153,8 @@ export default function Discord() {
                 variants={fadeUp}
                 className="card rounded-xl p-4 flex items-center gap-3"
               >
-                <div className="w-8 h-8 rounded-lg bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center shrink-0">
-                  <span className="text-indigo-500 text-xs font-bold">#</span>
+                <div className="w-8 h-8 rounded-lg bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 flex items-center justify-center shrink-0">
+                  <span className="text-[var(--color-primary)] text-xs font-bold">#</span>
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="text-sm font-semibold text-slate-900 dark:text-white">{channel.name}</div>
@@ -178,7 +178,7 @@ export default function Discord() {
             <div className="space-y-3">
               {rules.map((rule, i) => (
                 <div key={i} className="flex items-start gap-3">
-                  <span className="w-6 h-6 rounded-full bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center text-[10px] font-bold text-indigo-500 shrink-0 mt-0.5">
+                  <span className="w-6 h-6 rounded-full bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 flex items-center justify-center text-[10px] font-bold text-[var(--color-primary)] shrink-0 mt-0.5">
                     {i + 1}
                   </span>
                   <span className="text-sm text-slate-600 dark:text-slate-400">{rule}</span>
@@ -195,7 +195,7 @@ export default function Discord() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-500 p-[1px]"
+            className="rounded-2xl bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary)] p-[1px]"
           >
             <div className="rounded-2xl bg-white dark:bg-slate-900 p-8">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
@@ -212,7 +212,7 @@ export default function Discord() {
                     viewport={{ once: true }}
                     transition={{ delay: i * 0.1 }}
                   >
-                    <div className="text-2xl font-black bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-transparent">
+                    <div className="text-2xl font-black bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary)] bg-clip-text text-transparent">
                       {stat.value}
                     </div>
                     <div className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-medium">{stat.label}</div>

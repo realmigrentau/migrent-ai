@@ -88,7 +88,7 @@ export default function SimilarListings({
       {currentSuburb && (
         <Link
           href={`/seeker/search?suburb=${encodeURIComponent(currentSuburb)}`}
-          className="mt-4 block text-center text-sm font-semibold text-rose-500 hover:text-rose-600 transition-colors"
+          className="mt-4 block text-center text-sm font-semibold text-[var(--color-primary)] hover:text-[var(--color-primary)] transition-colors"
         >
           View all rooms in {currentSuburb}
         </Link>

@@ -20,15 +20,15 @@ import {
 
 const TYPE_ICONS: Record<string, { icon: typeof Bell; color: string; bg: string }> = {
   booking_request_created: { icon: Calendar, color: "text-blue-500", bg: "bg-blue-50 dark:bg-blue-500/10" },
-  booking_approved: { icon: Calendar, color: "text-emerald-500", bg: "bg-emerald-50 dark:bg-emerald-500/10" },
+  booking_approved: { icon: Calendar, color: "text-[var(--color-accent)]", bg: "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10" },
   booking_declined: { icon: Calendar, color: "text-red-500", bg: "bg-red-50 dark:bg-red-500/10" },
-  booking_confirmed: { icon: Calendar, color: "text-emerald-600", bg: "bg-emerald-50 dark:bg-emerald-500/10" },
-  payment_received: { icon: DollarSign, color: "text-emerald-500", bg: "bg-emerald-50 dark:bg-emerald-500/10" },
+  booking_confirmed: { icon: Calendar, color: "text-[var(--color-accent)]", bg: "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10" },
+  payment_received: { icon: DollarSign, color: "text-[var(--color-accent)]", bg: "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10" },
   verification_status_changed: { icon: Shield, color: "text-amber-500", bg: "bg-amber-50 dark:bg-amber-500/10" },
-  message_received: { icon: MessageCircle, color: "text-pink-500", bg: "bg-pink-50 dark:bg-pink-500/10" },
+  message_received: { icon: MessageCircle, color: "text-[var(--color-primary)]", bg: "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary-soft)]0/10" },
   match_created: { icon: Zap, color: "text-yellow-500", bg: "bg-yellow-50 dark:bg-yellow-500/10" },
   host_response_sent: { icon: Calendar, color: "text-cyan-500", bg: "bg-cyan-50 dark:bg-cyan-500/10" },
-  listing_published: { icon: Home, color: "text-indigo-500", bg: "bg-indigo-50 dark:bg-indigo-500/10" },
+  listing_published: { icon: Home, color: "text-[var(--color-primary)]", bg: "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10" },
   listing_rejected: { icon: Home, color: "text-red-500", bg: "bg-red-50 dark:bg-red-500/10" },
   listing_changes_requested: { icon: Home, color: "text-orange-500", bg: "bg-orange-50 dark:bg-orange-500/10" },
 };
@@ -79,7 +79,7 @@ export default function NotificationsPage() {
           {unreadCount > 0 && (
             <button
               onClick={markAllRead}
-              className="flex items-center gap-1.5 text-sm text-indigo-500 hover:text-indigo-600 dark:text-indigo-400 font-medium px-3 py-2 rounded-xl hover:bg-indigo-50 dark:hover:bg-indigo-500/10 transition-colors"
+              className="flex items-center gap-1.5 text-sm text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:text-[var(--color-primary)] font-medium px-3 py-2 rounded-xl hover:bg-[var(--color-primary-soft)] dark:hover:bg-[var(--color-primary)]/10 transition-colors"
             >
               <CheckCheck className="w-4 h-4" />
               Mark all read
@@ -100,7 +100,7 @@ export default function NotificationsPage() {
               onClick={() => setFilter(opt.value)}
               className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                 filter === opt.value
-                  ? "bg-indigo-500 text-white shadow-sm"
+                  ? "bg-[var(--color-primary)] text-white shadow-sm"
                   : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"
               }`}
             >
@@ -113,7 +113,7 @@ export default function NotificationsPage() {
               onClick={() => setShowUnreadOnly(!showUnreadOnly)}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                 showUnreadOnly
-                  ? "bg-rose-100 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400"
+                  ? "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 text-[var(--color-primary)] dark:text-[var(--color-primary)]"
                   : "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700"
               }`}
             >
@@ -169,7 +169,7 @@ export default function NotificationsPage() {
                     <div
                       className={`flex items-start gap-3 px-5 py-4 transition-colors group ${
                         !n.is_read
-                          ? "bg-indigo-50/40 dark:bg-indigo-500/5"
+                          ? "bg-[var(--color-primary-soft)]/40 dark:bg-[var(--color-primary)]/5"
                           : "hover:bg-slate-50 dark:hover:bg-slate-800/30"
                       }`}
                     >
@@ -205,7 +205,7 @@ export default function NotificationsPage() {
                           <button
                             onClick={() => markRead(n.id)}
                             title="Mark as read"
-                            className="p-1.5 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 transition-colors"
+                            className="p-1.5 rounded-lg text-slate-400 hover:text-[var(--color-primary)] hover:bg-[var(--color-primary-soft)] dark:hover:bg-[var(--color-primary)]/10 transition-colors"
                           >
                             <CheckCheck className="w-3.5 h-3.5" />
                           </button>
@@ -221,7 +221,7 @@ export default function NotificationsPage() {
 
                       {/* Unread dot */}
                       {!n.is_read && (
-                        <span className="mt-2 w-2 h-2 rounded-full bg-indigo-500 shrink-0" />
+                        <span className="mt-2 w-2 h-2 rounded-full bg-[var(--color-primary)] shrink-0" />
                       )}
                     </div>
                   </motion.div>

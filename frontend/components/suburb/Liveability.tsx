@@ -14,14 +14,14 @@ export default function Liveability({ pros, cons, suburbName }: LiveabilityProps
       </h2>
       <div className="grid md:grid-cols-2 gap-6">
         {/* Pros */}
-        <div className="rounded-xl border border-emerald-200 dark:border-emerald-800/50 bg-emerald-50/50 dark:bg-emerald-900/10 p-6">
-          <h3 className="font-semibold text-emerald-800 dark:text-emerald-400 mb-4">
+        <div className="rounded-xl border border-[var(--color-accent-soft)] dark:border-emerald-800/50 bg-[var(--color-accent-soft)]/50 dark:bg-emerald-900/10 p-6">
+          <h3 className="font-semibold text-emerald-800 dark:text-[var(--color-accent)] mb-4">
             What we love
           </h3>
           <ul className="space-y-3">
             {pros.map((pro, i) => (
               <li key={i} className="flex items-start gap-3">
-                <CheckCircle className="w-5 h-5 text-emerald-500 mt-0.5 shrink-0" />
+                <CheckCircle className="w-5 h-5 text-[var(--color-accent)] mt-0.5 shrink-0" />
                 <span className="text-sm text-slate-700 dark:text-slate-300">
                   {pro}
                 </span>

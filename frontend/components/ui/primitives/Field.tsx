@@ -27,20 +27,20 @@ export function Field({
       {label && (
         <label
           htmlFor={htmlFor}
-          className="text-sm font-medium text-slate-800 dark:text-slate-200 flex items-center gap-1.5"
+          className="text-[12.5px] font-semibold text-[var(--color-ink-2)] tracking-[-0.005em] flex items-center gap-1.5"
         >
           {label}
-          {required && <span className="text-rose-600">*</span>}
+          {required && <span className="text-[var(--color-danger-500)]">*</span>}
           {optional && (
-            <span className="text-xs font-normal text-slate-500">(optional)</span>
+            <span className="text-xs font-normal text-[var(--color-ink-3)]">(optional)</span>
           )}
         </label>
       )}
       {children}
       {error ? (
-        <span className="text-xs text-rose-600">{error}</span>
+        <span className="text-xs text-[var(--color-danger-500)]">{error}</span>
       ) : (
-        hint && <span className="text-xs text-slate-500">{hint}</span>
+        hint && <span className="text-xs text-[var(--color-ink-3)]">{hint}</span>
       )}
     </div>
   );

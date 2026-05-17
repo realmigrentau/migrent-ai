@@ -75,7 +75,7 @@ function AmenityItem({
       <Icon
         className={`w-4.5 h-4.5 ${
           available
-            ? "text-emerald-500"
+            ? "text-[var(--color-accent)]"
             : "text-slate-300 dark:text-slate-600"
         }`}
       />
@@ -158,7 +158,7 @@ export default function KeyDetails({ listing }: KeyDetailsProps) {
         </div>
         <div className="mt-2 text-sm text-slate-600 dark:text-slate-300">
           {listing.bills_included ? (
-            <span className="text-emerald-600 dark:text-emerald-400 font-medium">
+            <span className="text-[var(--color-accent)] dark:text-[var(--color-accent)] font-medium">
               Bills included
             </span>
           ) : (
@@ -213,7 +213,7 @@ export default function KeyDetails({ listing }: KeyDetailsProps) {
             {listing.highlights.map((h, i) => (
               <span
                 key={i}
-                className="text-xs font-medium px-3 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400"
+                className="text-xs font-medium px-3 py-1.5 rounded-full bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 text-[var(--color-accent)] dark:text-[var(--color-accent)]"
               >
                 {h}
               </span>

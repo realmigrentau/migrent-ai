@@ -9,7 +9,7 @@ const categoryColors: Record<BlogCategory, string> = {
   Guide: "bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400",
   Market: "bg-green-50 dark:bg-green-500/10 text-green-600 dark:text-green-400",
   Safety: "bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400",
-  News: "bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400",
+  News: "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary-soft)]0/10 text-[var(--color-primary)] dark:text-[var(--color-primary)]",
   Tips: "bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400",
 };
 
@@ -70,7 +70,7 @@ export default function BlogPost() {
           </h1>
 
           <div className="flex items-center gap-3 mt-6">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-rose-500 to-purple-500 flex items-center justify-center text-white text-sm font-bold">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center text-white text-sm font-bold">
               {post.author.charAt(0)}
             </div>
             <div>
@@ -109,8 +109,8 @@ export default function BlogPost() {
                   <ul key={i} className="space-y-2 pl-1">
                     {block.content.split("\n").map((item, li) => (
                       <li key={li} className="flex items-start gap-3 text-sm text-slate-600 dark:text-slate-400">
-                        <span className="w-5 h-5 rounded-full bg-rose-50 dark:bg-rose-500/10 flex items-center justify-center shrink-0 mt-0.5">
-                          <svg className="w-3 h-3 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                        <span className="w-5 h-5 rounded-full bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 flex items-center justify-center shrink-0 mt-0.5">
+                          <svg className="w-3 h-3 text-[var(--color-primary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                           </svg>
                         </span>

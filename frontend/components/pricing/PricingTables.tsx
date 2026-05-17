@@ -40,13 +40,13 @@ const seekerVerifiedFeatures = [
 function FeatureItem({ text, color }: { text: string; color: "blue" | "rose" | "emerald" }) {
   const colorClasses = {
     blue: "text-blue-500",
-    rose: "text-rose-500",
-    emerald: "text-emerald-500",
+    rose: "text-[var(--color-primary)]",
+    emerald: "text-[var(--color-accent)]",
   };
   const bgClasses = {
     blue: "bg-blue-50 dark:bg-blue-500/20",
-    rose: "bg-rose-50 dark:bg-rose-500/20",
-    emerald: "bg-emerald-100 dark:bg-emerald-500/20",
+    rose: "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/20",
+    emerald: "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/20",
   };
 
   return (
@@ -106,7 +106,7 @@ export default function PricingTables() {
               <span className="text-5xl font-bold text-blue-600 dark:text-blue-400">$99</span>
               <span className="text-sm font-medium text-slate-400 dark:text-slate-500">AUD</span>
             </div>
-            <p className="text-xs text-emerald-600 dark:text-emerald-400 font-medium mt-2">
+            <p className="text-xs text-[var(--color-accent)] dark:text-[var(--color-accent)] font-medium mt-2">
               One-time per property &bull; Charged only on match
             </p>
           </div>
@@ -133,11 +133,11 @@ export default function PricingTables() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
-            className="card p-8 rounded-2xl border-t-2 border-t-rose-500 relative"
+            className="card p-8 rounded-2xl border-t-2 border-t-[var(--color-ink)] relative"
           >
-            <div className="absolute top-4 right-4 flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-50 dark:bg-rose-500/20 border border-rose-100 dark:border-rose-500/30">
-              <Zap className="w-3 h-3 text-rose-500" />
-              <span className="text-xs font-semibold text-rose-600 dark:text-rose-400">
+            <div className="absolute top-4 right-4 flex items-center gap-1.5 px-3 py-1 rounded-full bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/20 border border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)]">
+              <Zap className="w-3 h-3 text-[var(--color-primary)]" />
+              <span className="text-xs font-semibold text-[var(--color-primary)] dark:text-[var(--color-primary)]">
                 Seekers
               </span>
             </div>
@@ -151,7 +151,7 @@ export default function PricingTables() {
 
             <div className="my-6 pb-6 border-b border-slate-100 dark:border-slate-800">
               <div className="flex items-baseline gap-1">
-                <span className="text-5xl font-bold text-rose-500">$0</span>
+                <span className="text-5xl font-bold text-[var(--color-primary)]">$0</span>
               </div>
               <p className="text-xs text-slate-400 dark:text-slate-500 font-medium mt-2">
                 No credit card required &bull; No limits
@@ -166,7 +166,7 @@ export default function PricingTables() {
 
             <Link
               href="/signup"
-              className="block w-full text-center py-2.5 rounded-[10px] text-sm font-semibold bg-rose-600 hover:bg-rose-700 text-white transition-colors"
+              className="block w-full text-center py-2.5 rounded-[10px] text-sm font-semibold bg-[var(--color-primary)] hover:bg-[var(--color-primary-500)] text-white transition-colors"
             >
               Start Searching Free
             </Link>
@@ -178,9 +178,9 @@ export default function PricingTables() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.3 }}
-            className="card p-6 rounded-2xl border border-emerald-200 dark:border-emerald-500/20 relative"
+            className="card p-6 rounded-2xl border border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)] relative"
           >
-            <div className="absolute -top-3 left-6 px-3 py-1 rounded-full bg-emerald-500 text-white text-xs font-semibold flex items-center gap-1">
+            <div className="absolute -top-3 left-6 px-3 py-1 rounded-full bg-[var(--color-accent-soft)]0 text-white text-xs font-semibold flex items-center gap-1">
               <Star className="w-3 h-3" fill="currentColor" />
               Popular
             </div>
@@ -196,7 +196,7 @@ export default function PricingTables() {
               </div>
               <div className="text-right">
                 <span className="text-3xl font-bold text-slate-900 dark:text-white">$19</span>
-                <p className="text-xs text-emerald-600 dark:text-emerald-400 font-medium">
+                <p className="text-xs text-[var(--color-accent)] dark:text-[var(--color-accent)] font-medium">
                   One-time
                 </p>
               </div>
@@ -205,7 +205,7 @@ export default function PricingTables() {
             <div className="mt-5 grid grid-cols-2 gap-2">
               {seekerVerifiedFeatures.map((feature) => (
                 <div key={feature} className="flex items-start gap-2 text-xs text-slate-600 dark:text-slate-300">
-                  <Check className="w-3.5 h-3.5 text-emerald-500 shrink-0 mt-0.5" strokeWidth={2.5} />
+                  <Check className="w-3.5 h-3.5 text-[var(--color-accent)] shrink-0 mt-0.5" strokeWidth={2.5} />
                   {feature}
                 </div>
               ))}
@@ -213,7 +213,7 @@ export default function PricingTables() {
 
             <Link
               href="/signup"
-              className="mt-5 block w-full text-center py-2.5 rounded-[10px] text-sm font-semibold bg-emerald-600 hover:bg-emerald-700 text-white transition-colors"
+              className="mt-5 block w-full text-center py-2.5 rounded-[10px] text-sm font-semibold bg-[var(--color-accent)] hover:bg-[var(--color-accent-700)] text-white transition-colors"
             >
               Get Verified - $19
             </Link>

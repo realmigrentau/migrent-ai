@@ -17,8 +17,8 @@ export default function NotFound() {
           transition={{ duration: 0.5 }}
           className="text-center max-w-md"
         >
-          <div className="w-20 h-20 rounded-2xl bg-rose-50 dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/20 flex items-center justify-center mx-auto mb-6">
-            <span className="text-4xl font-bold text-rose-500">404</span>
+          <div className="w-20 h-20 rounded-2xl bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 border border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)] flex items-center justify-center mx-auto mb-6">
+            <span className="text-4xl font-bold text-[var(--color-primary)]">404</span>
           </div>
 
           <h1 className="text-2xl font-semibold tracking-tight text-slate-900 dark:text-white mb-3">

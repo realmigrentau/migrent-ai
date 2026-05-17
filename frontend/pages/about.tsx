@@ -39,10 +39,10 @@ export default function About() {
       <div className="space-y-16">
         {/* Hero */}
         <section className="relative text-center py-16 overflow-hidden">
-          <div className="absolute top-10 left-10 w-72 h-72 bg-rose-500/10 dark:bg-rose-500/5 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute top-10 left-10 w-72 h-72 bg-[var(--color-primary)]/10 dark:bg-[var(--color-primary)]/5 rounded-full blur-3xl animate-pulse" />
           <div className="absolute bottom-10 right-10 w-96 h-96 bg-blue-500/10 dark:bg-blue-500/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "1s" }} />
           <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="relative z-10 max-w-3xl mx-auto">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-rose-50 dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/20 text-xs font-medium text-rose-600 dark:text-rose-400 mb-6">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 border border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)] text-xs font-medium text-[var(--color-primary)] dark:text-[var(--color-primary)] mb-6">
               {t("about.badge")}
             </div>
             <h1 className="text-4xl sm:text-5xl font-semibold tracking-tight leading-tight text-slate-900 dark:text-white">
@@ -59,7 +59,7 @@ export default function About() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {stats.map((stat, i) => (
               <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="card p-4 rounded-2xl text-center">
-                <p className="text-2xl font-bold text-rose-500">{stat.value}</p>
+                <p className="text-2xl font-bold text-[var(--color-primary)]">{stat.value}</p>
                 <p className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white mt-1">{stat.label}</p>
                 <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{stat.detail}</p>
               </motion.div>
@@ -92,7 +92,7 @@ export default function About() {
 
         {/* Mission */}
         <section className="max-w-3xl mx-auto">
-          <div className="card p-6 md:p-8 rounded-2xl bg-gradient-to-br from-rose-50 to-rose-100/50 dark:from-rose-500/10 dark:to-rose-600/5 border-rose-200 dark:border-rose-500/20 space-y-4">
+          <div className="card p-6 md:p-8 rounded-2xl bg-gradient-to-br from-[var(--color-primary-soft)] to-[var(--color-primary-soft)]/50 dark:from-[var(--color-primary)]/10 dark:to-[var(--color-primary)]/5 border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)] space-y-4">
             <h2 className="text-xl font-semibold tracking-tight text-slate-900 dark:text-white">{t("about.missionTitle")}</h2>
             <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
               {t("about.missionText")}
@@ -108,8 +108,8 @@ export default function About() {
           <div className="grid sm:grid-cols-2 gap-4">
             {values.map((item, i) => (
               <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="card p-5 rounded-2xl">
-                <div className="w-10 h-10 rounded-xl bg-rose-50 dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/20 flex items-center justify-center mb-3">
-                  <svg className="w-5 h-5 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <div className="w-10 h-10 rounded-xl bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 border border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)] flex items-center justify-center mb-3">
+                  <svg className="w-5 h-5 text-[var(--color-primary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d={item.icon} />
                   </svg>
                 </div>
@@ -127,10 +127,10 @@ export default function About() {
             <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
               <p>{t("about.howDesc")}</p>
               <div className="grid sm:grid-cols-2 gap-3">
-                <div className="card-subtle p-4 rounded-xl border-l-2 border-l-rose-500">
+                <div className="card-subtle p-4 rounded-xl border-l-2 border-l-[var(--color-primary)]">
                   <h3 className="font-semibold text-slate-800 dark:text-slate-200 text-sm mb-1">{t("about.howSeekerTitle")}</h3>
                   <p className="text-xs text-slate-500 dark:text-slate-400">{t("about.howSeekerDesc")}</p>
-                  <Link href="/for-seekers" className="text-xs text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors mt-1 inline-block">{t("about.howSeekerLink")}</Link>
+                  <Link href="/for-seekers" className="text-xs text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors mt-1 inline-block">{t("about.howSeekerLink")}</Link>
                 </div>
                 <div className="card-subtle p-4 rounded-xl border-l-2 border-l-blue-500">
                   <h3 className="font-semibold text-slate-800 dark:text-slate-200 text-sm mb-1">{t("about.howOwnerTitle")}</h3>
@@ -170,7 +170,7 @@ export default function About() {
                 </div>
                 <div>
                   <span className="text-xs font-medium uppercase tracking-wider text-slate-400 dark:text-slate-500">{t("about.emailLabel")}</span>
-                  <p><a href="https://mail.google.com/mail/?view=cm&fs=1&to=migrentau@gmail.com" target="_blank" rel="noopener noreferrer" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">migrentau@gmail.com</a></p>
+                  <p><a href="https://mail.google.com/mail/?view=cm&fs=1&to=migrentau@gmail.com" target="_blank" rel="noopener noreferrer" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">migrentau@gmail.com</a></p>
                 </div>
               </div>
             </div>
@@ -188,7 +188,7 @@ export default function About() {
 
         {/* CTA */}
         <section className="max-w-3xl mx-auto pb-8">
-          <div className="card p-8 rounded-2xl bg-gradient-to-br from-rose-50 via-white to-blue-50 dark:from-rose-500/10 dark:via-slate-900 dark:to-blue-500/10 text-center">
+          <div className="card p-8 rounded-2xl bg-gradient-to-br from-[var(--color-primary-soft)] via-white to-blue-50 dark:from-[var(--color-primary)]/10 dark:via-slate-900 dark:to-[var(--color-primary)]/10 text-center">
             <h2 className="text-2xl font-semibold tracking-tight text-slate-900 dark:text-white mb-3">{t("about.ctaTitle")}</h2>
             <p className="text-sm text-slate-600 dark:text-slate-300 mb-6">{t("about.ctaSubtitle")}</p>
             <div className="flex gap-3 justify-center flex-col sm:flex-row">

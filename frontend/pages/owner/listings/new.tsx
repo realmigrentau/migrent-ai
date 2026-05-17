@@ -95,7 +95,7 @@ export default function NewListing() {
   if (loading || checkingVerification)
     return (
       <div className="flex items-center justify-center py-20">
-        <div className="w-8 h-8 border-2 border-rose-300 dark:border-rose-500/30 border-t-rose-500 rounded-full animate-spin" />
+        <div className="w-8 h-8 border-2 border-[var(--color-line-2)] dark:border-[var(--color-primary-soft)] border-t-[var(--color-ink)] rounded-full animate-spin" />
       </div>
     );
 
@@ -128,7 +128,7 @@ export default function NewListing() {
           </p>
           <div className="space-y-3 text-left mb-6">
             <div className="flex items-center gap-3 text-sm text-slate-600 dark:text-slate-300">
-              <span className="w-6 h-6 rounded-full bg-emerald-100 dark:bg-emerald-500/10 flex items-center justify-center text-xs font-bold text-emerald-600">1</span>
+              <span className="w-6 h-6 rounded-full bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 flex items-center justify-center text-xs font-bold text-[var(--color-accent)]">1</span>
               Email verification (already done)
             </div>
             <div className="flex items-center gap-3 text-sm text-slate-600 dark:text-slate-300">
@@ -150,7 +150,7 @@ export default function NewListing() {
     <div className="space-y-6">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
         <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 mb-2">
-          <Link href="/owner/listings" className="hover:text-rose-500 transition-colors">
+          <Link href="/owner/listings" className="hover:text-[var(--color-primary)] transition-colors">
             My listings
           </Link>
           <span>/</span>

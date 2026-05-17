@@ -127,7 +127,7 @@ export default function ListingDetailPage() {
           </h1>
           <Link
             href="/seeker/search"
-            className="text-rose-500 hover:text-rose-600 text-sm font-medium"
+            className="text-[var(--color-primary)] hover:opacity-80 text-sm font-medium"
           >
             Back to search
           </Link>
@@ -264,7 +264,7 @@ export default function ListingDetailPage() {
               <div className="border-t border-slate-200 dark:border-slate-800 pt-8 pb-4">
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div className="flex items-center gap-3 p-4 rounded-xl bg-slate-50 dark:bg-slate-900/50">
-                    <Shield className="w-8 h-8 text-rose-500" />
+                    <Shield className="w-8 h-8 text-[var(--color-accent)]" />
                     <div>
                       <p className="text-sm font-semibold text-slate-900 dark:text-white">
                         MigRent Guarantee
@@ -275,7 +275,7 @@ export default function ListingDetailPage() {
                     </div>
                   </div>
                   <div className="flex items-center gap-3 p-4 rounded-xl bg-slate-50 dark:bg-slate-900/50">
-                    <CreditCard className="w-8 h-8 text-indigo-500" />
+                    <CreditCard className="w-8 h-8 text-[var(--color-primary)]" />
                     <div>
                       <p className="text-sm font-semibold text-slate-900 dark:text-white">
                         Secure Payments
@@ -286,7 +286,7 @@ export default function ListingDetailPage() {
                     </div>
                   </div>
                   <div className="flex items-center gap-3 p-4 rounded-xl bg-slate-50 dark:bg-slate-900/50">
-                    <Mail className="w-8 h-8 text-emerald-500" />
+                    <Mail className="w-8 h-8 text-[var(--color-accent)]" />
                     <div>
                       <p className="text-sm font-semibold text-slate-900 dark:text-white">
                         24h Support
@@ -307,9 +307,9 @@ export default function ListingDetailPage() {
                   <motion.div
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="card p-6 rounded-2xl text-center border border-emerald-200 dark:border-emerald-500/30"
+                    className="card p-6 text-center border-[var(--color-accent)]"
                   >
-                    <CheckCircle className="w-12 h-12 mx-auto text-emerald-500 mb-3" />
+                    <CheckCircle className="w-12 h-12 mx-auto text-[var(--color-accent)] mb-3" />
                     <h3 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white mb-2">
                       Request sent!
                     </h3>
@@ -319,7 +319,7 @@ export default function ListingDetailPage() {
                     </p>
                     <Link
                       href="/dashboard/seeker"
-                      className="text-sm font-semibold text-rose-500 hover:text-rose-600"
+                      className="text-sm font-semibold text-[var(--color-primary)] hover:opacity-80"
                     >
                       View your bookings
                     </Link>
@@ -330,7 +330,7 @@ export default function ListingDetailPage() {
                       This is your listing. You can manage it from your{" "}
                       <Link
                         href="/dashboard/owner"
-                        className="text-rose-500 font-semibold hover:text-rose-600"
+                        className="text-[var(--color-primary)] font-semibold hover:text-[var(--color-primary)]"
                       >
                         owner dashboard
                       </Link>
@@ -352,7 +352,7 @@ export default function ListingDetailPage() {
                       New to MigRent?{" "}
                       <Link
                         href="/signup"
-                        className="text-rose-500 hover:text-rose-600"
+                        className="text-[var(--color-primary)] hover:opacity-80"
                       >
                         Create an account
                       </Link>

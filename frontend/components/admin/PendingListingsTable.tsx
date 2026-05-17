@@ -52,8 +52,8 @@ export default function PendingListingsTable({
   if (listings.length === 0) {
     return (
       <div className="card p-8 rounded-2xl text-center">
-        <div className="w-14 h-14 mx-auto mb-4 rounded-full bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center">
-          <svg className="w-7 h-7 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <div className="w-14 h-14 mx-auto mb-4 rounded-full bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 flex items-center justify-center">
+          <svg className="w-7 h-7 text-[var(--color-accent)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
         </div>
@@ -111,7 +111,7 @@ export default function PendingListingsTable({
 
               {/* Owner info */}
               <div className="flex items-center gap-2 mt-2">
-                <div className="w-5 h-5 rounded-full bg-gradient-to-br from-indigo-500 to-pink-500 flex items-center justify-center text-white text-[9px] font-bold overflow-hidden shrink-0">
+                <div className="w-5 h-5 rounded-full bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center text-white text-[9px] font-bold overflow-hidden shrink-0">
                   {listing.owner_photo ? (
                     <img src={listing.owner_photo} alt="" className="w-full h-full object-cover" />
                   ) : (

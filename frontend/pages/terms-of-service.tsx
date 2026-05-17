@@ -49,7 +49,7 @@ export default function TermsOfService() {
                 <li>A legal representative of any user</li>
                 <li>A collector of rent, bonds, or deposits on behalf of any user</li>
               </ul>
-              <p>All arrangements, agreements, and ongoing rent payments are between owners and seekers directly. MigRent does not create tenancy agreements, collect bonds, or handle rent payments. Users make their own direct arrangements. See our <Link href="/no-agency" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">No Agency Disclosure</Link> for further details.</p>
+              <p>All arrangements, agreements, and ongoing rent payments are between owners and seekers directly. MigRent does not create tenancy agreements, collect bonds, or handle rent payments. Users make their own direct arrangements. See our <Link href="/no-agency" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">No Agency Disclosure</Link> for further details.</p>
             </div>
           </section>
 
@@ -65,7 +65,7 @@ export default function TermsOfService() {
                 <li>Notify us immediately of any unauthorised access</li>
                 <li>Not create multiple accounts for deceptive purposes</li>
               </ul>
-              <p>We reserve the right to suspend or terminate accounts that violate these Terms or our <Link href="/rules-community-guidelines" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">Community Guidelines</Link>.</p>
+              <p>We reserve the right to suspend or terminate accounts that violate these Terms or our <Link href="/rules-community-guidelines" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">Community Guidelines</Link>.</p>
             </div>
           </section>
 
@@ -86,43 +86,43 @@ export default function TermsOfService() {
                   <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                     <tr>
                       <td className="py-2.5 px-3">Provide accurate listing/profile information</td>
-                      <td className="py-2.5 px-3 text-center text-emerald-500">Yes</td>
-                      <td className="py-2.5 px-3 text-center text-emerald-500">Yes</td>
+                      <td className="py-2.5 px-3 text-center text-[var(--color-accent)]">Yes</td>
+                      <td className="py-2.5 px-3 text-center text-[var(--color-accent)]">Yes</td>
                     </tr>
                     <tr>
                       <td className="py-2.5 px-3">Comply with all applicable AU rental and STRA laws</td>
-                      <td className="py-2.5 px-3 text-center text-emerald-500">Yes</td>
-                      <td className="py-2.5 px-3 text-center text-emerald-500">Yes</td>
+                      <td className="py-2.5 px-3 text-center text-[var(--color-accent)]">Yes</td>
+                      <td className="py-2.5 px-3 text-center text-[var(--color-accent)]">Yes</td>
                     </tr>
                     <tr>
                       <td className="py-2.5 px-3">Arrange your own tenancy agreements and bonds</td>
-                      <td className="py-2.5 px-3 text-center text-emerald-500">Yes</td>
-                      <td className="py-2.5 px-3 text-center text-emerald-500">Yes</td>
+                      <td className="py-2.5 px-3 text-center text-[var(--color-accent)]">Yes</td>
+                      <td className="py-2.5 px-3 text-center text-[var(--color-accent)]">Yes</td>
                     </tr>
                     <tr>
                       <td className="py-2.5 px-3">Pay applicable platform fees</td>
-                      <td className="py-2.5 px-3 text-center text-emerald-500">$99/deal</td>
+                      <td className="py-2.5 px-3 text-center text-[var(--color-accent)]">$99/deal</td>
                       <td className="py-2.5 px-3 text-center text-slate-400">$19 optional</td>
                     </tr>
                     <tr>
                       <td className="py-2.5 px-3">Ensure property meets safety and habitability standards</td>
-                      <td className="py-2.5 px-3 text-center text-emerald-500">Yes</td>
+                      <td className="py-2.5 px-3 text-center text-[var(--color-accent)]">Yes</td>
                       <td className="py-2.5 px-3 text-center text-slate-400">N/A</td>
                     </tr>
                     <tr>
                       <td className="py-2.5 px-3">Conduct personal inspection before committing</td>
                       <td className="py-2.5 px-3 text-center text-slate-400">N/A</td>
-                      <td className="py-2.5 px-3 text-center text-emerald-500">Yes</td>
+                      <td className="py-2.5 px-3 text-center text-[var(--color-accent)]">Yes</td>
                     </tr>
                     <tr>
                       <td className="py-2.5 px-3">Comply with anti-discrimination laws</td>
-                      <td className="py-2.5 px-3 text-center text-emerald-500">Yes</td>
-                      <td className="py-2.5 px-3 text-center text-emerald-500">Yes</td>
+                      <td className="py-2.5 px-3 text-center text-[var(--color-accent)]">Yes</td>
+                      <td className="py-2.5 px-3 text-center text-[var(--color-accent)]">Yes</td>
                     </tr>
                     <tr>
                       <td className="py-2.5 px-3">Indemnify MigRent against claims from your deals</td>
-                      <td className="py-2.5 px-3 text-center text-emerald-500">Yes</td>
-                      <td className="py-2.5 px-3 text-center text-emerald-500">Yes</td>
+                      <td className="py-2.5 px-3 text-center text-[var(--color-accent)]">Yes</td>
+                      <td className="py-2.5 px-3 text-center text-[var(--color-accent)]">Yes</td>
                     </tr>
                   </tbody>
                 </table>
@@ -155,7 +155,7 @@ export default function TermsOfService() {
             <h2 className="text-lg font-bold text-slate-900 dark:text-white">6. Refund Policy</h2>
             <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
               <p>Platform fees are generally non-refundable once a deal is confirmed and payment is processed. In exceptional circumstances, refunds may be considered at the sole discretion of MigRent AI.</p>
-              <p>Stripe receipts are automatically sent to the email address associated with your account. For refund inquiries, contact <a href="mailto:migrentau@gmail.com" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">migrentau@gmail.com</a>.</p>
+              <p>Stripe receipts are automatically sent to the email address associated with your account. For refund inquiries, contact <a href="mailto:migrentau@gmail.com" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">migrentau@gmail.com</a>.</p>
             </div>
           </section>
 
@@ -200,8 +200,8 @@ export default function TermsOfService() {
                 <li>MigRent is not liable for any loss, injury, damage, or harm arising from any arrangement made through the Platform</li>
                 <li>Verification badges and match scores are informational tools only and do not constitute guarantees of safety or suitability</li>
               </ul>
-              <div className="card-subtle p-4 rounded-xl border-l-2 border-l-rose-500">
-                <h3 className="font-semibold text-rose-600 dark:text-rose-400 mb-2">Maximum Liability Cap</h3>
+              <div className="card-subtle p-4 rounded-xl border-l-2 border-l-[var(--color-primary)]">
+                <h3 className="font-semibold text-[var(--color-primary)] dark:text-[var(--color-primary)] mb-2">Maximum Liability Cap</h3>
                 <p>In any event, MigRent&apos;s total aggregate liability to you for all claims arising out of or relating to the use of the Platform shall not exceed the total amount of platform fees you have paid to MigRent in the 12 months preceding the claim.</p>
               </div>
               <p>Users are responsible for conducting their own due diligence before entering into any arrangement. Nothing in these Terms excludes, restricts, or modifies rights that cannot be excluded under Australian Consumer Law.</p>
@@ -231,9 +231,9 @@ export default function TermsOfService() {
             <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
               <p>Users are responsible for complying with all applicable local, state, and federal laws, including but not limited to:</p>
               <ul className="list-disc list-inside space-y-1.5">
-                <li>Short-term rental accommodation (STRA) regulations - see our <Link href="/code-of-conduct" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">STRA Code of Conduct</Link> page</li>
-                <li>Anti-discrimination laws - see our <Link href="/anti-discrimination" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">Fair Housing Policy</Link></li>
-                <li>Residential tenancy laws - see our <Link href="/rental-laws" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">State Rental Laws Guide</Link></li>
+                <li>Short-term rental accommodation (STRA) regulations - see our <Link href="/code-of-conduct" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">STRA Code of Conduct</Link> page</li>
+                <li>Anti-discrimination laws - see our <Link href="/anti-discrimination" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">Fair Housing Policy</Link></li>
+                <li>Residential tenancy laws - see our <Link href="/rental-laws" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">State Rental Laws Guide</Link></li>
                 <li>Tax obligations (including income tax on rental income)</li>
               </ul>
               <p>MigRent does not provide legal advice and is not responsible for users&apos; regulatory compliance.</p>
@@ -251,7 +251,7 @@ export default function TermsOfService() {
                 <li>Attempts to circumvent platform fees</li>
                 <li>Behaviour that endangers other users or the platform</li>
               </ul>
-              <p>You may delete your account at any time through your account settings. Upon deletion, your data will be handled in accordance with our <Link href="/privacy-policy" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">Privacy Policy</Link>.</p>
+              <p>You may delete your account at any time through your account settings. Upon deletion, your data will be handled in accordance with our <Link href="/privacy-policy" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">Privacy Policy</Link>.</p>
             </div>
           </section>
 
@@ -262,10 +262,10 @@ export default function TermsOfService() {
               <p>Any dispute, controversy, or claim arising out of or relating to these Terms or your use of the Platform shall be resolved as follows:</p>
               <div className="card-subtle p-4 rounded-xl space-y-2">
                 <p><strong className="text-slate-800 dark:text-slate-200">Step 1 - Direct Resolution:</strong> Contact the other party directly to attempt resolution.</p>
-                <p><strong className="text-slate-800 dark:text-slate-200">Step 2 - MigRent Mediation:</strong> If unresolved within 14 days, contact MigRent at <a href="mailto:migrentau@gmail.com" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">migrentau@gmail.com</a> for informal mediation assistance.</p>
+                <p><strong className="text-slate-800 dark:text-slate-200">Step 2 - MigRent Mediation:</strong> If unresolved within 14 days, contact MigRent at <a href="mailto:migrentau@gmail.com" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">migrentau@gmail.com</a> for informal mediation assistance.</p>
                 <p><strong className="text-slate-800 dark:text-slate-200">Step 3 - Binding Arbitration:</strong> If mediation fails within 30 days, any remaining dispute shall be finally resolved by binding arbitration administered by the Australian Centre for International Commercial Arbitration (ACICA) in accordance with ACICA Arbitration Rules. The seat of arbitration shall be Sydney, NSW. The language of arbitration shall be English.</p>
               </div>
-              <p>To the extent permitted by law, you agree to waive any right to participate in a class action, representative proceeding, or class-wide arbitration. See our <Link href="/support-disputes" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">Dispute Resolution</Link> page for full details.</p>
+              <p>To the extent permitted by law, you agree to waive any right to participate in a class action, representative proceeding, or class-wide arbitration. See our <Link href="/support-disputes" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">Dispute Resolution</Link> page for full details.</p>
             </div>
           </section>
 
@@ -300,7 +300,7 @@ export default function TermsOfService() {
               <div className="card-subtle p-4 rounded-xl space-y-1">
                 <p className="font-semibold text-slate-800 dark:text-slate-200">MigRent AI</p>
                 <p>ABN: 22 669 566 941</p>
-                <p>Email: <a href="mailto:migrentau@gmail.com" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">migrentau@gmail.com</a></p>
+                <p>Email: <a href="mailto:migrentau@gmail.com" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">migrentau@gmail.com</a></p>
                 <p>Location: Sydney, Australia</p>
               </div>
             </div>
@@ -312,7 +312,7 @@ export default function TermsOfService() {
           </div>
 
           {/* CTA */}
-          <div className="card p-6 rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-500/10 dark:to-blue-600/5 border-blue-200 dark:border-blue-500/20 text-center">
+          <div className="card p-6 rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-[var(--color-primary)]/10 dark:to-[var(--color-primary)]/5 border-blue-200 dark:border-blue-500/20 text-center">
             <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Questions about our terms?</h3>
             <p className="text-sm text-slate-600 dark:text-slate-300 mb-4">Our team is happy to clarify anything.</p>
             <Link href="/contact">

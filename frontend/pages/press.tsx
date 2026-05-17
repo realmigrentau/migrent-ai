@@ -30,9 +30,9 @@ export default function Press() {
       <div className="space-y-16">
         {/* Hero */}
         <section className="relative text-center py-16 overflow-hidden">
-          <div className="absolute top-10 right-10 w-72 h-72 bg-violet-500/10 dark:bg-violet-500/5 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute top-10 right-10 w-72 h-72 bg-[var(--color-primary-soft)]0/10 dark:bg-[var(--color-primary-soft)]0/5 rounded-full blur-3xl animate-pulse" />
           <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="relative z-10 max-w-3xl mx-auto">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-violet-50 dark:bg-violet-500/10 border border-violet-100 dark:border-violet-500/20 text-xs font-medium text-violet-600 dark:text-violet-400 mb-6">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary-soft)]0/10 border border-violet-100 dark:border-[var(--color-primary)]/20 text-xs font-medium text-[var(--color-primary)] dark:text-[var(--color-primary)] mb-6">
               {t("press.badge")}
             </div>
             <h1 className="text-4xl sm:text-5xl font-semibold tracking-tight leading-tight">
@@ -50,7 +50,7 @@ export default function Press() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {stats.map((stat, i) => (
               <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="card p-4 rounded-2xl text-center">
-                <p className="text-2xl font-semibold text-rose-500">{stat.value}</p>
+                <p className="text-2xl font-semibold text-[var(--color-primary)]">{stat.value}</p>
                 <p className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white mt-1">{stat.label}</p>
                 <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{stat.detail}</p>
               </motion.div>
@@ -92,7 +92,7 @@ export default function Press() {
           <div className="space-y-3">
             {milestones.map((m, i) => (
               <motion.div key={i} initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="card p-5 rounded-2xl flex gap-4 items-start">
-                <span className="text-xs font-bold text-rose-500 bg-rose-50 dark:bg-rose-500/10 px-2.5 py-1 rounded-lg shrink-0">{m.date}</span>
+                <span className="text-xs font-bold text-[var(--color-primary)] bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 px-2.5 py-1 rounded-lg shrink-0">{m.date}</span>
                 <div>
                   <h3 className="font-bold text-slate-900 dark:text-white text-sm">{m.title}</h3>
                   <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">{m.desc}</p>
@@ -142,7 +142,7 @@ export default function Press() {
 
         {/* Press Contact */}
         <section className="max-w-3xl mx-auto pb-8">
-          <div className="card p-8 rounded-2xl bg-gradient-to-br from-violet-50 to-violet-100/50 dark:from-violet-500/10 dark:to-violet-600/5 border-violet-200 dark:border-violet-500/20 text-center">
+          <div className="card p-8 rounded-2xl bg-gradient-to-br from-violet-50 to-violet-100/50 dark:from-[var(--color-primary)]/10 dark:to-[var(--color-primary)]/5 border-[var(--color-primary-soft)] dark:border-[var(--color-primary)]/20 text-center">
             <h2 className="text-2xl font-semibold text-slate-900 dark:text-white mb-3">{t("press.ctaTitle")}</h2>
             <p className="text-sm text-slate-600 dark:text-slate-300 mb-6 max-w-md mx-auto">{t("press.ctaSubtitle")}</p>
             <a href="https://mail.google.com/mail/?view=cm&fs=1&to=migrentau@gmail.com&su=Press%20Enquiry%20-%20MigRent%20AI" target="_blank" rel="noopener noreferrer">

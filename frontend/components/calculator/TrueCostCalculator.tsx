@@ -107,7 +107,7 @@ export default function TrueCostCalculator({
         className="w-full px-4 py-3 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
       >
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shadow-md">
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[var(--color-accent)] to-teal-500 flex items-center justify-center shadow-md">
             <Zap className="w-4.5 h-4.5 text-white" />
           </div>
           <div className="text-left">
@@ -120,7 +120,7 @@ export default function TrueCostCalculator({
                 <span className="text-sm font-normal text-slate-400">/wk rent</span>
               </span>
               {(result.bills > 0 || result.transport > 0) && (
-                <span className="text-sm font-bold text-emerald-600 dark:text-emerald-400">
+                <span className="text-sm font-bold text-[var(--color-accent)] dark:text-[var(--color-accent)]">
                   + ${result.bills + result.transport} extras = ${result.trueCost}/wk
                 </span>
               )}
@@ -203,9 +203,9 @@ export default function TrueCostCalculator({
                               <div
                                 className={`w-6 h-6 rounded-lg flex items-center justify-center text-white text-[10px] font-bold ${
                                   d.type === "university"
-                                    ? "bg-indigo-500"
+                                    ? "bg-[var(--color-primary)]"
                                     : d.type === "cbd"
-                                    ? "bg-rose-500"
+                                    ? "bg-[var(--color-primary)]"
                                     : "bg-amber-500"
                                 }`}
                               >
@@ -269,7 +269,7 @@ export default function TrueCostCalculator({
                 {/* Stacked bar chart */}
                 <div className="h-3 rounded-full overflow-hidden flex bg-slate-100 dark:bg-slate-800">
                   <div
-                    className="bg-rose-400 transition-all duration-300"
+                    className="bg-[var(--color-primary)] transition-all duration-300"
                     style={{ width: `${rentPercent}%` }}
                   />
                   {result.bills > 0 && (
@@ -290,7 +290,7 @@ export default function TrueCostCalculator({
                 <div className="grid grid-cols-1 gap-1.5">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <div className="w-2.5 h-2.5 rounded-full bg-rose-400" />
+                      <div className="w-2.5 h-2.5 rounded-full bg-[var(--color-primary)]" />
                       <span className="text-xs text-slate-600 dark:text-slate-300">
                         Rent
                       </span>
@@ -312,7 +312,7 @@ export default function TrueCostCalculator({
                     </div>
                     <span className="text-xs font-bold text-slate-900 dark:text-white">
                       {billsIncluded ? (
-                        <span className="text-emerald-500">Included</span>
+                        <span className="text-[var(--color-accent)]">Included</span>
                       ) : (
                         `$${result.bills}/wk`
                       )}
@@ -349,7 +349,7 @@ export default function TrueCostCalculator({
                   <span className="text-sm font-bold text-slate-900 dark:text-white">
                     True Weekly Cost
                   </span>
-                  <span className="text-lg font-black text-emerald-600 dark:text-emerald-400">
+                  <span className="text-lg font-black text-[var(--color-accent)] dark:text-[var(--color-accent)]">
                     ${result.trueCost}/wk
                   </span>
                 </div>

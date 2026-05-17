@@ -65,7 +65,7 @@ export default function SeekerDashboard() {
             {metrics ? (
               <>
                 {metrics.recommended > 0 && (
-                  <span className="font-medium text-indigo-600 dark:text-indigo-400">
+                  <span className="font-medium text-[var(--color-primary)] dark:text-[var(--color-primary)]">
                     {metrics.recommended} matches waiting
                   </span>
                 )}
@@ -111,7 +111,7 @@ export default function SeekerDashboard() {
               My Bookings
             </h2>
             {bookings.length > 0 && (
-              <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400">
+              <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 text-[var(--color-primary)] dark:text-[var(--color-primary)]">
                 {
                   bookings.filter((b) =>
                     ["PENDING_OWNER", "OWNER_ACCEPTED"].includes(b.status)
@@ -132,13 +132,13 @@ export default function SeekerDashboard() {
         <section>
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-semibold tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
-              <Heart className="w-5 h-5 text-rose-500" />
+              <Heart className="w-5 h-5 text-[var(--color-primary)]" />
               Saved Listings
             </h2>
             {wishlist.length > 0 && (
               <Link
                 href="/seeker/wishlist"
-                className="text-sm text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 font-medium flex items-center gap-1"
+                className="text-sm text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] font-medium flex items-center gap-1"
               >
                 View all ({wishlist.length})
                 <ArrowRight className="w-3.5 h-3.5" />
@@ -153,7 +153,7 @@ export default function SeekerDashboard() {
           <div className="flex items-center justify-between mb-4">
             <div>
               <h2 className="text-xl font-semibold tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
-                <Star className="w-5 h-5 text-indigo-500" />
+                <Star className="w-5 h-5 text-[var(--color-primary)]" />
                 Perfect for You
               </h2>
               <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
@@ -176,24 +176,24 @@ export default function SeekerDashboard() {
                 label: "Find New Rooms",
                 desc: "Browse all available listings",
                 icon: <Search className="w-5 h-5" />,
-                color: "text-rose-600",
-                bg: "bg-rose-50 dark:bg-rose-500/10",
+                color: "text-[var(--color-primary)]",
+                bg: "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10",
               },
               {
                 href: "/seeker/wishlist",
                 label: "Saved Searches",
                 desc: "Your collections and saved rooms",
                 icon: <Heart className="w-5 h-5" />,
-                color: "text-indigo-600",
-                bg: "bg-indigo-50 dark:bg-indigo-500/10",
+                color: "text-[var(--color-primary)]",
+                bg: "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10",
               },
               {
                 href: "/account/settings",
                 label: "Settings",
                 desc: "Profile, verification, preferences",
                 icon: <Settings className="w-5 h-5" />,
-                color: "text-emerald-600",
-                bg: "bg-emerald-50 dark:bg-emerald-500/10",
+                color: "text-[var(--color-accent)]",
+                bg: "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10",
               },
             ].map((action) => (
               <motion.div

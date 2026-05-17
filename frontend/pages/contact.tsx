@@ -91,8 +91,8 @@ export default function Contact() {
         {/* HERO */}
         <motion.section initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
           <div className="flex flex-col items-start gap-4">
-            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 text-emerald-700 dark:text-emerald-400 text-xs font-medium">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 border border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)] text-[var(--color-accent)] dark:text-[var(--color-accent)] text-xs font-medium">
+              <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-accent-soft)]0 animate-pulse" />
               Support online - replies within 24h on weekdays
             </span>
             <h1 className="text-4xl md:text-5xl font-semibold tracking-tight text-slate-900 dark:text-white">
@@ -107,9 +107,9 @@ export default function Contact() {
 
         {/* QUICK ROUTE GRID */}
         <section className="grid sm:grid-cols-3 gap-4">
-          <a href="#contact-form" className="card p-6 rounded-2xl text-left hover:border-rose-200 dark:hover:border-rose-500/30 transition-colors block">
-            <div className="w-10 h-10 rounded-xl bg-rose-50 dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/20 flex items-center justify-center mb-4">
-              <svg className="w-5 h-5 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+          <a href="#contact-form" className="card p-6 rounded-2xl text-left hover:border-[var(--color-primary-soft)] dark:hover:border-[var(--color-primary)]/30 transition-colors block">
+            <div className="w-10 h-10 rounded-xl bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 border border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)] flex items-center justify-center mb-4">
+              <svg className="w-5 h-5 text-[var(--color-primary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
               </svg>
             </div>
@@ -145,7 +145,7 @@ export default function Contact() {
               <h2 className="text-xl font-semibold tracking-tight text-slate-900 dark:text-white">Quick answers</h2>
               <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Most questions are answered in seconds.</p>
             </div>
-            <Link href="/faq" className="text-sm text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 font-medium">
+            <Link href="/faq" className="text-sm text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] font-medium">
               Browse all FAQs →
             </Link>
           </div>
@@ -161,7 +161,7 @@ export default function Contact() {
               <Link
                 key={item.q}
                 href={item.href}
-                className="flex items-center justify-between gap-3 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-rose-200 dark:hover:border-rose-500/30 hover:bg-rose-50/30 dark:hover:bg-rose-500/5 transition-colors text-sm text-slate-700 dark:text-slate-300"
+                className="flex items-center justify-between gap-3 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-[var(--color-primary-soft)] dark:hover:border-[var(--color-primary)]/30 hover:bg-[var(--color-primary-soft)]/30 dark:hover:bg-[var(--color-primary)]/5 transition-colors text-sm text-slate-700 dark:text-slate-300"
               >
                 <span>{item.q}</span>
                 <svg className="w-4 h-4 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -185,7 +185,7 @@ export default function Contact() {
                 href="https://mail.google.com/mail/?view=cm&fs=1&to=migrentau@gmail.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2"
+                className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2"
               >
                 migrentau@gmail.com
               </a>
@@ -200,10 +200,10 @@ export default function Contact() {
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="card p-8 rounded-2xl border-emerald-200 dark:border-emerald-500/30 bg-emerald-50/40 dark:bg-emerald-500/5 text-center"
+                className="card p-8 rounded-2xl border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)] bg-[var(--color-accent-soft)]/40 dark:bg-[var(--color-accent-soft)]0/5 text-center"
               >
-                <div className="w-12 h-12 rounded-full bg-emerald-100 dark:bg-emerald-500/20 mx-auto mb-4 flex items-center justify-center">
-                  <svg className="w-6 h-6 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <div className="w-12 h-12 rounded-full bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/20 mx-auto mb-4 flex items-center justify-center">
+                  <svg className="w-6 h-6 text-[var(--color-accent)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                   </svg>
                 </div>
@@ -217,7 +217,7 @@ export default function Contact() {
                     setName(""); setEmail(""); setSubject(""); setMessage("");
                     setCategory("GENERAL"); setRole("seeker"); setTouched({});
                   }}
-                  className="mt-6 text-sm text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 font-medium"
+                  className="mt-6 text-sm text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] font-medium"
                 >
                   Send another message
                 </button>
@@ -265,7 +265,7 @@ export default function Contact() {
                         onClick={() => setRole(r)}
                         className={`py-2.5 rounded-xl text-sm font-medium border transition-colors capitalize ${
                           role === r
-                            ? "bg-rose-50 dark:bg-rose-500/10 border-rose-300 dark:border-rose-500/40 text-rose-600 dark:text-rose-400"
+                            ? "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 border-[var(--color-line-2)] dark:border-[var(--color-primary)]/40 text-[var(--color-primary)] dark:text-[var(--color-primary)]"
                             : "bg-white dark:bg-slate-900/40 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-slate-300 dark:hover:border-slate-600"
                         }`}
                       >
@@ -338,7 +338,7 @@ export default function Contact() {
                     {submitting ? "Sending..." : "Send message"}
                   </button>
                   <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-                    We use your email only to reply. See our <Link href="/privacy-policy" className="underline underline-offset-2 hover:text-rose-500">Privacy Policy</Link>.
+                    We use your email only to reply. See our <Link href="/privacy-policy" className="underline underline-offset-2 hover:text-[var(--color-primary)]">Privacy Policy</Link>.
                   </p>
                 </div>
               </form>
@@ -411,10 +411,10 @@ export default function Contact() {
               href="https://mail.google.com/mail/?view=cm&fs=1&to=migrentau@gmail.com&su=%5BPRESS%5D"
               target="_blank"
               rel="noopener noreferrer"
-              className="card p-5 rounded-2xl block hover:border-violet-200 dark:hover:border-violet-500/30 transition-colors"
+              className="card p-5 rounded-2xl block hover:border-[var(--color-primary-soft)] dark:hover:border-[var(--color-primary)]/30 transition-colors"
             >
-              <div className="w-10 h-10 rounded-xl bg-violet-50 dark:bg-violet-500/10 border border-violet-100 dark:border-violet-500/20 flex items-center justify-center mb-3">
-                <svg className="w-5 h-5 text-violet-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <div className="w-10 h-10 rounded-xl bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary-soft)]0/10 border border-violet-100 dark:border-[var(--color-primary)]/20 flex items-center justify-center mb-3">
+                <svg className="w-5 h-5 text-[var(--color-primary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 01-3-3V4.5a3 3 0 116 0v8.25a3 3 0 01-3 3z" />
                 </svg>
               </div>
@@ -438,8 +438,8 @@ export default function Contact() {
             </a>
 
             <div className="card p-5 rounded-2xl opacity-80">
-              <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-100 dark:border-indigo-500/20 flex items-center justify-center mb-3">
-                <svg className="w-5 h-5 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <div className="w-10 h-10 rounded-xl bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 border border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)] flex items-center justify-center mb-3">
+                <svg className="w-5 h-5 text-[var(--color-primary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12.76c0 1.6 1.123 2.994 2.707 3.227 1.068.157 2.148.279 3.238.364.466.037.893.281 1.153.671L12 21l2.652-3.978c.26-.39.687-.634 1.153-.67 1.09-.086 2.17-.208 3.238-.365 1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z" />
                 </svg>
               </div>
@@ -467,7 +467,7 @@ export default function Contact() {
                   href="https://mail.google.com/mail/?view=cm&fs=1&to=migrentau@gmail.com"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2"
+                  className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2"
                 >
                   migrentau@gmail.com
                 </a>
@@ -479,7 +479,7 @@ export default function Contact() {
             <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
               Hi - I'm Anesh, the founder of MigRent. We're a small, focused team building MigRent for migrants and students in Australia. Email goes straight to a real human inbox. If something's not working or you just want to say hello, write to us. We read everything.
             </p>
-            <Link href="/about" className="inline-flex items-center gap-1.5 text-sm font-medium text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 mt-4">
+            <Link href="/about" className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] mt-4">
               About MigRent
               <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
@@ -495,7 +495,7 @@ export default function Contact() {
             href="https://mail.google.com/mail/?view=cm&fs=1&to=migrentau@gmail.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 font-medium underline underline-offset-2"
+            className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] font-medium underline underline-offset-2"
           >
             migrentau@gmail.com
           </a>

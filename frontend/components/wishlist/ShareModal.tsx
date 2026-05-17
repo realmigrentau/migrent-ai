@@ -70,7 +70,7 @@ export default function ShareModal({ show, onClose, listings }: ShareModalProps)
             {/* Header */}
             <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 dark:border-slate-800">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-xl bg-gradient-to-r from-rose-500 to-pink-500 flex items-center justify-center">
+                <div className="w-8 h-8 rounded-xl bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center">
                   <Share2 className="w-4 h-4 text-white" />
                 </div>
                 <div>
@@ -132,7 +132,7 @@ export default function ShareModal({ show, onClose, listings }: ShareModalProps)
                     onClick={handleCopy}
                     className={`px-3 py-2.5 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5 shrink-0 ${
                       copied
-                        ? "bg-emerald-500 text-white"
+                        ? "bg-[var(--color-accent-soft)]0 text-white"
                         : "bg-slate-900 dark:bg-white text-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-100"
                     }`}
                   >
@@ -159,7 +159,7 @@ export default function ShareModal({ show, onClose, listings }: ShareModalProps)
                     onClick={handleNativeShare}
                     className="flex flex-col items-center gap-1.5 p-3 rounded-xl bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
                   >
-                    <Share2 className="w-5 h-5 text-rose-500" />
+                    <Share2 className="w-5 h-5 text-[var(--color-primary)]" />
                     <span className="text-[10px] text-slate-500 dark:text-slate-400">Share</span>
                   </button>
                   <button
@@ -177,21 +177,21 @@ export default function ShareModal({ show, onClose, listings }: ShareModalProps)
                     }}
                     className="flex flex-col items-center gap-1.5 p-3 rounded-xl bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
                   >
-                    <MessageSquare className="w-5 h-5 text-emerald-500" />
+                    <MessageSquare className="w-5 h-5 text-[var(--color-accent)]" />
                     <span className="text-[10px] text-slate-500 dark:text-slate-400">Message</span>
                   </button>
                 </div>
               </div>
 
               {/* Roommate invite */}
-              <div className="p-3 rounded-2xl bg-gradient-to-r from-violet-50 to-purple-50 dark:from-violet-950/30 dark:to-purple-950/30 border border-violet-200/50 dark:border-violet-500/20">
+              <div className="p-3 rounded-2xl bg-gradient-to-r from-violet-50 to-purple-50 dark:from-violet-950/30 dark:to-purple-950/30 border border-[var(--color-primary-soft)]/50 dark:border-[var(--color-primary)]/20">
                 <div className="flex items-center gap-2">
-                  <Users className="w-5 h-5 text-violet-500" />
+                  <Users className="w-5 h-5 text-[var(--color-primary)]" />
                   <div>
-                    <p className="text-xs font-bold text-violet-700 dark:text-violet-300">
+                    <p className="text-xs font-bold text-violet-700 dark:text-[var(--color-primary)]">
                       Invite roommates to vote
                     </p>
-                    <p className="text-[10px] text-violet-600/60 dark:text-violet-300/60 mt-0.5">
+                    <p className="text-[10px] text-[var(--color-primary)]/60 dark:text-[var(--color-primary)]/60 mt-0.5">
                       Coming soon - let friends react to your picks!
                     </p>
                   </div>

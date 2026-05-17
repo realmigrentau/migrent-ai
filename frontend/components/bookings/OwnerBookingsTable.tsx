@@ -46,8 +46,8 @@ const STATUS_CONFIG: Record<
   },
   PAID: {
     label: "Confirmed",
-    color: "text-emerald-600 dark:text-emerald-400",
-    bg: "bg-emerald-50 dark:bg-emerald-500/10",
+    color: "text-[var(--color-accent)] dark:text-[var(--color-accent)]",
+    bg: "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10",
   },
   COMPLETED: {
     label: "Completed",
@@ -189,7 +189,7 @@ export default function OwnerBookingsTable({
                   </div>
                   <div>
                     <p className="text-xs text-slate-400 mb-0.5">Est. total rent</p>
-                    <p className="font-medium text-emerald-600 dark:text-emerald-400">
+                    <p className="font-medium text-[var(--color-accent)] dark:text-[var(--color-accent)]">
                       AUD ${booking.total_price?.toLocaleString()}
                     </p>
                   </div>

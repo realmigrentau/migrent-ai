@@ -13,8 +13,8 @@ export default function AnalyticsTab({ profile }: AnalyticsTabProps) {
       {/* Analytics Empty State */}
       <GlassCard delay={0.05}>
         <div className="text-center py-12 px-6">
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-100 to-purple-100 dark:from-indigo-500/10 dark:to-purple-500/10 flex items-center justify-center mx-auto mb-4">
-            <BarChart3 className="w-7 h-7 text-indigo-500" />
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[var(--color-primary-soft)] to-purple-100 dark:from-[var(--color-primary)]/10 dark:to-[var(--color-primary)]/10 flex items-center justify-center mx-auto mb-4">
+            <BarChart3 className="w-7 h-7 text-[var(--color-primary)]" />
           </div>
           <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">
             Analytics coming soon
@@ -33,21 +33,21 @@ export default function AnalyticsTab({ profile }: AnalyticsTabProps) {
             icon: TrendingUp,
             label: "Revenue trends",
             desc: "Track your monthly earnings",
-            gradient: "from-emerald-400 to-teal-500",
-            bg: "bg-emerald-50/80 dark:bg-emerald-500/10 border-emerald-100 dark:border-emerald-500/20",
+            gradient: "from-[var(--color-accent)] to-teal-500",
+            bg: "bg-[var(--color-accent-soft)]/80 dark:bg-[var(--color-accent-soft)]0/10 border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)]",
           },
           {
             icon: Search,
             label: "Search insights",
             desc: "See how seekers find you",
-            gradient: "from-pink-400 to-rose-500",
-            bg: "bg-pink-50/80 dark:bg-pink-500/10 border-pink-100 dark:border-pink-500/20",
+            gradient: "from-[var(--color-primary)] to-[var(--color-primary)]",
+            bg: "bg-[var(--color-primary-soft)]/80 dark:bg-[var(--color-primary-soft)]0/10 border-pink-100 dark:border-[var(--color-primary)]/20",
           },
           {
             icon: Users,
             label: "Audience data",
             desc: "Understand your viewers",
-            gradient: "from-blue-400 to-indigo-500",
+            gradient: "from-blue-400 to-[var(--color-primary)]",
             bg: "bg-blue-50/80 dark:bg-blue-500/10 border-blue-100 dark:border-blue-500/20",
           },
         ].map((item, i) => {

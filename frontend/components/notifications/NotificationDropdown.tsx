@@ -22,15 +22,15 @@ interface NotificationDropdownProps {
 
 const TYPE_ICONS: Record<string, { icon: typeof Bell; color: string }> = {
   booking_request_created: { icon: Calendar, color: "text-blue-500" },
-  booking_approved: { icon: Calendar, color: "text-emerald-500" },
+  booking_approved: { icon: Calendar, color: "text-[var(--color-accent)]" },
   booking_declined: { icon: Calendar, color: "text-red-500" },
-  booking_confirmed: { icon: Calendar, color: "text-emerald-600" },
-  payment_received: { icon: DollarSign, color: "text-emerald-500" },
+  booking_confirmed: { icon: Calendar, color: "text-[var(--color-accent)]" },
+  payment_received: { icon: DollarSign, color: "text-[var(--color-accent)]" },
   verification_status_changed: { icon: Shield, color: "text-amber-500" },
-  message_received: { icon: MessageCircle, color: "text-pink-500" },
+  message_received: { icon: MessageCircle, color: "text-[var(--color-primary)]" },
   match_created: { icon: Zap, color: "text-yellow-500" },
   host_response_sent: { icon: Calendar, color: "text-cyan-500" },
-  listing_published: { icon: Home, color: "text-indigo-500" },
+  listing_published: { icon: Home, color: "text-[var(--color-primary)]" },
   listing_rejected: { icon: Home, color: "text-red-500" },
   listing_changes_requested: { icon: Home, color: "text-orange-500" },
 };
@@ -63,7 +63,7 @@ export default function NotificationDropdown({ onClose }: NotificationDropdownPr
           {unreadCount > 0 && (
             <button
               onClick={markAllRead}
-              className="flex items-center gap-1 text-xs text-indigo-500 hover:text-indigo-600 dark:text-indigo-400 font-medium px-2 py-1 rounded-lg hover:bg-indigo-50 dark:hover:bg-indigo-500/10 transition-colors"
+              className="flex items-center gap-1 text-xs text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:text-[var(--color-primary)] font-medium px-2 py-1 rounded-lg hover:bg-[var(--color-primary-soft)] dark:hover:bg-[var(--color-primary)]/10 transition-colors"
             >
               <CheckCheck className="w-3.5 h-3.5" />
               Mark all read
@@ -110,7 +110,7 @@ export default function NotificationDropdown({ onClose }: NotificationDropdownPr
                 >
                   <div
                     className={`flex items-start gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors border-b border-slate-50 dark:border-slate-800/50 last:border-b-0 cursor-pointer ${
-                      !n.is_read ? "bg-indigo-50/50 dark:bg-indigo-500/5" : ""
+                      !n.is_read ? "bg-[var(--color-primary-soft)]/50 dark:bg-[var(--color-primary)]/5" : ""
                     }`}
                   >
                     <div className={`mt-0.5 shrink-0 ${typeConfig.color}`}>
@@ -134,7 +134,7 @@ export default function NotificationDropdown({ onClose }: NotificationDropdownPr
                       </p>
                     </div>
                     {!n.is_read && (
-                      <span className="mt-1.5 w-2 h-2 rounded-full bg-indigo-500 shrink-0" />
+                      <span className="mt-1.5 w-2 h-2 rounded-full bg-[var(--color-primary)] shrink-0" />
                     )}
                   </div>
                 </Link>
@@ -150,7 +150,7 @@ export default function NotificationDropdown({ onClose }: NotificationDropdownPr
           <Link
             href="/dashboard/notifications"
             onClick={onClose}
-            className="block text-center py-2.5 text-xs font-medium text-indigo-500 hover:text-indigo-600 dark:text-indigo-400 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+            className="block text-center py-2.5 text-xs font-medium text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:text-[var(--color-primary)] hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
           >
             View all notifications
           </Link>

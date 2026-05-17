@@ -97,7 +97,7 @@ export default function ProfileCompleteness({ profile, role, loading }: ProfileC
 
         <Link
           href={profileHref}
-          className="text-xs font-semibold text-indigo-500 hover:text-indigo-600 dark:hover:text-indigo-400 flex items-center gap-1"
+          className="text-xs font-semibold text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] flex items-center gap-1"
         >
           Edit <ChevronRight className="w-3.5 h-3.5" />
         </Link>
@@ -112,16 +112,16 @@ export default function ProfileCompleteness({ profile, role, loading }: ProfileC
                 className="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group cursor-pointer"
               >
                 <Circle className="w-4 h-4 text-slate-300 dark:text-slate-600 shrink-0" />
-                <span className="text-sm text-slate-600 dark:text-slate-300 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                <span className="text-sm text-slate-600 dark:text-slate-300 group-hover:text-[var(--color-primary)] dark:group-hover:text-[var(--color-primary)] transition-colors">
                   Add {field.toLowerCase()}
                 </span>
-                <ChevronRight className="w-3 h-3 ml-auto text-slate-300 dark:text-slate-600 group-hover:text-indigo-500 transition-colors" />
+                <ChevronRight className="w-3 h-3 ml-auto text-slate-300 dark:text-slate-600 group-hover:text-[var(--color-primary)] transition-colors" />
               </div>
             </Link>
           ))}
           {profile.missingFields.length > 3 && (
             <Link href={profileHref}>
-              <span className="block text-center text-xs text-indigo-500 hover:text-indigo-600 dark:hover:text-indigo-400 py-1.5 font-medium">
+              <span className="block text-center text-xs text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] py-1.5 font-medium">
                 +{profile.missingFields.length - 3} more
               </span>
             </Link>
@@ -192,7 +192,7 @@ export default function ProfileCompleteness({ profile, role, loading }: ProfileC
             className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer group"
           >
             <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-sm overflow-hidden shrink-0 ${
-              profile.photo ? "" : "bg-gradient-to-br from-indigo-500 to-pink-500"
+              profile.photo ? "" : "bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary)]"
             }`}>
               {profile.photo ? (
                 <img src={profile.photo} alt="" className="w-full h-full object-cover" />
@@ -209,11 +209,11 @@ export default function ProfileCompleteness({ profile, role, loading }: ProfileC
               </p>
             </div>
             {profile.uselessSkill && (
-              <span className="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-purple-50 dark:bg-purple-500/10 text-purple-500 dark:text-purple-400 border border-purple-200 dark:border-purple-500/20 shrink-0">
+              <span className="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary-soft)]0/10 text-[var(--color-primary)] dark:text-[var(--color-primary)] border border-[var(--color-primary-soft)] dark:border-[var(--color-primary)]/20 shrink-0">
                 {profile.uselessSkill}
               </span>
             )}
-            <ChevronRight className="w-4 h-4 text-slate-300 dark:text-slate-600 group-hover:text-indigo-500 transition-colors shrink-0" />
+            <ChevronRight className="w-4 h-4 text-slate-300 dark:text-slate-600 group-hover:text-[var(--color-primary)] transition-colors shrink-0" />
           </motion.div>
         </Link>
       )}
@@ -234,7 +234,7 @@ function VerificationBadge({
     <span
       className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border ${
         verified
-          ? "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/20"
+          ? "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 text-[var(--color-accent)] dark:text-[var(--color-accent)] border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)]"
           : "bg-slate-50 dark:bg-slate-800 text-slate-400 dark:text-slate-500 border-slate-200 dark:border-slate-700"
       }`}
     >

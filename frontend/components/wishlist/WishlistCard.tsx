@@ -16,7 +16,7 @@ import {
 import type { WishlistListing, WishlistCollection } from "../../hooks/useWishlist";
 
 const CARD_GRADIENTS = [
-  "from-rose-50 to-pink-50 dark:from-rose-950/30 dark:to-pink-950/30",
+  "from-[var(--color-primary-soft)] to-pink-50 dark:from-rose-950/30 dark:to-pink-950/30",
   "from-violet-50 to-purple-50 dark:from-violet-950/30 dark:to-purple-950/30",
   "from-teal-50 to-emerald-50 dark:from-teal-950/30 dark:to-emerald-950/30",
   "from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30",
@@ -88,7 +88,7 @@ export default function WishlistCard({
               onClick={() => onToggleCompare(listing.id)}
               className={`absolute top-3 left-3 z-20 w-7 h-7 rounded-full flex items-center justify-center transition-all ${
                 isCompareSelected
-                  ? "bg-rose-500 text-white shadow-lg shadow-rose-500/30"
+                  ? "bg-[var(--color-primary)] text-white shadow-lg shadow-[var(--color-primary)]/20"
                   : "bg-white/90 dark:bg-slate-800/90 text-slate-400 border border-slate-200 dark:border-slate-600"
               }`}
             >
@@ -134,7 +134,7 @@ export default function WishlistCard({
                     <Heart className="w-5 h-5 text-slate-300" />
                   </motion.div>
                 ) : (
-                  <Heart className="w-5 h-5 fill-rose-500 text-rose-500" />
+                  <Heart className="w-5 h-5 fill-[var(--color-coral-500)] text-[var(--color-primary)]" />
                 )}
               </AnimatePresence>
             </button>
@@ -143,7 +143,7 @@ export default function WishlistCard({
             <div className="absolute bottom-3 left-3 flex items-center gap-2">
               <div className={`px-3 py-1.5 rounded-xl backdrop-blur-md shadow-lg ${
                 hasPriceDrop
-                  ? "bg-emerald-500/90 text-white"
+                  ? "bg-[var(--color-accent-soft)]0/90 text-white"
                   : "bg-white/90 dark:bg-slate-900/90 text-slate-900 dark:text-white"
               }`}>
                 <span className="font-bold text-sm">${listing.weeklyPrice}</span>
@@ -173,7 +173,7 @@ export default function WishlistCard({
             <div className="absolute bottom-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
               <Link
                 href={`/listing/${listing.id}`}
-                className="px-3 py-1.5 rounded-xl bg-rose-500 hover:bg-rose-600 text-white text-xs font-semibold shadow-lg flex items-center gap-1 transition-colors"
+                className="px-3 py-1.5 rounded-xl bg-[var(--color-primary)] hover:bg-[var(--color-primary)] text-white text-xs font-semibold shadow-lg flex items-center gap-1 transition-colors"
                 onClick={(e) => e.stopPropagation()}
               >
                 Quick Book <ArrowRight className="w-3 h-3" />
@@ -207,7 +207,7 @@ export default function WishlistCard({
                 )}
               </div>
               {listing.verified && (
-                <div className="flex items-center gap-1 text-emerald-500">
+                <div className="flex items-center gap-1 text-[var(--color-accent)]">
                   <BadgeCheck className="w-4 h-4" />
                   <span className="text-xs font-medium">Verified</span>
                 </div>
@@ -228,7 +228,7 @@ export default function WishlistCard({
             {hasPriceDrop && (
               <div className="flex items-center gap-2">
                 <span className="text-sm text-slate-400 line-through">${listing.originalPrice}/wk</span>
-                <span className="text-xs font-bold text-emerald-500 bg-emerald-50 dark:bg-emerald-500/10 px-2 py-0.5 rounded-full">
+                <span className="text-xs font-bold text-[var(--color-accent)] bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 px-2 py-0.5 rounded-full">
                   Save ${priceSavings}/wk
                 </span>
               </div>
@@ -237,7 +237,7 @@ export default function WishlistCard({
             {/* Station distance */}
             {listing.nearestStation && (
               <div className="flex items-center gap-1.5 text-sm">
-                <div className="w-4 h-4 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center">
+                <div className="w-4 h-4 rounded-full bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center">
                   <span className="text-white text-[8px] font-bold">T</span>
                 </div>
                 <span className="text-slate-600 dark:text-slate-300">
@@ -269,9 +269,9 @@ export default function WishlistCard({
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.3 + index * 0.05 }}
-                className="flex items-start gap-2 p-2.5 rounded-xl bg-white/80 dark:bg-slate-800/50 border border-emerald-200/50 dark:border-emerald-500/20"
+                className="flex items-start gap-2 p-2.5 rounded-xl bg-white/80 dark:bg-slate-800/50 border border-[var(--color-accent-soft)]/50 dark:border-[var(--color-accent-soft)]"
               >
-                <div className="w-6 h-6 rounded-full bg-gradient-to-r from-emerald-400 to-teal-400 flex items-center justify-center shrink-0 mt-0.5">
+                <div className="w-6 h-6 rounded-full bg-gradient-to-r from-[var(--color-accent)] to-teal-400 flex items-center justify-center shrink-0 mt-0.5">
                   <span className="text-white text-[10px] font-bold">
                     {listing.ownerName[0]}
                   </span>
@@ -284,7 +284,7 @@ export default function WishlistCard({
                     {listing.ownerVerified && (
                       <BadgeCheck className="w-3 h-3 text-blue-500" />
                     )}
-                    <span className="wl-reply-badge px-1.5 py-0.5 rounded-full text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-500/10">
+                    <span className="wl-reply-badge px-1.5 py-0.5 rounded-full text-[10px] font-bold text-[var(--color-accent)] dark:text-[var(--color-accent)] bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10">
                       Replied
                     </span>
                   </div>
@@ -299,7 +299,7 @@ export default function WishlistCard({
             <div className="flex items-center gap-2 pt-2 border-t border-slate-200/50 dark:border-slate-700/50">
               <Link
                 href={`/listing/${listing.id}`}
-                className="flex-1 text-center py-2 px-3 rounded-xl bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white text-xs font-semibold shadow-md hover:shadow-lg transition-all"
+                className="flex-1 text-center py-2 px-3 rounded-xl bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary)] hover:from-[var(--color-primary)] hover:to-pink-600 text-white text-xs font-semibold shadow-md hover:shadow-lg transition-all"
                 onClick={(e) => e.stopPropagation()}
               >
                 View Details
@@ -337,10 +337,10 @@ export default function WishlistCard({
                           setShowCollectionMenu(false);
                         }}
                         className={`w-full text-left px-3 py-2 text-xs hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors flex items-center gap-2 ${
-                          !currentCollectionId ? "text-rose-500 font-semibold" : "text-slate-600 dark:text-slate-300"
+                          !currentCollectionId ? "text-[var(--color-primary)] font-semibold" : "text-slate-600 dark:text-slate-300"
                         }`}
                       >
-                        <div className="w-3 h-3 rounded-full bg-gradient-to-r from-rose-500 to-pink-500" />
+                        <div className="w-3 h-3 rounded-full bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary)]" />
                         No collection
                       </button>
                       {customCollections.map((c) => (
@@ -352,7 +352,7 @@ export default function WishlistCard({
                             setShowCollectionMenu(false);
                           }}
                           className={`w-full text-left px-3 py-2 text-xs hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors flex items-center gap-2 ${
-                            currentCollectionId === c.id ? "text-rose-500 font-semibold" : "text-slate-600 dark:text-slate-300"
+                            currentCollectionId === c.id ? "text-[var(--color-primary)] font-semibold" : "text-slate-600 dark:text-slate-300"
                           }`}
                         >
                           <div className={`w-3 h-3 rounded-full bg-gradient-to-r ${c.gradient}`} />

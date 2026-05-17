@@ -101,7 +101,7 @@ export default function SupportWidget() {
       {/* Floating button */}
       <button
         onClick={() => setOpen(!open)}
-        className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-rose-500 hover:bg-rose-600 text-white shadow-lg hover:shadow-xl transition-all flex items-center justify-center"
+        className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-[var(--color-primary)] hover:bg-[var(--color-primary)] text-white shadow-lg hover:shadow-xl transition-all flex items-center justify-center"
         aria-label="MigRent Support"
       >
         {open ? (
@@ -126,7 +126,7 @@ export default function SupportWidget() {
             className="fixed bottom-24 right-6 z-50 w-[28rem] h-[38rem] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-2xl flex flex-col overflow-hidden"
           >
             {/* Header */}
-            <div className="bg-gradient-to-r from-rose-500 to-rose-600 text-white px-5 py-4">
+            <div className="bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary)] text-white px-5 py-4">
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center">
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -154,7 +154,7 @@ export default function SupportWidget() {
                   onClick={() => { setTab(t.key); if (t.key === "contact") resetForm(); }}
                   className={`flex-1 py-2.5 text-sm font-medium transition-colors flex items-center justify-center gap-1.5 ${
                     tab === t.key
-                      ? "text-rose-600 border-b-2 border-rose-500"
+                      ? "text-[var(--color-primary)] border-b-2 border-[var(--color-primary)]"
                       : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
                   }`}
                 >
@@ -176,7 +176,7 @@ export default function SupportWidget() {
                     <div key={i} className={`flex ${msg.from === "user" ? "justify-end" : "justify-start"}`}>
                       <div className={`max-w-[85%] px-4 py-2.5 rounded-2xl text-sm whitespace-pre-line leading-relaxed ${
                         msg.from === "user"
-                          ? "bg-rose-500 text-white rounded-br-md"
+                          ? "bg-[var(--color-primary)] text-white rounded-br-md"
                           : "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-bl-md"
                       }`}>
                         {msg.text}
@@ -207,12 +207,12 @@ export default function SupportWidget() {
                       onChange={(e) => setChatInput(e.target.value)}
                       onKeyDown={(e) => e.key === "Enter" && handleSend()}
                       placeholder="Ask a question..."
-                      className="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-rose-500"
+                      className="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-ink)]/30"
                     />
                     <button
                       onClick={handleSend}
                       disabled={!chatInput.trim()}
-                      className="px-4 py-2.5 bg-rose-500 hover:bg-rose-600 disabled:bg-rose-300 text-white rounded-xl text-sm font-medium transition-colors shrink-0"
+                      className="px-4 py-2.5 bg-[var(--color-primary)] hover:bg-[var(--color-primary)] disabled:bg-[var(--color-primary-soft)] text-white rounded-xl text-sm font-medium transition-colors shrink-0"
                     >
                       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
@@ -236,13 +236,13 @@ export default function SupportWidget() {
                     </div>
                     <h4 className="font-bold text-lg text-slate-900 dark:text-white">Request submitted!</h4>
                     <p className="text-sm text-slate-500 mt-2">
-                      Ticket ID: <span className="font-mono font-semibold text-rose-500">{ticketId}</span>
+                      Ticket ID: <span className="font-mono font-semibold text-[var(--color-primary)]">{ticketId}</span>
                     </p>
                     <p className="text-xs text-slate-400 mt-2">We'll get back to you within 24 hours.</p>
                     {session && (
                       <a
                         href="/support/tickets"
-                        className="inline-block mt-4 text-sm text-rose-500 hover:text-rose-600 font-medium"
+                        className="inline-block mt-4 text-sm text-[var(--color-primary)] hover:text-[var(--color-primary)] font-medium"
                       >
                         View your tickets
                       </a>
@@ -261,7 +261,7 @@ export default function SupportWidget() {
                           onChange={(e) => setName(e.target.value)}
                           placeholder="Your name"
                           required
-                          className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-rose-500"
+                          className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-ink)]/30"
                         />
                         <input
                           type="email"
@@ -269,7 +269,7 @@ export default function SupportWidget() {
                           onChange={(e) => setEmail(e.target.value)}
                           placeholder="Your email"
                           required
-                          className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-rose-500"
+                          className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-ink)]/30"
                         />
                       </div>
                     )}
@@ -277,7 +277,7 @@ export default function SupportWidget() {
                     <select
                       value={category}
                       onChange={(e) => setCategory(e.target.value)}
-                      className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-rose-500"
+                      className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-ink)]/30"
                     >
                       <option value="feedback">General Feedback</option>
                       <option value="billing">Billing / Payments</option>
@@ -295,7 +295,7 @@ export default function SupportWidget() {
                       placeholder="Subject"
                       required
                       minLength={3}
-                      className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-rose-500"
+                      className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-ink)]/30"
                     />
 
                     <textarea
@@ -305,13 +305,13 @@ export default function SupportWidget() {
                       required
                       minLength={10}
                       rows={5}
-                      className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-rose-500 resize-none"
+                      className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-ink)]/30 resize-none"
                     />
 
                     <button
                       type="submit"
                       disabled={submitting}
-                      className="w-full py-3 bg-rose-500 hover:bg-rose-600 disabled:bg-rose-300 text-white rounded-xl text-sm font-semibold transition-colors"
+                      className="w-full py-3 bg-[var(--color-primary)] hover:bg-[var(--color-primary)] disabled:bg-[var(--color-primary-soft)] text-white rounded-xl text-sm font-semibold transition-colors"
                     >
                       {submitting ? "Submitting..." : "Submit Request"}
                     </button>

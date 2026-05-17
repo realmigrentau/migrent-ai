@@ -14,8 +14,8 @@ export default function PrivacyPolicy() {
         {/* Hero */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-xl bg-rose-50 dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/20 flex items-center justify-center">
-              <svg className="w-5 h-5 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <div className="w-10 h-10 rounded-xl bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 border border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)] flex items-center justify-center">
+              <svg className="w-5 h-5 text-[var(--color-primary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
               </svg>
             </div>
@@ -222,7 +222,7 @@ export default function PrivacyPolicy() {
                 <li><strong>Deletion</strong> - Request deletion of your personal data (subject to legal retention requirements)</li>
                 <li><strong>Complaint</strong> - Lodge a complaint with the Office of the Australian Information Commissioner (OAIC) if you believe we have breached the APPs</li>
               </ul>
-              <p>To exercise any of these rights, contact us at <a href="mailto:migrentau@gmail.com" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">migrentau@gmail.com</a>. We will respond within 30 days.</p>
+              <p>To exercise any of these rights, contact us at <a href="mailto:migrentau@gmail.com" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">migrentau@gmail.com</a>. We will respond within 30 days.</p>
             </div>
           </section>
 
@@ -247,7 +247,7 @@ export default function PrivacyPolicy() {
                   <li><strong>Consent:</strong> Marketing communications (you may withdraw at any time)</li>
                 </ul>
               </div>
-              <p>For GDPR requests, contact <a href="mailto:migrentau@gmail.com" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">migrentau@gmail.com</a> with the subject line &quot;GDPR Request.&quot; We will respond within 30 days. You may also lodge a complaint with your local EU data protection authority.</p>
+              <p>For GDPR requests, contact <a href="mailto:migrentau@gmail.com" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">migrentau@gmail.com</a> with the subject line &quot;GDPR Request.&quot; We will respond within 30 days. You may also lodge a complaint with your local EU data protection authority.</p>
             </div>
           </section>
 
@@ -256,7 +256,7 @@ export default function PrivacyPolicy() {
             <h2 className="text-lg font-bold text-slate-900 dark:text-white">9. Cookies &amp; Tracking</h2>
             <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
               <p>We use essential cookies to maintain your session and preferences (such as dark mode and language). We use Vercel Analytics for anonymous usage statistics. We do not use advertising cookies or sell your data to advertisers.</p>
-              <p>For more details, see our <Link href="/cookie-policy" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">Cookie Policy</Link>.</p>
+              <p>For more details, see our <Link href="/cookie-policy" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">Cookie Policy</Link>.</p>
             </div>
           </section>
 
@@ -272,7 +272,7 @@ export default function PrivacyPolicy() {
                 <li>Stripe PCI-DSS compliant payment processing</li>
                 <li>Regular security reviews and access controls</li>
               </ul>
-              <p>However, no method of transmission over the internet is 100% secure, and we cannot guarantee absolute security. If you discover a vulnerability, please report it to <a href="mailto:migrentau@gmail.com" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">migrentau@gmail.com</a>.</p>
+              <p>However, no method of transmission over the internet is 100% secure, and we cannot guarantee absolute security. If you discover a vulnerability, please report it to <a href="mailto:migrentau@gmail.com" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">migrentau@gmail.com</a>.</p>
             </div>
           </section>
 
@@ -284,10 +284,10 @@ export default function PrivacyPolicy() {
               <div className="card-subtle p-4 rounded-xl space-y-1">
                 <p className="font-semibold text-slate-800 dark:text-slate-200">MigRent AI - Privacy Inquiries</p>
                 <p>ABN: 22 669 566 941</p>
-                <p>Email: <a href="mailto:migrentau@gmail.com" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">migrentau@gmail.com</a></p>
+                <p>Email: <a href="mailto:migrentau@gmail.com" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">migrentau@gmail.com</a></p>
                 <p>Location: Sydney, Australia</p>
               </div>
-              <p className="text-xs text-slate-400 dark:text-slate-500">You may also contact the Office of the Australian Information Commissioner (OAIC) at <a href="https://www.oaic.gov.au" target="_blank" rel="noopener noreferrer" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">www.oaic.gov.au</a> if you believe your privacy has been breached.</p>
+              <p className="text-xs text-slate-400 dark:text-slate-500">You may also contact the Office of the Australian Information Commissioner (OAIC) at <a href="https://www.oaic.gov.au" target="_blank" rel="noopener noreferrer" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">www.oaic.gov.au</a> if you believe your privacy has been breached.</p>
             </div>
           </section>
 
@@ -297,7 +297,7 @@ export default function PrivacyPolicy() {
           </div>
 
           {/* CTA */}
-          <div className="card p-6 rounded-2xl bg-gradient-to-br from-rose-50 to-rose-100/50 dark:from-rose-500/10 dark:to-rose-600/5 border-rose-200 dark:border-rose-500/20 text-center">
+          <div className="card p-6 rounded-2xl bg-gradient-to-br from-[var(--color-primary-soft)] to-[var(--color-primary-soft)]/50 dark:from-[var(--color-primary)]/10 dark:to-[var(--color-primary)]/5 border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)] text-center">
             <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Ready to get started?</h3>
             <p className="text-sm text-slate-600 dark:text-slate-300 mb-4">Join thousands of migrants finding rooms across Australia.</p>
             <div className="flex gap-3 justify-center">

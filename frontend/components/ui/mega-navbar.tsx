@@ -7,6 +7,7 @@ import { useTheme } from "../../hooks/useTheme";
 import { useAuth } from "../../hooks/useAuth";
 import { useLanguage } from "../../hooks/useLanguage";
 import { navItems, type NavLinkDropdown } from "../../lib/navData";
+import { Logo } from "./Logo";
 
 export default function MegaNavbar() {
   const router = useRouter();
@@ -94,17 +95,17 @@ export default function MegaNavbar() {
 
   // Shared nav link classes
   const navLinkClass = (active: boolean) =>
-    `relative px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 bg-transparent border-0 outline-none appearance-none ${
+    `relative px-3 py-2 rounded-[6px] text-[13.5px] tracking-[-0.005em] transition-colors duration-150 bg-transparent border-0 outline-none appearance-none ${
       active
-        ? "text-rose-500"
-        : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5"
+        ? "text-[var(--color-ink)] font-semibold"
+        : "text-[var(--color-ink-2)] font-medium hover:text-[var(--color-ink)] hover:bg-[var(--color-surface-sunk)]"
     }`;
 
   const navLinkClassMobile = (active: boolean) =>
-    `block px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+    `block px-3 py-2.5 rounded-[8px] text-sm transition-colors ${
       active
-        ? "text-rose-500 bg-rose-50 dark:bg-rose-500/10"
-        : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-white/5"
+        ? "text-[var(--color-ink)] font-semibold bg-[var(--color-surface-sunk)]"
+        : "text-[var(--color-ink-2)] font-medium hover:text-[var(--color-ink)] hover:bg-[var(--color-surface-sunk)]"
     }`;
 
   return (
@@ -114,19 +115,18 @@ export default function MegaNavbar() {
       transition={{ duration: 0.5, ease: "easeOut" }}
       className="fixed top-0 left-0 right-0 z-50 px-4 sm:px-6 pt-4"
     >
-      <nav className={`${session ? "max-w-5xl" : "max-w-4xl"} mx-auto px-4 sm:px-5 py-2.5 flex items-center justify-between rounded-2xl transition-all duration-300 ${
+      <nav className={`${session ? "max-w-5xl" : "max-w-4xl"} mx-auto px-4 sm:px-5 py-2 flex items-center justify-between rounded-[14px] transition-all duration-300 ${
         scrolled
-          ? "bg-white/90 dark:bg-slate-950/85 backdrop-blur-xl border border-slate-200/70 dark:border-slate-800/70 shadow-[0_1px_2px_rgba(16,24,40,0.04)]"
-          : "bg-white/70 dark:bg-slate-950/70 backdrop-blur-lg border border-slate-200/50 dark:border-slate-800/50"
+          ? "bg-[var(--color-surface)]/95 backdrop-blur-xl border border-[var(--color-line)] shadow-[var(--shadow-soft)]"
+          : "bg-[var(--color-surface)]/85 backdrop-blur-lg border border-[var(--color-line)]/70"
       }`}>
         {/* Logo */}
-        <Link href={session ? "/dashboard" : "/"} className="flex items-center gap-2 group">
-          <div className={`w-8 h-8 rounded-lg ${isSignIn ? "bg-blue-600" : "bg-rose-600"} flex items-center justify-center text-white font-bold text-sm transition-transform group-hover:scale-105`}>
-            M
-          </div>
-          <span className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white">
-            Mig<span className={isSignIn ? "text-blue-600" : "text-rose-600"}>Rent</span>
+        <Link href={session ? "/dashboard" : "/"} className="inline-flex items-center gap-2 group text-[var(--color-ink)]">
+          <Logo size={26} className="transition-transform group-hover:scale-105" />
+          <span className="font-serif text-[20px] leading-none tracking-[-0.012em]">
+            MigRent
           </span>
+          <span className="eyebrow ml-0.5 mt-0.5">AU</span>
         </Link>
 
         {/* Desktop nav */}
@@ -141,7 +141,7 @@ export default function MegaNavbar() {
                     {active && (
                       <motion.div
                         layoutId="navIndicator"
-                        className="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-0.5 bg-rose-500 rounded-full"
+                        className="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-0.5 bg-[var(--color-ink)] rounded-full"
                         transition={{ type: "spring", stiffness: 500, damping: 30 }}
                       />
                     )}
@@ -156,7 +156,7 @@ export default function MegaNavbar() {
                       {router.pathname.startsWith("/dashboard") && (
                         <motion.div
                           layoutId="navIndicator"
-                          className="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-0.5 bg-rose-500 rounded-full"
+                          className="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-0.5 bg-[var(--color-ink)] rounded-full"
                           transition={{ type: "spring", stiffness: 500, damping: 30 }}
                         />
                       )}
@@ -192,7 +192,7 @@ export default function MegaNavbar() {
                   {active && !openDropdown && (
                     <motion.div
                       layoutId="navIndicator"
-                      className="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-0.5 bg-rose-500 rounded-full"
+                      className="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-0.5 bg-[var(--color-ink)] rounded-full"
                       transition={{ type: "spring", stiffness: 500, damping: 30 }}
                     />
                   )}
@@ -206,7 +206,7 @@ export default function MegaNavbar() {
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: 8, scale: 0.97 }}
                       transition={{ duration: 0.15, ease: "easeOut" }}
-                      className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-[520px] rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800 shadow-[0_24px_48px_-12px_rgba(16,24,40,0.18)] overflow-hidden z-50"
+                      className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-[520px] rounded-[14px] bg-[var(--color-surface-2)] border border-[var(--color-line)] shadow-[var(--shadow-modal)] overflow-hidden z-50"
                       onMouseEnter={() => handleDropdownEnter(item.id)}
                       onMouseLeave={handleDropdownLeave}
                     >
@@ -218,20 +218,20 @@ export default function MegaNavbar() {
                                 key={dropItem.href}
                                 href={dropItem.href}
                                 onClick={() => setOpenDropdown(null)}
-                                className="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-white/5 transition-colors group"
+                                className="flex items-start gap-3 p-3 rounded-[10px] hover:bg-[var(--color-surface-sunk)] transition-colors group"
                               >
                                 <div
-                                  className={`w-9 h-9 rounded-lg bg-slate-100 dark:bg-white/5 flex items-center justify-center shrink-0 ${dropItem.color} transition-colors group-hover:bg-slate-200/70 dark:group-hover:bg-white/10`}
+                                  className={`w-9 h-9 rounded-[8px] bg-[var(--color-surface-sunk)] flex items-center justify-center shrink-0 text-[var(--color-ink-2)] transition-colors group-hover:bg-[var(--color-surface)] group-hover:text-[var(--color-ink)]`}
                                 >
                                   <svg className="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                                     <path strokeLinecap="round" strokeLinejoin="round" d={dropItem.iconPath} />
                                   </svg>
                                 </div>
                                 <div>
-                                  <p className="text-sm font-semibold text-slate-900 dark:text-white leading-tight">
+                                  <p className="text-sm font-semibold text-[var(--color-ink)] leading-tight">
                                     {t(dropItem.titleKey)}
                                   </p>
-                                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 leading-snug">
+                                  <p className="text-xs text-[var(--color-ink-3)] mt-0.5 leading-snug">
                                     {t(dropItem.descKey)}
                                   </p>
                                 </div>
@@ -252,7 +252,7 @@ export default function MegaNavbar() {
             <div ref={langRef} className="relative">
               <button
                 onClick={() => setLangOpen(!langOpen)}
-                className="px-3 py-2 rounded-lg text-sm font-medium bg-transparent border-0 outline-none appearance-none text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 transition-all duration-200 inline-flex items-center gap-1.5"
+                className="px-3 py-2 rounded-[6px] text-[13.5px] font-medium bg-transparent border-0 outline-none appearance-none text-[var(--color-ink-2)] hover:text-[var(--color-ink)] hover:bg-[var(--color-surface-sunk)] transition-colors duration-150 inline-flex items-center gap-1.5"
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
@@ -275,7 +275,7 @@ export default function MegaNavbar() {
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 8, scale: 0.95 }}
                     transition={{ duration: 0.15 }}
-                    className="absolute right-0 mt-2 w-48 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-xl overflow-hidden z-50"
+                    className="absolute right-0 mt-2 w-48 rounded-[10px] bg-[var(--color-surface-2)] border border-[var(--color-line)] shadow-[var(--shadow-pop)] overflow-hidden z-50"
                   >
                     {languages.map((lang) => (
                       <button
@@ -286,14 +286,14 @@ export default function MegaNavbar() {
                         }}
                         className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-colors ${
                           lang.code === currentLanguage.code
-                            ? "bg-rose-50 dark:bg-rose-500/10 text-rose-500 font-semibold"
-                            : "text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5"
+                            ? "bg-[var(--color-surface-sunk)] text-[var(--color-ink)] font-semibold"
+                            : "text-[var(--color-ink-2)] hover:bg-[var(--color-surface-sunk)]"
                         }`}
                       >
                         <span className="text-base">{lang.flag}</span>
                         {lang.label}
                         {lang.code === currentLanguage.code && (
-                          <svg className="w-4 h-4 ml-auto text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <svg className="w-4 h-4 ml-auto text-[var(--color-accent)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                           </svg>
                         )}
@@ -310,7 +310,7 @@ export default function MegaNavbar() {
             <li>
               <button
                 onClick={toggle}
-                className="p-2 rounded-lg bg-transparent border-0 outline-none appearance-none text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5 transition-colors"
+                className="p-2 rounded-[6px] bg-transparent border-0 outline-none appearance-none text-[var(--color-ink-3)] hover:text-[var(--color-ink)] hover:bg-[var(--color-surface-sunk)] transition-colors"
                 aria-label="Toggle theme"
               >
                 {theme === "dark" ? (
@@ -332,7 +332,7 @@ export default function MegaNavbar() {
               <div ref={accountRef} className="relative">
                 <button
                   onClick={() => setAccountOpen(!accountOpen)}
-                  className="px-4 h-9 rounded-full text-sm font-semibold bg-rose-600 text-white hover:bg-rose-700 transition-colors inline-flex items-center gap-1.5"
+                  className="px-4 h-9 rounded-full text-sm font-semibold bg-[var(--color-primary)] text-[var(--color-primary-fg)] hover:bg-[var(--color-primary-500)] transition-colors inline-flex items-center gap-1.5"
                 >
                   {t("nav.myAccount")}
                   <svg className={`w-3.5 h-3.5 transition-transform ${accountOpen ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -348,36 +348,36 @@ export default function MegaNavbar() {
                       transition={{ duration: 0.15 }}
                       className="absolute right-0 mt-2 w-56 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-xl overflow-hidden z-50"
                     >
-                      <p className="px-4 pt-3 pb-2 text-xs font-medium text-slate-400 dark:text-slate-500">
+                      <p className="px-4 pt-3 pb-2 eyebrow">
                         {t("nav.iAmA")}
                       </p>
                       <Link
                         href="/dashboard/seeker"
                         onClick={() => setAccountOpen(false)}
-                        className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-colors"
+                        className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-[var(--color-ink)] hover:bg-[var(--color-surface-sunk)] transition-colors"
                       >
-                        <svg className="w-5 h-5 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                        <svg className="w-5 h-5 text-[var(--color-ink-3)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                         </svg>
                         {t("nav.seeker")}
-                        <span className="text-xs text-slate-400 dark:text-slate-500 ml-auto">{t("nav.findRoom")}</span>
+                        <span className="text-xs text-[var(--color-ink-3)] ml-auto">{t("nav.findRoom")}</span>
                       </Link>
                       <Link
                         href="/dashboard/owner"
                         onClick={() => setAccountOpen(false)}
-                        className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-blue-50 dark:hover:bg-blue-500/10 transition-colors"
+                        className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-[var(--color-ink)] hover:bg-[var(--color-surface-sunk)] transition-colors"
                       >
-                        <svg className="w-5 h-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                        <svg className="w-5 h-5 text-[var(--color-ink-3)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                         </svg>
                         {t("nav.owner")}
-                        <span className="text-xs text-slate-400 dark:text-slate-500 ml-auto">{t("nav.listRoom")}</span>
+                        <span className="text-xs text-[var(--color-ink-3)] ml-auto">{t("nav.listRoom")}</span>
                       </Link>
-                      <div className="border-t border-slate-100 dark:border-slate-800">
+                      <div className="border-t border-[var(--color-line)]">
                         <Link
                           href="/messages"
                           onClick={() => setAccountOpen(false)}
-                          className="flex items-center gap-3 px-4 py-3 text-sm text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors"
+                          className="flex items-center gap-3 px-4 py-3 text-sm text-[var(--color-ink-2)] hover:bg-[var(--color-surface-sunk)] transition-colors"
                         >
                           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
@@ -387,9 +387,9 @@ export default function MegaNavbar() {
                         <Link
                           href="/seeker/wishlist"
                           onClick={() => setAccountOpen(false)}
-                          className="flex items-center gap-3 px-4 py-3 text-sm text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors"
+                          className="flex items-center gap-3 px-4 py-3 text-sm text-[var(--color-ink-2)] hover:bg-[var(--color-surface-sunk)] transition-colors"
                         >
-                          <svg className="w-4 h-4 text-rose-500" fill="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-4 h-4 text-[var(--color-coral-500)]" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
                           </svg>
                           {t("nav.wishlist")}
@@ -397,7 +397,7 @@ export default function MegaNavbar() {
                         <Link
                           href="/guides"
                           onClick={() => setAccountOpen(false)}
-                          className="flex items-center gap-3 px-4 py-3 text-sm text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors"
+                          className="flex items-center gap-3 px-4 py-3 text-sm text-[var(--color-ink-2)] hover:bg-[var(--color-surface-sunk)] transition-colors"
                         >
                           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" />
@@ -407,7 +407,7 @@ export default function MegaNavbar() {
                         <Link
                           href="/account/settings"
                           onClick={() => setAccountOpen(false)}
-                          className="flex items-center gap-3 px-4 py-3 text-sm text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors"
+                          className="flex items-center gap-3 px-4 py-3 text-sm text-[var(--color-ink-2)] hover:bg-[var(--color-surface-sunk)] transition-colors"
                         >
                           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
@@ -423,7 +423,7 @@ export default function MegaNavbar() {
             ) : (
               <Link
                 href="/signup"
-                className={`px-4 h-9 inline-flex items-center justify-center rounded-full text-sm font-semibold ${isSignIn ? "bg-blue-600 hover:bg-blue-700" : "bg-rose-600 hover:bg-rose-700"} text-white transition-colors`}
+                className="px-4 h-9 inline-flex items-center justify-center rounded-full text-sm font-semibold bg-[var(--color-primary)] text-[var(--color-primary-fg)] hover:bg-[var(--color-primary-500)] transition-colors"
               >
                 {t("nav.signUp")}
               </Link>
@@ -436,7 +436,7 @@ export default function MegaNavbar() {
           {mounted && (
             <button
               onClick={toggle}
-              className="p-2 rounded-lg text-slate-500 dark:text-slate-400"
+              className="p-2 rounded-[6px] text-[var(--color-ink-3)]"
               aria-label="Toggle theme"
             >
               {theme === "dark" ? (
@@ -457,15 +457,15 @@ export default function MegaNavbar() {
           >
             <motion.span
               animate={mobileOpen ? { rotate: 45, y: 7 } : { rotate: 0, y: 0 }}
-              className="block w-6 h-0.5 bg-slate-600 dark:bg-slate-300"
+              className="block w-6 h-0.5 bg-[var(--color-ink-2)]"
             />
             <motion.span
               animate={mobileOpen ? { opacity: 0 } : { opacity: 1 }}
-              className="block w-6 h-0.5 bg-slate-600 dark:bg-slate-300"
+              className="block w-6 h-0.5 bg-[var(--color-ink-2)]"
             />
             <motion.span
               animate={mobileOpen ? { rotate: -45, y: -7 } : { rotate: 0, y: 0 }}
-              className="block w-6 h-0.5 bg-slate-600 dark:bg-slate-300"
+              className="block w-6 h-0.5 bg-[var(--color-ink-2)]"
             />
           </button>
         </div>
@@ -479,7 +479,7 @@ export default function MegaNavbar() {
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className={`lg:hidden overflow-hidden mt-2 ${session ? "max-w-5xl" : "max-w-4xl"} mx-auto rounded-2xl bg-white/95 dark:bg-slate-950/95 backdrop-blur-xl border border-slate-200/60 dark:border-slate-700/60 shadow-lg`}
+            className={`lg:hidden overflow-hidden mt-2 ${session ? "max-w-5xl" : "max-w-4xl"} mx-auto rounded-[14px] bg-[var(--color-surface-2)]/97 backdrop-blur-xl border border-[var(--color-line)] shadow-[var(--shadow-pop)]`}
           >
             <div className="px-4 py-3 space-y-1 max-h-[80vh] overflow-y-auto">
               {navItems.map((item, index) => {
@@ -509,7 +509,7 @@ export default function MegaNavbar() {
                   <div key={item.id}>
                     <button
                       onClick={() => setMobileExpanded(expanded ? null : item.id)}
-                      className="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors"
+                      className="w-full flex items-center justify-between px-3 py-2.5 rounded-[8px] text-sm font-medium text-[var(--color-ink-2)] hover:bg-[var(--color-surface-sunk)] transition-colors"
                     >
                       {t(item.labelKey)}
                       <svg
@@ -536,9 +536,9 @@ export default function MegaNavbar() {
                               <Link
                                 key={subItem.href}
                                 href={subItem.href}
-                                className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors"
+                                className="flex items-center gap-3 px-3 py-2 rounded-[8px] text-sm text-[var(--color-ink-2)] hover:bg-[var(--color-surface-sunk)] transition-colors"
                               >
-                                <div className={`w-7 h-7 rounded-md bg-slate-100 dark:bg-white/5 flex items-center justify-center shrink-0 ${subItem.color}`}>
+                                <div className="w-7 h-7 rounded-[6px] bg-[var(--color-surface-sunk)] flex items-center justify-center shrink-0 text-[var(--color-ink-3)]">
                                   <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                                     <path strokeLinecap="round" strokeLinejoin="round" d={subItem.iconPath} />
                                   </svg>
@@ -555,10 +555,10 @@ export default function MegaNavbar() {
               })}
 
               {/* Language selector in mobile */}
-              <div className="border-t border-slate-100 dark:border-slate-800 pt-2 mt-2">
+              <div className="border-t border-[var(--color-line)] pt-2 mt-2">
                 <button
                   onClick={() => setMobileExpanded(mobileExpanded === "language" ? null : "language")}
-                  className="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors"
+                  className="w-full flex items-center justify-between px-3 py-2.5 rounded-[8px] text-sm font-medium text-[var(--color-ink-2)] hover:bg-[var(--color-surface-sunk)] transition-colors"
                 >
                   <span className="flex items-center gap-2">
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -593,16 +593,16 @@ export default function MegaNavbar() {
                               changeLanguage(lang.code);
                               setMobileExpanded(null);
                             }}
-                            className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
+                            className={`w-full flex items-center gap-3 px-3 py-2 rounded-[8px] text-sm transition-colors ${
                               lang.code === currentLanguage.code
-                                ? "text-rose-500 font-semibold bg-rose-50 dark:bg-rose-500/10"
-                                : "text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5"
+                                ? "text-[var(--color-ink)] font-semibold bg-[var(--color-surface-sunk)]"
+                                : "text-[var(--color-ink-2)] hover:bg-[var(--color-surface-sunk)]"
                             }`}
                           >
                             <span className="text-base">{lang.flag}</span>
                             {lang.label}
                             {lang.code === currentLanguage.code && (
-                              <svg className="w-4 h-4 ml-auto text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <svg className="w-4 h-4 ml-auto text-[var(--color-accent)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                               </svg>
                             )}
@@ -617,31 +617,31 @@ export default function MegaNavbar() {
               {/* Account section */}
               {session ? (
                 <>
-                  <div className="border-t border-slate-100 dark:border-slate-800 pt-2 mt-2">
-                    <p className="px-3 pt-1 pb-1 text-xs font-medium text-slate-400 dark:text-slate-500">
+                  <div className="border-t border-[var(--color-line)] pt-2 mt-2">
+                    <p className="px-3 pt-1 pb-1 eyebrow">
                       {t("nav.myAccount")} - {t("nav.iAmA")}
                     </p>
                     <Link
                       href="/dashboard/seeker"
-                      className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-colors"
+                      className="flex items-center gap-3 px-3 py-2.5 rounded-[8px] text-sm font-medium text-[var(--color-ink-2)] hover:text-[var(--color-ink)] hover:bg-[var(--color-surface-sunk)] transition-colors"
                     >
-                      <svg className="w-5 h-5 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                      <svg className="w-5 h-5 text-[var(--color-ink-3)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                       </svg>
                       {t("nav.seeker")}
                     </Link>
                     <Link
                       href="/dashboard/owner"
-                      className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-500/10 transition-colors"
+                      className="flex items-center gap-3 px-3 py-2.5 rounded-[8px] text-sm font-medium text-[var(--color-ink-2)] hover:text-[var(--color-ink)] hover:bg-[var(--color-surface-sunk)] transition-colors"
                     >
-                      <svg className="w-5 h-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                      <svg className="w-5 h-5 text-[var(--color-ink-3)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                       </svg>
                       {t("nav.owner")}
                     </Link>
                     <Link
                       href="/account/settings"
-                      className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors"
+                      className="flex items-center gap-3 px-3 py-2.5 rounded-[8px] text-sm font-medium text-[var(--color-ink-2)] hover:bg-[var(--color-surface-sunk)] transition-colors"
                     >
                       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
@@ -654,7 +654,7 @@ export default function MegaNavbar() {
               ) : (
                 <Link
                   href="/signup"
-                  className={`block mt-2 px-4 py-2.5 rounded-full text-sm font-semibold text-center ${isSignIn ? "bg-blue-600 hover:bg-blue-700" : "bg-rose-600 hover:bg-rose-700"} text-white transition-colors`}
+                  className="block mt-2 px-4 py-2.5 rounded-full text-sm font-semibold text-center bg-[var(--color-primary)] text-[var(--color-primary-fg)] hover:bg-[var(--color-primary-500)] transition-colors"
                 >
                   {t("nav.signUp")}
                 </Link>

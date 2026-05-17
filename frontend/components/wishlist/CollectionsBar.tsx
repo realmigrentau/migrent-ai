@@ -130,7 +130,7 @@ export default function CollectionsBar({
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: collections.length * 0.04 }}
           onClick={() => setShowAddModal(true)}
-          className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap border-2 border-dashed border-slate-200 dark:border-slate-700 text-slate-400 hover:border-rose-300 hover:text-rose-500 dark:hover:border-rose-500/30 dark:hover:text-rose-400 transition-all shrink-0"
+          className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap border-2 border-dashed border-slate-200 dark:border-slate-700 text-slate-400 hover:border-[var(--color-line-2)] hover:text-[var(--color-primary)] dark:hover:border-[var(--color-primary)]/30 dark:hover:text-[var(--color-primary)] transition-all shrink-0"
         >
           <Plus className="w-3.5 h-3.5" />
           New
@@ -149,7 +149,7 @@ export default function CollectionsBar({
             <div className="card p-4 rounded-2xl space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Palette className="w-4 h-4 text-rose-500" />
+                  <Palette className="w-4 h-4 text-[var(--color-primary)]" />
                   <h3 className="text-sm font-bold text-slate-900 dark:text-white">
                     New Collection
                   </h3>
@@ -202,7 +202,7 @@ export default function CollectionsBar({
                       onClick={() => setSelectedEmoji(e.id)}
                       className={`p-2 rounded-xl transition-all ${
                         selectedEmoji === e.id
-                          ? "bg-rose-50 dark:bg-rose-500/10 text-rose-500 border border-rose-200 dark:border-rose-500/20 scale-110"
+                          ? "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 text-[var(--color-primary)] border border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)] scale-110"
                           : "bg-slate-50 dark:bg-slate-800 text-slate-400 border border-transparent hover:text-slate-600 dark:hover:text-slate-200"
                       }`}
                     >

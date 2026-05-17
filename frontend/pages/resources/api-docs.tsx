@@ -56,7 +56,7 @@ function EndpointCard({ endpoint }: { endpoint: ApiEndpoint }) {
                   <div className="space-y-1">
                     {endpoint.params.map((p) => (
                       <div key={p.name} className="flex items-start gap-2 text-xs">
-                        <code className="font-mono text-rose-500 dark:text-rose-400 shrink-0">{p.name}</code>
+                        <code className="font-mono text-[var(--color-primary)] dark:text-[var(--color-primary)] shrink-0">{p.name}</code>
                         <span className="text-slate-400">{p.type}</span>
                         {p.required && <span className="text-[9px] font-bold text-red-400 bg-red-50 dark:bg-red-500/10 px-1.5 rounded">required</span>}
                         <span className="text-slate-500 dark:text-slate-400">{p.description}</span>
@@ -116,7 +116,7 @@ export default function ApiDocs() {
             API v2
           </div>
           <h1 className="text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white">
-            <span className="bg-gradient-to-r from-blue-500 to-indigo-500 bg-clip-text text-transparent">Developer</span> API Docs
+            <span className="bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary)] bg-clip-text text-transparent">Developer</span> API Docs
           </h1>
           <p className="mt-3 text-slate-500 dark:text-slate-400 max-w-xl mx-auto">
             Build on the MigRent platform with our RESTful API. OAuth 2.0 authentication, JSON responses, and real-time webhooks.

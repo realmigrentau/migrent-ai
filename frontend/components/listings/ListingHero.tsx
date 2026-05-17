@@ -101,7 +101,7 @@ export default function ListingHero({
               </span>
             )}
             {verified && (
-              <span className="flex items-center gap-1 text-xs font-semibold text-emerald-800 bg-emerald-100/90 backdrop-blur-sm px-3 py-1.5 rounded-full">
+              <span className="flex items-center gap-1 text-xs font-semibold text-emerald-800 bg-[var(--color-accent-soft)]/90 backdrop-blur-sm px-3 py-1.5 rounded-full">
                 <ShieldCheck className="w-3 h-3" />
                 Verified Owner
               </span>
@@ -157,7 +157,7 @@ export default function ListingHero({
                 onClick={() => setSelectedIndex(i)}
                 className={`flex-shrink-0 w-20 h-14 rounded-lg overflow-hidden border-2 transition-all duration-200 ${
                   selectedIndex === i
-                    ? "border-rose-500 shadow-md"
+                    ? "border-[var(--color-primary)] shadow-md"
                     : "border-transparent opacity-60 hover:opacity-100"
                 }`}
               >

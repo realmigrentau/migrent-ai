@@ -104,7 +104,7 @@ export default function OwnerDashboard() {
   if (loading)
     return (
       <div className="flex items-center justify-center py-20">
-        <div className="w-8 h-8 border-2 border-rose-300 dark:border-rose-500/30 border-t-rose-500 rounded-full animate-spin" />
+        <div className="w-8 h-8 border-2 border-[var(--color-line-2)] dark:border-[var(--color-primary-soft)] border-t-[var(--color-ink)] rounded-full animate-spin" />
       </div>
     );
 
@@ -181,7 +181,7 @@ export default function OwnerDashboard() {
                 animate={{ opacity: 1 }}
                 className={`text-sm p-3 rounded-xl ${
                   authError.includes("Check your email")
-                    ? "bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 text-emerald-600 dark:text-emerald-400"
+                    ? "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 border border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)] text-[var(--color-accent)] dark:text-[var(--color-accent)]"
                     : "bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 text-red-600 dark:text-red-400"
                 }`}
               >
@@ -200,10 +200,10 @@ export default function OwnerDashboard() {
           <span className="text-sm text-slate-600 dark:text-slate-300">
             Signed in as <strong className="text-slate-900 dark:text-white">{user?.email}</strong>
           </span>
-          <Link href="/account/settings" className="text-slate-500 hover:text-rose-500 text-sm transition-colors ml-auto">
+          <Link href="/account/settings" className="text-slate-500 hover:text-[var(--color-primary)] text-sm transition-colors ml-auto">
             Settings
           </Link>
-          <button onClick={signOut} className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 text-sm underline underline-offset-2 transition-colors">
+          <button onClick={signOut} className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] text-sm underline underline-offset-2 transition-colors">
             Sign out
           </button>
         </motion.section>
@@ -327,7 +327,7 @@ export default function OwnerDashboard() {
                 animate={{ opacity: 1 }}
                 className={`text-sm p-3 rounded-xl ${
                   formMsg.includes("created")
-                    ? "bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 text-emerald-600 dark:text-emerald-400"
+                    ? "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 border border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)] text-[var(--color-accent)] dark:text-[var(--color-accent)]"
                     : "bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20 text-amber-600 dark:text-amber-400"
                 }`}
               >

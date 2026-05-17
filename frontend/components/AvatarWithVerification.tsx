@@ -32,11 +32,11 @@ export default function AvatarWithVerification({
         {/* Avatar circle */}
         <div
           style={{ width: size, height: size }}
-          className={`rounded-full flex items-center justify-center text-white font-bold overflow-hidden ring-2 shadow-lg transition-all duration-200 group-hover:ring-rose-400 group-hover:shadow-rose-500/20 ${
+          className={`rounded-full flex items-center justify-center text-white font-bold overflow-hidden ring-2 shadow-lg transition-all duration-200 group-hover:ring-[var(--color-primary)] group-hover:shadow-[var(--color-primary)]/20 ${
             isVerified
-              ? "ring-rose-300 dark:ring-rose-500/40"
+              ? "ring-[var(--color-line-2)] dark:ring-[var(--color-primary)]/40"
               : "ring-white dark:ring-slate-700"
-          } bg-gradient-to-br from-rose-400 to-rose-600`}
+          } bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary)]`}
         >
           {photo ? (
             <img
@@ -58,7 +58,7 @@ export default function AvatarWithVerification({
               height: size * 0.35,
             }}
           >
-            <div className="w-full h-full rounded-full bg-gradient-to-br from-rose-400 to-rose-500 flex items-center justify-center">
+            <div className="w-full h-full rounded-full bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center">
               <svg
                 className="text-white"
                 style={{ width: size * 0.18, height: size * 0.18 }}
@@ -80,7 +80,7 @@ export default function AvatarWithVerification({
         {/* Hover glow */}
         <div
           style={{ width: size + 8, height: size + 8, top: -4, left: -4 }}
-          className="absolute rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-rose-400/10 dark:bg-rose-500/10 pointer-events-none"
+          className="absolute rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-primary-soft dark:bg-[var(--color-primary)]/10 pointer-events-none"
         />
       </div>
 

@@ -53,7 +53,7 @@ export default function CompareTable({
           {/* Header */}
           <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 dark:border-slate-800">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-xl bg-gradient-to-r from-rose-500 to-pink-500 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-xl bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center">
                 <Sparkles className="w-4 h-4 text-white" />
               </div>
               <div>
@@ -116,7 +116,7 @@ export default function CompareTable({
                   <div className="flex items-center gap-2">
                     <span className={`text-base font-black ${
                       l.weeklyPrice === lowestPrice
-                        ? "text-emerald-500"
+                        ? "text-[var(--color-accent)]"
                         : "text-slate-900 dark:text-white"
                     }`}>
                       ${l.weeklyPrice}
@@ -125,7 +125,7 @@ export default function CompareTable({
                       <span className="text-xs text-slate-400 line-through">${l.originalPrice}</span>
                     )}
                     {l.weeklyPrice === lowestPrice && (
-                      <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                      <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 text-[var(--color-accent)] dark:text-[var(--color-accent)]">
                         Best
                       </span>
                     )}
@@ -146,18 +146,18 @@ export default function CompareTable({
                   return (
                     <div>
                       <div className="flex items-center gap-1.5">
-                        <Calculator className="w-3.5 h-3.5 text-emerald-500" />
+                        <Calculator className="w-3.5 h-3.5 text-[var(--color-accent)]" />
                         <span
                           className={`text-sm font-bold ${
                             estimated === lowestTrue
-                              ? "text-emerald-500"
+                              ? "text-[var(--color-accent)]"
                               : "text-slate-700 dark:text-slate-200"
                           }`}
                         >
                           ~${estimated}/wk
                         </span>
                         {estimated === lowestTrue && (
-                          <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                          <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 text-[var(--color-accent)] dark:text-[var(--color-accent)]">
                             Best
                           </span>
                         )}
@@ -239,8 +239,8 @@ export default function CompareTable({
                   <div className="flex items-center gap-1">
                     {l.verified ? (
                       <>
-                        <BadgeCheck className="w-4 h-4 text-emerald-500" />
-                        <span className="text-xs font-medium text-emerald-500">Yes</span>
+                        <BadgeCheck className="w-4 h-4 text-[var(--color-accent)]" />
+                        <span className="text-xs font-medium text-[var(--color-accent)]">Yes</span>
                       </>
                     ) : (
                       <span className="text-xs text-slate-400">No</span>
@@ -253,7 +253,7 @@ export default function CompareTable({
               <CompareRow label="Host" listings={listings}>
                 {(l) => (
                   <div className="flex items-center gap-1.5">
-                    <div className="w-5 h-5 rounded-full bg-gradient-to-r from-rose-400 to-pink-400 flex items-center justify-center">
+                    <div className="w-5 h-5 rounded-full bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center">
                       <span className="text-white text-[8px] font-bold">{l.ownerName[0]}</span>
                     </div>
                     <span className="text-sm text-slate-600 dark:text-slate-300">{l.ownerName}</span>
@@ -265,7 +265,7 @@ export default function CompareTable({
               {/* Owner reply */}
               <CompareRow label="Reply" listings={listings}>
                 {(l) => l.ownerReply ? (
-                  <p className="text-xs text-emerald-600 dark:text-emerald-400 italic line-clamp-2">
+                  <p className="text-xs text-[var(--color-accent)] dark:text-[var(--color-accent)] italic line-clamp-2">
                     "{l.ownerReply}"
                   </p>
                 ) : (

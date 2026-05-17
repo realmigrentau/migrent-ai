@@ -86,7 +86,7 @@ export default function ConversationList({
               <motion.span
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
-                className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-gradient-to-r from-rose-500 to-pink-500 text-white shadow-lg shadow-rose-500/25"
+                className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary)] text-white shadow-lg shadow-[var(--color-primary)]/20"
               >
                 {totalUnread}
               </motion.span>
@@ -132,7 +132,7 @@ export default function ConversationList({
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search conversations, messages..."
                   autoFocus
-                  className="w-full pl-10 pr-10 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all"
+                  className="w-full pl-10 pr-10 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:ring-2 focus:ring-[var(--color-ink)]/30 focus:border-transparent outline-none transition-all"
                 />
                 {searchQuery && (
                   <button
@@ -161,7 +161,7 @@ export default function ConversationList({
                 onClick={() => setActiveFolder(folder.key)}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all ${
                   activeFolder === folder.key
-                    ? "bg-indigo-100 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-300"
+                    ? "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/20 text-[var(--color-primary)] dark:text-[var(--color-primary)]"
                     : "text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
                 }`}
               >
@@ -170,7 +170,7 @@ export default function ConversationList({
                 {count > 0 && (
                   <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-bold ${
                     activeFolder === folder.key
-                      ? "bg-indigo-200 dark:bg-indigo-500/30 text-indigo-700 dark:text-indigo-200"
+                      ? "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/30 text-[var(--color-primary)] dark:text-[var(--color-primary)]"
                       : "bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400"
                   }`}>
                     {count}
@@ -205,7 +205,7 @@ export default function ConversationList({
             {unreadCount > 0 && (
               <span
                 className={`w-4.5 h-4.5 flex items-center justify-center rounded-full text-[9px] font-black ${
-                  filter === "unread" ? "bg-white/20 dark:bg-slate-900/20" : "bg-rose-500 text-white"
+                  filter === "unread" ? "bg-white/20 dark:bg-slate-900/20" : "bg-[var(--color-primary)] text-white"
                 }`}
               >
                 {unreadCount}
@@ -285,16 +285,16 @@ function ThreadItem({
       onClick={onClick}
       className={`w-full px-4 py-3 text-left flex items-center gap-3 transition-all relative ${
         isActive
-          ? "bg-indigo-50 dark:bg-indigo-500/10 border-r-3 border-indigo-500"
+          ? "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 border-r-3 border-[var(--color-primary)]"
           : hasUnread
-          ? "bg-rose-50/40 dark:bg-rose-500/5 hover:bg-slate-50 dark:hover:bg-slate-800/50"
+          ? "bg-[var(--color-primary-soft)]/40 dark:bg-[var(--color-primary)]/5 hover:bg-slate-50 dark:hover:bg-slate-800/50"
           : "hover:bg-slate-50 dark:hover:bg-slate-800/50"
       }`}
     >
       {/* Avatar */}
       <div className="relative shrink-0">
         <div className={`w-12 h-12 rounded-full flex items-center justify-center overflow-hidden ring-2 ring-white dark:ring-slate-950 ${
-          thread.other_user_pfp ? "bg-slate-200 dark:bg-slate-700" : "bg-gradient-to-br from-indigo-500 to-emerald-500"
+          thread.other_user_pfp ? "bg-slate-200 dark:bg-slate-700" : "bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-accent)]"
         }`}>
           {thread.other_user_pfp ? (
             <img src={thread.other_user_pfp} alt="" className="w-full h-full object-cover" />
@@ -306,14 +306,14 @@ function ThreadItem({
         </div>
         {/* Online dot */}
         {thread.is_online && (
-          <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-white dark:border-slate-950" />
+          <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-[var(--color-accent-soft)]0 border-2 border-white dark:border-slate-950" />
         )}
         {/* Unread badge */}
         {hasUnread && (
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
-            className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-gradient-to-r from-rose-500 to-pink-500 flex items-center justify-center shadow-lg shadow-rose-500/30"
+            className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center shadow-lg shadow-[var(--color-primary)]/20"
           >
             <span className="text-[9px] font-black text-white">
               {thread.unread_count > 99 ? "99+" : thread.unread_count}
@@ -340,7 +340,7 @@ function ThreadItem({
           <span
             className={`text-[11px] shrink-0 ${
               hasUnread
-                ? "font-bold text-indigo-600 dark:text-indigo-400"
+                ? "font-bold text-[var(--color-primary)] dark:text-[var(--color-primary)]"
                 : "text-slate-400 dark:text-slate-500"
             }`}
           >
@@ -362,16 +362,16 @@ function ThreadItem({
         {/* Listing badge */}
         {thread.listing_title && (
           <div className="flex items-center gap-1.5 mt-1">
-            <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10 px-2 py-0.5 rounded-full">
-              <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 inline-block" />
+            <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-[var(--color-primary)] dark:text-[var(--color-primary)] bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 px-2 py-0.5 rounded-full">
+              <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-primary)] inline-block" />
               {thread.listing_title}
             </span>
           </div>
         )}
         {!thread.listing_title && thread.is_direct && (
           <div className="flex items-center gap-1.5 mt-1">
-            <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 px-2 py-0.5 rounded-full">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block" />
+            <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-[var(--color-accent)] dark:text-[var(--color-accent)] bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 px-2 py-0.5 rounded-full">
+              <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-accent-soft)]0 inline-block" />
               Direct
             </span>
           </div>
@@ -398,13 +398,13 @@ function EmptyState({
 }) {
   return (
     <div className="flex flex-col items-center justify-center h-full text-center px-8 py-16">
-      <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-indigo-100 to-emerald-100 dark:from-indigo-500/10 dark:to-emerald-500/10 flex items-center justify-center mb-5 rotate-3">
+      <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-[var(--color-primary-soft)] to-[var(--color-accent-soft)] dark:from-[var(--color-primary)]/10 dark:to-[var(--color-accent)]/10 flex items-center justify-center mb-5 rotate-3">
         {filter === "unread" ? (
-          <CheckCheck className="w-8 h-8 text-emerald-500" />
+          <CheckCheck className="w-8 h-8 text-[var(--color-accent)]" />
         ) : searchQuery ? (
-          <Search className="w-8 h-8 text-indigo-400" />
+          <Search className="w-8 h-8 text-[var(--color-primary)]" />
         ) : (
-          <MessageSquarePlus className="w-8 h-8 text-indigo-400" />
+          <MessageSquarePlus className="w-8 h-8 text-[var(--color-primary)]" />
         )}
       </div>
       <h3 className="text-base font-bold text-slate-900 dark:text-white mb-1.5">

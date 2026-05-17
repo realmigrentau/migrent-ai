@@ -18,9 +18,9 @@ export default function AdminMetrics({ stats, loading }: AdminMetricsProps) {
     {
       label: "Approved Today",
       value: stats?.approved_today ?? 0,
-      color: "text-emerald-500",
-      bg: "bg-emerald-50 dark:bg-emerald-500/10",
-      border: "border-emerald-200 dark:border-emerald-500/20",
+      color: "text-[var(--color-accent)]",
+      bg: "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10",
+      border: "border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)]",
     },
     {
       label: "Rejected Today",

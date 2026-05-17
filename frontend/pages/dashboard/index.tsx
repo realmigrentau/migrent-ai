@@ -249,11 +249,11 @@ function RoleSelectionScreen({
           whileTap={{ scale: 0.99 }}
           onClick={() => onSelect("owner")}
           disabled={loading}
-          className="bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800 hover:border-indigo-300 dark:hover:border-indigo-500/40 rounded-2xl p-7 text-left transition-colors disabled:opacity-50"
+          className="bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800 hover:border-[var(--color-line-2)] dark:hover:border-[var(--color-primary)]/40 rounded-2xl p-7 text-left transition-colors disabled:opacity-50"
         >
-          <div className="w-12 h-12 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center mb-5">
+          <div className="w-12 h-12 rounded-xl bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 flex items-center justify-center mb-5">
             <svg
-              className="w-6 h-6 text-indigo-600 dark:text-indigo-400"
+              className="w-6 h-6 text-[var(--color-primary)] dark:text-[var(--color-primary)]"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -272,7 +272,7 @@ function RoleSelectionScreen({
           <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
             List rooms, manage properties, and connect with verified tenants.
           </p>
-          <div className="mt-5 flex items-center text-indigo-600 dark:text-indigo-400 font-medium text-sm">
+          <div className="mt-5 flex items-center text-[var(--color-primary)] dark:text-[var(--color-primary)] font-medium text-sm">
             Get started
             <svg
               className="w-4 h-4 ml-1.5"
@@ -292,11 +292,11 @@ function RoleSelectionScreen({
           whileTap={{ scale: 0.99 }}
           onClick={() => onSelect("seeker")}
           disabled={loading}
-          className="bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800 hover:border-rose-300 dark:hover:border-rose-500/40 rounded-2xl p-7 text-left transition-colors disabled:opacity-50"
+          className="bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800 hover:border-[var(--color-line-2)] dark:hover:border-[var(--color-primary)]/40 rounded-2xl p-7 text-left transition-colors disabled:opacity-50"
         >
-          <div className="w-12 h-12 rounded-xl bg-rose-50 dark:bg-rose-500/10 flex items-center justify-center mb-5">
+          <div className="w-12 h-12 rounded-xl bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 flex items-center justify-center mb-5">
             <svg
-              className="w-6 h-6 text-rose-600 dark:text-rose-400"
+              className="w-6 h-6 text-[var(--color-primary)] dark:text-[var(--color-primary)]"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -315,7 +315,7 @@ function RoleSelectionScreen({
           <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
             Search rooms, save favorites, and get AI-powered match recommendations.
           </p>
-          <div className="mt-5 flex items-center text-rose-600 dark:text-rose-400 font-medium text-sm">
+          <div className="mt-5 flex items-center text-[var(--color-primary)] dark:text-[var(--color-primary)] font-medium text-sm">
             Get started
             <svg
               className="w-4 h-4 ml-1.5"
@@ -332,7 +332,7 @@ function RoleSelectionScreen({
 
       {loading && (
         <div className="flex justify-center mt-6">
-          <div className="w-6 h-6 border-2 border-indigo-300 dark:border-indigo-500/30 border-t-indigo-500 rounded-full animate-spin" />
+          <div className="w-6 h-6 border-2 border-[var(--color-line-2)] dark:border-[var(--color-primary-soft)] border-t-[var(--color-ink)] rounded-full animate-spin" />
         </div>
       )}
     </motion.div>

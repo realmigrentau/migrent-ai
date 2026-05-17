@@ -169,7 +169,7 @@ export default function MediaGallery({ images, initialIndex = 0, isOpen, onClose
                   }}
                   className={`w-14 h-14 rounded-xl overflow-hidden shrink-0 transition-all ${
                     i === currentIndex
-                      ? "ring-2 ring-indigo-500 ring-offset-2 ring-offset-black opacity-100 scale-105"
+                      ? "ring-2 ring-[var(--color-primary)] ring-offset-2 ring-offset-black opacity-100 scale-105"
                       : "opacity-40 hover:opacity-70"
                   }`}
                 >

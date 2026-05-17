@@ -112,7 +112,7 @@ export default function ReportModal({ listingId, itemType, itemId, isOpen, onClo
                 </p>
                 <button
                   onClick={handleClose}
-                  className="px-6 py-2 bg-rose-500 text-white rounded-lg hover:bg-rose-600 transition"
+                  className="px-6 py-2 bg-[var(--color-primary)] text-white rounded-lg hover:bg-[var(--color-primary)] transition"
                 >
                   Close
                 </button>
@@ -132,7 +132,7 @@ export default function ReportModal({ listingId, itemType, itemId, isOpen, onClo
                       key={r}
                       className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition ${
                         reason === r
-                          ? "border-rose-500 bg-rose-50 dark:bg-rose-500/10 dark:border-rose-500"
+                          ? "border-[var(--color-primary)] bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 dark:border-[var(--color-primary)]"
                           : "border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600"
                       }`}
                     >
@@ -145,7 +145,7 @@ export default function ReportModal({ listingId, itemType, itemId, isOpen, onClo
                           setReason(r);
                           if (r !== "Other") setOtherText("");
                         }}
-                        className="text-rose-500 focus:ring-rose-500 accent-rose-500"
+                        className="text-[var(--color-primary)] focus:ring-[var(--color-ink)]/30 accent-[var(--color-primary)]"
                       />
                       <span className="text-sm text-slate-700 dark:text-slate-300">{r}</span>
                     </label>
@@ -168,7 +168,7 @@ export default function ReportModal({ listingId, itemType, itemId, isOpen, onClo
                         onChange={(e) => setOtherText(e.target.value)}
                         rows={3}
                         maxLength={500}
-                        className="w-full border-2 border-slate-900 dark:border-slate-400 rounded-lg p-3 text-sm text-slate-900 dark:text-white bg-white dark:bg-slate-800 focus:ring-2 focus:ring-rose-500 focus:border-transparent resize-none mb-4 placeholder:text-slate-400 dark:placeholder:text-slate-500"
+                        className="w-full border-2 border-slate-900 dark:border-slate-400 rounded-lg p-3 text-sm text-slate-900 dark:text-white bg-white dark:bg-slate-800 focus:ring-2 focus:ring-[var(--color-ink)]/30 focus:border-transparent resize-none mb-4 placeholder:text-slate-400 dark:placeholder:text-slate-500"
                       />
                     </motion.div>
                   )}
@@ -182,7 +182,7 @@ export default function ReportModal({ listingId, itemType, itemId, isOpen, onClo
                     onChange={(e) => setDetails(e.target.value)}
                     rows={3}
                     maxLength={2000}
-                    className="w-full border border-slate-200 dark:border-slate-700 rounded-lg p-3 text-sm text-slate-900 dark:text-white bg-white dark:bg-slate-800 focus:ring-2 focus:ring-rose-500 focus:border-transparent resize-none mb-4 placeholder:text-slate-400 dark:placeholder:text-slate-500"
+                    className="w-full border border-slate-200 dark:border-slate-700 rounded-lg p-3 text-sm text-slate-900 dark:text-white bg-white dark:bg-slate-800 focus:ring-2 focus:ring-[var(--color-ink)]/30 focus:border-transparent resize-none mb-4 placeholder:text-slate-400 dark:placeholder:text-slate-500"
                   />
                 )}
 

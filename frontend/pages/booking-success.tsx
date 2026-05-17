@@ -18,7 +18,7 @@ export default function BookingSuccessPage() {
             animate={{ scale: 1 }}
             transition={{ delay: 0.2, type: "spring" }}
           >
-            <CheckCircle className="w-16 h-16 mx-auto text-emerald-500" />
+            <CheckCircle className="w-16 h-16 mx-auto text-[var(--color-accent)]" />
           </motion.div>
 
           <div>
@@ -41,7 +41,7 @@ export default function BookingSuccessPage() {
                 { icon: Home, text: "Prepare your documents (ID, visa if applicable)" },
               ].map((step, i) => (
                 <div key={i} className="flex items-start gap-2 text-sm text-slate-600 dark:text-slate-300">
-                  <step.icon className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" />
+                  <step.icon className="w-4 h-4 text-[var(--color-accent)] mt-0.5 shrink-0" />
                   {step.text}
                 </div>
               ))}

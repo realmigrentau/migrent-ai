@@ -35,10 +35,10 @@ export default function OwnerCard({
           <img
             src={profile.custom_pfp}
             alt={profile.name}
-            className="w-14 h-14 rounded-full object-cover ring-2 ring-rose-100 dark:ring-rose-500/20"
+            className="w-14 h-14 rounded-full object-cover ring-2 ring-[var(--color-primary-soft)] dark:ring-[var(--color-primary)]/20"
           />
         ) : (
-          <div className="w-14 h-14 rounded-full bg-gradient-to-br from-rose-400 to-purple-500 flex items-center justify-center text-white font-bold text-xl ring-2 ring-rose-100 dark:ring-rose-500/20">
+          <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center text-white font-bold text-xl ring-2 ring-[var(--color-primary-soft)] dark:ring-[var(--color-primary)]/20">
             {profile.name.charAt(0)}
           </div>
         )}
@@ -63,7 +63,7 @@ export default function OwnerCard({
               </span>
             )}
             {profile.identity_verified && (
-              <span className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400">
+              <span className="flex items-center gap-1 text-[var(--color-accent)] dark:text-[var(--color-accent)]">
                 <BadgeCheck className="w-3 h-3" />
                 ID verified
               </span>

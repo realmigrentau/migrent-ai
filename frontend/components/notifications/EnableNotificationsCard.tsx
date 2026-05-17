@@ -63,11 +63,11 @@ export default function EnableNotificationsCard({ token }: Props) {
 
   if (state === "success") {
     return (
-      <div className="p-4 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 flex items-center gap-3">
-        <div className="w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-500/20 flex items-center justify-center shrink-0">
-          <Check className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+      <div className="p-4 rounded-xl bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 border border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)] flex items-center gap-3">
+        <div className="w-10 h-10 rounded-full bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/20 flex items-center justify-center shrink-0">
+          <Check className="w-5 h-5 text-[var(--color-accent)] dark:text-[var(--color-accent)]" />
         </div>
-        <p className="text-sm font-medium text-emerald-800 dark:text-emerald-300">
+        <p className="text-sm font-medium text-emerald-800 dark:text-[var(--color-accent)]">
           Notifications enabled! You will get alerts for messages, bookings, and more.
         </p>
       </div>
@@ -75,29 +75,29 @@ export default function EnableNotificationsCard({ token }: Props) {
   }
 
   return (
-    <div className="p-4 rounded-xl bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/20">
+    <div className="p-4 rounded-xl bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 border border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)]">
       <div className="flex items-start gap-3">
-        <div className="w-10 h-10 rounded-full bg-rose-100 dark:bg-rose-500/20 flex items-center justify-center shrink-0 mt-0.5">
-          <Bell className="w-5 h-5 text-rose-600 dark:text-rose-400" />
+        <div className="w-10 h-10 rounded-full bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/20 flex items-center justify-center shrink-0 mt-0.5">
+          <Bell className="w-5 h-5 text-[var(--color-primary)] dark:text-[var(--color-primary)]" />
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-semibold text-rose-800 dark:text-rose-300">
+          <p className="text-sm font-semibold text-rose-800 dark:text-[var(--color-primary)]">
             Turn on notifications
           </p>
-          <p className="text-xs text-rose-600 dark:text-rose-400 mt-0.5">
+          <p className="text-xs text-[var(--color-primary)] dark:text-[var(--color-primary)] mt-0.5">
             Never miss messages or booking updates - get instant alerts on your phone or desktop.
           </p>
           <div className="flex items-center gap-2 mt-3">
             <button
               onClick={handleEnable}
               disabled={state === "loading"}
-              className="px-4 py-2 text-xs font-semibold rounded-lg bg-rose-500 hover:bg-rose-600 text-white transition-colors disabled:opacity-50"
+              className="px-4 py-2 text-xs font-semibold rounded-lg bg-[var(--color-primary)] hover:bg-[var(--color-primary)] text-white transition-colors disabled:opacity-50"
             >
               {state === "loading" ? "Enabling..." : state === "error" ? "Try again" : "Enable notifications"}
             </button>
             <button
               onClick={handleDismiss}
-              className="px-3 py-2 text-xs text-rose-500 dark:text-rose-400 hover:text-rose-700 dark:hover:text-rose-300 transition-colors"
+              className="px-3 py-2 text-xs text-[var(--color-primary)] dark:text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] transition-colors"
             >
               No thanks
             </button>
@@ -108,7 +108,7 @@ export default function EnableNotificationsCard({ token }: Props) {
             </p>
           )}
         </div>
-        <button onClick={handleDismiss} className="text-rose-400 hover:text-rose-600 shrink-0">
+        <button onClick={handleDismiss} className="text-[var(--color-primary)] hover:text-[var(--color-primary)] shrink-0">
           <X className="w-4 h-4" />
         </button>
       </div>

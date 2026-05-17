@@ -218,7 +218,7 @@ export default function PublicProfilePage() {
                 ))}
               </div>
               {profile.badges.length > 6 && !showAllBadges && (
-                <button onClick={() => setShowAllBadges(true)} className="mt-3 text-sm font-semibold text-slate-900 dark:text-white underline underline-offset-4 hover:text-rose-500 transition-colors">
+                <button onClick={() => setShowAllBadges(true)} className="mt-3 text-sm font-semibold text-slate-900 dark:text-white underline underline-offset-4 hover:text-[var(--color-primary)] transition-colors">
                   Show all {profile.badges.length} badges
                 </button>
               )}
@@ -273,7 +273,7 @@ export default function PublicProfilePage() {
                   disabled={blockLoading}
                   className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm transition-all disabled:opacity-50 ${
                     blocked
-                      ? "text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-500/10"
+                      ? "text-[var(--color-accent)] dark:text-[var(--color-accent)] hover:bg-[var(--color-accent-soft)] dark:hover:bg-[var(--color-accent-soft)]0/10"
                       : "text-slate-500 dark:text-slate-400 hover:bg-red-50 dark:hover:bg-red-500/10 hover:text-red-600 dark:hover:text-red-400"
                   }`}
                 >

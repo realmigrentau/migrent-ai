@@ -132,7 +132,7 @@ function MockFilters() {
           <span className="text-white/90 text-xs font-semibold">500m</span>
         </div>
         <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
-          <div className="h-full w-1/3 bg-gradient-to-r from-purple-400 to-violet-400 rounded-full" />
+          <div className="h-full w-1/3 bg-gradient-to-r from-[var(--color-primary)] to-violet-400 rounded-full" />
         </div>
       </div>
       <div className="text-white/50 text-xs">147 rooms match your filters</div>
@@ -221,7 +221,7 @@ function MockStationFinder() {
           <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${
             i === 0 ? "bg-emerald-400/20" : "bg-white/15"
           }`}>
-            <svg className={`w-5 h-5 ${i === 0 ? "text-emerald-300" : "text-white/60"}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <svg className={`w-5 h-5 ${i === 0 ? "text-[var(--color-accent)]" : "text-white/60"}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
             </svg>
           </div>
@@ -230,7 +230,7 @@ function MockStationFinder() {
             <div className="text-white/50 text-[10px]">{s.line} - {s.walk} walk</div>
           </div>
           <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${
-            i === 0 ? "bg-emerald-400/20 text-emerald-200" : "bg-white/10 text-white/60"
+            i === 0 ? "bg-emerald-400/20 text-[var(--color-accent)]" : "bg-white/10 text-white/60"
           }`}>{s.dist}</span>
         </div>
       ))}
@@ -293,7 +293,7 @@ function MockSuburbReport() {
           <span className="text-white/70 text-xs">Near Kellyville Station</span>
         </div>
         <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
-          <div className="h-full w-3/4 bg-gradient-to-r from-teal-400 to-emerald-400 rounded-full" />
+          <div className="h-full w-3/4 bg-gradient-to-r from-teal-400 to-[var(--color-accent)] rounded-full" />
         </div>
         <div className="text-white/40 text-[10px] mt-1">Transport Score: 7.8/10</div>
       </div>
@@ -309,9 +309,9 @@ const features = [
     descKey: "features.aiMatching.desc",
     bulletsKey: "features.aiMatching.bullets",
     icon: "M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z",
-    color: "from-rose-500 to-pink-500",
-    iconColor: "text-rose-500",
-    bgColor: "bg-rose-50 dark:bg-rose-500/10",
+    color: "from-[var(--color-primary)] to-[var(--color-primary)]",
+    iconColor: "text-[var(--color-primary)]",
+    bgColor: "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10",
     headline: "AI finds your perfect room",
     subline: "Smart matching that learns what you actually want",
     MockUI: MockAIMatching,
@@ -322,7 +322,7 @@ const features = [
     descKey: "features.verifiedHosts.desc",
     bulletsKey: "features.verifiedHosts.bullets",
     icon: "M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z",
-    color: "from-blue-500 to-indigo-500",
+    color: "from-[var(--color-primary)] to-[var(--color-primary)]",
     iconColor: "text-blue-500",
     bgColor: "bg-blue-50 dark:bg-blue-500/10",
     headline: "100% verified hosts only",
@@ -335,7 +335,7 @@ const features = [
     descKey: "features.instantBooking.desc",
     bulletsKey: "features.instantBooking.bullets",
     icon: "M13 10V3L4 14h7v7l9-11h-7z",
-    color: "from-green-500 to-emerald-500",
+    color: "from-green-500 to-[var(--color-accent)]",
     iconColor: "text-green-500",
     bgColor: "bg-green-50 dark:bg-green-500/10",
     headline: "Book in 30 seconds",
@@ -348,9 +348,9 @@ const features = [
     descKey: "features.smartFilters.desc",
     bulletsKey: "features.smartFilters.bullets",
     icon: "M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z",
-    color: "from-purple-500 to-violet-500",
-    iconColor: "text-purple-500",
-    bgColor: "bg-purple-50 dark:bg-purple-500/10",
+    color: "from-[var(--color-primary)] to-[var(--color-primary)]",
+    iconColor: "text-[var(--color-primary)]",
+    bgColor: "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary-soft)]0/10",
     headline: "Station, budget, visa filters",
     subline: "20+ smart filters built for migrant needs",
     MockUI: MockFilters,
@@ -388,7 +388,7 @@ const features = [
     descKey: "features.suburbs.desc",
     bulletsKey: "features.suburbs.bullets",
     icon: "M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z",
-    color: "from-teal-500 to-emerald-500",
+    color: "from-teal-500 to-[var(--color-accent)]",
     iconColor: "text-teal-500",
     bgColor: "bg-teal-50 dark:bg-teal-500/10",
     headline: "Data-rich suburb reports",
@@ -402,9 +402,9 @@ const features = [
     descKey: "features.mentorNetwork.desc",
     bulletsKey: "features.mentorNetwork.bullets",
     icon: "M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z",
-    color: "from-pink-500 to-rose-500",
-    iconColor: "text-pink-500",
-    bgColor: "bg-pink-50 dark:bg-pink-500/10",
+    color: "from-[var(--color-primary)] to-[var(--color-primary)]",
+    iconColor: "text-[var(--color-primary)]",
+    bgColor: "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary-soft)]0/10",
     headline: "Local mentors for new arrivals",
     subline: "Verified locals help you settle in your suburb",
     MockUI: MockMentorNetwork,
@@ -426,9 +426,9 @@ export default function Features() {
         {/* ── Hero ───────────────────────────────────────────────── */}
         <section className="relative text-center py-20 overflow-hidden">
           {/* Background blobs */}
-          <div className="absolute top-0 left-1/4 w-96 h-96 bg-purple-500/15 dark:bg-purple-500/8 rounded-full blur-3xl animate-pulse" />
-          <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-rose-500/12 dark:bg-rose-500/6 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "1s" }} />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-violet-400/5 dark:bg-violet-600/5 rounded-full blur-3xl" />
+          <div className="absolute top-0 left-1/4 w-96 h-96 bg-[var(--color-primary-soft)]0/15 dark:bg-[var(--color-primary-soft)]0/8 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-[var(--color-primary)]/12 dark:bg-[var(--color-primary)]/6 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "1s" }} />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-violet-400/5 dark:bg-[var(--color-primary)]/5 rounded-full blur-3xl" />
 
           <motion.div
             initial={{ opacity: 0, y: 40 }}
@@ -436,13 +436,13 @@ export default function Features() {
             transition={{ duration: 0.8 }}
             className="relative z-10 max-w-3xl mx-auto"
           >
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-purple-50 dark:bg-purple-500/10 border border-purple-100 dark:border-purple-500/20 text-xs font-medium text-purple-600 dark:text-purple-400 mb-6">
-              <span className="w-2 h-2 rounded-full bg-purple-500 animate-pulse" />
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary-soft)]0/10 border border-purple-100 dark:border-[var(--color-primary)]/20 text-xs font-medium text-[var(--color-primary)] dark:text-[var(--color-primary)] mb-6">
+              <span className="w-2 h-2 rounded-full bg-[var(--color-primary-soft)]0 animate-pulse" />
               {t("features.heroBadge")}
             </div>
 
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight leading-tight">
-              <span className="bg-gradient-to-r from-purple-500 via-violet-500 to-rose-500 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-[var(--color-primary)] via-[var(--color-primary)] to-[var(--color-primary)] bg-clip-text text-transparent">
                 Powerful Features
               </span>
               <br />
@@ -571,7 +571,7 @@ export default function Features() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="rounded-2xl bg-gradient-to-r from-purple-500 via-violet-500 to-rose-500 p-[1px]"
+            className="rounded-2xl bg-gradient-to-r from-[var(--color-primary)] via-[var(--color-primary)] to-[var(--color-primary)] p-[1px]"
           >
             <div className="rounded-2xl bg-white dark:bg-slate-900 p-8 md:p-10">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
@@ -588,7 +588,7 @@ export default function Features() {
                     viewport={{ once: true }}
                     transition={{ delay: i * 0.1, duration: 0.5 }}
                   >
-                    <div className="text-2xl md:text-3xl font-black bg-gradient-to-r from-purple-500 to-rose-500 bg-clip-text text-transparent">
+                    <div className="text-2xl md:text-3xl font-black bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary)] bg-clip-text text-transparent">
                       {stat.value}
                     </div>
                     <div className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-medium">{stat.label}</div>

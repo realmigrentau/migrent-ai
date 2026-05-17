@@ -177,7 +177,7 @@ export default function EditListing() {
   if (authLoading || loadingListing)
     return (
       <div className="flex items-center justify-center py-20">
-        <div className="w-8 h-8 border-2 border-rose-300 dark:border-rose-500/30 border-t-rose-500 rounded-full animate-spin" />
+        <div className="w-8 h-8 border-2 border-[var(--color-line-2)] dark:border-[var(--color-primary-soft)] border-t-[var(--color-ink)] rounded-full animate-spin" />
       </div>
     );
 
@@ -214,7 +214,7 @@ export default function EditListing() {
     <div className="space-y-6">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
         <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 mb-2">
-          <Link href="/owner/listings" className="hover:text-rose-500 transition-colors flex items-center gap-1">
+          <Link href="/owner/listings" className="hover:text-[var(--color-primary)] transition-colors flex items-center gap-1">
             <ArrowLeft className="w-4 h-4" />
             My listings
           </Link>
@@ -243,10 +243,10 @@ export default function EditListing() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.05 }}
-        className="flex items-center gap-3 p-4 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20"
+        className="flex items-center gap-3 p-4 rounded-xl bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 border border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)]"
       >
-        <DollarSign className="w-5 h-5 text-emerald-500 shrink-0" />
-        <p className="text-sm text-emerald-700 dark:text-emerald-400">
+        <DollarSign className="w-5 h-5 text-[var(--color-accent)] shrink-0" />
+        <p className="text-sm text-[var(--color-accent)] dark:text-[var(--color-accent)]">
           Your custom price is preserved. The weekly rent field is editable and will not be overwritten by defaults.
         </p>
       </motion.div>
@@ -258,7 +258,7 @@ export default function EditListing() {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
-            className="p-4 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-sm font-medium"
+            className="p-4 rounded-xl bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 border border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)] text-[var(--color-accent)] dark:text-[var(--color-accent)] text-sm font-medium"
           >
             Listing updated successfully! Redirecting...
           </motion.div>

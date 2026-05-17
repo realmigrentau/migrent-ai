@@ -12,8 +12,8 @@ import type { ActivityItem } from "../../hooks/useWishlist";
 const ACTIVITY_ICONS: Record<string, { icon: React.ReactNode; color: string; bg: string }> = {
   price_drop: {
     icon: <TrendingDown className="w-4 h-4" />,
-    color: "text-emerald-500",
-    bg: "bg-emerald-50 dark:bg-emerald-500/10",
+    color: "text-[var(--color-accent)]",
+    bg: "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10",
   },
   owner_reply: {
     icon: <MessageCircle className="w-4 h-4" />,
@@ -27,8 +27,8 @@ const ACTIVITY_ICONS: Record<string, { icon: React.ReactNode; color: string; bg:
   },
   new_match: {
     icon: <Bell className="w-4 h-4" />,
-    color: "text-violet-500",
-    bg: "bg-violet-50 dark:bg-violet-500/10",
+    color: "text-[var(--color-primary)]",
+    bg: "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary-soft)]0/10",
   },
 };
 
@@ -85,7 +85,7 @@ export default function ActivityFeed({
                   <motion.span
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
-                    className="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-rose-500 text-white"
+                    className="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-[var(--color-primary)] text-white"
                   >
                     {unreadCount}
                   </motion.span>
@@ -131,7 +131,7 @@ export default function ActivityFeed({
                       </p>
                     </div>
                     {!activity.read && (
-                      <div className="w-2 h-2 rounded-full bg-rose-500 shrink-0 mt-1.5" />
+                      <div className="w-2 h-2 rounded-full bg-[var(--color-primary)] shrink-0 mt-1.5" />
                     )}
                     <ChevronRight className="w-3 h-3 text-slate-300 dark:text-slate-600 shrink-0 mt-1.5 opacity-0 group-hover:opacity-100 transition-opacity" />
                   </motion.div>
@@ -140,11 +140,11 @@ export default function ActivityFeed({
             </div>
 
             {/* Pro tip */}
-            <div className="p-4 mx-3 mb-3 rounded-2xl bg-gradient-to-br from-violet-50 to-purple-50 dark:from-violet-950/30 dark:to-purple-950/30 border border-violet-200/50 dark:border-violet-500/20">
-              <p className="text-xs font-bold text-violet-700 dark:text-violet-300 mb-1">
+            <div className="p-4 mx-3 mb-3 rounded-2xl bg-gradient-to-br from-violet-50 to-purple-50 dark:from-violet-950/30 dark:to-purple-950/30 border border-[var(--color-primary-soft)]/50 dark:border-[var(--color-primary)]/20">
+              <p className="text-xs font-bold text-violet-700 dark:text-[var(--color-primary)] mb-1">
                 Pro Tip
               </p>
-              <p className="text-xs text-violet-600/70 dark:text-violet-300/60 leading-relaxed">
+              <p className="text-xs text-[var(--color-primary)]/70 dark:text-[var(--color-primary)]/60 leading-relaxed">
                 Add a special request when messaging owners - it leads to 40% faster responses!
               </p>
             </div>

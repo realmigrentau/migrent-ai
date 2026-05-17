@@ -55,7 +55,7 @@ export default function HeroSection({
                 </div>
                 {/* Verified badge */}
                 {profile?.idVerified && (
-                  <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-emerald-500 border-2 border-white flex items-center justify-center">
+                  <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-[var(--color-accent-soft)]0 border-2 border-white flex items-center justify-center">
                     <ShieldCheck className="w-3 h-3 text-white" />
                   </div>
                 )}

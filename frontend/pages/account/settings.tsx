@@ -48,10 +48,10 @@ function MessageToast({ text, type }: { text: string; type: "success" | "error" 
 
   const styles = {
     success:
-      "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/30",
+      "bg-[var(--color-accent-soft)] text-[var(--color-accent)] border-transparent",
     error:
-      "bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400 border-red-200 dark:border-red-500/30",
-    info: "bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-500/30",
+      "bg-[#f1d8d4] dark:bg-[#2b1614] text-[var(--color-danger-500)] border-transparent",
+    info: "bg-[#dde4ec] dark:bg-[#182230] text-[var(--color-info-500)] border-transparent",
   };
 
   return (
@@ -151,13 +151,13 @@ export default function SettingsPage() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800 rounded-2xl p-8 text-center max-w-md mx-4"
+          className="bg-[var(--color-surface)] border border-[var(--color-line)] rounded-[14px] p-8 text-center max-w-md mx-4"
         >
-          <div className="w-16 h-16 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center mx-auto mb-4">
+          <div className="w-16 h-16 rounded-[14px] bg-[var(--color-surface-sunk)] flex items-center justify-center mx-auto mb-4">
             <span className="text-2xl">🔒</span>
           </div>
-          <h2 className="text-xl font-semibold tracking-tight text-slate-900 dark:text-white mb-2">Sign in required</h2>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mb-6">
+          <h2 className="text-xl font-semibold tracking-tight text-[var(--color-ink)] mb-2">Sign in required</h2>
+          <p className="text-sm text-[var(--color-ink-3)] mb-6">
             Sign in to access your account settings and personalise your experience.
           </p>
           <Link
@@ -325,7 +325,7 @@ export default function SettingsPage() {
       >
         <button
           onClick={signOut}
-          className="text-sm text-rose-500 hover:text-rose-600 underline underline-offset-4 transition-colors"
+          className="text-sm text-[var(--color-danger-500)] hover:opacity-80 underline underline-offset-4 transition-colors"
         >
           Sign out of MigRent
         </button>

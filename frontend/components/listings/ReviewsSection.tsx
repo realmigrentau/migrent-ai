@@ -62,7 +62,7 @@ function ReviewCard({
             className="w-10 h-10 rounded-full object-cover"
           />
         ) : (
-          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-rose-400 to-purple-500 flex items-center justify-center text-white font-bold text-sm">
+          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center text-white font-bold text-sm">
             {(review.reviewer_name || "A").charAt(0)}
           </div>
         )}
@@ -166,7 +166,7 @@ export default function ReviewsSection({
           {reviews.length > 3 && !expanded && (
             <button
               onClick={() => setExpanded(true)}
-              className="mt-3 flex items-center gap-1 text-sm font-semibold text-rose-500 hover:text-rose-600 transition-colors"
+              className="mt-3 flex items-center gap-1 text-sm font-semibold text-[var(--color-primary)] hover:text-[var(--color-primary)] transition-colors"
             >
               Show all {reviews.length} reviews
               <ChevronDown className="w-4 h-4" />
@@ -177,7 +177,7 @@ export default function ReviewsSection({
             <button
               onClick={loadMore}
               disabled={loading}
-              className="mt-3 flex items-center gap-1 text-sm font-semibold text-rose-500 hover:text-rose-600 transition-colors disabled:opacity-50"
+              className="mt-3 flex items-center gap-1 text-sm font-semibold text-[var(--color-primary)] hover:text-[var(--color-primary)] transition-colors disabled:opacity-50"
             >
               {loading ? "Loading..." : "Load more reviews"}
               <ChevronDown className="w-4 h-4" />

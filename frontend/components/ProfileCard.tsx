@@ -48,7 +48,7 @@ export default function ProfileCard({
           <div className="flex items-center gap-2 flex-wrap">
             <Link
               href={`/users/profile/${userId}`}
-              className="text-base font-bold text-slate-900 dark:text-white hover:text-rose-500 dark:hover:text-rose-400 transition-colors truncate"
+              className="text-base font-bold text-slate-900 dark:text-white hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] transition-colors truncate"
             >
               {displayName}
             </Link>
@@ -103,7 +103,7 @@ export default function ProfileCard({
               <span className="inline-flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400">
                 Verified {verifiedLabel}
                 <svg
-                  className="w-3.5 h-3.5 text-rose-500"
+                  className="w-3.5 h-3.5 text-[var(--color-primary)]"
                   viewBox="0 0 24 24"
                   fill="currentColor"
                 >

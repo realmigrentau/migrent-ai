@@ -254,7 +254,7 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
         <button
           type="button"
           onClick={() => onChange(Math.max(min, value - 1))}
-          className="w-8 h-8 rounded-full border border-slate-300 dark:border-slate-600 flex items-center justify-center text-slate-500 hover:border-rose-400 hover:text-rose-500 transition-colors"
+          className="w-8 h-8 rounded-full border border-slate-300 dark:border-slate-600 flex items-center justify-center text-slate-500 hover:border-[var(--color-line-2)] hover:text-[var(--color-primary)] transition-colors"
         >
           -
         </button>
@@ -262,7 +262,7 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
         <button
           type="button"
           onClick={() => onChange(value + 1)}
-          className="w-8 h-8 rounded-full border border-slate-300 dark:border-slate-600 flex items-center justify-center text-slate-500 hover:border-rose-400 hover:text-rose-500 transition-colors"
+          className="w-8 h-8 rounded-full border border-slate-300 dark:border-slate-600 flex items-center justify-center text-slate-500 hover:border-[var(--color-line-2)] hover:text-[var(--color-primary)] transition-colors"
         >
           +
         </button>
@@ -275,7 +275,7 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
     <label
       className={`flex items-center gap-3 p-4 rounded-xl border cursor-pointer transition-all ${
         checked
-          ? "border-rose-300 dark:border-rose-500/30 bg-rose-50 dark:bg-rose-500/5"
+          ? "border-[var(--color-line-2)] dark:border-[var(--color-primary-soft)] bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/5"
           : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50"
       }`}
     >
@@ -283,7 +283,7 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
         type="checkbox"
         checked={checked}
         onChange={(e) => onChange(e.target.checked)}
-        className="w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-rose-500 focus:ring-rose-500"
+        className="w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-[var(--color-primary)] focus:ring-[var(--color-ink)]/30"
       />
       <span className="text-sm font-medium text-slate-700 dark:text-slate-300">{label}</span>
     </label>
@@ -301,9 +301,9 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
                 onClick={() => i < step && setStep(i)}
                 className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
                   i === step
-                    ? "bg-rose-500 text-white"
+                    ? "bg-[var(--color-primary)] text-white"
                     : i < step
-                    ? "bg-emerald-100 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 cursor-pointer"
+                    ? "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 text-[var(--color-accent)] dark:text-[var(--color-accent)] cursor-pointer"
                     : "bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500"
                 }`}
               >
@@ -317,7 +317,7 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
                 <span className="hidden sm:inline">{label}</span>
               </button>
               {i < STEPS.length - 1 && (
-                <div className={`w-6 h-0.5 rounded-full ${i < step ? "bg-emerald-300 dark:bg-emerald-500/30" : "bg-slate-200 dark:bg-slate-700"}`} />
+                <div className={`w-6 h-0.5 rounded-full ${i < step ? "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/30" : "bg-slate-200 dark:bg-slate-700"}`} />
               )}
             </div>
           ))}
@@ -386,7 +386,7 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
                         onClick={() => update("propertyType", pt)}
                         className={`px-4 py-2 rounded-xl text-sm font-medium border transition-all ${
                           form.propertyType === pt
-                            ? "border-rose-400 dark:border-rose-500/40 bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400"
+                            ? "border-[var(--color-line-2)] dark:border-[var(--color-primary)]/40 bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 text-[var(--color-primary)] dark:text-[var(--color-primary)]"
                             : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 text-slate-600 dark:text-slate-300 hover:border-slate-300"
                         }`}
                       >
@@ -407,7 +407,7 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
                         onClick={() => update("placeType", pt)}
                         className={`px-4 py-2 rounded-xl text-sm font-medium border transition-all ${
                           form.placeType === pt
-                            ? "border-rose-400 dark:border-rose-500/40 bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400"
+                            ? "border-[var(--color-line-2)] dark:border-[var(--color-primary)]/40 bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 text-[var(--color-primary)] dark:text-[var(--color-primary)]"
                             : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 text-slate-600 dark:text-slate-300 hover:border-slate-300"
                         }`}
                       >
@@ -436,7 +436,7 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
                         onClick={() => update("bathroomType", bt)}
                         className={`flex-1 py-2.5 rounded-xl text-sm font-medium border transition-all capitalize ${
                           form.bathroomType === bt
-                            ? "border-rose-400 dark:border-rose-500/40 bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400"
+                            ? "border-[var(--color-line-2)] dark:border-[var(--color-primary)]/40 bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 text-[var(--color-primary)] dark:text-[var(--color-primary)]"
                             : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 text-slate-600 dark:text-slate-300"
                         }`}
                       >
@@ -564,10 +564,10 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
                       {form.highlights.map((h, i) => (
                         <span
                           key={i}
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-500/20"
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 text-[var(--color-primary)] dark:text-[var(--color-primary)] border border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)]"
                         >
                           {h}
-                          <button type="button" onClick={() => removeHighlight(i)} className="hover:text-rose-800 dark:hover:text-rose-300 transition-colors">
+                          <button type="button" onClick={() => removeHighlight(i)} className="hover:text-rose-800 dark:hover:text-[var(--color-primary)] transition-colors">
                             &times;
                           </button>
                         </span>
@@ -692,7 +692,7 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
                         onClick={() => update("laundry", opt)}
                         className={`px-4 py-2 rounded-xl text-sm font-medium border transition-all ${
                           form.laundry === opt
-                            ? "border-rose-400 dark:border-rose-500/40 bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400"
+                            ? "border-[var(--color-line-2)] dark:border-[var(--color-primary)]/40 bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 text-[var(--color-primary)] dark:text-[var(--color-primary)]"
                             : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 text-slate-600 dark:text-slate-300 hover:border-slate-300"
                         }`}
                       >
@@ -713,7 +713,7 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
                         onClick={() => update("genderPreference", opt)}
                         className={`px-4 py-2 rounded-xl text-sm font-medium border transition-all ${
                           form.genderPreference === opt
-                            ? "border-rose-400 dark:border-rose-500/40 bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400"
+                            ? "border-[var(--color-line-2)] dark:border-[var(--color-primary)]/40 bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 text-[var(--color-primary)] dark:text-[var(--color-primary)]"
                             : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 text-slate-600 dark:text-slate-300 hover:border-slate-300"
                         }`}
                       >
@@ -937,11 +937,11 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
                     {form.bedrooms} bed{form.bedrooms !== 1 ? "s" : ""} &middot; {form.bathrooms} bath &middot; {form.maxGuests} guest{form.maxGuests !== 1 ? "s" : ""}
                   </p>
                 </div>
-                <div className="px-3 py-1.5 rounded-lg bg-rose-50 dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/20">
-                  <span className="text-rose-600 dark:text-rose-400 font-bold text-sm">
+                <div className="px-3 py-1.5 rounded-lg bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 border border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)]">
+                  <span className="text-[var(--color-primary)] dark:text-[var(--color-primary)] font-bold text-sm">
                     AUD ${form.weeklyPrice || 0}
                   </span>
-                  <span className="text-rose-400 dark:text-rose-500 text-xs">/wk</span>
+                  <span className="text-[var(--color-primary)] dark:text-[var(--color-primary)] text-xs">/wk</span>
                 </div>
               </div>
               <div className="flex flex-wrap gap-1.5">
@@ -970,13 +970,13 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
                   <span className="px-2 py-0.5 rounded-full text-xs bg-sky-50 dark:bg-sky-500/10 text-sky-600 dark:text-sky-400">A/C</span>
                 )}
                 {form.couplesOk && (
-                  <span className="px-2 py-0.5 rounded-full text-xs bg-pink-50 dark:bg-pink-500/10 text-pink-600 dark:text-pink-400">Couples OK</span>
+                  <span className="px-2 py-0.5 rounded-full text-xs bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary-soft)]0/10 text-[var(--color-primary)] dark:text-[var(--color-primary)]">Couples OK</span>
                 )}
               </div>
               {form.highlights.length > 0 && (
                 <div className="flex flex-wrap gap-1.5">
                   {form.highlights.map((h, i) => (
-                    <span key={i} className="px-2 py-0.5 rounded-full text-xs bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-100 dark:border-rose-500/20">
+                    <span key={i} className="px-2 py-0.5 rounded-full text-xs bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 text-[var(--color-primary)] dark:text-[var(--color-primary)] border border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)]">
                       {h}
                     </span>
                   ))}
@@ -996,12 +996,12 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
               {(form.weeklyDiscount || form.monthlyDiscount) && (
                 <div className="flex gap-2">
                   {form.weeklyDiscount && (
-                    <span className="px-2 py-0.5 rounded-full text-xs bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-500/20">
+                    <span className="px-2 py-0.5 rounded-full text-xs bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 text-[var(--color-accent)] dark:text-[var(--color-accent)] border border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)]">
                       {form.weeklyDiscount}% weekly discount
                     </span>
                   )}
                   {form.monthlyDiscount && (
-                    <span className="px-2 py-0.5 rounded-full text-xs bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-500/20">
+                    <span className="px-2 py-0.5 rounded-full text-xs bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 text-[var(--color-accent)] dark:text-[var(--color-accent)] border border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)]">
                       {form.monthlyDiscount}% monthly discount
                     </span>
                   )}

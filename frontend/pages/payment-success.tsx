@@ -133,13 +133,13 @@ export default function PaymentSuccess() {
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           transition={{ delay: 0.3, type: "spring", stiffness: 200, damping: 10 }}
-          className="w-20 h-20 mx-auto rounded-full bg-emerald-100 dark:bg-emerald-500/20 flex items-center justify-center"
+          className="w-20 h-20 mx-auto rounded-full bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/20 flex items-center justify-center"
         >
           <motion.svg
             initial={{ pathLength: 0 }}
             animate={{ pathLength: 1 }}
             transition={{ delay: 0.5, duration: 0.5 }}
-            className="w-10 h-10 text-emerald-600 dark:text-emerald-400"
+            className="w-10 h-10 text-[var(--color-accent)] dark:text-[var(--color-accent)]"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"

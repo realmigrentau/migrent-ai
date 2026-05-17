@@ -35,7 +35,7 @@ export default function OwnerView({ listings, loading, profile }: OwnerViewProps
           <motion.span
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.97 }}
-            className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-4 py-2.5 rounded-xl text-sm transition-colors cursor-pointer"
+            className="inline-flex items-center gap-2 bg-[var(--color-primary)] hover:bg-[var(--color-primary-500)] text-white font-semibold px-4 py-2.5 rounded-xl text-sm transition-colors cursor-pointer"
           >
             <Plus className="w-4 h-4" />
             List Room
@@ -68,7 +68,7 @@ export default function OwnerView({ listings, loading, profile }: OwnerViewProps
             </h2>
             <Link
               href="/owner/listings"
-              className="text-xs font-semibold text-indigo-500 hover:text-indigo-600 dark:hover:text-indigo-400 flex items-center gap-1"
+              className="text-xs font-semibold text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] flex items-center gap-1"
             >
               View all <ChevronRight className="w-3.5 h-3.5" />
             </Link>
@@ -90,8 +90,8 @@ export default function OwnerView({ listings, loading, profile }: OwnerViewProps
           </div>
         ) : listings.length === 0 ? (
           <div className="p-10 text-center">
-            <div className="w-16 h-16 rounded-2xl bg-indigo-100 dark:bg-indigo-500/20 flex items-center justify-center mx-auto mb-4">
-              <Building2 className="w-8 h-8 text-indigo-500" />
+            <div className="w-16 h-16 rounded-2xl bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/20 flex items-center justify-center mx-auto mb-4">
+              <Building2 className="w-8 h-8 text-[var(--color-primary)]" />
             </div>
             <h3 className="font-bold text-slate-900 dark:text-white mb-2">
               No listings yet
@@ -103,7 +103,7 @@ export default function OwnerView({ listings, loading, profile }: OwnerViewProps
               <motion.span
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.97 }}
-                className="inline-flex items-center gap-2 bg-indigo-600 text-white font-semibold px-5 py-2.5 rounded-xl text-sm cursor-pointer"
+                className="inline-flex items-center gap-2 bg-[var(--color-primary)] text-white font-semibold px-5 py-2.5 rounded-xl text-sm cursor-pointer"
               >
                 <Plus className="w-4 h-4" />
                 Post Your First Room
@@ -134,8 +134,8 @@ export default function OwnerView({ listings, loading, profile }: OwnerViewProps
                 >
                   {/* Property info */}
                   <div className="col-span-5 flex items-center gap-3 mb-2 md:mb-0">
-                    <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-indigo-100 to-pink-100 dark:from-indigo-500/20 dark:to-pink-500/20 flex items-center justify-center shrink-0">
-                      <Building2 className="w-5 h-5 text-indigo-500" />
+                    <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-[var(--color-primary-soft)] to-pink-100 dark:from-[var(--color-primary)]/20 dark:to-[var(--color-primary)]/20 flex items-center justify-center shrink-0">
+                      <Building2 className="w-5 h-5 text-[var(--color-primary)]" />
                     </div>
                     <div className="min-w-0">
                       <p className="text-sm font-semibold text-slate-800 dark:text-slate-100 truncate">
@@ -150,8 +150,8 @@ export default function OwnerView({ listings, loading, profile }: OwnerViewProps
 
                   {/* Rate */}
                   <div className="col-span-2 flex items-center md:justify-start gap-1">
-                    <DollarSign className="w-3.5 h-3.5 text-emerald-500 md:hidden" />
-                    <span className="text-sm font-semibold text-emerald-600 dark:text-emerald-400">
+                    <DollarSign className="w-3.5 h-3.5 text-[var(--color-accent)] md:hidden" />
+                    <span className="text-sm font-semibold text-[var(--color-accent)] dark:text-[var(--color-accent)]">
                       ${listing.weekly_price || listing.weeklyPrice || 0}
                     </span>
                     <span className="text-xs text-slate-400 dark:text-slate-500">/wk</span>
@@ -159,8 +159,8 @@ export default function OwnerView({ listings, loading, profile }: OwnerViewProps
 
                   {/* Status */}
                   <div className="col-span-2 flex items-center">
-                    <span className="inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                    <span className="inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full bg-[var(--color-accent-soft)] text-[var(--color-accent)] dark:bg-[var(--color-accent-soft)]0/20 dark:text-[var(--color-accent)]">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-accent-soft)]0" />
                       Active
                     </span>
                   </div>
@@ -173,7 +173,7 @@ export default function OwnerView({ listings, loading, profile }: OwnerViewProps
 
                   {/* Arrow */}
                   <div className="col-span-1 hidden md:flex items-center justify-end">
-                    <ChevronRight className="w-4 h-4 text-slate-300 dark:text-slate-600 group-hover:text-indigo-500 transition-colors" />
+                    <ChevronRight className="w-4 h-4 text-slate-300 dark:text-slate-600 group-hover:text-[var(--color-primary)] transition-colors" />
                   </div>
                 </Link>
               </motion.div>
@@ -188,19 +188,19 @@ export default function OwnerView({ listings, loading, profile }: OwnerViewProps
           {/* Properties counter */}
           {(profile.roomsOwned > 0 || profile.propertiesOwned > 0) && (
             <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-200 dark:border-indigo-500/20">
-                <Home className="w-4 h-4 text-indigo-500" />
-                <span className="text-sm font-semibold text-indigo-600 dark:text-indigo-400">{profile.roomsOwned}</span>
-                <span className="text-xs text-indigo-500/70 dark:text-indigo-400/70">rooms</span>
+              <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 border border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)]">
+                <Home className="w-4 h-4 text-[var(--color-primary)]" />
+                <span className="text-sm font-semibold text-[var(--color-primary)] dark:text-[var(--color-primary)]">{profile.roomsOwned}</span>
+                <span className="text-xs text-[var(--color-primary)]/70 dark:text-[var(--color-primary)]/70">rooms</span>
               </div>
-              <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-pink-50 dark:bg-pink-500/10 border border-pink-200 dark:border-pink-500/20">
-                <Building2 className="w-4 h-4 text-pink-500" />
-                <span className="text-sm font-semibold text-pink-600 dark:text-pink-400">{profile.propertiesOwned}</span>
-                <span className="text-xs text-pink-500/70 dark:text-pink-400/70">properties</span>
+              <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary-soft)]0/10 border border-[var(--color-primary-soft)] dark:border-[var(--color-primary)]/20">
+                <Building2 className="w-4 h-4 text-[var(--color-primary)]" />
+                <span className="text-sm font-semibold text-[var(--color-primary)] dark:text-[var(--color-primary)]">{profile.propertiesOwned}</span>
+                <span className="text-xs text-[var(--color-primary)]/70 dark:text-primary-soft">properties</span>
               </div>
               <Link
                 href="/dashboard/owner-profile"
-                className="text-xs text-indigo-500 hover:text-indigo-600 dark:hover:text-indigo-400 font-medium ml-auto"
+                className="text-xs text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] font-medium ml-auto"
               >
                 Edit
               </Link>
@@ -235,7 +235,7 @@ export default function OwnerView({ listings, loading, profile }: OwnerViewProps
           whileHover={{ y: -2 }}
           className="card p-6 text-center cursor-pointer"
         >
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-rose-500 to-pink-500 flex items-center justify-center mx-auto mb-4">
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center mx-auto mb-4">
             <Users className="w-7 h-7 text-white" />
           </div>
           <h3 className="font-bold text-slate-900 dark:text-white mb-1">

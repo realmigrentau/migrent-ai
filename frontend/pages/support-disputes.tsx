@@ -34,7 +34,7 @@ export default function SupportDisputes() {
             <h2 className="text-lg font-bold text-slate-900 dark:text-white">Our Approach</h2>
             <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
               <p>MigRent is an introduction service and is not a party to any arrangement between users. However, we want all users to have a positive experience. This page outlines the dispute resolution process for issues arising from or related to the MigRent platform.</p>
-              <p>For disputes about tenancy arrangements (rent, bonds, property condition), please contact your state&apos;s Fair Trading or Residential Tenancies authority. See our <Link href="/rental-laws" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">Rental Laws Guide</Link>.</p>
+              <p>For disputes about tenancy arrangements (rent, bonds, property condition), please contact your state&apos;s Fair Trading or Residential Tenancies authority. See our <Link href="/rental-laws" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">Rental Laws Guide</Link>.</p>
             </div>
           </section>
 
@@ -45,7 +45,7 @@ export default function SupportDisputes() {
               {/* Step 1 */}
               <div className="card-subtle p-4 rounded-xl border-l-2 border-l-emerald-500">
                 <div className="flex items-center gap-2 mb-2">
-                  <span className="w-7 h-7 rounded-full bg-emerald-100 dark:bg-emerald-500/20 flex items-center justify-center text-xs font-bold text-emerald-600 dark:text-emerald-400">1</span>
+                  <span className="w-7 h-7 rounded-full bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/20 flex items-center justify-center text-xs font-bold text-[var(--color-accent)] dark:text-[var(--color-accent)]">1</span>
                   <h3 className="font-semibold text-slate-800 dark:text-slate-200">Direct Resolution (0-14 days)</h3>
                 </div>
                 <p>Attempt to resolve the issue directly with the other user. Use MigRent&apos;s messaging system to communicate clearly and document your conversations. Many disputes can be resolved through good-faith discussion.</p>
@@ -57,7 +57,7 @@ export default function SupportDisputes() {
                   <span className="w-7 h-7 rounded-full bg-blue-100 dark:bg-blue-500/20 flex items-center justify-center text-xs font-bold text-blue-600 dark:text-blue-400">2</span>
                   <h3 className="font-semibold text-slate-800 dark:text-slate-200">MigRent Mediation (14-30 days)</h3>
                 </div>
-                <p>If direct resolution fails, contact MigRent at <a href="mailto:migrentau@gmail.com" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">migrentau@gmail.com</a> with the subject &quot;Dispute&quot;. Include:</p>
+                <p>If direct resolution fails, contact MigRent at <a href="mailto:migrentau@gmail.com" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">migrentau@gmail.com</a> with the subject &quot;Dispute&quot;. Include:</p>
                 <ul className="list-disc list-inside space-y-1 mt-2">
                   <li>Your account email and the other user&apos;s profile name</li>
                   <li>A clear description of the issue</li>
@@ -70,7 +70,7 @@ export default function SupportDisputes() {
               {/* Step 3 */}
               <div className="card-subtle p-4 rounded-xl border-l-2 border-l-violet-500">
                 <div className="flex items-center gap-2 mb-2">
-                  <span className="w-7 h-7 rounded-full bg-violet-100 dark:bg-violet-500/20 flex items-center justify-center text-xs font-bold text-violet-600 dark:text-violet-400">3</span>
+                  <span className="w-7 h-7 rounded-full bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary-soft)]0/20 flex items-center justify-center text-xs font-bold text-[var(--color-primary)] dark:text-[var(--color-primary)]">3</span>
                   <h3 className="font-semibold text-slate-800 dark:text-slate-200">Binding Arbitration (30+ days)</h3>
                 </div>
                 <p>If mediation does not resolve the dispute within 30 days, either party may submit the dispute to binding arbitration administered by the Australian Centre for International Commercial Arbitration (ACICA) in accordance with ACICA Arbitration Rules.</p>
@@ -122,7 +122,7 @@ export default function SupportDisputes() {
             <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
               <p>For disputes specifically about MigRent platform fees ($99 owner fee or $19 seeker fee):</p>
               <ul className="list-disc list-inside space-y-1.5">
-                <li>Contact us at <a href="mailto:migrentau@gmail.com" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">migrentau@gmail.com</a> with subject &quot;Fee Dispute&quot;</li>
+                <li>Contact us at <a href="mailto:migrentau@gmail.com" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">migrentau@gmail.com</a> with subject &quot;Fee Dispute&quot;</li>
                 <li>Include your Stripe receipt number and a description of the issue</li>
                 <li>We will review and respond within 5 business days</li>
                 <li>Refunds of platform fees are at MigRent&apos;s sole discretion</li>
@@ -132,7 +132,7 @@ export default function SupportDisputes() {
 
           {/* Legal Disclaimer */}
           <div className="card-subtle p-4 rounded-xl text-xs text-slate-400 dark:text-slate-500 leading-relaxed">
-            <p>This dispute resolution process is part of MigRent&apos;s <Link href="/terms-of-service" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">Terms of Service</Link>. MigRent recommends consulting a qualified lawyer for legal disputes. Last reviewed: March 2026.</p>
+            <p>This dispute resolution process is part of MigRent&apos;s <Link href="/terms-of-service" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">Terms of Service</Link>. MigRent recommends consulting a qualified lawyer for legal disputes. Last reviewed: March 2026.</p>
           </div>
 
           {/* CTA */}

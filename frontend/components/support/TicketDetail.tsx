@@ -5,7 +5,7 @@ import { replyToTicket, updateTicket, submitCSAT } from "../../lib/api";
 const statusColors: Record<string, string> = {
   open: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
   pending_customer: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400",
-  pending_internal: "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400",
+  pending_internal: "bg-[var(--color-primary-soft)] text-primary-700 dark:bg-primary-900/30 dark:text-[var(--color-primary)]",
   resolved: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
   closed: "bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400",
 };
@@ -85,8 +85,8 @@ export default function TicketDetailView({ ticket, token, isAgent, onUpdate }: P
 
       {/* Agent Controls */}
       {isAgent && (
-        <div className="p-4 rounded-xl border border-indigo-200 dark:border-indigo-800 bg-indigo-50/50 dark:bg-indigo-900/10 space-y-3">
-          <h3 className="text-sm font-semibold text-indigo-700 dark:text-indigo-400">Agent Controls</h3>
+        <div className="p-4 rounded-xl border border-[var(--color-primary-soft)] dark:border-indigo-800 bg-[var(--color-primary-soft)]/50 dark:bg-primary-900/10 space-y-3">
+          <h3 className="text-sm font-semibold text-[var(--color-primary)] dark:text-[var(--color-primary)]">Agent Controls</h3>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
@@ -128,7 +128,7 @@ export default function TicketDetailView({ ticket, token, isAgent, onUpdate }: P
 
           <button
             onClick={handleAgentUpdate}
-            className="px-4 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-medium transition-colors"
+            className="px-4 py-1.5 bg-[var(--color-primary)] hover:bg-[var(--color-primary-500)] text-white rounded-lg text-sm font-medium transition-colors"
           >
             Update Ticket
           </button>
@@ -148,14 +148,14 @@ export default function TicketDetailView({ ticket, token, isAgent, onUpdate }: P
               msg.is_internal
                 ? "border border-amber-200 dark:border-amber-800 bg-amber-50/50 dark:bg-amber-900/10"
                 : msg.sender_type === "agent"
-                ? "border border-indigo-100 dark:border-indigo-900 bg-indigo-50/50 dark:bg-indigo-900/10"
+                ? "border border-[var(--color-primary-soft)] dark:border-primary-900 bg-[var(--color-primary-soft)]/50 dark:bg-primary-900/10"
                 : "border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900"
             }`}
           >
             <div className="flex items-center gap-2 mb-2">
               <span className={`text-xs font-medium ${
                 msg.is_internal ? "text-amber-600 dark:text-amber-400" :
-                msg.sender_type === "agent" ? "text-indigo-600 dark:text-indigo-400" :
+                msg.sender_type === "agent" ? "text-[var(--color-primary)] dark:text-[var(--color-primary)]" :
                 "text-slate-600 dark:text-slate-400"
               }`}>
                 {msg.is_internal ? "Internal Note" : msg.sender_type === "agent" ? "Support Agent" : "Customer"}
@@ -178,12 +178,12 @@ export default function TicketDetailView({ ticket, token, isAgent, onUpdate }: P
             placeholder="Write a reply..."
             required
             rows={3}
-            className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-rose-500 resize-none"
+            className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-ink)]/30 resize-none"
           />
           <button
             type="submit"
             disabled={sending || !reply.trim()}
-            className="px-5 py-2 bg-rose-500 hover:bg-rose-600 disabled:bg-rose-300 text-white rounded-lg text-sm font-medium transition-colors"
+            className="px-5 py-2 bg-[var(--color-primary)] hover:bg-[var(--color-primary)] disabled:bg-[var(--color-primary-soft)] text-white rounded-lg text-sm font-medium transition-colors"
           >
             {sending ? "Sending..." : "Send Reply"}
           </button>

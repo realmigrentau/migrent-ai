@@ -199,8 +199,8 @@ export default function MessageInput({
             className="overflow-hidden"
           >
             <div className="px-4 pt-2.5 pb-1 flex items-center gap-2">
-              <div className="flex-1 pl-3 border-l-2 border-indigo-500">
-                <p className="text-[11px] font-semibold text-indigo-500">Replying to</p>
+              <div className="flex-1 pl-3 border-l-2 border-[var(--color-primary)]">
+                <p className="text-[11px] font-semibold text-[var(--color-primary)]">Replying to</p>
                 <p className="text-[12px] text-slate-500 dark:text-slate-400 truncate">{replyTo.text}</p>
               </div>
               <button
@@ -253,7 +253,7 @@ export default function MessageInput({
                 {attachments.length < 10 && (
                   <button
                     onClick={() => fileInputRef.current?.click()}
-                    className="w-16 h-16 rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-600 flex items-center justify-center text-slate-400 hover:border-indigo-400 hover:text-indigo-400 transition-all shrink-0"
+                    className="w-16 h-16 rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-600 flex items-center justify-center text-slate-400 hover:border-[var(--color-line-2)] hover:text-[var(--color-primary)] transition-all shrink-0"
                   >
                     <Plus className="w-5 h-5" />
                   </button>
@@ -304,7 +304,7 @@ export default function MessageInput({
             onClick={() => { setShowPlus(!showPlus); setShowEmoji(false); setShowMemes(false); }}
             className={`p-2 rounded-xl transition-all shrink-0 ${
               showPlus
-                ? "bg-indigo-100 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400"
+                ? "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/20 text-[var(--color-primary)] dark:text-[var(--color-primary)]"
                 : "text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"
             }`}
           >
@@ -323,8 +323,8 @@ export default function MessageInput({
                   onClick={() => { fileInputRef.current?.click(); setShowPlus(false); }}
                   className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
                 >
-                  <div className="w-8 h-8 rounded-lg bg-indigo-100 dark:bg-indigo-500/20 flex items-center justify-center">
-                    <Paperclip className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+                  <div className="w-8 h-8 rounded-lg bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/20 flex items-center justify-center">
+                    <Paperclip className="w-4 h-4 text-[var(--color-primary)] dark:text-[var(--color-primary)]" />
                   </div>
                   Upload Files
                 </button>
@@ -336,8 +336,8 @@ export default function MessageInput({
                   }}
                   className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
                 >
-                  <div className="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-500/20 flex items-center justify-center">
-                    <ImageIcon className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                  <div className="w-8 h-8 rounded-lg bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/20 flex items-center justify-center">
+                    <ImageIcon className="w-4 h-4 text-[var(--color-accent)] dark:text-[var(--color-accent)]" />
                   </div>
                   Upload Photos
                 </button>
@@ -349,8 +349,8 @@ export default function MessageInput({
                   }}
                   className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
                 >
-                  <div className="w-8 h-8 rounded-lg bg-rose-100 dark:bg-rose-500/20 flex items-center justify-center">
-                    <FileText className="w-4 h-4 text-rose-600 dark:text-rose-400" />
+                  <div className="w-8 h-8 rounded-lg bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/20 flex items-center justify-center">
+                    <FileText className="w-4 h-4 text-[var(--color-primary)] dark:text-[var(--color-primary)]" />
                   </div>
                   Send Contract/PDF
                 </button>
@@ -373,7 +373,7 @@ export default function MessageInput({
           onClick={() => setShowFormatBar(!showFormatBar)}
           className={`p-2 rounded-xl transition-all shrink-0 ${
             showFormatBar
-              ? "text-indigo-500 bg-indigo-50 dark:bg-indigo-500/10"
+              ? "text-[var(--color-primary)] bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10"
               : "text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"
           }`}
           title="Formatting"
@@ -390,7 +390,7 @@ export default function MessageInput({
           onKeyDown={handleKeyDown}
           rows={1}
           disabled={isDisabled}
-          className="flex-1 resize-none rounded-xl bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none transition-all disabled:opacity-50"
+          className="flex-1 resize-none rounded-xl bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white px-4 py-2.5 text-sm focus:ring-2 focus:ring-[var(--color-ink)]/30 focus:border-transparent placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none transition-all disabled:opacity-50"
           style={{ minHeight: "42px", maxHeight: "120px" }}
         />
 
@@ -400,7 +400,7 @@ export default function MessageInput({
             onClick={() => { setShowMemes(!showMemes); setShowEmoji(false); setShowPlus(false); }}
             className={`p-2 rounded-xl transition-all shrink-0 ${
               showMemes
-                ? "text-pink-500 bg-pink-50 dark:bg-pink-500/10"
+                ? "text-[var(--color-primary)] bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary-soft)]0/10"
                 : "text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"
             }`}
             title="Quick reactions"
@@ -424,7 +424,7 @@ export default function MessageInput({
                     <button
                       key={meme.value}
                       onClick={() => { insertText(meme.value); setShowMemes(false); }}
-                      className="text-left px-3 py-2 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors truncate"
+                      className="text-left px-3 py-2 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-[var(--color-primary-soft)] dark:hover:bg-[var(--color-primary)]/10 hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] transition-colors truncate"
                     >
                       {meme.label}
                     </button>
@@ -464,7 +464,7 @@ export default function MessageInput({
                       onClick={() => setEmojiCategory(i)}
                       className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold whitespace-nowrap transition-all ${
                         emojiCategory === i
-                          ? "bg-indigo-100 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400"
+                          ? "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/20 text-[var(--color-primary)] dark:text-[var(--color-primary)]"
                           : "text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700"
                       }`}
                     >
@@ -495,7 +495,7 @@ export default function MessageInput({
           disabled={!canSend}
           className={`p-2.5 rounded-xl transition-all shrink-0 shadow-lg ${
             canSend
-              ? "bg-gradient-to-r from-indigo-500 to-indigo-600 text-white hover:shadow-indigo-500/30 hover:shadow-xl"
+              ? "bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary)] text-white hover:shadow-[var(--color-primary)]/20 hover:shadow-xl"
               : "bg-slate-200 dark:bg-slate-700 text-slate-400 shadow-none"
           }`}
         >

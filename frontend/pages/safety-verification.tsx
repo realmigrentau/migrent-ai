@@ -14,8 +14,8 @@ export default function SafetyVerification() {
         {/* Hero */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-100 dark:border-emerald-500/20 flex items-center justify-center">
-              <svg className="w-5 h-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <div className="w-10 h-10 rounded-xl bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 border border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)] flex items-center justify-center">
+              <svg className="w-5 h-5 text-[var(--color-accent)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
               </svg>
             </div>
@@ -137,7 +137,7 @@ export default function SafetyVerification() {
               <p>If you encounter unsafe, misleading, or suspicious behaviour:</p>
               <ul className="list-disc list-inside space-y-1.5">
                 <li><strong>Report button</strong> - Available on every listing and user profile</li>
-                <li><strong>Email</strong> - Contact <a href="https://mail.google.com/mail/?view=cm&fs=1&to=migrentau@gmail.com" target="_blank" rel="noopener noreferrer" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">migrentau@gmail.com</a></li>
+                <li><strong>Email</strong> - Contact <a href="https://mail.google.com/mail/?view=cm&fs=1&to=migrentau@gmail.com" target="_blank" rel="noopener noreferrer" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">migrentau@gmail.com</a></li>
                 <li><strong>Emergency</strong> - If you feel unsafe, contact local emergency services (000) immediately</li>
               </ul>
               <p>We take all reports seriously and will investigate promptly. Users who are found to violate our guidelines may have their accounts suspended or terminated.</p>
@@ -150,7 +150,7 @@ export default function SafetyVerification() {
           </div>
 
           {/* CTA */}
-          <div className="card p-6 rounded-2xl bg-gradient-to-br from-emerald-50 to-emerald-100/50 dark:from-emerald-500/10 dark:to-emerald-600/5 border-emerald-200 dark:border-emerald-500/20 text-center">
+          <div className="card p-6 rounded-2xl bg-gradient-to-br from-emerald-50 to-[var(--color-accent-soft)]/50 dark:from-[var(--color-accent)]/10 dark:to-emerald-600/5 border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)] text-center">
             <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Stay safe on MigRent</h3>
             <p className="text-sm text-slate-600 dark:text-slate-300 mb-4">Complete your verification to build trust with other users.</p>
             <Link href="/signup">

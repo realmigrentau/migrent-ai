@@ -36,7 +36,7 @@ function SliderInput({
         step={step}
         value={value}
         onChange={(e) => onChange(Number(e.target.value))}
-        className="w-full h-2 rounded-full appearance-none cursor-pointer bg-slate-200 dark:bg-slate-700 accent-rose-500"
+        className="w-full h-2 rounded-full appearance-none cursor-pointer bg-slate-200 dark:bg-slate-700 accent-[var(--color-primary)]"
       />
       <div className="flex justify-between text-xs text-slate-400 mt-1">
         <span>{unit === "$" ? `$${min}` : `${min}${unit}`}</span>
@@ -60,9 +60,9 @@ function StatCard({
   delay: number;
 }) {
   const bgClasses: Record<string, string> = {
-    indigo: "bg-indigo-100 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400",
-    emerald: "bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400",
-    pink: "bg-pink-100 dark:bg-pink-500/20 text-pink-600 dark:text-pink-400",
+    indigo: "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/20 text-[var(--color-primary)] dark:text-[var(--color-primary)]",
+    emerald: "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/20 text-[var(--color-accent)] dark:text-[var(--color-accent)]",
+    pink: "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary-soft)]0/20 text-[var(--color-primary)] dark:text-[var(--color-primary)]",
     amber: "bg-amber-100 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400",
   };
 
@@ -98,9 +98,9 @@ export default function EarningsCalculator() {
         viewport={{ once: true }}
         className="text-center mb-10"
       >
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-rose-50 dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/20 mb-4">
-          <Calculator className="w-3.5 h-3.5 text-rose-500" />
-          <span className="text-xs font-semibold text-rose-600 dark:text-rose-400">
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 border border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)] mb-4">
+          <Calculator className="w-3.5 h-3.5 text-[var(--color-primary)]" />
+          <span className="text-xs font-semibold text-[var(--color-primary)] dark:text-[var(--color-primary)]">
             Interactive Calculator
           </span>
         </div>
@@ -176,20 +176,20 @@ export default function EarningsCalculator() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.25 }}
-              className="p-6 rounded-xl bg-gradient-to-br from-emerald-50 via-emerald-100/50 to-teal-50 dark:from-emerald-500/10 dark:via-emerald-500/5 dark:to-teal-500/5 border border-emerald-200 dark:border-emerald-500/20"
+              className="p-6 rounded-xl bg-gradient-to-br from-emerald-50 via-emerald-100/50 to-teal-50 dark:from-[var(--color-accent)]/10 dark:via-[var(--color-accent)]/5 dark:to-teal-500/5 border border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)]"
             >
               <div className="flex items-center gap-2 mb-3">
-                <div className="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center">
+                <div className="w-8 h-8 rounded-lg bg-[var(--color-accent-soft)]0 flex items-center justify-center">
                   <DollarSign className="w-4 h-4 text-white" />
                 </div>
-                <span className="text-sm font-semibold text-emerald-700 dark:text-emerald-400">
+                <span className="text-sm font-semibold text-[var(--color-accent)] dark:text-[var(--color-accent)]">
                   Your Annual Take-Home
                 </span>
               </div>
-              <div className="text-4xl font-semibold text-emerald-700 dark:text-emerald-300">
+              <div className="text-4xl font-semibold text-[var(--color-accent)] dark:text-[var(--color-accent)]">
                 ${outputs.annualTakeHome.toLocaleString()}
               </div>
-              <div className="text-sm text-emerald-600 dark:text-emerald-400 mt-1">
+              <div className="text-sm text-[var(--color-accent)] dark:text-[var(--color-accent)] mt-1">
                 ~${outputs.monthlyTakeHome.toLocaleString()}/month after one-time fees
               </div>
             </motion.div>

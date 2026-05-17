@@ -24,12 +24,12 @@ const rows: ComparisonRow[] = [
 
 function CellValue({ value, highlight }: { value: boolean | string; highlight?: boolean }) {
   if (typeof value === "string") {
-    return <span className="text-sm font-semibold text-rose-500">{value}</span>;
+    return <span className="text-sm font-semibold text-[var(--color-primary)]">{value}</span>;
   }
   if (value) {
     return highlight ? (
-      <div className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-rose-50 dark:bg-rose-500/20">
-        <Check className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400" strokeWidth={3} />
+      <div className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/20">
+        <Check className="w-3.5 h-3.5 text-[var(--color-primary)] dark:text-[var(--color-primary)]" strokeWidth={3} />
       </div>
     ) : (
       <Check className="w-4 h-4 text-slate-300 dark:text-slate-600 mx-auto" strokeWidth={2} />
@@ -79,7 +79,7 @@ export default function ComparisonTable() {
                   Domain
                 </th>
                 <th className="text-center p-4 min-w-[100px]">
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-rose-600">
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--color-primary)]">
                     <Sparkles className="w-3 h-3 text-white" />
                     <span className="font-semibold text-white">MigRent</span>
                   </div>

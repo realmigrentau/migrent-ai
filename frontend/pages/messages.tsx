@@ -180,7 +180,7 @@ export default function MessagesPage() {
   if (authLoading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <div className="w-8 h-8 border-2 border-indigo-300 dark:border-indigo-500/30 border-t-indigo-500 rounded-full animate-spin" />
+        <div className="w-8 h-8 border-2 border-[var(--color-line-2)] dark:border-[var(--color-primary-soft)] border-t-[var(--color-ink)] rounded-full animate-spin" />
       </div>
     );
   }
@@ -194,7 +194,7 @@ export default function MessagesPage() {
           animate={{ opacity: 1, y: 0 }}
           className="max-w-sm w-full text-center"
         >
-          <div className="w-20 h-20 mx-auto rounded-2xl bg-indigo-600 flex items-center justify-center mb-6">
+          <div className="w-20 h-20 mx-auto rounded-2xl bg-[var(--color-primary)] flex items-center justify-center mb-6">
             <MessageCircle className="w-10 h-10 text-white" />
           </div>
           <h2 className="text-xl font-semibold tracking-tight text-slate-900 dark:text-white mb-2">
@@ -269,9 +269,9 @@ export default function MessagesPage() {
                 {messagesLoading ? (
                   <div className="flex flex-col items-center justify-center h-full gap-3">
                     <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 rounded-full bg-indigo-500 animate-bounce" style={{ animationDelay: "0ms" }} />
-                      <div className="w-2 h-2 rounded-full bg-indigo-500 animate-bounce" style={{ animationDelay: "150ms" }} />
-                      <div className="w-2 h-2 rounded-full bg-indigo-500 animate-bounce" style={{ animationDelay: "300ms" }} />
+                      <div className="w-2 h-2 rounded-full bg-[var(--color-primary)] animate-bounce" style={{ animationDelay: "0ms" }} />
+                      <div className="w-2 h-2 rounded-full bg-[var(--color-primary)] animate-bounce" style={{ animationDelay: "150ms" }} />
+                      <div className="w-2 h-2 rounded-full bg-[var(--color-primary)] animate-bounce" style={{ animationDelay: "300ms" }} />
                     </div>
                     <p className="text-xs text-slate-400">Loading messages...</p>
                   </div>
@@ -324,7 +324,7 @@ export default function MessagesPage() {
                               <div className="w-2 h-2 rounded-full bg-emerald-400 animate-bounce" style={{ animationDelay: "300ms" }} />
                             </div>
                           </div>
-                          <span className="text-[10px] text-emerald-500 font-medium">
+                          <span className="text-[10px] text-[var(--color-accent)] font-medium">
                             {activeThread.other_user_name} is typing
                           </span>
                         </motion.div>
@@ -390,7 +390,7 @@ function WelcomeScreen() {
             transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
             className="absolute inset-0 flex items-center justify-center"
           >
-            <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center shadow-2xl shadow-indigo-500/30 rotate-6">
+            <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center shadow-2xl shadow-[var(--color-primary)]/20 rotate-6">
               <MessageCircle className="w-12 h-12 text-white" />
             </div>
           </motion.div>
@@ -399,7 +399,7 @@ function WelcomeScreen() {
             transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut", delay: 0.3 }}
             className="absolute -top-2 -right-2"
           >
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-400 to-emerald-500 flex items-center justify-center shadow-lg shadow-emerald-500/20 -rotate-12">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[var(--color-accent)] to-[var(--color-accent)] flex items-center justify-center shadow-lg shadow-emerald-500/20 -rotate-12">
               <Sparkles className="w-6 h-6 text-white" />
             </div>
           </motion.div>
@@ -408,7 +408,7 @@ function WelcomeScreen() {
             transition={{ duration: 2.8, repeat: Infinity, ease: "easeInOut", delay: 0.6 }}
             className="absolute -bottom-1 -left-3"
           >
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-pink-400 to-rose-500 flex items-center justify-center shadow-lg shadow-pink-500/20 rotate-12">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center shadow-lg shadow-[var(--color-primary)]/500/20 rotate-12">
               <Heart className="w-5 h-5 text-white" />
             </div>
           </motion.div>
@@ -425,8 +425,8 @@ function WelcomeScreen() {
         <div className="grid grid-cols-3 gap-4 max-w-sm mx-auto">
           {[
             { icon: Zap, label: "Instant", sublabel: "Real-time chat", color: "from-amber-400 to-orange-500" },
-            { icon: Shield, label: "Secure", sublabel: "Private messages", color: "from-emerald-400 to-emerald-500" },
-            { icon: Send, label: "Rich", sublabel: "Files & media", color: "from-indigo-400 to-indigo-500" },
+            { icon: Shield, label: "Secure", sublabel: "Private messages", color: "from-[var(--color-accent)] to-[var(--color-accent)]" },
+            { icon: Send, label: "Rich", sublabel: "Files & media", color: "from-[var(--color-primary)] to-[var(--color-primary)]" },
           ].map(({ icon: Icon, label, sublabel, color }) => (
             <div key={label} className="text-center">
               <div className={`w-12 h-12 mx-auto mb-2 rounded-xl bg-gradient-to-br ${color} flex items-center justify-center shadow-lg`}>
@@ -453,14 +453,14 @@ function ChatEmpty({ userName }: { userName: string }) {
         animate={{ opacity: 1, scale: 1 }}
         className="max-w-xs"
       >
-        <div className="w-20 h-20 mx-auto mb-5 rounded-2xl bg-gradient-to-br from-indigo-100 to-emerald-100 dark:from-indigo-500/10 dark:to-emerald-500/10 flex items-center justify-center rotate-3">
-          <Send className="w-8 h-8 text-indigo-500 -rotate-3" />
+        <div className="w-20 h-20 mx-auto mb-5 rounded-2xl bg-gradient-to-br from-[var(--color-primary-soft)] to-[var(--color-accent-soft)] dark:from-[var(--color-primary)]/10 dark:to-[var(--color-accent)]/10 flex items-center justify-center rotate-3">
+          <Send className="w-8 h-8 text-[var(--color-primary)] -rotate-3" />
         </div>
         <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">
           Start the conversation
         </h3>
         <p className="text-sm text-slate-500 dark:text-slate-400">
-          Say hi to <span className="font-semibold text-indigo-500">{userName}</span> and get the conversation going!
+          Say hi to <span className="font-semibold text-[var(--color-primary)]">{userName}</span> and get the conversation going!
         </p>
       </motion.div>
     </div>

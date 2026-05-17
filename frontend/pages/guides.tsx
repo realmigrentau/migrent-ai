@@ -37,7 +37,7 @@ const guides = [
     icon: "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6",
     color: "text-blue-500",
     bgColor: "bg-blue-50 dark:bg-blue-500/10",
-    gradient: "from-blue-500 to-indigo-500",
+    gradient: "from-[var(--color-primary)] to-[var(--color-primary)]",
     steps: ["Create your listing", "Add photos & pricing", "Set house rules", "Welcome your first seeker"],
     readTime: "5 min read",
     difficulty: "Beginner",
@@ -47,9 +47,9 @@ const guides = [
     titleKey: "guides.findFast.title",
     descKey: "guides.findFast.desc",
     icon: "M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z",
-    color: "text-rose-500",
-    bgColor: "bg-rose-50 dark:bg-rose-500/10",
-    gradient: "from-rose-500 to-pink-500",
+    color: "text-[var(--color-primary)]",
+    bgColor: "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10",
+    gradient: "from-[var(--color-primary)] to-[var(--color-primary)]",
     steps: ["Set up smart filters", "Enable instant alerts", "Save favourite suburbs", "Apply with one click"],
     readTime: "4 min read",
     difficulty: "Beginner",
@@ -61,7 +61,7 @@ const guides = [
     icon: "M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2",
     color: "text-green-500",
     bgColor: "bg-green-50 dark:bg-green-500/10",
-    gradient: "from-green-500 to-emerald-500",
+    gradient: "from-green-500 to-[var(--color-accent)]",
     steps: ["Upload your ID", "Take a selfie for matching", "Confirm your address", "Earn your trust badge"],
     readTime: "3 min read",
     difficulty: "Beginner",
@@ -71,9 +71,9 @@ const guides = [
     titleKey: "guides.listProperty.title",
     descKey: "guides.listProperty.desc",
     icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01",
-    color: "text-purple-500",
-    bgColor: "bg-purple-50 dark:bg-purple-500/10",
-    gradient: "from-purple-500 to-violet-500",
+    color: "text-[var(--color-primary)]",
+    bgColor: "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary-soft)]0/10",
+    gradient: "from-[var(--color-primary)] to-[var(--color-primary)]",
     steps: ["Enter room details", "Upload quality photos", "Set pricing & availability", "Publish and go live"],
     readTime: "6 min read",
     difficulty: "Intermediate",
@@ -95,9 +95,9 @@ const guides = [
     titleKey: "guides.earnings.title",
     descKey: "guides.earnings.desc",
     icon: "M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z",
-    color: "text-emerald-500",
-    bgColor: "bg-emerald-50 dark:bg-emerald-500/10",
-    gradient: "from-emerald-500 to-teal-500",
+    color: "text-[var(--color-accent)]",
+    bgColor: "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10",
+    gradient: "from-[var(--color-accent)] to-teal-500",
     steps: ["Select your suburb", "Choose room type", "See weekly estimates", "Compare with market rates"],
     readTime: "3 min read",
     difficulty: "Beginner",
@@ -107,9 +107,9 @@ const guides = [
     titleKey: "guides.visas.title",
     descKey: "guides.visas.desc",
     icon: "M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z",
-    color: "text-indigo-500",
-    bgColor: "bg-indigo-50 dark:bg-indigo-500/10",
-    gradient: "from-indigo-500 to-blue-500",
+    color: "text-[var(--color-primary)]",
+    bgColor: "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10",
+    gradient: "from-[var(--color-primary)] to-[var(--color-primary)]",
     steps: ["Identify your visa type", "Check housing rights", "Understand bond rules", "Know your protections"],
     readTime: "7 min read",
     difficulty: "Intermediate",
@@ -121,7 +121,7 @@ const guides = [
     icon: "M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3",
     color: "text-red-500",
     bgColor: "bg-red-50 dark:bg-red-500/10",
-    gradient: "from-red-500 to-rose-500",
+    gradient: "from-[var(--color-danger-500)] to-[var(--color-primary)]",
     steps: ["File your dispute", "Provide evidence", "Mediation process", "Resolution & outcome"],
     readTime: "5 min read",
     difficulty: "Intermediate",
@@ -131,7 +131,7 @@ const guides = [
 const difficultyColors: Record<string, string> = {
   Beginner: "bg-green-50 dark:bg-green-500/10 text-green-600 dark:text-green-400",
   Intermediate: "bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400",
-  Advanced: "bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400",
+  Advanced: "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary-soft)]0/10 text-[var(--color-primary)] dark:text-[var(--color-primary)]",
 };
 
 export default function Guides() {
@@ -163,7 +163,7 @@ export default function Guides() {
             </div>
 
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight leading-tight">
-              <span className="bg-gradient-to-r from-blue-500 via-teal-500 to-green-500 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-[var(--color-primary)] via-teal-500 to-green-500 bg-clip-text text-transparent">
                 Guides & How-Tos
               </span>
             </h1>
@@ -310,7 +310,7 @@ export default function Guides() {
 
                       {/* Footer */}
                       <div className="mt-auto pt-4">
-                        <span className="inline-flex items-center gap-1 text-xs font-medium text-rose-500 dark:text-rose-400">
+                        <span className="inline-flex items-center gap-1 text-xs font-medium text-[var(--color-primary)] dark:text-[var(--color-primary)]">
                           {t("guides.readGuide")}
                           <svg className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
@@ -332,7 +332,7 @@ export default function Guides() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="rounded-2xl bg-gradient-to-r from-blue-500 via-teal-500 to-green-500 p-[1px]"
+            className="rounded-2xl bg-gradient-to-r from-[var(--color-primary)] via-teal-500 to-green-500 p-[1px]"
           >
             <div className="rounded-2xl bg-white dark:bg-slate-900 p-8 md:p-10 flex flex-col md:flex-row items-center gap-6">
               <div className="w-14 h-14 rounded-2xl bg-blue-50 dark:bg-blue-500/10 flex items-center justify-center shrink-0">

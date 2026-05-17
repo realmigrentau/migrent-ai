@@ -33,11 +33,11 @@ interface HeroGamificationProps {
 
 const LEVEL_COLORS = [
   { bg: "from-slate-400 to-slate-500", ring: "ring-slate-300" },
-  { bg: "from-blue-400 to-indigo-500", ring: "ring-blue-300" },
-  { bg: "from-emerald-400 to-teal-500", ring: "ring-emerald-300" },
+  { bg: "from-blue-400 to-[var(--color-primary)]", ring: "ring-blue-300" },
+  { bg: "from-[var(--color-accent)] to-teal-500", ring: "ring-emerald-300" },
   { bg: "from-amber-400 to-orange-500", ring: "ring-amber-300" },
-  { bg: "from-rose-400 to-pink-500", ring: "ring-rose-300" },
-  { bg: "from-violet-400 to-purple-500", ring: "ring-violet-300" },
+  { bg: "from-[var(--color-primary)] to-[var(--color-primary)]", ring: "ring-[var(--color-line-2)]" },
+  { bg: "from-violet-400 to-[var(--color-primary)]", ring: "ring-[var(--color-primary-soft)]" },
 ];
 
 export default function HeroGamification({
@@ -84,7 +84,7 @@ export default function HeroGamification({
         <div className="flex items-center gap-2 shrink-0">
           <button
             onClick={onShare}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-rose-300 dark:hover:border-rose-500/30 hover:text-rose-500 transition-all"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-[var(--color-line-2)] dark:hover:border-[var(--color-primary)]/30 hover:text-[var(--color-primary)] transition-all"
           >
             <Share2 className="w-3.5 h-3.5" />
             Share
@@ -155,9 +155,9 @@ export default function HeroGamification({
           transition={{ delay: 0.2 }}
           className="grid grid-cols-3 gap-2"
         >
-          <div className="card p-3 rounded-2xl text-center group hover:border-rose-200 dark:hover:border-rose-500/20 transition-colors">
-            <div className="w-8 h-8 mx-auto rounded-xl bg-rose-50 dark:bg-rose-500/10 flex items-center justify-center mb-1.5 group-hover:scale-110 transition-transform">
-              <Heart className="w-4 h-4 text-rose-500" />
+          <div className="card p-3 rounded-2xl text-center group hover:border-[var(--color-primary-soft)] dark:hover:border-[var(--color-primary)]/20 transition-colors">
+            <div className="w-8 h-8 mx-auto rounded-xl bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 flex items-center justify-center mb-1.5 group-hover:scale-110 transition-transform">
+              <Heart className="w-4 h-4 text-[var(--color-primary)]" />
             </div>
             <motion.p
               initial={{ opacity: 0 }}
@@ -169,9 +169,9 @@ export default function HeroGamification({
             <p className="text-[10px] text-slate-400">Saved</p>
           </div>
 
-          <div className="card p-3 rounded-2xl text-center group hover:border-emerald-200 dark:hover:border-emerald-500/20 transition-colors">
-            <div className="w-8 h-8 mx-auto rounded-xl bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center mb-1.5 group-hover:scale-110 transition-transform">
-              <TrendingDown className="w-4 h-4 text-emerald-500" />
+          <div className="card p-3 rounded-2xl text-center group hover:border-[var(--color-accent-soft)] dark:hover:border-[var(--color-accent-soft)] transition-colors">
+            <div className="w-8 h-8 mx-auto rounded-xl bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 flex items-center justify-center mb-1.5 group-hover:scale-110 transition-transform">
+              <TrendingDown className="w-4 h-4 text-[var(--color-accent)]" />
             </div>
             <motion.p
               initial={{ opacity: 0 }}
@@ -205,16 +205,16 @@ export default function HeroGamification({
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.35 }}
-          className="flex items-center gap-3 p-3 rounded-2xl bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/30 border border-emerald-200/50 dark:border-emerald-500/20"
+          className="flex items-center gap-3 p-3 rounded-2xl bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/30 border border-[var(--color-accent-soft)]/50 dark:border-[var(--color-accent-soft)]"
         >
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-r from-emerald-400 to-teal-400 flex items-center justify-center shadow-lg shrink-0">
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-r from-[var(--color-accent)] to-teal-400 flex items-center justify-center shadow-lg shrink-0">
             <TrendingDown className="w-4 h-4 text-white" />
           </div>
           <div className="min-w-0">
-            <p className="text-sm font-bold text-emerald-700 dark:text-emerald-300">
+            <p className="text-sm font-bold text-[var(--color-accent)] dark:text-[var(--color-accent)]">
               You could save ${stats.totalSaved}/wk on price drops!
             </p>
-            <p className="text-xs text-emerald-600/60 dark:text-emerald-400/60">
+            <p className="text-xs text-[var(--color-accent)]/60 dark:text-[var(--color-accent)]/60">
               {stats.priceDrops} {stats.priceDrops === 1 ? "listing has" : "listings have"} reduced prices
             </p>
           </div>

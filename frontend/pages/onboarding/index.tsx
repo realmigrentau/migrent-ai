@@ -409,7 +409,7 @@ export default function OnboardingPage() {
                     )}
                   </div>
                   {!stationLoading && nearestStation && (
-                    <p className="text-xs text-emerald-600 dark:text-emerald-400 mt-1 flex items-center gap-1">
+                    <p className="text-xs text-[var(--color-accent)] dark:text-[var(--color-accent)] mt-1 flex items-center gap-1">
                       <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                       </svg>

@@ -43,7 +43,7 @@ export default function MentorCard({
         <div className="card p-5 hover:shadow-lg transition-all cursor-pointer group">
           <div className="flex items-start gap-4">
             {/* Avatar */}
-            <div className="w-14 h-14 rounded-2xl overflow-hidden shrink-0 bg-gradient-to-br from-indigo-500 to-pink-500 flex items-center justify-center">
+            <div className="w-14 h-14 rounded-2xl overflow-hidden shrink-0 bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center">
               {photo ? (
                 <img src={photo} alt={name} className="w-full h-full object-cover" />
               ) : (
@@ -60,7 +60,7 @@ export default function MentorCard({
                   {name}
                 </h3>
                 {verified && (
-                  <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400">
+                  <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-semibold bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/20 text-[var(--color-accent)] dark:text-[var(--color-accent)]">
                     Verified
                   </span>
                 )}
@@ -89,7 +89,7 @@ export default function MentorCard({
                 {languages.slice(0, 3).map((lang) => (
                   <span
                     key={lang}
-                    className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-500/20"
+                    className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 text-[var(--color-primary)] dark:text-[var(--color-primary)] border border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)]"
                   >
                     <Globe className="w-2.5 h-2.5" />
                     {lang}
@@ -108,11 +108,11 @@ export default function MentorCard({
 
             {/* Price + CTA */}
             <div className="shrink-0 text-right flex flex-col items-end gap-2">
-              <div className="bg-rose-600 text-white font-bold text-sm px-3 py-1 rounded-xl">
+              <div className="bg-[var(--color-primary)] text-white font-bold text-sm px-3 py-1 rounded-xl">
                 {priceDisplay}
               </div>
               <span className="text-[10px] text-slate-400 dark:text-slate-500">per session</span>
-              <ChevronRight className="w-4 h-4 text-slate-300 dark:text-slate-600 group-hover:text-indigo-500 transition-colors mt-1" />
+              <ChevronRight className="w-4 h-4 text-slate-300 dark:text-slate-600 group-hover:text-[var(--color-primary)] transition-colors mt-1" />
             </div>
           </div>
         </div>

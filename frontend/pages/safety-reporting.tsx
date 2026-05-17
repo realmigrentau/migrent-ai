@@ -66,7 +66,7 @@ export default function SafetyReporting() {
             <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-4">
               <div className="card-subtle p-4 rounded-xl">
                 <h3 className="font-semibold text-slate-800 dark:text-slate-200 mb-2">Option 1: Email</h3>
-                <p>Send an email to <a href="mailto:migrentau@gmail.com" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">migrentau@gmail.com</a> with the subject &quot;Safety Report&quot;. Include:</p>
+                <p>Send an email to <a href="mailto:migrentau@gmail.com" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">migrentau@gmail.com</a> with the subject &quot;Safety Report&quot;. Include:</p>
                 <ul className="list-disc list-inside space-y-1 mt-2">
                   <li>Your account email</li>
                   <li>The listing or user you are reporting</li>
@@ -144,7 +144,7 @@ export default function SafetyReporting() {
           </div>
 
           {/* CTA */}
-          <div className="card p-6 rounded-2xl bg-gradient-to-br from-red-50 to-red-100/50 dark:from-red-500/10 dark:to-red-600/5 border-red-200 dark:border-red-500/20 text-center">
+          <div className="card p-6 rounded-2xl bg-gradient-to-br from-red-50 to-red-100/50 dark:from-[var(--color-danger-500)]/10 dark:to-red-600/5 border-red-200 dark:border-red-500/20 text-center">
             <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Report something now</h3>
             <p className="text-sm text-slate-600 dark:text-slate-300 mb-4">Your reports help keep the MigRent community safe.</p>
             <a href="mailto:migrentau@gmail.com?subject=Safety%20Report">

@@ -15,7 +15,7 @@ export default function MentorSessionSuccessPage() {
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           transition={{ type: "spring", stiffness: 200 }}
-          className="w-20 h-20 rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center mx-auto"
+          className="w-20 h-20 rounded-2xl bg-gradient-to-br from-[var(--color-accent)] to-teal-500 flex items-center justify-center mx-auto"
         >
           <CheckCircle2 className="w-10 h-10 text-white" />
         </motion.div>
@@ -32,7 +32,7 @@ export default function MentorSessionSuccessPage() {
           <Link href="/messages">
             <motion.span
               whileHover={{ scale: 1.03 }}
-              className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-6 py-2.5 rounded-xl text-sm transition-colors cursor-pointer"
+              className="inline-flex items-center gap-2 bg-[var(--color-primary)] hover:bg-[var(--color-primary-500)] text-white font-semibold px-6 py-2.5 rounded-xl text-sm transition-colors cursor-pointer"
             >
               <MessageCircle className="w-4 h-4" />
               Go to Messages

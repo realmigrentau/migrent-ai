@@ -45,7 +45,7 @@ export default function PaymentCancelled() {
         Having issues?{" "}
         <Link
           href="/about"
-          className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors"
+          className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors"
         >
           Contact support
         </Link>

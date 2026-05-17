@@ -4,7 +4,7 @@ import type { Ticket } from "../../lib/api";
 const statusColors: Record<string, string> = {
   open: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
   pending_customer: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400",
-  pending_internal: "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400",
+  pending_internal: "bg-[var(--color-primary-soft)] text-primary-700 dark:bg-primary-900/30 dark:text-[var(--color-primary)]",
   resolved: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
   closed: "bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400",
 };
@@ -45,7 +45,7 @@ export default function TicketList({ tickets, basePath = "/support/tickets" }: P
     <div className="space-y-2">
       {tickets.map((t) => (
         <Link key={t.id} href={`${basePath}/${t.id}`}>
-          <div className="p-4 rounded-xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-rose-200 dark:hover:border-rose-800 hover:shadow-sm transition-all cursor-pointer">
+          <div className="p-4 rounded-xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-[var(--color-primary-soft)] dark:hover:border-rose-800 hover:shadow-sm transition-all cursor-pointer">
             <div className="flex items-start justify-between gap-3">
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">

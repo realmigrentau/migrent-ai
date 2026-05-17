@@ -22,8 +22,8 @@ interface Listing {
 }
 
 const STATUS_STYLES: Record<string, string> = {
-  active: "bg-emerald-100 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/20",
-  approved: "bg-emerald-100 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/20",
+  active: "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 text-[var(--color-accent)] dark:text-[var(--color-accent)] border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)]",
+  approved: "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 text-[var(--color-accent)] dark:text-[var(--color-accent)] border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)]",
   pending_approval: "bg-amber-100 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-200 dark:border-amber-500/20",
   changes_requested: "bg-orange-100 dark:bg-orange-500/10 text-orange-600 dark:text-orange-400 border-orange-200 dark:border-orange-500/20",
   rejected: "bg-red-100 dark:bg-red-500/10 text-red-600 dark:text-red-400 border-red-200 dark:border-red-500/20",
@@ -172,7 +172,7 @@ export default function OwnerListings() {
   if (loading)
     return (
       <div className="flex items-center justify-center py-20">
-        <div className="w-8 h-8 border-2 border-rose-300 dark:border-rose-500/30 border-t-rose-500 rounded-full animate-spin" />
+        <div className="w-8 h-8 border-2 border-[var(--color-line-2)] dark:border-[var(--color-primary-soft)] border-t-[var(--color-ink)] rounded-full animate-spin" />
       </div>
     );
 
@@ -271,13 +271,13 @@ export default function OwnerListings() {
                 {listings.map((l) => (
                   <tr key={l.id} className="border-b border-slate-100 dark:border-slate-800 last:border-0 hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors">
                     <td className="py-3 px-5">
-                      <Link href={`/listing/${l.id}`} className="hover:text-rose-500 transition-colors">
+                      <Link href={`/listing/${l.id}`} className="hover:text-[var(--color-primary)] transition-colors">
                         <span className="font-semibold text-slate-900 dark:text-white">{l.title || l.address}</span>
                         {l.suburb && <span className="text-xs text-slate-400 dark:text-slate-500 ml-2">{l.suburb}</span>}
                       </Link>
                     </td>
                     <td className="py-3 px-5 text-slate-600 dark:text-slate-300">{l.postcode}</td>
-                    <td className="py-3 px-5 text-rose-600 dark:text-rose-400 font-bold">${l.weeklyPrice}/wk</td>
+                    <td className="py-3 px-5 text-[var(--color-primary)] dark:text-[var(--color-primary)] font-bold">${l.weeklyPrice}/wk</td>
                     <td className="py-3 px-5">
                       <span className={`px-2.5 py-1 rounded-full text-xs font-semibold border ${STATUS_STYLES[l.moderation_status || l.status || "active"] || ""}`}>
                         {STATUS_LABELS[l.moderation_status || l.status || "active"] || l.status || "active"}
@@ -290,7 +290,7 @@ export default function OwnerListings() {
                         <Link href={`/owner/listings/edit/${l.id}`} className="text-xs text-blue-500 hover:text-blue-600 font-semibold transition-colors">
                           Edit
                         </Link>
-                        <Link href={`/listing/${l.id}`} className="text-xs text-slate-500 hover:text-rose-500 font-semibold transition-colors">
+                        <Link href={`/listing/${l.id}`} className="text-xs text-slate-500 hover:text-[var(--color-primary)] font-semibold transition-colors">
                           View
                         </Link>
                         <button
@@ -322,8 +322,8 @@ export default function OwnerListings() {
                     <h3 className="font-bold text-slate-900 dark:text-white text-sm">{l.title || l.address}</h3>
                     <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{l.suburb ? `${l.suburb}, ` : ""}{l.postcode}</p>
                   </div>
-                  <div className="px-2.5 py-1 rounded-lg bg-rose-50 dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/20">
-                    <span className="text-rose-600 dark:text-rose-400 font-bold text-sm">${l.weeklyPrice}/wk</span>
+                  <div className="px-2.5 py-1 rounded-lg bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 border border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)]">
+                    <span className="text-[var(--color-primary)] dark:text-[var(--color-primary)] font-bold text-sm">${l.weeklyPrice}/wk</span>
                   </div>
                 </div>
                 <div className="flex items-center gap-3 mt-3 text-xs text-slate-500 dark:text-slate-400">

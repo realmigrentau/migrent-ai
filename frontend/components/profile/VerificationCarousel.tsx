@@ -113,7 +113,7 @@ export default function VerificationCarousel({ profile, badges, onVerifyClick }:
               </p>
               <div className="flex items-center gap-1 mt-0.5">
                 {item.verified ? (
-                  <svg className="w-3 h-3 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                  <svg className="w-3 h-3 text-[var(--color-accent)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                   </svg>
                 ) : (
@@ -121,7 +121,7 @@ export default function VerificationCarousel({ profile, badges, onVerifyClick }:
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 )}
-                <span className={`text-[10px] ${item.verified ? "text-emerald-600 dark:text-emerald-400" : "text-slate-400"}`}>
+                <span className={`text-[10px] ${item.verified ? "text-[var(--color-accent)] dark:text-[var(--color-accent)]" : "text-slate-400"}`}>
                   {item.verified ? "Confirmed" : "Pending"}
                 </span>
               </div>

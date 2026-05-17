@@ -165,7 +165,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-8 h-8 border-2 border-rose-500 border-t-transparent rounded-full animate-spin" />
+          <div className="w-8 h-8 border-2 border-[var(--color-primary)] border-t-transparent rounded-full animate-spin" />
           <p className="text-sm text-slate-500 dark:text-slate-400">Verifying access...</p>
         </div>
       </div>
@@ -199,7 +199,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
       {/* Mobile sidebar toggle */}
       <button
         onClick={() => setSidebarOpen(!sidebarOpen)}
-        className="lg:hidden fixed bottom-4 right-4 z-40 w-12 h-12 rounded-full bg-gradient-to-r from-rose-500 to-rose-600 text-white shadow-lg flex items-center justify-center"
+        className="lg:hidden fixed bottom-4 right-4 z-40 w-12 h-12 rounded-full bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary)] text-white shadow-lg flex items-center justify-center"
         aria-label="Toggle sidebar"
       >
         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -233,7 +233,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
         {/* Brand */}
         <div className="px-5 py-5 border-b border-slate-100 dark:border-slate-800">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-rose-500 to-rose-600 flex items-center justify-center text-white font-black text-sm">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center text-white font-black text-sm">
               A
             </div>
             <div>
@@ -253,16 +253,16 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
                 href={link.href}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 ${
                   active
-                    ? "bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400"
+                    ? "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 text-[var(--color-primary)] dark:text-[var(--color-primary)]"
                     : "text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white"
                 }`}
               >
-                <span className={active ? "text-rose-500" : ""}>{link.icon}</span>
+                <span className={active ? "text-[var(--color-primary)]" : ""}>{link.icon}</span>
                 {link.label}
                 {active && (
                   <motion.div
                     layoutId="adminSidebarIndicator"
-                    className="ml-auto w-1.5 h-1.5 rounded-full bg-rose-500"
+                    className="ml-auto w-1.5 h-1.5 rounded-full bg-[var(--color-primary)]"
                     transition={{ type: "spring", stiffness: 500, damping: 30 }}
                   />
                 )}

@@ -125,7 +125,7 @@ export default function MentorProfilePage() {
     return (
       <div className="max-w-3xl mx-auto px-4 py-12 text-center">
         <h1 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Mentor not found</h1>
-        <Link href="/mentors" className="text-indigo-500 hover:text-indigo-600 text-sm font-medium">
+        <Link href="/mentors" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] text-sm font-medium">
           Back to directory
         </Link>
       </div>
@@ -145,7 +145,7 @@ export default function MentorProfilePage() {
 
       <div className="max-w-3xl mx-auto px-4 py-8 space-y-6">
         {/* Back */}
-        <Link href="/mentors" className="inline-flex items-center gap-1 text-sm text-slate-500 hover:text-indigo-500 transition-colors">
+        <Link href="/mentors" className="inline-flex items-center gap-1 text-sm text-slate-500 hover:text-[var(--color-primary)] transition-colors">
           <ChevronLeft className="w-4 h-4" />
           Back to mentors
         </Link>
@@ -158,7 +158,7 @@ export default function MentorProfilePage() {
         >
           <div className="flex flex-col sm:flex-row items-start gap-5">
             {/* Avatar */}
-            <div className="w-20 h-20 rounded-2xl overflow-hidden shrink-0 bg-gradient-to-br from-indigo-500 to-pink-500 flex items-center justify-center">
+            <div className="w-20 h-20 rounded-2xl overflow-hidden shrink-0 bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center">
               {photo ? (
                 <img src={photo} alt={name} className="w-full h-full object-cover" />
               ) : (
@@ -172,7 +172,7 @@ export default function MentorProfilePage() {
               <div className="flex items-center gap-2 flex-wrap">
                 <h1 className="text-xl font-bold text-slate-900 dark:text-white">{name}</h1>
                 {mentor.profiles?.verified && (
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400">
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/20 text-[var(--color-accent)] dark:text-[var(--color-accent)]">
                     <Shield className="w-3 h-3" />
                     Verified
                   </span>
@@ -197,7 +197,7 @@ export default function MentorProfilePage() {
                 {mentor.languages.map((lang) => (
                   <span
                     key={lang}
-                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-500/20"
+                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 text-[var(--color-primary)] dark:text-[var(--color-primary)] border border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)]"
                   >
                     <Globe className="w-3 h-3" />
                     {lang}
@@ -208,7 +208,7 @@ export default function MentorProfilePage() {
 
             {/* Price */}
             <div className="sm:text-right shrink-0">
-              <div className="bg-rose-600 text-white font-bold text-xl px-5 py-2 rounded-xl inline-block">
+              <div className="bg-[var(--color-primary)] text-white font-bold text-xl px-5 py-2 rounded-xl inline-block">
                 {priceDisplay}
               </div>
               <p className="text-xs text-slate-500 mt-1">per session</p>
@@ -244,7 +244,7 @@ export default function MentorProfilePage() {
               {mentor.specialties.map((spec) => (
                 <span
                   key={spec}
-                  className="px-3 py-1.5 rounded-full text-xs font-medium bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20"
+                  className="px-3 py-1.5 rounded-full text-xs font-medium bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 text-[var(--color-accent)] dark:text-[var(--color-accent)] border border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)]"
                 >
                   {spec}
                 </span>
@@ -261,7 +261,7 @@ export default function MentorProfilePage() {
           className="card p-6 space-y-4"
         >
           <h2 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            <Calendar className="w-5 h-5 text-indigo-500" />
+            <Calendar className="w-5 h-5 text-[var(--color-primary)]" />
             Book a Session
           </h2>
 
@@ -281,7 +281,7 @@ export default function MentorProfilePage() {
                   onClick={() => setSessionType(type.value)}
                   className={`flex flex-col items-center gap-1.5 p-3 rounded-xl text-xs font-medium transition-colors ${
                     sessionType === type.value
-                      ? "bg-indigo-600 text-white"
+                      ? "bg-[var(--color-primary)] text-white"
                       : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200"
                   }`}
                 >
@@ -301,7 +301,7 @@ export default function MentorProfilePage() {
               type="datetime-local"
               value={scheduledAt}
               onChange={(e) => setScheduledAt(e.target.value)}
-              className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
+              className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-[var(--color-ink)]/30 focus:border-transparent outline-none"
             />
           </div>
 
@@ -316,7 +316,7 @@ export default function MentorProfilePage() {
               placeholder="e.g. I just arrived from India and need help finding groceries and setting up Medicare..."
               rows={3}
               maxLength={1000}
-              className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none resize-none"
+              className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-[var(--color-ink)]/30 focus:border-transparent outline-none resize-none"
             />
           </div>
 
@@ -336,7 +336,7 @@ export default function MentorProfilePage() {
             whileTap={{ scale: 0.98 }}
             onClick={handleBook}
             disabled={booking}
-            className="w-full bg-gradient-to-r from-indigo-600 to-pink-600 hover:from-indigo-700 hover:to-pink-700 text-white font-semibold py-3 rounded-xl text-sm transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+            className="w-full bg-gradient-to-r from-[var(--color-primary)] to-pink-600 hover:from-primary-700 hover:to-pink-700 text-white font-semibold py-3 rounded-xl text-sm transition-all disabled:opacity-50 flex items-center justify-center gap-2"
           >
             {booking ? (
               <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -365,7 +365,7 @@ export default function MentorProfilePage() {
               {mentor.reviews.map((review) => (
                 <div key={review.id} className="border-b border-slate-100 dark:border-slate-800 last:border-0 pb-4 last:pb-0">
                   <div className="flex items-center gap-2 mb-2">
-                    <div className="w-7 h-7 rounded-full bg-gradient-to-br from-indigo-500 to-pink-500 flex items-center justify-center overflow-hidden">
+                    <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center overflow-hidden">
                       {review.profiles?.custom_pfp ? (
                         <img src={review.profiles.custom_pfp} alt="" className="w-full h-full object-cover" />
                       ) : (

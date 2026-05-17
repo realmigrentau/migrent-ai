@@ -132,7 +132,7 @@ export default function OwnerProfilePage() {
   if (loading || loadingProfile)
     return (
       <div className="flex items-center justify-center py-20">
-        <div className="w-8 h-8 border-2 border-rose-300 dark:border-rose-500/30 border-t-rose-500 rounded-full animate-spin" />
+        <div className="w-8 h-8 border-2 border-[var(--color-line-2)] dark:border-[var(--color-primary-soft)] border-t-[var(--color-ink)] rounded-full animate-spin" />
       </div>
     );
 
@@ -167,7 +167,7 @@ export default function OwnerProfilePage() {
           <div className="relative group">
             <div
               onClick={() => fileRef.current?.click()}
-              className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-400 to-rose-500 flex items-center justify-center text-white font-bold text-3xl shrink-0 cursor-pointer overflow-hidden ring-2 ring-white dark:ring-slate-800 shadow-lg"
+              className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-400 to-[var(--color-primary)] flex items-center justify-center text-white font-bold text-3xl shrink-0 cursor-pointer overflow-hidden ring-2 ring-white dark:ring-slate-800 shadow-lg"
             >
               {profile.profilePhoto ? (
                 <img src={profile.profilePhoto} alt="Profile" className="w-full h-full object-cover" />
@@ -210,7 +210,7 @@ export default function OwnerProfilePage() {
             )}
             {/* Useless skill fun badge */}
             {profile.uselessSkill && (
-              <span className="inline-block mt-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-200 dark:border-purple-500/20">
+              <span className="inline-block mt-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary-soft)]0/10 text-[var(--color-primary)] dark:text-[var(--color-primary)] border border-[var(--color-primary-soft)] dark:border-[var(--color-primary)]/20">
                 {profile.uselessSkill}
               </span>
             )}
@@ -228,10 +228,10 @@ export default function OwnerProfilePage() {
       >
         <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">Verification badges</h3>
         <div className="flex flex-wrap gap-2">
-          <span className="px-3 py-1.5 rounded-full text-xs font-semibold bg-emerald-100 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20">
+          <span className="px-3 py-1.5 rounded-full text-xs font-semibold bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 text-[var(--color-accent)] dark:text-[var(--color-accent)] border border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)]">
             ✓ Email verified
           </span>
-          <span className="px-3 py-1.5 rounded-full text-xs font-semibold bg-emerald-100 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20">
+          <span className="px-3 py-1.5 rounded-full text-xs font-semibold bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 text-[var(--color-accent)] dark:text-[var(--color-accent)] border border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)]">
             ✓ Identity verified
           </span>
           <span className="px-3 py-1.5 rounded-full text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
@@ -268,7 +268,7 @@ export default function OwnerProfilePage() {
                 <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 leading-tight">{badge.desc}</p>
                 {earned ? (
                   <div className="absolute top-2 right-2">
-                    <span className="text-emerald-500 text-xs font-bold">✓</span>
+                    <span className="text-[var(--color-accent)] text-xs font-bold">✓</span>
                   </div>
                 ) : (
                   <div className="absolute top-2 right-2">
@@ -332,8 +332,8 @@ export default function OwnerProfilePage() {
             className="w-full flex items-center justify-between p-4 text-left hover:bg-slate-50 dark:hover:bg-white/5 transition-colors"
           >
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-rose-50 dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/20 flex items-center justify-center">
-                <svg className="w-5 h-5 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <div className="w-10 h-10 rounded-xl bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 border border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)] flex items-center justify-center">
+                <svg className="w-5 h-5 text-[var(--color-primary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                 </svg>
               </div>
@@ -502,7 +502,7 @@ export default function OwnerProfilePage() {
             type="checkbox"
             checked={profile.notifyEmail}
             onChange={(e) => update("notifyEmail", e.target.checked)}
-            className="w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-rose-500 focus:ring-rose-500"
+            className="w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-[var(--color-primary)] focus:ring-[var(--color-ink)]/30"
           />
         </label>
         <label className="flex items-center justify-between p-3 rounded-xl border border-slate-200 dark:border-slate-700 cursor-pointer">
@@ -512,7 +512,7 @@ export default function OwnerProfilePage() {
             checked={profile.notifySms}
             onChange={(e) => update("notifySms", e.target.checked)}
             disabled
-            className="w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-rose-500 focus:ring-rose-500 opacity-50"
+            className="w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-[var(--color-primary)] focus:ring-[var(--color-ink)]/30 opacity-50"
           />
         </label>
         <div className="card-subtle p-4 rounded-xl">
@@ -551,7 +551,7 @@ export default function OwnerProfilePage() {
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="text-sm text-emerald-600 dark:text-emerald-400 mt-3"
+            className="text-sm text-[var(--color-accent)] dark:text-[var(--color-accent)] mt-3"
           >
             Profile saved successfully.
           </motion.p>

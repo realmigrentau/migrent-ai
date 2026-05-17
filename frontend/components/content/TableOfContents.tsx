@@ -40,7 +40,7 @@ export default function TableOfContents({ items }: { items: TOCItem[] }) {
               href={`#${item.id}`}
               className={`block pl-4 py-1.5 text-sm transition-all ${
                 activeId === item.id
-                  ? "text-rose-500 dark:text-rose-400 font-medium border-l-2 border-rose-500 -ml-[2px]"
+                  ? "text-[var(--color-primary)] dark:text-[var(--color-primary)] font-medium border-l-2 border-[var(--color-primary)] -ml-[2px]"
                   : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"
               }`}
             >

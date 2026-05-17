@@ -58,8 +58,8 @@ export default function Disclaimer() {
                 <li>Compliance with local building and zoning codes</li>
                 <li>Accuracy of listed room dimensions, photos, or descriptions</li>
               </ul>
-              <div className="card-subtle p-4 rounded-xl border-l-2 border-l-rose-500">
-                <p className="font-semibold text-rose-600 dark:text-rose-400">You must inspect any property personally before entering into any arrangement. Never send money without first viewing the property in person.</p>
+              <div className="card-subtle p-4 rounded-xl border-l-2 border-l-[var(--color-primary)]">
+                <p className="font-semibold text-[var(--color-primary)] dark:text-[var(--color-primary)]">You must inspect any property personally before entering into any arrangement. Never send money without first viewing the property in person.</p>
               </div>
             </div>
           </section>
@@ -100,7 +100,7 @@ export default function Disclaimer() {
           <section className="card p-6 rounded-2xl space-y-3">
             <h2 className="text-lg font-bold text-slate-900 dark:text-white">4. No Legal Advice</h2>
             <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
-              <p>Information provided on MigRent, including our <Link href="/rental-laws" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">rental laws guide</Link> and <Link href="/code-of-conduct" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">STRA code of conduct</Link>, is for general informational purposes only. It does not constitute legal advice. You should seek independent legal advice for your specific circumstances.</p>
+              <p>Information provided on MigRent, including our <Link href="/rental-laws" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">rental laws guide</Link> and <Link href="/code-of-conduct" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">STRA code of conduct</Link>, is for general informational purposes only. It does not constitute legal advice. You should seek independent legal advice for your specific circumstances.</p>
             </div>
           </section>
 
@@ -135,7 +135,7 @@ export default function Disclaimer() {
 
           {/* Legal Disclaimer */}
           <div className="card-subtle p-4 rounded-xl text-xs text-slate-400 dark:text-slate-500 leading-relaxed">
-            <p>This disclaimer is part of MigRent&apos;s <Link href="/terms-of-service" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">Terms of Service</Link>. For full legal terms, please refer to our Terms of Service. MigRent recommends consulting a qualified Australian lawyer for specific legal advice. Last reviewed: March 2026.</p>
+            <p>This disclaimer is part of MigRent&apos;s <Link href="/terms-of-service" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">Terms of Service</Link>. For full legal terms, please refer to our Terms of Service. MigRent recommends consulting a qualified Australian lawyer for specific legal advice. Last reviewed: March 2026.</p>
           </div>
 
           {/* CTA */}

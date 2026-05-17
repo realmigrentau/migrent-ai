@@ -75,8 +75,8 @@ export default function ChatHeader({
   };
 
   const getStatusColor = () => {
-    if (isTyping) return "text-emerald-500";
-    if (isOnline) return "text-emerald-500";
+    if (isTyping) return "text-[var(--color-accent)]";
+    if (isOnline) return "text-[var(--color-accent)]";
     return "text-slate-400 dark:text-slate-500";
   };
 
@@ -98,7 +98,7 @@ export default function ChatHeader({
         >
           <div className="relative shrink-0">
             <div className={`w-10 h-10 rounded-full flex items-center justify-center overflow-hidden ring-2 ring-white dark:ring-slate-950 shadow-md ${
-              userAvatar ? "bg-slate-200 dark:bg-slate-700" : "bg-gradient-to-br from-indigo-500 to-emerald-500"
+              userAvatar ? "bg-slate-200 dark:bg-slate-700" : "bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-accent)]"
             }`}>
               {userAvatar ? (
                 <img src={userAvatar} alt="" className="w-full h-full object-cover" />
@@ -109,7 +109,7 @@ export default function ChatHeader({
               )}
             </div>
             {isOnline && (
-              <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-emerald-500 border-2 border-white dark:border-slate-950 shadow-sm" />
+              <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-[var(--color-accent-soft)]0 border-2 border-white dark:border-slate-950 shadow-sm" />
             )}
           </div>
 
@@ -142,7 +142,7 @@ export default function ChatHeader({
               {listingTitle && (
                 <>
                   <span className="text-slate-300 dark:text-slate-600">|</span>
-                  <span className="text-[11px] text-indigo-500 dark:text-indigo-400 font-medium truncate">
+                  <span className="text-[11px] text-[var(--color-primary)] dark:text-[var(--color-primary)] font-medium truncate">
                     {listingTitle}
                   </span>
                 </>

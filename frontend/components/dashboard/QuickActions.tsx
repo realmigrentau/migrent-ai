@@ -10,8 +10,8 @@ const actions = [
     label: "Create New Listing",
     desc: "Post a room for seekers to find",
     icon: <Plus className="w-5 h-5" />,
-    color: "text-rose-500",
-    bg: "bg-rose-50 dark:bg-rose-500/10",
+    color: "text-[var(--color-primary)]",
+    bg: "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10",
     external: false,
   },
   {
@@ -28,8 +28,8 @@ const actions = [
     label: "Edit Profile",
     desc: "Update your owner details",
     icon: <Settings className="w-5 h-5" />,
-    color: "text-violet-500",
-    bg: "bg-violet-50 dark:bg-violet-500/10",
+    color: "text-[var(--color-primary)]",
+    bg: "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary-soft)]0/10",
     external: false,
   },
   {
@@ -37,8 +37,8 @@ const actions = [
     label: "Payouts",
     desc: "View your Stripe dashboard",
     icon: <CreditCard className="w-5 h-5" />,
-    color: "text-emerald-500",
-    bg: "bg-emerald-50 dark:bg-emerald-500/10",
+    color: "text-[var(--color-accent)]",
+    bg: "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10",
     external: true,
   },
 ];

@@ -55,14 +55,14 @@ export default function NotificationsTab({
       label: "Booking Requests",
       description: "When someone requests to book your room",
       icon: MessageSquare,
-      gradient: "from-blue-400 to-indigo-500",
+      gradient: "from-blue-400 to-[var(--color-primary)]",
     },
     {
       key: "email_payments",
       label: "Payments Received",
       description: "When you receive a payout or payment",
       icon: DollarSign,
-      gradient: "from-emerald-400 to-teal-500",
+      gradient: "from-[var(--color-accent)] to-teal-500",
     },
     {
       key: "email_verification",
@@ -76,14 +76,14 @@ export default function NotificationsTab({
       label: "New Messages",
       description: "When you receive a new message from a user",
       icon: Mail,
-      gradient: "from-pink-400 to-rose-500",
+      gradient: "from-[var(--color-primary)] to-[var(--color-primary)]",
     },
     {
       key: "email_weekly_summary",
       label: "Weekly Summary",
       description: "A weekly overview of your listings & activity",
       icon: BarChart3,
-      gradient: "from-purple-400 to-indigo-500",
+      gradient: "from-[var(--color-primary)] to-[var(--color-primary)]",
     },
   ];
 
@@ -106,14 +106,14 @@ export default function NotificationsTab({
       label: "Host Responses",
       description: "When a host responds to your inquiry",
       icon: MessageSquare,
-      gradient: "from-cyan-400 to-blue-500",
+      gradient: "from-cyan-400 to-[var(--color-primary)]",
     },
     {
       key: "push_new_listings",
       label: "New Listings",
       description: "When new rooms match your preferences",
       icon: Bell,
-      gradient: "from-rose-400 to-pink-500",
+      gradient: "from-[var(--color-primary)] to-[var(--color-primary)]",
     },
   ];
 
@@ -122,7 +122,7 @@ export default function NotificationsTab({
       {/* Email Preferences */}
       <GlassCard delay={0.05}>
         <div className="flex items-start gap-4 mb-5">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center shadow-lg shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-400 to-[var(--color-primary)] flex items-center justify-center shadow-lg shrink-0">
             <Mail className="w-5 h-5 text-white" />
           </div>
           <div>
@@ -206,7 +206,7 @@ export default function NotificationsTab({
       {/* Smart System Info */}
       <GlassCard delay={0.25} gradient="emerald">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shadow-lg shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--color-accent)] to-teal-500 flex items-center justify-center shadow-lg shrink-0">
             <Zap className="w-5 h-5 text-white" />
           </div>
           <div className="flex-1">
@@ -231,8 +231,8 @@ export default function NotificationsTab({
           className={`
             flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium transition-all
             ${testSent
-              ? "bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/30"
-              : "btn-secondary hover:border-rose-200 dark:hover:border-rose-500/30"
+              ? "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 text-[var(--color-accent)] dark:text-[var(--color-accent)] border border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)]"
+              : "btn-secondary hover:border-[var(--color-primary-soft)] dark:hover:border-[var(--color-primary)]/30"
             }
           `}
         >

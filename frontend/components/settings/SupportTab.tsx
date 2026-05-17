@@ -107,9 +107,9 @@ export default function SupportTab({
       {/* Stats cards */}
       <div className="grid grid-cols-3 gap-3">
         {[
-          { label: "Open", count: openTickets, icon: AlertCircle, color: "rose", gradient: "from-rose-400 to-pink-500", bg: "bg-rose-50/80 dark:bg-rose-500/10 border-rose-100 dark:border-rose-500/20" },
+          { label: "Open", count: openTickets, icon: AlertCircle, color: "rose", gradient: "from-[var(--color-primary)] to-[var(--color-primary)]", bg: "bg-[var(--color-primary-soft)]/80 dark:bg-[var(--color-primary)]/10 border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)]" },
           { label: "Pending", count: pendingTickets, icon: Clock, color: "amber", gradient: "from-amber-400 to-orange-500", bg: "bg-amber-50/80 dark:bg-amber-500/10 border-amber-100 dark:border-amber-500/20" },
-          { label: "Resolved", count: resolvedTickets, icon: CheckCircle2, color: "emerald", gradient: "from-emerald-400 to-teal-500", bg: "bg-emerald-50/80 dark:bg-emerald-500/10 border-emerald-100 dark:border-emerald-500/20" },
+          { label: "Resolved", count: resolvedTickets, icon: CheckCircle2, color: "emerald", gradient: "from-[var(--color-accent)] to-teal-500", bg: "bg-[var(--color-accent-soft)]/80 dark:bg-[var(--color-accent-soft)]0/10 border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)]" },
         ].map((stat, i) => {
           const Icon = stat.icon;
           return (
@@ -246,7 +246,7 @@ export default function SupportTab({
       {/* Ticket List */}
       <GlassCard delay={0.15}>
         <div className="flex items-start gap-4 mb-4">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-rose-400 to-pink-500 flex items-center justify-center shadow-lg shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center shadow-lg shrink-0">
             <MessageCircle className="w-5 h-5 text-white" />
           </div>
           <div>
@@ -300,7 +300,7 @@ export default function SupportTab({
       {/* Quick Help */}
       <GlassCard delay={0.25}>
         <div className="flex items-start gap-4 mb-4">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center shadow-lg shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-400 to-[var(--color-primary)] flex items-center justify-center shadow-lg shrink-0">
             <HelpCircle className="w-5 h-5 text-white" />
           </div>
           <div>
@@ -327,7 +327,7 @@ export default function SupportTab({
             href="/contact"
             className="flex items-center gap-3 p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group"
           >
-            <Headphones className="w-5 h-5 text-emerald-500" />
+            <Headphones className="w-5 h-5 text-[var(--color-accent)]" />
             <div>
               <p className="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white">
                 Contact Support

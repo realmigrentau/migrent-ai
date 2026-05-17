@@ -62,7 +62,7 @@ export default function AbnTerms() {
                     </tr>
                     <tr>
                       <td className="py-3 px-3 font-semibold text-slate-800 dark:text-slate-200">Contact Email</td>
-                      <td className="py-3 px-3"><a href="mailto:migrentau@gmail.com" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">migrentau@gmail.com</a></td>
+                      <td className="py-3 px-3"><a href="mailto:migrentau@gmail.com" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">migrentau@gmail.com</a></td>
                     </tr>
                   </tbody>
                 </table>
@@ -80,7 +80,7 @@ export default function AbnTerms() {
                 <li>An AI-powered matching service for short- to medium-term rooms</li>
                 <li>A facilitator of introductions - not a real estate agent or property manager</li>
               </ul>
-              <p>We do not hold a real estate licence, as we do not perform real estate agent activities (see <Link href="/no-agency" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">No Agency Disclosure</Link>). We do not collect rent, bonds, or manage tenancy agreements.</p>
+              <p>We do not hold a real estate licence, as we do not perform real estate agent activities (see <Link href="/no-agency" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">No Agency Disclosure</Link>). We do not collect rent, bonds, or manage tenancy agreements.</p>
             </div>
           </section>
 
@@ -114,19 +114,19 @@ export default function AbnTerms() {
                     </tr>
                     <tr>
                       <td className="py-2.5 px-3 font-medium">Account creation</td>
-                      <td className="py-2.5 px-3 text-emerald-600 dark:text-emerald-400 font-semibold">Free</td>
+                      <td className="py-2.5 px-3 text-[var(--color-accent)] dark:text-[var(--color-accent)] font-semibold">Free</td>
                       <td className="py-2.5 px-3">All users</td>
                       <td className="py-2.5 px-3">-</td>
                     </tr>
                     <tr>
                       <td className="py-2.5 px-3 font-medium">Browsing and searching</td>
-                      <td className="py-2.5 px-3 text-emerald-600 dark:text-emerald-400 font-semibold">Free</td>
+                      <td className="py-2.5 px-3 text-[var(--color-accent)] dark:text-[var(--color-accent)] font-semibold">Free</td>
                       <td className="py-2.5 px-3">All users</td>
                       <td className="py-2.5 px-3">-</td>
                     </tr>
                     <tr>
                       <td className="py-2.5 px-3 font-medium">Messaging</td>
-                      <td className="py-2.5 px-3 text-emerald-600 dark:text-emerald-400 font-semibold">Free</td>
+                      <td className="py-2.5 px-3 text-[var(--color-accent)] dark:text-[var(--color-accent)] font-semibold">Free</td>
                       <td className="py-2.5 px-3">All users</td>
                       <td className="py-2.5 px-3">-</td>
                     </tr>
@@ -145,7 +145,7 @@ export default function AbnTerms() {
                 <li>Accepted payment methods: Visa, Mastercard, American Express (via Stripe)</li>
                 <li>All prices are in <strong>Australian Dollars (AUD)</strong> and include GST where applicable</li>
                 <li>Stripe receipts are emailed automatically after payment</li>
-                <li>Platform fees are generally <strong>non-refundable</strong> once a deal is confirmed (see <Link href="/terms-of-service" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">Terms of Service</Link> section 6)</li>
+                <li>Platform fees are generally <strong>non-refundable</strong> once a deal is confirmed (see <Link href="/terms-of-service" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">Terms of Service</Link> section 6)</li>
                 <li>MigRent does not store full credit card details - all payment data is handled by Stripe</li>
               </ul>
             </div>
@@ -164,14 +164,14 @@ export default function AbnTerms() {
             <h2 className="text-lg font-bold text-slate-900 dark:text-white">Verify Our ABN</h2>
             <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
               <p>You can verify MigRent&apos;s ABN on the Australian Business Register:</p>
-              <a href="https://abr.business.gov.au" target="_blank" rel="noopener noreferrer" className="inline-block text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">abr.business.gov.au</a>
+              <a href="https://abr.business.gov.au" target="_blank" rel="noopener noreferrer" className="inline-block text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">abr.business.gov.au</a>
               <p>Search for ABN: <span className="font-mono font-semibold">22 669 566 941</span></p>
             </div>
           </section>
 
           {/* Legal Disclaimer */}
           <div className="card-subtle p-4 rounded-xl text-xs text-slate-400 dark:text-slate-500 leading-relaxed">
-            <p>For full terms governing your use of MigRent, see our <Link href="/terms-of-service" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">Terms of Service</Link>. Last reviewed: March 2026.</p>
+            <p>For full terms governing your use of MigRent, see our <Link href="/terms-of-service" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">Terms of Service</Link>. Last reviewed: March 2026.</p>
           </div>
 
           {/* CTA */}

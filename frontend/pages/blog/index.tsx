@@ -17,7 +17,7 @@ const categoryColors: Record<BlogCategory, string> = {
   Guide: "bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400",
   Market: "bg-green-50 dark:bg-green-500/10 text-green-600 dark:text-green-400",
   Safety: "bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400",
-  News: "bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400",
+  News: "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary-soft)]0/10 text-[var(--color-primary)] dark:text-[var(--color-primary)]",
   Tips: "bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400",
 };
 
@@ -38,8 +38,8 @@ export default function BlogIndex() {
       <div className="space-y-16">
         {/* Hero */}
         <section className="relative text-center py-20 overflow-hidden">
-          <div className="absolute top-0 left-1/4 w-96 h-96 bg-rose-500/15 dark:bg-rose-500/8 rounded-full blur-3xl animate-pulse" />
-          <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-purple-500/12 dark:bg-purple-500/6 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "1s" }} />
+          <div className="absolute top-0 left-1/4 w-96 h-96 bg-[var(--color-primary)]/15 dark:bg-[var(--color-primary)]/8 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-[var(--color-primary-soft)]0/12 dark:bg-[var(--color-primary-soft)]0/6 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "1s" }} />
 
           <motion.div
             initial={{ opacity: 0, y: 40 }}
@@ -47,13 +47,13 @@ export default function BlogIndex() {
             transition={{ duration: 0.8 }}
             className="relative z-10 max-w-3xl mx-auto"
           >
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-rose-50 dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/20 text-xs font-medium text-rose-600 dark:text-rose-400 mb-6">
-              <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 border border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)] text-xs font-medium text-[var(--color-primary)] dark:text-[var(--color-primary)] mb-6">
+              <span className="w-2 h-2 rounded-full bg-[var(--color-primary)] animate-pulse" />
               MigRent Blog
             </div>
 
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight leading-tight">
-              <span className="bg-gradient-to-r from-rose-500 via-pink-500 to-purple-500 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-[var(--color-primary)] via-[var(--color-primary)] to-[var(--color-primary)] bg-clip-text text-transparent">
                 Tips, News & Stories
               </span>
             </h1>
@@ -70,7 +70,7 @@ export default function BlogIndex() {
                   onClick={() => setActiveCategory(cat)}
                   className={`px-4 py-2 rounded-full text-xs font-medium border transition-all cursor-pointer ${
                     activeCategory === cat
-                      ? "bg-rose-500 text-white border-rose-500"
+                      ? "bg-[var(--color-primary)] text-white border-[var(--color-primary)]"
                       : "bg-white dark:bg-white/5 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-600"
                   }`}
                 >
@@ -100,7 +100,7 @@ export default function BlogIndex() {
                     className="group card rounded-2xl overflow-hidden hover:shadow-lg transition-all duration-300 h-full flex flex-col"
                   >
                     {/* Gradient top bar */}
-                    <div className="h-1.5 bg-gradient-to-r from-rose-500 to-purple-500" />
+                    <div className="h-1.5 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary)]" />
 
                     <div className="p-6 flex flex-col flex-1">
                       <div className="flex items-center gap-2 mb-3">
@@ -110,7 +110,7 @@ export default function BlogIndex() {
                         <span className="text-[10px] text-slate-400 dark:text-slate-500">{post.date}</span>
                       </div>
 
-                      <h3 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-rose-500 dark:group-hover:text-rose-400 transition-colors">
+                      <h3 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-[var(--color-primary)] dark:group-hover:text-[var(--color-primary)] transition-colors">
                         {post.title}
                       </h3>
 
@@ -122,7 +122,7 @@ export default function BlogIndex() {
                         <div className="text-xs text-slate-400 dark:text-slate-500">
                           {post.author} &middot; {post.readTime}
                         </div>
-                        <span className="text-xs font-medium text-rose-500 dark:text-rose-400 group-hover:translate-x-1 transition-transform flex items-center gap-1">
+                        <span className="text-xs font-medium text-[var(--color-primary)] dark:text-[var(--color-primary)] group-hover:translate-x-1 transition-transform flex items-center gap-1">
                           Read
                           <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />

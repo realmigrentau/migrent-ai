@@ -14,8 +14,8 @@ export default function AntiDiscrimination() {
         {/* Hero */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-xl bg-pink-50 dark:bg-pink-500/10 border border-pink-100 dark:border-pink-500/20 flex items-center justify-center">
-              <svg className="w-5 h-5 text-pink-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <div className="w-10 h-10 rounded-xl bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary-soft)]0/10 border border-pink-100 dark:border-[var(--color-primary)]/20 flex items-center justify-center">
+              <svg className="w-5 h-5 text-[var(--color-primary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
               </svg>
             </div>
@@ -58,7 +58,7 @@ export default function AntiDiscrimination() {
                   "Visa or immigration status",
                 ].map((attr) => (
                   <div key={attr} className="card-subtle p-3 rounded-lg flex items-center gap-2">
-                    <svg className="w-4 h-4 text-pink-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <svg className="w-4 h-4 text-[var(--color-primary)] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75" />
                     </svg>
                     <span className="text-sm">{attr}</span>
@@ -103,8 +103,8 @@ export default function AntiDiscrimination() {
             <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
               <p>If you experience discrimination on MigRent:</p>
               <div className="card-subtle p-4 rounded-xl space-y-2">
-                <p><strong className="text-slate-800 dark:text-slate-200">1. Report to MigRent:</strong> Email <a href="mailto:migrentau@gmail.com" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">migrentau@gmail.com</a> with subject &quot;Discrimination Report.&quot; Include screenshots and details. We will investigate within 48 hours.</p>
-                <p><strong className="text-slate-800 dark:text-slate-200">2. Australian Human Rights Commission:</strong> You can lodge a formal complaint at <a href="https://humanrights.gov.au/complaints" target="_blank" rel="noopener noreferrer" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">humanrights.gov.au</a></p>
+                <p><strong className="text-slate-800 dark:text-slate-200">1. Report to MigRent:</strong> Email <a href="mailto:migrentau@gmail.com" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">migrentau@gmail.com</a> with subject &quot;Discrimination Report.&quot; Include screenshots and details. We will investigate within 48 hours.</p>
+                <p><strong className="text-slate-800 dark:text-slate-200">2. Australian Human Rights Commission:</strong> You can lodge a formal complaint at <a href="https://humanrights.gov.au/complaints" target="_blank" rel="noopener noreferrer" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">humanrights.gov.au</a></p>
                 <p><strong className="text-slate-800 dark:text-slate-200">3. State anti-discrimination body:</strong> Each state has its own body (e.g., Anti-Discrimination NSW, Victorian Equal Opportunity and Human Rights Commission)</p>
               </div>
             </div>
@@ -131,7 +131,7 @@ export default function AntiDiscrimination() {
           </div>
 
           {/* CTA */}
-          <div className="card p-6 rounded-2xl bg-gradient-to-br from-pink-50 to-pink-100/50 dark:from-pink-500/10 dark:to-pink-600/5 border-pink-200 dark:border-pink-500/20 text-center">
+          <div className="card p-6 rounded-2xl bg-gradient-to-br from-pink-50 to-pink-100/50 dark:from-[var(--color-primary)]/10 dark:to-pink-600/5 border-[var(--color-primary-soft)] dark:border-[var(--color-primary)]/20 text-center">
             <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Experienced discrimination?</h3>
             <p className="text-sm text-slate-600 dark:text-slate-300 mb-4">We take every report seriously. Let us know.</p>
             <a href="mailto:migrentau@gmail.com?subject=Discrimination%20Report">

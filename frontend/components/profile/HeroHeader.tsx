@@ -53,7 +53,7 @@ export default function HeroHeader({
             {/* Verified heart */}
             {isVerified && (
               <div className="absolute -bottom-1 -right-1 w-9 h-9 bg-white rounded-full p-1 shadow-lg">
-                <div className="w-full h-full rounded-full bg-gradient-to-br from-rose-400 to-rose-500 flex items-center justify-center">
+                <div className="w-full h-full rounded-full bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center">
                   <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                   </svg>

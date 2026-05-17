@@ -6,15 +6,15 @@ const highlights = [
     icon: Shield,
     label: "Verified hosts and seekers",
     desc: "Every user goes through identity verification",
-    color: "text-emerald-500",
-    bg: "bg-emerald-100 dark:bg-emerald-500/20",
+    color: "text-[var(--color-accent)]",
+    bg: "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/20",
   },
   {
     icon: Sparkles,
     label: "AI-powered matching",
     desc: "Find rooms that fit your visa, budget, and location",
-    color: "text-indigo-500",
-    bg: "bg-indigo-100 dark:bg-indigo-500/20",
+    color: "text-[var(--color-primary)]",
+    bg: "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/20",
   },
   {
     icon: Clock,
@@ -27,8 +27,8 @@ const highlights = [
     icon: DollarSign,
     label: "Transparent pricing",
     desc: "No hidden fees - one-time listing fee only",
-    color: "text-pink-500",
-    bg: "bg-pink-100 dark:bg-pink-500/20",
+    color: "text-[var(--color-primary)]",
+    bg: "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary-soft)]0/20",
   },
 ];
 

@@ -9,7 +9,7 @@ import { getGuideById, getAllGuides } from "../../data/guidesContent";
 const difficultyColors: Record<string, string> = {
   Beginner: "bg-green-50 dark:bg-green-500/10 text-green-600 dark:text-green-400",
   Intermediate: "bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400",
-  Advanced: "bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400",
+  Advanced: "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary-soft)]0/10 text-[var(--color-primary)] dark:text-[var(--color-primary)]",
 };
 
 export default function GuidePage() {

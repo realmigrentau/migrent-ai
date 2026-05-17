@@ -23,12 +23,12 @@ function MarqueeCard({ listing }: { listing: MarqueeListing }) {
             loading="lazy"
           />
           {listing.superhost && (
-            <span className="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded-md bg-rose-500 text-white text-[9px] font-bold uppercase tracking-wide shadow-sm">
+            <span className="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded-md bg-[var(--color-primary)] text-white text-[9px] font-bold uppercase tracking-wide shadow-sm">
               Superhost
             </span>
           )}
           {listing.ownerVerified && !listing.superhost && (
-            <span className="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded-md bg-emerald-500 text-white text-[9px] font-bold uppercase tracking-wide shadow-sm">
+            <span className="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded-md bg-[var(--color-accent-soft)]0 text-white text-[9px] font-bold uppercase tracking-wide shadow-sm">
               Verified
             </span>
           )}
@@ -50,10 +50,10 @@ function MarqueeCard({ listing }: { listing: MarqueeListing }) {
 
             {/* Price */}
             <div className="mt-0.5">
-              <span className="text-sm font-bold text-rose-600 dark:text-rose-400">
+              <span className="text-sm font-bold text-[var(--color-primary)] dark:text-[var(--color-primary)]">
                 ${listing.weeklyPrice}
               </span>
-              <span className="text-[10px] text-rose-400 dark:text-rose-500">/wk</span>
+              <span className="text-[10px] text-[var(--color-primary)] dark:text-[var(--color-primary)]">/wk</span>
             </div>
 
             {/* Title */}

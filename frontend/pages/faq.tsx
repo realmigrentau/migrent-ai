@@ -180,7 +180,7 @@ export default function FAQ() {
 
           {filteredCategories.length === 0 && (
             <div className="text-center py-12">
-              <p className="text-slate-500 dark:text-slate-400 text-sm">{t("faq.noResults")} <Link href="/contact" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">{t("faq.contactUs")}</Link>.</p>
+              <p className="text-slate-500 dark:text-slate-400 text-sm">{t("faq.noResults")} <Link href="/contact" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">{t("faq.contactUs")}</Link>.</p>
             </div>
           )}
 

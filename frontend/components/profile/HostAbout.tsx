@@ -42,7 +42,7 @@ export default function HostAbout({ profile }: HostAboutProps) {
             {isLongBio && (
               <button
                 onClick={() => setExpanded(!expanded)}
-                className="mt-2 text-sm font-semibold text-slate-900 dark:text-white underline underline-offset-4 hover:text-rose-500 dark:hover:text-rose-400 transition-colors"
+                className="mt-2 text-sm font-semibold text-slate-900 dark:text-white underline underline-offset-4 hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] transition-colors"
               >
                 {expanded ? "Show less" : "Read more"}
               </button>
@@ -71,12 +71,12 @@ export default function HostAbout({ profile }: HostAboutProps) {
       {profile.most_useless_skill && (
         <motion.div
           whileHover={{ scale: 1.01 }}
-          className="flex items-start gap-3 p-4 rounded-2xl bg-purple-50 dark:bg-purple-500/10 border border-purple-100 dark:border-purple-500/20"
+          className="flex items-start gap-3 p-4 rounded-2xl bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary-soft)]0/10 border border-purple-100 dark:border-[var(--color-primary)]/20"
         >
           <span className="text-2xl">🎯</span>
           <div>
-            <p className="text-xs font-semibold text-purple-500 dark:text-purple-400 uppercase tracking-wider">Most useless skill</p>
-            <p className="text-sm text-purple-700 dark:text-purple-300 mt-0.5">{profile.most_useless_skill}</p>
+            <p className="text-xs font-semibold text-[var(--color-primary)] dark:text-[var(--color-primary)] uppercase tracking-wider">Most useless skill</p>
+            <p className="text-sm text-primary-700 dark:text-purple-300 mt-0.5">{profile.most_useless_skill}</p>
           </div>
         </motion.div>
       )}
@@ -105,7 +105,7 @@ export default function HostAbout({ profile }: HostAboutProps) {
               <motion.span
                 key={item}
                 whileHover={{ scale: 1.05, y: -1 }}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm bg-rose-50 dark:bg-rose-500/10 text-rose-700 dark:text-rose-300 border border-rose-100 dark:border-rose-500/20 cursor-default"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 text-[var(--color-primary)] dark:text-[var(--color-primary)] border border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)] cursor-default"
               >
                 <span>{interestIcons[item] || "•"}</span>
                 {item}

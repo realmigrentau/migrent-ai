@@ -145,7 +145,7 @@ export default function ProfileForm({
       <div className="card p-5 rounded-2xl">
         <div className="flex flex-col sm:flex-row items-center gap-5">
           <div className="relative group">
-            <div className="w-24 h-24 rounded-2xl overflow-hidden bg-gradient-to-br from-rose-400 to-indigo-500 shadow-xl">
+            <div className="w-24 h-24 rounded-2xl overflow-hidden bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary)] shadow-xl">
               {avatarUrl ? (
                 <img src={avatarUrl} alt="Profile" className="w-full h-full object-cover" />
               ) : (
@@ -187,7 +187,7 @@ export default function ProfileForm({
       {/* About Me */}
       <div className="card p-5 rounded-2xl">
         <div className="flex items-start gap-4 mb-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-400 to-pink-500 flex items-center justify-center shadow-lg shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center shadow-lg shrink-0">
             <Pen className="w-5 h-5 text-white" />
           </div>
           <div>
@@ -214,7 +214,7 @@ export default function ProfileForm({
       {/* Occupation */}
       <div className="card p-5 rounded-2xl">
         <div className="flex items-start gap-4">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center shadow-lg shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-400 to-[var(--color-primary)] flex items-center justify-center shadow-lg shrink-0">
             <Briefcase className="w-5 h-5 text-white" />
           </div>
           <div className="flex-1">
@@ -235,7 +235,7 @@ export default function ProfileForm({
       {/* Interests */}
       <div className="card p-5 rounded-2xl">
         <div className="flex items-start gap-4 mb-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shadow-lg shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--color-accent)] to-teal-500 flex items-center justify-center shadow-lg shrink-0">
             <Heart className="w-5 h-5 text-white" />
           </div>
           <div className="flex-1">
@@ -246,7 +246,7 @@ export default function ProfileForm({
               </div>
               <button
                 onClick={() => setShowInterestsModal(true)}
-                className="flex items-center gap-1 text-xs text-rose-500 hover:text-rose-600 font-medium"
+                className="flex items-center gap-1 text-xs text-[var(--color-primary)] hover:text-[var(--color-primary)] font-medium"
               >
                 <Plus className="w-3.5 h-3.5" /> Edit
               </button>
@@ -258,7 +258,7 @@ export default function ProfileForm({
             interests.map((interest) => (
               <span
                 key={interest}
-                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium bg-gradient-to-r from-rose-50 to-pink-50 dark:from-rose-500/10 dark:to-pink-500/10 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-500/20"
+                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium bg-gradient-to-r from-[var(--color-primary-soft)] to-pink-50 dark:from-[var(--color-primary)]/10 dark:to-[var(--color-primary)]/10 text-[var(--color-primary)] dark:text-[var(--color-primary)] border border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)]"
               >
                 {interest}
                 <button onClick={() => toggleInterest(interest)} className="hover:text-rose-900">
@@ -287,7 +287,7 @@ export default function ProfileForm({
                 </div>
                 <button
                   onClick={() => setShowLifestyleModal(true)}
-                  className="flex items-center gap-1 text-xs text-rose-500 hover:text-rose-600 font-medium"
+                  className="flex items-center gap-1 text-xs text-[var(--color-primary)] hover:text-[var(--color-primary)] font-medium"
                 >
                   <Plus className="w-3.5 h-3.5" /> Edit
                 </button>
@@ -338,7 +338,7 @@ export default function ProfileForm({
       {/* Social Links */}
       <div className="card p-5 rounded-2xl">
         <div className="flex items-start gap-4 mb-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-400 to-blue-500 flex items-center justify-center shadow-lg shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-400 to-[var(--color-primary)] flex items-center justify-center shadow-lg shrink-0">
             <Globe className="w-5 h-5 text-white" />
           </div>
           <div>
@@ -396,7 +396,7 @@ export default function ProfileForm({
         <button
           onClick={handleSave}
           disabled={saving || !hasChanges}
-          className="w-full btn-primary py-3.5 rounded-2xl text-sm font-semibold flex items-center justify-center gap-2 shadow-xl shadow-rose-500/20 disabled:opacity-50"
+          className="w-full btn-primary py-3.5 rounded-2xl text-sm font-semibold flex items-center justify-center gap-2 shadow-xl shadow-[var(--color-primary)]/20 disabled:opacity-50"
         >
           <Save className="w-4 h-4" />
           {saving ? "Saving..." : "Save Profile Changes"}
@@ -436,8 +436,8 @@ export default function ProfileForm({
                         onClick={() => toggleInterest(opt)}
                         className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${
                           selected
-                            ? "bg-rose-500 text-white border-rose-500 shadow-md"
-                            : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-rose-300 dark:hover:border-rose-500/30"
+                            ? "bg-[var(--color-primary)] text-white border-[var(--color-primary)] shadow-md"
+                            : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-[var(--color-line-2)] dark:hover:border-[var(--color-primary)]/30"
                         }`}
                       >
                         {opt}

@@ -159,7 +159,7 @@ export default function AuthCallback() {
     <div className="min-h-[70vh] flex items-center justify-center px-4">
       {/* Floating shapes */}
       <div className="fixed top-20 left-20 w-96 h-96 bg-blue-500/10 dark:bg-blue-500/5 rounded-full blur-3xl" />
-      <div className="fixed bottom-20 right-20 w-96 h-96 bg-indigo-500/10 dark:bg-indigo-500/5 rounded-full blur-3xl" />
+      <div className="fixed bottom-20 right-20 w-96 h-96 bg-[var(--color-primary)]/10 dark:bg-[var(--color-primary)]/5 rounded-full blur-3xl" />
 
       <motion.div
         initial={{ opacity: 0, y: 30, scale: 0.96 }}
@@ -171,7 +171,7 @@ export default function AuthCallback() {
           <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-400/50 to-transparent rounded-t-2xl" />
 
           <div className="text-center">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-black text-lg mx-auto mb-4">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center text-white font-black text-lg mx-auto mb-4">
               M
             </div>
 

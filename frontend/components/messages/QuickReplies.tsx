@@ -37,7 +37,7 @@ export default function QuickReplies({ onSelect, expanded: initialExpanded }: Qu
       {/* Toggle button */}
       <button
         onClick={() => setExpanded(!expanded)}
-        className="flex items-center gap-1.5 text-[11px] font-semibold text-indigo-500 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors mb-1.5 px-1"
+        className="flex items-center gap-1.5 text-[11px] font-semibold text-[var(--color-primary)] dark:text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] transition-colors mb-1.5 px-1"
       >
         <Zap className="w-3 h-3" />
         Quick replies
@@ -64,7 +64,7 @@ export default function QuickReplies({ onSelect, expanded: initialExpanded }: Qu
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => onSelect(template.text)}
-                  className="px-3 py-1.5 rounded-full text-[11px] font-semibold bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-500/20 transition-all border border-indigo-200/50 dark:border-indigo-500/20"
+                  className="px-3 py-1.5 rounded-full text-[11px] font-semibold bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 text-[var(--color-primary)] dark:text-[var(--color-primary)] hover:bg-[var(--color-primary-soft)] dark:hover:bg-[var(--color-primary)]/20 transition-all border border-[var(--color-primary-soft)]/50 dark:border-[var(--color-primary-soft)]"
                   title={template.text}
                 >
                   {template.label}

@@ -11,7 +11,7 @@ const ListingsMap = dynamic(() => import("../../components/ListingsMap"), {
   ssr: false,
   loading: () => (
     <div className="w-full h-full flex items-center justify-center bg-slate-50 dark:bg-slate-800/50">
-      <div className="w-6 h-6 border-2 border-rose-500 border-t-transparent rounded-full animate-spin" />
+      <div className="w-6 h-6 border-2 border-[var(--color-accent)] border-t-transparent rounded-full animate-spin" />
     </div>
   ),
 });
@@ -95,9 +95,9 @@ function mapListingData(l: any): Listing {
 // Filter chip - shown when a filter is active
 function FilterChip({ label, onRemove }: { label: string; onRemove: () => void }) {
   return (
-    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-500/20">
+    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-[var(--color-primary-soft)] text-[var(--color-primary)] border border-[var(--color-primary-soft)]">
       {label}
-      <button onClick={onRemove} className="ml-0.5 hover:text-rose-800 dark:hover:text-rose-300 transition-colors">
+      <button onClick={onRemove} className="ml-0.5 hover:text-[var(--color-ink)] transition-colors">
         <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
         </svg>
@@ -144,8 +144,8 @@ function TogglePill({ active, onClick, label }: { active: boolean; onClick: () =
       onClick={onClick}
       className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
         active
-          ? "bg-rose-500 text-white shadow-sm"
-          : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"
+          ? "bg-[var(--color-ink)] text-[var(--color-bg)] shadow-sm"
+          : "bg-[var(--color-surface-sunk)] text-[var(--color-ink-2)] hover:bg-[var(--color-line)]"
       }`}
     >
       {label}
@@ -501,8 +501,8 @@ export default function SeekerSearch() {
         <button key={day} onClick={() => handleDateClick(day)} disabled={isPast}
           className={`w-10 h-10 rounded-full text-sm font-medium transition-all ${
             isPast ? "text-slate-300 dark:text-slate-600 cursor-not-allowed"
-            : selected ? "bg-rose-500 text-white"
-            : inRange ? "bg-rose-100 dark:bg-rose-500/20 text-rose-600 dark:text-rose-400"
+            : selected ? "bg-[var(--color-ink)] text-[var(--color-bg)]"
+            : inRange ? "bg-[var(--color-surface-sunk)] text-[var(--color-ink)]"
             : "text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
           }`}
         >{day}</button>
@@ -531,20 +531,20 @@ export default function SeekerSearch() {
         <div className="space-y-3">
           <div className="flex flex-wrap gap-1.5">
             <button onClick={handleUseLocation}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 ${searchType === "nearMe" ? "bg-rose-500 text-white" : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"}`}>
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 ${searchType === "nearMe" ? "bg-[var(--color-ink)] text-[var(--color-bg)]" : "bg-[var(--color-surface-sunk)] text-[var(--color-ink-2)] hover:bg-[var(--color-line)]"}`}>
               {locationLoading ? <span className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" /> :
                 <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>}
               Near me
             </button>
             {(["suburb", "postcode", "address"] as const).map((t) => (
               <button key={t} onClick={() => setSearchType(t)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all capitalize ${searchType === t ? "bg-rose-500 text-white" : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"}`}>
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all capitalize ${searchType === t ? "bg-[var(--color-ink)] text-[var(--color-bg)]" : "bg-[var(--color-surface-sunk)] text-[var(--color-ink-2)] hover:bg-[var(--color-line)]"}`}>
                 {t === "address" ? "Address" : t === "suburb" ? "Suburb" : "Postcode"}
               </button>
             ))}
           </div>
           {searchType === "nearMe" && userLocation && (
-            <p className="text-xs text-emerald-600 dark:text-emerald-400 flex items-center gap-1"><span>&#10003;</span> Using your location</p>
+            <p className="text-xs text-[var(--color-accent)] dark:text-[var(--color-accent)] flex items-center gap-1"><span>&#10003;</span> Using your location</p>
           )}
           {searchType === "nearMe" && locationError && <p className="text-xs text-red-500">{locationError}</p>}
           {searchType === "suburb" && (
@@ -667,7 +667,7 @@ export default function SeekerSearch() {
               <span className="text-[11px] text-slate-500 dark:text-slate-400 self-center mr-0.5">Walk:</span>
               {(["15", "30", "any"] as const).map((val) => (
                 <button key={val} onClick={() => setStationDistanceFilter(val)}
-                  className={`px-2.5 py-1 rounded-lg text-[11px] font-medium transition-all ${stationDistanceFilter === val ? "bg-emerald-500 text-white shadow-sm" : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"}`}>
+                  className={`px-2.5 py-1 rounded-lg text-[11px] font-medium transition-all ${stationDistanceFilter === val ? "bg-[var(--color-accent-soft)]0 text-white shadow-sm" : "bg-[var(--color-surface-sunk)] text-[var(--color-ink-2)] hover:bg-[var(--color-line)]"}`}>
                   {val === "15" ? "< 15 min" : val === "30" ? "< 30 min" : "Any"}
                 </button>
               ))}
@@ -781,7 +781,7 @@ export default function SeekerSearch() {
                 <h2 className="font-bold text-lg text-slate-900 dark:text-white">Filters</h2>
                 <div className="flex items-center gap-3">
                   {activeFilters.length > 0 && (
-                    <button onClick={clearAllFilters} className="text-xs text-rose-500 hover:text-rose-600 font-medium">Clear all</button>
+                    <button onClick={clearAllFilters} className="text-xs text-[var(--color-ink)] hover:opacity-80 font-medium">Clear all</button>
                   )}
                   <button onClick={() => setShowMobileFilters(false)} className="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
                     <svg className="w-5 h-5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -804,7 +804,7 @@ export default function SeekerSearch() {
           {activeFilters.map((f, i) => (
             <FilterChip key={i} label={f.label} onRemove={f.clear} />
           ))}
-          <button onClick={clearAllFilters} className="text-xs text-rose-500 hover:text-rose-600 font-medium ml-1">
+          <button onClick={clearAllFilters} className="text-xs text-[var(--color-ink)] hover:opacity-80 font-medium ml-1">
             Clear all
           </button>
         </motion.div>
@@ -815,7 +815,7 @@ export default function SeekerSearch() {
         <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }}
           className="text-xs text-slate-500 dark:text-slate-400 -mt-2">
           Listings ranked by how well they fit your saved preferences. Scores are based on location, budget, and features - not guesswork.
-          {" "}<Link href="/seeker/profile" className="text-rose-500 hover:underline font-medium">Update your preferences</Link>
+          {" "}<Link href="/seeker/profile" className="text-[var(--color-primary)] hover:underline font-medium">Update your preferences</Link>
         </motion.p>
       )}
 
@@ -835,7 +835,7 @@ export default function SeekerSearch() {
             </select>
             <button
               onClick={() => setShowMap(!showMap)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-[var(--color-surface-sunk)] text-[var(--color-ink-2)] hover:bg-[var(--color-line)] transition-colors"
             >
               <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 {showMap ? (
@@ -865,11 +865,11 @@ export default function SeekerSearch() {
           {/* Best match prompts */}
           {isBestMatch && !session && (
             <motion.div initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }}
-              className="mb-4 p-4 rounded-xl border border-rose-200 dark:border-rose-500/30 bg-rose-50 dark:bg-rose-500/10 flex items-start gap-3">
-              <svg className="w-5 h-5 text-rose-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+              className="mb-4 p-4 rounded-xl border border-[var(--color-line)] bg-[var(--color-primary-soft)] flex items-start gap-3">
+              <svg className="w-5 h-5 text-[var(--color-primary)] shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
               <div>
-                <p className="text-sm font-semibold text-rose-700 dark:text-rose-400">Sign in for personalised matches</p>
-                <p className="text-xs text-rose-600/80 dark:text-rose-400/70 mt-0.5">Add your budget and suburb to your profile and we will rank listings that suit you first.</p>
+                <p className="text-sm font-semibold text-[var(--color-primary)]">Sign in for personalised matches</p>
+                <p className="text-xs text-[var(--color-ink-2)] mt-0.5">Add your budget and suburb to your profile and we will rank listings that suit you first.</p>
               </div>
             </motion.div>
           )}
@@ -922,7 +922,7 @@ export default function SeekerSearch() {
                               setSuburbName(s);
                               setTimeout(() => doSearch(true), 100);
                             }}
-                            className="px-3 py-1.5 rounded-full text-xs bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-500/20 transition-colors">
+                            className="px-3 py-1.5 rounded-full text-xs bg-[var(--color-primary-soft)] text-[var(--color-primary)] hover:bg-[var(--color-line-2)] transition-colors">
                             {s}
                           </button>
                         ))}
@@ -959,14 +959,14 @@ export default function SeekerSearch() {
                           {/* Save */}
                           <button onClick={(e) => { e.preventDefault(); toggleSave(listing.id); }}
                             className="absolute top-3 left-3 w-8 h-8 rounded-full bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm flex items-center justify-center transition-colors hover:bg-white dark:hover:bg-slate-900">
-                            <svg className={`w-4 h-4 ${saved.has(listing.id) ? "text-rose-500 fill-rose-500" : "text-slate-600 dark:text-slate-300"}`}
+                            <svg className={`w-4 h-4 ${saved.has(listing.id) ? "text-[var(--color-coral-500)] fill-[var(--color-coral-500)]" : "text-[var(--color-ink-2)]"}`}
                               fill={saved.has(listing.id) ? "currentColor" : "none"} viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                               <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                             </svg>
                           </button>
                           {/* Instant book badge */}
                           {listing.instantBook && (
-                            <div className="absolute bottom-3 left-3 px-2 py-1 rounded-md bg-emerald-500/90 backdrop-blur-sm text-white text-xs font-semibold flex items-center gap-1">
+                            <div className="absolute bottom-3 left-3 px-2 py-1 rounded-md bg-[var(--color-accent-soft)]0/90 backdrop-blur-sm text-white text-xs font-semibold flex items-center gap-1">
                               <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
                               Instant
                             </div>
@@ -983,9 +983,9 @@ export default function SeekerSearch() {
                           <div className="flex flex-wrap gap-1">
                             <span className="px-2 py-0.5 rounded-full text-[11px] bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 capitalize">{listing.roomType}</span>
                             {listing.furnished && <span className="px-2 py-0.5 rounded-full text-[11px] bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400">Furnished</span>}
-                            {listing.billsIncluded && <span className="px-2 py-0.5 rounded-full text-[11px] bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400">Bills incl.</span>}
-                            {listing.verified && <span className="px-2 py-0.5 rounded-full text-[11px] bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">&#10003; Verified</span>}
-                            {listing.genderPreference === "female" && <span className="px-2 py-0.5 rounded-full text-[11px] bg-pink-50 dark:bg-pink-500/10 text-pink-600 dark:text-pink-400">Female only</span>}
+                            {listing.billsIncluded && <span className="px-2 py-0.5 rounded-full text-[11px] bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary-soft)]0/10 text-[var(--color-primary)] dark:text-[var(--color-primary)]">Bills incl.</span>}
+                            {listing.verified && <span className="px-2 py-0.5 rounded-full text-[11px] bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 text-[var(--color-accent)] dark:text-[var(--color-accent)]">&#10003; Verified</span>}
+                            {listing.genderPreference === "female" && <span className="px-2 py-0.5 rounded-full text-[11px] bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary-soft)]0/10 text-[var(--color-primary)] dark:text-[var(--color-primary)]">Female only</span>}
                             {listing.petsAllowed && <span className="px-2 py-0.5 rounded-full text-[11px] bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400">Pets OK</span>}
                             {listing.parking && <span className="px-2 py-0.5 rounded-full text-[11px] bg-cyan-50 dark:bg-cyan-500/10 text-cyan-600 dark:text-cyan-400">Parking</span>}
                           </div>
@@ -996,18 +996,18 @@ export default function SeekerSearch() {
                               <div className="flex items-center gap-2">
                                 <div className="flex-1 h-1.5 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
                                   <div
-                                    className={`h-full rounded-full transition-all ${listing.matchScore >= 80 ? "bg-rose-500" : listing.matchScore >= 60 ? "bg-amber-400" : "bg-slate-400"}`}
+                                    className={`h-full rounded-full transition-all ${listing.matchScore >= 80 ? "bg-[var(--color-accent)]" : listing.matchScore >= 60 ? "bg-[var(--color-warn-500)]" : "bg-[var(--color-line-2)]"}`}
                                     style={{ width: `${listing.matchScore}%` }}
                                   />
                                 </div>
-                                <span className={`text-[11px] font-semibold whitespace-nowrap ${listing.matchScore >= 80 ? "text-rose-600 dark:text-rose-400" : listing.matchScore >= 60 ? "text-amber-600 dark:text-amber-400" : "text-slate-500"}`}>
+                                <span className={`text-[11px] font-semibold whitespace-nowrap ${listing.matchScore >= 80 ? "text-[var(--color-accent)]" : listing.matchScore >= 60 ? "text-[var(--color-warn-500)]" : "text-[var(--color-ink-3)]"}`}>
                                   {listing.matchScore >= 80 ? "Strong match" : listing.matchScore >= 60 ? "Good match" : "Possible match"}
                                 </span>
                               </div>
                               {listing.matchReasons && listing.matchReasons.length > 0 && (
                                 <div className="flex flex-wrap gap-1">
                                   {listing.matchReasons.map((reason, ri) => (
-                                    <span key={ri} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400">
+                                    <span key={ri} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] bg-[var(--color-primary-soft)] text-[var(--color-primary)]">
                                       <svg className="w-2.5 h-2.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
                                       {reason}
                                     </span>
@@ -1020,7 +1020,7 @@ export default function SeekerSearch() {
                           {listing.stationName && listing.stationWalkMin != null && (
                             <div className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full ${
                               listing.stationWalkMin <= 15
-                                ? "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+                                ? "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 text-[var(--color-accent)] dark:text-[var(--color-accent)]"
                                 : "bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400"
                             }`}>
                               <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M8 7h8m-8 4h4m4-8H6a2 2 0 00-2 2v14l4-3h10a2 2 0 002-2V5a2 2 0 00-2-2z" /></svg>
@@ -1028,7 +1028,7 @@ export default function SeekerSearch() {
                             </div>
                           )}
                           {!listing.billsIncluded && (
-                            <p className="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium">~${(listing.weeklyPrice || 0) + 50}/wk total with bills + transport</p>
+                            <p className="text-[11px] text-[var(--color-accent)] dark:text-[var(--color-accent)] font-medium">~${(listing.weeklyPrice || 0) + 50}/wk total with bills + transport</p>
                           )}
                           <Link href={`/listing/${listing.id}`} className="btn-primary py-2 px-4 rounded-lg text-xs w-full text-center block">
                             View details
@@ -1046,7 +1046,7 @@ export default function SeekerSearch() {
                         className="btn-secondary px-8 py-3 rounded-xl text-sm font-semibold">
                         {loadingMore ? (
                           <span className="flex items-center justify-center gap-2">
-                            <span className="w-4 h-4 border-2 border-rose-500/30 border-t-rose-500 rounded-full animate-spin" />
+                            <span className="w-4 h-4 border-2 border-[var(--color-ink)]/20 border-t-[var(--color-ink)] rounded-full animate-spin" />
                             Loading...
                           </span>
                         ) : "Load more rooms"}
@@ -1069,7 +1069,7 @@ export default function SeekerSearch() {
                       <p className="text-sm font-bold text-slate-900 dark:text-white">Wishlist</p>
                       <p className="text-xs text-slate-500 dark:text-slate-400">{saved.size} saved items</p>
                       <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800">
-                        <span className="text-xs text-rose-500 hover:text-rose-600 font-semibold">View all &rarr;</span>
+                        <span className="text-xs text-[var(--color-ink)] hover:opacity-80 font-semibold">View all &rarr;</span>
                       </div>
                     </Link>
                   )}

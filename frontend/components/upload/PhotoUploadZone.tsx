@@ -149,8 +149,8 @@ export default function PhotoUploadZone({
           transition-all duration-300 group
           ${
             isDragging
-              ? "border-rose-400 dark:border-rose-500 bg-rose-50/50 dark:bg-rose-500/10 photo-drop-glow"
-              : "border-slate-300 dark:border-slate-600 hover:border-rose-400 dark:hover:border-rose-500/40"
+              ? "border-[var(--color-line-2)] dark:border-[var(--color-primary)] bg-[var(--color-primary-soft)]/50 dark:bg-[var(--color-primary)]/10 photo-drop-glow"
+              : "border-slate-300 dark:border-slate-600 hover:border-[var(--color-line-2)] dark:hover:border-[var(--color-primary)]/40"
           }
           ${photos.length >= maxFiles ? "opacity-50 pointer-events-none" : ""}
         `}
@@ -163,15 +163,15 @@ export default function PhotoUploadZone({
             className={`w-16 h-16 mx-auto mb-4 rounded-2xl flex items-center justify-center transition-all duration-300
             ${
               isDragging
-                ? "bg-rose-100 dark:bg-rose-500/20 scale-110"
-                : "bg-slate-100 dark:bg-slate-800 group-hover:bg-rose-50 dark:group-hover:bg-rose-500/10"
+                ? "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/20 scale-110"
+                : "bg-slate-100 dark:bg-slate-800 group-hover:bg-[var(--color-primary-soft)] dark:group-hover:bg-[var(--color-primary)]/10"
             }`}
           >
             <svg
               className={`w-8 h-8 transition-colors duration-300 ${
                 isDragging
-                  ? "text-rose-500"
-                  : "text-slate-400 dark:text-slate-500 group-hover:text-rose-400"
+                  ? "text-[var(--color-primary)]"
+                  : "text-slate-400 dark:text-slate-500 group-hover:text-[var(--color-primary)]"
               }`}
               fill="none"
               viewBox="0 0 24 24"
@@ -195,7 +195,7 @@ export default function PhotoUploadZone({
             or click to browse - JPG, PNG, WebP up to 10MB each
           </p>
           {photos.length > 0 && (
-            <p className="text-xs text-rose-500 dark:text-rose-400 mt-2 font-medium">
+            <p className="text-xs text-[var(--color-primary)] dark:text-[var(--color-primary)] mt-2 font-medium">
               {photos.length}/{maxFiles} photos added
             </p>
           )}
@@ -271,10 +271,10 @@ export default function PhotoUploadZone({
                   bg-slate-100 dark:bg-slate-800 border-2 transition-all
                   ${
                     dragOverIndex === index
-                      ? "border-rose-400 dark:border-rose-500 scale-105"
+                      ? "border-[var(--color-line-2)] dark:border-[var(--color-primary)] scale-105"
                       : "border-transparent"
                   }
-                  ${index === 0 ? "ring-2 ring-rose-400 dark:ring-rose-500 ring-offset-2 ring-offset-white dark:ring-offset-slate-900" : ""}
+                  ${index === 0 ? "ring-2 ring-[var(--color-primary)] dark:ring-[var(--color-primary)] ring-offset-2 ring-offset-white dark:ring-offset-slate-900" : ""}
                 `}
               >
                 <img
@@ -286,7 +286,7 @@ export default function PhotoUploadZone({
 
                 {/* Hero badge */}
                 {index === 0 && (
-                  <div className="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded-md bg-rose-500 text-white text-[10px] font-bold">
+                  <div className="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded-md bg-[var(--color-primary)] text-white text-[10px] font-bold">
                     HERO
                   </div>
                 )}
@@ -333,7 +333,7 @@ export default function PhotoUploadZone({
 
                 {/* Done overlay */}
                 {photo.status === "done" && (
-                  <div className="absolute bottom-1.5 right-1.5 w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center">
+                  <div className="absolute bottom-1.5 right-1.5 w-5 h-5 rounded-full bg-[var(--color-accent-soft)]0 flex items-center justify-center">
                     <svg
                       className="w-3 h-3 text-white"
                       fill="none"
@@ -423,7 +423,7 @@ export default function PhotoUploadZone({
         <motion.div
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex items-center gap-2 text-sm text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 rounded-xl px-4 py-3"
+          className="flex items-center gap-2 text-sm text-[var(--color-accent)] dark:text-[var(--color-accent)] bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 border border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)] rounded-xl px-4 py-3"
         >
           <svg
             className="w-5 h-5 flex-shrink-0"

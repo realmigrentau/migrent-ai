@@ -1,7 +1,7 @@
 import { ButtonHTMLAttributes, forwardRef, ReactNode } from 'react';
 import { cn } from '@/lib/cn';
 
-type Variant = 'primary' | 'secondary' | 'ghost' | 'destructive';
+type Variant = 'primary' | 'secondary' | 'ghost' | 'destructive' | 'accent' | 'link';
 type Size = 'sm' | 'md' | 'lg';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -14,23 +14,27 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const base =
-  'inline-flex items-center justify-center gap-2 font-medium rounded-[10px] transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-white disabled:opacity-50 disabled:cursor-not-allowed select-none';
+  'inline-flex items-center justify-center gap-2 font-semibold tracking-[-0.005em] transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-bg)] focus-visible:ring-[var(--color-ink)] disabled:opacity-45 disabled:cursor-not-allowed select-none whitespace-nowrap';
 
 const variants: Record<Variant, string> = {
   primary:
-    'bg-rose-600 text-white hover:bg-rose-700 active:bg-rose-800 focus-visible:ring-rose-600',
+    'bg-[var(--color-primary)] text-[var(--color-primary-fg)] hover:bg-[var(--color-primary-500)] active:bg-[var(--color-primary-700)]',
   secondary:
-    'bg-white text-slate-900 border border-slate-200 hover:bg-slate-50 hover:border-slate-300 focus-visible:ring-slate-400',
+    'bg-[var(--color-surface-2)] text-[var(--color-ink)] border border-[var(--color-line-2)] hover:bg-[var(--color-surface)] hover:border-[var(--color-ink-3)]',
   ghost:
-    'bg-transparent text-slate-700 hover:bg-slate-100 focus-visible:ring-slate-400',
+    'bg-transparent text-[var(--color-ink)] hover:bg-[var(--color-surface-sunk)]',
   destructive:
-    'bg-red-600 text-white hover:bg-red-700 focus-visible:ring-red-600',
+    'bg-[var(--color-danger-500)] text-white hover:opacity-90',
+  accent:
+    'bg-[var(--color-accent)] text-[var(--color-accent-fg)] hover:bg-[var(--color-accent-600)]',
+  link:
+    'bg-transparent text-[var(--color-ink)] hover:underline underline-offset-[3px] decoration-[1.5px] !px-0',
 };
 
 const sizes: Record<Size, string> = {
-  sm: 'h-9 px-3 text-sm',
-  md: 'h-10 px-4 text-[15px]',
-  lg: 'h-11 px-5 text-[15px]',
+  sm: 'h-[30px] px-3 text-[13px] rounded-[6px]',
+  md: 'h-[38px] px-4 text-[14px] rounded-[10px]',
+  lg: 'h-[46px] px-5 text-[15px] rounded-[10px]',
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
@@ -48,6 +52,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
   },
   ref
 ) {
+  const isLink = variant === 'link';
   return (
     <button
       ref={ref}
@@ -55,7 +60,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
       className={cn(
         base,
         variants[variant],
-        sizes[size],
+        isLink ? 'h-auto px-0 py-0 rounded-none' : sizes[size],
         fullWidth && 'w-full',
         className
       )}

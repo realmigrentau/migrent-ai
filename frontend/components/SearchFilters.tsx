@@ -162,7 +162,7 @@ export default function SearchFilters({ onSearch, loading }: SearchFiltersProps)
             type="checkbox"
             checked={filters.femaleOnly}
             onChange={(e) => update("femaleOnly", e.target.checked)}
-            className="w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-rose-500 focus:ring-rose-500"
+            className="w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-[var(--color-primary)] focus:ring-[var(--color-ink)]/30"
           />
           Female-only
         </label>
@@ -180,7 +180,7 @@ export default function SearchFilters({ onSearch, loading }: SearchFiltersProps)
         {activeCount > 0 && (
           <button
             onClick={handleReset}
-            className="text-sm text-rose-500 hover:text-rose-600 underline underline-offset-2 transition-colors"
+            className="text-sm text-[var(--color-primary)] hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors"
           >
             Clear filters
           </button>
@@ -270,7 +270,7 @@ export default function SearchFilters({ onSearch, loading }: SearchFiltersProps)
                     type="checkbox"
                     checked={filters.femaleOnly}
                     onChange={(e) => update("femaleOnly", e.target.checked)}
-                    className="w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-rose-500 focus:ring-rose-500"
+                    className="w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-[var(--color-primary)] focus:ring-[var(--color-ink)]/30"
                   />
                   Female-only
                 </label>

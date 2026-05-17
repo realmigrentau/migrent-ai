@@ -30,7 +30,7 @@ export default function ConsentCheckboxes({ consents, onChange, error }: Consent
           type="checkbox"
           checked={consents.facilitator}
           onChange={() => toggle("facilitator")}
-          className="mt-0.5 w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-rose-500 focus:ring-rose-500 dark:bg-slate-800 shrink-0"
+          className="mt-0.5 w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-[var(--color-primary)] focus:ring-[var(--color-ink)]/30 dark:bg-slate-800 shrink-0"
         />
         <span className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed group-hover:text-slate-900 dark:group-hover:text-white transition-colors">
           I understand MigRent is a <strong>facilitator only</strong>, not a real estate agent, and does not collect rent, bonds, or manage tenancy agreements.
@@ -42,13 +42,13 @@ export default function ConsentCheckboxes({ consents, onChange, error }: Consent
           type="checkbox"
           checked={consents.terms}
           onChange={() => toggle("terms")}
-          className="mt-0.5 w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-rose-500 focus:ring-rose-500 dark:bg-slate-800 shrink-0"
+          className="mt-0.5 w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-[var(--color-primary)] focus:ring-[var(--color-ink)]/30 dark:bg-slate-800 shrink-0"
         />
         <span className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed group-hover:text-slate-900 dark:group-hover:text-white transition-colors">
           I agree to the{" "}
-          <Link href="/terms-of-service" target="_blank" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2">Terms of Service</Link>,{" "}
-          <Link href="/privacy-policy" target="_blank" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2">Privacy Policy</Link>, and{" "}
-          <Link href="/disclaimer" target="_blank" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2">Platform Disclaimer</Link>.
+          <Link href="/terms-of-service" target="_blank" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2">Terms of Service</Link>,{" "}
+          <Link href="/privacy-policy" target="_blank" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2">Privacy Policy</Link>, and{" "}
+          <Link href="/disclaimer" target="_blank" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2">Platform Disclaimer</Link>.
         </span>
       </label>
 
@@ -57,10 +57,10 @@ export default function ConsentCheckboxes({ consents, onChange, error }: Consent
           type="checkbox"
           checked={consents.rentalLaws}
           onChange={() => toggle("rentalLaws")}
-          className="mt-0.5 w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-rose-500 focus:ring-rose-500 dark:bg-slate-800 shrink-0"
+          className="mt-0.5 w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-[var(--color-primary)] focus:ring-[var(--color-ink)]/30 dark:bg-slate-800 shrink-0"
         />
         <span className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed group-hover:text-slate-900 dark:group-hover:text-white transition-colors">
-          I will comply with all applicable <Link href="/rental-laws" target="_blank" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2">local rental laws</Link> and regulations in my state or territory.
+          I will comply with all applicable <Link href="/rental-laws" target="_blank" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2">local rental laws</Link> and regulations in my state or territory.
         </span>
       </label>
 
@@ -69,10 +69,10 @@ export default function ConsentCheckboxes({ consents, onChange, error }: Consent
           type="checkbox"
           checked={consents.indemnity}
           onChange={() => toggle("indemnity")}
-          className="mt-0.5 w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-rose-500 focus:ring-rose-500 dark:bg-slate-800 shrink-0"
+          className="mt-0.5 w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-[var(--color-primary)] focus:ring-[var(--color-ink)]/30 dark:bg-slate-800 shrink-0"
         />
         <span className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed group-hover:text-slate-900 dark:group-hover:text-white transition-colors">
-          I <Link href="/terms-of-service#10" target="_blank" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2">indemnify MigRent</Link> against any claims arising from deals or arrangements I make through the platform.
+          I <Link href="/terms-of-service#10" target="_blank" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2">indemnify MigRent</Link> against any claims arising from deals or arrangements I make through the platform.
         </span>
       </label>
 

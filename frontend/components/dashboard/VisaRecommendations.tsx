@@ -37,7 +37,7 @@ function VisaMatchBadge({ score }: { score: number }) {
   let color = "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400";
   let label = "Match";
   if (score >= 85) {
-    color = "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20";
+    color = "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 text-[var(--color-accent)] dark:text-[var(--color-accent)] border border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)]";
     label = "Excellent match";
   } else if (score >= 70) {
     color = "bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-500/20";
@@ -106,7 +106,7 @@ export default function VisaRecommendations() {
         </h2>
         <Link
           href="/seeker/search"
-          className="text-xs font-semibold text-indigo-500 hover:text-indigo-600 dark:hover:text-indigo-400 flex items-center gap-1"
+          className="text-xs font-semibold text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] flex items-center gap-1"
         >
           See all <ArrowRight className="w-3.5 h-3.5" />
         </Link>
@@ -121,7 +121,7 @@ export default function VisaRecommendations() {
             transition={{ delay: 0.05 * i }}
           >
             <Link href={`/listing/${listing.id}`}>
-              <div className="rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 group hover:shadow-md hover:border-indigo-300 dark:hover:border-indigo-500/30 transition-all bg-white dark:bg-slate-900">
+              <div className="rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 group hover:shadow-md hover:border-[var(--color-line-2)] dark:hover:border-[var(--color-primary)]/30 transition-all bg-white dark:bg-slate-900">
                 {/* Image */}
                 <div className="relative h-28 bg-slate-200 dark:bg-slate-700">
                   {listing.images?.[0] ? (
@@ -144,7 +144,7 @@ export default function VisaRecommendations() {
                   {/* Feature badges */}
                   <div className="absolute bottom-2 left-2 flex gap-1.5">
                     {listing.near_uni && (
-                      <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-violet-500/90 text-white">
+                      <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-[var(--color-primary-soft)]0/90 text-white">
                         Near uni
                       </span>
                     )}
@@ -154,7 +154,7 @@ export default function VisaRecommendations() {
                       </span>
                     )}
                     {listing.furnished && !listing.near_uni && !listing.near_cbd && (
-                      <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-indigo-500/90 text-white">
+                      <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-[var(--color-primary)]/90 text-white">
                         Furnished
                       </span>
                     )}
@@ -173,7 +173,7 @@ export default function VisaRecommendations() {
                         {listing.suburb || listing.city || listing.address}
                       </p>
                     </div>
-                    <p className="text-sm font-bold text-indigo-600 dark:text-indigo-400 shrink-0">
+                    <p className="text-sm font-bold text-[var(--color-primary)] dark:text-[var(--color-primary)] shrink-0">
                       ${listing.weekly_price}/wk
                     </p>
                   </div>

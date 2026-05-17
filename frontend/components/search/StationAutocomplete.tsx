@@ -118,7 +118,7 @@ export default function StationAutocomplete({
           </button>
         )}
         {loading && (
-          <span className="absolute right-8 top-1/2 -translate-y-1/2 w-4 h-4 border-2 border-rose-500/30 border-t-rose-500 rounded-full animate-spin" />
+          <span className="absolute right-8 top-1/2 -translate-y-1/2 w-4 h-4 border-2 border-[var(--color-primary)]/30 border-t-[var(--color-ink)] rounded-full animate-spin" />
         )}
       </div>
 

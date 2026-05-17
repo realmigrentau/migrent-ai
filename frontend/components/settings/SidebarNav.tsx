@@ -43,16 +43,16 @@ const tabs: Array<{
     label: "Verification",
     icon: Shield,
     emoji: "📱",
-    color: "text-emerald-500",
-    activeColor: "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/30",
+    color: "text-[var(--color-accent)]",
+    activeColor: "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 text-[var(--color-accent)] dark:text-[var(--color-accent)] border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)]",
   },
   {
     id: "profile",
     label: "Profile & Address",
     icon: Home,
     emoji: "🏠",
-    color: "text-purple-500",
-    activeColor: "bg-purple-50 dark:bg-purple-500/10 text-purple-700 dark:text-purple-400 border-purple-200 dark:border-purple-500/30",
+    color: "text-[var(--color-primary)]",
+    activeColor: "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary-soft)]0/10 text-primary-700 dark:text-[var(--color-primary)] border-[var(--color-primary-soft)] dark:border-[var(--color-primary)]/30",
   },
   {
     id: "notifications",
@@ -67,8 +67,8 @@ const tabs: Array<{
     label: "Payments & Payouts",
     icon: CreditCard,
     emoji: "💳",
-    color: "text-pink-500",
-    activeColor: "bg-pink-50 dark:bg-pink-500/10 text-pink-700 dark:text-pink-400 border-pink-200 dark:border-pink-500/30",
+    color: "text-[var(--color-primary)]",
+    activeColor: "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary-soft)]0/10 text-pink-700 dark:text-[var(--color-primary)] border-[var(--color-primary-soft)] dark:border-[var(--color-primary)]/30",
   },
   {
     id: "analytics",
@@ -91,8 +91,8 @@ const tabs: Array<{
     label: "Support & Tickets",
     icon: MessageCircle,
     emoji: "💬",
-    color: "text-rose-500",
-    activeColor: "bg-rose-50 dark:bg-rose-500/10 text-rose-700 dark:text-rose-400 border-rose-200 dark:border-rose-500/30",
+    color: "text-[var(--color-primary)]",
+    activeColor: "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 text-[var(--color-primary)] dark:text-[var(--color-primary)] border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)]",
   },
 ];
 
@@ -142,7 +142,7 @@ export default function SidebarNav({ activeTab, setActiveTab, isOwner, ticketCou
                 <span className="text-base">{tab.emoji}</span>
                 <span className="flex-1 truncate">{tab.label}</span>
                 {tab.id === "support" && ticketCount > 0 && (
-                  <span className="bg-rose-500 text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                  <span className="bg-[var(--color-primary)] text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center">
                     {ticketCount}
                   </span>
                 )}
@@ -223,7 +223,7 @@ export default function SidebarNav({ activeTab, setActiveTab, isOwner, ticketCou
                         <span className="text-lg">{tab.emoji}</span>
                         <span className="flex-1">{tab.label}</span>
                         {tab.id === "support" && ticketCount > 0 && (
-                          <span className="bg-rose-500 text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                          <span className="bg-[var(--color-primary)] text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center">
                             {ticketCount}
                           </span>
                         )}

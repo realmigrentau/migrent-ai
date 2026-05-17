@@ -95,12 +95,12 @@ export default function ReviewCard({ review, showListingContext }: ReviewCardPro
           </span>
         )}
         {!isSeeker && review.reliability_rating && (
-          <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 text-xs text-emerald-700 dark:text-emerald-300">
+          <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 text-xs text-[var(--color-accent)] dark:text-[var(--color-accent)]">
             Reliable {review.reliability_rating}/5
           </span>
         )}
         {!isSeeker && review.cleanliness_rating && (
-          <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-violet-50 dark:bg-violet-500/10 text-xs text-violet-700 dark:text-violet-300">
+          <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary-soft)]0/10 text-xs text-violet-700 dark:text-[var(--color-primary)]">
             Clean {review.cleanliness_rating}/5
           </span>
         )}
@@ -114,7 +114,7 @@ export default function ReviewCard({ review, showListingContext }: ReviewCardPro
       {/* Reviewer info */}
       <div className="flex items-center justify-between mt-4 pt-3 border-t border-slate-100 dark:border-slate-800">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-rose-400 to-rose-600 flex items-center justify-center overflow-hidden">
+          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center overflow-hidden">
             {review.reviewer_photo ? (
               <img src={review.reviewer_photo} alt="" className="w-full h-full object-cover" />
             ) : (

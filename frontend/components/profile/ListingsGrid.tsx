@@ -94,7 +94,7 @@ function ListingItem({ listing, index }: { listing: ProfileListing; index: numbe
 
           {/* Info */}
           <div className="p-4">
-            <h3 className="font-bold text-sm text-slate-900 dark:text-white truncate group-hover:text-rose-500 dark:group-hover:text-rose-400 transition-colors">
+            <h3 className="font-bold text-sm text-slate-900 dark:text-white truncate group-hover:text-[var(--color-primary)] dark:group-hover:text-[var(--color-primary)] transition-colors">
               {listing.title}
             </h3>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 truncate">

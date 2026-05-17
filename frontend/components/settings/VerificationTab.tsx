@@ -171,7 +171,7 @@ export default function VerificationTab({
                     className={`
                       inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium border
                       ${step.done
-                        ? "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/30"
+                        ? "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 text-[var(--color-accent)] dark:text-[var(--color-accent)] border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)]"
                         : "bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700"
                       }
                     `}
@@ -222,7 +222,7 @@ export default function VerificationTab({
           {/* STEP 1: Email */}
           <GlassCard delay={0.1}>
             <div className="flex items-center gap-4">
-              <div className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-md shrink-0 ${emailDone ? "bg-gradient-to-br from-blue-400 to-indigo-500" : "bg-slate-200 dark:bg-slate-700"}`}>
+              <div className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-md shrink-0 ${emailDone ? "bg-gradient-to-br from-blue-400 to-[var(--color-primary)]" : "bg-slate-200 dark:bg-slate-700"}`}>
                 {emailDone ? <CheckCircle2 className="w-5 h-5 text-white" /> : <Mail className="w-5 h-5 text-slate-500" />}
               </div>
               <div className="flex-1">
@@ -240,7 +240,7 @@ export default function VerificationTab({
           {/* STEP 2: Government ID Upload */}
           <GlassCard delay={0.15}>
             <div className="flex items-start gap-4">
-              <div className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-md shrink-0 mt-0.5 ${idDone ? "bg-gradient-to-br from-amber-400 to-orange-500" : idStatus === "pending" ? "bg-gradient-to-br from-blue-400 to-blue-500" : "bg-slate-200 dark:bg-slate-700"}`}>
+              <div className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-md shrink-0 mt-0.5 ${idDone ? "bg-gradient-to-br from-amber-400 to-orange-500" : idStatus === "pending" ? "bg-gradient-to-br from-blue-400 to-[var(--color-primary)]" : "bg-slate-200 dark:bg-slate-700"}`}>
                 {idDone ? (
                   <CheckCircle2 className="w-5 h-5 text-white" />
                 ) : idStatus === "pending" ? (
@@ -303,7 +303,7 @@ export default function VerificationTab({
                             onClick={() => setDocType(dt.value)}
                             className={`px-3 py-2 rounded-xl text-xs font-medium border transition-all ${
                               docType === dt.value
-                                ? "bg-rose-50 dark:bg-rose-500/10 border-rose-300 dark:border-rose-500/30 text-rose-700 dark:text-rose-400"
+                                ? "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 border-[var(--color-line-2)] dark:border-[var(--color-primary-soft)] text-[var(--color-primary)] dark:text-[var(--color-primary)]"
                                 : "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-slate-300"
                             }`}
                           >
@@ -321,9 +321,9 @@ export default function VerificationTab({
                       onClick={() => fileInputRef.current?.click()}
                       className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all ${
                         dragOver
-                          ? "border-rose-400 bg-rose-50/50 dark:bg-rose-500/5"
+                          ? "border-[var(--color-line-2)] bg-[var(--color-primary-soft)]/50 dark:bg-[var(--color-primary)]/5"
                           : selectedFile
-                          ? "border-emerald-300 bg-emerald-50/50 dark:bg-emerald-500/5"
+                          ? "border-[var(--color-accent-soft)] bg-[var(--color-accent-soft)]/50 dark:bg-[var(--color-accent-soft)]0/5"
                           : "border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600"
                       }`}
                     >
@@ -336,8 +336,8 @@ export default function VerificationTab({
                       />
                       {selectedFile ? (
                         <div className="flex items-center justify-center gap-2">
-                          <FileText className="w-5 h-5 text-emerald-500" />
-                          <span className="text-sm text-emerald-700 dark:text-emerald-400 font-medium">{selectedFile.name}</span>
+                          <FileText className="w-5 h-5 text-[var(--color-accent)]" />
+                          <span className="text-sm text-[var(--color-accent)] dark:text-[var(--color-accent)] font-medium">{selectedFile.name}</span>
                           <button
                             onClick={(e) => { e.stopPropagation(); setSelectedFile(null); }}
                             className="ml-2 p-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800"
@@ -349,7 +349,7 @@ export default function VerificationTab({
                         <>
                           <Upload className="w-8 h-8 text-slate-400 mx-auto mb-2" />
                           <p className="text-sm text-slate-600 dark:text-slate-400">
-                            Drag and drop your ID here, or <span className="text-rose-500 font-medium">browse</span>
+                            Drag and drop your ID here, or <span className="text-[var(--color-primary)] font-medium">browse</span>
                           </p>
                           <p className="text-[10px] text-slate-400 mt-1">JPEG, PNG, WebP, or PDF - Max 10MB</p>
                         </>
@@ -383,18 +383,18 @@ export default function VerificationTab({
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-500/10 dark:to-teal-500/10 rounded-2xl p-6 text-center border border-emerald-200 dark:border-emerald-500/30"
+              className="bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-[var(--color-accent)]/10 dark:to-teal-500/10 rounded-2xl p-6 text-center border border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)]"
             >
               <div className="text-4xl mb-3">🎉</div>
-              <h3 className="text-lg font-bold text-emerald-800 dark:text-emerald-300 mb-1">
+              <h3 className="text-lg font-bold text-emerald-800 dark:text-[var(--color-accent)] mb-1">
                 You are a Verified Owner!
               </h3>
-              <p className="text-sm text-emerald-600 dark:text-emerald-400 mb-4">
+              <p className="text-sm text-[var(--color-accent)] dark:text-[var(--color-accent)] mb-4">
                 Both verification steps are complete. You can now list rooms on MigRent.
               </p>
               <a
                 href="/owner/listings/new"
-                className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-xl text-sm font-semibold transition-colors"
+                className="inline-flex items-center gap-2 bg-[var(--color-accent)] hover:bg-[var(--color-accent-700)] text-white px-6 py-3 rounded-xl text-sm font-semibold transition-colors"
               >
                 List Your Room
                 <ChevronRight className="w-4 h-4" />
@@ -414,19 +414,19 @@ export default function VerificationTab({
               <p className="text-lg font-bold text-blue-700 dark:text-blue-400">3x</p>
               <p className="text-[10px] text-blue-600/70 dark:text-blue-400/60">More bookings</p>
             </div>
-            <div className="backdrop-blur-xl bg-emerald-50/80 dark:bg-emerald-500/10 rounded-xl p-3 text-center border border-emerald-100 dark:border-emerald-500/20">
-              <Star className="w-5 h-5 text-emerald-500 mx-auto mb-1" />
-              <p className="text-lg font-bold text-emerald-700 dark:text-emerald-400">
+            <div className="backdrop-blur-xl bg-[var(--color-accent-soft)]/80 dark:bg-[var(--color-accent-soft)]0/10 rounded-xl p-3 text-center border border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)]">
+              <Star className="w-5 h-5 text-[var(--color-accent)] mx-auto mb-1" />
+              <p className="text-lg font-bold text-[var(--color-accent)] dark:text-[var(--color-accent)]">
                 {profile?.average_rating?.toFixed(1) || "-"}
               </p>
-              <p className="text-[10px] text-emerald-600/70 dark:text-emerald-400/60">Rating</p>
+              <p className="text-[10px] text-[var(--color-accent)]/70 dark:text-[var(--color-accent)]/60">Rating</p>
             </div>
-            <div className="backdrop-blur-xl bg-purple-50/80 dark:bg-purple-500/10 rounded-xl p-3 text-center border border-purple-100 dark:border-purple-500/20">
-              <Award className="w-5 h-5 text-purple-500 mx-auto mb-1" />
-              <p className="text-lg font-bold text-purple-700 dark:text-purple-400">
+            <div className="backdrop-blur-xl bg-[var(--color-primary-soft)]/80 dark:bg-[var(--color-primary-soft)]0/10 rounded-xl p-3 text-center border border-purple-100 dark:border-[var(--color-primary)]/20">
+              <Award className="w-5 h-5 text-[var(--color-primary)] mx-auto mb-1" />
+              <p className="text-lg font-bold text-primary-700 dark:text-[var(--color-primary)]">
                 {profile?.badges?.length || 0}
               </p>
-              <p className="text-[10px] text-purple-600/70 dark:text-purple-400/60">Badges</p>
+              <p className="text-[10px] text-[var(--color-primary)]/70 dark:text-[var(--color-primary)]/60">Badges</p>
             </div>
           </motion.div>
 

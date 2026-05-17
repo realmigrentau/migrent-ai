@@ -27,7 +27,7 @@ export default function HeroStatus({
       icon: Phone,
       status: profile?.phone ? ("verified" as const) : ("pending" as const),
       tab: "verification" as SettingsTab,
-      gradient: "from-emerald-400 to-teal-500",
+      gradient: "from-[var(--color-accent)] to-teal-500",
     },
     {
       label: profile?.identity_verified ? "ID ✓" : "ID Check",
@@ -41,7 +41,7 @@ export default function HeroStatus({
       icon: Rocket,
       status: "info" as const,
       tab: "profile" as SettingsTab,
-      gradient: "from-blue-400 to-indigo-500",
+      gradient: "from-blue-400 to-[var(--color-primary)]",
       href: isOwner ? "/owner/listings/new" : "/search",
     },
     {
@@ -49,7 +49,7 @@ export default function HeroStatus({
       icon: Calculator,
       status: "info" as const,
       tab: "analytics" as SettingsTab,
-      gradient: "from-purple-400 to-pink-500",
+      gradient: "from-[var(--color-primary)] to-[var(--color-primary)]",
       href: "/pricing",
     },
   ];
@@ -63,7 +63,7 @@ export default function HeroStatus({
       {/* Hero card */}
       <div className="relative overflow-hidden rounded-3xl">
         {/* Gradient background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-rose-500 via-pink-500 to-indigo-600 opacity-90" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-primary)] via-[var(--color-primary)] to-[var(--color-primary)] opacity-90" />
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAxOGMtOS45NDEgMC0xOCA4LjA1OS0xOCAxOHM4LjA1OSAxOCAxOCAxOCAxOC04LjA1OSAxOC0xOC04LjA1OS0xOC0xOC0xOHoiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwwLjA1KSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9nPjwvc3ZnPg==')] opacity-30" />
 
         <div className="relative px-6 py-8 md:px-8 md:py-10">

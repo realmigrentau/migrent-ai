@@ -11,7 +11,7 @@ interface Props {
 function MatchBadge({ score }: { score: number }) {
   let color = "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400";
   if (score >= 90) {
-    color = "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400";
+    color = "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 text-[var(--color-accent)] dark:text-[var(--color-accent)]";
   } else if (score >= 80) {
     color = "bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400";
   } else if (score >= 70) {
@@ -73,7 +73,7 @@ export default function RecommendedMatches({ listings, loading }: Props) {
             transition={{ delay: 0.05 * i }}
           >
             <Link href={`/listing/${listing.id}`}>
-              <div className="card rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 group hover:shadow-md hover:border-indigo-300 dark:hover:border-indigo-500/30 transition-all">
+              <div className="card rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 group hover:shadow-md hover:border-[var(--color-line-2)] dark:hover:border-[var(--color-primary)]/30 transition-all">
                 {/* Image */}
                 <div className="relative h-32 bg-slate-200 dark:bg-slate-700">
                   {listing.images?.[0] ? (
@@ -96,12 +96,12 @@ export default function RecommendedMatches({ listings, loading }: Props) {
                   {/* Badges row */}
                   <div className="absolute bottom-2 left-2 flex gap-1.5">
                     {listing.furnished && (
-                      <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-indigo-500/90 text-white">
+                      <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-[var(--color-primary)]/90 text-white">
                         Furnished
                       </span>
                     )}
                     {listing.bills_included && (
-                      <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-emerald-500/90 text-white">
+                      <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-[var(--color-accent-soft)]0/90 text-white">
                         Bills incl.
                       </span>
                     )}
@@ -120,7 +120,7 @@ export default function RecommendedMatches({ listings, loading }: Props) {
                         {listing.suburb || listing.city || listing.address}
                       </p>
                     </div>
-                    <p className="text-sm font-bold text-indigo-600 dark:text-indigo-400 shrink-0">
+                    <p className="text-sm font-bold text-[var(--color-primary)] dark:text-[var(--color-primary)] shrink-0">
                       ${listing.weekly_price}/wk
                     </p>
                   </div>
@@ -139,7 +139,7 @@ export default function RecommendedMatches({ listings, loading }: Props) {
                       </span>
                     )}
                     {(listing as any).visa_match && (listing as any).near_uni && (
-                      <span className="text-xs text-violet-500 flex items-center gap-1">
+                      <span className="text-xs text-[var(--color-primary)] flex items-center gap-1">
                         Near uni
                       </span>
                     )}
@@ -159,7 +159,7 @@ export default function RecommendedMatches({ listings, loading }: Props) {
       {/* Browse more link */}
       <Link
         href="/seeker/search"
-        className="flex items-center justify-center gap-2 text-sm font-medium text-indigo-500 hover:text-indigo-600 dark:hover:text-indigo-400 py-2"
+        className="flex items-center justify-center gap-2 text-sm font-medium text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] py-2"
       >
         Find more rooms
         <ArrowRight className="w-4 h-4" />

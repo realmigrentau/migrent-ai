@@ -60,7 +60,7 @@ export default function VerificationModal({
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-4">
                     {/* Avatar */}
-                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-rose-400 to-rose-600 flex items-center justify-center text-white font-bold text-2xl shrink-0 overflow-hidden ring-2 ring-white dark:ring-slate-800 shadow-lg">
+                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center text-white font-bold text-2xl shrink-0 overflow-hidden ring-2 ring-white dark:ring-slate-800 shadow-lg">
                       {profile.custom_pfp ? (
                         <img
                           src={profile.custom_pfp}
@@ -81,7 +81,7 @@ export default function VerificationModal({
                             Verified {profile.verifiedLabel}
                           </span>
                           <svg
-                            className="w-4 h-4 text-rose-500"
+                            className="w-4 h-4 text-[var(--color-primary)]"
                             viewBox="0 0 24 24"
                             fill="currentColor"
                           >
@@ -133,7 +133,7 @@ export default function VerificationModal({
                     </p>
                     <a
                       href="/help/verification"
-                      className="text-sm font-semibold text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 transition-colors"
+                      className="text-sm font-semibold text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] transition-colors"
                     >
                       Learn more about verification
                     </a>
@@ -147,7 +147,7 @@ export default function VerificationModal({
                     </p>
                     <a
                       href="/dashboard/seeker-profile"
-                      className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-rose-500 to-rose-600 hover:shadow-lg hover:shadow-rose-500/25 transition-all"
+                      className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary)] hover:shadow-lg hover:shadow-[var(--color-primary)]/20 transition-all"
                     >
                       Get verified now
                       <svg
@@ -174,7 +174,7 @@ export default function VerificationModal({
                   initial={{ width: "100%" }}
                   animate={{ width: "0%" }}
                   transition={{ duration: 5, ease: "linear" }}
-                  className="h-full bg-gradient-to-r from-rose-400 to-rose-500"
+                  className="h-full bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary)]"
                 />
               </div>
             </div>

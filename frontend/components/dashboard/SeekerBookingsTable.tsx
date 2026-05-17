@@ -36,8 +36,8 @@ const STATUS_CONFIG: Record<
   },
   PAID: {
     label: "Confirmed",
-    color: "text-emerald-600 dark:text-emerald-400",
-    bg: "bg-emerald-50 dark:bg-emerald-500/10",
+    color: "text-[var(--color-accent)] dark:text-[var(--color-accent)]",
+    bg: "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10",
   },
   COMPLETED: {
     label: "Completed",
@@ -118,7 +118,7 @@ export default function DashboardSeekerBookings({
               onClick={() => setActiveTab(tab.key)}
               className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
                 activeTab === tab.key
-                  ? "bg-rose-500 text-white"
+                  ? "bg-[var(--color-primary)] text-white"
                   : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700"
               }`}
             >
@@ -348,7 +348,7 @@ export default function DashboardSeekerBookings({
                         <p className="text-xs text-slate-400 mb-0.5">
                           Total cost
                         </p>
-                        <p className="font-medium text-emerald-600 dark:text-emerald-400">
+                        <p className="font-medium text-[var(--color-accent)] dark:text-[var(--color-accent)]">
                           ${booking.total_price?.toLocaleString()}
                         </p>
                       </div>

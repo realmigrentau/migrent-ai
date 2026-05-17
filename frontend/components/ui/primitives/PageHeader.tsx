@@ -8,6 +8,7 @@ interface PageHeaderProps {
   actions?: ReactNode;
   className?: string;
   align?: 'left' | 'center';
+  display?: boolean;
 }
 
 export function PageHeader({
@@ -17,6 +18,7 @@ export function PageHeader({
   actions,
   className,
   align = 'left',
+  display = false,
 }: PageHeaderProps) {
   return (
     <div
@@ -27,16 +29,19 @@ export function PageHeader({
       )}
     >
       <div className="min-w-0 max-w-2xl">
-        {eyebrow && (
-          <div className="text-[11px] font-semibold uppercase tracking-[0.08em] text-slate-500 mb-2">
-            {eyebrow}
-          </div>
-        )}
-        <h1 className="text-2xl md:text-3xl font-semibold tracking-tight text-slate-900 dark:text-white">
+        {eyebrow && <div className="eyebrow mb-2">{eyebrow}</div>}
+        <h1
+          className={cn(
+            'text-[var(--color-ink)] tracking-[-0.02em]',
+            display
+              ? 'font-serif text-4xl md:text-5xl leading-[1.05] font-normal'
+              : 'text-2xl md:text-3xl font-semibold'
+          )}
+        >
           {title}
         </h1>
         {description && (
-          <p className="mt-2 text-[15px] leading-relaxed text-slate-600 dark:text-slate-400">
+          <p className="mt-2 text-[15px] leading-relaxed text-[var(--color-ink-2)]">
             {description}
           </p>
         )}

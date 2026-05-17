@@ -14,8 +14,8 @@ export default function RentalLaws() {
         {/* Hero */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-100 dark:border-indigo-500/20 flex items-center justify-center">
-              <svg className="w-5 h-5 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <div className="w-10 h-10 rounded-xl bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 border border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)] flex items-center justify-center">
+              <svg className="w-5 h-5 text-[var(--color-primary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
               </svg>
             </div>
@@ -57,9 +57,9 @@ export default function RentalLaws() {
                     <td className="py-3 px-3 font-medium text-slate-800 dark:text-slate-200">NSW</td>
                     <td className="py-3 px-3">Max 4 weeks rent. Must lodge with NSW Fair Trading within 10 business days.</td>
                     <td className="py-3 px-3">180 days/year (Greater Sydney, unless host-present). Unlimited if host is present.</td>
-                    <td className="py-3 px-3 text-emerald-600 dark:text-emerald-400 font-medium">Required - NSW STRA Register</td>
+                    <td className="py-3 px-3 text-[var(--color-accent)] dark:text-[var(--color-accent)] font-medium">Required - NSW STRA Register</td>
                     <td className="py-3 px-3">
-                      <a href="https://www.fairtrading.nsw.gov.au" target="_blank" rel="noopener noreferrer" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">NSW Fair Trading</a>
+                      <a href="https://www.fairtrading.nsw.gov.au" target="_blank" rel="noopener noreferrer" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">NSW Fair Trading</a>
                     </td>
                   </tr>
                   <tr>
@@ -68,7 +68,7 @@ export default function RentalLaws() {
                     <td className="py-3 px-3">No statewide cap currently. Check local council rules.</td>
                     <td className="py-3 px-3 text-amber-600 dark:text-amber-400 font-medium">Varies by council</td>
                     <td className="py-3 px-3">
-                      <a href="https://www.consumer.vic.gov.au" target="_blank" rel="noopener noreferrer" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">Consumer Affairs VIC</a>
+                      <a href="https://www.consumer.vic.gov.au" target="_blank" rel="noopener noreferrer" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">Consumer Affairs VIC</a>
                     </td>
                   </tr>
                   <tr>
@@ -77,7 +77,7 @@ export default function RentalLaws() {
                     <td className="py-3 px-3">No statewide cap. Some local government areas have restrictions.</td>
                     <td className="py-3 px-3 text-amber-600 dark:text-amber-400 font-medium">Varies by council</td>
                     <td className="py-3 px-3">
-                      <a href="https://www.rta.qld.gov.au" target="_blank" rel="noopener noreferrer" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">RTA QLD</a>
+                      <a href="https://www.rta.qld.gov.au" target="_blank" rel="noopener noreferrer" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">RTA QLD</a>
                     </td>
                   </tr>
                   <tr>
@@ -86,7 +86,7 @@ export default function RentalLaws() {
                     <td className="py-3 px-3">No statewide cap. Check local planning scheme.</td>
                     <td className="py-3 px-3 text-amber-600 dark:text-amber-400 font-medium">Varies by council</td>
                     <td className="py-3 px-3">
-                      <a href="https://www.consumerprotection.wa.gov.au" target="_blank" rel="noopener noreferrer" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">Consumer Protection WA</a>
+                      <a href="https://www.consumerprotection.wa.gov.au" target="_blank" rel="noopener noreferrer" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">Consumer Protection WA</a>
                     </td>
                   </tr>
                   <tr>
@@ -95,7 +95,7 @@ export default function RentalLaws() {
                     <td className="py-3 px-3">No statewide cap. Check local council.</td>
                     <td className="py-3 px-3 text-amber-600 dark:text-amber-400 font-medium">Varies by council</td>
                     <td className="py-3 px-3">
-                      <a href="https://www.cbs.sa.gov.au" target="_blank" rel="noopener noreferrer" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">CBS South Australia</a>
+                      <a href="https://www.cbs.sa.gov.au" target="_blank" rel="noopener noreferrer" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">CBS South Australia</a>
                     </td>
                   </tr>
                 </tbody>
@@ -143,7 +143,7 @@ export default function RentalLaws() {
           </div>
 
           {/* CTA */}
-          <div className="card p-6 rounded-2xl bg-gradient-to-br from-indigo-50 to-indigo-100/50 dark:from-indigo-500/10 dark:to-indigo-600/5 border-indigo-200 dark:border-indigo-500/20 text-center">
+          <div className="card p-6 rounded-2xl bg-gradient-to-br from-indigo-50 to-[var(--color-primary-soft)]/50 dark:from-[var(--color-primary)]/10 dark:to-[var(--color-primary)]/5 border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)] text-center">
             <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Need more guidance?</h3>
             <p className="text-sm text-slate-600 dark:text-slate-300 mb-4">Contact your state&apos;s Fair Trading office or reach out to us.</p>
             <Link href="/contact">

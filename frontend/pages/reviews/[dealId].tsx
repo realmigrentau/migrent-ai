@@ -19,7 +19,7 @@ export default function ReviewDealPage() {
   if (authLoading || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="w-8 h-8 border-3 border-rose-200 border-t-rose-500 rounded-full animate-spin" />
+        <div className="w-8 h-8 border-3 border-[var(--color-primary-soft)] border-t-[var(--color-ink)] rounded-full animate-spin" />
       </div>
     );
   }
@@ -49,7 +49,7 @@ export default function ReviewDealPage() {
           </div>
           <h1 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Error</h1>
           <p className="text-sm text-slate-500 dark:text-slate-400">{error}</p>
-          <button onClick={() => router.back()} className="mt-4 text-sm text-rose-500 hover:text-rose-600">
+          <button onClick={() => router.back()} className="mt-4 text-sm text-[var(--color-primary)] hover:text-[var(--color-primary)]">
             Go Back
           </button>
         </div>
@@ -95,8 +95,8 @@ export default function ReviewDealPage() {
               animate={{ scale: 1, opacity: 1 }}
               className="card p-8 rounded-2xl text-center"
             >
-              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center">
-                <svg className="w-8 h-8 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 flex items-center justify-center">
+                <svg className="w-8 h-8 text-[var(--color-accent)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                 </svg>
               </div>
@@ -160,7 +160,7 @@ export default function ReviewDealPage() {
                   ? "Reviews can only be submitted after the deal is completed."
                   : "You have already submitted a review for this deal."}
               </p>
-              <button onClick={() => router.back()} className="mt-4 text-sm text-rose-500 hover:text-rose-600">
+              <button onClick={() => router.back()} className="mt-4 text-sm text-[var(--color-primary)] hover:text-[var(--color-primary)]">
                 Go Back
               </button>
             </div>
@@ -211,7 +211,7 @@ export default function ReviewDealPage() {
             className="card p-4 rounded-2xl mb-6"
           >
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-rose-400 to-rose-600 flex items-center justify-center overflow-hidden">
+              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center overflow-hidden">
                 {context.other_user.photo ? (
                   <img src={context.other_user.photo} alt="" className="w-full h-full object-cover" />
                 ) : (

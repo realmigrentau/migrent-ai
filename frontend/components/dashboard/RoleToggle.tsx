@@ -15,7 +15,7 @@ export default function RoleToggle({ role, onToggle, disabled }: RoleToggleProps
     <div className="relative inline-flex items-center rounded-xl bg-slate-100 dark:bg-slate-800 p-1">
       {/* Sliding background */}
       <motion.div
-        className="absolute top-1 bottom-1 rounded-lg bg-rose-600"
+        className="absolute top-1 bottom-1 rounded-lg bg-[var(--color-primary)]"
         initial={false}
         animate={{
           left: isOwner ? "4px" : "50%",

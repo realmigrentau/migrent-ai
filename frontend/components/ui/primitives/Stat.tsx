@@ -11,20 +11,20 @@ interface StatProps {
 }
 
 const trendColor = {
-  up: 'text-emerald-600',
-  down: 'text-rose-600',
-  flat: 'text-slate-500',
+  up: 'text-[var(--color-accent)]',
+  down: 'text-[var(--color-danger-500)]',
+  flat: 'text-[var(--color-ink-3)]',
 } as const;
 
 export function Stat({ label, value, delta, hint, icon, className }: StatProps) {
   return (
     <div className={cn('min-w-0', className)}>
-      <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.08em] text-slate-500">
-        {icon && <span className="text-slate-400">{icon}</span>}
+      <div className="eyebrow flex items-center gap-2">
+        {icon && <span className="text-[var(--color-ink-4)]">{icon}</span>}
         {label}
       </div>
       <div className="mt-2 flex items-baseline gap-2">
-        <div className="text-3xl font-semibold tracking-tight text-slate-900 dark:text-white tabular-nums">
+        <div className="text-3xl font-semibold tracking-[-0.02em] text-[var(--color-ink)] tabular-nums">
           {value}
         </div>
         {delta && (
@@ -33,7 +33,7 @@ export function Stat({ label, value, delta, hint, icon, className }: StatProps) 
           </span>
         )}
       </div>
-      {hint && <div className="mt-1 text-xs text-slate-500">{hint}</div>}
+      {hint && <div className="mt-1 text-xs text-[var(--color-ink-3)]">{hint}</div>}
     </div>
   );
 }

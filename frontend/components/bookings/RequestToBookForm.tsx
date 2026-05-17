@@ -158,7 +158,7 @@ export default function RequestToBookForm({
           <button
             type="button"
             onClick={() => setGuests(Math.max(1, guests - 1))}
-            className="w-8 h-8 rounded-full border border-slate-300 dark:border-slate-600 flex items-center justify-center text-slate-500 hover:border-rose-400 hover:text-rose-500 transition-colors"
+            className="w-8 h-8 rounded-full border border-slate-300 dark:border-slate-600 flex items-center justify-center text-slate-500 hover:border-[var(--color-line-2)] hover:text-[var(--color-primary)] transition-colors"
           >
             -
           </button>
@@ -171,7 +171,7 @@ export default function RequestToBookForm({
           <button
             type="button"
             onClick={() => setGuests(Math.min(maxGuests, guests + 1))}
-            className="w-8 h-8 rounded-full border border-slate-300 dark:border-slate-600 flex items-center justify-center text-slate-500 hover:border-rose-400 hover:text-rose-500 transition-colors"
+            className="w-8 h-8 rounded-full border border-slate-300 dark:border-slate-600 flex items-center justify-center text-slate-500 hover:border-[var(--color-line-2)] hover:text-[var(--color-primary)] transition-colors"
           >
             +
           </button>

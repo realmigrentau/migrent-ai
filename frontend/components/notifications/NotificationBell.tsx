@@ -33,7 +33,7 @@ export default function NotificationBell({ unreadCount, collapsed }: Notificatio
           collapsed ? "justify-center px-2 py-2.5" : "px-3 py-2.5"
         } ${
           open
-            ? "bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400"
+            ? "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 text-[var(--color-primary)] dark:text-[var(--color-primary)]"
             : "text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50"
         }`}
         title={collapsed ? "Notifications" : undefined}
@@ -46,7 +46,7 @@ export default function NotificationBell({ unreadCount, collapsed }: Notificatio
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 exit={{ scale: 0 }}
-                className="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-rose-500 text-white text-[10px] font-bold px-1 shadow-sm"
+                className="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-[var(--color-primary)] text-white text-[10px] font-bold px-1 shadow-sm"
               >
                 {unreadCount > 99 ? "99+" : unreadCount}
               </motion.span>

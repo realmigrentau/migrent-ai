@@ -110,7 +110,7 @@ export default function AccountSecurityTab({
       {/* Email Section */}
       <GlassCard delay={0.05} gradient="indigo">
         <div className="flex items-start gap-4">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center shadow-lg shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-400 to-[var(--color-primary)] flex items-center justify-center shadow-lg shrink-0">
             <Mail className="w-5 h-5 text-white" />
           </div>
           <div className="flex-1 min-w-0">
@@ -141,7 +141,7 @@ export default function AccountSecurityTab({
                 title="Copy ID"
               >
                 {copied ? (
-                  <Check className="w-4 h-4 text-emerald-500" />
+                  <Check className="w-4 h-4 text-[var(--color-accent)]" />
                 ) : (
                   <Copy className="w-4 h-4 text-slate-400" />
                 )}
@@ -156,7 +156,7 @@ export default function AccountSecurityTab({
       {isGoogleOnlyUser && !hasPassword && (
         <GlassCard delay={0.12} gradient="emerald">
           <div className="flex items-start gap-4 mb-5">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shadow-lg shrink-0">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--color-accent)] to-teal-500 flex items-center justify-center shadow-lg shrink-0">
               <Key className="w-5 h-5 text-white" />
             </div>
             <div>
@@ -261,7 +261,7 @@ export default function AccountSecurityTab({
       {/* Connected Accounts */}
       <GlassCard delay={0.2}>
         <div className="flex items-start gap-4 mb-4">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center shadow-lg shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center shadow-lg shrink-0">
             <Shield className="w-5 h-5 text-white" />
           </div>
           <div>
@@ -288,7 +288,7 @@ export default function AccountSecurityTab({
           {/* Magic Link */}
           <div className="flex items-center justify-between p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/30">
             <div className="flex items-center gap-3">
-              <Mail className="w-5 h-5 text-indigo-500" />
+              <Mail className="w-5 h-5 text-[var(--color-primary)]" />
               <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Magic Link</span>
             </div>
             <StatusBadge status="verified" label="Available" />
@@ -299,7 +299,7 @@ export default function AccountSecurityTab({
       {/* Active Sessions */}
       <GlassCard delay={0.25}>
         <div className="flex items-start gap-4 mb-4">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center shadow-lg shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-400 to-[var(--color-primary)] flex items-center justify-center shadow-lg shrink-0">
             <Monitor className="w-5 h-5 text-white" />
           </div>
           <div>
@@ -326,12 +326,12 @@ export default function AccountSecurityTab({
                 </div>
               </div>
               {s.current ? (
-                <span className="flex items-center gap-1.5 text-xs font-medium text-emerald-600 dark:text-emerald-400">
+                <span className="flex items-center gap-1.5 text-xs font-medium text-[var(--color-accent)] dark:text-[var(--color-accent)]">
                   <span className="pulse-dot" />
                   Current
                 </span>
               ) : (
-                <button className="text-xs text-rose-500 hover:text-rose-600 font-medium">
+                <button className="text-xs text-[var(--color-primary)] hover:text-[var(--color-primary)] font-medium">
                   Log out
                 </button>
               )}
@@ -340,7 +340,7 @@ export default function AccountSecurityTab({
 
           <button
             onClick={signOut}
-            className="flex items-center gap-2 text-sm text-rose-500 hover:text-rose-600 font-medium transition-colors mt-2"
+            className="flex items-center gap-2 text-sm text-[var(--color-primary)] hover:text-[var(--color-primary)] font-medium transition-colors mt-2"
           >
             <LogOut className="w-4 h-4" />
             Log out of all devices

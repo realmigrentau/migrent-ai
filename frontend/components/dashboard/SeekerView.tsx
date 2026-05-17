@@ -44,7 +44,7 @@ export default function SeekerView({ loading, profile }: SeekerViewProps) {
     desc: "Enter your preferred area code to find nearby rooms",
     icon: <MapPin className="w-4 h-4" />,
     href: "/seeker/search",
-    color: "bg-indigo-100 text-indigo-600 dark:bg-indigo-500/20 dark:text-indigo-400",
+    color: "bg-[var(--color-primary-soft)] text-[var(--color-primary)] dark:bg-[var(--color-primary)]/20 dark:text-[var(--color-primary)]",
     priority: 0,
   });
 
@@ -55,7 +55,7 @@ export default function SeekerView({ loading, profile }: SeekerViewProps) {
         desc: "Profiles with photos get 5x more responses from owners",
         icon: <Camera className="w-4 h-4" />,
         href: "/dashboard/seeker-profile",
-        color: "bg-pink-100 text-pink-600 dark:bg-pink-500/20 dark:text-pink-400",
+        color: "bg-[var(--color-primary-soft)] text-[var(--color-primary)] dark:bg-[var(--color-primary-soft)]0/20 dark:text-[var(--color-primary)]",
         priority: 1,
       });
     }
@@ -66,7 +66,7 @@ export default function SeekerView({ loading, profile }: SeekerViewProps) {
         desc: "Tell owners about yourself - what brings you here, your lifestyle",
         icon: <User className="w-4 h-4" />,
         href: "/dashboard/seeker-profile",
-        color: "bg-violet-100 text-violet-600 dark:bg-violet-500/20 dark:text-violet-400",
+        color: "bg-[var(--color-primary-soft)] text-[var(--color-primary)] dark:bg-[var(--color-primary-soft)]0/20 dark:text-[var(--color-primary)]",
         priority: 2,
       });
     }
@@ -77,7 +77,7 @@ export default function SeekerView({ loading, profile }: SeekerViewProps) {
         desc: "Owners want to know you have stable income",
         icon: <Briefcase className="w-4 h-4" />,
         href: "/dashboard/seeker-profile",
-        color: "bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400",
+        color: "bg-[var(--color-accent-soft)] text-[var(--color-accent)] dark:bg-[var(--color-accent-soft)]0/20 dark:text-[var(--color-accent)]",
         priority: 3,
       });
     }
@@ -99,7 +99,7 @@ export default function SeekerView({ loading, profile }: SeekerViewProps) {
         desc: "Get notified when new rooms match your criteria",
         icon: <Clock className="w-4 h-4" />,
         href: "/seeker/search",
-        color: "bg-pink-100 text-pink-600 dark:bg-pink-500/20 dark:text-pink-400",
+        color: "bg-[var(--color-primary-soft)] text-[var(--color-primary)] dark:bg-[var(--color-primary-soft)]0/20 dark:text-[var(--color-primary)]",
         priority: 5,
       });
     }
@@ -125,7 +125,7 @@ export default function SeekerView({ loading, profile }: SeekerViewProps) {
           <motion.span
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.97 }}
-            className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-4 py-2.5 rounded-xl text-sm transition-colors cursor-pointer"
+            className="inline-flex items-center gap-2 bg-[var(--color-primary)] hover:bg-[var(--color-primary-500)] text-white font-semibold px-4 py-2.5 rounded-xl text-sm transition-colors cursor-pointer"
           >
             <Search className="w-4 h-4" />
             New Search
@@ -168,12 +168,12 @@ export default function SeekerView({ loading, profile }: SeekerViewProps) {
       <div className="card p-5">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-indigo-500" />
+            <Sparkles className="w-4 h-4 text-[var(--color-primary)]" />
             {profile && profile.completionPercent < 50 ? "Get Started" : "Recommended for You"}
           </h2>
           <Link
             href="/seeker/search"
-            className="text-xs font-semibold text-indigo-500 hover:text-indigo-600 dark:hover:text-indigo-400 flex items-center gap-1"
+            className="text-xs font-semibold text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] flex items-center gap-1"
           >
             See all <ChevronRight className="w-3.5 h-3.5" />
           </Link>
@@ -202,7 +202,7 @@ export default function SeekerView({ loading, profile }: SeekerViewProps) {
                     {item.desc}
                   </p>
                 </div>
-                <ChevronRight className="w-4 h-4 text-slate-300 dark:text-slate-600 group-hover:text-indigo-500 transition-colors shrink-0" />
+                <ChevronRight className="w-4 h-4 text-slate-300 dark:text-slate-600 group-hover:text-[var(--color-primary)] transition-colors shrink-0" />
               </Link>
             </motion.div>
           ))}
@@ -216,25 +216,25 @@ export default function SeekerView({ loading, profile }: SeekerViewProps) {
             <h2 className="text-sm font-bold text-slate-900 dark:text-white">Your Preferences</h2>
             <Link
               href="/dashboard/seeker-profile"
-              className="text-xs font-semibold text-indigo-500 hover:text-indigo-600 dark:hover:text-indigo-400"
+              className="text-xs font-semibold text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)]"
             >
               Edit
             </Link>
           </div>
           <div className="flex flex-wrap gap-2">
             {profile.budgetMin && (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 text-[var(--color-accent)] dark:text-[var(--color-accent)] border border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)]">
                 ${profile.budgetMin}–${profile.budgetMax || "?"}/wk
               </span>
             )}
             {profile.preferredSuburbs && (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-500/20">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 text-[var(--color-primary)] dark:text-[var(--color-primary)] border border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)]">
                 <MapPin className="w-3 h-3" />
                 {profile.preferredSuburbs}
               </span>
             )}
             {profile.moveInDate && (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-pink-50 dark:bg-pink-500/10 text-pink-600 dark:text-pink-400 border border-pink-200 dark:border-pink-500/20">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary-soft)]0/10 text-[var(--color-primary)] dark:text-[var(--color-primary)] border border-[var(--color-primary-soft)] dark:border-[var(--color-primary)]/20">
                 <Clock className="w-3 h-3" />
                 Move-in: {profile.moveInDate}
               </span>
@@ -254,7 +254,7 @@ export default function SeekerView({ loading, profile }: SeekerViewProps) {
           whileHover={{ y: -2 }}
           className="card p-6 text-center cursor-pointer"
         >
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-rose-500 to-pink-500 flex items-center justify-center mx-auto mb-4">
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center mx-auto mb-4">
             <Users className="w-7 h-7 text-white" />
           </div>
           <h3 className="font-bold text-slate-900 dark:text-white mb-1">
@@ -272,7 +272,7 @@ export default function SeekerView({ loading, profile }: SeekerViewProps) {
           whileHover={{ y: -2 }}
           className="card p-6 text-center cursor-pointer"
         >
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-pink-500 flex items-center justify-center mx-auto mb-4">
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center mx-auto mb-4">
             <Search className="w-7 h-7 text-white" />
           </div>
           <h3 className="font-bold text-slate-900 dark:text-white mb-1">

@@ -52,10 +52,10 @@ const AUDIENCE_LABEL: Record<string, string> = {
 
 const TYPE_COLORS: Record<string, string> = {
   guide: "bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400",
-  faq: "bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-emerald-400",
+  faq: "bg-[var(--color-accent-soft)] text-[var(--color-accent)] dark:bg-emerald-900/20 dark:text-[var(--color-accent)]",
   troubleshoot: "bg-amber-50 text-amber-600 dark:bg-amber-900/20 dark:text-amber-400",
-  policy: "bg-purple-50 text-purple-600 dark:bg-purple-900/20 dark:text-purple-400",
-  safety: "bg-rose-50 text-rose-600 dark:bg-rose-900/20 dark:text-rose-400",
+  policy: "bg-[var(--color-primary-soft)] text-[var(--color-primary)] dark:bg-primary-900/20 dark:text-[var(--color-primary)]",
+  safety: "bg-[var(--color-primary-soft)] text-[var(--color-primary)] dark:bg-rose-900/20 dark:text-[var(--color-primary)]",
 };
 
 function FAQItem({ faq, index }: { faq: typeof QUICK_FAQS[0]; index: number }) {
@@ -106,13 +106,13 @@ function ArticleCard({ article, index }: { article: StaticHelpArticle; index: nu
       transition={{ delay: index * 0.06 }}
     >
       <Link href={`/help/${article.slug}`}>
-        <div className="group p-4 rounded-xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-indigo-200 dark:hover:border-indigo-700 hover:shadow-md transition-all cursor-pointer">
+        <div className="group p-4 rounded-xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-[var(--color-primary-soft)] dark:hover:border-primary-700 hover:shadow-md transition-all cursor-pointer">
           <div className="flex items-start gap-3">
             <div className="shrink-0 mt-0.5">
-              <BookOpen className="w-4 h-4 text-slate-400 group-hover:text-indigo-500 transition-colors" />
+              <BookOpen className="w-4 h-4 text-slate-400 group-hover:text-[var(--color-primary)] transition-colors" />
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="font-semibold text-sm text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors mb-1 leading-snug">
+              <h3 className="font-semibold text-sm text-slate-900 dark:text-white group-hover:text-[var(--color-primary)] dark:group-hover:text-[var(--color-primary)] transition-colors mb-1 leading-snug">
                 {article.title}
               </h3>
               <p className="text-xs text-slate-400 dark:text-slate-500 line-clamp-2 leading-relaxed mb-2">
@@ -132,7 +132,7 @@ function ArticleCard({ article, index }: { article: StaticHelpArticle; index: nu
                 </span>
               </div>
             </div>
-            <ChevronRight className="w-4 h-4 text-slate-300 dark:text-slate-600 group-hover:text-indigo-400 transition-colors shrink-0 mt-1" />
+            <ChevronRight className="w-4 h-4 text-slate-300 dark:text-slate-600 group-hover:text-[var(--color-primary)] transition-colors shrink-0 mt-1" />
           </div>
         </div>
       </Link>
@@ -176,7 +176,7 @@ export default function HelpCenter() {
       <div className="max-w-4xl mx-auto space-y-10 pb-16">
 
         {/* Hero */}
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-600 via-indigo-500 to-blue-500 p-8 md:p-12 text-white shadow-xl">
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[var(--color-primary)] via-[var(--color-primary)] to-[var(--color-primary)] p-8 md:p-12 text-white shadow-xl">
           <div className="absolute inset-0 opacity-10">
             <div className="absolute top-0 right-0 w-64 h-64 rounded-full bg-white transform translate-x-20 -translate-y-20" />
             <div className="absolute bottom-0 left-0 w-48 h-48 rounded-full bg-white transform -translate-x-16 translate-y-16" />
@@ -202,7 +202,7 @@ export default function HelpCenter() {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search for help - e.g. verify identity, cancel booking..."
-                className="w-full pl-12 pr-10 py-3.5 rounded-xl text-slate-900 dark:text-white bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 shadow-lg placeholder:text-slate-400"
+                className="w-full pl-12 pr-10 py-3.5 rounded-xl text-slate-900 dark:text-white bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] shadow-lg placeholder:text-slate-400"
               />
               {query && (
                 <button
@@ -217,7 +217,7 @@ export default function HelpCenter() {
             {/* Popular searches */}
             {!showSearch && (
               <div className="mt-4 flex flex-wrap gap-2">
-                <span className="text-indigo-200 text-xs self-center">Popular:</span>
+                <span className="text-[var(--color-primary)] text-xs self-center">Popular:</span>
                 {POPULAR_SEARCHES.slice(0, 6).map((s) => (
                   <button
                     key={s}
@@ -285,7 +285,7 @@ export default function HelpCenter() {
                   </p>
                   <Link
                     href="/support/tickets"
-                    className="inline-flex items-center gap-2 text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:underline"
+                    className="inline-flex items-center gap-2 text-sm font-medium text-[var(--color-primary)] dark:text-[var(--color-primary)] hover:underline"
                   >
                     Contact support instead
                     <ArrowRight className="w-4 h-4" />
@@ -311,11 +311,11 @@ export default function HelpCenter() {
                     transition={{ delay: i * 0.04 }}
                   >
                     <Link href={`/help/category/${cat.slug}`}>
-                      <div className="group p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-indigo-200 dark:hover:border-indigo-700 hover:shadow-md transition-all cursor-pointer h-full">
+                      <div className="group p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-[var(--color-primary-soft)] dark:hover:border-primary-700 hover:shadow-md transition-all cursor-pointer h-full">
                         <div className={`w-9 h-9 rounded-lg bg-gradient-to-br ${cat.gradient} flex items-center justify-center mb-3 shadow-sm`}>
                           {CATEGORY_ICONS[cat.icon]}
                         </div>
-                        <h3 className="font-semibold text-xs text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors mb-1 leading-snug">
+                        <h3 className="font-semibold text-xs text-slate-900 dark:text-white group-hover:text-[var(--color-primary)] dark:group-hover:text-[var(--color-primary)] transition-colors mb-1 leading-snug">
                           {cat.name}
                         </h3>
                         <p className="text-[10px] text-slate-400">
@@ -336,7 +336,7 @@ export default function HelpCenter() {
                 </h2>
                 <Link
                   href={`/help/category/getting-started`}
-                  className="text-xs text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1"
+                  className="text-xs text-[var(--color-primary)] dark:text-[var(--color-primary)] hover:underline flex items-center gap-1"
                 >
                   See all
                   <ArrowRight className="w-3 h-3" />
@@ -363,7 +363,7 @@ export default function HelpCenter() {
 
             {/* Escalation / Contact support */}
             <section className="rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
-              <div className="bg-gradient-to-r from-slate-50 to-indigo-50/40 dark:from-slate-900 dark:to-indigo-900/10 p-6 md:p-8">
+              <div className="bg-gradient-to-r from-slate-50 to-indigo-50/40 dark:from-slate-900 dark:to-primary-900/10 p-6 md:p-8">
                 <div className="flex flex-col md:flex-row items-start md:items-center gap-6 md:gap-10">
                   <div className="flex-1">
                     <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-1">
@@ -376,7 +376,7 @@ export default function HelpCenter() {
                   <div className="flex flex-col sm:flex-row gap-3 shrink-0">
                     <Link
                       href="/support/tickets"
-                      className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-semibold transition-colors shadow-sm"
+                      className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-[var(--color-primary)] hover:bg-[var(--color-primary-500)] text-white rounded-xl text-sm font-semibold transition-colors shadow-sm"
                     >
                       <MessageCircle className="w-4 h-4" />
                       Submit a request
@@ -393,15 +393,15 @@ export default function HelpCenter() {
 
                 <div className="grid grid-cols-3 gap-3 mt-6 pt-6 border-t border-slate-200 dark:border-slate-700">
                   <div className="text-center">
-                    <p className="text-xl font-black text-indigo-600 dark:text-indigo-400">24h</p>
+                    <p className="text-xl font-black text-[var(--color-primary)] dark:text-[var(--color-primary)]">24h</p>
                     <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Response time</p>
                   </div>
                   <div className="text-center border-x border-slate-200 dark:border-slate-700">
-                    <p className="text-xl font-black text-indigo-600 dark:text-indigo-400">5 days</p>
+                    <p className="text-xl font-black text-[var(--color-primary)] dark:text-[var(--color-primary)]">5 days</p>
                     <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Mon - Fri support</p>
                   </div>
                   <div className="text-center">
-                    <p className="text-xl font-black text-indigo-600 dark:text-indigo-400">AU</p>
+                    <p className="text-xl font-black text-[var(--color-primary)] dark:text-[var(--color-primary)]">AU</p>
                     <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Australia-based</p>
                   </div>
                 </div>

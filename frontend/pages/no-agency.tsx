@@ -14,8 +14,8 @@ export default function NoAgency() {
         {/* Hero */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-xl bg-violet-50 dark:bg-violet-500/10 border border-violet-100 dark:border-violet-500/20 flex items-center justify-center">
-              <svg className="w-5 h-5 text-violet-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <div className="w-10 h-10 rounded-xl bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary-soft)]0/10 border border-violet-100 dark:border-[var(--color-primary)]/20 flex items-center justify-center">
+              <svg className="w-5 h-5 text-[var(--color-primary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
               </svg>
             </div>
@@ -87,44 +87,44 @@ export default function NoAgency() {
                       <tr className="border-b border-slate-200 dark:border-slate-700">
                         <th className="text-left py-2 px-2 font-semibold text-slate-800 dark:text-slate-200">Activity</th>
                         <th className="text-center py-2 px-2 font-semibold text-slate-800 dark:text-slate-200">Agent</th>
-                        <th className="text-center py-2 px-2 font-semibold text-emerald-600 dark:text-emerald-400">MigRent</th>
+                        <th className="text-center py-2 px-2 font-semibold text-[var(--color-accent)] dark:text-[var(--color-accent)]">MigRent</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                       <tr>
                         <td className="py-2 px-2">Introduces parties</td>
                         <td className="py-2 px-2 text-center">Yes</td>
-                        <td className="py-2 px-2 text-center text-emerald-500 font-medium">Yes</td>
+                        <td className="py-2 px-2 text-center text-[var(--color-accent)] font-medium">Yes</td>
                       </tr>
                       <tr>
                         <td className="py-2 px-2">Negotiates terms on your behalf</td>
                         <td className="py-2 px-2 text-center">Yes</td>
-                        <td className="py-2 px-2 text-center text-rose-500 font-medium">No</td>
+                        <td className="py-2 px-2 text-center text-[var(--color-primary)] font-medium">No</td>
                       </tr>
                       <tr>
                         <td className="py-2 px-2">Collects rent or bonds</td>
                         <td className="py-2 px-2 text-center">Yes</td>
-                        <td className="py-2 px-2 text-center text-rose-500 font-medium">No</td>
+                        <td className="py-2 px-2 text-center text-[var(--color-primary)] font-medium">No</td>
                       </tr>
                       <tr>
                         <td className="py-2 px-2">Creates tenancy agreements</td>
                         <td className="py-2 px-2 text-center">Yes</td>
-                        <td className="py-2 px-2 text-center text-rose-500 font-medium">No</td>
+                        <td className="py-2 px-2 text-center text-[var(--color-primary)] font-medium">No</td>
                       </tr>
                       <tr>
                         <td className="py-2 px-2">Manages property</td>
                         <td className="py-2 px-2 text-center">Yes</td>
-                        <td className="py-2 px-2 text-center text-rose-500 font-medium">No</td>
+                        <td className="py-2 px-2 text-center text-[var(--color-primary)] font-medium">No</td>
                       </tr>
                       <tr>
                         <td className="py-2 px-2">Owes fiduciary duty</td>
                         <td className="py-2 px-2 text-center">Yes</td>
-                        <td className="py-2 px-2 text-center text-rose-500 font-medium">No</td>
+                        <td className="py-2 px-2 text-center text-[var(--color-primary)] font-medium">No</td>
                       </tr>
                       <tr>
                         <td className="py-2 px-2">Requires licence</td>
                         <td className="py-2 px-2 text-center">Yes</td>
-                        <td className="py-2 px-2 text-center text-rose-500 font-medium">No</td>
+                        <td className="py-2 px-2 text-center text-[var(--color-primary)] font-medium">No</td>
                       </tr>
                     </tbody>
                   </table>
@@ -145,7 +145,7 @@ export default function NoAgency() {
                 <li>Arranging bond payments through the appropriate state authority</li>
                 <li>Ensuring compliance with all applicable rental and tenancy laws</li>
               </ul>
-              <p>See our <Link href="/rental-laws" className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2 transition-colors">Australian Rental Laws Guide</Link> for an overview of state-by-state requirements.</p>
+              <p>See our <Link href="/rental-laws" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">Australian Rental Laws Guide</Link> for an overview of state-by-state requirements.</p>
             </div>
           </section>
 
@@ -155,7 +155,7 @@ export default function NoAgency() {
           </div>
 
           {/* CTA */}
-          <div className="card p-6 rounded-2xl bg-gradient-to-br from-violet-50 to-violet-100/50 dark:from-violet-500/10 dark:to-violet-600/5 border-violet-200 dark:border-violet-500/20 text-center">
+          <div className="card p-6 rounded-2xl bg-gradient-to-br from-violet-50 to-violet-100/50 dark:from-[var(--color-primary)]/10 dark:to-[var(--color-primary)]/5 border-[var(--color-primary-soft)] dark:border-[var(--color-primary)]/20 text-center">
             <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Questions about our model?</h3>
             <p className="text-sm text-slate-600 dark:text-slate-300 mb-4">We&apos;re happy to explain how MigRent works.</p>
             <Link href="/contact">

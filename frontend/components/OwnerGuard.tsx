@@ -31,12 +31,12 @@ function DefaultTeaser({
       <div className="relative rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 p-8 text-center overflow-hidden">
         {/* Blurred decorative background */}
         <div className="absolute inset-0 backdrop-blur-sm" />
-        <div className="absolute -top-10 -right-10 w-32 h-32 bg-indigo-500/5 rounded-full blur-2xl" />
-        <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-pink-500/5 rounded-full blur-2xl" />
+        <div className="absolute -top-10 -right-10 w-32 h-32 bg-[var(--color-primary)]/5 rounded-full blur-2xl" />
+        <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-[var(--color-primary-soft)]0/5 rounded-full blur-2xl" />
 
         <div className="relative z-10">
-          <div className="w-12 h-12 rounded-xl bg-indigo-100 dark:bg-indigo-500/20 flex items-center justify-center mx-auto mb-4">
-            <Lock className="w-6 h-6 text-indigo-500" />
+          <div className="w-12 h-12 rounded-xl bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/20 flex items-center justify-center mx-auto mb-4">
+            <Lock className="w-6 h-6 text-[var(--color-primary)]" />
           </div>
           <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">
             {title}
@@ -48,7 +48,7 @@ function DefaultTeaser({
             <motion.span
               whileHover={{ scale: 1.04 }}
               whileTap={{ scale: 0.98 }}
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold bg-indigo-500 text-white hover:bg-indigo-600 transition-colors"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary)] transition-colors"
             >
               Sign Up as Owner
               <ArrowRight className="w-4 h-4" />

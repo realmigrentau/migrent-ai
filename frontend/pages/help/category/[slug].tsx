@@ -41,10 +41,10 @@ const CATEGORY_ICONS: Record<string, React.ReactNode> = {
 
 const TYPE_COLORS: Record<string, string> = {
   guide: "bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400",
-  faq: "bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-emerald-400",
+  faq: "bg-[var(--color-accent-soft)] text-[var(--color-accent)] dark:bg-emerald-900/20 dark:text-[var(--color-accent)]",
   troubleshoot: "bg-amber-50 text-amber-600 dark:bg-amber-900/20 dark:text-amber-400",
-  policy: "bg-purple-50 text-purple-600 dark:bg-purple-900/20 dark:text-purple-400",
-  safety: "bg-rose-50 text-rose-600 dark:bg-rose-900/20 dark:text-rose-400",
+  policy: "bg-[var(--color-primary-soft)] text-[var(--color-primary)] dark:bg-primary-900/20 dark:text-[var(--color-primary)]",
+  safety: "bg-[var(--color-primary-soft)] text-[var(--color-primary)] dark:bg-rose-900/20 dark:text-[var(--color-primary)]",
 };
 
 const TYPE_LABELS: Record<string, string> = {
@@ -69,13 +69,13 @@ function ArticleCard({ article, index }: { article: StaticHelpArticle; index: nu
       transition={{ delay: index * 0.05 }}
     >
       <Link href={`/help/${article.slug}`}>
-        <div className="group p-5 rounded-xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-indigo-200 dark:hover:border-indigo-700 hover:shadow-md transition-all cursor-pointer">
+        <div className="group p-5 rounded-xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-[var(--color-primary-soft)] dark:hover:border-primary-700 hover:shadow-md transition-all cursor-pointer">
           <div className="flex items-start gap-4">
-            <div className="w-9 h-9 rounded-xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center shrink-0 group-hover:bg-indigo-50 dark:group-hover:bg-indigo-900/20 transition-colors">
-              <BookOpen className="w-4 h-4 text-slate-400 group-hover:text-indigo-500 transition-colors" />
+            <div className="w-9 h-9 rounded-xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center shrink-0 group-hover:bg-[var(--color-primary-soft)] dark:group-hover:bg-primary-900/20 transition-colors">
+              <BookOpen className="w-4 h-4 text-slate-400 group-hover:text-[var(--color-primary)] transition-colors" />
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="font-semibold text-sm text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors mb-1 leading-snug">
+              <h3 className="font-semibold text-sm text-slate-900 dark:text-white group-hover:text-[var(--color-primary)] dark:group-hover:text-[var(--color-primary)] transition-colors mb-1 leading-snug">
                 {article.title}
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed mb-3">
@@ -95,7 +95,7 @@ function ArticleCard({ article, index }: { article: StaticHelpArticle; index: nu
                 </span>
               </div>
             </div>
-            <ChevronRight className="w-4 h-4 text-slate-300 dark:text-slate-600 group-hover:text-indigo-400 transition-colors shrink-0 mt-1" />
+            <ChevronRight className="w-4 h-4 text-slate-300 dark:text-slate-600 group-hover:text-[var(--color-primary)] transition-colors shrink-0 mt-1" />
           </div>
         </div>
       </Link>
@@ -128,7 +128,7 @@ export default function HelpCategoryPage() {
           </p>
           <Link
             href="/help"
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-semibold transition-colors"
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-[var(--color-primary)] hover:bg-[var(--color-primary-500)] text-white rounded-xl text-sm font-semibold transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to Help Center
@@ -149,7 +149,7 @@ export default function HelpCategoryPage() {
 
         {/* Breadcrumb */}
         <nav className="flex items-center gap-1.5 text-xs text-slate-400 flex-wrap">
-          <Link href="/help" className="hover:text-indigo-500 transition-colors font-medium">
+          <Link href="/help" className="hover:text-[var(--color-primary)] transition-colors font-medium">
             Help Center
           </Link>
           <ChevronRight className="w-3 h-3" />
@@ -199,7 +199,7 @@ export default function HelpCategoryPage() {
             </p>
             <Link
               href="/support/tickets"
-              className="inline-flex items-center gap-2 text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:underline"
+              className="inline-flex items-center gap-2 text-sm font-medium text-[var(--color-primary)] dark:text-[var(--color-primary)] hover:underline"
             >
               Contact support
             </Link>
@@ -220,11 +220,11 @@ export default function HelpCategoryPage() {
                 transition={{ delay: i * 0.03 }}
               >
                 <Link href={`/help/category/${cat.slug}`}>
-                  <div className="group p-3.5 rounded-xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-indigo-200 dark:hover:border-indigo-700 hover:shadow-sm transition-all cursor-pointer h-full">
+                  <div className="group p-3.5 rounded-xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-[var(--color-primary-soft)] dark:hover:border-primary-700 hover:shadow-sm transition-all cursor-pointer h-full">
                     <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${cat.gradient} flex items-center justify-center mb-2 shadow-sm`}>
                       <span className="scale-75">{CATEGORY_ICONS[cat.icon]}</span>
                     </div>
-                    <h3 className="font-semibold text-xs text-slate-800 dark:text-slate-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors leading-snug">
+                    <h3 className="font-semibold text-xs text-slate-800 dark:text-slate-100 group-hover:text-[var(--color-primary)] dark:group-hover:text-[var(--color-primary)] transition-colors leading-snug">
                       {cat.name}
                     </h3>
                     <p className="text-[10px] text-slate-400 mt-0.5">
@@ -238,7 +238,7 @@ export default function HelpCategoryPage() {
         </section>
 
         {/* Escalation */}
-        <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-gradient-to-r from-slate-50 to-indigo-50/40 dark:from-slate-900 dark:to-indigo-900/10 p-6">
+        <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-gradient-to-r from-slate-50 to-indigo-50/40 dark:from-slate-900 dark:to-primary-900/10 p-6">
           <div className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-8">
             <div className="flex-1">
               <h3 className="font-bold text-slate-900 dark:text-white mb-1">
@@ -251,7 +251,7 @@ export default function HelpCategoryPage() {
             <div className="flex flex-col sm:flex-row gap-2 shrink-0">
               <Link
                 href="/support/tickets"
-                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-semibold transition-colors"
+                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-[var(--color-primary)] hover:bg-[var(--color-primary-500)] text-white rounded-xl text-sm font-semibold transition-colors"
               >
                 <MessageCircle className="w-4 h-4" />
                 Submit a request
@@ -270,7 +270,7 @@ export default function HelpCategoryPage() {
         {/* Back link */}
         <Link
           href="/help"
-          className="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors font-medium"
+          className="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] transition-colors font-medium"
         >
           <ArrowLeft className="w-4 h-4" />
           Back to Help Center

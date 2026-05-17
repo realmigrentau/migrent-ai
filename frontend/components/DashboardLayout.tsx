@@ -67,8 +67,8 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
         <div className="text-center space-y-4">
-          <div className="w-10 h-10 border-2 border-indigo-300 dark:border-indigo-500/30 border-t-indigo-500 rounded-full animate-spin mx-auto" />
-          <p className="text-sm text-slate-500 dark:text-slate-400">
+          <div className="w-10 h-10 border-2 border-[var(--color-line-2)] border-t-[var(--color-ink)] rounded-full animate-spin mx-auto" />
+          <p className="text-sm text-[var(--color-ink-3)]">
             Loading dashboard...
           </p>
         </div>
@@ -80,8 +80,8 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
         <div className="text-center space-y-4">
-          <div className="w-10 h-10 border-2 border-indigo-300 dark:border-indigo-500/30 border-t-indigo-500 rounded-full animate-spin mx-auto" />
-          <p className="text-sm text-slate-500 dark:text-slate-400">
+          <div className="w-10 h-10 border-2 border-[var(--color-line-2)] border-t-[var(--color-ink)] rounded-full animate-spin mx-auto" />
+          <p className="text-sm text-[var(--color-ink-3)]">
             Redirecting to login...
           </p>
         </div>
@@ -93,8 +93,8 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
         <div className="text-center space-y-4">
-          <div className="w-10 h-10 border-2 border-indigo-300 dark:border-indigo-500/30 border-t-indigo-500 rounded-full animate-spin mx-auto" />
-          <p className="text-sm text-slate-500 dark:text-slate-400">
+          <div className="w-10 h-10 border-2 border-[var(--color-line-2)] border-t-[var(--color-ink)] rounded-full animate-spin mx-auto" />
+          <p className="text-sm text-[var(--color-ink-3)]">
             Completing setup...
           </p>
         </div>
@@ -180,15 +180,15 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             sidebarCollapsed ? "w-[72px]" : "w-64"
           }`}
         >
-          <div className="bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800 p-4 rounded-2xl sticky top-24 overflow-hidden">
+          <div className="bg-[var(--color-surface)] border border-[var(--color-line)] p-4 rounded-[14px] sticky top-24 overflow-hidden">
             {/* User info */}
             {!sidebarCollapsed && (
-              <div className="flex items-center gap-3 mb-5 pb-5 border-b border-slate-200/70 dark:border-slate-800">
+              <div className="flex items-center gap-3 mb-5 pb-5 border-b border-[var(--color-line)]">
                 <div
-                  className={`w-10 h-10 rounded-xl flex items-center justify-center text-white font-semibold text-sm overflow-hidden shrink-0 ${
+                  className={`w-10 h-10 rounded-[10px] flex items-center justify-center text-[var(--color-primary-fg)] font-semibold text-sm overflow-hidden shrink-0 ${
                     profilePhoto
                       ? ""
-                      : isOwner ? "bg-indigo-600" : "bg-rose-600"
+                      : isOwner ? "bg-[var(--color-accent)]" : "bg-[var(--color-primary)]"
                   }`}
                 >
                   {profilePhoto ? (
@@ -202,13 +202,13 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-slate-900 dark:text-white text-sm truncate">
+                  <p className="font-semibold text-[var(--color-ink)] text-sm truncate">
                     {displayName || "User"}
                   </p>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
+                  <p className="text-xs text-[var(--color-ink-3)] flex items-center gap-1.5">
                     <span
                       className={`w-1.5 h-1.5 rounded-full ${
-                        isOwner ? "bg-indigo-500" : "bg-rose-500"
+                        isOwner ? "bg-[var(--color-accent)]" : "bg-[var(--color-primary)]"
                       }`}
                     />
                     <span className="capitalize">{role || "No role"}</span>
@@ -219,12 +219,12 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
             {/* Collapsed: just avatar */}
             {sidebarCollapsed && (
-              <div className="flex justify-center mb-4 pb-4 border-b border-slate-200/70 dark:border-slate-800">
+              <div className="flex justify-center mb-4 pb-4 border-b border-[var(--color-line)]">
                 <div
-                  className={`w-9 h-9 rounded-xl flex items-center justify-center text-white font-semibold text-xs overflow-hidden ${
+                  className={`w-9 h-9 rounded-[10px] flex items-center justify-center text-[var(--color-primary-fg)] font-semibold text-xs overflow-hidden ${
                     profilePhoto
                       ? ""
-                      : isOwner ? "bg-indigo-600" : "bg-rose-600"
+                      : isOwner ? "bg-[var(--color-accent)]" : "bg-[var(--color-primary)]"
                   }`}
                 >
                   {profilePhoto ? (
@@ -250,18 +250,18 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                   <Link key={item.href} href={item.href}>
                     <motion.div
                       whileHover={{ x: 2 }}
-                      className={`flex items-center gap-3 rounded-xl text-sm font-medium transition-all cursor-pointer ${
+                      className={`flex items-center gap-3 rounded-[8px] text-[13.5px] transition-colors cursor-pointer ${
                         sidebarCollapsed
                           ? "justify-center px-2 py-2.5"
-                          : "px-3 py-2.5"
+                          : "px-3 py-2"
                       } ${
                         isActive
-                          ? "bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400"
-                          : "text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50"
+                          ? "bg-[var(--color-surface-sunk)] text-[var(--color-ink)] font-semibold"
+                          : "text-[var(--color-ink-2)] font-medium hover:bg-[var(--color-surface-sunk)] hover:text-[var(--color-ink)]"
                       }`}
                       title={sidebarCollapsed ? item.label : undefined}
                     >
-                      <span className={isActive ? "text-indigo-600 dark:text-indigo-400" : ""}>
+                      <span className={isActive ? "text-[var(--color-ink)]" : "text-[var(--color-ink-3)]"}>
                         {item.icon}
                       </span>
                       {!sidebarCollapsed && item.label}
@@ -272,18 +272,18 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             </nav>
 
             {/* Notification bell */}
-            <div className="mt-3 pt-3 border-t border-slate-200/70 dark:border-slate-800">
+            <div className="mt-3 pt-3 border-t border-[var(--color-line)]">
               <NotificationBell unreadCount={unreadCount} collapsed={sidebarCollapsed} />
             </div>
 
             {/* Sign out */}
-            <div className="mt-2 pt-2 border-t border-slate-200/70 dark:border-slate-800">
+            <div className="mt-2 pt-2 border-t border-[var(--color-line)]">
               <button
                 onClick={signOut}
-                className={`flex items-center gap-3 rounded-xl text-sm font-medium text-slate-500 dark:text-slate-400 hover:bg-red-50 dark:hover:bg-red-500/10 hover:text-red-600 dark:hover:text-red-400 transition-all w-full ${
+                className={`flex items-center gap-3 rounded-[8px] text-[13.5px] font-medium text-[var(--color-ink-3)] hover:bg-[#f1d8d4] dark:hover:bg-[#2b1614] hover:text-[var(--color-danger-500)] transition-colors w-full ${
                   sidebarCollapsed
                     ? "justify-center px-2 py-2.5"
-                    : "px-3 py-2.5"
+                    : "px-3 py-2"
                 }`}
                 title={sidebarCollapsed ? "Sign out" : undefined}
               >
@@ -295,7 +295,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             {/* Collapse toggle */}
             <button
               onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-              className="mt-3 w-full flex items-center justify-center py-1.5 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+              className="mt-3 w-full flex items-center justify-center py-1.5 text-[var(--color-ink-4)] hover:text-[var(--color-ink-2)] transition-colors"
             >
               {sidebarCollapsed ? (
                 <ChevronRight className="w-4 h-4" />
@@ -318,7 +318,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       </div>
 
       {/* Mobile bottom nav */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 dark:bg-slate-950/95 backdrop-blur-xl border-t border-slate-200/70 dark:border-slate-800 pb-safe-bottom">
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-[var(--color-surface-2)]/97 backdrop-blur-xl border-t border-[var(--color-line)] pb-safe-bottom">
         <div className="flex items-center justify-around px-2 py-2">
           {mobileNavItems.map((item) => {
             const isActive =
@@ -328,18 +328,18 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
               <Link key={item.href} href={item.href} className="flex-1">
                 <motion.div
                   whileTap={{ scale: 0.9 }}
-                  className={`flex flex-col items-center gap-0.5 py-1 rounded-lg transition-colors ${
+                  className={`flex flex-col items-center gap-0.5 py-1 rounded-[6px] transition-colors ${
                     isActive
-                      ? "text-indigo-600 dark:text-indigo-400"
-                      : "text-slate-400 dark:text-slate-500"
+                      ? "text-[var(--color-ink)]"
+                      : "text-[var(--color-ink-3)]"
                   }`}
                 >
                   {item.icon}
-                  <span className="text-[10px] font-medium">{item.label}</span>
+                  <span className="text-[10px] font-semibold">{item.label}</span>
                   {isActive && (
                     <motion.div
                       layoutId="mobile-nav-indicator"
-                      className="w-1 h-1 rounded-full bg-indigo-500"
+                      className="w-1 h-1 rounded-full bg-[var(--color-ink)]"
                       transition={{ type: "spring", stiffness: 500, damping: 35 }}
                     />
                   )}

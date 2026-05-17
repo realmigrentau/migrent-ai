@@ -74,20 +74,20 @@ export default function TrueCostBadge({
   };
 
   return (
-    <div className="rounded-2xl border border-emerald-200 dark:border-emerald-500/20 bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/30 overflow-hidden">
+    <div className="rounded-2xl border border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)] bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/30 overflow-hidden">
       {/* Collapsed header */}
       <button
         onClick={() => setOpen(!open)}
         className="w-full px-4 py-3.5 flex items-center justify-between transition-colors"
       >
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shadow-sm">
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[var(--color-accent)] to-teal-500 flex items-center justify-center shadow-sm">
             <Zap className="w-4 h-4 text-white" />
           </div>
           <div className="text-left">
             {!open ? (
               <>
-                <p className="text-[11px] font-medium text-emerald-600 dark:text-emerald-400">
+                <p className="text-[11px] font-medium text-[var(--color-accent)] dark:text-[var(--color-accent)]">
                   What will this really cost you?
                 </p>
                 <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
@@ -95,16 +95,16 @@ export default function TrueCostBadge({
                 </p>
               </>
             ) : (
-              <p className="text-sm font-bold text-emerald-700 dark:text-emerald-300">
+              <p className="text-sm font-bold text-[var(--color-accent)] dark:text-[var(--color-accent)]">
                 True Cost Calculator
               </p>
             )}
           </div>
         </div>
         {open ? (
-          <ChevronUp className="w-4 h-4 text-emerald-500" />
+          <ChevronUp className="w-4 h-4 text-[var(--color-accent)]" />
         ) : (
-          <ChevronDown className="w-4 h-4 text-emerald-500" />
+          <ChevronDown className="w-4 h-4 text-[var(--color-accent)]" />
         )}
       </button>
 
@@ -132,7 +132,7 @@ export default function TrueCostBadge({
                   }}
                   onFocus={() => setShowDropdown(true)}
                   placeholder="Your uni or workplace"
-                  className="w-full pl-8 pr-8 py-2 rounded-xl border border-emerald-200 dark:border-emerald-700/50 bg-white dark:bg-slate-800/50 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
+                  className="w-full pl-8 pr-8 py-2 rounded-xl border border-[var(--color-accent-soft)] dark:border-emerald-700/50 bg-white dark:bg-slate-800/50 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
                 />
                 {destination && (
                   <button
@@ -163,9 +163,9 @@ export default function TrueCostBadge({
                           <span
                             className={`w-5 h-5 rounded text-white text-[9px] font-bold flex items-center justify-center ${
                               d.type === "university"
-                                ? "bg-indigo-500"
+                                ? "bg-[var(--color-primary)]"
                                 : d.type === "cbd"
-                                ? "bg-rose-500"
+                                ? "bg-[var(--color-primary)]"
                                 : "bg-amber-500"
                             }`}
                           >
@@ -204,7 +204,7 @@ export default function TrueCostBadge({
                     max={BILLS_RANGE.max}
                     value={billsEstimate}
                     onChange={(e) => setBillsEstimate(Number(e.target.value))}
-                    className="w-full h-1.5 rounded-full appearance-none cursor-pointer bg-emerald-200 dark:bg-emerald-900/50 accent-emerald-500"
+                    className="w-full h-1.5 rounded-full appearance-none cursor-pointer bg-[var(--color-accent-soft)] dark:bg-emerald-900/50 accent-emerald-500"
                   />
                 </div>
               )}
@@ -239,7 +239,7 @@ export default function TrueCostBadge({
                   <span className="text-sm font-bold text-slate-900 dark:text-white">
                     True Cost
                   </span>
-                  <span className="text-sm font-black text-emerald-600 dark:text-emerald-400">
+                  <span className="text-sm font-black text-[var(--color-accent)] dark:text-[var(--color-accent)]">
                     ${result.trueCost}/wk
                   </span>
                 </div>

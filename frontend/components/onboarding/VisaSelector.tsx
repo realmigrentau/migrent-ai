@@ -67,7 +67,7 @@ export default function VisaSelector({ value, onChange }: VisaSelectorProps) {
             onClick={() => onChange(selected ? "" : visa.id)}
             className={`w-full text-left p-4 rounded-xl border-2 transition-all ${
               selected
-                ? "border-indigo-500 bg-indigo-50 dark:bg-indigo-500/10 shadow-sm"
+                ? "border-[var(--color-primary)] bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 shadow-sm"
                 : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-slate-300 dark:hover:border-slate-600"
             }`}
           >
@@ -76,7 +76,7 @@ export default function VisaSelector({ value, onChange }: VisaSelectorProps) {
               <div className="flex-1 min-w-0">
                 <p className={`text-sm font-semibold ${
                   selected
-                    ? "text-indigo-700 dark:text-indigo-300"
+                    ? "text-[var(--color-primary)] dark:text-[var(--color-primary)]"
                     : "text-slate-800 dark:text-slate-100"
                 }`}>
                   {visa.name}
@@ -89,7 +89,7 @@ export default function VisaSelector({ value, onChange }: VisaSelectorProps) {
                 <motion.div
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
-                  className="w-6 h-6 rounded-full bg-indigo-500 flex items-center justify-center shrink-0"
+                  className="w-6 h-6 rounded-full bg-[var(--color-primary)] flex items-center justify-center shrink-0"
                 >
                   <svg className="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />

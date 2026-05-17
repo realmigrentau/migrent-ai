@@ -9,7 +9,7 @@ export default function OldMessagesRedirect() {
   }, [router]);
   return (
     <div className="flex items-center justify-center min-h-[60vh]">
-      <div className="w-8 h-8 border-2 border-indigo-300 border-t-indigo-500 rounded-full animate-spin" />
+      <div className="w-8 h-8 border-2 border-[var(--color-line-2)] border-t-[var(--color-ink)] rounded-full animate-spin" />
     </div>
   );
 }

@@ -154,7 +154,7 @@ export default function WishlistPage() {
                   onClick={() => setViewMode("grid")}
                   className={`p-2.5 transition-colors ${
                     viewMode === "grid"
-                      ? "bg-rose-50 dark:bg-rose-500/10 text-rose-500"
+                      ? "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 text-[var(--color-primary)]"
                       : "text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
                   }`}
                 >
@@ -164,7 +164,7 @@ export default function WishlistPage() {
                   onClick={() => setViewMode("list")}
                   className={`p-2.5 transition-colors ${
                     viewMode === "list"
-                      ? "bg-rose-50 dark:bg-rose-500/10 text-rose-500"
+                      ? "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 text-[var(--color-primary)]"
                       : "text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
                   }`}
                 >
@@ -180,8 +180,8 @@ export default function WishlistPage() {
                 }}
                 className={`flex items-center gap-1.5 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all ${
                   compareMode
-                    ? "bg-rose-500 text-white shadow-lg shadow-rose-500/25"
-                    : "bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 hover:border-rose-300 dark:hover:border-rose-500/30"
+                    ? "bg-[var(--color-primary)] text-white shadow-lg shadow-[var(--color-primary)]/20"
+                    : "bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 hover:border-[var(--color-line-2)] dark:hover:border-[var(--color-primary)]/30"
                 }`}
               >
                 <Columns3 className="w-3.5 h-3.5" />
@@ -191,11 +191,11 @@ export default function WishlistPage() {
               {/* Activity bell (mobile) */}
               <button
                 onClick={() => setShowActivityFeed(true)}
-                className="relative p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-400 hover:text-rose-500 transition-colors lg:hidden"
+                className="relative p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-400 hover:text-[var(--color-primary)] transition-colors lg:hidden"
               >
                 <Bell className="w-4 h-4" />
                 {unreadActivityCount > 0 && (
-                  <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-rose-500 text-white text-[9px] font-bold flex items-center justify-center">
+                  <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[var(--color-primary)] text-white text-[9px] font-bold flex items-center justify-center">
                     {unreadActivityCount}
                   </span>
                 )}
@@ -228,8 +228,8 @@ export default function WishlistPage() {
               animate={{ opacity: 1, scale: 1 }}
               className="card p-12 rounded-2xl text-center"
             >
-              <div className="w-20 h-20 mx-auto rounded-2xl bg-gradient-to-br from-rose-100 to-pink-100 dark:from-rose-900/30 dark:to-pink-900/30 flex items-center justify-center mb-5">
-                <Heart className="w-10 h-10 text-rose-400" />
+              <div className="w-20 h-20 mx-auto rounded-2xl bg-gradient-to-br from-[var(--color-primary-soft)] to-pink-100 dark:from-rose-900/30 dark:to-pink-900/30 flex items-center justify-center mb-5">
+                <Heart className="w-10 h-10 text-[var(--color-primary)]" />
               </div>
               <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">
                 {searchQuery ? "No matches found" : activeCollection !== "all" ? "No listings in this collection" : "Your wishlist is empty"}
@@ -299,7 +299,7 @@ export default function WishlistPage() {
               >
                 <button
                   onClick={() => setShowCompareTable(true)}
-                  className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-gradient-to-r from-rose-500 to-pink-500 text-white font-semibold shadow-2xl shadow-rose-500/30 hover:shadow-rose-500/50 transition-all hover:scale-105"
+                  className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary)] text-white font-semibold shadow-2xl shadow-[var(--color-primary)]/20 hover:shadow-[var(--color-primary)]/20 transition-all hover:scale-105"
                 >
                   <Columns3 className="w-5 h-5" />
                   Compare {compareIds.size} Listings
@@ -359,7 +359,7 @@ export default function WishlistPage() {
       >
         <Link
           href="/seeker/search"
-          className="w-14 h-14 rounded-2xl bg-gradient-to-r from-rose-500 to-pink-500 text-white shadow-2xl shadow-rose-500/30 flex items-center justify-center hover:scale-110 active:scale-95 transition-transform"
+          className="w-14 h-14 rounded-2xl bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary)] text-white shadow-2xl shadow-[var(--color-primary)]/20 flex items-center justify-center hover:scale-110 active:scale-95 transition-transform"
         >
           <Plus className="w-6 h-6" />
         </Link>
