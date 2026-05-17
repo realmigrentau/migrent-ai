@@ -12,14 +12,14 @@ export default function RoleToggle({ role, onToggle, disabled }: RoleToggleProps
   const isOwner = role === "owner";
 
   return (
-    <div className="relative inline-flex items-center rounded-xl bg-slate-100 dark:bg-slate-800 p-1">
+    <div className="relative inline-flex items-center rounded-[10px] bg-[var(--color-surface-sunk)] p-[3px]">
       {/* Sliding background */}
       <motion.div
-        className="absolute top-1 bottom-1 rounded-lg bg-[var(--color-primary)]"
+        className="absolute top-[3px] bottom-[3px] rounded-[7px] bg-[var(--color-surface-2)] shadow-[var(--shadow-soft)] border border-[var(--color-line)]"
         initial={false}
         animate={{
-          left: isOwner ? "4px" : "50%",
-          right: isOwner ? "50%" : "4px",
+          left: isOwner ? "3px" : "50%",
+          right: isOwner ? "50%" : "3px",
         }}
         transition={{ type: "spring", stiffness: 500, damping: 35 }}
       />
@@ -27,26 +27,26 @@ export default function RoleToggle({ role, onToggle, disabled }: RoleToggleProps
       <button
         onClick={() => onToggle("owner")}
         disabled={disabled}
-        className={`relative z-10 flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${
+        className={`relative z-10 flex items-center gap-1.5 px-3.5 py-1.5 rounded-[7px] text-[13px] font-semibold transition-colors ${
           isOwner
-            ? "text-white"
-            : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
+            ? "text-[var(--color-ink)]"
+            : "text-[var(--color-ink-3)] hover:text-[var(--color-ink-2)]"
         }`}
       >
-        <Home className="w-4 h-4" />
+        <Home className="w-3.5 h-3.5" />
         Owner
       </button>
 
       <button
         onClick={() => onToggle("seeker")}
         disabled={disabled}
-        className={`relative z-10 flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${
+        className={`relative z-10 flex items-center gap-1.5 px-3.5 py-1.5 rounded-[7px] text-[13px] font-semibold transition-colors ${
           !isOwner
-            ? "text-white"
-            : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
+            ? "text-[var(--color-ink)]"
+            : "text-[var(--color-ink-3)] hover:text-[var(--color-ink-2)]"
         }`}
       >
-        <Search className="w-4 h-4" />
+        <Search className="w-3.5 h-3.5" />
         Seeker
       </button>
     </div>
