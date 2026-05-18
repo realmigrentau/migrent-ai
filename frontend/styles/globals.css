@@ -235,37 +235,36 @@ html[data-palette="paper"] {
 
 /* ══════════════════════════════════════════════════════════════
    DARK THEME OVERRIDES
-   Activated via .dark on <html>. Uses html.dark + [data-palette]
-   selectors so it always beats palette overrides in specificity.
+   Each palette gets its own dark variant tinted in the same family.
+   html.dark always beats html[data-palette] specificity-wise so dark
+   mode wins regardless of the chosen palette.
    ══════════════════════════════════════════════════════════════ */
 
-html.dark,
-html.dark[data-palette],
-html.dark[data-palette="sand"],
-html.dark[data-palette="cloud"],
-html.dark[data-palette="mint"],
-html.dark[data-palette="blush"],
-html.dark[data-palette="paper"] {
-  --color-ink: #ede6d4;
-  --color-ink-2: #b8b2a2;
-  --color-ink-muted: #8a8578;
-  --color-ink-3: #8a8578;
-  --color-ink-4: #5f5b52;
+/* Default dark = Sky-dark (cool blue) */
+html.dark {
+  --color-ink: #e2eaf4;
+  --color-ink-2: #a8b5c8;
+  --color-ink-muted: #788698;
+  --color-ink-3: #788698;
+  --color-ink-4: #54606f;
 
-  --color-bg: #0f1316;
-  --color-surface: #161c20;
-  --color-surface-2: #1d242a;
-  --color-surface-muted: #0b0f12;
-  --color-surface-warm: #161c20;
-  --color-surface-sunk: #0b0f12;
+  --color-bg: #0a1320;
+  --color-surface: #11203a;
+  --color-surface-2: #182d4d;
+  --color-surface-muted: #060e1a;
+  --color-surface-warm: #11203a;
+  --color-surface-sunk: #060e1a;
 
-  --color-line: #262d33;
-  --color-line-2: #364048;
-  --color-hairline: #262d33;
+  --color-line: #1e3458;
+  --color-line-2: #2c4774;
+  --color-hairline: #1e3458;
 
-  --color-primary: #c9d6ea;
+  --color-primary: #94b6e0;
+  --color-primary-500: #b1c8e8;
+  --color-primary-600: #94b6e0;
+  --color-primary-700: #6a92c4;
   --color-primary-fg: #0a1320;
-  --color-primary-soft: #1f2a3a;
+  --color-primary-soft: #182d4d;
 
   --color-accent: #6fbd8f;
   --color-accent-soft: #1c2c24;
@@ -274,6 +273,123 @@ html.dark[data-palette="paper"] {
   --color-danger-500: #d97169;
   --color-warn-500: #e09454;
   --color-info-500: #94aac8;
+}
+
+/* Sand-dark = warm charcoal */
+html.dark[data-palette="sand"] {
+  --color-ink: #ede6d4;
+  --color-ink-2: #b8b2a2;
+  --color-ink-3: #8a8578;
+  --color-ink-4: #5f5b52;
+  --color-bg: #0f1316;
+  --color-surface: #161c20;
+  --color-surface-2: #1d242a;
+  --color-surface-muted: #0b0f12;
+  --color-surface-warm: #161c20;
+  --color-surface-sunk: #0b0f12;
+  --color-line: #262d33;
+  --color-line-2: #364048;
+  --color-hairline: #262d33;
+  --color-primary: #c9d6ea;
+  --color-primary-500: #dde6f4;
+  --color-primary-600: #c9d6ea;
+  --color-primary-700: #aab9d0;
+  --color-primary-fg: #0a1320;
+  --color-primary-soft: #1f2a3a;
+}
+
+/* Cloud-dark = cool slate */
+html.dark[data-palette="cloud"] {
+  --color-ink: #e6ebf3;
+  --color-ink-2: #aab4c4;
+  --color-ink-3: #6e7a8f;
+  --color-ink-4: #4f5a6e;
+  --color-bg: #0e131c;
+  --color-surface: #161c2a;
+  --color-surface-2: #1d2538;
+  --color-surface-muted: #080c14;
+  --color-surface-warm: #161c2a;
+  --color-surface-sunk: #080c14;
+  --color-line: #232c3f;
+  --color-line-2: #354160;
+  --color-hairline: #232c3f;
+  --color-primary: #a8bce0;
+  --color-primary-500: #c1d2eb;
+  --color-primary-600: #a8bce0;
+  --color-primary-700: #859ac6;
+  --color-primary-fg: #0e131c;
+  --color-primary-soft: #1d2538;
+}
+
+/* Mint-dark = deep forest */
+html.dark[data-palette="mint"] {
+  --color-ink: #d8ead8;
+  --color-ink-2: #a4b9a8;
+  --color-ink-3: #6e8473;
+  --color-ink-4: #4f6256;
+  --color-bg: #0c1410;
+  --color-surface: #131e16;
+  --color-surface-2: #1a281e;
+  --color-surface-muted: #060c08;
+  --color-surface-warm: #131e16;
+  --color-surface-sunk: #060c08;
+  --color-line: #1e2e23;
+  --color-line-2: #2f4434;
+  --color-hairline: #1e2e23;
+  --color-primary: #8fc4a4;
+  --color-primary-500: #a8d4ba;
+  --color-primary-600: #8fc4a4;
+  --color-primary-700: #6ea584;
+  --color-primary-fg: #0c1410;
+  --color-primary-soft: #1a281e;
+  --color-accent: #d6a063;
+  --color-accent-soft: #2c1f10;
+}
+
+/* Blush-dark = deep wine */
+html.dark[data-palette="blush"] {
+  --color-ink: #f1d8d4;
+  --color-ink-2: #c2a4a0;
+  --color-ink-3: #8a6d6a;
+  --color-ink-4: #5f4f4d;
+  --color-bg: #1a0e10;
+  --color-surface: #261518;
+  --color-surface-2: #321c20;
+  --color-surface-muted: #100608;
+  --color-surface-warm: #261518;
+  --color-surface-sunk: #100608;
+  --color-line: #3a2128;
+  --color-line-2: #4f2e37;
+  --color-hairline: #3a2128;
+  --color-primary: #e09bab;
+  --color-primary-500: #ecb4c2;
+  --color-primary-600: #e09bab;
+  --color-primary-700: #c47a8b;
+  --color-primary-fg: #1a0e10;
+  --color-primary-soft: #321c20;
+}
+
+/* Paper-dark = pure black */
+html.dark[data-palette="paper"] {
+  --color-ink: #f4f4f2;
+  --color-ink-2: #b8b8b4;
+  --color-ink-3: #71717a;
+  --color-ink-4: #4f4f56;
+  --color-bg: #050505;
+  --color-surface: #0d0d0e;
+  --color-surface-2: #18181b;
+  --color-surface-muted: #020202;
+  --color-surface-warm: #0d0d0e;
+  --color-surface-sunk: #020202;
+  --color-line: #1f1f22;
+  --color-line-2: #2e2e32;
+  --color-hairline: #1f1f22;
+  --color-primary: #f4f4f2;
+  --color-primary-500: #ffffff;
+  --color-primary-600: #f4f4f2;
+  --color-primary-700: #c8c8c4;
+  --color-primary-fg: #0a0a0a;
+  --color-primary-soft: #18181b;
 }
 
 /* ══════════════════════════════════════════════════════════════

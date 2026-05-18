@@ -1,6 +1,5 @@
 import { motion } from "framer-motion";
-import { ProgressRing, StatusBadge } from "../ui/GlassCard";
-import { Shield, Phone, Rocket, Calculator, Sparkles, Star } from "lucide-react";
+import { Shield, Phone, Rocket, Calculator, Check } from "lucide-react";
 import type { SettingsTab, ProfileData } from "../../hooks/useSettingsData";
 
 interface HeroStatusProps {
@@ -19,157 +18,145 @@ export default function HeroStatus({
   setActiveTab,
 }: HeroStatusProps) {
   const percentage = verificationProgress.percentage;
-  const isSuperhost = (profile?.average_rating || 0) >= 4.8 && (profile?.reviews_count || 0) >= 10;
 
   const quickActions = [
     {
-      label: profile?.phone ? "Phone ✓" : "Verify Phone",
+      label: profile?.phone ? "Phone" : "Verify phone",
+      sub: profile?.phone ? "Done" : "Required",
+      done: !!profile?.phone,
       icon: Phone,
-      status: profile?.phone ? ("verified" as const) : ("pending" as const),
       tab: "verification" as SettingsTab,
-      gradient: "from-[var(--color-accent)] to-teal-500",
     },
     {
-      label: profile?.identity_verified ? "ID ✓" : "ID Check",
+      label: profile?.identity_verified ? "ID verified" : "ID check",
+      sub: profile?.identity_verified ? "Done" : "Required",
+      done: !!profile?.identity_verified,
       icon: Shield,
-      status: profile?.identity_verified ? ("verified" as const) : ("action" as const),
       tab: "verification" as SettingsTab,
-      gradient: "from-amber-400 to-orange-500",
     },
     {
-      label: isOwner ? "List Room" : "Find Room",
+      label: isOwner ? "List a room" : "Find a room",
+      sub: "Go",
+      done: false,
       icon: Rocket,
-      status: "info" as const,
       tab: "profile" as SettingsTab,
-      gradient: "from-blue-400 to-[var(--color-primary)]",
-      href: isOwner ? "/owner/listings/new" : "/search",
+      href: isOwner ? "/owner/listings/new" : "/seeker/search",
     },
     {
       label: "Calculator",
+      sub: "Go",
+      done: false,
       icon: Calculator,
-      status: "info" as const,
       tab: "analytics" as SettingsTab,
-      gradient: "from-[var(--color-primary)] to-[var(--color-primary)]",
       href: "/pricing",
     },
   ];
 
+  // Circle math for verification ring
+  const r = 36;
+  const c = 2 * Math.PI * r;
+  const ringColor = percentage >= 80 ? "var(--color-accent)" : "var(--color-primary)";
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 24 }}
+      initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
+      transition={{ duration: 0.3 }}
+      className="rounded-[20px] border border-[var(--color-line)] bg-[var(--color-surface)] px-6 py-7 md:px-8 md:py-9"
     >
-      {/* Hero card */}
-      <div className="relative overflow-hidden rounded-3xl">
-        {/* Gradient background */}
-        <div className="absolute inset-0 bg-[var(--color-primary-soft)] from-[var(--color-primary)] via-[var(--color-primary)] to-[var(--color-primary)] opacity-90" />
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAxOGMtOS45NDEgMC0xOCA4LjA1OS0xOCAxOHM4LjA1OSAxOCAxOCAxOCAxOC04LjA1OSAxOC0xOC04LjA1OS0xOC0xOC0xOHoiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwwLjA1KSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9nPjwvc3ZnPg==')] opacity-30" />
-
-        <div className="relative px-6 py-8 md:px-8 md:py-10">
-          <div className="flex flex-col md:flex-row md:items-center gap-6">
-            {/* Left: greeting + badge */}
-            <div className="flex-1">
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.2 }}
-                className="flex items-center gap-2 mb-2"
-              >
-                <span className="text-white/80 text-sm">Welcome back</span>
-                <Sparkles className="w-4 h-4 text-yellow-300" />
-              </motion.div>
-
-              <motion.h1
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.3 }}
-                className="text-3xl md:text-4xl font-black text-white tracking-tight mb-3"
-              >
-                {displayName} ✨
-              </motion.h1>
-
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.4 }}
-                className="flex flex-wrap gap-2"
-              >
-                {profile?.email && (
-                  <StatusBadge status="verified" label="Email Verified" />
-                )}
-                {isSuperhost && (
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-800 border border-yellow-200 badge-glow">
-                    <Star className="w-3 h-3" /> Superhost
-                  </span>
-                )}
-                {isOwner && (
-                  <StatusBadge status="info" label={isOwner ? "Owner" : "Seeker"} />
-                )}
-              </motion.div>
-            </div>
-
-            {/* Right: progress ring */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.4, type: "spring" }}
-              className="flex flex-col items-center gap-2"
-            >
-              <div className="bg-white/15 backdrop-blur-md rounded-2xl p-4 border border-white/20">
-                <ProgressRing
-                  progress={percentage}
-                  size={90}
-                  strokeWidth={7}
-                  color={percentage >= 80 ? "emerald" : "rose"}
-                />
-              </div>
-              <span className="text-white/90 text-xs font-medium">
-                {percentage >= 80
-                  ? "Superhost eligible! 🎉"
-                  : `${100 - percentage}% to Superhost`}
+      <div className="flex flex-col md:flex-row md:items-center gap-7">
+        {/* Greeting */}
+        <div className="flex-1">
+          <div className="eyebrow mb-1.5">Welcome back</div>
+          <h1 className="font-serif text-[34px] md:text-[44px] leading-[1.05] tracking-[-0.02em] text-[var(--color-ink)]">
+            {displayName}
+          </h1>
+          <div className="flex flex-wrap items-center gap-2 mt-3">
+            {profile?.email && (
+              <span className="inline-flex items-center gap-1 h-[22px] px-2 rounded-full text-[11.5px] font-semibold bg-[var(--color-accent-soft)] text-[var(--color-accent)]">
+                <Check className="w-2.5 h-2.5" strokeWidth={2.6} /> Email verified
               </span>
-            </motion.div>
+            )}
+            {isOwner && (
+              <span className="inline-flex items-center h-[22px] px-2 rounded-full text-[11.5px] font-semibold bg-[var(--color-primary-soft)] text-[var(--color-primary)]">
+                Owner
+              </span>
+            )}
           </div>
-
-          {/* Quick actions row */}
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
-            className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-6"
-          >
-            {quickActions.map((action, i) => {
-              const Icon = action.icon;
-              return (
-                <motion.button
-                  key={action.label}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.5 + i * 0.08 }}
-                  onClick={() => {
-                    if (action.href) {
-                      window.location.href = action.href;
-                    } else {
-                      setActiveTab(action.tab);
-                    }
-                  }}
-                  className="group flex items-center gap-2.5 bg-white/15 hover:bg-white/25 backdrop-blur-sm border border-white/20 rounded-xl px-3.5 py-2.5 transition-all hover:scale-[1.02] active:scale-[0.98]"
-                >
-                  <div className={`w-8 h-8 rounded-lg bg-[var(--color-primary-soft)] ${action.gradient} flex items-center justify-center shadow-lg`}>
-                    <Icon className="w-4 h-4 text-white" />
-                  </div>
-                  <div className="text-left">
-                    <p className="text-white text-xs font-semibold leading-tight">{action.label}</p>
-                    <p className="text-white/60 text-[10px]">
-                      {action.status === "verified" ? "Done" : action.status === "pending" ? "Pending" : action.status === "action" ? "Required" : "Go"}
-                    </p>
-                  </div>
-                </motion.button>
-              );
-            })}
-          </motion.div>
         </div>
+
+        {/* Verification ring */}
+        <div className="flex items-center gap-3 self-start md:self-center">
+          <div className="relative w-[88px] h-[88px]">
+            <svg width="88" height="88" viewBox="0 0 88 88">
+              <circle
+                cx="44"
+                cy="44"
+                r={r}
+                fill="none"
+                stroke="var(--color-line)"
+                strokeWidth="6"
+              />
+              <circle
+                cx="44"
+                cy="44"
+                r={r}
+                fill="none"
+                stroke={ringColor}
+                strokeWidth="6"
+                strokeDasharray={`${(percentage / 100) * c} ${c}`}
+                strokeLinecap="round"
+                transform="rotate(-90 44 44)"
+              />
+            </svg>
+            <div className="absolute inset-0 flex items-center justify-center">
+              <span className="font-serif text-[22px] text-[var(--color-ink)] tracking-[-0.02em] tabular-nums">
+                {percentage}%
+              </span>
+            </div>
+          </div>
+          <div className="text-[12px] text-[var(--color-ink-3)] max-w-[120px] leading-[1.4]">
+            {percentage >= 80
+              ? "Superhost eligible"
+              : `${100 - percentage}% to Superhost`}
+          </div>
+        </div>
+      </div>
+
+      {/* Quick action chips */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 mt-7 pt-7 border-t border-[var(--color-line)]">
+        {quickActions.map((action) => {
+          const Icon = action.icon;
+          return (
+            <button
+              key={action.label}
+              onClick={() => {
+                if (action.href) {
+                  window.location.href = action.href;
+                } else {
+                  setActiveTab(action.tab);
+                }
+              }}
+              className="group flex items-center gap-3 bg-[var(--color-surface-2)] border border-[var(--color-line)] hover:border-[var(--color-line-2)] rounded-[10px] px-3.5 py-2.5 transition-colors text-left"
+            >
+              <div
+                className={`w-9 h-9 rounded-[8px] flex items-center justify-center shrink-0 ${
+                  action.done
+                    ? "bg-[var(--color-accent-soft)] text-[var(--color-accent)]"
+                    : "bg-[var(--color-surface-sunk)] text-[var(--color-ink-2)]"
+                }`}
+              >
+                <Icon className="w-[18px] h-[18px]" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-[var(--color-ink)] text-[13.5px] font-semibold leading-tight truncate">
+                  {action.label} {action.done && "✓"}
+                </p>
+                <p className="text-[var(--color-ink-3)] text-[11px] mt-0.5">{action.sub}</p>
+              </div>
+            </button>
+          );
+        })}
       </div>
     </motion.div>
   );

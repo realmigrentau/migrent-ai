@@ -111,32 +111,30 @@ export default function MetricsCards({ metrics, loading, role }: MetricsCardsPro
   const cards = role === "owner" ? ownerMetrics : seekerMetrics;
 
   return (
-    <div className={`grid grid-cols-2 ${role === "owner" ? "lg:grid-cols-3" : "lg:grid-cols-3"} gap-3 md:gap-4`}>
+    <div className={`grid grid-cols-2 ${role === "owner" ? "lg:grid-cols-3" : "lg:grid-cols-3"} gap-3`}>
       {cards.map((card, i) => (
         <motion.div
           key={card.key}
-          initial={{ opacity: 0, y: 12 }}
+          initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 + i * 0.05 }}
-          className="card p-4 md:p-5 cursor-default"
+          transition={{ delay: i * 0.04 }}
+          className="bg-[var(--color-surface)] border border-[var(--color-line)] rounded-[14px] p-5 flex flex-col gap-2.5"
         >
           {loading ? (
             <div className="space-y-3">
-              <Skeleton className="w-10 h-10" />
-              <Skeleton className="w-16 h-7" />
+              <Skeleton className="w-20 h-4" />
+              <Skeleton className="w-16 h-10" />
               <Skeleton className="w-20 h-4" />
             </div>
           ) : (
             <>
-              <div className={`w-10 h-10 rounded-xl ${card.iconBg} ${card.color} flex items-center justify-center mb-3`}>
-                {card.icon}
+              <div className="flex items-center justify-between">
+                <div className="eyebrow">{card.label}</div>
+                <span className="text-[var(--color-ink-3)]">{card.icon}</span>
               </div>
-              <p className={`text-2xl font-bold ${card.color}`}>
+              <div className="font-serif text-[40px] leading-none tracking-[-0.02em] text-[var(--color-ink)] tabular-nums">
                 {metrics ? card.format(metrics[card.key]) : "-"}
-              </p>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-medium">
-                {card.label}
-              </p>
+              </div>
             </>
           )}
         </motion.div>
