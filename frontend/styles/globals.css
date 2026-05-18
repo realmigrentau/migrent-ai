@@ -235,10 +235,17 @@ html[data-palette="paper"] {
 
 /* ══════════════════════════════════════════════════════════════
    DARK THEME OVERRIDES
-   Activated via .dark on <html>. Overrides any palette.
+   Activated via .dark on <html>. Uses html.dark + [data-palette]
+   selectors so it always beats palette overrides in specificity.
    ══════════════════════════════════════════════════════════════ */
 
-.dark {
+html.dark,
+html.dark[data-palette],
+html.dark[data-palette="sand"],
+html.dark[data-palette="cloud"],
+html.dark[data-palette="mint"],
+html.dark[data-palette="blush"],
+html.dark[data-palette="paper"] {
   --color-ink: #ede6d4;
   --color-ink-2: #b8b2a2;
   --color-ink-muted: #8a8578;

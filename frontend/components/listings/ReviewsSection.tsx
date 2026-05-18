@@ -62,7 +62,7 @@ function ReviewCard({
             className="w-10 h-10 rounded-full object-cover"
           />
         ) : (
-          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center text-white font-bold text-sm">
+          <div className="w-10 h-10 rounded-full bg-[var(--color-primary-soft)] from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center text-white font-bold text-sm">
             {(review.reviewer_name || "A").charAt(0)}
           </div>
         )}

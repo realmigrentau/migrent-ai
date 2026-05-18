@@ -131,7 +131,7 @@ export default function AntiDiscrimination() {
           </div>
 
           {/* CTA */}
-          <div className="card p-6 rounded-2xl bg-gradient-to-br from-pink-50 to-pink-100/50 dark:from-[var(--color-primary)]/10 dark:to-pink-600/5 border-[var(--color-primary-soft)] dark:border-[var(--color-primary)]/20 text-center">
+          <div className="card p-6 rounded-2xl bg-[var(--color-primary-soft)] from-pink-50 to-pink-100/50 dark:from-[var(--color-primary)]/10 dark:to-pink-600/5 border-[var(--color-primary-soft)] dark:border-[var(--color-primary)]/20 text-center">
             <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Experienced discrimination?</h3>
             <p className="text-sm text-slate-600 dark:text-slate-300 mb-4">We take every report seriously. Let us know.</p>
             <a href="mailto:migrentau@gmail.com?subject=Discrimination%20Report">

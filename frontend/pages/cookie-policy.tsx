@@ -136,7 +136,7 @@ export default function CookiePolicy() {
           </div>
 
           {/* CTA */}
-          <div className="card p-6 rounded-2xl bg-gradient-to-br from-orange-50 to-orange-100/50 dark:from-orange-500/10 dark:to-orange-600/5 border-orange-200 dark:border-orange-500/20 text-center">
+          <div className="card p-6 rounded-2xl bg-[var(--color-primary-soft)] from-orange-50 to-orange-100/50 dark:from-orange-500/10 dark:to-orange-600/5 border-orange-200 dark:border-orange-500/20 text-center">
             <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Questions about cookies?</h3>
             <p className="text-sm text-slate-600 dark:text-slate-300 mb-4">We&apos;re happy to explain our data practices.</p>
             <Link href="/contact">

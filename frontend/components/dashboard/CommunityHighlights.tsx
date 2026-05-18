@@ -149,7 +149,7 @@ export default function CommunityHighlights() {
 
                 {/* Avatar */}
                 <div className={`w-9 h-9 rounded-xl flex items-center justify-center text-white font-bold text-sm overflow-hidden shrink-0 ${
-                  profile.custom_pfp ? "" : "bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary)]"
+                  profile.custom_pfp ? "" : "bg-[var(--color-primary-soft)] from-[var(--color-primary)] to-[var(--color-primary)]"
                 }`}>
                   {profile.custom_pfp ? (
                     <img src={profile.custom_pfp} alt="" className="w-full h-full object-cover" />

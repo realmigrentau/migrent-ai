@@ -55,7 +55,7 @@ export default function GuidePage() {
           transition={{ duration: 0.5 }}
           className="mb-12"
         >
-          <div className={`rounded-2xl bg-gradient-to-br ${guide.gradient} p-8 md:p-12 relative overflow-hidden`}>
+          <div className={`rounded-2xl bg-[var(--color-primary-soft)] ${guide.gradient} p-8 md:p-12 relative overflow-hidden`}>
             <div className="absolute bottom-4 right-4 w-32 h-32 rounded-full bg-white/8 blur-2xl" />
             <div className="absolute top-8 right-8 w-20 h-20 rounded-full bg-white/8 blur-xl" />
             <div className="relative z-10">
@@ -98,7 +98,7 @@ export default function GuidePage() {
                 transition={{ delay: i * 0.05, duration: 0.4 }}
               >
                 <div className="flex items-start gap-4 mb-4">
-                  <span className={`w-8 h-8 rounded-full bg-gradient-to-br ${guide.gradient} flex items-center justify-center text-sm font-bold text-white shrink-0 mt-0.5`}>
+                  <span className={`w-8 h-8 rounded-full bg-[var(--color-primary-soft)] ${guide.gradient} flex items-center justify-center text-sm font-bold text-white shrink-0 mt-0.5`}>
                     {i + 1}
                   </span>
                   <h2 className="text-xl font-bold text-slate-900 dark:text-white">{section.title}</h2>

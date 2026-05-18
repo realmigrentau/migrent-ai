@@ -176,7 +176,7 @@ export default function HelpCenter() {
       <div className="max-w-4xl mx-auto space-y-10 pb-16">
 
         {/* Hero */}
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[var(--color-primary)] via-[var(--color-primary)] to-[var(--color-primary)] p-8 md:p-12 text-white shadow-xl">
+        <div className="relative overflow-hidden rounded-2xl bg-[var(--color-primary-soft)] from-[var(--color-primary)] via-[var(--color-primary)] to-[var(--color-primary)] p-8 md:p-12 text-white shadow-xl">
           <div className="absolute inset-0 opacity-10">
             <div className="absolute top-0 right-0 w-64 h-64 rounded-full bg-white transform translate-x-20 -translate-y-20" />
             <div className="absolute bottom-0 left-0 w-48 h-48 rounded-full bg-white transform -translate-x-16 translate-y-16" />
@@ -312,7 +312,7 @@ export default function HelpCenter() {
                   >
                     <Link href={`/help/category/${cat.slug}`}>
                       <div className="group p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-[var(--color-primary-soft)] dark:hover:border-primary-700 hover:shadow-md transition-all cursor-pointer h-full">
-                        <div className={`w-9 h-9 rounded-lg bg-gradient-to-br ${cat.gradient} flex items-center justify-center mb-3 shadow-sm`}>
+                        <div className={`w-9 h-9 rounded-lg bg-[var(--color-primary-soft)] ${cat.gradient} flex items-center justify-center mb-3 shadow-sm`}>
                           {CATEGORY_ICONS[cat.icon]}
                         </div>
                         <h3 className="font-semibold text-xs text-slate-900 dark:text-white group-hover:text-[var(--color-primary)] dark:group-hover:text-[var(--color-primary)] transition-colors mb-1 leading-snug">
@@ -363,7 +363,7 @@ export default function HelpCenter() {
 
             {/* Escalation / Contact support */}
             <section className="rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
-              <div className="bg-gradient-to-r from-slate-50 to-indigo-50/40 dark:from-slate-900 dark:to-primary-900/10 p-6 md:p-8">
+              <div className="bg-[var(--color-primary)] from-slate-50 to-indigo-50/40 dark:from-slate-900 dark:to-primary-900/10 p-6 md:p-8">
                 <div className="flex flex-col md:flex-row items-start md:items-center gap-6 md:gap-10">
                   <div className="flex-1">
                     <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-1">

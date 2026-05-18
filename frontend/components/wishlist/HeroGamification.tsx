@@ -65,7 +65,7 @@ export default function HeroGamification({
               initial={{ scale: 0, rotate: -20 }}
               animate={{ scale: 1, rotate: 0 }}
               transition={{ type: "spring", stiffness: 400, damping: 15, delay: 0.2 }}
-              className={`flex items-center gap-1 px-2.5 py-1 rounded-full bg-gradient-to-r ${levelColor.bg} text-white text-xs font-bold shadow-lg`}
+              className={`flex items-center gap-1 px-2.5 py-1 rounded-full bg-[var(--color-primary)] ${levelColor.bg} text-white text-xs font-bold shadow-lg`}
             >
               {level.level >= 4 ? (
                 <Trophy className="w-3.5 h-3.5" />
@@ -109,7 +109,7 @@ export default function HeroGamification({
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className={`w-8 h-8 rounded-xl bg-gradient-to-r ${levelColor.bg} flex items-center justify-center shadow-lg`}>
+              <div className={`w-8 h-8 rounded-xl bg-[var(--color-primary)] ${levelColor.bg} flex items-center justify-center shadow-lg`}>
                 <Sparkles className="w-4 h-4 text-white" />
               </div>
               <div>
@@ -132,14 +132,14 @@ export default function HeroGamification({
               initial={{ width: 0 }}
               animate={{ width: `${level.progress}%` }}
               transition={{ duration: 1.2, ease: "easeOut", delay: 0.3 }}
-              className={`absolute inset-y-0 left-0 rounded-full bg-gradient-to-r ${levelColor.bg}`}
+              className={`absolute inset-y-0 left-0 rounded-full bg-[var(--color-primary)] ${levelColor.bg}`}
             />
             {/* Shimmer */}
             <motion.div
               initial={{ x: "-100%" }}
               animate={{ x: "200%" }}
               transition={{ duration: 2, repeat: Infinity, repeatDelay: 3, ease: "easeInOut" }}
-              className="absolute inset-y-0 w-1/3 bg-gradient-to-r from-transparent via-white/30 to-transparent"
+              className="absolute inset-y-0 w-1/3 bg-[var(--color-primary)] from-transparent via-white/30 to-transparent"
             />
           </div>
 
@@ -205,9 +205,9 @@ export default function HeroGamification({
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.35 }}
-          className="flex items-center gap-3 p-3 rounded-2xl bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/30 border border-[var(--color-accent-soft)]/50 dark:border-[var(--color-accent-soft)]"
+          className="flex items-center gap-3 p-3 rounded-2xl bg-[var(--color-primary)] from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/30 border border-[var(--color-accent-soft)]/50 dark:border-[var(--color-accent-soft)]"
         >
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-r from-[var(--color-accent)] to-teal-400 flex items-center justify-center shadow-lg shrink-0">
+          <div className="w-8 h-8 rounded-xl bg-[var(--color-primary)] from-[var(--color-accent)] to-teal-400 flex items-center justify-center shadow-lg shrink-0">
             <TrendingDown className="w-4 h-4 text-white" />
           </div>
           <div className="min-w-0">

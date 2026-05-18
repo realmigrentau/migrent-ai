@@ -222,7 +222,7 @@ export default function VerificationTab({
           {/* STEP 1: Email */}
           <GlassCard delay={0.1}>
             <div className="flex items-center gap-4">
-              <div className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-md shrink-0 ${emailDone ? "bg-gradient-to-br from-blue-400 to-[var(--color-primary)]" : "bg-slate-200 dark:bg-slate-700"}`}>
+              <div className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-md shrink-0 ${emailDone ? "bg-[var(--color-primary-soft)] from-blue-400 to-[var(--color-primary)]" : "bg-slate-200 dark:bg-slate-700"}`}>
                 {emailDone ? <CheckCircle2 className="w-5 h-5 text-white" /> : <Mail className="w-5 h-5 text-slate-500" />}
               </div>
               <div className="flex-1">
@@ -240,7 +240,7 @@ export default function VerificationTab({
           {/* STEP 2: Government ID Upload */}
           <GlassCard delay={0.15}>
             <div className="flex items-start gap-4">
-              <div className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-md shrink-0 mt-0.5 ${idDone ? "bg-gradient-to-br from-amber-400 to-orange-500" : idStatus === "pending" ? "bg-gradient-to-br from-blue-400 to-[var(--color-primary)]" : "bg-slate-200 dark:bg-slate-700"}`}>
+              <div className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-md shrink-0 mt-0.5 ${idDone ? "bg-[var(--color-primary-soft)] from-amber-400 to-orange-500" : idStatus === "pending" ? "bg-[var(--color-primary-soft)] from-blue-400 to-[var(--color-primary)]" : "bg-slate-200 dark:bg-slate-700"}`}>
                 {idDone ? (
                   <CheckCircle2 className="w-5 h-5 text-white" />
                 ) : idStatus === "pending" ? (
@@ -383,7 +383,7 @@ export default function VerificationTab({
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-[var(--color-accent)]/10 dark:to-teal-500/10 rounded-2xl p-6 text-center border border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)]"
+              className="bg-[var(--color-primary)] from-emerald-50 to-teal-50 dark:from-[var(--color-accent)]/10 dark:to-teal-500/10 rounded-2xl p-6 text-center border border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)]"
             >
               <div className="text-4xl mb-3">🎉</div>
               <h3 className="text-lg font-bold text-emerald-800 dark:text-[var(--color-accent)] mb-1">
@@ -433,7 +433,7 @@ export default function VerificationTab({
           {/* Superhost Badge */}
           <GlassCard delay={0.3} gradient={isSuperhost ? "amber" : "none"}>
             <div className="flex items-center gap-4">
-              <div className={`w-16 h-16 rounded-2xl flex items-center justify-center ${isSuperhost ? "bg-gradient-to-br from-yellow-400 to-amber-500 shadow-lg" : "bg-slate-100 dark:bg-slate-800 border-2 border-dashed border-slate-300 dark:border-slate-600"}`}>
+              <div className={`w-16 h-16 rounded-2xl flex items-center justify-center ${isSuperhost ? "bg-[var(--color-primary-soft)] from-yellow-400 to-amber-500 shadow-lg" : "bg-slate-100 dark:bg-slate-800 border-2 border-dashed border-slate-300 dark:border-slate-600"}`}>
                 <Star className={`w-8 h-8 ${isSuperhost ? "text-white" : "text-slate-400 dark:text-slate-500"}`} />
               </div>
               <div className="flex-1">

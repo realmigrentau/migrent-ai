@@ -211,7 +211,7 @@ export default function ReviewDealPage() {
             className="card p-4 rounded-2xl mb-6"
           >
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center overflow-hidden">
+              <div className="w-12 h-12 rounded-full bg-[var(--color-primary-soft)] from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center overflow-hidden">
                 {context.other_user.photo ? (
                   <img src={context.other_user.photo} alt="" className="w-full h-full object-cover" />
                 ) : (

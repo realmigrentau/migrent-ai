@@ -26,7 +26,7 @@ export default function PaymentsTab({ profile, isOwner, showMessage }: PaymentsT
       {/* Payout Method */}
       <GlassCard delay={0.05} gradient="pink-indigo">
         <div className="flex items-start gap-4 mb-4">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--color-accent)] to-teal-500 flex items-center justify-center shadow-lg shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-[var(--color-primary-soft)] from-[var(--color-accent)] to-teal-500 flex items-center justify-center shadow-lg shrink-0">
             <Building2 className="w-5 h-5 text-white" />
           </div>
           <div className="flex-1">
@@ -64,7 +64,7 @@ export default function PaymentsTab({ profile, isOwner, showMessage }: PaymentsT
       {/* Payout History */}
       <GlassCard delay={0.1}>
         <div className="flex items-start gap-4 mb-4">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-400 to-[var(--color-primary)] flex items-center justify-center shadow-lg shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-[var(--color-primary-soft)] from-blue-400 to-[var(--color-primary)] flex items-center justify-center shadow-lg shrink-0">
             <Receipt className="w-5 h-5 text-white" />
           </div>
           <div>
@@ -87,7 +87,7 @@ export default function PaymentsTab({ profile, isOwner, showMessage }: PaymentsT
       {/* Tax Settings */}
       <GlassCard delay={0.2}>
         <div className="flex items-start gap-4 mb-4">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-400 to-[var(--color-primary)] flex items-center justify-center shadow-lg shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-[var(--color-primary-soft)] from-cyan-400 to-[var(--color-primary)] flex items-center justify-center shadow-lg shrink-0">
             <FileText className="w-5 h-5 text-white" />
           </div>
           <div>

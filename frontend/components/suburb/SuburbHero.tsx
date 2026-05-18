@@ -24,7 +24,7 @@ export default function SuburbHero({
   const primaryStation = nearestStations[0];
 
   return (
-    <section className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-teal-600 via-teal-700 to-emerald-800 text-white">
+    <section className="relative overflow-hidden rounded-2xl bg-[var(--color-primary-soft)] from-teal-600 via-teal-700 to-emerald-800 text-white">
       {/* Background pattern */}
       <div className="absolute inset-0 opacity-10">
         <div

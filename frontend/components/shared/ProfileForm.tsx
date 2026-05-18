@@ -145,7 +145,7 @@ export default function ProfileForm({
       <div className="card p-5 rounded-2xl">
         <div className="flex flex-col sm:flex-row items-center gap-5">
           <div className="relative group">
-            <div className="w-24 h-24 rounded-2xl overflow-hidden bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary)] shadow-xl">
+            <div className="w-24 h-24 rounded-2xl overflow-hidden bg-[var(--color-primary-soft)] from-[var(--color-primary)] to-[var(--color-primary)] shadow-xl">
               {avatarUrl ? (
                 <img src={avatarUrl} alt="Profile" className="w-full h-full object-cover" />
               ) : (
@@ -187,7 +187,7 @@ export default function ProfileForm({
       {/* About Me */}
       <div className="card p-5 rounded-2xl">
         <div className="flex items-start gap-4 mb-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center shadow-lg shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-[var(--color-primary-soft)] from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center shadow-lg shrink-0">
             <Pen className="w-5 h-5 text-white" />
           </div>
           <div>
@@ -214,7 +214,7 @@ export default function ProfileForm({
       {/* Occupation */}
       <div className="card p-5 rounded-2xl">
         <div className="flex items-start gap-4">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-400 to-[var(--color-primary)] flex items-center justify-center shadow-lg shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-[var(--color-primary-soft)] from-cyan-400 to-[var(--color-primary)] flex items-center justify-center shadow-lg shrink-0">
             <Briefcase className="w-5 h-5 text-white" />
           </div>
           <div className="flex-1">
@@ -235,7 +235,7 @@ export default function ProfileForm({
       {/* Interests */}
       <div className="card p-5 rounded-2xl">
         <div className="flex items-start gap-4 mb-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--color-accent)] to-teal-500 flex items-center justify-center shadow-lg shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-[var(--color-primary-soft)] from-[var(--color-accent)] to-teal-500 flex items-center justify-center shadow-lg shrink-0">
             <Heart className="w-5 h-5 text-white" />
           </div>
           <div className="flex-1">
@@ -258,7 +258,7 @@ export default function ProfileForm({
             interests.map((interest) => (
               <span
                 key={interest}
-                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium bg-gradient-to-r from-[var(--color-primary-soft)] to-pink-50 dark:from-[var(--color-primary)]/10 dark:to-[var(--color-primary)]/10 text-[var(--color-primary)] dark:text-[var(--color-primary)] border border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)]"
+                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium bg-[var(--color-primary)] from-[var(--color-primary-soft)] to-pink-50 dark:from-[var(--color-primary)]/10 dark:to-[var(--color-primary)]/10 text-[var(--color-primary)] dark:text-[var(--color-primary)] border border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)]"
               >
                 {interest}
                 <button onClick={() => toggleInterest(interest)} className="hover:text-rose-900">
@@ -276,7 +276,7 @@ export default function ProfileForm({
       {seekerMode && (
         <div className="card p-5 rounded-2xl">
           <div className="flex items-start gap-4 mb-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-lg shrink-0">
+            <div className="w-10 h-10 rounded-xl bg-[var(--color-primary-soft)] from-amber-400 to-orange-500 flex items-center justify-center shadow-lg shrink-0">
               <Heart className="w-5 h-5 text-white" />
             </div>
             <div className="flex-1">
@@ -299,7 +299,7 @@ export default function ProfileForm({
               lifestyle.map((item) => (
                 <span
                   key={item}
-                  className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-500/10 dark:to-orange-500/10 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-500/20"
+                  className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium bg-[var(--color-primary)] from-amber-50 to-orange-50 dark:from-amber-500/10 dark:to-orange-500/10 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-500/20"
                 >
                   {item}
                   <button onClick={() => toggleLifestyle(item)} className="hover:text-amber-900">
@@ -317,7 +317,7 @@ export default function ProfileForm({
       {/* Most Useless Skill */}
       <div className="card p-5 rounded-2xl">
         <div className="flex items-start gap-4">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center shadow-lg shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-[var(--color-primary-soft)] from-yellow-400 to-orange-500 flex items-center justify-center shadow-lg shrink-0">
             <Wand2 className="w-5 h-5 text-white" />
           </div>
           <div className="flex-1">
@@ -338,7 +338,7 @@ export default function ProfileForm({
       {/* Social Links */}
       <div className="card p-5 rounded-2xl">
         <div className="flex items-start gap-4 mb-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-400 to-[var(--color-primary)] flex items-center justify-center shadow-lg shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-[var(--color-primary-soft)] from-sky-400 to-[var(--color-primary)] flex items-center justify-center shadow-lg shrink-0">
             <Globe className="w-5 h-5 text-white" />
           </div>
           <div>

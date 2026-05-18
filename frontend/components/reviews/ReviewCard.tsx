@@ -114,7 +114,7 @@ export default function ReviewCard({ review, showListingContext }: ReviewCardPro
       {/* Reviewer info */}
       <div className="flex items-center justify-between mt-4 pt-3 border-t border-slate-100 dark:border-slate-800">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center overflow-hidden">
+          <div className="w-8 h-8 rounded-full bg-[var(--color-primary-soft)] from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center overflow-hidden">
             {review.reviewer_photo ? (
               <img src={review.reviewer_photo} alt="" className="w-full h-full object-cover" />
             ) : (

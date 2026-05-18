@@ -144,7 +144,7 @@ export default function SafetyReporting() {
           </div>
 
           {/* CTA */}
-          <div className="card p-6 rounded-2xl bg-gradient-to-br from-red-50 to-red-100/50 dark:from-[var(--color-danger-500)]/10 dark:to-red-600/5 border-red-200 dark:border-red-500/20 text-center">
+          <div className="card p-6 rounded-2xl bg-[var(--color-primary-soft)] from-red-50 to-red-100/50 dark:from-[var(--color-danger-500)]/10 dark:to-red-600/5 border-red-200 dark:border-red-500/20 text-center">
             <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Report something now</h3>
             <p className="text-sm text-slate-600 dark:text-slate-300 mb-4">Your reports help keep the MigRent community safe.</p>
             <a href="mailto:migrentau@gmail.com?subject=Safety%20Report">

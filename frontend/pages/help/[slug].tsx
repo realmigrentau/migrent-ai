@@ -291,7 +291,7 @@ export default function HelpArticlePage() {
               </div>
 
               {/* Bottom escalation */}
-              <div className="mt-6 p-5 rounded-2xl bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-primary-900/20 dark:to-blue-900/20 border border-[var(--color-primary-soft)] dark:border-primary-900/40">
+              <div className="mt-6 p-5 rounded-2xl bg-[var(--color-primary)] from-indigo-50 to-blue-50 dark:from-primary-900/20 dark:to-blue-900/20 border border-[var(--color-primary-soft)] dark:border-primary-900/40">
                 <h3 className="font-bold text-slate-900 dark:text-white text-sm mb-1">
                   Still need help with this?
                 </h3>
@@ -336,7 +336,7 @@ export default function HelpArticlePage() {
               {/* Category card */}
               {category && (
                 <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-hidden">
-                  <div className={`bg-gradient-to-br ${category.gradient} p-4`}>
+                  <div className={`bg-[var(--color-primary-soft)] ${category.gradient} p-4`}>
                     <div className="flex items-center gap-2 text-white">
                       {CATEGORY_ICONS[category.icon]}
                       <span className="font-semibold text-sm">{category.name}</span>

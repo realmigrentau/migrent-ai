@@ -157,7 +157,7 @@ export default function HelpCategoryPage() {
         </nav>
 
         {/* Category hero */}
-        <div className={`rounded-2xl bg-gradient-to-br ${category.gradient} p-7 md:p-10 text-white shadow-lg`}>
+        <div className={`rounded-2xl bg-[var(--color-primary-soft)] ${category.gradient} p-7 md:p-10 text-white shadow-lg`}>
           <div className="flex items-start gap-4">
             <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center shrink-0 shadow-sm">
               {CATEGORY_ICONS[category.icon]}
@@ -221,7 +221,7 @@ export default function HelpCategoryPage() {
               >
                 <Link href={`/help/category/${cat.slug}`}>
                   <div className="group p-3.5 rounded-xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-[var(--color-primary-soft)] dark:hover:border-primary-700 hover:shadow-sm transition-all cursor-pointer h-full">
-                    <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${cat.gradient} flex items-center justify-center mb-2 shadow-sm`}>
+                    <div className={`w-8 h-8 rounded-lg bg-[var(--color-primary-soft)] ${cat.gradient} flex items-center justify-center mb-2 shadow-sm`}>
                       <span className="scale-75">{CATEGORY_ICONS[cat.icon]}</span>
                     </div>
                     <h3 className="font-semibold text-xs text-slate-800 dark:text-slate-100 group-hover:text-[var(--color-primary)] dark:group-hover:text-[var(--color-primary)] transition-colors leading-snug">
@@ -238,7 +238,7 @@ export default function HelpCategoryPage() {
         </section>
 
         {/* Escalation */}
-        <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-gradient-to-r from-slate-50 to-indigo-50/40 dark:from-slate-900 dark:to-primary-900/10 p-6">
+        <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-[var(--color-primary)] from-slate-50 to-indigo-50/40 dark:from-slate-900 dark:to-primary-900/10 p-6">
           <div className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-8">
             <div className="flex-1">
               <h3 className="font-bold text-slate-900 dark:text-white mb-1">

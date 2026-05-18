@@ -79,11 +79,11 @@ export default function MessageBubble({
       {/* Date separator */}
       {showDate && dateLabel && (
         <div className="flex items-center gap-3 my-5">
-          <div className="flex-1 h-px bg-gradient-to-r from-transparent via-slate-200 dark:via-slate-700/50 to-transparent" />
+          <div className="flex-1 h-px bg-[var(--color-primary)] from-transparent via-slate-200 dark:via-slate-700/50 to-transparent" />
           <span className="text-[11px] font-semibold text-slate-400 dark:text-slate-500 bg-slate-50 dark:bg-slate-900 px-3 py-1 rounded-full">
             {dateLabel}
           </span>
-          <div className="flex-1 h-px bg-gradient-to-r from-transparent via-slate-200 dark:via-slate-700/50 to-transparent" />
+          <div className="flex-1 h-px bg-[var(--color-primary)] from-transparent via-slate-200 dark:via-slate-700/50 to-transparent" />
         </div>
       )}
 
@@ -104,7 +104,7 @@ export default function MessageBubble({
           <div className="w-7 mr-2 shrink-0">
             {isLastInGroup && (
               <div className={`w-7 h-7 rounded-full flex items-center justify-center overflow-hidden mt-auto ${
-                otherUserAvatar ? "bg-slate-200 dark:bg-slate-700" : "bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-accent)]"
+                otherUserAvatar ? "bg-slate-200 dark:bg-slate-700" : "bg-[var(--color-primary-soft)] from-[var(--color-primary)] to-[var(--color-accent)]"
               }`}>
                 {otherUserAvatar ? (
                   <img src={otherUserAvatar} alt="" className="w-full h-full object-cover" />
@@ -198,7 +198,7 @@ export default function MessageBubble({
               rel="noopener noreferrer"
               className={`flex items-center gap-3 px-4 py-3 rounded-2xl mb-0.5 transition-all hover:shadow-md ${
                 isMine
-                  ? "bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary)] text-white"
+                  ? "bg-[var(--color-primary)] from-[var(--color-primary)] to-[var(--color-primary)] text-white"
                   : "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700"
               }`}
             >
@@ -224,7 +224,7 @@ export default function MessageBubble({
             <div
               className={`rounded-2xl px-4 py-2.5 ${
                 isMine
-                  ? `bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary)] text-white shadow-md shadow-[var(--color-primary)]/20 ${
+                  ? `bg-[var(--color-primary-soft)] from-[var(--color-primary)] to-[var(--color-primary)] text-white shadow-md shadow-[var(--color-primary)]/20 ${
                       isLastInGroup ? "rounded-br-md" : ""
                     }`
                   : `bg-white dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-700/50 shadow-sm ${

@@ -110,8 +110,8 @@ export default function MegaNavbar() {
           : "bg-[var(--color-surface)]/90 backdrop-blur-md border-b border-[var(--color-line)]/60"
       }`}
     >
-      <nav className="max-w-[1280px] mx-auto h-[60px] px-4 sm:px-6 lg:px-10 flex items-center gap-6">
-        {/* Logo */}
+      <nav className="max-w-[1280px] mx-auto h-[60px] px-4 sm:px-6 lg:px-10 grid grid-cols-[auto_1fr_auto] items-center gap-4">
+        {/* Logo (left) */}
         <Link href={session ? "/dashboard" : "/"} className="inline-flex items-center gap-2.5 group text-[var(--color-ink)] shrink-0">
           <Logo size={26} className="transition-transform group-hover:scale-105" />
           <span className="font-serif text-[22px] leading-none tracking-[-0.012em]">
@@ -120,8 +120,8 @@ export default function MegaNavbar() {
           <span className="eyebrow ml-0.5 mt-0.5">AU</span>
         </Link>
 
-        {/* Desktop nav */}
-        <ul className="hidden lg:flex items-center gap-0.5" ref={navRef}>
+        {/* Desktop nav (centered) */}
+        <ul className="hidden lg:flex items-center justify-center gap-0.5" ref={navRef}>
           {navItems.map((item, index) => {
             if (item.type === "link") {
               const active = router.pathname === item.href;
@@ -237,7 +237,13 @@ export default function MegaNavbar() {
               </li>
             );
           })}
+        </ul>
 
+        {/* Right cell - actions on desktop, hamburger on mobile */}
+        <div className="flex items-center justify-end gap-2">
+
+        {/* Actions (right) */}
+        <ul className="hidden lg:flex items-center gap-2 justify-end">
           {/* Theme toggle */}
           {mounted && (
             <li>
@@ -411,6 +417,7 @@ export default function MegaNavbar() {
               className="block w-6 h-0.5 bg-[var(--color-ink-2)]"
             />
           </button>
+        </div>
         </div>
       </nav>
 

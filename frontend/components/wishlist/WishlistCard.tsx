@@ -78,7 +78,7 @@ export default function WishlistCard({
           exit={{ opacity: 0, scale: 0.8, y: -20 }}
           transition={{ duration: 0.35, delay: index * 0.05 }}
           whileHover={{ y: -6, boxShadow: "0 20px 60px rgba(0,0,0,0.12)" }}
-          className={`relative rounded-2xl overflow-hidden border border-slate-200/60 dark:border-slate-700/60 bg-gradient-to-br ${gradientClass} group cursor-pointer`}
+          className={`relative rounded-2xl overflow-hidden border border-slate-200/60 dark:border-slate-700/60 bg-[var(--color-primary-soft)] ${gradientClass} group cursor-pointer`}
         >
           {/* Compare mode checkbox */}
           {compareMode && (
@@ -107,7 +107,7 @@ export default function WishlistCard({
                 loading="lazy"
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-700">
+              <div className="w-full h-full flex items-center justify-center bg-[var(--color-primary-soft)] from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-700">
                 <MapPin className="w-12 h-12 text-slate-300 dark:text-slate-600" />
               </div>
             )}
@@ -163,7 +163,7 @@ export default function WishlistCard({
 
             {/* Superhost badge */}
             {listing.superhost && (
-              <div className="absolute top-3 left-3 px-2.5 py-1 rounded-lg bg-gradient-to-r from-amber-400 to-orange-400 text-white text-xs font-bold shadow-lg flex items-center gap-1">
+              <div className="absolute top-3 left-3 px-2.5 py-1 rounded-lg bg-[var(--color-primary)] from-amber-400 to-orange-400 text-white text-xs font-bold shadow-lg flex items-center gap-1">
                 <Sparkles className="w-3 h-3" />
                 Superhost
               </div>
@@ -237,7 +237,7 @@ export default function WishlistCard({
             {/* Station distance */}
             {listing.nearestStation && (
               <div className="flex items-center gap-1.5 text-sm">
-                <div className="w-4 h-4 rounded-full bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center">
+                <div className="w-4 h-4 rounded-full bg-[var(--color-primary)] from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center">
                   <span className="text-white text-[8px] font-bold">T</span>
                 </div>
                 <span className="text-slate-600 dark:text-slate-300">
@@ -271,7 +271,7 @@ export default function WishlistCard({
                 transition={{ delay: 0.3 + index * 0.05 }}
                 className="flex items-start gap-2 p-2.5 rounded-xl bg-white/80 dark:bg-slate-800/50 border border-[var(--color-accent-soft)]/50 dark:border-[var(--color-accent-soft)]"
               >
-                <div className="w-6 h-6 rounded-full bg-gradient-to-r from-[var(--color-accent)] to-teal-400 flex items-center justify-center shrink-0 mt-0.5">
+                <div className="w-6 h-6 rounded-full bg-[var(--color-primary)] from-[var(--color-accent)] to-teal-400 flex items-center justify-center shrink-0 mt-0.5">
                   <span className="text-white text-[10px] font-bold">
                     {listing.ownerName[0]}
                   </span>
@@ -299,7 +299,7 @@ export default function WishlistCard({
             <div className="flex items-center gap-2 pt-2 border-t border-slate-200/50 dark:border-slate-700/50">
               <Link
                 href={`/listing/${listing.id}`}
-                className="flex-1 text-center py-2 px-3 rounded-xl bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary)] hover:from-[var(--color-primary)] hover:to-pink-600 text-white text-xs font-semibold shadow-md hover:shadow-lg transition-all"
+                className="flex-1 text-center py-2 px-3 rounded-xl bg-[var(--color-primary)] from-[var(--color-primary)] to-[var(--color-primary)] hover:from-[var(--color-primary)] hover:to-pink-600 text-white text-xs font-semibold shadow-md hover:shadow-lg transition-all"
                 onClick={(e) => e.stopPropagation()}
               >
                 View Details
@@ -340,7 +340,7 @@ export default function WishlistCard({
                           !currentCollectionId ? "text-[var(--color-primary)] font-semibold" : "text-slate-600 dark:text-slate-300"
                         }`}
                       >
-                        <div className="w-3 h-3 rounded-full bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary)]" />
+                        <div className="w-3 h-3 rounded-full bg-[var(--color-primary)] from-[var(--color-primary)] to-[var(--color-primary)]" />
                         No collection
                       </button>
                       {customCollections.map((c) => (
@@ -355,7 +355,7 @@ export default function WishlistCard({
                             currentCollectionId === c.id ? "text-[var(--color-primary)] font-semibold" : "text-slate-600 dark:text-slate-300"
                           }`}
                         >
-                          <div className={`w-3 h-3 rounded-full bg-gradient-to-r ${c.gradient}`} />
+                          <div className={`w-3 h-3 rounded-full bg-[var(--color-primary)] ${c.gradient}`} />
                           {c.name}
                         </button>
                       ))}

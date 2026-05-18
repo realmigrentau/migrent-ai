@@ -116,7 +116,7 @@ export default function ApiDocs() {
             API v2
           </div>
           <h1 className="text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white">
-            <span className="bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary)] bg-clip-text text-transparent">Developer</span> API Docs
+            <span className="bg-[var(--color-primary)] from-[var(--color-primary)] to-[var(--color-primary)] bg-clip-text text-transparent">Developer</span> API Docs
           </h1>
           <p className="mt-3 text-slate-500 dark:text-slate-400 max-w-xl mx-auto">
             Build on the MigRent platform with our RESTful API. OAuth 2.0 authentication, JSON responses, and real-time webhooks.

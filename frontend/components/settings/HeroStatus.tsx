@@ -63,7 +63,7 @@ export default function HeroStatus({
       {/* Hero card */}
       <div className="relative overflow-hidden rounded-3xl">
         {/* Gradient background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-primary)] via-[var(--color-primary)] to-[var(--color-primary)] opacity-90" />
+        <div className="absolute inset-0 bg-[var(--color-primary-soft)] from-[var(--color-primary)] via-[var(--color-primary)] to-[var(--color-primary)] opacity-90" />
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAxOGMtOS45NDEgMC0xOCA4LjA1OS0xOCAxOHM4LjA1OSAxOCAxOCAxOCAxOC04LjA1OSAxOC0xOC04LjA1OS0xOC0xOC0xOHoiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwwLjA1KSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9nPjwvc3ZnPg==')] opacity-30" />
 
         <div className="relative px-6 py-8 md:px-8 md:py-10">
@@ -156,7 +156,7 @@ export default function HeroStatus({
                   }}
                   className="group flex items-center gap-2.5 bg-white/15 hover:bg-white/25 backdrop-blur-sm border border-white/20 rounded-xl px-3.5 py-2.5 transition-all hover:scale-[1.02] active:scale-[0.98]"
                 >
-                  <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${action.gradient} flex items-center justify-center shadow-lg`}>
+                  <div className={`w-8 h-8 rounded-lg bg-[var(--color-primary-soft)] ${action.gradient} flex items-center justify-center shadow-lg`}>
                     <Icon className="w-4 h-4 text-white" />
                   </div>
                   <div className="text-left">

@@ -92,7 +92,7 @@ function MarqueeRow({
   return (
     <div className="overflow-hidden relative group">
       {/* Fade edges */}
-      <div className="pointer-events-none absolute inset-y-0 left-0 w-16 z-10 bg-gradient-to-r from-slate-50 dark:from-slate-950 to-transparent" />
+      <div className="pointer-events-none absolute inset-y-0 left-0 w-16 z-10 bg-[var(--color-primary)] from-slate-50 dark:from-slate-950 to-transparent" />
       <div className="pointer-events-none absolute inset-y-0 right-0 w-16 z-10 bg-gradient-to-l from-slate-50 dark:from-slate-950 to-transparent" />
 
       <div className={`flex gap-4 ${animClass} group-hover:[animation-play-state:paused]`}>

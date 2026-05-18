@@ -297,7 +297,7 @@ export default function PrivacyPolicy() {
           </div>
 
           {/* CTA */}
-          <div className="card p-6 rounded-2xl bg-gradient-to-br from-[var(--color-primary-soft)] to-[var(--color-primary-soft)]/50 dark:from-[var(--color-primary)]/10 dark:to-[var(--color-primary)]/5 border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)] text-center">
+          <div className="card p-6 rounded-2xl bg-[var(--color-primary-soft)] from-[var(--color-primary-soft)] to-[var(--color-primary-soft)]/50 dark:from-[var(--color-primary)]/10 dark:to-[var(--color-primary)]/5 border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)] text-center">
             <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Ready to get started?</h3>
             <p className="text-sm text-slate-600 dark:text-slate-300 mb-4">Join thousands of migrants finding rooms across Australia.</p>
             <div className="flex gap-3 justify-center">

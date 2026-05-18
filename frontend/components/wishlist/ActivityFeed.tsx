@@ -140,7 +140,7 @@ export default function ActivityFeed({
             </div>
 
             {/* Pro tip */}
-            <div className="p-4 mx-3 mb-3 rounded-2xl bg-gradient-to-br from-violet-50 to-purple-50 dark:from-violet-950/30 dark:to-purple-950/30 border border-[var(--color-primary-soft)]/50 dark:border-[var(--color-primary)]/20">
+            <div className="p-4 mx-3 mb-3 rounded-2xl bg-[var(--color-primary-soft)] from-violet-50 to-purple-50 dark:from-violet-950/30 dark:to-purple-950/30 border border-[var(--color-primary-soft)]/50 dark:border-[var(--color-primary)]/20">
               <p className="text-xs font-bold text-violet-700 dark:text-[var(--color-primary)] mb-1">
                 Pro Tip
               </p>

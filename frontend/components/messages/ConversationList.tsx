@@ -86,7 +86,7 @@ export default function ConversationList({
               <motion.span
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
-                className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary)] text-white shadow-lg shadow-[var(--color-primary)]/20"
+                className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-[var(--color-primary)] from-[var(--color-primary)] to-[var(--color-primary)] text-white shadow-lg shadow-[var(--color-primary)]/20"
               >
                 {totalUnread}
               </motion.span>
@@ -294,7 +294,7 @@ function ThreadItem({
       {/* Avatar */}
       <div className="relative shrink-0">
         <div className={`w-12 h-12 rounded-full flex items-center justify-center overflow-hidden ring-2 ring-white dark:ring-slate-950 ${
-          thread.other_user_pfp ? "bg-slate-200 dark:bg-slate-700" : "bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-accent)]"
+          thread.other_user_pfp ? "bg-slate-200 dark:bg-slate-700" : "bg-[var(--color-primary-soft)] from-[var(--color-primary)] to-[var(--color-accent)]"
         }`}>
           {thread.other_user_pfp ? (
             <img src={thread.other_user_pfp} alt="" className="w-full h-full object-cover" />
@@ -313,7 +313,7 @@ function ThreadItem({
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
-            className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center shadow-lg shadow-[var(--color-primary)]/20"
+            className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-[var(--color-primary)] from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center shadow-lg shadow-[var(--color-primary)]/20"
           >
             <span className="text-[9px] font-black text-white">
               {thread.unread_count > 99 ? "99+" : thread.unread_count}
@@ -398,7 +398,7 @@ function EmptyState({
 }) {
   return (
     <div className="flex flex-col items-center justify-center h-full text-center px-8 py-16">
-      <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-[var(--color-primary-soft)] to-[var(--color-accent-soft)] dark:from-[var(--color-primary)]/10 dark:to-[var(--color-accent)]/10 flex items-center justify-center mb-5 rotate-3">
+      <div className="w-20 h-20 rounded-2xl bg-[var(--color-primary-soft)] from-[var(--color-primary-soft)] to-[var(--color-accent-soft)] dark:from-[var(--color-primary)]/10 dark:to-[var(--color-accent)]/10 flex items-center justify-center mb-5 rotate-3">
         {filter === "unread" ? (
           <CheckCheck className="w-8 h-8 text-[var(--color-accent)]" />
         ) : searchQuery ? (

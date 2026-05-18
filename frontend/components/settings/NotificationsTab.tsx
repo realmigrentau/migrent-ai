@@ -122,7 +122,7 @@ export default function NotificationsTab({
       {/* Email Preferences */}
       <GlassCard delay={0.05}>
         <div className="flex items-start gap-4 mb-5">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-400 to-[var(--color-primary)] flex items-center justify-center shadow-lg shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-[var(--color-primary-soft)] from-blue-400 to-[var(--color-primary)] flex items-center justify-center shadow-lg shrink-0">
             <Mail className="w-5 h-5 text-white" />
           </div>
           <div>
@@ -143,7 +143,7 @@ export default function NotificationsTab({
                 className="flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group"
               >
                 <div className="flex items-center gap-3 flex-1 min-w-0">
-                  <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${pref.gradient} flex items-center justify-center shadow-sm shrink-0`}>
+                  <div className={`w-8 h-8 rounded-lg bg-[var(--color-primary-soft)] ${pref.gradient} flex items-center justify-center shadow-sm shrink-0`}>
                     <Icon className="w-4 h-4 text-white" />
                   </div>
                   <div className="min-w-0">
@@ -164,7 +164,7 @@ export default function NotificationsTab({
       {/* Push Notifications */}
       <GlassCard delay={0.15}>
         <div className="flex items-start gap-4 mb-5">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-lg shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-[var(--color-primary-soft)] from-amber-400 to-orange-500 flex items-center justify-center shadow-lg shrink-0">
             <Smartphone className="w-5 h-5 text-white" />
           </div>
           <div>
@@ -185,7 +185,7 @@ export default function NotificationsTab({
                 className="flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
               >
                 <div className="flex items-center gap-3 flex-1 min-w-0">
-                  <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${pref.gradient} flex items-center justify-center shadow-sm shrink-0`}>
+                  <div className={`w-8 h-8 rounded-lg bg-[var(--color-primary-soft)] ${pref.gradient} flex items-center justify-center shadow-sm shrink-0`}>
                     <Icon className="w-4 h-4 text-white" />
                   </div>
                   <div className="min-w-0">
@@ -206,7 +206,7 @@ export default function NotificationsTab({
       {/* Smart System Info */}
       <GlassCard delay={0.25} gradient="emerald">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--color-accent)] to-teal-500 flex items-center justify-center shadow-lg shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-[var(--color-primary-soft)] from-[var(--color-accent)] to-teal-500 flex items-center justify-center shadow-lg shrink-0">
             <Zap className="w-5 h-5 text-white" />
           </div>
           <div className="flex-1">

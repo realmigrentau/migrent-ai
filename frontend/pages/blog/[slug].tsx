@@ -70,7 +70,7 @@ export default function BlogPost() {
           </h1>
 
           <div className="flex items-center gap-3 mt-6">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center text-white text-sm font-bold">
+            <div className="w-10 h-10 rounded-full bg-[var(--color-primary-soft)] from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center text-white text-sm font-bold">
               {post.author.charAt(0)}
             </div>
             <div>

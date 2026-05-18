@@ -36,7 +36,7 @@ export default function RentalLaws() {
             Legal Guide
           </div>
           <h1 className="text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white">
-            Australian <span className="bg-gradient-to-r from-cyan-500 to-teal-500 bg-clip-text text-transparent">Rental Laws</span> for Migrants
+            Australian <span className="bg-[var(--color-primary)] from-cyan-500 to-teal-500 bg-clip-text text-transparent">Rental Laws</span> for Migrants
           </h1>
           <p className="mt-3 text-slate-500 dark:text-slate-400 max-w-xl mx-auto">
             Know your rights as a renter in Australia. Tenancy laws, bond rules, and dispute processes by state.
@@ -153,7 +153,7 @@ export default function RentalLaws() {
               <div className="space-y-3">
                 {state.disputeProcess.map((step, i) => (
                   <div key={i} className="flex items-start gap-3">
-                    <span className="w-6 h-6 rounded-full bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center text-[10px] font-bold text-white shrink-0 mt-0.5">
+                    <span className="w-6 h-6 rounded-full bg-[var(--color-primary-soft)] from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center text-[10px] font-bold text-white shrink-0 mt-0.5">
                       {i + 1}
                     </span>
                     <span className="text-sm text-slate-600 dark:text-slate-400">{step}</span>

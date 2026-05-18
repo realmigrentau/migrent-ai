@@ -43,7 +43,7 @@ export default function MentorCard({
         <div className="card p-5 hover:shadow-lg transition-all cursor-pointer group">
           <div className="flex items-start gap-4">
             {/* Avatar */}
-            <div className="w-14 h-14 rounded-2xl overflow-hidden shrink-0 bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center">
+            <div className="w-14 h-14 rounded-2xl overflow-hidden shrink-0 bg-[var(--color-primary-soft)] from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center">
               {photo ? (
                 <img src={photo} alt={name} className="w-full h-full object-cover" />
               ) : (

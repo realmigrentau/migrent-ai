@@ -158,7 +158,7 @@ export default function MentorProfilePage() {
         >
           <div className="flex flex-col sm:flex-row items-start gap-5">
             {/* Avatar */}
-            <div className="w-20 h-20 rounded-2xl overflow-hidden shrink-0 bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center">
+            <div className="w-20 h-20 rounded-2xl overflow-hidden shrink-0 bg-[var(--color-primary-soft)] from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center">
               {photo ? (
                 <img src={photo} alt={name} className="w-full h-full object-cover" />
               ) : (
@@ -336,7 +336,7 @@ export default function MentorProfilePage() {
             whileTap={{ scale: 0.98 }}
             onClick={handleBook}
             disabled={booking}
-            className="w-full bg-gradient-to-r from-[var(--color-primary)] to-pink-600 hover:from-primary-700 hover:to-pink-700 text-white font-semibold py-3 rounded-xl text-sm transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+            className="w-full bg-[var(--color-primary)] from-[var(--color-primary)] to-pink-600 hover:from-primary-700 hover:to-pink-700 text-white font-semibold py-3 rounded-xl text-sm transition-all disabled:opacity-50 flex items-center justify-center gap-2"
           >
             {booking ? (
               <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -365,7 +365,7 @@ export default function MentorProfilePage() {
               {mentor.reviews.map((review) => (
                 <div key={review.id} className="border-b border-slate-100 dark:border-slate-800 last:border-0 pb-4 last:pb-0">
                   <div className="flex items-center gap-2 mb-2">
-                    <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center overflow-hidden">
+                    <div className="w-7 h-7 rounded-full bg-[var(--color-primary-soft)] from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center overflow-hidden">
                       {review.profiles?.custom_pfp ? (
                         <img src={review.profiles.custom_pfp} alt="" className="w-full h-full object-cover" />
                       ) : (

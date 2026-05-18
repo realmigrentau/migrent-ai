@@ -70,7 +70,7 @@ export default function ShareModal({ show, onClose, listings }: ShareModalProps)
             {/* Header */}
             <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 dark:border-slate-800">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-xl bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center">
+                <div className="w-8 h-8 rounded-xl bg-[var(--color-primary)] from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center">
                   <Share2 className="w-4 h-4 text-white" />
                 </div>
                 <div>
@@ -184,7 +184,7 @@ export default function ShareModal({ show, onClose, listings }: ShareModalProps)
               </div>
 
               {/* Roommate invite */}
-              <div className="p-3 rounded-2xl bg-gradient-to-r from-violet-50 to-purple-50 dark:from-violet-950/30 dark:to-purple-950/30 border border-[var(--color-primary-soft)]/50 dark:border-[var(--color-primary)]/20">
+              <div className="p-3 rounded-2xl bg-[var(--color-primary)] from-violet-50 to-purple-50 dark:from-violet-950/30 dark:to-purple-950/30 border border-[var(--color-primary-soft)]/50 dark:border-[var(--color-primary)]/20">
                 <div className="flex items-center gap-2">
                   <Users className="w-5 h-5 text-[var(--color-primary)]" />
                   <div>

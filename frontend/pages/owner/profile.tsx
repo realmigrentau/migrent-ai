@@ -167,7 +167,7 @@ export default function OwnerProfilePage() {
           <div className="relative group">
             <div
               onClick={() => fileRef.current?.click()}
-              className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-400 to-[var(--color-primary)] flex items-center justify-center text-white font-bold text-3xl shrink-0 cursor-pointer overflow-hidden ring-2 ring-white dark:ring-slate-800 shadow-lg"
+              className="w-20 h-20 rounded-full bg-[var(--color-primary-soft)] from-blue-400 to-[var(--color-primary)] flex items-center justify-center text-white font-bold text-3xl shrink-0 cursor-pointer overflow-hidden ring-2 ring-white dark:ring-slate-800 shadow-lg"
             >
               {profile.profilePhoto ? (
                 <img src={profile.profilePhoto} alt="Profile" className="w-full h-full object-cover" />

@@ -74,14 +74,14 @@ export default function TrueCostBadge({
   };
 
   return (
-    <div className="rounded-2xl border border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)] bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/30 overflow-hidden">
+    <div className="rounded-2xl border border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)] bg-[var(--color-primary-soft)] from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/30 overflow-hidden">
       {/* Collapsed header */}
       <button
         onClick={() => setOpen(!open)}
         className="w-full px-4 py-3.5 flex items-center justify-between transition-colors"
       >
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[var(--color-accent)] to-teal-500 flex items-center justify-center shadow-sm">
+          <div className="w-8 h-8 rounded-xl bg-[var(--color-primary-soft)] from-[var(--color-accent)] to-teal-500 flex items-center justify-center shadow-sm">
             <Zap className="w-4 h-4 text-white" />
           </div>
           <div className="text-left">

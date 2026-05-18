@@ -156,7 +156,7 @@ export default function PhotoUploadZone({
         `}
       >
         {/* Glassmorphism background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-white/80 to-slate-50/80 dark:from-slate-800/80 dark:to-slate-900/80 backdrop-blur-sm" />
+        <div className="absolute inset-0 bg-[var(--color-primary-soft)] from-white/80 to-slate-50/80 dark:from-slate-800/80 dark:to-slate-900/80 backdrop-blur-sm" />
 
         <div className="relative z-10">
           <div
@@ -386,7 +386,7 @@ export default function PhotoUploadZone({
           whileTap={{ scale: 0.98 }}
           onClick={handleUpload}
           disabled={uploading}
-          className="w-full py-3 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 transition-all shadow-lg shadow-teal-500/20 disabled:opacity-50"
+          className="w-full py-3 rounded-xl text-sm font-semibold text-white bg-[var(--color-primary)] from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 transition-all shadow-lg shadow-teal-500/20 disabled:opacity-50"
         >
           Upload {photos.length} photos
         </motion.button>
@@ -409,7 +409,7 @@ export default function PhotoUploadZone({
           </div>
           <div className="h-2 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
             <motion.div
-              className="h-full rounded-full bg-gradient-to-r from-teal-400 to-teal-500"
+              className="h-full rounded-full bg-[var(--color-primary)] from-teal-400 to-teal-500"
               initial={{ width: 0 }}
               animate={{ width: `${overallProgress}%` }}
               transition={{ duration: 0.3 }}

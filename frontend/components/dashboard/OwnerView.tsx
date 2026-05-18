@@ -134,7 +134,7 @@ export default function OwnerView({ listings, loading, profile }: OwnerViewProps
                 >
                   {/* Property info */}
                   <div className="col-span-5 flex items-center gap-3 mb-2 md:mb-0">
-                    <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-[var(--color-primary-soft)] to-pink-100 dark:from-[var(--color-primary)]/20 dark:to-[var(--color-primary)]/20 flex items-center justify-center shrink-0">
+                    <div className="w-11 h-11 rounded-xl bg-[var(--color-primary-soft)] from-[var(--color-primary-soft)] to-pink-100 dark:from-[var(--color-primary)]/20 dark:to-[var(--color-primary)]/20 flex items-center justify-center shrink-0">
                       <Building2 className="w-5 h-5 text-[var(--color-primary)]" />
                     </div>
                     <div className="min-w-0">
@@ -235,7 +235,7 @@ export default function OwnerView({ listings, loading, profile }: OwnerViewProps
           whileHover={{ y: -2 }}
           className="card p-6 text-center cursor-pointer"
         >
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center mx-auto mb-4">
+          <div className="w-14 h-14 rounded-2xl bg-[var(--color-primary-soft)] from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center mx-auto mb-4">
             <Users className="w-7 h-7 text-white" />
           </div>
           <h3 className="font-bold text-slate-900 dark:text-white mb-1">

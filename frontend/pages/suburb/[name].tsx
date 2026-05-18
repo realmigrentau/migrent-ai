@@ -236,7 +236,7 @@ export default function SuburbPage() {
           <SuburbFAQ faqs={suburb.faq} suburbName={suburb.name} />
 
           {/* Bottom CTA */}
-          <section className="rounded-2xl bg-gradient-to-r from-teal-600 to-emerald-600 p-8 sm:p-12 text-center text-white">
+          <section className="rounded-2xl bg-[var(--color-primary)] from-teal-600 to-emerald-600 p-8 sm:p-12 text-center text-white">
             <h2 className="text-2xl sm:text-3xl font-bold mb-3">
               Ready to find your room in {suburb.name}?
             </h2>

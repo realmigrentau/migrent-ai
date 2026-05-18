@@ -254,7 +254,7 @@ export default function SeekerView({ loading, profile }: SeekerViewProps) {
           whileHover={{ y: -2 }}
           className="card p-6 text-center cursor-pointer"
         >
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center mx-auto mb-4">
+          <div className="w-14 h-14 rounded-2xl bg-[var(--color-primary-soft)] from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center mx-auto mb-4">
             <Users className="w-7 h-7 text-white" />
           </div>
           <h3 className="font-bold text-slate-900 dark:text-white mb-1">
@@ -272,7 +272,7 @@ export default function SeekerView({ loading, profile }: SeekerViewProps) {
           whileHover={{ y: -2 }}
           className="card p-6 text-center cursor-pointer"
         >
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center mx-auto mb-4">
+          <div className="w-14 h-14 rounded-2xl bg-[var(--color-primary-soft)] from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center mx-auto mb-4">
             <Search className="w-7 h-7 text-white" />
           </div>
           <h3 className="font-bold text-slate-900 dark:text-white mb-1">

@@ -107,7 +107,7 @@ export default function TrueCostCalculator({
         className="w-full px-4 py-3 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
       >
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[var(--color-accent)] to-teal-500 flex items-center justify-center shadow-md">
+          <div className="w-9 h-9 rounded-xl bg-[var(--color-primary-soft)] from-[var(--color-accent)] to-teal-500 flex items-center justify-center shadow-md">
             <Zap className="w-4.5 h-4.5 text-white" />
           </div>
           <div className="text-left">

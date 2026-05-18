@@ -116,7 +116,7 @@ export default function CodeOfConduct() {
           </div>
 
           {/* CTA */}
-          <div className="card p-6 rounded-2xl bg-gradient-to-br from-emerald-50 to-[var(--color-accent-soft)]/50 dark:from-[var(--color-accent)]/10 dark:to-emerald-600/5 border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)] text-center">
+          <div className="card p-6 rounded-2xl bg-[var(--color-primary-soft)] from-emerald-50 to-[var(--color-accent-soft)]/50 dark:from-[var(--color-accent)]/10 dark:to-emerald-600/5 border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)] text-center">
             <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Report a code violation?</h3>
             <p className="text-sm text-slate-600 dark:text-slate-300 mb-4">Help us maintain a safe and compliant community.</p>
             <Link href="/safety-reporting">

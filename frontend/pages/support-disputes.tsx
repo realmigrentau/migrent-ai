@@ -136,7 +136,7 @@ export default function SupportDisputes() {
           </div>
 
           {/* CTA */}
-          <div className="card p-6 rounded-2xl bg-gradient-to-br from-teal-50 to-teal-100/50 dark:from-teal-500/10 dark:to-teal-600/5 border-teal-200 dark:border-teal-500/20 text-center">
+          <div className="card p-6 rounded-2xl bg-[var(--color-primary-soft)] from-teal-50 to-teal-100/50 dark:from-teal-500/10 dark:to-teal-600/5 border-teal-200 dark:border-teal-500/20 text-center">
             <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Need to report an issue?</h3>
             <p className="text-sm text-slate-600 dark:text-slate-300 mb-4">Contact our team and we&apos;ll help where we can.</p>
             <Link href="/contact">

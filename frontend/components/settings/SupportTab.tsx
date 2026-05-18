@@ -120,7 +120,7 @@ export default function SupportTab({
               transition={{ delay: 0.05 + i * 0.06 }}
               className={`rounded-xl p-4 border ${stat.bg} text-center`}
             >
-              <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${stat.gradient} flex items-center justify-center shadow-sm mx-auto mb-2`}>
+              <div className={`w-8 h-8 rounded-lg bg-[var(--color-primary-soft)] ${stat.gradient} flex items-center justify-center shadow-sm mx-auto mb-2`}>
                 <Icon className="w-4 h-4 text-white" />
               </div>
               <p className="text-2xl font-bold text-slate-900 dark:text-white">{stat.count}</p>
@@ -246,7 +246,7 @@ export default function SupportTab({
       {/* Ticket List */}
       <GlassCard delay={0.15}>
         <div className="flex items-start gap-4 mb-4">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center shadow-lg shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-[var(--color-primary-soft)] from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center shadow-lg shrink-0">
             <MessageCircle className="w-5 h-5 text-white" />
           </div>
           <div>
@@ -300,7 +300,7 @@ export default function SupportTab({
       {/* Quick Help */}
       <GlassCard delay={0.25}>
         <div className="flex items-start gap-4 mb-4">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-400 to-[var(--color-primary)] flex items-center justify-center shadow-lg shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-[var(--color-primary-soft)] from-blue-400 to-[var(--color-primary)] flex items-center justify-center shadow-lg shrink-0">
             <HelpCircle className="w-5 h-5 text-white" />
           </div>
           <div>

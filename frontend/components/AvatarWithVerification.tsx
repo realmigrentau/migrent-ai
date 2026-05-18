@@ -36,7 +36,7 @@ export default function AvatarWithVerification({
             isVerified
               ? "ring-[var(--color-line-2)] dark:ring-[var(--color-primary)]/40"
               : "ring-white dark:ring-slate-700"
-          } bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary)]`}
+          } bg-[var(--color-primary-soft)] from-[var(--color-primary)] to-[var(--color-primary)]`}
         >
           {photo ? (
             <img
@@ -58,7 +58,7 @@ export default function AvatarWithVerification({
               height: size * 0.35,
             }}
           >
-            <div className="w-full h-full rounded-full bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center">
+            <div className="w-full h-full rounded-full bg-[var(--color-primary-soft)] from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center">
               <svg
                 className="text-white"
                 style={{ width: size * 0.18, height: size * 0.18 }}

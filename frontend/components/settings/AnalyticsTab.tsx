@@ -13,7 +13,7 @@ export default function AnalyticsTab({ profile }: AnalyticsTabProps) {
       {/* Analytics Empty State */}
       <GlassCard delay={0.05}>
         <div className="text-center py-12 px-6">
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[var(--color-primary-soft)] to-purple-100 dark:from-[var(--color-primary)]/10 dark:to-[var(--color-primary)]/10 flex items-center justify-center mx-auto mb-4">
+          <div className="w-14 h-14 rounded-2xl bg-[var(--color-primary-soft)] from-[var(--color-primary-soft)] to-purple-100 dark:from-[var(--color-primary)]/10 dark:to-[var(--color-primary)]/10 flex items-center justify-center mx-auto mb-4">
             <BarChart3 className="w-7 h-7 text-[var(--color-primary)]" />
           </div>
           <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">
@@ -60,7 +60,7 @@ export default function AnalyticsTab({ profile }: AnalyticsTabProps) {
               transition={{ delay: 0.1 + i * 0.06 }}
               className={`rounded-xl p-4 border ${item.bg} opacity-60`}
             >
-              <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${item.gradient} flex items-center justify-center shadow-sm mb-2`}>
+              <div className={`w-8 h-8 rounded-lg bg-[var(--color-primary-soft)] ${item.gradient} flex items-center justify-center shadow-sm mb-2`}>
                 <Icon className="w-4 h-4 text-white" />
               </div>
               <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">

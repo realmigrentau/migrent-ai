@@ -155,7 +155,7 @@ export default function NoAgency() {
           </div>
 
           {/* CTA */}
-          <div className="card p-6 rounded-2xl bg-gradient-to-br from-violet-50 to-violet-100/50 dark:from-[var(--color-primary)]/10 dark:to-[var(--color-primary)]/5 border-[var(--color-primary-soft)] dark:border-[var(--color-primary)]/20 text-center">
+          <div className="card p-6 rounded-2xl bg-[var(--color-primary-soft)] from-violet-50 to-violet-100/50 dark:from-[var(--color-primary)]/10 dark:to-[var(--color-primary)]/5 border-[var(--color-primary-soft)] dark:border-[var(--color-primary)]/20 text-center">
             <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Questions about our model?</h3>
             <p className="text-sm text-slate-600 dark:text-slate-300 mb-4">We&apos;re happy to explain how MigRent works.</p>
             <Link href="/contact">

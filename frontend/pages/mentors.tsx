@@ -76,7 +76,7 @@ export default function MentorsPage() {
           animate={{ opacity: 1, y: 0 }}
           className="text-center space-y-4"
         >
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center mx-auto">
+          <div className="w-16 h-16 rounded-2xl bg-[var(--color-primary-soft)] from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center mx-auto">
             <Users className="w-8 h-8 text-white" />
           </div>
           <h1 className="text-3xl font-bold text-slate-900 dark:text-white">

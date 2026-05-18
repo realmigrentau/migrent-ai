@@ -495,7 +495,7 @@ export default function MessageInput({
           disabled={!canSend}
           className={`p-2.5 rounded-xl transition-all shrink-0 shadow-lg ${
             canSend
-              ? "bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary)] text-white hover:shadow-[var(--color-primary)]/20 hover:shadow-xl"
+              ? "bg-[var(--color-primary)] from-[var(--color-primary)] to-[var(--color-primary)] text-white hover:shadow-[var(--color-primary)]/20 hover:shadow-xl"
               : "bg-slate-200 dark:bg-slate-700 text-slate-400 shadow-none"
           }`}
         >

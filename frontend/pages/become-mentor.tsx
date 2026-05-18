@@ -214,7 +214,7 @@ export default function BecomeMentorPage() {
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ type: "spring", stiffness: 200 }}
-            className="w-20 h-20 rounded-2xl bg-gradient-to-br from-[var(--color-accent)] to-teal-500 flex items-center justify-center mx-auto"
+            className="w-20 h-20 rounded-2xl bg-[var(--color-primary-soft)] from-[var(--color-accent)] to-teal-500 flex items-center justify-center mx-auto"
           >
             <CheckCircle2 className="w-10 h-10 text-white" />
           </motion.div>
@@ -261,7 +261,7 @@ export default function BecomeMentorPage() {
           animate={{ opacity: 1, y: 0 }}
           className="text-center space-y-3"
         >
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center mx-auto">
+          <div className="w-16 h-16 rounded-2xl bg-[var(--color-primary-soft)] from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center mx-auto">
             <Heart className="w-8 h-8 text-white" />
           </div>
           <h1 className="text-3xl font-bold text-slate-900 dark:text-white">
@@ -500,7 +500,7 @@ export default function BecomeMentorPage() {
                 whileTap={{ scale: 0.98 }}
                 onClick={handleSubmit}
                 disabled={loading}
-                className="flex-1 bg-gradient-to-r from-[var(--color-primary)] to-pink-600 hover:from-rose-700 hover:to-pink-700 text-white font-semibold py-3 rounded-xl text-sm transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                className="flex-1 bg-[var(--color-primary)] from-[var(--color-primary)] to-pink-600 hover:from-rose-700 hover:to-pink-700 text-white font-semibold py-3 rounded-xl text-sm transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 {loading ? (
                   <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />

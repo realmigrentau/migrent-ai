@@ -23,7 +23,7 @@ export default function Careers() {
       <div className="space-y-16">
         {/* Hero */}
         <section className="relative text-center py-16 overflow-hidden">
-          <div className="absolute top-10 left-10 w-72 h-72 bg-[var(--color-primary)]/10 dark:bg-[var(--color-primary)]/5 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute top-10 left-10 w-72 h-72 bg-[var(--color-primary)]/10 dark:bg-[var(--color-primary)]/5 hidden " />
           <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="relative z-10 max-w-3xl mx-auto">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 border border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)] text-xs font-medium text-[var(--color-primary)] dark:text-[var(--color-primary)] mb-6">
               <span className="w-2 h-2 rounded-full bg-[var(--color-primary)] animate-pulse" />
@@ -105,7 +105,7 @@ export default function Careers() {
 
         {/* CTA */}
         <section className="max-w-3xl mx-auto pb-8">
-          <div className="card p-8 rounded-2xl bg-gradient-to-br from-[var(--color-primary-soft)] to-[var(--color-primary-soft)]/50 dark:from-[var(--color-primary)]/10 dark:to-[var(--color-primary)]/5 border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)] text-center">
+          <div className="card p-8 rounded-2xl bg-[var(--color-primary-soft)] from-[var(--color-primary-soft)] to-[var(--color-primary-soft)]/50 dark:from-[var(--color-primary)]/10 dark:to-[var(--color-primary)]/5 border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)] text-center">
             <h2 className="text-2xl font-semibold text-slate-900 dark:text-white mb-3">{t("careers.ctaTitle")}</h2>
             <p className="text-sm text-slate-600 dark:text-slate-300 mb-6 max-w-md mx-auto">{t("careers.ctaSubtitle")}</p>
             <a href="https://mail.google.com/mail/?view=cm&fs=1&to=migrentau@gmail.com&su=Careers%20at%20MigRent%20AI" target="_blank" rel="noopener noreferrer">

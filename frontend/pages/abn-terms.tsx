@@ -175,7 +175,7 @@ export default function AbnTerms() {
           </div>
 
           {/* CTA */}
-          <div className="card p-6 rounded-2xl bg-gradient-to-br from-slate-50 to-slate-100/50 dark:from-slate-500/10 dark:to-slate-600/5 border-slate-200 dark:border-slate-500/20 text-center">
+          <div className="card p-6 rounded-2xl bg-[var(--color-primary-soft)] from-slate-50 to-slate-100/50 dark:from-slate-500/10 dark:to-slate-600/5 border-slate-200 dark:border-slate-500/20 text-center">
             <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Business enquiries?</h3>
             <p className="text-sm text-slate-600 dark:text-slate-300 mb-4">Get in touch with our team.</p>
             <Link href="/contact">

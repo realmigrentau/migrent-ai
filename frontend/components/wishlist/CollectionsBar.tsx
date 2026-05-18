@@ -181,7 +181,7 @@ export default function CollectionsBar({
                     <button
                       key={i}
                       onClick={() => setSelectedGradient(i)}
-                      className={`w-7 h-7 rounded-full bg-gradient-to-r ${g.gradient} transition-all ${
+                      className={`w-7 h-7 rounded-full bg-[var(--color-primary)] ${g.gradient} transition-all ${
                         selectedGradient === i
                           ? "ring-2 ring-offset-2 ring-offset-white dark:ring-offset-slate-900 scale-110"
                           : "hover:scale-110"

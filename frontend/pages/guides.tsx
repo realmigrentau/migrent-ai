@@ -19,7 +19,7 @@ function StepsPreview({ steps, color }: { steps: string[]; color: string }) {
     <div className="flex flex-col gap-2 mt-4">
       {steps.map((step, i) => (
         <div key={i} className="flex items-center gap-3">
-          <span className={`w-6 h-6 rounded-full bg-gradient-to-br ${color} flex items-center justify-center text-[10px] font-bold text-white shrink-0`}>
+          <span className={`w-6 h-6 rounded-full bg-[var(--color-primary-soft)] ${color} flex items-center justify-center text-[10px] font-bold text-white shrink-0`}>
             {i + 1}
           </span>
           <span className="text-xs text-slate-500 dark:text-slate-400">{step}</span>
@@ -147,9 +147,9 @@ export default function Guides() {
       <div className="space-y-20">
         {/* ── Hero ───────────────────────────────────────────────── */}
         <section className="relative text-center py-20 overflow-hidden">
-          <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-500/12 dark:bg-blue-500/6 rounded-full blur-3xl animate-pulse" />
-          <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-green-500/12 dark:bg-green-500/6 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "1s" }} />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-teal-400/5 dark:bg-teal-600/5 rounded-full blur-3xl" />
+          <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-500/12 dark:bg-blue-500/6 hidden " />
+          <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-green-500/12 dark:bg-green-500/6 hidden " style={{ animationDelay: "1s" }} />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-teal-400/5 dark:bg-teal-600/5 hidden " />
 
           <motion.div
             initial={{ opacity: 0, y: 40 }}
@@ -205,10 +205,10 @@ export default function Guides() {
             className="scroll-mt-24"
           >
             <div className="group relative rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-hidden hover:shadow-xl transition-all duration-300">
-              <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${guides[0].gradient}`} />
+              <div className={`absolute top-0 left-0 right-0 h-1 bg-[var(--color-primary)] ${guides[0].gradient}`} />
               <div className="flex flex-col md:flex-row">
                 {/* Visual */}
-                <div className={`w-full md:w-2/5 bg-gradient-to-br ${guides[0].gradient} p-8 flex flex-col justify-center min-h-[240px]`}>
+                <div className={`w-full md:w-2/5 bg-[var(--color-primary-soft)] ${guides[0].gradient} p-8 flex flex-col justify-center min-h-[240px]`}>
                   <div className="flex items-center gap-2 mb-4">
                     <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
                       <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -274,8 +274,8 @@ export default function Guides() {
                     className="group relative rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-hidden hover:shadow-lg transition-all duration-300 h-full flex flex-col cursor-pointer"
                   >
                     {/* Top gradient accent */}
-                    <div className={`h-1 bg-gradient-to-r ${guide.gradient} opacity-0 group-hover:opacity-100 transition-opacity`} />
-                    <div className={`h-1 bg-gradient-to-r ${guide.gradient} opacity-100 group-hover:opacity-0 transition-opacity -mt-1`} style={{ height: "2px" }} />
+                    <div className={`h-1 bg-[var(--color-primary)] ${guide.gradient} opacity-0 group-hover:opacity-100 transition-opacity`} />
+                    <div className={`h-1 bg-[var(--color-primary)] ${guide.gradient} opacity-100 group-hover:opacity-0 transition-opacity -mt-1`} style={{ height: "2px" }} />
 
                     <div className="p-6 flex flex-col flex-1">
                       {/* Header */}

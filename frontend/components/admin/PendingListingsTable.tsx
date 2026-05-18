@@ -111,7 +111,7 @@ export default function PendingListingsTable({
 
               {/* Owner info */}
               <div className="flex items-center gap-2 mt-2">
-                <div className="w-5 h-5 rounded-full bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center text-white text-[9px] font-bold overflow-hidden shrink-0">
+                <div className="w-5 h-5 rounded-full bg-[var(--color-primary-soft)] from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center text-white text-[9px] font-bold overflow-hidden shrink-0">
                   {listing.owner_photo ? (
                     <img src={listing.owner_photo} alt="" className="w-full h-full object-cover" />
                   ) : (

@@ -64,7 +64,7 @@ function MockCalculator() {
           initial={{ width: 0 }}
           animate={{ width: "52%" }}
           transition={{ duration: 2, ease: "easeOut", repeat: Infinity, repeatType: "reverse" }}
-          className="h-full bg-gradient-to-r from-green-400 to-[var(--color-accent)] rounded-full"
+          className="h-full bg-[var(--color-primary)] from-green-400 to-[var(--color-accent)] rounded-full"
         />
       </div>
       <div className="text-white/40 text-[10px]">Based on Sydney metro averages</div>
@@ -315,9 +315,9 @@ export default function Resources() {
       <div className="space-y-24">
         {/* ── Hero ───────────────────────────────────────────────── */}
         <section className="relative text-center py-20 overflow-hidden">
-          <div className="absolute top-0 left-1/4 w-96 h-96 bg-[var(--color-primary-soft)]0/15 dark:bg-[var(--color-primary-soft)]0/8 rounded-full blur-3xl animate-pulse" />
-          <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-cyan-500/12 dark:bg-cyan-500/6 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "1s" }} />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-violet-400/5 dark:bg-[var(--color-primary)]/5 rounded-full blur-3xl" />
+          <div className="absolute top-0 left-1/4 w-96 h-96 bg-[var(--color-primary-soft)]0/15 dark:bg-[var(--color-primary-soft)]0/8 hidden " />
+          <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-cyan-500/12 dark:bg-cyan-500/6 hidden " style={{ animationDelay: "1s" }} />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-violet-400/5 dark:bg-[var(--color-primary)]/5 hidden " />
 
           <motion.div
             initial={{ opacity: 0, y: 40 }}
@@ -331,7 +331,7 @@ export default function Resources() {
             </div>
 
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight leading-tight">
-              <span className="bg-gradient-to-r from-[var(--color-primary)] via-[var(--color-primary)] to-cyan-500 bg-clip-text text-transparent">
+              <span className="bg-[var(--color-primary)] from-[var(--color-primary)] via-[var(--color-primary)] to-cyan-500 bg-clip-text text-transparent">
                 Resources for MigRent
               </span>
               <br />
@@ -385,7 +385,7 @@ export default function Resources() {
                   <motion.div
                     whileHover={{ y: -6, scale: 1.01 }}
                     transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                    className={`relative rounded-2xl overflow-hidden bg-gradient-to-br ${resource.color} aspect-[4/3] shadow-xl`}
+                    className={`relative rounded-2xl overflow-hidden bg-[var(--color-primary-soft)] ${resource.color} aspect-[4/3] shadow-xl`}
                   >
                     <div className="absolute top-4 left-4 flex gap-1.5 z-10">
                       <div className="w-2.5 h-2.5 rounded-full bg-white/20" />
@@ -464,7 +464,7 @@ export default function Resources() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="rounded-2xl bg-gradient-to-r from-[var(--color-primary)] via-[var(--color-primary)] to-cyan-500 p-[1px]"
+            className="rounded-2xl bg-[var(--color-primary)] from-[var(--color-primary)] via-[var(--color-primary)] to-cyan-500 p-[1px]"
           >
             <div className="rounded-2xl bg-white dark:bg-slate-900 p-8 md:p-10">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
@@ -481,7 +481,7 @@ export default function Resources() {
                     viewport={{ once: true }}
                     transition={{ delay: si * 0.1, duration: 0.5 }}
                   >
-                    <div className="text-2xl md:text-3xl font-black bg-gradient-to-r from-[var(--color-primary)] to-cyan-500 bg-clip-text text-transparent">
+                    <div className="text-2xl md:text-3xl font-black bg-[var(--color-primary)] from-[var(--color-primary)] to-cyan-500 bg-clip-text text-transparent">
                       {stat.value}
                     </div>
                     <div className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-medium">{stat.label}</div>

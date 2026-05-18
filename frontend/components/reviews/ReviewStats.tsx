@@ -58,7 +58,7 @@ export default function ReviewStats({ stats, compact }: ReviewStatsProps) {
         <div className="flex-1">
           <div className="h-2 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
             <div
-              className="h-full rounded-full bg-gradient-to-r from-amber-400 to-amber-500 transition-all duration-500"
+              className="h-full rounded-full bg-[var(--color-primary)] from-amber-400 to-amber-500 transition-all duration-500"
               style={{ width: `${ratingPercent}%` }}
             />
           </div>

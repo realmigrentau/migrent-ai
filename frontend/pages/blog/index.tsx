@@ -38,8 +38,8 @@ export default function BlogIndex() {
       <div className="space-y-16">
         {/* Hero */}
         <section className="relative text-center py-20 overflow-hidden">
-          <div className="absolute top-0 left-1/4 w-96 h-96 bg-[var(--color-primary)]/15 dark:bg-[var(--color-primary)]/8 rounded-full blur-3xl animate-pulse" />
-          <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-[var(--color-primary-soft)]0/12 dark:bg-[var(--color-primary-soft)]0/6 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "1s" }} />
+          <div className="absolute top-0 left-1/4 w-96 h-96 bg-[var(--color-primary)]/15 dark:bg-[var(--color-primary)]/8 hidden " />
+          <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-[var(--color-primary-soft)]0/12 dark:bg-[var(--color-primary-soft)]0/6 hidden " style={{ animationDelay: "1s" }} />
 
           <motion.div
             initial={{ opacity: 0, y: 40 }}
@@ -53,7 +53,7 @@ export default function BlogIndex() {
             </div>
 
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight leading-tight">
-              <span className="bg-gradient-to-r from-[var(--color-primary)] via-[var(--color-primary)] to-[var(--color-primary)] bg-clip-text text-transparent">
+              <span className="bg-[var(--color-primary)] from-[var(--color-primary)] via-[var(--color-primary)] to-[var(--color-primary)] bg-clip-text text-transparent">
                 Tips, News & Stories
               </span>
             </h1>
@@ -100,7 +100,7 @@ export default function BlogIndex() {
                     className="group card rounded-2xl overflow-hidden hover:shadow-lg transition-all duration-300 h-full flex flex-col"
                   >
                     {/* Gradient top bar */}
-                    <div className="h-1.5 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary)]" />
+                    <div className="h-1.5 bg-[var(--color-primary)] from-[var(--color-primary)] to-[var(--color-primary)]" />
 
                     <div className="p-6 flex flex-col flex-1">
                       <div className="flex items-center gap-2 mb-3">

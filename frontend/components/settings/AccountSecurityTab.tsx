@@ -110,7 +110,7 @@ export default function AccountSecurityTab({
       {/* Email Section */}
       <GlassCard delay={0.05} gradient="indigo">
         <div className="flex items-start gap-4">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-400 to-[var(--color-primary)] flex items-center justify-center shadow-lg shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-[var(--color-primary-soft)] from-blue-400 to-[var(--color-primary)] flex items-center justify-center shadow-lg shrink-0">
             <Mail className="w-5 h-5 text-white" />
           </div>
           <div className="flex-1 min-w-0">
@@ -126,7 +126,7 @@ export default function AccountSecurityTab({
       {/* Account ID */}
       <GlassCard delay={0.1}>
         <div className="flex items-start gap-4">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-slate-400 to-slate-600 flex items-center justify-center shadow-lg shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-[var(--color-primary-soft)] from-slate-400 to-slate-600 flex items-center justify-center shadow-lg shrink-0">
             <Key className="w-5 h-5 text-white" />
           </div>
           <div className="flex-1 min-w-0">
@@ -156,7 +156,7 @@ export default function AccountSecurityTab({
       {isGoogleOnlyUser && !hasPassword && (
         <GlassCard delay={0.12} gradient="emerald">
           <div className="flex items-start gap-4 mb-5">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--color-accent)] to-teal-500 flex items-center justify-center shadow-lg shrink-0">
+            <div className="w-10 h-10 rounded-xl bg-[var(--color-primary-soft)] from-[var(--color-accent)] to-teal-500 flex items-center justify-center shadow-lg shrink-0">
               <Key className="w-5 h-5 text-white" />
             </div>
             <div>
@@ -205,7 +205,7 @@ export default function AccountSecurityTab({
       {/* Password */}
       <GlassCard delay={0.15}>
         <div className="flex items-start gap-4 mb-5">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-lg shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-[var(--color-primary-soft)] from-amber-400 to-orange-500 flex items-center justify-center shadow-lg shrink-0">
             <Lock className="w-5 h-5 text-white" />
           </div>
           <div>
@@ -261,7 +261,7 @@ export default function AccountSecurityTab({
       {/* Connected Accounts */}
       <GlassCard delay={0.2}>
         <div className="flex items-start gap-4 mb-4">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center shadow-lg shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-[var(--color-primary-soft)] from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center shadow-lg shrink-0">
             <Shield className="w-5 h-5 text-white" />
           </div>
           <div>
@@ -299,7 +299,7 @@ export default function AccountSecurityTab({
       {/* Active Sessions */}
       <GlassCard delay={0.25}>
         <div className="flex items-start gap-4 mb-4">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-400 to-[var(--color-primary)] flex items-center justify-center shadow-lg shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-[var(--color-primary-soft)] from-cyan-400 to-[var(--color-primary)] flex items-center justify-center shadow-lg shrink-0">
             <Monitor className="w-5 h-5 text-white" />
           </div>
           <div>
@@ -351,7 +351,7 @@ export default function AccountSecurityTab({
       {/* Danger Zone */}
       <GlassCard delay={0.3} gradient="rose">
         <div className="flex items-start gap-4 mb-4">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-red-400 to-red-600 flex items-center justify-center shadow-lg shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-[var(--color-primary-soft)] from-red-400 to-red-600 flex items-center justify-center shadow-lg shrink-0">
             <AlertTriangle className="w-5 h-5 text-white" />
           </div>
           <div>

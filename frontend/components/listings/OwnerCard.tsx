@@ -38,7 +38,7 @@ export default function OwnerCard({
             className="w-14 h-14 rounded-full object-cover ring-2 ring-[var(--color-primary-soft)] dark:ring-[var(--color-primary)]/20"
           />
         ) : (
-          <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center text-white font-bold text-xl ring-2 ring-[var(--color-primary-soft)] dark:ring-[var(--color-primary)]/20">
+          <div className="w-14 h-14 rounded-full bg-[var(--color-primary-soft)] from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center text-white font-bold text-xl ring-2 ring-[var(--color-primary-soft)] dark:ring-[var(--color-primary)]/20">
             {profile.name.charAt(0)}
           </div>
         )}

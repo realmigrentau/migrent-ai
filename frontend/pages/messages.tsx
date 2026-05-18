@@ -376,7 +376,7 @@ export default function MessagesPage() {
 // ═══════════════════════════════════════════════════════════════
 function WelcomeScreen() {
   return (
-    <div className="flex-1 flex flex-col items-center justify-center bg-gradient-to-br from-slate-50 via-white to-indigo-50/30 dark:from-slate-900 dark:via-slate-900 dark:to-indigo-950/20 px-8 rounded-r-2xl">
+    <div className="flex-1 flex flex-col items-center justify-center bg-[var(--color-primary-soft)] from-slate-50 via-white to-indigo-50/30 dark:from-slate-900 dark:via-slate-900 dark:to-indigo-950/20 px-8 rounded-r-2xl">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -390,7 +390,7 @@ function WelcomeScreen() {
             transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
             className="absolute inset-0 flex items-center justify-center"
           >
-            <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center shadow-2xl shadow-[var(--color-primary)]/20 rotate-6">
+            <div className="w-24 h-24 rounded-3xl bg-[var(--color-primary-soft)] from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center shadow-2xl shadow-[var(--color-primary)]/20 rotate-6">
               <MessageCircle className="w-12 h-12 text-white" />
             </div>
           </motion.div>
@@ -399,7 +399,7 @@ function WelcomeScreen() {
             transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut", delay: 0.3 }}
             className="absolute -top-2 -right-2"
           >
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[var(--color-accent)] to-[var(--color-accent)] flex items-center justify-center shadow-lg shadow-emerald-500/20 -rotate-12">
+            <div className="w-12 h-12 rounded-2xl bg-[var(--color-primary-soft)] from-[var(--color-accent)] to-[var(--color-accent)] flex items-center justify-center shadow-lg shadow-emerald-500/20 -rotate-12">
               <Sparkles className="w-6 h-6 text-white" />
             </div>
           </motion.div>
@@ -408,7 +408,7 @@ function WelcomeScreen() {
             transition={{ duration: 2.8, repeat: Infinity, ease: "easeInOut", delay: 0.6 }}
             className="absolute -bottom-1 -left-3"
           >
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center shadow-lg shadow-[var(--color-primary)]/500/20 rotate-12">
+            <div className="w-10 h-10 rounded-xl bg-[var(--color-primary-soft)] from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center shadow-lg shadow-[var(--color-primary)]/500/20 rotate-12">
               <Heart className="w-5 h-5 text-white" />
             </div>
           </motion.div>
@@ -429,7 +429,7 @@ function WelcomeScreen() {
             { icon: Send, label: "Rich", sublabel: "Files & media", color: "from-[var(--color-primary)] to-[var(--color-primary)]" },
           ].map(({ icon: Icon, label, sublabel, color }) => (
             <div key={label} className="text-center">
-              <div className={`w-12 h-12 mx-auto mb-2 rounded-xl bg-gradient-to-br ${color} flex items-center justify-center shadow-lg`}>
+              <div className={`w-12 h-12 mx-auto mb-2 rounded-xl bg-[var(--color-primary-soft)] ${color} flex items-center justify-center shadow-lg`}>
                 <Icon className="w-5 h-5 text-white" />
               </div>
               <p className="text-xs font-bold text-slate-700 dark:text-slate-200">{label}</p>
@@ -453,7 +453,7 @@ function ChatEmpty({ userName }: { userName: string }) {
         animate={{ opacity: 1, scale: 1 }}
         className="max-w-xs"
       >
-        <div className="w-20 h-20 mx-auto mb-5 rounded-2xl bg-gradient-to-br from-[var(--color-primary-soft)] to-[var(--color-accent-soft)] dark:from-[var(--color-primary)]/10 dark:to-[var(--color-accent)]/10 flex items-center justify-center rotate-3">
+        <div className="w-20 h-20 mx-auto mb-5 rounded-2xl bg-[var(--color-primary-soft)] from-[var(--color-primary-soft)] to-[var(--color-accent-soft)] dark:from-[var(--color-primary)]/10 dark:to-[var(--color-accent)]/10 flex items-center justify-center rotate-3">
           <Send className="w-8 h-8 text-[var(--color-primary)] -rotate-3" />
         </div>
         <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">

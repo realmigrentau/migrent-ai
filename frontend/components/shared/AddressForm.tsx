@@ -20,7 +20,7 @@ export default function AddressForm({ profile }: AddressFormProps) {
       {/* Residential Address */}
       <div className="card p-5 rounded-2xl">
         <div className="flex items-start gap-4 mb-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-400 to-[var(--color-primary)] flex items-center justify-center shadow-lg shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-[var(--color-primary-soft)] from-blue-400 to-[var(--color-primary)] flex items-center justify-center shadow-lg shrink-0">
             <MapPin className="w-5 h-5 text-white" />
           </div>
           <div>
@@ -55,7 +55,7 @@ export default function AddressForm({ profile }: AddressFormProps) {
       {/* Phone */}
       <div className="card p-5 rounded-2xl">
         <div className="flex items-start gap-4">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--color-accent)] to-green-500 flex items-center justify-center shadow-lg shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-[var(--color-primary-soft)] from-[var(--color-accent)] to-green-500 flex items-center justify-center shadow-lg shrink-0">
             <Phone className="w-5 h-5 text-white" />
           </div>
           <div className="flex-1">
@@ -75,7 +75,7 @@ export default function AddressForm({ profile }: AddressFormProps) {
       {/* Email (read-only) */}
       <div className="card p-5 rounded-2xl">
         <div className="flex items-start gap-4">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center shadow-lg shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-[var(--color-primary-soft)] from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center shadow-lg shrink-0">
             <Mail className="w-5 h-5 text-white" />
           </div>
           <div className="flex-1">
@@ -95,7 +95,7 @@ export default function AddressForm({ profile }: AddressFormProps) {
       {profile?.emergency_contact && (
         <div className="card p-5 rounded-2xl">
           <div className="flex items-start gap-4">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-red-400 to-[var(--color-primary)] flex items-center justify-center shadow-lg shrink-0">
+            <div className="w-10 h-10 rounded-xl bg-[var(--color-primary-soft)] from-red-400 to-[var(--color-primary)] flex items-center justify-center shadow-lg shrink-0">
               <Shield className="w-5 h-5 text-white" />
             </div>
             <div className="flex-1">

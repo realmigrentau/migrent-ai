@@ -132,7 +132,7 @@ function MockFilters() {
           <span className="text-white/90 text-xs font-semibold">500m</span>
         </div>
         <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
-          <div className="h-full w-1/3 bg-gradient-to-r from-[var(--color-primary)] to-violet-400 rounded-full" />
+          <div className="h-full w-1/3 bg-[var(--color-primary)] from-[var(--color-primary)] to-violet-400 rounded-full" />
         </div>
       </div>
       <div className="text-white/50 text-xs">147 rooms match your filters</div>
@@ -293,7 +293,7 @@ function MockSuburbReport() {
           <span className="text-white/70 text-xs">Near Kellyville Station</span>
         </div>
         <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
-          <div className="h-full w-3/4 bg-gradient-to-r from-teal-400 to-[var(--color-accent)] rounded-full" />
+          <div className="h-full w-3/4 bg-[var(--color-primary)] from-teal-400 to-[var(--color-accent)] rounded-full" />
         </div>
         <div className="text-white/40 text-[10px] mt-1">Transport Score: 7.8/10</div>
       </div>
@@ -424,32 +424,24 @@ export default function Features() {
 
       <div className="space-y-24">
         {/* ── Hero ───────────────────────────────────────────────── */}
-        <section className="relative text-center py-20 overflow-hidden">
-          {/* Background blobs */}
-          <div className="absolute top-0 left-1/4 w-96 h-96 bg-[var(--color-primary-soft)]0/15 dark:bg-[var(--color-primary-soft)]0/8 rounded-full blur-3xl animate-pulse" />
-          <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-[var(--color-primary)]/12 dark:bg-[var(--color-primary)]/6 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "1s" }} />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-violet-400/5 dark:bg-[var(--color-primary)]/5 rounded-full blur-3xl" />
-
+        <section className="relative py-20">
           <motion.div
-            initial={{ opacity: 0, y: 40 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="relative z-10 max-w-3xl mx-auto"
+            transition={{ duration: 0.5 }}
+            className="relative z-10 max-w-3xl"
           >
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary-soft)]0/10 border border-purple-100 dark:border-[var(--color-primary)]/20 text-xs font-medium text-[var(--color-primary)] dark:text-[var(--color-primary)] mb-6">
-              <span className="w-2 h-2 rounded-full bg-[var(--color-primary-soft)]0 animate-pulse" />
-              {t("features.heroBadge")}
+            <div className="inline-flex items-center gap-2 mb-6">
+              <span className="w-2 h-2 rounded-full bg-[var(--color-accent)] animate-pulse" />
+              <span className="eyebrow">{t("features.heroBadge")}</span>
             </div>
 
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight leading-tight">
-              <span className="bg-gradient-to-r from-[var(--color-primary)] via-[var(--color-primary)] to-[var(--color-primary)] bg-clip-text text-transparent">
-                Powerful Features
-              </span>
-              <br />
-              <span className="text-slate-900 dark:text-white">for MigRent AI</span>
+            <h1 className="font-serif text-[44px] sm:text-[60px] md:text-[84px] leading-[0.98] tracking-[-0.025em] text-[var(--color-ink)] text-balance">
+              Powerful features{" "}
+              <span className="italic text-[var(--color-ink-2)]">for MigRent AI.</span>
             </h1>
 
-            <p className="mt-6 text-lg md:text-xl text-slate-500 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
+            <p className="mt-6 text-lg md:text-xl text-[var(--color-ink-2)] max-w-2xl leading-relaxed">
               {t("features.heroSubtitle")}
             </p>
 
@@ -497,7 +489,7 @@ export default function Features() {
                   <motion.div
                     whileHover={{ y: -6, scale: 1.01 }}
                     transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                    className={`relative rounded-2xl overflow-hidden bg-gradient-to-br ${feature.color} aspect-[4/3] shadow-xl`}
+                    className={`relative rounded-2xl overflow-hidden bg-[var(--color-primary-soft)] ${feature.color} aspect-[4/3] shadow-xl`}
                   >
                     {/* Decorative dots / glass effect */}
                     <div className="absolute top-4 left-4 flex gap-1.5 z-10">
@@ -571,7 +563,7 @@ export default function Features() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="rounded-2xl bg-gradient-to-r from-[var(--color-primary)] via-[var(--color-primary)] to-[var(--color-primary)] p-[1px]"
+            className="rounded-2xl bg-[var(--color-primary)] from-[var(--color-primary)] via-[var(--color-primary)] to-[var(--color-primary)] p-[1px]"
           >
             <div className="rounded-2xl bg-white dark:bg-slate-900 p-8 md:p-10">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
@@ -588,7 +580,7 @@ export default function Features() {
                     viewport={{ once: true }}
                     transition={{ delay: i * 0.1, duration: 0.5 }}
                   >
-                    <div className="text-2xl md:text-3xl font-black bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary)] bg-clip-text text-transparent">
+                    <div className="text-2xl md:text-3xl font-black bg-[var(--color-primary)] from-[var(--color-primary)] to-[var(--color-primary)] bg-clip-text text-transparent">
                       {stat.value}
                     </div>
                     <div className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-medium">{stat.label}</div>

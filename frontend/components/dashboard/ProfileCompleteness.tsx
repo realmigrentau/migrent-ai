@@ -192,7 +192,7 @@ export default function ProfileCompleteness({ profile, role, loading }: ProfileC
             className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer group"
           >
             <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-sm overflow-hidden shrink-0 ${
-              profile.photo ? "" : "bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary)]"
+              profile.photo ? "" : "bg-[var(--color-primary-soft)] from-[var(--color-primary)] to-[var(--color-primary)]"
             }`}>
               {profile.photo ? (
                 <img src={profile.photo} alt="" className="w-full h-full object-cover" />

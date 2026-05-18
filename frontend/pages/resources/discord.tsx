@@ -91,7 +91,7 @@ export default function Discord() {
             2,847 members online
           </div>
           <h1 className="text-3xl md:text-5xl font-black tracking-tight text-slate-900 dark:text-white">
-            Join the <span className="bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary)] bg-clip-text text-transparent">MigRent Community</span>
+            Join the <span className="bg-[var(--color-primary)] from-[var(--color-primary)] to-[var(--color-primary)] bg-clip-text text-transparent">MigRent Community</span>
           </h1>
           <p className="mt-4 text-lg text-slate-500 dark:text-slate-400 max-w-xl mx-auto">
             Connect with thousands of migrants and hosts. Get housing tips, share experiences, and find support.
@@ -195,7 +195,7 @@ export default function Discord() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="rounded-2xl bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary)] p-[1px]"
+            className="rounded-2xl bg-[var(--color-primary)] from-[var(--color-primary)] to-[var(--color-primary)] p-[1px]"
           >
             <div className="rounded-2xl bg-white dark:bg-slate-900 p-8">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
@@ -212,7 +212,7 @@ export default function Discord() {
                     viewport={{ once: true }}
                     transition={{ delay: i * 0.1 }}
                   >
-                    <div className="text-2xl font-black bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary)] bg-clip-text text-transparent">
+                    <div className="text-2xl font-black bg-[var(--color-primary)] from-[var(--color-primary)] to-[var(--color-primary)] bg-clip-text text-transparent">
                       {stat.value}
                     </div>
                     <div className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-medium">{stat.label}</div>

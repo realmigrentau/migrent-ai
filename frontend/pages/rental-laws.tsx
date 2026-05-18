@@ -143,7 +143,7 @@ export default function RentalLaws() {
           </div>
 
           {/* CTA */}
-          <div className="card p-6 rounded-2xl bg-gradient-to-br from-indigo-50 to-[var(--color-primary-soft)]/50 dark:from-[var(--color-primary)]/10 dark:to-[var(--color-primary)]/5 border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)] text-center">
+          <div className="card p-6 rounded-2xl bg-[var(--color-primary-soft)] from-indigo-50 to-[var(--color-primary-soft)]/50 dark:from-[var(--color-primary)]/10 dark:to-[var(--color-primary)]/5 border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)] text-center">
             <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Need more guidance?</h3>
             <p className="text-sm text-slate-600 dark:text-slate-300 mb-4">Contact your state&apos;s Fair Trading office or reach out to us.</p>
             <Link href="/contact">

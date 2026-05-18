@@ -176,7 +176,7 @@ export default function EarningsCalculator() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.25 }}
-              className="p-6 rounded-xl bg-gradient-to-br from-emerald-50 via-emerald-100/50 to-teal-50 dark:from-[var(--color-accent)]/10 dark:via-[var(--color-accent)]/5 dark:to-teal-500/5 border border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)]"
+              className="p-6 rounded-xl bg-[var(--color-primary-soft)] from-emerald-50 via-emerald-100/50 to-teal-50 dark:from-[var(--color-accent)]/10 dark:via-[var(--color-accent)]/5 dark:to-teal-500/5 border border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)]"
             >
               <div className="flex items-center gap-2 mb-3">
                 <div className="w-8 h-8 rounded-lg bg-[var(--color-accent-soft)]0 flex items-center justify-center">

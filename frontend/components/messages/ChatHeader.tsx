@@ -98,7 +98,7 @@ export default function ChatHeader({
         >
           <div className="relative shrink-0">
             <div className={`w-10 h-10 rounded-full flex items-center justify-center overflow-hidden ring-2 ring-white dark:ring-slate-950 shadow-md ${
-              userAvatar ? "bg-slate-200 dark:bg-slate-700" : "bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-accent)]"
+              userAvatar ? "bg-slate-200 dark:bg-slate-700" : "bg-[var(--color-primary-soft)] from-[var(--color-primary)] to-[var(--color-accent)]"
             }`}>
               {userAvatar ? (
                 <img src={userAvatar} alt="" className="w-full h-full object-cover" />
