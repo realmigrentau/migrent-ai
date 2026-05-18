@@ -217,14 +217,14 @@ export default function MessagesPage() {
   // ── Main layout ──
   return (
     <>
-      <div className="flex rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 overflow-hidden shadow-sm" style={{ height: "calc(100vh - 10rem)" }}>
+      <div className="flex rounded-[14px] border border-[var(--color-line)] bg-[var(--color-surface)] overflow-hidden" style={{ height: "calc(100vh - 10rem)" }}>
         {/* ════════════════════════════════════════════════════════
             LEFT SIDEBAR - Conversation List
             ════════════════════════════════════════════════════════ */}
         <div
           className={`${
             showChat ? "hidden lg:flex" : "flex"
-          } w-full lg:w-[380px] xl:w-[420px] flex-col border-r border-slate-200 dark:border-slate-800 shrink-0`}
+          } w-full lg:w-[340px] xl:w-[380px] flex-col border-r border-[var(--color-line)] shrink-0`}
         >
           <ConversationList
             threads={threads}
@@ -236,7 +236,7 @@ export default function MessagesPage() {
         </div>
 
         {/* ════════════════════════════════════════════════════════
-            RIGHT PANEL - Active Chat
+            CENTER PANEL - Active Chat Thread
             ════════════════════════════════════════════════════════ */}
         <div
           className={`${
@@ -358,6 +358,79 @@ export default function MessagesPage() {
             <WelcomeScreen />
           )}
         </div>
+
+        {/* ════════════════════════════════════════════════════════
+            RIGHT PANEL - About this listing + Trust signals + Stay safe
+            ════════════════════════════════════════════════════════ */}
+        {activeThread && (
+          <aside className="hidden xl:flex w-[280px] flex-col gap-4 p-5 border-l border-[var(--color-line)] overflow-y-auto bg-[var(--color-surface)]">
+            <div>
+              <div className="eyebrow mb-2.5">About this listing</div>
+              {activeThread.listing_title ? (
+                <Link
+                  href={activeThread.listing_id ? `/listing/${activeThread.listing_id}` : "#"}
+                  className="block rounded-[10px] border border-[var(--color-line)] bg-[var(--color-surface-2)] overflow-hidden hover:border-[var(--color-line-2)] transition-colors"
+                >
+                  <div className="photo-placeholder h-[110px]">
+                    {activeThread.listing_title.slice(0, 30)}
+                  </div>
+                  <div className="p-3">
+                    <div className="eyebrow">
+                      {activeThread.listing_id ? `MR-${String(activeThread.listing_id).slice(-4)}` : ""}
+                    </div>
+                    <div className="text-[13px] font-semibold mt-1 text-[var(--color-ink)] line-clamp-2 leading-snug">
+                      {activeThread.listing_title}
+                    </div>
+                    <div className="mt-3 flex justify-end">
+                      <span className="text-[12px] font-semibold text-[var(--color-ink)] inline-flex items-center gap-1">
+                        Open <ArrowRight className="w-3 h-3" />
+                      </span>
+                    </div>
+                  </div>
+                </Link>
+              ) : (
+                <div className="text-[12.5px] text-[var(--color-ink-3)] italic">
+                  No listing linked to this thread.
+                </div>
+              )}
+            </div>
+
+            <div>
+              <div className="eyebrow mb-2.5">Trust signals</div>
+              <div className="flex flex-col gap-1.5">
+                {[
+                  ["ID verified", true],
+                  ["Bond protected", true],
+                  ["Replies in ~2h", activeThread.is_online],
+                  ["Tour scheduled", false],
+                ].map(([t, ok]) => (
+                  <div
+                    key={String(t)}
+                    className="flex items-center gap-2 text-[12.5px] text-[var(--color-ink-2)]"
+                  >
+                    <Shield className={`w-3 h-3 ${ok ? "text-[var(--color-accent)]" : "text-[var(--color-ink-4)]"}`} />
+                    {t}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="mt-auto rounded-[10px] p-3.5 bg-[#f4e4cf] dark:bg-[#2c1e10]">
+              <div className="flex items-center gap-1.5 font-bold text-[13px] text-[var(--color-warn-500)]">
+                ⚠ Stay safe
+              </div>
+              <p className="text-[12px] text-[var(--color-ink-2)] mt-1.5 leading-[1.5]">
+                Never send bond or rent outside MigRent. We&apos;ll never ask for crypto, gift cards, or wires.
+              </p>
+              <Link
+                href="/safety-reporting"
+                className="inline-block mt-2 text-[12px] font-semibold text-[var(--color-ink)] hover:underline underline-offset-[3px]"
+              >
+                Report a host →
+              </Link>
+            </div>
+          </aside>
+        )}
       </div>
 
       {/* Media Gallery overlay */}
