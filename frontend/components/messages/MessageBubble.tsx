@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import { Message } from "../../hooks/useMessages";
 
-const QUICK_REACTIONS = ["❤️", "👍", "😂", "🔥", "😮"];
+const QUICK_REACTIONS = ["👍", "🙏", "✅", "🤝", "⭐"];
 
 interface MessageBubbleProps {
   message: Message;

@@ -18,29 +18,27 @@ import {
 } from "lucide-react";
 import { AttachmentFile, formatRichText } from "../../hooks/useMessages";
 
-// ── Emoji categories ────────────────────────────────────────
+// ── Emoji categories - professional rental context only ───────
 const EMOJI_CATEGORIES = [
-  { label: "Smileys", emojis: ["😀","😂","🥹","😍","🤩","😎","🥳","😭","😤","🤔","😱","🫡","😈","💀","🤡","👻","🫠","🥺","😴","🤮"] },
-  { label: "Gestures", emojis: ["👍","👎","👋","🤝","✌️","🤞","🫶","👏","🙏","💪","🫵","🖕","✋","🤙","👀","🫣","🤷","🙄","🤦","🫰"] },
-  { label: "Hearts", emojis: ["❤️","🧡","💛","💚","💙","💜","🖤","🤍","💔","❤️‍🔥","💕","💞","💓","💗","💖","💘","💝","♥️","🫀","💟"] },
-  { label: "Objects", emojis: ["🔥","⭐","✨","💫","🌈","💰","💎","🎁","🎉","🎊","🏆","🎯","💡","📌","🔑","🏠","🚗","✈️","🚀","⚡"] },
-  { label: "Reactions", emojis: ["💯","✅","❌","⚠️","🚩","💤","💬","👑","🎵","🎶","📸","🔔","💌","🏳️","🎭","🃏","♟️","🧩","🪄","🫧"] },
+  { label: "Friendly", emojis: ["🙂","🙏","👋","👍","🤝","💬","✅","⭐","✨","🎉"] },
+  { label: "Housing", emojis: ["🏠","🏡","🛏️","🪑","🪟","🔑","📍","🗝️","🛋️","🧺"] },
+  { label: "Logistics", emojis: ["📅","🕒","📋","📎","✉️","📨","🗓️","📞","📲","🧾"] },
+  { label: "Status", emojis: ["✅","☑️","⏳","🔁","⏰","📌","⚠️","ℹ️","❓","🆗"] },
+  { label: "Travel", emojis: ["🚆","🚌","✈️","🚗","🚲","🚶","🛬","🗺️","🌏","📦"] },
 ];
 
-// ── Quick response stickers ──────────────────────────────────
+// ── Quick response templates - rental-specific, business tone ─
 const MEME_STICKERS = [
-  { label: "Sounds great!", value: "Sounds great! 👍" },
-  { label: "Thank you", value: "Thank you so much! 🙏" },
-  { label: "On my way", value: "On my way! 🚗" },
-  { label: "Confirmed", value: "Confirmed, thank you! ✅" },
-  { label: "Let me check", value: "Let me check and get back to you shortly." },
-  { label: "Available", value: "Yes, it's still available! 🏠" },
-  { label: "Interested", value: "I'm very interested! When can I view?" },
-  { label: "Perfect", value: "Perfect, that works for me! ✨" },
-  { label: "Will do", value: "Will do, thanks for letting me know!" },
-  { label: "See you then", value: "See you then! Looking forward to it." },
-  { label: "Noted", value: "Noted, I'll keep that in mind. 📝" },
-  { label: "No worries", value: "No worries at all! Take your time." },
+  { label: "Available", value: "Yes, the room is still available. Happy to answer any questions." },
+  { label: "Schedule a viewing", value: "I'd be happy to arrange a viewing. What times suit you this week?" },
+  { label: "Send agreement", value: "I'll prepare the rental agreement and send it through shortly." },
+  { label: "Request ID", value: "To proceed, could you please complete ID verification through MigRent? It protects both of us." },
+  { label: "Confirm booking", value: "Confirmed - thanks. I'll send the move-in details closer to the date." },
+  { label: "Payment received", value: "Payment received. Welcome - please let me know if you need anything to settle in." },
+  { label: "Need more info", value: "Could you share a bit more about your move-in dates and intended length of stay?" },
+  { label: "Following up", value: "Just following up - happy to clarify anything if you're still considering the room." },
+  { label: "Not a fit", value: "Thanks for your interest. Unfortunately this listing isn't the right fit, but best of luck with your search." },
+  { label: "Will reply soon", value: "Thanks for your message - I'll get back to you within 24 hours." },
 ];
 
 interface MessageInputProps {
