@@ -264,7 +264,7 @@ export default function MessagesPage() {
               {/* Messages area */}
               <div
                 ref={chatContainerRef}
-                className="flex-1 overflow-y-auto px-4 pt-4 pb-2 messages-scroll"
+                className="flex-1 overflow-y-auto px-6 pt-5 pb-3 messages-scroll bg-[var(--color-bg)]"
               >
                 {messagesLoading ? (
                   <div className="flex flex-col items-center justify-center h-full gap-3">

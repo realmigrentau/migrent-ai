@@ -188,7 +188,7 @@ export default function MessageInput({
   const canSend = (text.trim() || attachments.length > 0) && !isDisabled;
 
   return (
-    <div className="border-t border-slate-200/80 dark:border-slate-800/80 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl">
+    <div className="border-t border-[var(--color-line)] bg-[var(--color-surface)] p-3">
       {/* Reply preview */}
       <AnimatePresence>
         {replyTo && (
