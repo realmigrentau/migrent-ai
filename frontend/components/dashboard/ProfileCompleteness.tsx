@@ -78,16 +78,16 @@ export default function ProfileCompleteness({ profile, role, loading }: ProfileC
                 </linearGradient>
               </defs>
             </svg>
-            <span className="absolute inset-0 flex items-center justify-center text-xs font-bold text-slate-700 dark:text-slate-200">
+            <span className="absolute inset-0 flex items-center justify-center text-xs font-bold text-[var(--color-ink-2)]">
               {profile.completionPercent}%
             </span>
           </div>
 
           <div>
-            <h3 className="text-sm font-bold text-slate-900 dark:text-white">
+            <h3 className="text-sm font-bold text-[var(--color-ink)]">
               {isComplete ? "Profile complete!" : "Complete your profile"}
             </h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
+            <p className="text-xs text-[var(--color-ink-3)]">
               {isComplete
                 ? "You're all set - your profile is fully filled out"
                 : `${profile.missingFields.length} field${profile.missingFields.length > 1 ? "s" : ""} remaining`}
@@ -131,7 +131,7 @@ export default function ProfileCompleteness({ profile, role, loading }: ProfileC
 
       {/* Verification badges */}
       <div>
-        <h4 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">
+        <h4 className="text-xs font-semibold text-[var(--color-ink-3)] uppercase tracking-wider mb-2">
           Verification
         </h4>
         <div className="flex flex-wrap gap-2">
@@ -165,7 +165,7 @@ export default function ProfileCompleteness({ profile, role, loading }: ProfileC
       {/* Earned badges */}
       {profile.badges.length > 0 && (
         <div>
-          <h4 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">
+          <h4 className="text-xs font-semibold text-[var(--color-ink-3)] uppercase tracking-wider mb-2">
             Badges
           </h4>
           <div className="flex flex-wrap gap-1.5">
@@ -189,7 +189,7 @@ export default function ProfileCompleteness({ profile, role, loading }: ProfileC
         <Link href={profileHref}>
           <motion.div
             whileHover={{ y: -1 }}
-            className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer group"
+            className="flex items-center gap-3 p-3 rounded-xl bg-[var(--color-surface-sunk)] hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer group"
           >
             <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-sm overflow-hidden shrink-0 ${
               profile.photo ? "" : "bg-[var(--color-primary-soft)] from-[var(--color-primary)] to-[var(--color-primary)]"
@@ -204,7 +204,7 @@ export default function ProfileCompleteness({ profile, role, loading }: ProfileC
               <p className="text-sm font-semibold text-slate-800 dark:text-slate-100 truncate">
                 {profile.name}
               </p>
-              <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
+              <p className="text-xs text-[var(--color-ink-3)] truncate">
                 {profile.bio || profile.occupation || "Add a bio to introduce yourself"}
               </p>
             </div>
@@ -235,7 +235,7 @@ function VerificationBadge({
       className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border ${
         verified
           ? "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 text-[var(--color-accent)] dark:text-[var(--color-accent)] border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)]"
-          : "bg-slate-50 dark:bg-slate-800 text-slate-400 dark:text-slate-500 border-slate-200 dark:border-slate-700"
+          : "bg-slate-50 dark:bg-slate-800 text-[var(--color-ink-3)] border-[var(--color-line)]"
       }`}
     >
       {verified ? <CheckCircle2 className="w-3 h-3" /> : icon}

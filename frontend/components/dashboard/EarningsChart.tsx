@@ -50,7 +50,7 @@ export default function EarningsChart({ bookings }: Props) {
   if (!hasData) {
     return (
       <div className="card rounded-xl p-8 text-center">
-        <p className="text-sm text-slate-500 dark:text-slate-400">
+        <p className="text-sm text-[var(--color-ink-3)]">
           Earnings data will appear here once you have confirmed bookings.
         </p>
       </div>

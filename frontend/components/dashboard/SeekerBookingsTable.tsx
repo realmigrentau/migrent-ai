@@ -42,7 +42,7 @@ const STATUS_CONFIG: Record<
   COMPLETED: {
     label: "Completed",
     color: "text-slate-600 dark:text-slate-300",
-    bg: "bg-slate-100 dark:bg-slate-800/50",
+    bg: "bg-[var(--color-surface-sunk)]/50",
   },
   OWNER_DECLINED: {
     label: "Declined",
@@ -51,13 +51,13 @@ const STATUS_CONFIG: Record<
   },
   SEEKER_CANCELLED: {
     label: "Cancelled",
-    color: "text-slate-500 dark:text-slate-400",
-    bg: "bg-slate-50 dark:bg-slate-800/50",
+    color: "text-[var(--color-ink-3)]",
+    bg: "bg-[var(--color-surface-sunk)]",
   },
   EXPIRED: {
     label: "Expired",
     color: "text-slate-400",
-    bg: "bg-slate-50 dark:bg-slate-800/50",
+    bg: "bg-[var(--color-surface-sunk)]",
   },
 };
 
@@ -119,7 +119,7 @@ export default function DashboardSeekerBookings({
               className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
                 activeTab === tab.key
                   ? "bg-[var(--color-primary)] text-white"
-                  : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700"
+                  : "bg-[var(--color-surface-sunk)] text-[var(--color-ink-2)] hover:bg-slate-200 dark:hover:bg-slate-700"
               }`}
             >
               {tab.label} ({count})
@@ -130,7 +130,7 @@ export default function DashboardSeekerBookings({
 
       {filtered.length === 0 ? (
         <div className="card rounded-xl p-8 text-center">
-          <p className="text-sm text-slate-500 dark:text-slate-400">
+          <p className="text-sm text-[var(--color-ink-3)]">
             {activeTab === "all"
               ? "No bookings yet. Browse listings and send your first booking request!"
               : `No ${activeTab.toLowerCase().replace("_", " ")} bookings.`}
@@ -139,7 +139,7 @@ export default function DashboardSeekerBookings({
       ) : (
         <div className="space-y-2">
           {/* Table header - desktop only */}
-          <div className="hidden md:grid grid-cols-12 gap-3 px-4 py-2 text-xs font-medium text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+          <div className="hidden md:grid grid-cols-12 gap-3 px-4 py-2 text-xs font-medium text-[var(--color-ink-3)] uppercase tracking-wider">
             <div className="col-span-3">Listing</div>
             <div className="col-span-2">Owner</div>
             <div className="col-span-2">Dates</div>
@@ -165,7 +165,7 @@ export default function DashboardSeekerBookings({
                 className={`card rounded-xl overflow-hidden border transition-colors ${
                   needsPayment
                     ? "border-blue-200 dark:border-blue-500/30"
-                    : "border-slate-200 dark:border-slate-700"
+                    : "border-[var(--color-line)]"
                 }`}
               >
                 {/* Desktop row */}
@@ -186,7 +186,7 @@ export default function DashboardSeekerBookings({
                       <div className="w-10 h-10 rounded-lg bg-slate-200 dark:bg-slate-700 shrink-0" />
                     )}
                     <div className="min-w-0">
-                      <p className="text-sm font-medium text-slate-900 dark:text-white truncate">
+                      <p className="text-sm font-medium text-[var(--color-ink)] truncate">
                         {booking.listing?.title ||
                           booking.listing?.address ||
                           "Listing"}
@@ -198,9 +198,9 @@ export default function DashboardSeekerBookings({
                   </div>
                   <div className="col-span-2 flex items-center gap-2 min-w-0">
                     <div className="w-7 h-7 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center shrink-0">
-                      <User className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
+                      <User className="w-3.5 h-3.5 text-[var(--color-ink-3)]" />
                     </div>
-                    <p className="text-sm text-slate-700 dark:text-slate-300 truncate">
+                    <p className="text-sm text-[var(--color-ink-2)] truncate">
                       {booking.owner?.name || "Owner"}
                     </p>
                   </div>
@@ -213,7 +213,7 @@ export default function DashboardSeekerBookings({
                     </p>
                   </div>
                   <div className="col-span-2">
-                    <p className="text-sm font-semibold text-slate-900 dark:text-white">
+                    <p className="text-sm font-semibold text-[var(--color-ink)]">
                       ${booking.total_price?.toLocaleString()}
                     </p>
                     <p className="text-xs text-slate-400">
@@ -249,7 +249,7 @@ export default function DashboardSeekerBookings({
                           handleCancel(booking.id);
                         }}
                         disabled={cancelLoading === booking.id}
-                        className="px-3 py-1.5 rounded-lg text-xs font-medium border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50 disabled:opacity-50 flex items-center gap-1"
+                        className="px-3 py-1.5 rounded-lg text-xs font-medium border border-[var(--color-line)] text-[var(--color-ink-2)] hover:bg-slate-50 dark:hover:bg-slate-800/50 disabled:opacity-50 flex items-center gap-1"
                       >
                         <Ban className="w-3 h-3" /> Cancel
                       </button>
@@ -285,12 +285,12 @@ export default function DashboardSeekerBookings({
                         <div className="w-12 h-12 rounded-lg bg-slate-200 dark:bg-slate-700 shrink-0" />
                       )}
                       <div className="min-w-0">
-                        <p className="text-sm font-semibold text-slate-900 dark:text-white truncate">
+                        <p className="text-sm font-semibold text-[var(--color-ink)] truncate">
                           {booking.listing?.title ||
                             booking.listing?.address ||
                             "Listing"}
                         </p>
-                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                        <p className="text-xs text-[var(--color-ink-3)] mt-0.5">
                           ${booking.total_price?.toLocaleString()} total
                         </p>
                       </div>
@@ -312,11 +312,11 @@ export default function DashboardSeekerBookings({
 
                 {/* Expanded details */}
                 {isExpanded && (
-                  <div className="border-t border-slate-200 dark:border-slate-700 p-4 space-y-3">
+                  <div className="border-t border-[var(--color-line)] p-4 space-y-3">
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
                       <div>
                         <p className="text-xs text-slate-400 mb-0.5">Owner</p>
-                        <p className="font-medium text-slate-900 dark:text-white">
+                        <p className="font-medium text-[var(--color-ink)]">
                           {booking.owner?.name || "Owner"}
                           {booking.owner?.verified && (
                             <span
@@ -332,7 +332,7 @@ export default function DashboardSeekerBookings({
                         <p className="text-xs text-slate-400 mb-0.5">
                           Check-in
                         </p>
-                        <p className="font-medium text-slate-900 dark:text-white">
+                        <p className="font-medium text-[var(--color-ink)]">
                           {booking.check_in_date}
                         </p>
                       </div>
@@ -340,7 +340,7 @@ export default function DashboardSeekerBookings({
                         <p className="text-xs text-slate-400 mb-0.5">
                           Weekly rate
                         </p>
-                        <p className="font-medium text-slate-900 dark:text-white">
+                        <p className="font-medium text-[var(--color-ink)]">
                           ${booking.weekly_price_at_time?.toLocaleString()}/wk
                         </p>
                       </div>
@@ -355,12 +355,12 @@ export default function DashboardSeekerBookings({
                     </div>
 
                     {booking.message_to_owner && (
-                      <div className="p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50">
+                      <div className="p-3 rounded-lg bg-[var(--color-surface-sunk)]">
                         <p className="text-xs text-slate-400 mb-1 flex items-center gap-1">
                           <MessageSquare className="w-3 h-3" />
                           Your message to owner
                         </p>
-                        <p className="text-sm text-slate-700 dark:text-slate-300">
+                        <p className="text-sm text-[var(--color-ink-2)]">
                           {booking.message_to_owner}
                         </p>
                       </div>
@@ -403,7 +403,7 @@ export default function DashboardSeekerBookings({
                           whileTap={{ scale: 0.98 }}
                           onClick={() => handleCancel(booking.id)}
                           disabled={cancelLoading === booking.id}
-                          className={`${needsPayment ? "" : "flex-1"} py-2.5 px-4 rounded-xl text-sm font-semibold border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50 flex items-center justify-center gap-2 disabled:opacity-50`}
+                          className={`${needsPayment ? "" : "flex-1"} py-2.5 px-4 rounded-xl text-sm font-semibold border border-[var(--color-line)] text-[var(--color-ink-2)] hover:bg-slate-50 dark:hover:bg-slate-800/50 flex items-center justify-center gap-2 disabled:opacity-50`}
                         >
                           {cancelLoading === booking.id ? (
                             <span className="w-4 h-4 border-2 border-slate-300 border-t-slate-600 rounded-full animate-spin" />

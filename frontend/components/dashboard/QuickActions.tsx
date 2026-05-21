@@ -58,10 +58,10 @@ export default function QuickActions() {
             >
               {action.icon}
             </div>
-            <h3 className="font-bold text-slate-900 dark:text-white text-sm">
+            <h3 className="font-bold text-[var(--color-ink)] text-sm">
               {action.label}
             </h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+            <p className="text-xs text-[var(--color-ink-3)] mt-0.5">
               {action.desc}
             </p>
           </motion.div>

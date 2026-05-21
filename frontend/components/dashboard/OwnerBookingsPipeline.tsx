@@ -36,7 +36,7 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }
   COMPLETED: {
     label: "Completed",
     color: "text-slate-600 dark:text-slate-300",
-    bg: "bg-slate-100 dark:bg-slate-800/50",
+    bg: "bg-[var(--color-surface-sunk)]/50",
   },
   OWNER_DECLINED: {
     label: "Declined",
@@ -45,13 +45,13 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }
   },
   SEEKER_CANCELLED: {
     label: "Cancelled",
-    color: "text-slate-500 dark:text-slate-400",
-    bg: "bg-slate-50 dark:bg-slate-800/50",
+    color: "text-[var(--color-ink-3)]",
+    bg: "bg-[var(--color-surface-sunk)]",
   },
   EXPIRED: {
     label: "Expired",
     color: "text-slate-400",
-    bg: "bg-slate-50 dark:bg-slate-800/50",
+    bg: "bg-[var(--color-surface-sunk)]",
   },
 };
 
@@ -127,7 +127,7 @@ export default function OwnerBookingsPipeline({
               className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
                 activeTab === tab.key
                   ? "bg-[var(--color-primary)] text-white"
-                  : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700"
+                  : "bg-[var(--color-surface-sunk)] text-[var(--color-ink-2)] hover:bg-slate-200 dark:hover:bg-slate-700"
               }`}
             >
               {tab.label} ({count})
@@ -138,7 +138,7 @@ export default function OwnerBookingsPipeline({
 
       {filtered.length === 0 ? (
         <div className="card rounded-xl p-8 text-center">
-          <p className="text-sm text-slate-500 dark:text-slate-400">
+          <p className="text-sm text-[var(--color-ink-3)]">
             {activeTab === "all"
               ? "No bookings yet. They will appear here when seekers request your listings."
               : `No ${activeTab.toLowerCase().replace("_", " ")} bookings.`}
@@ -147,7 +147,7 @@ export default function OwnerBookingsPipeline({
       ) : (
         /* Table header - desktop only */
         <div className="space-y-2">
-          <div className="hidden md:grid grid-cols-12 gap-3 px-4 py-2 text-xs font-medium text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+          <div className="hidden md:grid grid-cols-12 gap-3 px-4 py-2 text-xs font-medium text-[var(--color-ink-3)] uppercase tracking-wider">
             <div className="col-span-3">Seeker</div>
             <div className="col-span-3">Listing</div>
             <div className="col-span-2">Dates</div>
@@ -170,7 +170,7 @@ export default function OwnerBookingsPipeline({
                 className={`card rounded-xl overflow-hidden border transition-colors ${
                   isPending
                     ? "border-amber-200 dark:border-amber-500/30"
-                    : "border-slate-200 dark:border-slate-700"
+                    : "border-[var(--color-line)]"
                 }`}
               >
                 {/* Desktop row */}
@@ -182,10 +182,10 @@ export default function OwnerBookingsPipeline({
                 >
                   <div className="col-span-3 flex items-center gap-2 min-w-0">
                     <div className="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center shrink-0">
-                      <User className="w-4 h-4 text-slate-500 dark:text-slate-400" />
+                      <User className="w-4 h-4 text-[var(--color-ink-3)]" />
                     </div>
                     <div className="min-w-0">
-                      <p className="text-sm font-medium text-slate-900 dark:text-white truncate">
+                      <p className="text-sm font-medium text-[var(--color-ink)] truncate">
                         {booking.seeker?.name || "Seeker"}
                       </p>
                       <p className="text-xs text-slate-400">
@@ -194,7 +194,7 @@ export default function OwnerBookingsPipeline({
                     </div>
                   </div>
                   <div className="col-span-3 min-w-0">
-                    <p className="text-sm text-slate-700 dark:text-slate-300 truncate">
+                    <p className="text-sm text-[var(--color-ink-2)] truncate">
                       {booking.listing?.title ||
                         booking.listing?.address ||
                         "Listing"}
@@ -209,7 +209,7 @@ export default function OwnerBookingsPipeline({
                     </p>
                   </div>
                   <div className="col-span-1">
-                    <p className="text-sm font-semibold text-slate-900 dark:text-white">
+                    <p className="text-sm font-semibold text-[var(--color-ink)]">
                       ${booking.total_price?.toLocaleString()}
                     </p>
                   </div>
@@ -265,10 +265,10 @@ export default function OwnerBookingsPipeline({
                 >
                   <div className="flex items-center justify-between gap-3">
                     <div className="min-w-0 flex-1">
-                      <p className="text-sm font-semibold text-slate-900 dark:text-white truncate">
+                      <p className="text-sm font-semibold text-[var(--color-ink)] truncate">
                         {booking.seeker?.name || "Seeker"}
                       </p>
-                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 truncate">
+                      <p className="text-xs text-[var(--color-ink-3)] mt-0.5 truncate">
                         {booking.listing?.title ||
                           booking.listing?.address ||
                           "Listing"}
@@ -291,13 +291,13 @@ export default function OwnerBookingsPipeline({
 
                 {/* Expanded details */}
                 {isExpanded && (
-                  <div className="border-t border-slate-200 dark:border-slate-700 p-4 space-y-3">
+                  <div className="border-t border-[var(--color-line)] p-4 space-y-3">
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
                       <div>
                         <p className="text-xs text-slate-400 mb-0.5">
                           Check-in
                         </p>
-                        <p className="font-medium text-slate-900 dark:text-white">
+                        <p className="font-medium text-[var(--color-ink)]">
                           {booking.check_in_date}
                         </p>
                       </div>
@@ -305,7 +305,7 @@ export default function OwnerBookingsPipeline({
                         <p className="text-xs text-slate-400 mb-0.5">
                           Check-out
                         </p>
-                        <p className="font-medium text-slate-900 dark:text-white">
+                        <p className="font-medium text-[var(--color-ink)]">
                           {booking.check_out_date}
                         </p>
                       </div>
@@ -313,7 +313,7 @@ export default function OwnerBookingsPipeline({
                         <p className="text-xs text-slate-400 mb-0.5">
                           Weekly rate
                         </p>
-                        <p className="font-medium text-slate-900 dark:text-white">
+                        <p className="font-medium text-[var(--color-ink)]">
                           ${booking.weekly_price_at_time?.toLocaleString()}/wk
                         </p>
                       </div>
@@ -328,12 +328,12 @@ export default function OwnerBookingsPipeline({
                     </div>
 
                     {booking.message_to_owner && (
-                      <div className="p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50">
+                      <div className="p-3 rounded-lg bg-[var(--color-surface-sunk)]">
                         <p className="text-xs text-slate-400 mb-1 flex items-center gap-1">
                           <MessageSquare className="w-3 h-3" />
                           Message from seeker
                         </p>
-                        <p className="text-sm text-slate-700 dark:text-slate-300">
+                        <p className="text-sm text-[var(--color-ink-2)]">
                           {booking.message_to_owner}
                         </p>
                       </div>

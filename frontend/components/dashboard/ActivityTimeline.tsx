@@ -75,7 +75,7 @@ export default function ActivityTimeline({ activities, loading }: Props) {
     return (
       <div className="card rounded-xl p-8 text-center">
         <Calendar className="w-10 h-10 mx-auto text-slate-300 dark:text-slate-600 mb-3" />
-        <p className="text-sm text-slate-500 dark:text-slate-400">
+        <p className="text-sm text-[var(--color-ink-3)]">
           No recent activity. Events will appear here as your listings get
           engagement.
         </p>
@@ -111,16 +111,16 @@ export default function ActivityTimeline({ activities, loading }: Props) {
 
             {/* Content */}
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-slate-900 dark:text-white">
+              <p className="text-sm font-medium text-[var(--color-ink)]">
                 {item.title}
               </p>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 truncate">
+              <p className="text-xs text-[var(--color-ink-3)] mt-0.5 truncate">
                 {item.description}
               </p>
             </div>
 
             {/* Time */}
-            <span className="text-xs text-slate-400 dark:text-slate-500 whitespace-nowrap shrink-0">
+            <span className="text-xs text-[var(--color-ink-3)] whitespace-nowrap shrink-0">
               {formatTimeAgo(item.timestamp)}
             </span>
           </motion.div>

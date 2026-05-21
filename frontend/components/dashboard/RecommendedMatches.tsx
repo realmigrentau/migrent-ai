@@ -9,7 +9,7 @@ interface Props {
 }
 
 function MatchBadge({ score }: { score: number }) {
-  let color = "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400";
+  let color = "bg-[var(--color-surface-sunk)] text-[var(--color-ink-2)]";
   if (score >= 90) {
     color = "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 text-[var(--color-accent)] dark:text-[var(--color-accent)]";
   } else if (score >= 80) {
@@ -49,7 +49,7 @@ export default function RecommendedMatches({ listings, loading }: Props) {
     return (
       <div className="card rounded-xl p-8 text-center">
         <Star className="w-10 h-10 mx-auto text-slate-300 dark:text-slate-600 mb-3" />
-        <p className="text-sm text-slate-500 dark:text-slate-400 mb-3">
+        <p className="text-sm text-[var(--color-ink-3)] mb-3">
           No recommendations yet. Complete your profile to get personalized matches!
         </p>
         <Link
@@ -73,7 +73,7 @@ export default function RecommendedMatches({ listings, loading }: Props) {
             transition={{ delay: 0.05 * i }}
           >
             <Link href={`/listing/${listing.id}`}>
-              <div className="card rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 group hover:shadow-md hover:border-[var(--color-line-2)] dark:hover:border-[var(--color-primary)]/30 transition-all">
+              <div className="card rounded-xl overflow-hidden border border-[var(--color-line)] group hover:shadow-md hover:border-[var(--color-line-2)] dark:hover:border-[var(--color-primary)]/30 transition-all">
                 {/* Image */}
                 <div className="relative h-32 bg-slate-200 dark:bg-slate-700">
                   {listing.images?.[0] ? (
@@ -112,10 +112,10 @@ export default function RecommendedMatches({ listings, loading }: Props) {
                 <div className="p-4">
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0">
-                      <p className="text-sm font-semibold text-slate-900 dark:text-white truncate">
+                      <p className="text-sm font-semibold text-[var(--color-ink)] truncate">
                         {listing.title || listing.address}
                       </p>
-                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 flex items-center gap-1">
+                      <p className="text-xs text-[var(--color-ink-3)] mt-0.5 flex items-center gap-1">
                         <MapPin className="w-3 h-3" />
                         {listing.suburb || listing.city || listing.address}
                       </p>
@@ -127,7 +127,7 @@ export default function RecommendedMatches({ listings, loading }: Props) {
 
                   <div className="flex items-center gap-3 mt-2">
                     {listing.nearest_transport && (
-                      <span className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1">
+                      <span className="text-xs text-[var(--color-ink-3)] flex items-center gap-1">
                         <Train className="w-3 h-3" />
                         {listing.nearest_transport}
                       </span>

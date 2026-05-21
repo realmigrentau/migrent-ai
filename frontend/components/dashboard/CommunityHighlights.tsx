@@ -78,7 +78,7 @@ export default function CommunityHighlights() {
     <div className="card p-5">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+        <h2 className="text-base font-bold text-[var(--color-ink)] flex items-center gap-2">
           <Users className="w-4 h-4 text-[var(--color-primary)]" />
           Community
         </h2>
@@ -86,13 +86,13 @@ export default function CommunityHighlights() {
 
       {/* Tabs */}
       {hasListers && hasMembers && (
-        <div className="flex gap-1 mb-4 bg-slate-100 dark:bg-slate-800 rounded-lg p-1">
+        <div className="flex gap-1 mb-4 bg-[var(--color-surface-sunk)] rounded-lg p-1">
           <button
             onClick={() => setActiveTab("listers")}
             className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-colors ${
               activeTab === "listers"
                 ? "bg-white dark:bg-slate-700 text-[var(--color-primary)] dark:text-[var(--color-primary)] shadow-sm"
-                : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
+                : "text-[var(--color-ink-3)] hover:text-slate-700 dark:hover:text-slate-200"
             }`}
           >
             <Crown className="w-3.5 h-3.5" />
@@ -103,7 +103,7 @@ export default function CommunityHighlights() {
             className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-colors ${
               activeTab === "members"
                 ? "bg-white dark:bg-slate-700 text-[var(--color-primary)] dark:text-[var(--color-primary)] shadow-sm"
-                : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
+                : "text-[var(--color-ink-3)] hover:text-slate-700 dark:hover:text-slate-200"
             }`}
           >
             <Star className="w-3.5 h-3.5" />
@@ -114,12 +114,12 @@ export default function CommunityHighlights() {
 
       {/* If only one tab exists, show a label */}
       {hasListers && !hasMembers && (
-        <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-3">
+        <p className="text-xs font-semibold text-[var(--color-ink-3)] uppercase tracking-wider mb-3">
           Top Listers
         </p>
       )}
       {!hasListers && hasMembers && (
-        <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-3">
+        <p className="text-xs font-semibold text-[var(--color-ink-3)] uppercase tracking-wider mb-3">
           Top Members
         </p>
       )}
@@ -163,7 +163,7 @@ export default function CommunityHighlights() {
                   <p className="text-sm font-semibold text-slate-800 dark:text-slate-100 truncate group-hover:text-[var(--color-primary)] dark:group-hover:text-[var(--color-primary)] transition-colors">
                     {displayName}
                   </p>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
+                  <p className="text-xs text-[var(--color-ink-3)] truncate">
                     {activeTab === "listers" && profile.listing_count
                       ? `${profile.listing_count} listing${profile.listing_count > 1 ? "s" : ""}`
                       : profile.occupation || (badgeCount > 0 ? `${badgeCount} badge${badgeCount > 1 ? "s" : ""}` : "Community member")}

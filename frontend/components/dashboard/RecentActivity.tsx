@@ -69,10 +69,10 @@ export default function RecentActivity({ activity, loading }: RecentActivityProp
     return (
       <div className="card p-8 text-center">
         <Sparkles className="w-10 h-10 text-[var(--color-primary)] mx-auto mb-3" />
-        <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">
+        <p className="text-sm font-semibold text-[var(--color-ink-2)]">
           No activity yet
         </p>
-        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+        <p className="text-xs text-[var(--color-ink-3)] mt-1">
           Activity will appear here as you use MigRent
         </p>
       </div>
@@ -82,10 +82,10 @@ export default function RecentActivity({ activity, loading }: RecentActivityProp
   return (
     <div className="card p-5" ref={containerRef}>
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-base font-bold text-slate-900 dark:text-white">
+        <h2 className="text-base font-bold text-[var(--color-ink)]">
           Recent Activity
         </h2>
-        <span className="text-xs text-slate-400 dark:text-slate-500">
+        <span className="text-xs text-[var(--color-ink-3)]">
           {activity.length} items
         </span>
       </div>
@@ -104,13 +104,13 @@ export default function RecentActivity({ activity, loading }: RecentActivityProp
               <p className="text-sm font-medium text-slate-800 dark:text-slate-100 truncate">
                 {item.title}
               </p>
-              <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
+              <p className="text-xs text-[var(--color-ink-3)] truncate">
                 {item.description}
               </p>
             </div>
 
             <div className="flex items-center gap-2 shrink-0">
-              <span className="text-xs text-slate-400 dark:text-slate-500 whitespace-nowrap">
+              <span className="text-xs text-[var(--color-ink-3)] whitespace-nowrap">
                 {item.time}
               </span>
               <ChevronRight className="w-3.5 h-3.5 text-slate-300 dark:text-slate-600 group-hover:text-[var(--color-primary)] transition-colors" />

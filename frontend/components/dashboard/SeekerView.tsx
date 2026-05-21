@@ -135,7 +135,7 @@ export default function SeekerView({ loading, profile }: SeekerViewProps) {
           <motion.span
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.97 }}
-            className="inline-flex items-center gap-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-semibold px-4 py-2.5 rounded-xl text-sm transition-colors cursor-pointer"
+            className="inline-flex items-center gap-2 bg-[var(--color-surface-sunk)] hover:bg-[var(--color-line)] text-[var(--color-ink-2)] font-semibold px-4 py-2.5 rounded-xl text-sm transition-colors cursor-pointer"
           >
             <Heart className="w-4 h-4" />
             Saved Rooms
@@ -144,7 +144,7 @@ export default function SeekerView({ loading, profile }: SeekerViewProps) {
         <motion.button
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.97 }}
-          className="inline-flex items-center gap-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-semibold px-4 py-2.5 rounded-xl text-sm transition-colors"
+          className="inline-flex items-center gap-2 bg-[var(--color-surface-sunk)] hover:bg-[var(--color-line)] text-[var(--color-ink-2)] font-semibold px-4 py-2.5 rounded-xl text-sm transition-colors"
         >
           <Filter className="w-4 h-4" />
           Saved Filters
@@ -153,7 +153,7 @@ export default function SeekerView({ loading, profile }: SeekerViewProps) {
           <motion.span
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.97 }}
-            className="inline-flex items-center gap-2 bg-teal-50 dark:bg-teal-500/10 hover:bg-teal-100 dark:hover:bg-teal-500/20 text-teal-700 dark:text-teal-400 font-semibold px-4 py-2.5 rounded-xl text-sm transition-colors cursor-pointer"
+            className="inline-flex items-center gap-2 bg-[var(--color-accent-soft)] hover:bg-[var(--color-accent-soft)] text-[var(--color-accent)] font-semibold px-4 py-2.5 rounded-xl text-sm transition-colors cursor-pointer"
           >
             <Map className="w-4 h-4" />
             Suburb Reports
@@ -167,7 +167,7 @@ export default function SeekerView({ loading, profile }: SeekerViewProps) {
       {/* Smart recommendations based on profile */}
       <div className="card p-5">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+          <h2 className="text-base font-bold text-[var(--color-ink)] flex items-center gap-2">
             <Sparkles className="w-4 h-4 text-[var(--color-primary)]" />
             {profile && profile.completionPercent < 50 ? "Get Started" : "Recommended for You"}
           </h2>
@@ -198,7 +198,7 @@ export default function SeekerView({ loading, profile }: SeekerViewProps) {
                   <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">
                     {item.title}
                   </p>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">
+                  <p className="text-xs text-[var(--color-ink-3)]">
                     {item.desc}
                   </p>
                 </div>
@@ -213,7 +213,7 @@ export default function SeekerView({ loading, profile }: SeekerViewProps) {
       {profile && (profile.budgetMin || profile.preferredSuburbs) && (
         <div className="card p-5">
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-sm font-bold text-slate-900 dark:text-white">Your Preferences</h2>
+            <h2 className="text-sm font-bold text-[var(--color-ink)]">Your Preferences</h2>
             <Link
               href="/dashboard/seeker-profile"
               className="text-xs font-semibold text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)]"
@@ -240,7 +240,7 @@ export default function SeekerView({ loading, profile }: SeekerViewProps) {
               </span>
             )}
             {profile.lifestyle.slice(0, 3).map((tag) => (
-              <span key={tag} className="px-3 py-1.5 rounded-full text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+              <span key={tag} className="px-3 py-1.5 rounded-full text-xs font-medium bg-[var(--color-surface-sunk)] text-slate-600 dark:text-slate-300 border border-[var(--color-line)]">
                 {tag}
               </span>
             ))}
@@ -257,10 +257,10 @@ export default function SeekerView({ loading, profile }: SeekerViewProps) {
           <div className="w-14 h-14 rounded-2xl bg-[var(--color-primary-soft)] from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center mx-auto mb-4">
             <Users className="w-7 h-7 text-white" />
           </div>
-          <h3 className="font-bold text-slate-900 dark:text-white mb-1">
+          <h3 className="font-bold text-[var(--color-ink)] mb-1">
             First week? Get a local mentor
           </h3>
-          <p className="text-sm text-slate-500 dark:text-slate-400 max-w-xs mx-auto">
+          <p className="text-sm text-[var(--color-ink-3)] max-w-xs mx-auto">
             Connect with verified locals who help you settle in - suburb walks, local tips, and more
           </p>
         </motion.div>
@@ -275,10 +275,10 @@ export default function SeekerView({ loading, profile }: SeekerViewProps) {
           <div className="w-14 h-14 rounded-2xl bg-[var(--color-primary-soft)] from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center mx-auto mb-4">
             <Search className="w-7 h-7 text-white" />
           </div>
-          <h3 className="font-bold text-slate-900 dark:text-white mb-1">
+          <h3 className="font-bold text-[var(--color-ink)] mb-1">
             Find your perfect room
           </h3>
-          <p className="text-sm text-slate-500 dark:text-slate-400 max-w-xs mx-auto">
+          <p className="text-sm text-[var(--color-ink-3)] max-w-xs mx-auto">
             Search thousands of verified rooms across Australia with AI-powered matching
           </p>
         </motion.div>

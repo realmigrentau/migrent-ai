@@ -34,7 +34,7 @@ export default function WishlistGrid({ listings, loading, onUnsave }: Props) {
     return (
       <div className="card rounded-xl p-8 text-center">
         <Heart className="w-10 h-10 mx-auto text-slate-300 dark:text-slate-600 mb-3" />
-        <p className="text-sm text-slate-500 dark:text-slate-400 mb-3">
+        <p className="text-sm text-[var(--color-ink-3)] mb-3">
           No saved listings yet. Browse rooms and tap the heart to save them!
         </p>
         <Link
@@ -55,7 +55,7 @@ export default function WishlistGrid({ listings, loading, onUnsave }: Props) {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.05 * i }}
-          className="card rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 group hover:shadow-md transition-shadow"
+          className="card rounded-xl overflow-hidden border border-[var(--color-line)] group hover:shadow-md transition-shadow"
         >
           {/* Image */}
           <div className="relative h-36 bg-slate-200 dark:bg-slate-700">
@@ -104,10 +104,10 @@ export default function WishlistGrid({ listings, loading, onUnsave }: Props) {
             <div className="p-4">
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0">
-                  <p className="text-sm font-semibold text-slate-900 dark:text-white truncate">
+                  <p className="text-sm font-semibold text-[var(--color-ink)] truncate">
                     {listing.title || listing.address}
                   </p>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 flex items-center gap-1">
+                  <p className="text-xs text-[var(--color-ink-3)] mt-0.5 flex items-center gap-1">
                     <MapPin className="w-3 h-3" />
                     {listing.suburb || listing.city || listing.address}
                     {listing.postcode ? ` ${listing.postcode}` : ""}
@@ -123,7 +123,7 @@ export default function WishlistGrid({ listings, loading, onUnsave }: Props) {
               {/* Station + verification */}
               <div className="flex items-center gap-3 mt-3">
                 {listing.nearest_transport && (
-                  <span className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1">
+                  <span className="text-xs text-[var(--color-ink-3)] flex items-center gap-1">
                     <Train className="w-3 h-3" />
                     {listing.nearest_transport}
                   </span>

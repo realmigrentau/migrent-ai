@@ -73,7 +73,7 @@ export default function SeekerMetrics({ metrics, loading }: Props) {
               <p className={`text-2xl font-bold ${card.color}`}>
                 {metrics ? card.format(metrics[card.key]) : "-"}
               </p>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-medium">
+              <p className="text-xs text-[var(--color-ink-3)] mt-1 font-medium">
                 {card.label}
               </p>
             </>
