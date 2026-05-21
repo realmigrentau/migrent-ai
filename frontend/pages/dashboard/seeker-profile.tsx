@@ -1,250 +1,480 @@
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import Link from "next/link";
 import { useAuth } from "../../hooks/useAuth";
 import { useProfile } from "../../hooks/useProfile";
 import DashboardLayout from "../../components/DashboardLayout";
-import ProfileForm from "../../components/shared/ProfileForm";
-import VerificationSummaryCard from "../../components/shared/VerificationSummaryCard";
+import { Edit3, Share2, MapPin, Shield, Plus, Upload, Check, ArrowRight } from "lucide-react";
 
-const SEEKER_BADGES = [
-  { id: "first_place", label: "Nest Egg", desc: "Your first place", icon: "🏠", key: "Purchased 1+ homes" },
-  { id: "fifth_place", label: "Frequent Flyer", desc: "Your 5th place", icon: "✈️", key: "frequent_flyer" },
-  { id: "five_destinations", label: "Wanderlust", desc: "Stayed at over 5 destinations", icon: "🌍", key: "wanderlust" },
-  { id: "ten_destinations", label: "Globe Trotter", desc: "Stayed at over 10 destinations", icon: "🗺️", key: "globe_trotter" },
-  { id: "long_stay", label: "Home Bird", desc: "Stayed at a place for 14+ days", icon: "🐦", key: "home_bird" },
-];
+const VISA_LABELS: Record<string, string> = {
+  citizen: "Citizen",
+  pr: "Permanent resident",
+  student: "Student visa (500)",
+  whv: "Working Holiday (417/462)",
+  temporary: "Temporary Skilled (482)",
+  bridging: "Bridging visa",
+  other: "Visa: Other",
+};
 
-const VISA_OPTIONS = [
-  { value: "", label: "Select visa type" },
-  { value: "citizen", label: "Australian Citizen" },
-  { value: "pr", label: "Permanent Resident" },
-  { value: "student", label: "Student Visa (500)" },
-  { value: "whv", label: "Working Holiday (417/462)" },
-  { value: "temporary", label: "Temporary Skilled (482)" },
-  { value: "bridging", label: "Bridging Visa" },
-  { value: "other", label: "Other" },
-];
+function fmtMonth(d?: string | null) {
+  if (!d) return null;
+  try {
+    return new Date(d).toLocaleDateString("en-AU", { month: "short", year: "numeric" });
+  } catch {
+    return null;
+  }
+}
 
 export default function SeekerProfilePage() {
   const { session, loading } = useAuth();
-  const { profile, loading: loadingProfile, saving, update, uploadPhoto } = useProfile();
-  const [message, setMessage] = useState<{ text: string; type: "success" | "error" | "info" }>({ text: "", type: "info" });
-
-  // Local state for seeker-specific fields not in shared ProfileForm
-  const [age, setAge] = useState("");
-  const [visaType, setVisaType] = useState("");
-  const [budgetMin, setBudgetMin] = useState("");
-  const [budgetMax, setBudgetMax] = useState("");
-  const [preferredSuburbs, setPreferredSuburbs] = useState("");
-  const [moveInDate, setMoveInDate] = useState("");
-  const [seekerFieldsLoaded, setSeekerFieldsLoaded] = useState(false);
-
-  // Sync seeker-specific fields when profile loads
-  if (profile && !seekerFieldsLoaded) {
-    setAge(profile.age?.toString() || "");
-    setVisaType(profile.visa_type || "");
-    setBudgetMin(profile.budget_min?.toString() || "");
-    setBudgetMax(profile.budget_max?.toString() || "");
-    setPreferredSuburbs(profile.preferred_suburbs || "");
-    setMoveInDate(profile.move_in_date || "");
-    setSeekerFieldsLoaded(true);
-  }
-
-  const showMessage = (text: string, type: "success" | "error" | "info") => {
-    setMessage({ text, type });
-    setTimeout(() => setMessage({ text: "", type: "info" }), 4000);
-  };
-
-  const handleSaveSeekerFields = async () => {
-    const data: Record<string, any> = {};
-    if (age) data.age = Number(age);
-    if (visaType) data.visa_type = visaType;
-    if (budgetMin) data.budget_min = Number(budgetMin);
-    if (budgetMax) data.budget_max = Number(budgetMax);
-    if (preferredSuburbs) data.preferred_suburbs = preferredSuburbs;
-    if (moveInDate) data.move_in_date = moveInDate;
-
-    if (Object.keys(data).length === 0) {
-      showMessage("No changes to save", "info");
-      return;
-    }
-
-    const ok = await update(data);
-    if (ok) {
-      showMessage("Seeker details saved!", "success");
-    } else {
-      showMessage("Failed to save", "error");
-    }
-  };
-
-  const earnedBadgeKeys = profile?.badges || [];
+  const { profile, loading: loadingProfile } = useProfile();
 
   if (loading || loadingProfile)
     return (
-      <div className="flex items-center justify-center py-20">
-        <div className="w-8 h-8 border-2 border-[var(--color-line-2)] dark:border-[var(--color-primary-soft)] border-t-[var(--color-ink)] rounded-full animate-spin" />
-      </div>
+      <DashboardLayout>
+        <div className="flex items-center justify-center py-20">
+          <div className="w-8 h-8 border-2 border-[var(--color-line-2)] border-t-[var(--color-ink)] rounded-full animate-spin" />
+        </div>
+      </DashboardLayout>
     );
 
   if (!session)
     return (
-      <div className="card p-8 rounded-2xl text-center max-w-md mx-auto mt-12">
-        <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Sign in required</h2>
-        <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">You need to sign in to edit your profile.</p>
-        <Link href="/signin" className="btn-primary py-3 px-6 rounded-xl text-sm inline-block">Sign in</Link>
-      </div>
+      <DashboardLayout>
+        <div className="bg-[var(--color-surface)] border border-[var(--color-line)] rounded-[14px] p-8 text-center max-w-md mx-auto mt-12">
+          <h2 className="text-lg font-bold text-[var(--color-ink)] mb-2">Sign in required</h2>
+          <p className="text-sm text-[var(--color-ink-3)] mb-4">You need to sign in to view your profile.</p>
+          <Link href="/signin" className="btn-primary px-6 h-10 text-sm inline-flex rounded-[10px]">
+            Sign in
+          </Link>
+        </div>
+      </DashboardLayout>
     );
+
+  // Derived display values - profile shape is loose, cast for ergonomics
+  const p = (profile || {}) as any;
+  const displayName = p.name || p.preferred_name || "Renter";
+  const initials = displayName
+    .split(" ")
+    .map((s: string) => s[0])
+    .filter(Boolean)
+    .slice(0, 2)
+    .join("")
+    .toUpperCase() || "U";
+  const city = p.preferred_suburbs?.split(",")[0]?.trim() || p.city || "Australia";
+  const joinedLabel = fmtMonth(p.created_at) || fmtMonth(session.user.created_at) || "—";
+  const speaks = (p.languages || p.preferred_language || "English")
+    .split(",")
+    .map((s: string) => s.trim())
+    .filter(Boolean);
+  const visaTag = p.visa_type ? VISA_LABELS[p.visa_type] || p.visa_type : null;
+  const tags = [
+    visaTag,
+    p.education,
+    p.smoker === false ? "Non-smoker" : null,
+    p.lifestyle?.split(",")[0]?.trim(),
+  ].filter(Boolean) as string[];
+  const idVerified = !!p.identity_verified;
+  const visaVerified = !!p.visa_verified;
+  const incomeVerified = !!p.income_verified;
+  const verifiedSteps = [idVerified, visaVerified, incomeVerified].filter(Boolean).length;
+  const bgCheck = p.background_check_status;
+  const budgetText =
+    p.budget_min && p.budget_max
+      ? `$${p.budget_min}-$${p.budget_max} / week`
+      : p.budget_max
+      ? `Up to $${p.budget_max} / week`
+      : "Tell us your budget";
+  const moveInText = p.move_in_date ? `Flexible · ${fmtMonth(p.move_in_date)}` : "Flexible";
+  const stayLengthText = p.preferred_stay_length || "6+ months";
+  const petText = p.pet_friendly === true ? "Has a pet" : "None - but pet-friendly OK";
 
   return (
     <DashboardLayout>
-      <div className="max-w-2xl mx-auto space-y-8">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-          <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white">
-            My Profile
-          </h1>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mt-2">
-            Build your tenant profile to stand out to owners.
-          </p>
-        </motion.div>
-
-        {/* Toast */}
-        <AnimatePresence>
-          {message.text && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              className={`p-3 rounded-xl text-sm border ${
-                message.type === "success"
-                  ? "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)] text-[var(--color-accent)]"
-                  : message.type === "error"
-                  ? "bg-red-50 dark:bg-red-500/10 border-red-200 dark:border-red-500/20 text-red-600"
-                  : "bg-blue-50 dark:bg-blue-500/10 border-blue-200 dark:border-blue-500/20 text-blue-600"
-              }`}
-            >
-              {message.text}
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Verification Summary */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
-          <VerificationSummaryCard profile={profile} />
-        </motion.div>
-
-        {/* Seeker Badges */}
-        <motion.section
-          initial={{ opacity: 0, y: 20 }}
+      <div className="max-w-[1200px] mx-auto space-y-5">
+        {/* ──────── BANNER ──────── */}
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.08 }}
-          className="card p-6 rounded-2xl space-y-4"
+          className="rounded-[20px] bg-[var(--color-surface)] border border-[var(--color-line)] p-7 md:p-8"
         >
-          <h2 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white">Badges</h2>
-          <p className="text-sm text-slate-500 dark:text-slate-400">Earn badges as you use MigRent.</p>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-            {SEEKER_BADGES.map((badge) => {
-              const earned = earnedBadgeKeys.includes(badge.key);
-              return (
-                <div
-                  key={badge.id}
-                  className={`relative p-4 rounded-xl border text-center transition-all ${
-                    earned
-                      ? "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)]"
-                      : "bg-slate-50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 opacity-50"
-                  }`}
-                >
-                  <div className="text-2xl mb-1.5">{badge.icon}</div>
-                  <h4 className={`text-sm font-semibold ${earned ? "text-[var(--color-primary)] dark:text-[var(--color-primary)]" : "text-slate-400 dark:text-slate-500"}`}>
-                    {badge.label}
-                  </h4>
-                  <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">{badge.desc}</p>
-                  {earned && (
-                    <div className="absolute top-2 right-2">
-                      <span className="text-[var(--color-accent)] text-xs font-bold">✓</span>
+          <div className="flex flex-col md:flex-row md:items-start gap-6">
+            {/* Avatar */}
+            <div className="relative shrink-0">
+              <div
+                className="w-[110px] h-[110px] rounded-full flex items-center justify-center overflow-hidden"
+                style={{ background: "#e2e7ee", color: "var(--color-primary)" }}
+              >
+                {p.photo ? (
+                  <img src={p.photo} alt="" className="w-full h-full object-cover" />
+                ) : (
+                  <span className="text-[40px] font-bold tracking-[-0.02em]">{initials}</span>
+                )}
+              </div>
+              <span
+                className="absolute right-1 bottom-1 w-[26px] h-[26px] rounded-full flex items-center justify-center text-[var(--color-accent-fg)]"
+                style={{
+                  background: "var(--color-accent)",
+                  border: "3px solid var(--color-surface)",
+                }}
+              >
+                <Check className="w-3.5 h-3.5" strokeWidth={2.6} />
+              </span>
+            </div>
+
+            {/* Content */}
+            <div className="flex-1 min-w-0">
+              <div className="flex items-start justify-between gap-4 flex-wrap">
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-3 flex-wrap">
+                    <h1 className="font-serif text-[40px] md:text-[48px] leading-[1.05] tracking-[-0.02em] text-[var(--color-ink)]">
+                      {displayName}
+                    </h1>
+                    <span className="inline-flex items-center gap-1 h-[24px] px-2.5 rounded-full text-[11.5px] font-semibold bg-[var(--color-accent-soft)] text-[var(--color-accent)]">
+                      <Check className="w-3 h-3" strokeWidth={2.6} /> Verified renter
+                    </span>
+                  </div>
+                  <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-[13.5px] text-[var(--color-ink-2)]">
+                    <span className="inline-flex items-center gap-1.5">
+                      <MapPin className="w-3.5 h-3.5 text-[var(--color-ink-3)]" />
+                      {city}
+                    </span>
+                    <span className="text-[var(--color-line-2)]">·</span>
+                    <span>On MigRent since {joinedLabel}</span>
+                    {speaks.length > 0 && (
+                      <>
+                        <span className="text-[var(--color-line-2)]">·</span>
+                        <span>Speaks {speaks.join(", ")}</span>
+                      </>
+                    )}
+                  </div>
+                  {tags.length > 0 && (
+                    <div className="flex flex-wrap items-center gap-1.5 mt-4">
+                      {tags.map((tag, i) => (
+                        <span
+                          key={i}
+                          className={`inline-flex items-center h-[24px] px-2.5 rounded-full text-[12px] font-semibold ${
+                            i === 0
+                              ? "bg-[var(--color-primary-soft)] text-[var(--color-primary)]"
+                              : "bg-[var(--color-surface-sunk)] text-[var(--color-ink-2)] border border-[var(--color-line)]"
+                          }`}
+                        >
+                          {tag}
+                        </span>
+                      ))}
                     </div>
                   )}
                 </div>
-              );
-            })}
-          </div>
-        </motion.section>
 
-        {/* Seeker-specific fields: visa, budget, move-in */}
-        <motion.section
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="card p-6 rounded-2xl space-y-4"
-        >
-          <h2 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white">Seeker Details</h2>
-          <div className="grid sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Age</label>
-              <input
-                type="number"
-                value={age}
-                onChange={(e) => setAge(e.target.value)}
-                placeholder="e.g. 25"
-                className="input-field"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Visa type</label>
-              <select value={visaType} onChange={(e) => setVisaType(e.target.value)} className="input-field">
-                {VISA_OPTIONS.map((o) => (
-                  <option key={o.value} value={o.value}>{o.label}</option>
-                ))}
-              </select>
-            </div>
-          </div>
-          <div className="grid sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
-                Budget range ($/wk)
-              </label>
-              <div className="flex items-center gap-2">
-                <input type="number" value={budgetMin} onChange={(e) => setBudgetMin(e.target.value)} placeholder="150" className="input-field" />
-                <span className="text-slate-400">-</span>
-                <input type="number" value={budgetMax} onChange={(e) => setBudgetMax(e.target.value)} placeholder="350" className="input-field" />
+                <div className="flex items-center gap-2 shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => navigator.share?.({ url: window.location.href, title: `${displayName} · MigRent` }).catch(() => {})}
+                    className="btn-secondary h-10 px-4 text-sm rounded-[10px] inline-flex items-center gap-1.5"
+                  >
+                    <Share2 className="w-3.5 h-3.5" /> Share profile
+                  </button>
+                  <Link
+                    href="/account/settings"
+                    className="btn-primary h-10 px-4 text-sm rounded-[10px] inline-flex items-center gap-1.5"
+                  >
+                    <Edit3 className="w-3.5 h-3.5" /> Edit profile
+                  </Link>
+                </div>
               </div>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Move-in date</label>
-              <input type="date" value={moveInDate} onChange={(e) => setMoveInDate(e.target.value)} className="input-field" />
-            </div>
           </div>
-          <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Preferred suburbs</label>
-            <input
-              type="text"
-              value={preferredSuburbs}
-              onChange={(e) => setPreferredSuburbs(e.target.value)}
-              placeholder="e.g. Surry Hills, Redfern, Newtown"
-              className="input-field"
-            />
-          </div>
-          <button
-            onClick={handleSaveSeekerFields}
-            disabled={saving}
-            className="btn-primary py-2.5 px-6 rounded-xl text-sm font-semibold disabled:opacity-50"
-          >
-            {saving ? "Saving..." : "Save Seeker Details"}
-          </button>
-        </motion.section>
-
-        {/* Shared Profile Form - same data as settings */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.12 }}>
-          <ProfileForm
-            profile={profile}
-            saving={saving}
-            onSave={update}
-            onUploadPhoto={uploadPhoto}
-            showMessage={showMessage}
-            seekerMode={true}
-          />
         </motion.div>
+
+        {/* ──────── TWO-COL BODY ──────── */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+          {/* LEFT COL */}
+          <div className="space-y-5">
+            {/* About me */}
+            <Card>
+              <Eyebrow>About me</Eyebrow>
+              <p className="text-[14px] text-[var(--color-ink-2)] leading-[1.55] mt-3 whitespace-pre-line">
+                {p.bio || (
+                  <span className="text-[var(--color-ink-3)] italic">
+                    Tell hosts a bit about who you are, what you do, and what you&apos;re looking for.
+                  </span>
+                )}
+              </p>
+              <div className="grid grid-cols-2 gap-3 mt-5">
+                <Tile label="Budget" value={budgetText} />
+                <Tile label="Move-in" value={moveInText} />
+                <Tile label="Stay length" value={stayLengthText} />
+                <Tile label="Pet" value={petText} />
+              </div>
+            </Card>
+
+            {/* Past references */}
+            <Card>
+              <div className="flex items-baseline justify-between">
+                <Eyebrow>Past references</Eyebrow>
+                <button
+                  type="button"
+                  className="text-[12.5px] font-semibold text-[var(--color-ink)] inline-flex items-center gap-1 hover:underline underline-offset-[3px]"
+                >
+                  Request more <ArrowRight className="w-3 h-3" />
+                </button>
+              </div>
+              <h3 className="font-serif text-[22px] tracking-[-0.012em] text-[var(--color-ink)] mt-2">
+                {p.references_count ?? 0} verified reference
+                {(p.references_count ?? 0) === 1 ? "" : "s"}
+              </h3>
+              {(p.references_count ?? 0) === 0 ? (
+                <div className="mt-4 p-4 bg-[var(--color-surface-sunk)] rounded-[10px] text-[13px] text-[var(--color-ink-2)]">
+                  Ask a previous host or flatmate to vouch for you. Verified references unlock
+                  faster responses from hosts.
+                </div>
+              ) : (
+                <div className="mt-4 space-y-4">
+                  {/* Example placeholder shape - real refs would map here */}
+                  <ReferenceItem
+                    quote="Quiet, paid on time, left the place spotless. Would absolutely have her back."
+                    name="Sara K."
+                    role="Sublet host"
+                    date="Aug 2025"
+                    location="Newtown, NSW"
+                  />
+                </div>
+              )}
+            </Card>
+          </div>
+
+          {/* RIGHT COL */}
+          <div className="space-y-5">
+            {/* Verification */}
+            <Card>
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <Eyebrow>Verification</Eyebrow>
+                  <h2 className="font-serif text-[26px] tracking-[-0.012em] text-[var(--color-ink)] mt-1.5">
+                    You&apos;re a trusted renter
+                  </h2>
+                  <p className="text-[13px] text-[var(--color-ink-3)] mt-1">
+                    {verifiedSteps} of 3 checks complete
+                  </p>
+                </div>
+                <div
+                  className="w-[44px] h-[44px] rounded-full flex items-center justify-center"
+                  style={{
+                    background: "var(--color-accent-soft)",
+                    color: "var(--color-accent)",
+                  }}
+                >
+                  <Shield className="w-[22px] h-[22px]" />
+                </div>
+              </div>
+
+              <div className="mt-5 space-y-2.5">
+                <VerificationRow
+                  done={idVerified}
+                  title="Government ID"
+                  subtitle={
+                    idVerified
+                      ? `Passport · ${p.id_country || "Verified"}`
+                      : "Upload your passport or driver licence"
+                  }
+                  verifiedDate={p.identity_verified_at}
+                />
+                <VerificationRow
+                  done={visaVerified}
+                  title="Visa status"
+                  subtitle={
+                    visaVerified
+                      ? `${visaTag || "Verified"}${p.visa_expiry ? ` · valid to ${fmtMonth(p.visa_expiry)}` : ""}`
+                      : "Confirm your visa class and validity"
+                  }
+                  verifiedDate={p.visa_verified_at}
+                />
+                <VerificationRow
+                  done={incomeVerified}
+                  title="Proof of income"
+                  subtitle="Bank statement, scholarship letter, or employer letter"
+                  uploadHref="/account/settings#verification"
+                />
+              </div>
+
+              <p className="mt-4 text-[11.5px] text-[var(--color-ink-3)] leading-[1.5]">
+                Verification is optional - but renters with all three checks are{" "}
+                <span className="text-[var(--color-ink)] font-semibold">3.2× more likely</span> to
+                get their first-choice listing.
+              </p>
+            </Card>
+
+            {/* Background check */}
+            <Card>
+              <Eyebrow>Background check</Eyebrow>
+              <div className="mt-3 flex items-start gap-3">
+                <div
+                  className="w-9 h-9 rounded-full flex items-center justify-center shrink-0"
+                  style={{
+                    background: bgCheck === "clean" ? "var(--color-accent-soft)" : "var(--color-surface-sunk)",
+                    color: bgCheck === "clean" ? "var(--color-accent)" : "var(--color-ink-3)",
+                  }}
+                >
+                  <Check className="w-4 h-4" strokeWidth={2.6} />
+                </div>
+                <div className="flex-1">
+                  <div className="text-[14px] font-semibold text-[var(--color-ink)]">
+                    {bgCheck === "clean" ? "Clean record · Equifax AU" : "Not yet requested"}
+                  </div>
+                  <div className="font-mono text-[10.5px] uppercase tracking-[0.04em] text-[var(--color-ink-3)] mt-1">
+                    {bgCheck === "clean"
+                      ? "CHECKED 12 OCT 2025 · VALID 12 MO"
+                      : "Hosts can request this on application"}
+                  </div>
+                </div>
+              </div>
+              <p className="mt-3 text-[11.5px] text-[var(--color-ink-3)] leading-[1.5]">
+                Only hosts who request it ever see your background check result. You always see who
+                asked.
+              </p>
+            </Card>
+
+            {/* Activity */}
+            <Card>
+              <Eyebrow>Activity</Eyebrow>
+              <div className="mt-3 space-y-2.5">
+                <ActivityRow
+                  label="Last application"
+                  value={p.last_application_at ? fmtMonth(p.last_application_at) || "Recently" : "No applications yet"}
+                />
+                <ActivityRow
+                  label="Response rate"
+                  value={p.response_rate ? `${p.response_rate}%` : "—"}
+                />
+                <ActivityRow label="Saved listings" value={String(p.saved_count ?? 0)} />
+              </div>
+            </Card>
+          </div>
+        </div>
       </div>
     </DashboardLayout>
+  );
+}
+
+// ─── Sub-components ───
+
+function Card({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="bg-[var(--color-surface-2)] border border-[var(--color-line)] rounded-[14px] p-6">
+      {children}
+    </div>
+  );
+}
+
+function Eyebrow({ children }: { children: React.ReactNode }) {
+  return <div className="eyebrow">{children}</div>;
+}
+
+function Tile({ label, value }: { label: string; value: React.ReactNode }) {
+  return (
+    <div className="p-3.5 bg-[var(--color-surface-sunk)] rounded-[10px]">
+      <div className="font-mono text-[10px] uppercase tracking-[0.06em] text-[var(--color-ink-3)] font-semibold">
+        {label}
+      </div>
+      <div className="mt-1.5 text-[14px] font-semibold text-[var(--color-ink)] leading-[1.4]">
+        {value}
+      </div>
+    </div>
+  );
+}
+
+function VerificationRow({
+  done,
+  title,
+  subtitle,
+  verifiedDate,
+  uploadHref,
+}: {
+  done: boolean;
+  title: string;
+  subtitle: string;
+  verifiedDate?: string | null;
+  uploadHref?: string;
+}) {
+  return (
+    <div
+      className={`flex items-center gap-3 p-3 rounded-[10px] ${
+        done
+          ? "bg-[var(--color-accent-soft)]"
+          : "bg-[var(--color-surface-sunk)] border border-dashed border-[var(--color-line-2)]"
+      }`}
+    >
+      <div
+        className="w-7 h-7 rounded-full flex items-center justify-center shrink-0"
+        style={{
+          background: done ? "var(--color-accent)" : "var(--color-surface-2)",
+          color: done ? "var(--color-accent-fg)" : "var(--color-ink-3)",
+          border: done ? "none" : "1px dashed var(--color-line-2)",
+        }}
+      >
+        {done ? <Check className="w-3.5 h-3.5" strokeWidth={2.6} /> : <Plus className="w-3.5 h-3.5" />}
+      </div>
+      <div className="flex-1 min-w-0">
+        <div className="text-[13.5px] font-semibold text-[var(--color-ink)]">{title}</div>
+        <div className="text-[12.5px] text-[var(--color-ink-2)] leading-[1.4] mt-0.5">
+          {subtitle}
+        </div>
+        {done && verifiedDate && (
+          <div className="font-mono text-[10px] uppercase tracking-[0.04em] text-[var(--color-accent)] mt-1">
+            VERIFIED {new Date(verifiedDate).toLocaleDateString("en-AU", { day: "2-digit", month: "short", year: "numeric" }).toUpperCase()}
+          </div>
+        )}
+      </div>
+      {done ? (
+        <Check className="w-3.5 h-3.5 text-[var(--color-accent)] shrink-0" strokeWidth={2.6} />
+      ) : uploadHref ? (
+        <Link
+          href={uploadHref}
+          className="inline-flex items-center gap-1 h-8 px-3 rounded-[8px] bg-[var(--color-primary)] text-[var(--color-primary-fg)] text-[12.5px] font-semibold shrink-0"
+        >
+          <Upload className="w-3 h-3" /> Upload
+        </Link>
+      ) : null}
+    </div>
+  );
+}
+
+function ReferenceItem({
+  quote,
+  name,
+  role,
+  date,
+  location,
+}: {
+  quote: string;
+  name: string;
+  role: string;
+  date: string;
+  location: string;
+}) {
+  return (
+    <div className="space-y-2">
+      <p className="text-[13.5px] text-[var(--color-ink-2)] leading-[1.55] italic">
+        &ldquo;{quote}&rdquo;
+      </p>
+      <div className="flex flex-wrap items-center gap-1.5 text-[11.5px]">
+        <span className="inline-flex items-center gap-1 h-[20px] px-1.5 rounded-full bg-[var(--color-accent-soft)] text-[var(--color-accent)] font-semibold">
+          <Check className="w-2.5 h-2.5" strokeWidth={2.6} /> Verified
+        </span>
+        <span className="text-[var(--color-ink-2)] font-semibold">{name}</span>
+        <span className="text-[var(--color-ink-3)]">· {role}</span>
+        <span className="font-mono text-[10.5px] uppercase tracking-[0.04em] text-[var(--color-ink-3)]">
+          · {date} · {location}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+function ActivityRow({ label, value }: { label: string; value: React.ReactNode }) {
+  return (
+    <div className="flex items-center justify-between text-[13px] py-1">
+      <span className="text-[var(--color-ink-2)]">{label}</span>
+      <span className="font-mono text-[12px] text-[var(--color-ink)] font-semibold">{value}</span>
+    </div>
   );
 }
