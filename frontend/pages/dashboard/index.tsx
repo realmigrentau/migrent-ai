@@ -8,9 +8,8 @@ import HeroSection from "../../components/dashboard/HeroSection";
 import MetricsCards from "../../components/dashboard/MetricsCards";
 import RecentActivity from "../../components/dashboard/RecentActivity";
 import OwnerView from "../../components/dashboard/OwnerView";
-import SeekerView from "../../components/dashboard/SeekerView";
+import SeekerOverview from "../../components/dashboard/SeekerOverview";
 import ProfileCompleteness from "../../components/dashboard/ProfileCompleteness";
-import CommunityHighlights from "../../components/dashboard/CommunityHighlights";
 import type confettiType from "canvas-confetti";
 
 /**
@@ -146,56 +145,41 @@ export default function DashboardHome() {
           role={role}
         />
 
-        {/* Two-column layout: Activity + Role View */}
-        <div className="grid lg:grid-cols-5 gap-6">
-          {/* Left column: Activity + Profile Completeness */}
-          <div className="lg:col-span-2 space-y-6">
-            <RecentActivity
-              activity={data?.activity || []}
-              loading={dataLoading}
-            />
-            <ProfileCompleteness
-              profile={data?.profile || null}
-              role={role}
-              loading={dataLoading}
-            />
-            {role === "seeker" && <CommunityHighlights />}
-          </div>
-
-          {/* Role-specific view - right column */}
-          <div className="lg:col-span-3">
-            <AnimatePresence mode="wait">
-              {role === "owner" ? (
-                <motion.div
-                  key="owner"
-                  initial={{ opacity: 0, x: 10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -10 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <OwnerView
-                    listings={data?.listings || []}
-                    loading={dataLoading}
-                    profile={data?.profile || null}
-                  />
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="seeker"
-                  initial={{ opacity: 0, x: 10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -10 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <SeekerView
-                    loading={dataLoading}
-                    profile={data?.profile || null}
-                  />
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-        </div>
+        {/* Body */}
+        <AnimatePresence mode="wait">
+          {role === "owner" ? (
+            <motion.div
+              key="owner"
+              initial={{ opacity: 0, x: 8 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -8 }}
+              transition={{ duration: 0.2 }}
+              className="grid lg:grid-cols-5 gap-5"
+            >
+              <div className="lg:col-span-2 space-y-5">
+                <RecentActivity activity={data?.activity || []} loading={dataLoading} />
+                <ProfileCompleteness profile={data?.profile || null} role={role} loading={dataLoading} />
+              </div>
+              <div className="lg:col-span-3">
+                <OwnerView
+                  listings={data?.listings || []}
+                  loading={dataLoading}
+                  profile={data?.profile || null}
+                />
+              </div>
+            </motion.div>
+          ) : (
+            <motion.div
+              key="seeker"
+              initial={{ opacity: 0, x: 8 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -8 }}
+              transition={{ duration: 0.2 }}
+            >
+              <SeekerOverview profile={data?.profile || null} />
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Keyboard shortcuts hint */}
         <div className="hidden lg:flex items-center justify-center gap-4 py-4 text-xs text-slate-400 dark:text-slate-500">
