@@ -6,6 +6,7 @@ import { supabase } from "../../lib/supabase";
 import { useAuth } from "../../hooks/useAuth";
 import SignInButton from "../../components/SignInButton";
 import ConsentCheckboxes from "../../components/legal/ConsentCheckboxes";
+import { Logo } from "../../components/ui/Logo";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 
@@ -84,44 +85,48 @@ export default function SignUp() {
   };
 
   return (
-    <div className="min-h-[70vh] flex items-center justify-center px-4">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-        className="relative w-full max-w-md"
-      >
-        <div className="bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800 p-8 rounded-2xl">
-          <div className="text-center mb-8">
-            <div className="w-12 h-12 rounded-xl bg-[var(--color-primary)] flex items-center justify-center text-white font-semibold text-lg mx-auto mb-4">
-              M
-            </div>
-            <h1 className="text-2xl font-semibold tracking-tight text-slate-900 dark:text-white">
-              {t("auth.signUpTitle")} {t("auth.signUpAccent")}
-            </h1>
-            <p className="text-slate-500 dark:text-slate-400 text-sm mt-2">{t("auth.signUpSubtitle")}</p>
-          </div>
+    <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.1fr] min-h-[calc(100vh-60px)] -mt-[60px] lg:mt-0">
+      {/* Form panel (left) */}
+      <div className="flex items-center justify-center px-6 sm:px-12 lg:px-20 py-14 order-2 lg:order-1">
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+          className="w-full max-w-[420px]"
+        >
+          <div className="eyebrow">Create an account</div>
+          <h1 className="font-serif text-[44px] sm:text-[48px] leading-[1.05] tracking-[-0.022em] text-[var(--color-ink)] mt-2">
+            {t("auth.signUpTitle") || "Start looking."}
+          </h1>
+          <p className="text-[14px] text-[var(--color-ink-2)] mt-1.5">
+            Already have an account?{" "}
+            <Link href="/signin" className="text-[var(--color-primary)] font-semibold hover:underline underline-offset-[3px]">
+              Sign in →
+            </Link>
+          </p>
 
-          <div className="space-y-4">
-            <div>
+          <div className="flex flex-col gap-3 mt-6">
+            <label className="block">
+              <div className="text-[12.5px] font-semibold text-[var(--color-ink-2)] mb-1.5">Email</div>
               <input
                 type="email"
-                placeholder={t("auth.email")}
+                placeholder="you@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="input-field"
               />
-            </div>
-            <div>
+            </label>
+            <label className="block">
+              <div className="text-[12.5px] font-semibold text-[var(--color-ink-2)] mb-1.5">Password</div>
               <input
                 type="password"
-                placeholder={t("auth.password")}
+                placeholder="At least 10 characters"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="input-field"
                 onKeyDown={(e) => e.key === "Enter" && handleSignUp()}
               />
-            </div>
+            </label>
 
             <ConsentCheckboxes
               consents={consents}
@@ -132,7 +137,7 @@ export default function SignUp() {
             <button
               onClick={handleSignUp}
               disabled={loading}
-              className="w-full h-10 rounded-[10px] text-sm font-semibold text-white bg-[var(--color-primary)] hover:bg-[var(--color-primary-500)] disabled:opacity-50 transition-colors"
+              className="btn-primary h-[46px] w-full text-[15px] rounded-[10px] mt-1 disabled:opacity-50"
             >
               {loading ? (
                 <span className="flex items-center justify-center gap-2">
@@ -140,60 +145,73 @@ export default function SignUp() {
                   {t("auth.creatingAccount")}
                 </span>
               ) : (
-                t("auth.signUp")
+                <>
+                  Create account
+                  <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M4 10h12M11 5l5 5-5 5" /></svg>
+                </>
               )}
             </button>
-
-            <p className="text-center text-sm text-slate-500 dark:text-slate-400">
-              {t("auth.hasAccount")}{" "}
-              <Link href="/signin" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] font-semibold transition-colors">
-                {t("auth.signInLink")}
-              </Link>
-            </p>
-
-            <div className="relative py-3">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-slate-200 dark:border-slate-700" />
-              </div>
-              <div className="relative flex justify-center text-xs">
-                <span className="px-3 text-slate-400 dark:text-slate-500 bg-white dark:bg-slate-900 rounded-full">{t("auth.or")}</span>
-              </div>
-            </div>
-
-            {!allConsented && (
-              <p className="text-xs text-center text-amber-600 dark:text-amber-400">
-                Please accept all legal acknowledgements above before using social sign-up.
-              </p>
-            )}
-
-            <SignInButton
-              redirectTo={typeof window !== "undefined" ? window.location.origin : undefined}
-              disabled={!allConsented}
-            />
-
-            <Link
-              href="/magic-link-signup"
-              className="block w-full text-center btn-secondary py-3 rounded-xl text-sm"
-            >
-              {t("auth.magicLinkSignUp")}
-            </Link>
-
-            {msg && (
-              <motion.p
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className={`text-sm text-center p-3 rounded-xl ${
-                  msg.includes("Check your email")
-                    ? "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 border border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)] text-[var(--color-accent)] dark:text-[var(--color-accent)]"
-                    : "bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 text-red-600 dark:text-red-400"
-                }`}
-              >
-                {msg}
-              </motion.p>
-            )}
           </div>
+
+          <div className="flex items-center gap-3 my-5 text-[var(--color-ink-3)]">
+            <div className="flex-1 h-px bg-[var(--color-line)]" />
+            <span className="font-mono text-[10.5px] uppercase tracking-[0.06em]">Or continue with</span>
+            <div className="flex-1 h-px bg-[var(--color-line)]" />
+          </div>
+
+          {!allConsented && (
+            <p className="text-[11.5px] text-center text-[var(--color-warn-500)] mb-3">
+              Please accept all legal acknowledgements above before using social sign-up.
+            </p>
+          )}
+
+          <SignInButton
+            redirectTo={typeof window !== "undefined" ? window.location.origin : undefined}
+            disabled={!allConsented}
+          />
+
+          {msg && (
+            <motion.p
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              className={`mt-4 text-sm text-center p-3 rounded-[10px] ${
+                msg.includes("Check your email")
+                  ? "bg-[var(--color-accent-soft)] text-[var(--color-accent)]"
+                  : "bg-[#f1d8d4] dark:bg-[#2b1614] text-[var(--color-danger-500)]"
+              }`}
+            >
+              {msg}
+            </motion.p>
+          )}
+        </motion.div>
+      </div>
+
+      {/* Brand panel (right) */}
+      <div className="hidden lg:flex flex-col justify-between p-14 bg-[var(--color-primary)] text-[var(--color-primary-fg)] order-1 lg:order-2">
+        <Link href="/" className="inline-flex items-center gap-2.5">
+          <Logo size={28} />
+          <span className="font-serif text-[24px] leading-none tracking-[-0.012em]">MigRent</span>
+        </Link>
+        <div>
+          <div className="font-mono text-[11px] uppercase tracking-[0.08em] opacity-60">
+            From hundreds of verified hosts
+          </div>
+          <h2 className="font-serif text-[56px] leading-[1.02] tracking-[-0.025em] mt-3 text-balance">
+            The lease begins<br />
+            <span className="italic opacity-75">at hello.</span>
+          </h2>
+          <p className="text-[14.5px] opacity-80 mt-4 max-w-[420px] leading-[1.55]">
+            MigRent helps people new to Australia find a place to live - without a rental history, a guarantor, or a stack of paperwork.
+          </p>
         </div>
-      </motion.div>
+        <div className="flex flex-wrap gap-x-4 gap-y-1 text-[12px] opacity-60">
+          <span>18,400+ verified rooms</span>
+          <span>·</span>
+          <span>Bond Protect AU partner</span>
+          <span>·</span>
+          <span>$0 renter fees</span>
+        </div>
+      </div>
     </div>
   );
 }
