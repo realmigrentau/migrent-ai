@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { motion } from "framer-motion";
-import { Calendar, Users, MessageSquare, Zap, Send } from "lucide-react";
+import { Calendar, Users, MessageSquare, Zap, Send, Shield } from "lucide-react";
 
 interface Listing {
   id: string;
@@ -90,37 +89,34 @@ export default function RequestToBookForm({
   return (
     <form
       onSubmit={handleSubmit}
-      className="card p-6 rounded-2xl space-y-5 border border-slate-200 dark:border-slate-700"
+      className="bg-[var(--color-surface-2)] p-6 rounded-[14px] space-y-5 border border-[var(--color-line)]"
     >
       {/* Header */}
-      <div>
-        <div className="flex items-center justify-between">
-          <div>
-            <span className="text-2xl font-black text-slate-900 dark:text-white">
-              AUD ${listing.weekly_price.toLocaleString()}
-            </span>
-            <span className="text-sm text-slate-500 dark:text-slate-400">
-              {" "}
-              / week
-            </span>
-          </div>
-          {isInstantBook && (
-            <span className="flex items-center gap-1 text-xs font-semibold text-amber-600 bg-amber-50 dark:bg-amber-500/10 dark:text-amber-400 px-2.5 py-1 rounded-full">
-              <Zap className="w-3 h-3" />
-              Instant Book
-            </span>
-          )}
+      <div className="flex items-end justify-between">
+        <div className="flex items-baseline gap-1">
+          <span className="font-serif text-[34px] leading-none tracking-[-0.02em] text-[var(--color-ink)] tabular-nums">
+            ${listing.weekly_price.toLocaleString()}
+          </span>
+          <span className="text-[13px] text-[var(--color-ink-3)] font-medium">AUD/wk</span>
         </div>
+        {isInstantBook ? (
+          <span className="inline-flex items-center gap-1 text-[11.5px] font-semibold text-[var(--color-warn-500)] bg-[#f4e4cf] dark:bg-[#2c1e10] px-2 h-[22px] rounded-full">
+            <Zap className="w-3 h-3" />
+            Instant book
+          </span>
+        ) : (
+          <span className="font-mono text-[10.5px] uppercase tracking-[0.04em] text-[var(--color-ink-3)]">
+            No charge until accepted
+          </span>
+        )}
       </div>
 
       {/* Dates */}
       <div className="grid grid-cols-2 gap-3">
-        <div>
-          <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wide">
-            Check-in
-          </label>
+        <label className="block">
+          <div className="eyebrow mb-1.5">Move-in</div>
           <div className="relative">
-            <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-ink-3)] pointer-events-none" />
             <input
               type="date"
               value={checkIn}
@@ -130,13 +126,11 @@ export default function RequestToBookForm({
               className="input-field pl-10"
             />
           </div>
-        </div>
-        <div>
-          <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wide">
-            Check-out
-          </label>
+        </label>
+        <label className="block">
+          <div className="eyebrow mb-1.5">Move-out</div>
           <div className="relative">
-            <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-ink-3)] pointer-events-none" />
             <input
               type="date"
               value={checkOut}
@@ -146,124 +140,105 @@ export default function RequestToBookForm({
               className="input-field pl-10"
             />
           </div>
-        </div>
+        </label>
       </div>
 
       {/* Guests */}
       <div>
-        <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wide">
-          Guests
-        </label>
+        <div className="eyebrow mb-1.5">Tenants</div>
         <div className="flex items-center gap-3">
           <button
             type="button"
             onClick={() => setGuests(Math.max(1, guests - 1))}
-            className="w-8 h-8 rounded-full border border-slate-300 dark:border-slate-600 flex items-center justify-center text-slate-500 hover:border-[var(--color-line-2)] hover:text-[var(--color-primary)] transition-colors"
+            className="w-8 h-8 rounded-full border border-[var(--color-line-2)] flex items-center justify-center text-[var(--color-ink-2)] hover:border-[var(--color-ink-3)] hover:text-[var(--color-ink)] transition-colors disabled:opacity-30"
+            disabled={guests <= 1}
           >
             -
           </button>
           <div className="flex items-center gap-1.5">
-            <Users className="w-4 h-4 text-slate-400" />
-            <span className="w-6 text-center text-sm font-bold text-slate-900 dark:text-white">
+            <Users className="w-4 h-4 text-[var(--color-ink-3)]" />
+            <span className="w-6 text-center text-sm font-bold text-[var(--color-ink)] tabular-nums">
               {guests}
             </span>
           </div>
           <button
             type="button"
             onClick={() => setGuests(Math.min(maxGuests, guests + 1))}
-            className="w-8 h-8 rounded-full border border-slate-300 dark:border-slate-600 flex items-center justify-center text-slate-500 hover:border-[var(--color-line-2)] hover:text-[var(--color-primary)] transition-colors"
+            className="w-8 h-8 rounded-full border border-[var(--color-line-2)] flex items-center justify-center text-[var(--color-ink-2)] hover:border-[var(--color-ink-3)] hover:text-[var(--color-ink)] transition-colors"
           >
             +
           </button>
-          <span className="text-xs text-slate-400">max {maxGuests}</span>
+          <span className="text-[11.5px] text-[var(--color-ink-3)]">max {maxGuests}</span>
         </div>
       </div>
 
       {/* Message to owner */}
       {!isInstantBook && (
-        <div>
-          <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wide">
-            <MessageSquare className="w-3.5 h-3.5 inline mr-1" />
-            Message to owner (optional)
-          </label>
+        <label className="block">
+          <div className="eyebrow mb-1.5 flex items-center gap-1">
+            <MessageSquare className="w-3 h-3" /> A few words for the host
+          </div>
           <textarea
-            placeholder="Introduce yourself, mention your visa type, when you'll arrive in AU..."
+            placeholder="What you're studying or doing, when you arrived, why this place. 2-4 sentences is the sweet spot."
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            rows={3}
-            maxLength={1000}
+            rows={4}
+            maxLength={800}
             className="input-field"
           />
-          <p className="text-xs text-slate-400 mt-1">{message.length}/1000</p>
-        </div>
+          <p className="text-[11px] text-[var(--color-ink-3)] mt-1 text-right tabular-nums">{message.length} / 800</p>
+        </label>
       )}
 
-      {/* Price breakdown */}
+      {/* Breakdown - if accepted */}
       {weeksEstimate && totalRent !== null && (
-        <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 space-y-2">
-          <div className="flex justify-between text-sm text-slate-600 dark:text-slate-300">
-            <span>
-              AUD ${listing.weekly_price.toLocaleString()} x {weeksEstimate} week
-              {weeksEstimate !== 1 ? "s" : ""}
+        <div className="p-4 rounded-[10px] bg-[var(--color-surface-sunk)]">
+          <div className="eyebrow mb-2.5">{isInstantBook ? "Breakdown" : "Breakdown - if accepted"}</div>
+          <div className="flex justify-between py-1.5 text-[13px]">
+            <span className="text-[var(--color-ink-2)]">
+              ${listing.weekly_price.toLocaleString()} x {weeksEstimate} week{weeksEstimate !== 1 ? "s" : ""} rent
             </span>
-            <span>AUD ${totalRent.toLocaleString()}</span>
+            <span className="text-[var(--color-ink)] tabular-nums">${totalRent.toLocaleString()}</span>
           </div>
-          <div className="flex justify-between text-sm text-slate-600 dark:text-slate-300">
-            <span>Owner service fee</span>
-            <span>AUD $99</span>
+          <div className="flex justify-between py-1.5 text-[13px]">
+            <span className="text-[var(--color-ink-2)]">Bond (refundable, escrow)</span>
+            <span className="text-[var(--color-ink)] tabular-nums">${listing.weekly_price.toLocaleString()}</span>
           </div>
-          <div className="flex justify-between text-sm text-slate-600 dark:text-slate-300">
-            <span>Seeker service fee</span>
-            <span>AUD $19</span>
+          <div className="flex justify-between py-1.5 text-[13px]">
+            <span className="text-[var(--color-ink-2)]">MigRent renter fee</span>
+            <span className="text-[var(--color-accent)] font-bold tabular-nums">$0</span>
           </div>
-          <div className="border-t border-slate-200 dark:border-slate-700 pt-2 flex justify-between text-sm font-bold text-slate-900 dark:text-white">
-            <span>MigRent fees total</span>
-            <span>AUD $118</span>
+          <div className="h-px bg-[var(--color-line)] my-2" />
+          <div className="flex justify-between text-[14px] font-bold text-[var(--color-ink)]">
+            <span>Move-in total</span>
+            <span className="tabular-nums">${(totalRent + listing.weekly_price).toLocaleString()}</span>
           </div>
-          <p className="text-xs text-slate-400">
-            Rent (AUD ${totalRent.toLocaleString()}) is paid directly to the owner.
-            MigRent only charges the AUD $118 service fee at booking.
-          </p>
         </div>
       )}
 
-      {/* Stepper */}
-      <div className="p-3 rounded-xl bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/20">
-        <p className="text-xs font-semibold text-blue-700 dark:text-blue-400 mb-1">
-          How it works
-        </p>
-        <ol className="text-xs text-blue-600 dark:text-blue-300 space-y-0.5 list-decimal list-inside">
-          {isInstantBook ? (
-            <>
-              <li>Pay the service fee to confirm</li>
-              <li>Owner is notified of your booking</li>
-              <li>Coordinate move-in details</li>
-            </>
-          ) : (
-            <>
-              <li>Send your request (no payment yet)</li>
-              <li>Owner reviews and accepts or declines</li>
-              <li>If accepted, pay the service fee to confirm</li>
-              <li>Coordinate move-in details</li>
-            </>
-          )}
-        </ol>
+      {/* Bond Protect banner */}
+      <div className="flex items-start gap-3 rounded-[6px] border-l-[3px] border-l-[var(--color-accent)] bg-[var(--color-accent-soft)] px-3.5 py-2.5">
+        <Shield className="w-4 h-4 text-[var(--color-accent)] mt-0.5 shrink-0" />
+        <div>
+          <div className="text-[13px] font-semibold text-[var(--color-ink)]">Bond Protect AU</div>
+          <div className="text-[12px] text-[var(--color-ink-2)] mt-0.5 leading-relaxed">
+            Bond is held by escrow, not your landlord. Released only when both parties agree.
+          </div>
+        </div>
       </div>
 
       {/* Error */}
       {error && (
-        <div className="p-3 rounded-xl bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 text-sm text-red-600 dark:text-red-400">
+        <div className="p-3 rounded-[10px] bg-[#f1d8d4] dark:bg-[#2b1614] text-sm text-[var(--color-danger-500)]">
           {error}
         </div>
       )}
 
       {/* Submit */}
-      <motion.button
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.98 }}
+      <button
         type="submit"
         disabled={loading || disabled || !checkIn || !checkOut}
-        className="w-full btn-primary py-3.5 px-6 rounded-xl text-sm font-semibold disabled:opacity-50 flex items-center justify-center gap-2"
+        className="btn-primary w-full h-[46px] text-[15px] rounded-[10px] disabled:opacity-50"
       >
         {loading ? (
           <span className="flex items-center gap-2">
@@ -273,20 +248,20 @@ export default function RequestToBookForm({
         ) : isInstantBook ? (
           <>
             <Zap className="w-4 h-4" />
-            Instant Book - Pay AUD $118
+            Instant book - pay $118
           </>
         ) : (
           <>
+            Submit application
             <Send className="w-4 h-4" />
-            Request to Book
           </>
         )}
-      </motion.button>
+      </button>
 
-      <p className="text-center text-xs text-slate-400">
+      <p className="text-center text-[11.5px] text-[var(--color-ink-3)]">
         {isInstantBook
-          ? "Your booking will be confirmed after payment."
-          : "You won't be charged until the owner accepts."}
+          ? "Your booking is confirmed after payment."
+          : "You won't be charged until the host accepts."}
       </p>
     </form>
   );
