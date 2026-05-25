@@ -9,6 +9,7 @@ import {
   updateMyProfile,
 } from "../../lib/api";
 import VisaSelector from "../../components/onboarding/VisaSelector";
+import { Logo } from "../../components/ui/Logo";
 import { motion, AnimatePresence } from "framer-motion";
 
 // ── Types ─────────────────────────────────────────────────
@@ -267,7 +268,7 @@ export default function OnboardingPage() {
       <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center p-4">
         <div className="text-center">
           <div className="w-10 h-10 border-2 border-slate-300 dark:border-slate-600 border-t-slate-600 dark:border-t-slate-300 rounded-full animate-spin mx-auto" />
-          <p className="text-sm text-slate-500 dark:text-slate-400 mt-4">Loading...</p>
+          <p className="text-sm text-[var(--color-ink-2)] mt-4">Loading...</p>
         </div>
       </div>
     );
@@ -285,30 +286,70 @@ export default function OnboardingPage() {
     !submitting;
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center px-4 py-12">
+    <div className="min-h-screen bg-[var(--color-bg)] flex flex-col">
+      {/* Top bar with step indicator */}
+      <div className="px-5 sm:px-8 py-5 flex items-center justify-between border-b border-[var(--color-line)]">
+        <div className="inline-flex items-center gap-2.5 text-[var(--color-ink)]">
+          <Logo size={24} />
+          <span className="font-serif text-[20px] leading-none tracking-[-0.012em]">MigRent</span>
+        </div>
+        <div className="hidden md:flex items-center gap-6">
+          {[
+            { n: 1, t: "About you" },
+            { n: 2, t: "Your preferences" },
+            { n: 3, t: "Verify your ID" },
+          ].map((s, i) => (
+            <div key={s.n} className="flex items-center gap-2">
+              <span
+                className="w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold"
+                style={{
+                  background: i === 0 ? "var(--color-ink)" : "transparent",
+                  color: i === 0 ? "var(--color-bg)" : "var(--color-ink-3)",
+                  border: i === 0 ? "none" : "1.5px solid var(--color-line-2)",
+                }}
+              >
+                {s.n}
+              </span>
+              <span
+                className="text-[13px]"
+                style={{
+                  fontWeight: i === 0 ? 700 : 500,
+                  color: i === 0 ? "var(--color-ink)" : "var(--color-ink-3)",
+                }}
+              >
+                {s.t}
+              </span>
+              {i < 2 && <div className="w-8 h-px bg-[var(--color-line)]" />}
+            </div>
+          ))}
+        </div>
+        <span className="text-[13px] font-semibold text-[var(--color-ink-3)]">Step 1 of 3</span>
+      </div>
+
+      <div className="flex-1 flex items-start justify-center px-4 py-10">
       <motion.div
-        initial={{ opacity: 0, y: 16 }}
+        initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, ease: "easeOut" }}
+        transition={{ duration: 0.3, ease: "easeOut" }}
         className="w-full max-w-lg"
       >
         {/* Header */}
-        <div className="mb-8 text-center">
-          <h1 className="text-2xl font-semibold text-slate-900 dark:text-slate-100 tracking-tight">
+        <div className="mb-7">
+          <div className="eyebrow mb-1.5">About you</div>
+          <h1 className="font-serif text-[36px] md:text-[40px] leading-[1.05] tracking-[-0.02em] text-[var(--color-ink)]">
             Complete your profile
           </h1>
-          <p className="text-slate-500 dark:text-slate-400 text-sm mt-2 max-w-sm mx-auto">
-            We need a few details to verify your identity and personalise your
-            experience.
+          <p className="text-[var(--color-ink-2)] text-[14px] mt-2 max-w-md">
+            A few basics so we can verify your identity and match you faster.
           </p>
         </div>
 
         {/* Form Card */}
-        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+        <div className="bg-[var(--color-surface)] rounded-[14px] border border-[var(--color-line)]">
           <form onSubmit={handleSubmit}>
             {/* Section: Identity */}
             <div className="p-6 pb-0">
-              <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-5">
+              <h2 className="eyebrow mb-5">
                 Identity
               </h2>
 
@@ -334,11 +375,11 @@ export default function OnboardingPage() {
             </div>
 
             {/* Divider */}
-            <div className="border-t border-slate-100 dark:border-slate-800 my-6 mx-6" />
+            <div className="border-t border-[var(--color-line)] my-6 mx-6" />
 
             {/* Section: Address */}
             <div className="px-6">
-              <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-5">
+              <h2 className="eyebrow mb-5">
                 Residential address
               </h2>
 
@@ -383,7 +424,7 @@ export default function OnboardingPage() {
 
                 {/* Nearest station (read-only, auto-populated) */}
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
+                  <label className="block text-[12.5px] font-semibold text-[var(--color-ink-2)] mb-1.5">
                     Nearest train station
                   </label>
                   <div className="relative">
@@ -396,10 +437,10 @@ export default function OnboardingPage() {
                           : nearestStation || stationError || ""
                       }
                       placeholder="Auto-detected from your suburb"
-                      className={`w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border rounded-lg text-sm cursor-default ${
+                      className={`w-full px-3.5 py-2.5 bg-[var(--color-surface-sunk)] border rounded-lg text-sm cursor-default ${
                         stationError && !stationLoading
                           ? "border-amber-300 dark:border-amber-600 text-amber-600 dark:text-amber-400"
-                          : "border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400"
+                          : "border-[var(--color-line)] text-[var(--color-ink-2)]"
                       }`}
                     />
                     {stationLoading && (
@@ -421,25 +462,25 @@ export default function OnboardingPage() {
             </div>
 
             {/* Divider */}
-            <div className="border-t border-slate-100 dark:border-slate-800 my-6 mx-6" />
+            <div className="border-t border-[var(--color-line)] my-6 mx-6" />
 
             {/* Section: Visa */}
             <div className="px-6">
-              <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-5">
+              <h2 className="eyebrow mb-5">
                 Visa type
               </h2>
-              <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">
+              <p className="text-[13.5px] text-[var(--color-ink-2)] mb-4">
                 This helps us show rooms that best fit your situation - near your uni, workplace, or flexible for travel.
               </p>
               <VisaSelector value={visaType} onChange={setVisaType} />
             </div>
 
             {/* Divider */}
-            <div className="border-t border-slate-100 dark:border-slate-800 my-6 mx-6" />
+            <div className="border-t border-[var(--color-line)] my-6 mx-6" />
 
             {/* Section: Contact */}
             <div className="px-6">
-              <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-5">
+              <h2 className="eyebrow mb-5">
                 Contact
               </h2>
 
@@ -467,7 +508,7 @@ export default function OnboardingPage() {
                   exit={{ opacity: 0, height: 0 }}
                   className="px-6 mt-4"
                 >
-                  <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
+                  <div className="flex items-center gap-2 text-sm text-[var(--color-ink-2)]">
                     <div className="w-3.5 h-3.5 border-2 border-slate-300 dark:border-slate-600 border-t-slate-600 dark:border-t-slate-300 rounded-full animate-spin" />
                     Verifying your details...
                   </div>
@@ -484,7 +525,7 @@ export default function OnboardingPage() {
                   exit={{ opacity: 0, height: 0 }}
                   className="px-6 mt-4"
                 >
-                  <div className="p-3 bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-800 rounded-lg text-sm text-red-700 dark:text-red-400">
+                  <div className="p-3 bg-[#f1d8d4] dark:bg-[#2b1614] rounded-[10px] text-sm text-[var(--color-danger-500)]">
                     {submitError}
                   </div>
                 </motion.div>
@@ -496,7 +537,7 @@ export default function OnboardingPage() {
               <button
                 type="submit"
                 disabled={!canSubmit}
-                className="w-full bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 font-medium text-sm py-3 rounded-lg hover:bg-slate-800 dark:hover:bg-slate-200 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                className="w-full btn-primary w-full h-[46px] text-[15px] rounded-[10px] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
               >
                 {submitting ? (
                   <span className="flex items-center justify-center gap-2">
@@ -508,7 +549,7 @@ export default function OnboardingPage() {
                 )}
               </button>
 
-              <p className="text-xs text-slate-400 dark:text-slate-500 text-center mt-4">
+              <p className="text-[11.5px] text-[var(--color-ink-3)] text-center mt-4">
                 These details are locked after submission and used for identity
                 verification.
               </p>
@@ -516,6 +557,7 @@ export default function OnboardingPage() {
           </form>
         </div>
       </motion.div>
+      </div>
     </div>
   );
 }
@@ -545,7 +587,7 @@ function FormField({
 }) {
   return (
     <div>
-      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
+      <label className="block text-[12.5px] font-semibold text-[var(--color-ink-2)] mb-1.5">
         {label}
         {required && <span className="text-red-400 ml-0.5">*</span>}
       </label>
