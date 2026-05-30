@@ -1585,7 +1585,9 @@ export async function deleteListing(
       try {
         const errBody = await res.json();
         if (errBody.detail) detail = errBody.detail;
-      } catch {}
+      } catch {
+        // Response body wasn't JSON - keep the generic error message
+      }
       return { success: false, error: detail };
     }
     return { success: true };

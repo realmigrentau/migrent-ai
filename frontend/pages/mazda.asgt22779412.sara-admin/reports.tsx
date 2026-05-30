@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import AdminGate from "../../components/AdminGate";
 import AdminLayout from "../../components/AdminLayout";
 import { supabase } from "../../lib/supabase";
+import { useToast } from "../../components/ui/Toast";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
 
@@ -20,6 +21,7 @@ export default function AdminReports() {
   const [reports, setReports] = useState<Report[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<string>("pending");
+  const toast = useToast();
 
   const getToken = async () => {
     const { data: { session } } = await supabase.auth.getSession();
@@ -59,9 +61,10 @@ export default function AdminReports() {
         body: JSON.stringify({ status: newStatus }),
       });
       if (!res.ok) throw new Error("Failed to update");
+      toast.success("Report updated.");
       fetchReports();
     } catch {
-      alert("Failed to update report");
+      toast.error("We couldn't update that report. Please try again.");
     }
   };
 

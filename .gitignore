@@ -18,3 +18,24 @@ node_modules/
 
 # Next.js build
 .next/
+
+# Internal strategy / planning docs (do not ship)
+LEGAL_PAGES_V1_STRATEGY.md
+MIGRENT_FEATURE_STRATEGY.md
+MIGRENT_REDESIGN_PLAN.md
+AUDIT_FAKE_DATA_REMOVAL.md
+DASHBOARD_SETUP.md
+FEATURE_IMPLEMENTATION_GUIDE.md
+FEATURE_SUMMARY.md
+FILES_TO_COPY.md
+INTEGRATION_CHECKLIST.md
+QUICKSTART.md
+plan.md
+test-role.js
+
+# Logs
+install.log
+*.log
+
+# Build artifacts
+tsconfig.tsbuildinfo

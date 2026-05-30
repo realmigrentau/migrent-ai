@@ -26,6 +26,15 @@ export default function AvatarWithVerification({
     <>
       <div
         onClick={() => setShowModal(true)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            setShowModal(true);
+          }
+        }}
+        role="button"
+        tabIndex={0}
+        aria-label={isVerified ? `${name || "User"} - verified profile` : `${name || "User"} - view profile`}
         className={`relative group cursor-pointer shrink-0 ${className}`}
         title={isVerified ? "Verified" : "Click to learn more"}
       >

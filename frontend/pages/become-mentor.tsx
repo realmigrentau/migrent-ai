@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import Head from "next/head";
 import { motion } from "framer-motion";
 import { useAuth } from "../hooks/useAuth";
+import { useToast } from "../components/ui/Toast";
 import {
   Heart,
   MapPin,
@@ -40,6 +41,7 @@ const LANGUAGES = [
 export default function BecomeMentorPage() {
   const router = useRouter();
   const { session } = useAuth();
+  const toast = useToast();
 
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -117,14 +119,14 @@ export default function BecomeMentorPage() {
       });
 
       if (!res.ok) {
-        const err = await res.json();
-        alert(err.detail || "Failed to create mentor profile");
+        const err = await res.json().catch(() => ({}));
+        toast.error(err.detail || "We couldn't create your mentor profile. Please try again.");
         return;
       }
 
       setSuccess(true);
-    } catch (err) {
-      alert("Something went wrong. Please try again.");
+    } catch {
+      toast.error("Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -142,10 +144,10 @@ export default function BecomeMentorPage() {
         const data = await res.json();
         if (data.url) window.location.href = data.url;
       } else {
-        alert("Failed to start payment setup. Please try again.");
+        toast.error("We couldn't start payment setup. Please try again.");
       }
     } catch {
-      alert("Something went wrong.");
+      toast.error("Something went wrong.");
     } finally {
       setLoading(false);
     }
@@ -349,7 +351,7 @@ export default function BecomeMentorPage() {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => {
-                if (!suburb.trim()) { alert("Please enter your suburb"); return; }
+                if (!suburb.trim()) { toast.warning("Please enter your suburb to continue."); return; }
                 setStep(2);
               }}
               className="w-full bg-[var(--color-primary)] hover:bg-[var(--color-primary-500)] text-white font-semibold py-3 rounded-xl text-sm transition-colors flex items-center justify-center gap-2"
@@ -426,7 +428,7 @@ export default function BecomeMentorPage() {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => {
-                  if (languages.length === 0) { alert("Please select at least one language"); return; }
+                  if (languages.length === 0) { toast.warning("Pick at least one language so we can match you."); return; }
                   setStep(3);
                 }}
                 className="flex-1 bg-[var(--color-primary)] hover:bg-[var(--color-primary-500)] text-white font-semibold py-3 rounded-xl text-sm transition-colors flex items-center justify-center gap-2"

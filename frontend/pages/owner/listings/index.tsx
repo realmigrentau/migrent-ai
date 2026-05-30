@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "../../../hooks/useAuth";
 import { getListings, deleteListing } from "../../../lib/api";
 import { supabase } from "../../../lib/supabase";
+import { useToast } from "../../../components/ui/Toast";
 
 interface Listing {
   id: string;
@@ -52,6 +53,7 @@ const STATUS_LABELS: Record<string, string> = {
 export default function OwnerListings() {
   const { session, user, loading, refreshing } = useAuth();
   const router = useRouter();
+  const toast = useToast();
   const [listings, setListings] = useState<Listing[]>([]);
   const [fetching, setFetching] = useState(true);
   const justCreated = router.query.created === "1";
@@ -162,8 +164,9 @@ export default function OwnerListings() {
       .then((result) => {
         if (result.success) {
           setListings((prev) => prev.filter((l) => l.id !== deleteId));
+          toast.success("Listing removed.");
         } else {
-          alert(result.error || "Failed to delete listing");
+          toast.error(result.error || "We couldn't delete that listing. Please try again.");
         }
       })
       .finally(() => setDeleting(false));

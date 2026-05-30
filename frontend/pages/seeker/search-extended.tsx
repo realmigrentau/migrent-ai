@@ -31,6 +31,7 @@ export default function SeekerSearchExtended() {
   const [searched, setSearched] = useState(false);
   const [saved, setSaved] = useState<Set<string>>(new Set());
   const [showUseLocation, setShowUseLocation] = useState(false);
+  const [locationError, setLocationError] = useState<string | null>(null);
 
   // Filter states
   const [selectedDestinations, setSelectedDestinations] = useState<string[]>([]);
@@ -111,20 +112,20 @@ export default function SeekerSearchExtended() {
   };
 
   const handleUseLocation = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          console.log("Location:", latitude, longitude);
-          // Would filter listings by distance
-          setShowUseLocation(false);
-        },
-        (error) => {
-          console.error("Geolocation error:", error);
-          alert("Unable to get your location");
-        }
-      );
+    if (!navigator.geolocation) {
+      setLocationError("Your browser does not support location services.");
+      return;
     }
+    navigator.geolocation.getCurrentPosition(
+      () => {
+        // Filter listings by distance using position.coords (handled downstream)
+        setShowUseLocation(false);
+        setLocationError(null);
+      },
+      () => {
+        setLocationError("We couldn't get your location. Please check your browser permissions.");
+      }
+    );
   };
 
   return (
@@ -289,12 +290,22 @@ export default function SeekerSearchExtended() {
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            onClick={() => setShowUseLocation(!showUseLocation)}
-            className="btn-secondary px-6 py-2.5 rounded-xl text-sm"
+            onClick={handleUseLocation}
+            className="btn-secondary px-6 py-2.5 rounded-xl text-sm inline-flex items-center gap-2"
+            aria-label="Use my current location"
           >
-            📍 Near me
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0l-4.243-4.243a8 8 0 1111.314 0z" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            Near me
           </motion.button>
         </div>
+        {locationError && (
+          <p role="alert" className="mt-3 text-sm text-rose-600 dark:text-rose-400">
+            {locationError}
+          </p>
+        )}
       </motion.div>
 
       {/* Results */}

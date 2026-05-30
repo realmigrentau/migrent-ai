@@ -975,3 +975,83 @@ select.input-field {
   50% { box-shadow: 0 0 40px rgb(14 34 55 / 0.3), inset 0 0 30px rgb(14 34 55 / 0.08); }
 }
 .photo-drop-glow { animation: photo-drop-pulse 1.5s ease-in-out infinite; }
+
+/* ══════════════════════════════════════════════════════════════
+   PREMIUM POLISH
+   Additive layer. Existing classes untouched.
+   Compatible with the new editorial palette (uses --color-primary
+   tokens where appropriate so it respects the active palette).
+   ══════════════════════════════════════════════════════════════ */
+
+/* Global focus ring: visible, brand-coloured, accessible */
+:where(button, a, [role="button"], input, textarea, select, summary):focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 3px color-mix(in srgb, var(--color-primary, #e11d48) 22%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--color-primary, #e11d48) 55%, transparent);
+  border-radius: 8px;
+}
+
+/* Subtle background grain for premium feel on hero sections */
+.bg-grain {
+  position: relative;
+}
+.bg-grain::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.025;
+  mix-blend-mode: overlay;
+}
+
+/* Premium CTA: subtle glow + lift on hover */
+.btn-premium {
+  position: relative;
+  background: var(--color-primary, #e11d48);
+  color: var(--color-primary-fg, white);
+  font-weight: 600;
+  height: 48px;
+  padding: 0 24px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: none;
+  cursor: pointer;
+  box-shadow:
+    0 1px 0 rgb(255 255 255 / 0.18) inset,
+    0 8px 24px -8px color-mix(in srgb, var(--color-primary, #e11d48) 55%, transparent);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+}
+.btn-premium:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    0 1px 0 rgb(255 255 255 / 0.22) inset,
+    0 14px 32px -10px color-mix(in srgb, var(--color-primary, #e11d48) 65%, transparent);
+  filter: saturate(1.05);
+}
+.btn-premium:active { transform: translateY(0); }
+.btn-premium:disabled { opacity: 0.65; cursor: not-allowed; transform: none; box-shadow: none; }
+
+/* Card lift on hover - premium, no jank */
+.card-lift {
+  transition: transform 0.25s cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 0.25s ease, border-color 0.2s ease;
+  will-change: transform;
+}
+.card-lift:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-card, 0 4px 12px rgb(16 24 40 / 0.06));
+}
+
+/* Respect users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

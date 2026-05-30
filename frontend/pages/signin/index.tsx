@@ -5,6 +5,7 @@ import { useHCaptcha } from "@hcaptcha/react-hcaptcha/hooks";
 import { supabase } from "../../lib/supabase";
 import { useAuth } from "../../hooks/useAuth";
 import SignInButton from "../../components/SignInButton";
+import SEOHead from "../../components/SEOHead";
 import { Logo } from "../../components/ui/Logo";
 
 import { motion } from "framer-motion";
@@ -70,7 +71,13 @@ export default function SignIn() {
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_1fr] min-h-[calc(100vh-60px)] -mt-[60px] lg:mt-0">
+    <>
+      <SEOHead
+        title="Sign in"
+        description="Sign in to MigRent to find verified rooms, manage listings, and message hosts across Australia."
+        noIndex
+      />
+      <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_1fr] min-h-[calc(100vh-60px)] -mt-[60px] lg:mt-0">
       {/* Brand panel */}
       <div className="hidden lg:flex flex-col justify-between p-14 bg-[var(--color-primary)] text-[var(--color-primary-fg)]">
         <Link href="/" className="inline-flex items-center gap-2.5">
@@ -198,5 +205,6 @@ export default function SignIn() {
         </motion.div>
       </div>
     </div>
+    </>
   );
 }

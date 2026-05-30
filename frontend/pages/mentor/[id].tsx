@@ -4,6 +4,7 @@ import Head from "next/head";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { useAuth } from "../../hooks/useAuth";
+import { useToast } from "../../components/ui/Toast";
 import {
   MapPin,
   Globe,
@@ -52,6 +53,7 @@ export default function MentorProfilePage() {
   const router = useRouter();
   const { id } = router.query;
   const { session } = useAuth();
+  const toast = useToast();
 
   const [mentor, setMentor] = useState<MentorData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -95,8 +97,8 @@ export default function MentorProfilePage() {
       });
 
       if (!res.ok) {
-        const err = await res.json();
-        alert(err.detail || "Failed to book session");
+        const err = await res.json().catch(() => ({}));
+        toast.error(err.detail || "We couldn't book that session. Please try again.");
         return;
       }
 
@@ -105,7 +107,7 @@ export default function MentorProfilePage() {
         window.location.href = data.session.checkout_url;
       }
     } catch {
-      alert("Something went wrong. Please try again.");
+      toast.error("Something went wrong. Please try again.");
     } finally {
       setBooking(false);
     }

@@ -96,18 +96,16 @@ export default function Discord() {
           <p className="mt-4 text-lg text-slate-500 dark:text-slate-400 max-w-xl mx-auto">
             Connect with thousands of migrants and hosts. Get housing tips, share experiences, and find support.
           </p>
-          <motion.a
-            href="#"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.98 }}
-            className="inline-flex items-center gap-2 mt-8 btn-primary text-base px-8 py-3.5 rounded-xl"
+          <div
+            aria-disabled="true"
+            className="inline-flex items-center gap-2 mt-8 px-8 py-3.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-semibold text-base cursor-not-allowed select-none"
           >
-            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
               <path d="M20.317 4.492c-1.53-.69-3.17-1.2-4.885-1.49a.075.075 0 00-.079.036c-.21.369-.444.85-.608 1.23a18.566 18.566 0 00-5.487 0 12.36 12.36 0 00-.617-1.23A.077.077 0 008.562 3c-1.714.29-3.354.8-4.885 1.491a.07.07 0 00-.032.027C.533 9.093-.32 13.555.099 17.961a.08.08 0 00.031.055 20.03 20.03 0 005.993 2.98.078.078 0 00.084-.026c.462-.62.874-1.275 1.226-1.963.021-.04.001-.088-.041-.104a13.201 13.201 0 01-1.872-.878.075.075 0 01-.008-.125c.126-.093.252-.19.372-.287a.075.075 0 01.078-.01c3.927 1.764 8.18 1.764 12.061 0a.075.075 0 01.079.009c.12.098.245.195.372.288a.075.075 0 01-.006.125c-.598.344-1.22.635-1.873.877a.075.075 0 00-.041.105c.36.687.772 1.341 1.225 1.962a.077.077 0 00.084.028 19.963 19.963 0 006.002-2.981.076.076 0 00.032-.054c.5-5.094-.838-9.52-3.549-13.442a.06.06 0 00-.031-.028z" />
             </svg>
-            Join Discord Server
-          </motion.a>
-          <p className="text-xs text-slate-400 dark:text-slate-500 mt-3">Discord invite link will be added soon</p>
+            Launching Soon
+          </div>
+          <p className="text-xs text-slate-400 dark:text-slate-500 mt-3">We&apos;re finalising community moderation. The invite link goes live shortly.</p>
         </motion.div>
 
         {/* Benefits */}
@@ -141,7 +139,7 @@ export default function Discord() {
 
         {/* Channels */}
         <section className="mb-16">
-          <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-6 text-center">Popular Channels</h2>
+          <h2 className="text-2xl font-semibold text-slate-900 dark:text-white mb-6 text-center">Popular Channels</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {channels.map((channel, i) => (
               <motion.div

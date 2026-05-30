@@ -137,6 +137,19 @@ export function getWishlistLevel(count: number) {
   return { ...level, progress, count };
 }
 
+// ── Helpers ──
+
+function safeParseIds(raw: string | null): string[] {
+  if (!raw) return [];
+  try {
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed.filter((x): x is string => typeof x === "string") : [];
+  } catch (err) {
+    console.warn("Wishlist storage was corrupt; resetting.", err);
+    return [];
+  }
+}
+
 // ── Collections storage ──
 
 const COLLECTIONS_KEY = "migrent_wishlist_collections";
@@ -219,16 +232,10 @@ export function useWishlist() {
         }
       } catch (err) {
         console.error("Failed to load wishlist:", err);
-        const saved = localStorage.getItem("wishlist");
-        if (saved) {
-          try { ids = JSON.parse(saved); } catch {}
-        }
+        ids = safeParseIds(localStorage.getItem("wishlist"));
       }
     } else {
-      const saved = localStorage.getItem("wishlist");
-      if (saved) {
-        try { ids = JSON.parse(saved); } catch {}
-      }
+      ids = safeParseIds(localStorage.getItem("wishlist"));
     }
 
     // If no saved wishlist items, just show empty
@@ -273,10 +280,13 @@ export function useWishlist() {
               savedAt: new Date().toISOString(),
             });
           }
-        } catch {}
+        } catch (err) {
+          console.warn(`Failed to fetch wishlist listing ${id}:`, err);
+        }
       }
       setListings(fetched);
-    } catch {
+    } catch (err) {
+      console.error("Failed to populate wishlist:", err);
       setListings([]);
     }
     setLoading(false);

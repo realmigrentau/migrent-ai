@@ -239,8 +239,12 @@ export default function SeekerSearch() {
   // Load wishlist
   useEffect(() => {
     const saved_listings = localStorage.getItem("wishlist");
-    if (saved_listings) {
-      try { setSaved(new Set(JSON.parse(saved_listings))); } catch {}
+    if (!saved_listings) return;
+    try {
+      const parsed = JSON.parse(saved_listings);
+      if (Array.isArray(parsed)) setSaved(new Set(parsed));
+    } catch (err) {
+      console.warn("Wishlist storage was corrupt; resetting.", err);
     }
   }, []);
 
