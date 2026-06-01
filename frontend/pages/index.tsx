@@ -57,7 +57,7 @@ function HomeListingCard({ listing }: { listing: Listing }) {
   const title = listing.title || listing.address || "Verified room in Australia";
   const price = listing.weekly_price || (listing.daily_price ? listing.daily_price * 7 : 0);
   return (
-    <Link href={`/listing/${listing.id}`} className="group flex flex-col overflow-hidden bg-[var(--color-surface)] border border-[var(--color-line)] rounded-[14px] hover:border-[var(--color-line-2)] hover:shadow-[var(--shadow-card)] transition-all">
+    <Link href={`/listing/${listing.id}`} className="card-lift group flex flex-col overflow-hidden bg-[var(--color-surface)] border border-[var(--color-line)] rounded-[14px] hover:border-[var(--color-line-2)] hover:shadow-[var(--shadow-card)] transition-all">
       <div className="relative">
         <div className="photo-placeholder h-[180px] w-full" style={{ borderRadius: 0 }}>
           {suburb} · {listing.property_type || listing.room_type || "Room"}
@@ -108,15 +108,28 @@ export default function Home() {
   const [budget, setBudget] = useState(350);
   const [city, setCity] = useState("Melbourne, VIC");
   const [listings, setListings] = useState<Listing[]>([]);
+  const [listingsLoading, setListingsLoading] = useState(true);
 
   useEffect(() => {
-    searchListings({ limit: "3" }).then((data) => {
-      if (Array.isArray(data) && data.length > 0) {
-        setListings(data.slice(0, 3));
-      } else if (data && Array.isArray(data.listings)) {
-        setListings(data.listings.slice(0, 3));
-      }
-    });
+    let cancelled = false;
+    searchListings({ limit: "3" })
+      .then((data) => {
+        if (cancelled) return;
+        if (Array.isArray(data) && data.length > 0) {
+          setListings(data.slice(0, 3));
+        } else if (data && Array.isArray(data.listings)) {
+          setListings(data.listings.slice(0, 3));
+        }
+      })
+      .catch((err) => {
+        if (!cancelled) console.warn("Failed to load featured listings:", err);
+      })
+      .finally(() => {
+        if (!cancelled) setListingsLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const categories = [
@@ -168,10 +181,14 @@ export default function Home() {
         <meta name="description" content="From a $195/wk share in Footscray to a $900/wk apartment in Surry Hills. Every host ID-checked, every listing bond-protected. No rental history needed." />
         <meta property="og:title" content="MigRent - A real home in Australia" />
         <meta property="og:description" content="Verified rooms across Australia for migrants, students, and new arrivals." />
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content="/og-default.png" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:image" content="/og-default.png" />
       </Head>
 
       {/* SECTION 1 - HERO */}
-      <section className="bg-[var(--color-bg)] border-b border-[var(--color-line)]">
+      <section className="bg-grain relative bg-[var(--color-bg)] border-b border-[var(--color-line)]">
         <div className="max-w-[1280px] mx-auto px-6 md:px-10 lg:px-14 pt-10 md:pt-14 pb-14 md:pb-20">
           <div className="eyebrow mb-3">For migrants, students &amp; new arrivals · AU only</div>
           <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-10 lg:gap-14 items-end">
@@ -216,7 +233,8 @@ export default function Home() {
                   step={5}
                   value={budget}
                   onChange={(e) => setBudget(+e.target.value)}
-                  className="w-full mt-2 accent-[var(--color-primary)]"
+                  aria-label={`Weekly budget: up to $${budget} AUD`}
+                  className="premium-range w-full mt-2 accent-[var(--color-primary)]"
                 />
                 <div className="flex justify-between text-[11px] text-[var(--color-ink-3)] mt-0.5">
                   <span>$150</span><span>$500</span><span>$1000+</span>
@@ -259,14 +277,14 @@ export default function Home() {
 
       {/* SECTION 2 - STATS STRIP */}
       <section className="bg-[var(--color-surface)] border-b border-[var(--color-line)]">
-        <div className="max-w-[1280px] mx-auto grid grid-cols-2 md:grid-cols-4">
+        <div className="max-w-[1280px] mx-auto grid grid-cols-2 md:grid-cols-4 divide-x divide-y md:divide-y-0 divide-[var(--color-line)]">
           {[
             ["Live", "Now accepting new listings"],
             ["Verified", "Every host ID-checked"],
             ["Bond protected", "Held in independent escrow"],
             ["$0", "Service fee for renters"],
           ].map(([n, l], i) => (
-            <div key={i} className={`px-6 md:px-8 py-6 ${i > 0 ? "border-l border-[var(--color-line)]" : ""} ${i > 1 ? "md:border-l border-[var(--color-line)]" : ""} ${i === 2 ? "border-l-0 md:border-l border-t md:border-t-0 border-[var(--color-line)]" : ""}`}>
+            <div key={i} className="px-6 md:px-8 py-6">
               <div className="font-serif text-[36px] md:text-[44px] leading-none tracking-[-0.02em] text-[var(--color-ink)] tabular-nums">{n}</div>
               <div className="text-[12.5px] text-[var(--color-ink-3)] mt-2">{l}</div>
             </div>
@@ -297,7 +315,7 @@ export default function Home() {
               <Link
                 key={c.label}
                 href={c.href}
-                className="flex items-center justify-between px-4 py-3.5 bg-[var(--color-surface)] border border-[var(--color-line)] rounded-[10px] text-[var(--color-ink)] hover:border-[var(--color-line-2)] transition-colors"
+                className="card-lift flex items-center justify-between px-4 py-3.5 bg-[var(--color-surface)] border border-[var(--color-line)] rounded-[10px] text-[var(--color-ink)] hover:border-[var(--color-line-2)] transition-colors"
               >
                 <span className="text-sm font-semibold">{c.label}</span>
                 <span className="font-mono text-xs text-[var(--color-ink-3)]">{c.count} →</span>
@@ -305,13 +323,31 @@ export default function Home() {
             ))}
           </div>
 
-          {listings.length > 0 && (
+          {listingsLoading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" aria-hidden="true">
+              {[0, 1, 2].map((i) => (
+                <div key={i} className="overflow-hidden bg-[var(--color-surface)] border border-[var(--color-line)] rounded-[14px]">
+                  <div className="shimmer h-[180px] w-full" />
+                  <div className="p-3.5 space-y-2">
+                    <div className="shimmer h-3 w-1/3 rounded" />
+                    <div className="shimmer h-4 w-3/4 rounded" />
+                    <div className="shimmer h-3 w-1/2 rounded" />
+                    <div className="h-px bg-[var(--color-line)] my-1" />
+                    <div className="flex justify-between">
+                      <div className="shimmer h-5 w-20 rounded" />
+                      <div className="shimmer h-3 w-16 rounded" />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : listings.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {listings.map((l) => (
                 <HomeListingCard key={l.id} listing={l} />
               ))}
             </div>
-          )}
+          ) : null}
         </div>
       </section>
 
