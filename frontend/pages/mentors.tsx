@@ -5,8 +5,7 @@ import { motion } from "framer-motion";
 import { Search, MapPin, Globe, Users, ChevronRight, Sparkles, Heart } from "lucide-react";
 import MentorCard from "../components/mentors/MentorCard";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
-
+import { API_BASE_URL as BASE_URL } from "../lib/apiBase";
 interface Mentor {
   id: string;
   user_id: string;

@@ -1,8 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "../lib/supabase";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
-
+import { API_BASE_URL as BASE_URL } from "../lib/apiBase";
 export interface Review {
   id: string;
   deal_id: string;

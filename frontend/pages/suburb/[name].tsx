@@ -12,8 +12,7 @@ import TransportCalculator from "../../components/suburb/TransportCalculator";
 import DemographicsCharts from "../../components/suburb/DemographicsCharts";
 import SuburbFAQ from "../../components/suburb/SuburbFAQ";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
-
+import { API_BASE_URL as BASE_URL } from "../../lib/apiBase";
 interface SuburbData {
   slug: string;
   name: string;

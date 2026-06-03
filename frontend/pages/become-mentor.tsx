@@ -17,8 +17,7 @@ import {
   Shield,
 } from "lucide-react";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
-
+import { API_BASE_URL as BASE_URL } from "../lib/apiBase";
 const SPECIALTIES = [
   "Suburb orientation",
   "Public transport",

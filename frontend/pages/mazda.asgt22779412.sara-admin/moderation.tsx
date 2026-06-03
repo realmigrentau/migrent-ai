@@ -16,8 +16,7 @@ import {
   type AdminActivity,
 } from "../../lib/adminModerationApi";
 
-const FRONTEND_URL = process.env.NEXT_PUBLIC_FRONTEND_URL || "http://localhost:3000";
-
+import { FRONTEND_BASE_URL as FRONTEND_URL } from "../../lib/apiBase";
 function timeAgo(dateStr: string): string {
   const now = new Date();
   const then = new Date(dateStr);

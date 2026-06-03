@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useAuth } from "./useAuth";
 import { getMyProfile, updateMyProfile } from "../lib/api";
+import { API_BASE_URL } from "../lib/apiBase";
 
 // ── Types ──
 
@@ -249,7 +250,7 @@ export function useWishlist() {
     setWishlistIds(ids);
     // Try to fetch real listing data for saved IDs
     try {
-      const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
+      const BASE_URL = API_BASE_URL;
       const fetched: WishlistListing[] = [];
       for (const id of ids) {
         try {

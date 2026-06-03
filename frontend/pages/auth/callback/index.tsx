@@ -5,8 +5,7 @@ import { supabase } from "../../../lib/supabase";
 import { motion } from "framer-motion";
 import type { Session } from "@supabase/supabase-js";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
-
+import { API_BASE_URL as API_BASE } from "../../../lib/apiBase";
 /**
  * Check if the user account was created recently (within 5 minutes).
  * New signups get sent to /onboarding, returning users to /dashboard.

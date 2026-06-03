@@ -7,6 +7,7 @@ import {
   getSupportAnalytics, getHelpCategories, getHelpArticles,
   type Ticket, type TicketDetail, type HelpArticle, type HelpCategory,
 } from "../../lib/api";
+import { API_BASE_URL } from "../../lib/apiBase";
 
 type Tab = "tickets" | "articles" | "analytics";
 
@@ -428,7 +429,7 @@ function ArticlesTab({ token }: { token: string }) {
     e.preventDefault();
     setSubmitting(true);
 
-    const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
+    const BASE_URL = API_BASE_URL;
     const res = await fetch(`${BASE_URL}/support/help/articles`, {
       method: "POST",
       headers: {

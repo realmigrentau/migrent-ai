@@ -6,8 +6,7 @@ import { useAuth } from "../../hooks/useAuth";
 import ConsentCheckboxes from "../../components/legal/ConsentCheckboxes";
 import { motion } from "framer-motion";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
-
+import { API_BASE_URL as API_BASE } from "../../lib/apiBase";
 function generatePollingId(): string {
   const arr = new Uint8Array(16);
   crypto.getRandomValues(arr);

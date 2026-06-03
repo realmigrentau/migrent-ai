@@ -4,8 +4,7 @@ import AdminLayout from "../../components/AdminLayout";
 import { supabase } from "../../lib/supabase";
 import { useToast } from "../../components/ui/Toast";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
-
+import { API_BASE_URL as BASE_URL } from "../../lib/apiBase";
 interface Report {
   id: string;
   reporter_id: string;

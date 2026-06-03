@@ -17,8 +17,7 @@ import {
   type ModerationEvent,
 } from "../../lib/spamModerationApi";
 
-const FRONTEND_URL = process.env.NEXT_PUBLIC_FRONTEND_URL || "http://localhost:3000";
-
+import { FRONTEND_BASE_URL as FRONTEND_URL } from "../../lib/apiBase";
 function timeAgo(dateStr: string | null): string {
   if (!dateStr) return "-";
   const now = new Date();

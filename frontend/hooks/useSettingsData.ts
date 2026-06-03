@@ -9,6 +9,7 @@ import {
   type Ticket,
 } from "../lib/api";
 import { supabase } from "../lib/supabase";
+import { API_BASE_URL } from "../lib/apiBase";
 
 // ─── Types ────────────────────────────────────────────────────────
 export type SettingsTab =
@@ -334,7 +335,7 @@ export function useSettingsData() {
     if (!session?.access_token) return false;
     setSaving(true);
     try {
-      const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
+      const BASE_URL = API_BASE_URL;
       const res = await fetch(`${BASE_URL}/account/delete`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${session.access_token}` },

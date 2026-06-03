@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
+import { API_BASE_URL as BASE_URL } from "../../lib/apiBase";
 const MAPTILER_KEY = "eiixMn3GOYAD8j7Rfnvz";
 
 interface GeocodeResult {

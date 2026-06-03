@@ -99,8 +99,7 @@ export function useProfileListings(userId: string | undefined) {
   return { listings, loading, hasMore, loadMore };
 }
 
-const REVIEWS_API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
-
+import { API_BASE_URL as REVIEWS_API_BASE } from "../lib/apiBase";
 export function useProfileReviews(userId: string | undefined) {
   const [reviews, setReviews] = useState<ProfileReview[]>([]);
   const [loading, setLoading] = useState(true);
