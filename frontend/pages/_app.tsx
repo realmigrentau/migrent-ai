@@ -6,6 +6,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import Layout from "../components/Layout";
 import SEOHead from "../components/SEOHead";
 import { ToastProvider } from "../components/ui/Toast";
+import { ConfirmProvider } from "../components/ui/ConfirmDialog";
 import { HCAPTCHA_SITE_KEY } from "../lib/recaptcha";
 import { getPageMeta } from "../lib/pageMeta";
 import "../lib/i18n";
@@ -50,9 +51,11 @@ export default function App({ Component, pageProps, router }: AppProps) {
 
   const wrapped = (
     <ToastProvider>
-      <SEOHead title={meta.title} description={meta.description} noIndex={meta.noIndex} />
-      {inner}
-      <SpeedInsights />
+      <ConfirmProvider>
+        <SEOHead title={meta.title} description={meta.description} noIndex={meta.noIndex} />
+        {inner}
+        <SpeedInsights />
+      </ConfirmProvider>
     </ToastProvider>
   );
 

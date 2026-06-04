@@ -12,6 +12,7 @@ import {
   ChevronUp,
 } from "lucide-react";
 import type { Booking } from "../../hooks/useBookings";
+import { useConfirm } from "../ui/ConfirmDialog";
 
 interface OwnerBookingsTableProps {
   bookings: Booking[];
@@ -69,6 +70,7 @@ export default function OwnerBookingsTable({
 }: OwnerBookingsTableProps) {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
+  const confirm = useConfirm();
 
   const handleAccept = async (bookingId: string) => {
     setActionLoading(bookingId);
@@ -83,7 +85,14 @@ export default function OwnerBookingsTable({
   };
 
   const handleDecline = async (bookingId: string) => {
-    if (!confirm("Are you sure you want to decline this booking request?")) return;
+    const ok = await confirm({
+      title: "Decline this booking request?",
+      description: "The seeker will be notified that you can't host them this time.",
+      confirmLabel: "Decline request",
+      cancelLabel: "Keep reviewing",
+      tone: "danger",
+    });
+    if (!ok) return;
     setActionLoading(bookingId);
     try {
       await onDecline(bookingId);

@@ -13,6 +13,7 @@ import {
   ExternalLink,
 } from "lucide-react";
 import type { SeekerBooking } from "../../hooks/useSeekerData";
+import { useConfirm } from "../ui/ConfirmDialog";
 
 interface Props {
   bookings: SeekerBooking[];
@@ -77,6 +78,7 @@ export default function DashboardSeekerBookings({
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [cancelLoading, setCancelLoading] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState("all");
+  const confirm = useConfirm();
 
   const filtered =
     activeTab === "all"
@@ -84,7 +86,14 @@ export default function DashboardSeekerBookings({
       : bookings.filter((b) => b.status === activeTab);
 
   const handleCancel = async (bookingId: string) => {
-    if (!confirm("Are you sure you want to cancel this booking?")) return;
+    const ok = await confirm({
+      title: "Cancel this booking?",
+      description: "The room will be released and the host will be notified. This can't be undone.",
+      confirmLabel: "Cancel booking",
+      cancelLabel: "Keep booking",
+      tone: "danger",
+    });
+    if (!ok) return;
     setCancelLoading(bookingId);
     try {
       await onCancel(bookingId);

@@ -12,6 +12,7 @@ import {
   Ban,
 } from "lucide-react";
 import type { Booking } from "../../hooks/useBookings";
+import { useConfirm } from "../ui/ConfirmDialog";
 
 interface SeekerBookingsTableProps {
   bookings: Booking[];
@@ -74,9 +75,17 @@ export default function SeekerBookingsTable({
 }: SeekerBookingsTableProps) {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [cancelLoading, setCancelLoading] = useState<string | null>(null);
+  const confirm = useConfirm();
 
   const handleCancel = async (bookingId: string) => {
-    if (!confirm("Are you sure you want to cancel this booking?")) return;
+    const ok = await confirm({
+      title: "Cancel this booking?",
+      description: "The room will be released and the host will be notified. This can't be undone.",
+      confirmLabel: "Cancel booking",
+      cancelLabel: "Keep booking",
+      tone: "danger",
+    });
+    if (!ok) return;
     setCancelLoading(bookingId);
     try {
       await onCancel(bookingId);

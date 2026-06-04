@@ -9,6 +9,7 @@ import {
   User,
 } from "lucide-react";
 import type { OwnerBooking } from "../../hooks/useOwnerData";
+import { useConfirm } from "../ui/ConfirmDialog";
 
 interface Props {
   bookings: OwnerBooking[];
@@ -72,6 +73,7 @@ export default function OwnerBookingsPipeline({
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState("all");
+  const confirm = useConfirm();
 
   const filtered =
     activeTab === "all"
@@ -91,8 +93,14 @@ export default function OwnerBookingsPipeline({
   };
 
   const handleDecline = async (bookingId: string) => {
-    if (!confirm("Are you sure you want to decline this booking request?"))
-      return;
+    const ok = await confirm({
+      title: "Decline this booking request?",
+      description: "The seeker will be notified that you can't host them this time.",
+      confirmLabel: "Decline request",
+      cancelLabel: "Keep reviewing",
+      tone: "danger",
+    });
+    if (!ok) return;
     setActionLoading(bookingId);
     try {
       await onDecline(bookingId);
