@@ -320,6 +320,23 @@ export function useWishlist() {
     }
   }, [wishlistIds, collectionMap, session, user?.id]);
 
+  /** Clear every saved listing (NOT custom collections). Caller should confirm first. */
+  const clearWishlist = useCallback(async () => {
+    setWishlistIds([]);
+    setListings([]);
+    setCompareIds(new Set());
+    setCollectionMap({});
+    localStorage.setItem("wishlist", JSON.stringify([]));
+    storeCollectionMap({});
+    if (session && user?.id) {
+      try {
+        await updateMyProfile(session.access_token, { wishlist: [] });
+      } catch (err) {
+        console.error("Failed to sync cleared wishlist:", err);
+      }
+    }
+  }, [session, user?.id]);
+
   // Collections with computed counts
   const allCollections = useMemo(() => {
     const smartWithCounts = SMART_COLLECTIONS.map((c) => {
@@ -494,6 +511,7 @@ export function useWishlist() {
     sortBy,
     setSortBy,
     removeFromWishlist,
+    clearWishlist,
     // Collections
     collections: allCollections,
     activeCollection,

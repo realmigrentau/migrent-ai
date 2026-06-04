@@ -19,6 +19,8 @@ import WishlistCard from "../../components/wishlist/WishlistCard";
 import ActivityFeed from "../../components/wishlist/ActivityFeed";
 import CompareTable from "../../components/wishlist/CompareTable";
 import ShareModal from "../../components/wishlist/ShareModal";
+import { useConfirm } from "../../components/ui/ConfirmDialog";
+import { useToast } from "../../components/ui/Toast";
 
 const SORT_OPTIONS: { value: SortOption; label: string }[] = [
   { value: "recent", label: "Most recent" },
@@ -37,6 +39,7 @@ export default function WishlistPage() {
     sortBy,
     setSortBy,
     removeFromWishlist,
+    clearWishlist,
     collections,
     activeCollection,
     setActiveCollection,
@@ -81,9 +84,22 @@ export default function WishlistPage() {
       )
     : listings;
 
-  const handleClearAll = useCallback(() => {
-    // Would normally confirm with the user
-  }, []);
+  const confirm = useConfirm();
+  const toast = useToast();
+
+  const handleClearAll = useCallback(async () => {
+    if (allListings.length === 0) return;
+    const ok = await confirm({
+      title: `Clear all ${allListings.length} saved listings?`,
+      description: "Your saved rooms will be removed and any custom-collection assignments will reset. You can always save listings again later.",
+      confirmLabel: "Clear all",
+      cancelLabel: "Keep them",
+      tone: "danger",
+    });
+    if (!ok) return;
+    await clearWishlist();
+    toast.success("Wishlist cleared.");
+  }, [allListings.length, clearWishlist, confirm, toast]);
 
   return (
     <div className="max-w-7xl mx-auto">

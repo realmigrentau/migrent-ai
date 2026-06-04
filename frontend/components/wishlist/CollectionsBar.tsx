@@ -12,6 +12,7 @@ import {
   FolderPlus,
 } from "lucide-react";
 import { COLLECTION_GRADIENTS, type WishlistCollection } from "../../hooks/useWishlist";
+import { useConfirm } from "../ui/ConfirmDialog";
 
 const EMOJI_MAP: Record<string, React.ReactNode> = {
   heart: <Heart className="w-3.5 h-3.5" />,
@@ -50,6 +51,7 @@ export default function CollectionsBar({
   const [newName, setNewName] = useState("");
   const [selectedGradient, setSelectedGradient] = useState(0);
   const [selectedEmoji, setSelectedEmoji] = useState("folder");
+  const confirm = useConfirm();
 
   const handleAdd = () => {
     if (!newName.trim()) return;
@@ -109,10 +111,18 @@ export default function CollectionsBar({
               {/* Remove button for custom collections */}
               {!collection.isSmartCollection && (
                 <button
-                  onClick={(e) => {
+                  onClick={async (e) => {
                     e.stopPropagation();
-                    onRemoveCollection(collection.id);
+                    const ok = await confirm({
+                      title: `Delete the "${collection.name}" collection?`,
+                      description: "The listings inside will go back to your main wishlist - you won't lose any saved rooms.",
+                      confirmLabel: "Delete collection",
+                      cancelLabel: "Keep collection",
+                      tone: "danger",
+                    });
+                    if (ok) onRemoveCollection(collection.id);
                   }}
+                  aria-label={`Delete ${collection.name} collection`}
                   className={`ml-1 p-0.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity ${
                     isActive ? "text-white/60 hover:text-white" : "text-slate-400 hover:text-red-500"
                   }`}
