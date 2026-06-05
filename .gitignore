@@ -39,3 +39,12 @@ install.log
 
 # Build artifacts
 tsconfig.tsbuildinfo
+
+# macOS "filename 2.ext" duplicate files created by Finder/iCloud sync
+* 2.ts
+* 2.tsx
+* 2.js
+* 2.jsx
+* 2.css
+* 2.md
+* 2.json
