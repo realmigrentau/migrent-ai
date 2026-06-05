@@ -505,13 +505,17 @@ export default function OwnerProfilePage() {
             className="w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-[var(--color-primary)] focus:ring-[var(--color-ink)]/30"
           />
         </label>
-        <label className="flex items-center justify-between p-3 rounded-xl border border-slate-200 dark:border-slate-700 cursor-pointer">
-          <span className="text-sm text-slate-700 dark:text-slate-300">SMS notifications (coming soon)</span>
+        <label className="flex items-center justify-between p-3 rounded-xl border border-slate-200 dark:border-slate-700 cursor-not-allowed opacity-70">
+          <span className="text-sm text-slate-700 dark:text-slate-300 inline-flex items-center gap-2">
+            SMS notifications
+            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-medium uppercase tracking-wide">In next release</span>
+          </span>
           <input
             type="checkbox"
             checked={profile.notifySms}
             onChange={(e) => update("notifySms", e.target.checked)}
             disabled
+            aria-label="SMS notifications (not yet available)"
             className="w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-[var(--color-primary)] focus:ring-[var(--color-ink)]/30 opacity-50"
           />
         </label>

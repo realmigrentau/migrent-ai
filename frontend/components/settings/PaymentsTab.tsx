@@ -114,7 +114,7 @@ export default function PaymentsTab({ profile, isOwner, showMessage }: PaymentsT
               <p className="text-sm font-medium text-slate-700 dark:text-slate-300">Invoice Template</p>
               <p className="text-xs text-slate-400">Auto-generate PDF invoices for payouts</p>
             </div>
-            <StatusBadge status="info" label="Coming Soon" />
+            <StatusBadge status="info" label="In next release" />
           </div>
         </div>
       </GlassCard>

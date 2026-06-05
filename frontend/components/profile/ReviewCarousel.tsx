@@ -139,7 +139,6 @@ export default function ReviewCarousel({ reviews, reviewsCount, averageRating, l
         <p className="text-sm text-slate-600 dark:text-slate-300">
           {reviewsCount} review{reviewsCount !== 1 ? "s" : ""} from verified guests
         </p>
-        <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">Full review details coming soon</p>
       </div>
     );
   }

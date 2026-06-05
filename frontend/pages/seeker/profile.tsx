@@ -591,13 +591,6 @@ export default function SeekerProfilePage() {
             "Save profile"
           )}
         </motion.button>
-        <button
-          disabled
-          className="btn-secondary py-3 px-8 rounded-xl text-sm opacity-50 cursor-not-allowed"
-          title="Coming soon"
-        >
-          Download PDF (coming soon)
-        </button>
       </motion.div>
 
       {saved && (

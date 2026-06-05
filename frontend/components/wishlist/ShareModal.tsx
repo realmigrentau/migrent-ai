@@ -192,7 +192,7 @@ export default function ShareModal({ show, onClose, listings }: ShareModalProps)
                       Invite roommates to vote
                     </p>
                     <p className="text-[10px] text-[var(--color-primary)]/60 dark:text-[var(--color-primary)]/60 mt-0.5">
-                      Coming soon - let friends react to your picks!
+                      Group voting launches in the next release.
                     </p>
                   </div>
                 </div>

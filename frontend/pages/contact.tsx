@@ -445,9 +445,9 @@ export default function Contact() {
               </div>
               <div className="flex items-center gap-2 mb-1">
                 <h3 className="font-semibold text-slate-900 dark:text-white text-sm">Discord community</h3>
-                <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-medium uppercase tracking-wide">Coming soon</span>
+                <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-medium uppercase tracking-wide">Launching soon</span>
               </div>
-              <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">Peer help and community chat - launching shortly.</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">Peer help and community chat. We&apos;re finalising moderation before opening it up.</p>
             </div>
           </div>
         </section>

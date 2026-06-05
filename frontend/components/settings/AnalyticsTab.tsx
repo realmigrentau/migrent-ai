@@ -17,11 +17,11 @@ export default function AnalyticsTab({ profile }: AnalyticsTabProps) {
             <BarChart3 className="w-7 h-7 text-[var(--color-primary)]" />
           </div>
           <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">
-            Analytics coming soon
+            Your dashboard will populate as you host
           </h3>
           <p className="text-sm text-slate-500 dark:text-slate-400 max-w-md mx-auto leading-relaxed">
-            Once your listings receive views and bookings, you will see
-            performance data, search trends, and occupancy stats here.
+            Publish a listing to start collecting views, search ranking, and
+            booking data. The charts below preview what you&apos;ll see here.
           </p>
         </div>
       </GlassCard>
