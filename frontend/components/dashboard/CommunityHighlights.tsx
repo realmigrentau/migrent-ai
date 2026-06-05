@@ -152,7 +152,7 @@ export default function CommunityHighlights() {
                   profile.custom_pfp ? "" : "bg-[var(--color-primary-soft)] from-[var(--color-primary)] to-[var(--color-primary)]"
                 }`}>
                   {profile.custom_pfp ? (
-                    <img src={profile.custom_pfp} alt="" className="w-full h-full object-cover" />
+                    <img src={profile.custom_pfp} alt={`${profile.name || "Community member"} profile photo`} className="w-full h-full object-cover" />
                   ) : (
                     displayName[0]?.toUpperCase() || "U"
                   )}

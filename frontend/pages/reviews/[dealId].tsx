@@ -213,7 +213,7 @@ export default function ReviewDealPage() {
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 rounded-full bg-[var(--color-primary-soft)] from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center overflow-hidden">
                 {context.other_user.photo ? (
-                  <img src={context.other_user.photo} alt="" className="w-full h-full object-cover" />
+                  <img src={context.other_user.photo} alt={`${context.other_user.name || "Reviewer"} profile photo`} className="w-full h-full object-cover" />
                 ) : (
                   <span className="text-lg font-bold text-white">
                     {context.other_user.name.charAt(0)}

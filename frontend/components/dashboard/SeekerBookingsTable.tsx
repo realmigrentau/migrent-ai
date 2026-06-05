@@ -188,7 +188,7 @@ export default function DashboardSeekerBookings({
                     {booking.listing?.images?.[0] ? (
                       <img
                         src={booking.listing.images[0]}
-                        alt=""
+                        alt={booking.listing?.title ? `${booking.listing.title} listing photo` : "Listing photo"}
                         className="w-10 h-10 rounded-lg object-cover shrink-0"
                       />
                     ) : (
@@ -287,7 +287,7 @@ export default function DashboardSeekerBookings({
                       {booking.listing?.images?.[0] ? (
                         <img
                           src={booking.listing.images[0]}
-                          alt=""
+                          alt={booking.listing?.title ? `${booking.listing.title} listing photo` : "Listing photo"}
                           className="w-12 h-12 rounded-lg object-cover shrink-0"
                         />
                       ) : (

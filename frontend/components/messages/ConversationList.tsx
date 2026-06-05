@@ -222,7 +222,7 @@ function ThreadItem({
           style={{ background: thread.other_user_pfp ? "var(--color-surface-sunk)" : bg, color: fg }}
         >
           {thread.other_user_pfp ? (
-            <img src={thread.other_user_pfp} alt="" className="w-full h-full object-cover" />
+            <img src={thread.other_user_pfp} alt={`${thread.other_user_name || "Conversation partner"} profile photo`} className="w-full h-full object-cover" />
           ) : (
             <span className="font-bold text-[14px]">{initial}</span>
           )}

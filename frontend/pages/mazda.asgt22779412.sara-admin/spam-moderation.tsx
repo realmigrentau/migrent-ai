@@ -364,7 +364,7 @@ export default function SpamModerationPage() {
                     <div className="flex items-center gap-2 mt-2">
                       <div className="w-5 h-5 rounded-full bg-gradient-to-br from-indigo-500 to-pink-500 flex items-center justify-center text-white text-[9px] font-bold overflow-hidden shrink-0">
                         {listing.owner_photo ? (
-                          <img src={listing.owner_photo} alt="" className="w-full h-full object-cover" />
+                          <img src={listing.owner_photo} alt={`${listing.owner_name || "Owner"} profile photo`} className="w-full h-full object-cover" />
                         ) : (
                           listing.owner_name?.charAt(0).toUpperCase() || "?"
                         )}
@@ -437,7 +437,7 @@ export default function SpamModerationPage() {
                     {selectedListing.images && selectedListing.images.length > 0 && (
                       <div className="flex gap-2 overflow-x-auto pb-2 mb-3">
                         {selectedListing.images.slice(0, 5).map((img, idx) => (
-                          <img key={idx} src={img} alt="" className="w-24 h-24 rounded-lg object-cover shrink-0" />
+                          <img key={idx} src={img} alt="Report evidence" className="w-24 h-24 rounded-lg object-cover shrink-0" />
                         ))}
                       </div>
                     )}
@@ -460,7 +460,7 @@ export default function SpamModerationPage() {
                   <div className="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-800 rounded-lg">
                     <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-pink-500 flex items-center justify-center text-white font-bold text-sm overflow-hidden shrink-0">
                       {selectedListing.owner_photo ? (
-                        <img src={selectedListing.owner_photo} alt="" className="w-full h-full object-cover" />
+                        <img src={selectedListing.owner_photo} alt={`${selectedListing.owner_name || "Owner"} profile photo`} className="w-full h-full object-cover" />
                       ) : (
                         selectedListing.owner_name?.charAt(0).toUpperCase() || "?"
                       )}

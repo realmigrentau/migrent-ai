@@ -163,7 +163,7 @@ export default function ListingHero({
               >
                 <img
                   src={img}
-                  alt=""
+                  alt={`Listing photo ${i + 1}`}
                   className="w-full h-full object-cover"
                   loading="lazy"
                 />

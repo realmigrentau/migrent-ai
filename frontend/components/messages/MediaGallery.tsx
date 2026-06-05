@@ -139,7 +139,7 @@ export default function MediaGallery({ images, initialIndex = 0, isOpen, onClose
             }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
             src={images[currentIndex]}
-            alt=""
+            alt="Attached image"
             className="max-w-[90vw] max-h-[80vh] object-contain select-none rounded-lg"
             draggable={false}
           />
@@ -173,7 +173,7 @@ export default function MediaGallery({ images, initialIndex = 0, isOpen, onClose
                       : "opacity-40 hover:opacity-70"
                   }`}
                 >
-                  <img src={img} alt="" className="w-full h-full object-cover" />
+                  <img src={img} alt="Message attachment" className="w-full h-full object-cover" />
                 </button>
               ))}
             </div>

@@ -228,7 +228,7 @@ export default function MessageInput({
                     {att.preview ? (
                       <img
                         src={att.preview}
-                        alt=""
+                        alt="Sticker preview"
                         className="w-16 h-16 rounded-xl object-cover ring-1 ring-slate-200 dark:ring-slate-700"
                       />
                     ) : (

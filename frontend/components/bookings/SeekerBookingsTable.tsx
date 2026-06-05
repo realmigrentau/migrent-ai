@@ -142,7 +142,7 @@ export default function SeekerBookingsTable({
                   {booking.listing?.images?.[0] && (
                     <img
                       src={booking.listing.images[0]}
-                      alt=""
+                      alt={booking.listing?.title ? `${booking.listing.title} listing photo` : "Listing photo"}
                       className="w-12 h-12 rounded-lg object-cover flex-shrink-0"
                     />
                   )}

@@ -168,7 +168,7 @@ export default function VerificationAdmin() {
                   {/* Owner info */}
                   <div className="flex items-center gap-3 flex-1">
                     {sub.owner_photo ? (
-                      <img src={sub.owner_photo} alt="" className="w-10 h-10 rounded-xl object-cover" />
+                      <img src={sub.owner_photo} alt={`${sub.owner_name || "Owner"} profile photo`} className="w-10 h-10 rounded-xl object-cover" />
                     ) : (
                       <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
                         <span className="text-sm font-bold text-slate-400">{sub.owner_name?.[0] || "?"}</span>

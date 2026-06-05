@@ -99,7 +99,7 @@ function ReviewCard({
                 <img
                   key={i}
                   src={photo}
-                  alt=""
+                  alt="Reviewer profile photo"
                   className="w-16 h-16 rounded-lg object-cover flex-shrink-0"
                   loading="lazy"
                 />

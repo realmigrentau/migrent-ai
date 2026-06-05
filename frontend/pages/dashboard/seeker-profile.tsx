@@ -105,7 +105,7 @@ export default function SeekerProfilePage() {
                 style={{ background: "#e2e7ee", color: "var(--color-primary)" }}
               >
                 {p.photo ? (
-                  <img src={p.photo} alt="" className="w-full h-full object-cover" />
+                  <img src={p.photo} alt={`${p.name || "Profile"} photo`} className="w-full h-full object-cover" />
                 ) : (
                   <span className="text-[40px] font-bold tracking-[-0.02em]">{initials}</span>
                 )}

@@ -43,7 +43,7 @@ export default function HeroHeader({
           >
             <div className={`w-28 h-28 md:w-32 md:h-32 rounded-full flex items-center justify-center overflow-hidden ring-4 ring-white/40 shadow-2xl transition-all group-hover:ring-white/70 ${isVerified ? "verify-pulse" : ""}`}>
               {profile.custom_pfp ? (
-                <img src={profile.custom_pfp} alt="" className="w-full h-full object-cover" />
+                <img src={profile.custom_pfp} alt={`${profile.name || "Profile"} photo`} className="w-full h-full object-cover" />
               ) : (
                 <div className="w-full h-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
                   <span className="text-5xl md:text-6xl font-black text-white select-none">{displayName.charAt(0).toUpperCase()}</span>

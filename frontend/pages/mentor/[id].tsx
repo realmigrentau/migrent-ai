@@ -368,7 +368,7 @@ export default function MentorProfilePage() {
                   <div className="flex items-center gap-2 mb-2">
                     <div className="w-7 h-7 rounded-full bg-[var(--color-primary-soft)] from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center overflow-hidden">
                       {review.profiles?.custom_pfp ? (
-                        <img src={review.profiles.custom_pfp} alt="" className="w-full h-full object-cover" />
+                        <img src={review.profiles.custom_pfp} alt={`${review.profiles?.name || "Reviewer"} profile photo`} className="w-full h-full object-cover" />
                       ) : (
                         <span className="text-white text-xs font-bold">
                           {review.profiles?.name?.charAt(0) || "?"}

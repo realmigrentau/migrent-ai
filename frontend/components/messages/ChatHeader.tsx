@@ -95,7 +95,7 @@ export default function ChatHeader({
               style={{ background: userAvatar ? "var(--color-surface-sunk)" : bg, color: fg }}
             >
               {userAvatar ? (
-                <img src={userAvatar} alt="" className="w-full h-full object-cover" />
+                <img src={userAvatar} alt={`${userName || "Chat partner"} profile photo`} className="w-full h-full object-cover" />
               ) : (
                 <span className="font-bold text-[13px]">{initial}</span>
               )}

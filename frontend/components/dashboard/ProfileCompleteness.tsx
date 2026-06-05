@@ -195,7 +195,7 @@ export default function ProfileCompleteness({ profile, role, loading }: ProfileC
               profile.photo ? "" : "bg-[var(--color-primary-soft)] from-[var(--color-primary)] to-[var(--color-primary)]"
             }`}>
               {profile.photo ? (
-                <img src={profile.photo} alt="" className="w-full h-full object-cover" />
+                <img src={profile.photo} alt="Your profile photo" className="w-full h-full object-cover" />
               ) : (
                 profile.name[0]?.toUpperCase() || "U"
               )}
