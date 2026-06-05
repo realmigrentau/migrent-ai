@@ -526,7 +526,7 @@ def notify_founder_spam(listing_id: str, result: dict, listing_title: str, owner
       Please review this listing and take action. No listing will be deleted without your approval.
     </p>
 
-    {_button("Review in Admin Panel", f"{FRONTEND_URL}/mazda.asgt22779412.sara-admin/spam-moderation")}
+    {_button("Review in Admin Panel", f"{FRONTEND_URL}/admin/spam-moderation")}
 
     <p style="font-size:12px;color:#9ca3af;text-align:center;margin:8px 0 0;">
       This is an automated alert from the MigRent spam detection system.
@@ -538,7 +538,7 @@ def notify_founder_spam(listing_id: str, result: dict, listing_title: str, owner
         f"Owner: {owner_name or 'Unknown'}\n"
         f"Spam Score: {result['spam_score']}/100\n\n"
         f"Reasons:\n" + "\n".join(f"- {r}" for r in result["reasons"][:10]) + "\n\n"
-        f"Review: {FRONTEND_URL}/mazda.asgt22779412.sara-admin/spam-moderation\n\n"
+        f"Review: {FRONTEND_URL}/admin/spam-moderation\n\n"
         f"- MigRent System"
     )
 

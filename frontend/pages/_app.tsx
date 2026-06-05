@@ -12,7 +12,7 @@ import { getPageMeta } from "../lib/pageMeta";
 import "../lib/i18n";
 import "../styles/globals.css";
 
-const ADMIN_PATH = process.env.NEXT_PUBLIC_ADMIN_PATH || "/mazda.asgt22779412.sara-admin";
+const ADMIN_PATH = process.env.NEXT_PUBLIC_ADMIN_PATH || "/admin";
 
 export default function App({ Component, pageProps, router }: AppProps) {
   // Register service worker for PWA + push notifications

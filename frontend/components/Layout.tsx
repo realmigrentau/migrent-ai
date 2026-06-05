@@ -14,7 +14,7 @@ export default function Layout({ children }: { children: ReactNode }) {
   const router = useRouter();
   const { t } = useTranslation();
 
-  const adminPath = process.env.NEXT_PUBLIC_ADMIN_PATH || "/mazda.asgt22779412.sara-admin";
+  const adminPath = process.env.NEXT_PUBLIC_ADMIN_PATH || "/admin";
   const isAdminRoute = router.pathname.startsWith(adminPath);
   const isHomePage = router.pathname === "/";
   const isDashboard = router.pathname.startsWith("/dashboard");

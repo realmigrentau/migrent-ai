@@ -40,6 +40,9 @@ install.log
 # Build artifacts
 tsconfig.tsbuildinfo
 
+# Claude Code worktrees + session state - never commit
+.claude/
+
 # macOS "filename 2.ext" duplicate files created by Finder/iCloud sync
 * 2.ts
 * 2.tsx

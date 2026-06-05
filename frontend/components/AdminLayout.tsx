@@ -9,7 +9,7 @@ import AdminGate, { useAdminGate } from "./AdminGate";
 
 const sidebarLinks = [
   {
-    href: "/mazda.asgt22779412.sara-admin/overview",
+    href: "/admin/overview",
     label: "Overview",
     icon: (
       <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -18,7 +18,7 @@ const sidebarLinks = [
     ),
   },
   {
-    href: "/mazda.asgt22779412.sara-admin/users",
+    href: "/admin/users",
     label: "Users",
     icon: (
       <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -27,7 +27,7 @@ const sidebarLinks = [
     ),
   },
   {
-    href: "/mazda.asgt22779412.sara-admin/revenue",
+    href: "/admin/revenue",
     label: "Revenue",
     icon: (
       <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -36,7 +36,7 @@ const sidebarLinks = [
     ),
   },
   {
-    href: "/mazda.asgt22779412.sara-admin/listings",
+    href: "/admin/listings",
     label: "Listings",
     icon: (
       <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -45,7 +45,7 @@ const sidebarLinks = [
     ),
   },
   {
-    href: "/mazda.asgt22779412.sara-admin/analytics",
+    href: "/admin/analytics",
     label: "Analytics",
     icon: (
       <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -54,7 +54,7 @@ const sidebarLinks = [
     ),
   },
   {
-    href: "/mazda.asgt22779412.sara-admin/moderation",
+    href: "/admin/moderation",
     label: "Moderation",
     icon: (
       <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -63,7 +63,7 @@ const sidebarLinks = [
     ),
   },
   {
-    href: "/mazda.asgt22779412.sara-admin/spam-moderation",
+    href: "/admin/spam-moderation",
     label: "Spam Detection",
     icon: (
       <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -72,7 +72,7 @@ const sidebarLinks = [
     ),
   },
   {
-    href: "/mazda.asgt22779412.sara-admin/support",
+    href: "/admin/support",
     label: "Support",
     icon: (
       <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>

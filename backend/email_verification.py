@@ -164,7 +164,7 @@ def send_founder_id_review_alert(founder_email: str, owner_name: str, owner_emai
     </div>
 
     <div style="text-align:center;margin:24px 0;">
-      <a href="{FRONTEND_URL}/mazda.asgt22779412.sara-admin/verification" style="background-color:#2563eb;border-radius:8px;color:#ffffff;font-size:16px;font-weight:600;text-decoration:none;padding:14px 32px;display:inline-block;">Review Now</a>
+      <a href="{FRONTEND_URL}/admin/verification" style="background-color:#2563eb;border-radius:8px;color:#ffffff;font-size:16px;font-weight:600;text-decoration:none;padding:14px 32px;display:inline-block;">Review Now</a>
     </div>
     """
     _send(founder_email, f"New ID submission from {owner_name} - review needed", _email_layout(content))
