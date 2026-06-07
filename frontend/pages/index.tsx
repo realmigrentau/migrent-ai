@@ -187,73 +187,112 @@ export default function Home() {
         <meta name="twitter:image" content="/og-default.png" />
       </Head>
 
-      {/* SECTION 1 - HERO */}
-      <section className="bg-grain relative bg-[var(--color-bg)] border-b border-[var(--color-line)]">
-        <div className="max-w-[1280px] mx-auto px-6 md:px-10 lg:px-14 pt-10 md:pt-14 pb-14 md:pb-20">
-          <div className="eyebrow mb-3">For migrants, students &amp; new arrivals · AU only</div>
-          <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-10 lg:gap-14 items-end">
-            <div>
-              <h1 className="font-serif text-[44px] sm:text-[60px] md:text-[72px] lg:text-[84px] leading-[0.98] tracking-[-0.025em] text-[var(--color-ink)] text-balance">
-                {t("home.headline1")},<br />
-                <span className="italic text-[var(--color-ink-2)]">{t("home.headline2")}.</span>
-              </h1>
-              <p className="text-[17px] text-[var(--color-ink-2)] mt-5 max-w-[540px] leading-[1.5]">
-                {t("home.subtitle")}
-              </p>
+      {/* SECTION 1 - HERO
+       * Hallmark v1.1.0 · remix of animated-hero pattern (Forma-style video card)
+       * macrostructure: Marquee Hero w/ video bg · split bottom band (headline left + search card right)
+       * theme: studied-DNA (source: user reference) · paper: dark video footage · ink: white drop-shadow
+       * display: existing font-serif italic accent (preserved per "almost everything same") · body: Inter via Layout
+       * note: in-card pill nav skipped — MegaNavbar above is the global nav; avoiding duplication.
+       */}
+      <section className="bg-[var(--color-bg)] p-3 sm:p-4 md:p-6">
+        <div className="relative w-full overflow-hidden rounded-2xl sm:rounded-3xl bg-black min-h-[calc(100vh-84px-24px)] sm:min-h-[calc(100vh-84px-32px)] md:min-h-[calc(100vh-84px-48px)] lg:h-[calc(100vh-84px-48px)]">
+          {/* Video backdrop */}
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            aria-hidden="true"
+            className="absolute inset-0 w-full h-full object-cover"
+            src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260602_150901_c45b90ec-18d7-42ff-90e2-b95d7109e330.mp4"
+          />
+          {/* Legibility scrim — keeps white headline + search card readable over any frame */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/15 to-black/25" aria-hidden="true" />
+
+          {/* Content layer */}
+          <div className="relative z-10 flex flex-col min-h-[calc(100vh-84px-24px)] sm:min-h-[calc(100vh-84px-32px)] md:min-h-[calc(100vh-84px-48px)] lg:h-full p-4 sm:p-6 md:p-8 gap-6">
+            {/* Top: eyebrow pill (white glass), echoing the Forma top-card affordance without duplicating MegaNavbar */}
+            <div className="flex items-start">
+              <div className="inline-flex items-center gap-2 bg-white/65 backdrop-blur-md rounded-2xl shadow-sm pl-3 pr-3 py-2">
+                <span className="inline-block w-2 h-2 rounded-full bg-[var(--color-accent)]" aria-hidden="true" />
+                <span className="text-[12.5px] font-medium text-gray-800 whitespace-nowrap">
+                  For migrants, students &amp; new arrivals · AU only
+                </span>
+              </div>
             </div>
 
-            {/* Search card */}
-            <div className="bg-[var(--color-surface-2)] border border-[var(--color-line)] rounded-[20px] p-1.5 shadow-[var(--shadow-pop)]">
-              <div className="px-4 py-3.5">
-                <div className="eyebrow">Start your search</div>
+            <div className="flex-1 min-h-[2rem]" />
+
+            {/* Bottom band: headline left / search card right */}
+            <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
+              {/* Headline */}
+              <div className="lg:max-w-lg xl:max-w-2xl shrink-0">
+                <h1 className="font-serif text-white text-[40px] sm:text-[56px] xl:text-[72px] font-medium leading-[1.02] tracking-[-0.02em] drop-shadow-[0_2px_24px_rgba(0,0,0,0.45)] text-balance">
+                  {t("home.headline1")}
+                  <br />
+                  <span className="italic text-white/95">{t("home.headline2")}.</span>
+                </h1>
+                <p className="mt-5 text-[15px] sm:text-[16px] text-white/85 drop-shadow-[0_1px_8px_rgba(0,0,0,0.5)] max-w-[520px] leading-[1.5]">
+                  {t("home.subtitle")}
+                </p>
               </div>
-              <div className="grid grid-cols-2 bg-[var(--color-surface-2)] rounded-[14px] overflow-hidden border border-[var(--color-line)]">
-                <label className="px-4 py-3 border-r border-[var(--color-line)] block">
-                  <div className="text-[11px] text-[var(--color-ink-3)] font-semibold uppercase tracking-[0.04em]">City</div>
-                  <input
-                    value={city}
-                    onChange={(e) => setCity(e.target.value)}
-                    className="bg-transparent border-none outline-none text-[15px] font-semibold text-[var(--color-ink)] w-full mt-0.5 p-0"
-                  />
-                </label>
-                <div className="px-4 py-3">
-                  <div className="text-[11px] text-[var(--color-ink-3)] font-semibold uppercase tracking-[0.04em]">Move-in</div>
-                  <div className="text-[15px] font-semibold text-[var(--color-ink)] mt-0.5">Any time</div>
-                </div>
-              </div>
-              <div className="px-4 pt-4 pb-1">
-                <div className="flex justify-between items-baseline">
-                  <div className="text-[11px] text-[var(--color-ink-3)] font-semibold uppercase tracking-[0.04em]">Weekly budget</div>
-                  <div className="font-mono text-[13px] text-[var(--color-ink)]">up to ${budget}/wk</div>
-                </div>
-                <input
-                  type="range"
-                  min={150}
-                  max={1000}
-                  step={5}
-                  value={budget}
-                  onChange={(e) => setBudget(+e.target.value)}
-                  aria-label={`Weekly budget: up to $${budget} AUD`}
-                  className="premium-range w-full mt-2 accent-[var(--color-primary)]"
-                />
-                <div className="flex justify-between text-[11px] text-[var(--color-ink-3)] mt-0.5">
-                  <span>$150</span><span>$500</span><span>$1000+</span>
-                </div>
-              </div>
-              <div className="px-4 py-4">
-                <Link
-                  href={`/seeker/search?city=${encodeURIComponent(city)}&maxPrice=${budget}`}
-                  className="btn-primary w-full h-12 text-[15px]"
-                >
-                  Show {matchCount} matching homes
-                  <ArrowRight className="w-4 h-4" />
-                </Link>
-                <div className="text-[11.5px] text-[var(--color-ink-3)] mt-2.5 text-center">
-                  Or{" "}
-                  <Link href={session ? "/owner/listings/new" : "/for-owners"} className="text-[var(--color-ink-2)] underline underline-offset-[3px]">
-                    list a room
+
+              {/* Search card — same UX as before, restyled as Forma-style floating white card */}
+              <div className="w-full lg:w-[min(480px,45%)] shrink-0">
+                <div className="bg-white rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden p-4 sm:p-6 flex flex-col gap-4">
+                  <div className="text-xl sm:text-2xl font-semibold text-black tracking-tight">
+                    Start your search
+                  </div>
+
+                  <div className="grid grid-cols-2 bg-gray-50 rounded-2xl overflow-hidden">
+                    <label className="px-4 py-3 border-r border-gray-200 block">
+                      <div className="text-[11px] text-gray-500 font-semibold uppercase tracking-[0.04em]">City</div>
+                      <input
+                        value={city}
+                        onChange={(e) => setCity(e.target.value)}
+                        className="bg-transparent border-none outline-none text-[15px] font-semibold text-black w-full mt-0.5 p-0"
+                      />
+                    </label>
+                    <div className="px-4 py-3">
+                      <div className="text-[11px] text-gray-500 font-semibold uppercase tracking-[0.04em]">Move-in</div>
+                      <div className="text-[15px] font-semibold text-black mt-0.5">Any time</div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <div className="flex justify-between items-baseline">
+                      <div className="text-[11px] text-gray-500 font-semibold uppercase tracking-[0.04em]">Weekly budget</div>
+                      <div className="font-mono text-[13px] text-black tabular-nums">up to ${budget}/wk</div>
+                    </div>
+                    <input
+                      type="range"
+                      min={150}
+                      max={1000}
+                      step={5}
+                      value={budget}
+                      onChange={(e) => setBudget(+e.target.value)}
+                      aria-label={`Weekly budget: up to $${budget} AUD`}
+                      className="premium-range w-full mt-2 accent-[var(--color-primary)]"
+                    />
+                    <div className="flex justify-between text-[11px] text-gray-500 mt-0.5">
+                      <span>$150</span><span>$500</span><span>$1000+</span>
+                    </div>
+                  </div>
+
+                  <Link
+                    href={`/seeker/search?city=${encodeURIComponent(city)}&maxPrice=${budget}`}
+                    className="w-full bg-black text-white text-[15px] font-semibold h-12 rounded-2xl hover:bg-gray-800 transition-colors inline-flex items-center justify-center gap-2"
+                  >
+                    Show {matchCount} matching homes
+                    <ArrowRight className="w-4 h-4" />
                   </Link>
-                  {" "}on MigRent
+                  <div className="text-[12px] text-gray-500 text-center -mt-2">
+                    Or{" "}
+                    <Link href={session ? "/owner/listings/new" : "/for-owners"} className="text-black underline underline-offset-[3px]">
+                      list a room
+                    </Link>
+                    {" "}on MigRent
+                  </div>
                 </div>
               </div>
             </div>
