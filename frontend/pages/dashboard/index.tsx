@@ -182,7 +182,7 @@ export default function DashboardHome() {
         </AnimatePresence>
 
         {/* Keyboard shortcuts hint */}
-        <div className="hidden lg:flex items-center justify-center gap-4 py-4 text-xs text-slate-400 dark:text-slate-500">
+        <div className="hidden lg:flex items-center justify-center gap-4 py-4 text-xs text-[var(--color-ink-3)]">
           <span>Keyboard shortcuts:</span>
           {[
             { key: "L", label: "New Listing" },
@@ -191,7 +191,7 @@ export default function DashboardHome() {
             { key: "P", label: "Profile" },
           ].map((shortcut) => (
             <span key={shortcut.key} className="flex items-center gap-1.5">
-              <kbd className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-mono text-[10px] font-semibold">
+              <kbd className="px-1.5 py-0.5 rounded bg-[var(--color-surface-muted)] border border-[var(--color-line)] font-mono text-[10px] font-semibold">
                 {shortcut.key}
               </kbd>
               {shortcut.label}
@@ -218,10 +218,10 @@ function RoleSelectionScreen({
       className="max-w-2xl mx-auto py-8"
     >
       <div className="text-center mb-10">
-        <h1 className="text-3xl font-semibold tracking-tight text-slate-900 dark:text-white mb-2">
+        <h1 className="font-serif text-[32px] md:text-[42px] tracking-[-0.02em] leading-[1.03] text-[var(--color-ink)] mb-2">
           How will you use MigRent?
         </h1>
-        <p className="text-[15px] text-slate-600 dark:text-slate-400">
+        <p className="text-[15px] text-[var(--color-ink-2)]">
           Choose your primary role. You can switch anytime from the dashboard.
         </p>
       </div>
@@ -233,7 +233,7 @@ function RoleSelectionScreen({
           whileTap={{ scale: 0.99 }}
           onClick={() => onSelect("owner")}
           disabled={loading}
-          className="bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800 hover:border-[var(--color-line-2)] dark:hover:border-[var(--color-primary)]/40 rounded-2xl p-7 text-left transition-colors disabled:opacity-50"
+          className="bg-[var(--color-surface-2)] border border-[var(--color-line)] hover:border-[var(--color-line-2)] dark:hover:border-[var(--color-primary)]/40 rounded-2xl p-7 text-left transition-colors disabled:opacity-50"
         >
           <div className="w-12 h-12 rounded-xl bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 flex items-center justify-center mb-5">
             <svg
@@ -250,10 +250,10 @@ function RoleSelectionScreen({
               />
             </svg>
           </div>
-          <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-1.5 tracking-tight">
+          <h3 className="font-serif text-[22px] text-[var(--color-ink)] mb-1.5 tracking-[-0.01em]">
             I&apos;m an owner
           </h3>
-          <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+          <p className="text-sm text-[var(--color-ink-2)] leading-relaxed">
             List rooms, manage properties, and connect with verified tenants.
           </p>
           <div className="mt-5 flex items-center text-[var(--color-primary)] dark:text-[var(--color-primary)] font-medium text-sm">
@@ -276,7 +276,7 @@ function RoleSelectionScreen({
           whileTap={{ scale: 0.99 }}
           onClick={() => onSelect("seeker")}
           disabled={loading}
-          className="bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800 hover:border-[var(--color-line-2)] dark:hover:border-[var(--color-primary)]/40 rounded-2xl p-7 text-left transition-colors disabled:opacity-50"
+          className="bg-[var(--color-surface-2)] border border-[var(--color-line)] hover:border-[var(--color-line-2)] dark:hover:border-[var(--color-primary)]/40 rounded-2xl p-7 text-left transition-colors disabled:opacity-50"
         >
           <div className="w-12 h-12 rounded-xl bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 flex items-center justify-center mb-5">
             <svg
@@ -293,10 +293,10 @@ function RoleSelectionScreen({
               />
             </svg>
           </div>
-          <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-1.5 tracking-tight">
+          <h3 className="font-serif text-[22px] text-[var(--color-ink)] mb-1.5 tracking-[-0.01em]">
             I&apos;m a seeker
           </h3>
-          <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+          <p className="text-sm text-[var(--color-ink-2)] leading-relaxed">
             Search rooms, save favorites, and get AI-powered match recommendations.
           </p>
           <div className="mt-5 flex items-center text-[var(--color-primary)] dark:text-[var(--color-primary)] font-medium text-sm">

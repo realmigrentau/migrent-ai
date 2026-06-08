@@ -10,7 +10,7 @@ import StationAutocomplete from "../../components/search/StationAutocomplete";
 const ListingsMap = dynamic(() => import("../../components/ListingsMap"), {
   ssr: false,
   loading: () => (
-    <div className="w-full h-full flex items-center justify-center bg-slate-50 dark:bg-slate-800/50">
+    <div className="w-full h-full flex items-center justify-center bg-[var(--color-surface)]">
       <div className="w-6 h-6 border-2 border-[var(--color-accent)] border-t-transparent rounded-full animate-spin" />
     </div>
   ),
@@ -110,10 +110,10 @@ function FilterChip({ label, onRemove }: { label: string; onRemove: () => void }
 function FilterSection({ title, children, defaultOpen = true }: { title: string; children: React.ReactNode; defaultOpen?: boolean }) {
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <div className="border-b border-slate-100 dark:border-slate-800 pb-4">
+    <div className="border-b border-[var(--color-line)] pb-4">
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center justify-between w-full text-sm font-semibold text-slate-800 dark:text-slate-200 mb-2"
+        className="flex items-center justify-between w-full text-sm font-semibold text-[var(--color-ink)] mb-2"
       >
         {title}
         <svg className={`w-4 h-4 transition-transform ${open ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -504,10 +504,10 @@ export default function SeekerSearch() {
       days.push(
         <button key={day} onClick={() => handleDateClick(day)} disabled={isPast}
           className={`w-10 h-10 rounded-full text-sm font-medium transition-all ${
-            isPast ? "text-slate-300 dark:text-slate-600 cursor-not-allowed"
+            isPast ? "text-[var(--color-ink-4)] cursor-not-allowed"
             : selected ? "bg-[var(--color-ink)] text-[var(--color-bg)]"
             : inRange ? "bg-[var(--color-surface-sunk)] text-[var(--color-ink)]"
-            : "text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+            : "text-[var(--color-ink-2)] hover:bg-[var(--color-surface-muted)]"
           }`}
         >{day}</button>
       );
@@ -518,11 +518,11 @@ export default function SeekerSearch() {
   // Guest counter
   const GuestCounter = ({ label, value, onDec, onInc, min = 0 }: { label: string; value: number; onDec: () => void; onInc: () => void; min?: number }) => (
     <div className="flex items-center justify-between">
-      <span className="text-xs text-slate-600 dark:text-slate-300">{label}</span>
+      <span className="text-xs text-[var(--color-ink-2)]">{label}</span>
       <div className="flex items-center gap-2">
-        <button onClick={onDec} disabled={value <= min} className="w-7 h-7 rounded-full border border-slate-200 dark:border-slate-700 flex items-center justify-center text-sm disabled:opacity-30 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">-</button>
-        <span className="text-xs font-semibold w-5 text-center text-slate-900 dark:text-white">{value}</span>
-        <button onClick={onInc} className="w-7 h-7 rounded-full border border-slate-200 dark:border-slate-700 flex items-center justify-center text-sm hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">+</button>
+        <button onClick={onDec} disabled={value <= min} className="w-7 h-7 rounded-full border border-[var(--color-line)] flex items-center justify-center text-sm disabled:opacity-30 hover:bg-[var(--color-surface)] transition-colors">-</button>
+        <span className="text-xs font-semibold w-5 text-center text-[var(--color-ink)]">{value}</span>
+        <button onClick={onInc} className="w-7 h-7 rounded-full border border-[var(--color-line)] flex items-center justify-center text-sm hover:bg-[var(--color-surface)] transition-colors">+</button>
       </div>
     </div>
   );
@@ -567,12 +567,12 @@ export default function SeekerSearch() {
       <FilterSection title="Price range ($/week)" defaultOpen={true}>
         <div className="flex gap-2">
           <div className="relative flex-1">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none">$</span>
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-ink-3)] text-xs pointer-events-none">$</span>
             <input type="number" value={minPrice} onChange={(e) => setMinPrice(e.target.value)} placeholder="Min" min="0" className="input-field text-sm" style={{ paddingLeft: "1.75rem" }} />
           </div>
-          <span className="flex items-center text-slate-400 text-xs">-</span>
+          <span className="flex items-center text-[var(--color-ink-3)] text-xs">-</span>
           <div className="relative flex-1">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none">$</span>
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-ink-3)] text-xs pointer-events-none">$</span>
             <input type="number" value={maxPrice} onChange={(e) => setMaxPrice(e.target.value)} placeholder="Max" min="0" className="input-field text-sm" style={{ paddingLeft: "1.75rem" }} />
           </div>
         </div>
@@ -613,31 +613,31 @@ export default function SeekerSearch() {
       <FilterSection title="Available dates" defaultOpen={false}>
         <div className="relative" ref={calendarRef}>
           <button onClick={() => setShowCalendar(!showCalendar)} className="input-field text-sm text-left flex items-center justify-between w-full">
-            <span className={checkInDate ? "text-slate-900 dark:text-white" : "text-slate-400 dark:text-slate-500"}>{formatDateRange()}</span>
-            <svg className="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+            <span className={checkInDate ? "text-[var(--color-ink)]" : "text-[var(--color-ink-3)]"}>{formatDateRange()}</span>
+            <svg className="w-4 h-4 text-[var(--color-ink-3)]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
           </button>
           <AnimatePresence>
             {showCalendar && (
               <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
-                className="absolute z-50 mt-2 p-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-xl w-full max-w-sm">
+                className="absolute z-50 mt-2 p-4 bg-[var(--color-surface-2)] border border-[var(--color-line)] rounded-2xl shadow-xl w-full max-w-sm">
                 <div className="flex items-center justify-between mb-4">
-                  <button onClick={goToPrevMonth} className="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
-                    <svg className="w-4 h-4 text-slate-600 dark:text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+                  <button onClick={goToPrevMonth} className="p-1.5 hover:bg-[var(--color-surface-muted)] rounded-lg">
+                    <svg className="w-4 h-4 text-[var(--color-ink-2)]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
                   </button>
-                  <h3 className="font-bold text-sm text-slate-900 dark:text-white">{MONTH_NAMES[calendarMonth]} {calendarYear}</h3>
-                  <button onClick={goToNextMonth} className="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
-                    <svg className="w-4 h-4 text-slate-600 dark:text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+                  <h3 className="font-bold text-sm text-[var(--color-ink)]">{MONTH_NAMES[calendarMonth]} {calendarYear}</h3>
+                  <button onClick={goToNextMonth} className="p-1.5 hover:bg-[var(--color-surface-muted)] rounded-lg">
+                    <svg className="w-4 h-4 text-[var(--color-ink-2)]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
                   </button>
                 </div>
                 <div className="grid grid-cols-7 gap-1 mb-2">
                   {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map((d) => (
-                    <div key={d} className="w-10 h-8 flex items-center justify-center text-xs font-semibold text-slate-500 dark:text-slate-400">{d}</div>
+                    <div key={d} className="w-10 h-8 flex items-center justify-center text-xs font-semibold text-[var(--color-ink-3)]">{d}</div>
                   ))}
                 </div>
                 <div className="grid grid-cols-7 gap-1">{renderCalendar()}</div>
                 {checkInDate && (
-                  <div className="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700">
-                    <p className="text-xs text-slate-600 dark:text-slate-300">
+                  <div className="mt-3 pt-3 border-t border-[var(--color-line)]">
+                    <p className="text-xs text-[var(--color-ink-2)]">
                       {checkOutDate ? `${Math.ceil((checkOutDate.getTime() - checkInDate.getTime()) / 86400000)} nights` : "Select check-out"}
                     </p>
                   </div>
@@ -668,10 +668,10 @@ export default function SeekerSearch() {
           />
           {(selectedStation || stationDistanceFilter !== "any") && (
             <div className="flex flex-wrap gap-1.5">
-              <span className="text-[11px] text-slate-500 dark:text-slate-400 self-center mr-0.5">Walk:</span>
+              <span className="text-[11px] text-[var(--color-ink-3)] self-center mr-0.5">Walk:</span>
               {(["15", "30", "any"] as const).map((val) => (
                 <button key={val} onClick={() => setStationDistanceFilter(val)}
-                  className={`px-2.5 py-1 rounded-lg text-[11px] font-medium transition-all ${stationDistanceFilter === val ? "bg-[var(--color-accent-soft)]0 text-white shadow-sm" : "bg-[var(--color-surface-sunk)] text-[var(--color-ink-2)] hover:bg-[var(--color-line)]"}`}>
+                  className={`px-2.5 py-1 rounded-lg text-[11px] font-medium transition-all ${stationDistanceFilter === val ? "bg-[var(--color-accent)] text-[var(--color-primary-fg)] shadow-sm" : "bg-[var(--color-surface-sunk)] text-[var(--color-ink-2)] hover:bg-[var(--color-line)]"}`}>
                   {val === "15" ? "< 15 min" : val === "30" ? "< 30 min" : "Any"}
                 </button>
               ))}
@@ -740,10 +740,10 @@ export default function SeekerSearch() {
     <div className="space-y-5">
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-        <h1 className="text-2xl md:text-3xl font-semibold tracking-tight text-slate-900 dark:text-white">
+        <h1 className="text-2xl md:text-3xl font-semibold tracking-tight text-[var(--color-ink)]">
           Find a Room
         </h1>
-        <p className="text-[15px] text-slate-600 dark:text-slate-400 mt-1.5">
+        <p className="text-[15px] text-[var(--color-ink-2)] mt-1.5">
           Search real listings by location, price, and preferences.
         </p>
       </motion.div>
@@ -779,16 +779,16 @@ export default function SeekerSearch() {
             <motion.div
               initial={{ x: "-100%" }} animate={{ x: 0 }} exit={{ x: "-100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="fixed inset-y-0 left-0 w-[85vw] max-w-sm bg-white dark:bg-slate-900 z-50 overflow-y-auto shadow-2xl lg:hidden"
+              className="fixed inset-y-0 left-0 w-[85vw] max-w-sm bg-[var(--color-surface-2)] z-50 overflow-y-auto shadow-2xl lg:hidden"
             >
-              <div className="sticky top-0 bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 px-5 py-4 flex items-center justify-between z-10">
-                <h2 className="font-bold text-lg text-slate-900 dark:text-white">Filters</h2>
+              <div className="sticky top-0 bg-[var(--color-surface-2)] border-b border-[var(--color-line)] px-5 py-4 flex items-center justify-between z-10">
+                <h2 className="font-bold text-lg text-[var(--color-ink)]">Filters</h2>
                 <div className="flex items-center gap-3">
                   {activeFilters.length > 0 && (
                     <button onClick={clearAllFilters} className="text-xs text-[var(--color-ink)] hover:opacity-80 font-medium">Clear all</button>
                   )}
-                  <button onClick={() => setShowMobileFilters(false)} className="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
-                    <svg className="w-5 h-5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <button onClick={() => setShowMobileFilters(false)} className="p-1.5 hover:bg-[var(--color-surface-muted)] rounded-lg">
+                    <svg className="w-5 h-5 text-[var(--color-ink-3)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                     </svg>
                   </button>
@@ -817,7 +817,7 @@ export default function SeekerSearch() {
       {/* Best match header description */}
       {isBestMatch && session && searched && !searching && results.length > 0 && (
         <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-          className="text-xs text-slate-500 dark:text-slate-400 -mt-2">
+          className="text-xs text-[var(--color-ink-3)] -mt-2">
           Listings ranked by how well they fit your saved preferences. Scores are based on location, budget, and features - not guesswork.
           {" "}<Link href="/seeker/profile" className="text-[var(--color-primary)] hover:underline font-medium">Update your preferences</Link>
         </motion.p>
@@ -826,7 +826,7 @@ export default function SeekerSearch() {
       {/* Results header */}
       {searched && !searching && (
         <div className="flex items-center justify-between">
-          <p className="text-sm font-medium text-slate-600 dark:text-slate-400">
+          <p className="text-sm font-medium text-[var(--color-ink-2)]">
             {results.length === 0 ? "No rooms found" : `${results.length}${hasMore ? "+" : ""} rooms found`}
           </p>
           <div className="flex items-center gap-2">
@@ -897,11 +897,11 @@ export default function SeekerSearch() {
               ) : results.length === 0 ? (
                 /* No results state */
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="card p-10 rounded-2xl text-center">
-                  <svg className="w-16 h-16 mx-auto text-slate-200 dark:text-slate-700 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
+                  <svg className="w-16 h-16 mx-auto text-[var(--color-ink-4)] mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                   </svg>
-                  <h3 className="font-bold text-lg text-slate-900 dark:text-white mb-2">No rooms match your search</h3>
-                  <p className="text-sm text-slate-500 dark:text-slate-400 mb-6 max-w-md mx-auto">
+                  <h3 className="font-bold text-lg text-[var(--color-ink)] mb-2">No rooms match your search</h3>
+                  <p className="text-sm text-[var(--color-ink-3)] mb-6 max-w-md mx-auto">
                     Try removing some filters or searching a different area.
                   </p>
 
@@ -916,7 +916,7 @@ export default function SeekerSearch() {
                       </button>
                     )}
                     <div>
-                      <p className="text-xs text-slate-400 mb-2">Popular suburbs:</p>
+                      <p className="text-xs text-[var(--color-ink-3)] mb-2">Popular suburbs:</p>
                       <div className="flex flex-wrap justify-center gap-2">
                         {["Kellyville", "Parramatta", "Blacktown", "Liverpool", "Chatswood", "Bankstown"].map((s) => (
                           <button key={s}
@@ -944,25 +944,25 @@ export default function SeekerSearch() {
                         whileHover={{ y: -2 }}
                         className="card rounded-2xl overflow-hidden group">
                         {/* Photo */}
-                        <div className="relative w-full aspect-[16/10] bg-slate-100 dark:bg-slate-800 overflow-hidden">
+                        <div className="relative w-full aspect-[16/10] bg-[var(--color-surface-muted)] overflow-hidden">
                           {listing.photos?.length > 0 ? (
                             <img src={listing.photos[0]} alt={listing.address}
                               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center">
-                              <svg className="w-10 h-10 text-slate-300 dark:text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
+                              <svg className="w-10 h-10 text-[var(--color-ink-4)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
                               </svg>
                             </div>
                           )}
                           {/* Price badge */}
-                          <div className="absolute top-3 right-3 px-2.5 py-1 rounded-lg bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm border border-slate-200/70 dark:border-slate-800">
-                            <span className="text-slate-900 dark:text-white font-semibold text-sm tabular-nums">${listing.weeklyPrice || listing.dailyPrice || 0}</span>
-                            <span className="text-slate-500 dark:text-slate-400 text-xs">{listing.dailyPrice && !listing.weeklyPrice ? "/day" : "/wk"}</span>
+                          <div className="absolute top-3 right-3 px-2.5 py-1 rounded-lg bg-[var(--color-surface-2)]/95 dark:bg-[var(--color-ink)]/95 backdrop-blur-sm border border-[var(--color-line)]/70 dark:border-[var(--color-line)]">
+                            <span className="text-[var(--color-ink)] font-semibold text-sm tabular-nums">${listing.weeklyPrice || listing.dailyPrice || 0}</span>
+                            <span className="text-[var(--color-ink-3)] text-xs">{listing.dailyPrice && !listing.weeklyPrice ? "/day" : "/wk"}</span>
                           </div>
                           {/* Save */}
                           <button onClick={(e) => { e.preventDefault(); toggleSave(listing.id); }}
-                            className="absolute top-3 left-3 w-8 h-8 rounded-full bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm flex items-center justify-center transition-colors hover:bg-white dark:hover:bg-slate-900">
+                            className="absolute top-3 left-3 w-8 h-8 rounded-full bg-[var(--color-surface-2)]/90 dark:bg-[var(--color-ink)]/90 backdrop-blur-sm flex items-center justify-center transition-colors hover:bg-[var(--color-surface-2)]">
                             <svg className={`w-4 h-4 ${saved.has(listing.id) ? "text-[var(--color-coral-500)] fill-[var(--color-coral-500)]" : "text-[var(--color-ink-2)]"}`}
                               fill={saved.has(listing.id) ? "currentColor" : "none"} viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                               <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
@@ -970,7 +970,7 @@ export default function SeekerSearch() {
                           </button>
                           {/* Instant book badge */}
                           {listing.instantBook && (
-                            <div className="absolute bottom-3 left-3 px-2 py-1 rounded-md bg-[var(--color-accent-soft)]0/90 backdrop-blur-sm text-white text-xs font-semibold flex items-center gap-1">
+                            <div className="absolute bottom-3 left-3 px-2 py-1 rounded-md bg-[var(--color-accent)]/90 backdrop-blur-sm text-[var(--color-primary-fg)] text-xs font-semibold flex items-center gap-1">
                               <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
                               Instant
                             </div>
@@ -980,17 +980,17 @@ export default function SeekerSearch() {
                         {/* Card body */}
                         <div className="p-4 space-y-2">
                           <div>
-                            <h3 className="font-bold text-slate-900 dark:text-white text-sm truncate">{listing.address}</h3>
-                            <p className="text-xs text-slate-500 dark:text-slate-400">{listing.suburb}{listing.postcode ? `, ${listing.postcode}` : ""}</p>
+                            <h3 className="font-bold text-[var(--color-ink)] text-sm truncate">{listing.address}</h3>
+                            <p className="text-xs text-[var(--color-ink-3)]">{listing.suburb}{listing.postcode ? `, ${listing.postcode}` : ""}</p>
                           </div>
                           {/* Tags */}
                           <div className="flex flex-wrap gap-1">
-                            <span className="px-2 py-0.5 rounded-full text-[11px] bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 capitalize">{listing.roomType}</span>
-                            {listing.furnished && <span className="px-2 py-0.5 rounded-full text-[11px] bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400">Furnished</span>}
-                            {listing.billsIncluded && <span className="px-2 py-0.5 rounded-full text-[11px] bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary-soft)]0/10 text-[var(--color-primary)] dark:text-[var(--color-primary)]">Bills incl.</span>}
-                            {listing.verified && <span className="px-2 py-0.5 rounded-full text-[11px] bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 text-[var(--color-accent)] dark:text-[var(--color-accent)]">&#10003; Verified</span>}
-                            {listing.genderPreference === "female" && <span className="px-2 py-0.5 rounded-full text-[11px] bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary-soft)]0/10 text-[var(--color-primary)] dark:text-[var(--color-primary)]">Female only</span>}
-                            {listing.petsAllowed && <span className="px-2 py-0.5 rounded-full text-[11px] bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400">Pets OK</span>}
+                            <span className="px-2 py-0.5 rounded-full text-[11px] bg-[var(--color-surface-muted)] text-[var(--color-ink-2)] capitalize">{listing.roomType}</span>
+                            {listing.furnished && <span className="px-2 py-0.5 rounded-full text-[11px] bg-[var(--color-primary-50)] text-[var(--color-primary)]">Furnished</span>}
+                            {listing.billsIncluded && <span className="px-2 py-0.5 rounded-full text-[11px] bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 text-[var(--color-primary)] dark:text-[var(--color-primary)]">Bills incl.</span>}
+                            {listing.verified && <span className="px-2 py-0.5 rounded-full text-[11px] bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent)]/10 text-[var(--color-accent)] dark:text-[var(--color-accent)]">&#10003; Verified</span>}
+                            {listing.genderPreference === "female" && <span className="px-2 py-0.5 rounded-full text-[11px] bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 text-[var(--color-primary)] dark:text-[var(--color-primary)]">Female only</span>}
+                            {listing.petsAllowed && <span className="px-2 py-0.5 rounded-full text-[11px] bg-[var(--color-warn-50)] text-[var(--color-warn-600)]">Pets OK</span>}
                             {listing.parking && <span className="px-2 py-0.5 rounded-full text-[11px] bg-cyan-50 dark:bg-cyan-500/10 text-cyan-600 dark:text-cyan-400">Parking</span>}
                           </div>
 
@@ -998,7 +998,7 @@ export default function SeekerSearch() {
                           {isBestMatch && listing.matchScore !== undefined && (
                             <div className="pt-1 space-y-1.5">
                               <div className="flex items-center gap-2">
-                                <div className="flex-1 h-1.5 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
+                                <div className="flex-1 h-1.5 rounded-full bg-[var(--color-surface-muted)] overflow-hidden">
                                   <div
                                     className={`h-full rounded-full transition-all ${listing.matchScore >= 80 ? "bg-[var(--color-accent)]" : listing.matchScore >= 60 ? "bg-[var(--color-warn-500)]" : "bg-[var(--color-line-2)]"}`}
                                     style={{ width: `${listing.matchScore}%` }}
@@ -1020,12 +1020,12 @@ export default function SeekerSearch() {
                               )}
                             </div>
                           )}
-                          <p className="text-xs text-slate-600 dark:text-slate-400 line-clamp-2">{listing.description}</p>
+                          <p className="text-xs text-[var(--color-ink-2)] line-clamp-2">{listing.description}</p>
                           {listing.stationName && listing.stationWalkMin != null && (
                             <div className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full ${
                               listing.stationWalkMin <= 15
-                                ? "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 text-[var(--color-accent)] dark:text-[var(--color-accent)]"
-                                : "bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400"
+                                ? "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent)]/10 text-[var(--color-accent)] dark:text-[var(--color-accent)]"
+                                : "bg-[var(--color-primary-50)] text-[var(--color-primary)]"
                             }`}>
                               <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M8 7h8m-8 4h4m4-8H6a2 2 0 00-2 2v14l4-3h10a2 2 0 002-2V5a2 2 0 00-2-2z" /></svg>
                               <span className="text-xs font-medium">{listing.stationWalkMin} min to {listing.stationName}</span>
@@ -1070,9 +1070,9 @@ export default function SeekerSearch() {
                   </div>
                   {saved.size > 0 && (
                     <Link href="/seeker/wishlist" className="card p-4 rounded-2xl block">
-                      <p className="text-sm font-bold text-slate-900 dark:text-white">Wishlist</p>
-                      <p className="text-xs text-slate-500 dark:text-slate-400">{saved.size} saved items</p>
-                      <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800">
+                      <p className="text-sm font-bold text-[var(--color-ink)]">Wishlist</p>
+                      <p className="text-xs text-[var(--color-ink-3)]">{saved.size} saved items</p>
+                      <div className="mt-3 pt-3 border-t border-[var(--color-line)]">
                         <span className="text-xs text-[var(--color-ink)] hover:opacity-80 font-semibold">View all &rarr;</span>
                       </div>
                     </Link>

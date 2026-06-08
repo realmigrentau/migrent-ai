@@ -92,26 +92,26 @@ export default function ListingDetailPage() {
   // Loading skeleton
   if (loading) {
     return (
-      <div className="min-h-screen bg-white dark:bg-slate-950">
+      <div className="min-h-screen bg-[var(--color-bg)]">
         <div className="max-w-7xl mx-auto px-4 py-6">
           {/* Hero skeleton */}
-          <div className="aspect-[16/9] md:aspect-[2/1] rounded-2xl bg-slate-100 dark:bg-slate-800 animate-pulse" />
+          <div className="aspect-[16/9] md:aspect-[2/1] rounded-2xl bg-[var(--color-surface-muted)] animate-pulse" />
           <div className="flex gap-2 mt-3">
             {[1, 2, 3, 4].map((i) => (
               <div
                 key={i}
-                className="w-20 h-14 rounded-lg bg-slate-100 dark:bg-slate-800 animate-pulse"
+                className="w-20 h-14 rounded-lg bg-[var(--color-surface-muted)] animate-pulse"
               />
             ))}
           </div>
           <div className="grid lg:grid-cols-3 gap-8 mt-8">
             <div className="lg:col-span-2 space-y-6">
-              <div className="h-8 w-3/4 bg-slate-100 dark:bg-slate-800 rounded animate-pulse" />
-              <div className="h-4 w-1/2 bg-slate-100 dark:bg-slate-800 rounded animate-pulse" />
-              <div className="h-32 bg-slate-100 dark:bg-slate-800 rounded-2xl animate-pulse" />
-              <div className="h-48 bg-slate-100 dark:bg-slate-800 rounded-2xl animate-pulse" />
+              <div className="h-8 w-3/4 bg-[var(--color-surface-muted)] rounded animate-pulse" />
+              <div className="h-4 w-1/2 bg-[var(--color-surface-muted)] rounded animate-pulse" />
+              <div className="h-32 bg-[var(--color-surface-muted)] rounded-2xl animate-pulse" />
+              <div className="h-48 bg-[var(--color-surface-muted)] rounded-2xl animate-pulse" />
             </div>
-            <div className="h-80 bg-slate-100 dark:bg-slate-800 rounded-2xl animate-pulse" />
+            <div className="h-80 bg-[var(--color-surface-muted)] rounded-2xl animate-pulse" />
           </div>
         </div>
       </div>
@@ -120,9 +120,9 @@ export default function ListingDetailPage() {
 
   if (!listing) {
     return (
-      <div className="min-h-screen bg-white dark:bg-slate-950 flex items-center justify-center">
+      <div className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-semibold tracking-tight text-slate-900 dark:text-white mb-2">
+          <h1 className="font-serif text-[28px] tracking-[-0.015em] text-[var(--color-ink)] mb-2">
             Listing not found
           </h1>
           <Link
@@ -149,29 +149,29 @@ export default function ListingDetailPage() {
         description={listing.description?.slice(0, 160)}
       />
 
-      <div className="min-h-screen bg-white dark:bg-slate-950">
+      <div className="min-h-screen bg-[var(--color-bg)]">
         {/* Sticky top bar */}
-        <div className="sticky top-0 z-30 bg-white/80 dark:bg-slate-950/80 backdrop-blur-lg border-b border-slate-200 dark:border-slate-800">
+        <div className="sticky top-0 z-30 bg-[var(--color-surface)]/80 backdrop-blur-lg border-b border-[var(--color-line)]">
           <div className="max-w-7xl mx-auto px-4 py-3 flex items-center gap-3">
             <button
               onClick={() => router.back()}
-              className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+              className="p-2 rounded-full hover:bg-[var(--color-surface-muted)] transition-colors"
             >
-              <ArrowLeft className="w-5 h-5 text-slate-700 dark:text-slate-300" />
+              <ArrowLeft className="w-5 h-5 text-[var(--color-ink-2)]" />
             </button>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-slate-900 dark:text-white truncate">
+              <p className="text-sm font-semibold text-[var(--color-ink)] truncate">
                 {listing.title || listing.address}
               </p>
-              <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+              <div className="flex items-center gap-2 text-xs text-[var(--color-ink-3)]">
                 <span>{listing.suburb || listing.city || "Australia"}</span>
                 {reviewStats && reviewStats.review_count > 0 && (
                   <>
                     <span>-</span>
                     <span className="flex items-center gap-0.5">
-                      <Star className="w-3 h-3 text-amber-400 fill-amber-400" />
+                      <Star className="w-3 h-3 text-[var(--color-warn-500)] fill-[var(--color-warn-500)]" />
                       {Number(reviewStats.avg_rating).toFixed(1)}
-                      <span className="text-slate-400">
+                      <span className="text-[var(--color-ink-3)]">
                         ({reviewStats.review_count})
                       </span>
                     </span>
@@ -180,9 +180,9 @@ export default function ListingDetailPage() {
               </div>
             </div>
             <div className="hidden sm:block">
-              <span className="text-lg font-semibold text-slate-900 dark:text-white tabular-nums">
+              <span className="text-lg font-semibold text-[var(--color-ink)] tabular-nums">
                 ${listing.weekly_price}
-                <span className="text-xs font-normal text-slate-400">/wk</span>
+                <span className="text-xs font-normal text-[var(--color-ink-3)]">/wk</span>
               </span>
             </div>
           </div>
@@ -199,10 +199,10 @@ export default function ListingDetailPage() {
 
           {/* Title + address */}
           <div className="mt-6">
-            <h1 className="text-2xl md:text-3xl font-semibold tracking-tight text-slate-900 dark:text-white">
+            <h1 className="font-serif text-[28px] md:text-[40px] tracking-[-0.02em] leading-[1.05] text-[var(--color-ink)]">
               {listing.title || listing.address}
             </h1>
-            <div className="flex items-center gap-2 mt-2 text-sm text-slate-500 dark:text-slate-400">
+            <div className="flex items-center gap-2 mt-2 text-sm text-[var(--color-ink-3)]">
               <MapPin className="w-4 h-4" />
               <span>
                 {listing.address}
@@ -218,10 +218,10 @@ export default function ListingDetailPage() {
             <div className="lg:col-span-2 space-y-8">
               {/* Description */}
               <div>
-                <h2 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white mb-2">
+                <h2 className="font-serif text-[22px] tracking-[-0.01em] text-[var(--color-ink)] mb-2">
                   About this place
                 </h2>
-                <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-line">
+                <p className="text-sm text-[var(--color-ink-2)] leading-relaxed whitespace-pre-line">
                   {listing.description}
                 </p>
               </div>
@@ -261,37 +261,37 @@ export default function ListingDetailPage() {
               )}
 
               {/* Trust footer */}
-              <div className="border-t border-slate-200 dark:border-slate-800 pt-8 pb-4">
+              <div className="border-t border-[var(--color-line)] pt-8 pb-4">
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <div className="flex items-center gap-3 p-4 rounded-xl bg-slate-50 dark:bg-slate-900/50">
+                  <div className="flex items-center gap-3 p-4 rounded-xl bg-[var(--color-surface)]">
                     <Shield className="w-8 h-8 text-[var(--color-accent)]" />
                     <div>
-                      <p className="text-sm font-semibold text-slate-900 dark:text-white">
+                      <p className="text-sm font-semibold text-[var(--color-ink)]">
                         MigRent Guarantee
                       </p>
-                      <p className="text-xs text-slate-500 dark:text-slate-400">
+                      <p className="text-xs text-[var(--color-ink-3)]">
                         Verified listings you can trust
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-3 p-4 rounded-xl bg-slate-50 dark:bg-slate-900/50">
+                  <div className="flex items-center gap-3 p-4 rounded-xl bg-[var(--color-surface)]">
                     <CreditCard className="w-8 h-8 text-[var(--color-primary)]" />
                     <div>
-                      <p className="text-sm font-semibold text-slate-900 dark:text-white">
+                      <p className="text-sm font-semibold text-[var(--color-ink)]">
                         Secure Payments
                       </p>
-                      <p className="text-xs text-slate-500 dark:text-slate-400">
+                      <p className="text-xs text-[var(--color-ink-3)]">
                         Protected by Stripe
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-3 p-4 rounded-xl bg-slate-50 dark:bg-slate-900/50">
+                  <div className="flex items-center gap-3 p-4 rounded-xl bg-[var(--color-surface)]">
                     <Mail className="w-8 h-8 text-[var(--color-accent)]" />
                     <div>
-                      <p className="text-sm font-semibold text-slate-900 dark:text-white">
+                      <p className="text-sm font-semibold text-[var(--color-ink)]">
                         24h Support
                       </p>
-                      <p className="text-xs text-slate-500 dark:text-slate-400">
+                      <p className="text-xs text-[var(--color-ink-3)]">
                         migrentau@gmail.com
                       </p>
                     </div>
@@ -310,10 +310,10 @@ export default function ListingDetailPage() {
                     className="card p-6 text-center border-[var(--color-accent)]"
                   >
                     <CheckCircle className="w-12 h-12 mx-auto text-[var(--color-accent)] mb-3" />
-                    <h3 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white mb-2">
+                    <h3 className="font-serif text-[22px] tracking-[-0.01em] text-[var(--color-ink)] mb-2">
                       Request sent!
                     </h3>
-                    <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">
+                    <p className="text-sm text-[var(--color-ink-3)] mb-4">
                       The owner has been notified. You will receive an email
                       when they respond.
                     </p>
@@ -325,8 +325,8 @@ export default function ListingDetailPage() {
                     </Link>
                   </motion.div>
                 ) : isOwner ? (
-                  <div className="card p-6 rounded-2xl text-center border border-slate-200 dark:border-slate-700">
-                    <p className="text-sm text-slate-500 dark:text-slate-400">
+                  <div className="card p-6 rounded-2xl text-center border border-[var(--color-line)]">
+                    <p className="text-sm text-[var(--color-ink-3)]">
                       This is your listing. You can manage it from your{" "}
                       <Link
                         href="/dashboard/owner"
@@ -338,8 +338,8 @@ export default function ListingDetailPage() {
                     </p>
                   </div>
                 ) : !session && !refreshing ? (
-                  <div className="card p-6 rounded-2xl text-center border border-slate-200 dark:border-slate-700 space-y-4">
-                    <p className="text-sm text-slate-600 dark:text-slate-300">
+                  <div className="card p-6 rounded-2xl text-center border border-[var(--color-line)] space-y-4">
+                    <p className="text-sm text-[var(--color-ink-2)]">
                       Sign in to request a booking
                     </p>
                     <Link
@@ -348,7 +348,7 @@ export default function ListingDetailPage() {
                     >
                       Sign in
                     </Link>
-                    <p className="text-xs text-slate-400">
+                    <p className="text-xs text-[var(--color-ink-3)]">
                       New to MigRent?{" "}
                       <Link
                         href="/signup"
@@ -373,13 +373,13 @@ export default function ListingDetailPage() {
 
         {/* Mobile sticky CTA */}
         {showMobileCTA && !isOwner && !bookingSuccess && (
-          <div className="fixed bottom-0 left-0 right-0 z-40 lg:hidden bg-white/95 dark:bg-slate-950/95 backdrop-blur-lg border-t border-slate-200 dark:border-slate-800 px-4 py-3 safe-area-pb">
+          <div className="fixed bottom-0 left-0 right-0 z-40 lg:hidden bg-[var(--color-surface)]/95 backdrop-blur-lg border-t border-[var(--color-line)] px-4 py-3 safe-area-pb">
             <div className="flex items-center justify-between gap-4">
               <div>
-                <span className="text-lg font-semibold text-slate-900 dark:text-white tabular-nums">
+                <span className="text-lg font-semibold text-[var(--color-ink)] tabular-nums">
                   ${listing.weekly_price}
                 </span>
-                <span className="text-sm text-slate-500 dark:text-slate-400">
+                <span className="text-sm text-[var(--color-ink-3)]">
                   {" "}
                   / week
                 </span>
