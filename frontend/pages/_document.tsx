@@ -7,11 +7,11 @@ export default function Document() {
   return (
     <Html lang="en" dir="ltr" suppressHydrationWarning>
       <Head>
-        {/* Fonts: Manrope (sans), Instrument Serif (display), JetBrains Mono (mono) */}
+        {/* Fonts: Fraunces (display, roman) · Hanken Grotesk (body) · Space Mono (meta) */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
-          href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Hanken+Grotesk:wght@400..800&family=Space+Mono:wght@400;700&display=swap"
           rel="stylesheet"
         />
 
@@ -25,7 +25,7 @@ export default function Document() {
 
         {/* PWA + mobile */}
         <link rel="manifest" href="/manifest.json" />
-        <meta name="theme-color" content="#0e2237" />
+        <meta name="theme-color" content="#f6f1e9" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />

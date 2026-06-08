@@ -1,0 +1,48 @@
+/* ══════════════════════════════════════════════════════════════
+   MigRent · "Sand & Ocean" design tokens (Hallmark, design.md v1)
+   Portable mirror of the live @theme tokens in frontend/styles/globals.css.
+   Warm coastal Australian: sand surfaces, deep ink, ocean-teal primary,
+   sea-green trust accent, dune-amber warmth.
+   ══════════════════════════════════════════════════════════════ */
+:root {
+  /* Surfaces */
+  --color-paper:        oklch(96.5% 0.010 85);   /* #f6f1e9 warm paper */
+  --color-paper-2:      oklch(98.5% 0.006 85);   /* #fbf8f2 elevated */
+  --color-canvas:       oklch(94.0% 0.012 85);   /* #ece5d8 sand canvas */
+  --color-surface-sunk: oklch(91.0% 0.013 85);   /* #e6ddcd */
+
+  /* Ink */
+  --color-ink:    oklch(25.0% 0.015 240);        /* #1e2a36 deep ink-navy */
+  --color-ink-2:  oklch(44.0% 0.014 240);        /* #49555f body */
+  --color-ink-3:  oklch(58.0% 0.012 240);        /* #6e7882 muted */
+  --color-ink-4:  oklch(70.0% 0.010 240);        /* #9aa1a8 placeholder */
+
+  /* Rules */
+  --color-rule:   oklch(89.0% 0.012 90);         /* #ded6c6 sand hairline */
+  --color-rule-2: oklch(82.0% 0.014 90);         /* #cabfa9 divider */
+
+  /* Brand + accents */
+  --color-primary:     oklch(46.0% 0.085 218);   /* #1d6475 ocean teal */
+  --color-primary-fg:  oklch(97.5% 0.010 200);   /* #f3faf9 */
+  --color-accent:      oklch(52.0% 0.080 175);   /* #208073 sea-green (trust) */
+  --color-dune:        oklch(64.0% 0.110 70);    /* #b06b2b warm amber */
+  --color-coral:       oklch(58.0% 0.150 25);    /* #c14a3f hearts/urgency */
+  --color-focus:       oklch(58.0% 0.120 215);   /* #2a8aa0 focus ring */
+
+  /* Type */
+  --font-display: 'Fraunces', 'Cormorant Garamond', Georgia, serif;
+  --font-body:    'Hanken Grotesk', ui-sans-serif, system-ui, sans-serif;
+  --font-mono:    'Space Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+
+  /* Spacing (4-pt) */
+  --space-3xs: 0.25rem; --space-2xs: 0.5rem; --space-xs: 0.75rem;
+  --space-sm: 1rem; --space-md: 1.5rem; --space-lg: 2rem;
+  --space-xl: 3rem; --space-2xl: 4.5rem; --space-3xl: 7rem;
+
+  /* Radius */
+  --radius-control: 10px; --radius-card: 14px; --radius-xl: 20px; --radius-pill: 999px;
+
+  /* Motion */
+  --ease-mr: cubic-bezier(0.2, 0.7, 0.3, 1);
+  --dur-fast: 120ms; --dur-base: 180ms; --dur-slow: 280ms; --dur-reveal: 700ms;
+}
