@@ -66,7 +66,7 @@
   --color-ink-3: #6e7882;
   --color-ink-4: #9aa1a8;        /* placeholder */
 
-  --color-bg: #ece5d8;           /* warm sand canvas */
+  --color-bg: #eef0ea;           /* light coastal sand canvas */
   --color-surface: #f6f1e9;      /* warm paper */
   --color-surface-2: #fbf8f2;    /* elevated near-white */
   --color-surface-muted: #e6ddcd;
@@ -194,6 +194,9 @@ html.lenis, html.lenis body { height: auto; }
 /* ══════════════════════════════════════════════════════════════
    BASE
    ══════════════════════════════════════════════════════════════ */
+/* overflow-x: clip (NOT hidden) so position: sticky keeps working -
+   `hidden` makes the body a scroll container and breaks pinned scroll. */
+html { overflow-x: clip; }
 body {
   margin: 0;
   padding: 0;
@@ -203,7 +206,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
-  overflow-x: hidden;
+  overflow-x: clip;
   background: var(--color-bg);
   color: var(--color-ink);
   transition: background-color 0.3s ease, color 0.3s ease;
@@ -956,18 +959,27 @@ select.input-field {
 
 /* Warm atmospheric background field - drop onto any section that
    wants the hero's mood where the video doesn't reach. */
+/* Coastal ocean wash - cool teal + sea-green, never warm/brown. */
 .mood-field {
   position: relative;
   background:
-    radial-gradient(58% 78% at 12% 8%, color-mix(in oklab, var(--color-primary) 13%, transparent), transparent 62%),
-    radial-gradient(46% 70% at 92% 16%, color-mix(in oklab, var(--color-warn-500) 12%, transparent), transparent 60%),
+    radial-gradient(62% 80% at 8% 0%, color-mix(in oklab, var(--color-primary) 12%, transparent), transparent 60%),
+    radial-gradient(50% 66% at 98% 10%, color-mix(in oklab, var(--color-primary-200) 18%, transparent), transparent 60%),
     var(--color-bg);
 }
 .mood-field-strong {
   background:
-    radial-gradient(60% 80% at 15% 6%, color-mix(in oklab, var(--color-primary) 22%, transparent), transparent 60%),
-    radial-gradient(52% 74% at 88% 22%, color-mix(in oklab, var(--color-warn-500) 18%, transparent), transparent 58%),
+    radial-gradient(64% 82% at 10% 0%, color-mix(in oklab, var(--color-primary) 17%, transparent), transparent 58%),
+    radial-gradient(56% 64% at 96% 12%, color-mix(in oklab, var(--color-accent) 14%, transparent), transparent 58%),
     var(--color-surface);
+}
+/* Focal ocean-glass gradient for cards / panel visuals - clean, not muddy. */
+.ocean-card {
+  background:
+    linear-gradient(150deg,
+      color-mix(in oklab, var(--color-primary) 30%, var(--color-surface)) 0%,
+      var(--color-surface) 50%,
+      color-mix(in oklab, var(--color-accent) 26%, var(--color-surface)) 100%);
 }
 
 /* Hairline that fades at the ends - editorial divider */

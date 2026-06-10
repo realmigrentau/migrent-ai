@@ -185,7 +185,7 @@ function PinnedHorizontal({ eyebrow, heading, label, items }: { eyebrow: string;
             <p className="mt-5 text-[18px] leading-[1.55] text-[var(--color-ink-2)] max-w-[40ch]">{it.body}</p>
           </div>
           <div className="hidden lg:flex justify-center">
-            <div className="relative w-full max-w-[440px] aspect-square rounded-[28px] mood-field-strong border border-[var(--color-line)] overflow-hidden flex items-center justify-center">
+            <div className="relative w-full max-w-[440px] aspect-square rounded-[28px] ocean-card border border-[var(--color-line)] overflow-hidden flex items-center justify-center">
               <span className="font-serif leading-none text-[var(--color-primary)] opacity-[0.13] select-none" style={{ fontSize: "16rem" }}>{it.n}</span>
               <Icon className="absolute w-24 h-24 text-[var(--color-primary)]" strokeWidth={1.1} />
             </div>
@@ -223,6 +223,41 @@ function PinnedHorizontal({ eyebrow, heading, label, items }: { eyebrow: string;
         <motion.div style={{ x }} className="flex">{items.map(Panel)}</motion.div>
         <div className="max-w-[1280px] mx-auto px-6 md:px-10 lg:px-14 w-full mt-8 shrink-0">
           <span className="font-mono text-[11px] tracking-[0.18em] text-[var(--color-ink-3)]">SCROLL TO EXPLORE →</span>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ─────────────────────────────────────────────
+   Stacking cards - a DIFFERENT scroll effect. Cards pin one after
+   another and stack on top of each other as you scroll (Apple/Lenis
+   style). Pure CSS sticky, so it just works once overflow-x is clip.
+   ───────────────────────────────────────────── */
+function StackingCards({ eyebrow, heading, items }: { eyebrow: string; heading: string; items: PanelItem[] }) {
+  return (
+    <section className="bg-[var(--color-bg)] border-y border-[var(--color-line)]">
+      <div className="max-w-[1100px] mx-auto px-6 md:px-10 lg:px-14 py-20 md:py-28">
+        <motion.div {...reveal} className="mb-12">
+          <div className="eyebrow mb-3">{eyebrow}</div>
+          <h2 className="font-serif text-[34px] md:text-[52px] leading-[1.0] tracking-[-0.03em] text-[var(--color-ink)] max-w-[18ch]">{heading}</h2>
+        </motion.div>
+        <div className="space-y-5">
+          {items.map((it, i) => {
+            const Icon = it.icon;
+            return (
+              <div key={it.n} className="sticky" style={{ top: `${100 + i * 22}px` }}>
+                <div className="bg-[var(--color-surface-2)] border border-[var(--color-line)] rounded-[var(--radius-xl)] shadow-[var(--shadow-card)] p-8 md:p-12 grid md:grid-cols-[150px_1fr] gap-6 md:gap-10 items-center overflow-hidden">
+                  <div className="font-serif text-[68px] md:text-[104px] leading-none text-[var(--color-primary)] tracking-[-0.04em]">{it.n}</div>
+                  <div>
+                    <div className="w-12 h-12 rounded-[var(--radius-card)] bg-[var(--color-primary-50)] text-[var(--color-primary)] flex items-center justify-center mb-4"><Icon className="w-6 h-6" strokeWidth={1.7} /></div>
+                    <h3 className="font-serif text-[28px] md:text-[38px] tracking-[-0.02em] text-[var(--color-ink)] leading-[1.05]">{it.title}</h3>
+                    <p className="mt-3 text-[16px] md:text-[17px] text-[var(--color-ink-2)] leading-[1.55] max-w-[52ch]">{it.body}</p>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>
@@ -578,8 +613,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 9b · WHO IT'S FOR (pinned horizontal) */}
-      <PinnedHorizontal eyebrow="Who it's for" heading="Built for everyone arriving in Australia." label="WHO" items={WHO_ITEMS} />
+      {/* 9b · WHO IT'S FOR (stacking cards - different effect) */}
+      <StackingCards eyebrow="Who it's for" heading="Built for everyone arriving in Australia." items={WHO_ITEMS} />
 
       {/* 10 · TWO PATHS */}
       <section className="bg-[var(--color-bg)]">
