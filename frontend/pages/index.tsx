@@ -133,7 +133,7 @@ const WHO_ITEMS: PanelItem[] = [
 function PinnedCard({ it, label, compact }: { it: PanelItem; label: string; compact?: boolean }) {
   const Icon = it.icon;
   return (
-    <article className={`relative overflow-hidden shrink-0 rounded-[var(--radius-xl)] border border-[var(--color-line)] bg-[var(--color-surface-2)] shadow-[var(--shadow-card)] ${compact ? "w-[80vw] sm:w-[360px] p-8" : "w-[min(86vw,560px)] p-9 md:p-11"}`}>
+    <article className={`relative overflow-hidden shrink-0 rounded-[var(--radius-xl)] border border-[var(--color-line)] bg-[var(--color-surface-2)] shadow-[var(--shadow-card)] ${compact ? "w-[80vw] sm:w-[360px] p-8" : "w-[min(90vw,640px)] p-9 md:p-12"}`}>
       <span className="absolute -right-5 -bottom-9 font-serif leading-none text-[var(--color-primary)] opacity-[0.06] select-none pointer-events-none" style={{ fontSize: compact ? "9rem" : "14rem" }}>{it.n}</span>
       <div className="relative">
         <div className="font-mono text-[var(--color-primary)] text-[13px] tracking-[0.2em] mb-5">{it.n} · {label}</div>
@@ -214,7 +214,7 @@ function PinnedHorizontal({ eyebrow, heading, label, items }: { eyebrow: string;
   }
 
   return (
-    <section ref={ref} className="mood-field relative border-y border-[var(--color-line)]" style={{ height: `${n * 52}vh` }}>
+    <section ref={ref} className="mood-field relative border-y border-[var(--color-line)]" style={{ height: `${n * 82}vh` }}>
       <div className="sticky top-0 h-screen flex flex-col justify-center overflow-hidden pt-20 pb-10">
         <div className="shrink-0 pb-8">{Header}</div>
         <motion.div ref={trackRef} style={{ x }} className="flex gap-6 px-6 md:px-10 lg:px-14 items-stretch">
@@ -248,6 +248,33 @@ function ScrollMarquee({ words }: { words: string[] }) {
           </span>
         ))}
       </motion.div>
+    </section>
+  );
+}
+
+/* ─────────────────────────────────────────────
+   Expanding media band - scroll-scrub scale + parallax caption. The
+   video panel grows as it centers and the caption drifts. Another Lenis move.
+   ───────────────────────────────────────────── */
+function BelongBand() {
+  const ref = useRef<HTMLDivElement>(null);
+  const reduced = useReducedMotion();
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
+  const scale = useTransform(scrollYProgress, [0, 0.45, 1], reduced ? [1, 1, 1] : [0.9, 1, 1.05]);
+  const y = useTransform(scrollYProgress, [0, 1], reduced ? [0, 0] : [50, -50]);
+  return (
+    <section ref={ref} className="bg-[var(--color-bg)] py-20 md:py-28 overflow-hidden">
+      <div className="max-w-[1280px] mx-auto px-6 md:px-10 lg:px-14">
+        <motion.div style={{ scale }} className="relative rounded-[28px] overflow-hidden border border-[var(--color-line)] shadow-[var(--shadow-pop)] aspect-[16/11] md:aspect-[21/9] bg-[var(--color-ink)]">
+          <video autoPlay muted loop playsInline aria-hidden="true" className="absolute inset-0 w-full h-full object-cover" src={VIDEO_SRC} />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#06121a]/78 via-[#06121a]/25 to-transparent" aria-hidden="true" />
+          <motion.div style={{ y }} className="absolute inset-0 flex flex-col justify-end p-8 md:p-14">
+            <div className="font-mono text-[12px] tracking-[0.2em] text-white/80 mb-4">A PLACE TO BELONG</div>
+            <h2 className="font-serif text-[clamp(2rem,5vw,4.2rem)] leading-[1.0] tracking-[-0.03em] text-white max-w-[18ch]">More than a room. Somewhere that feels like yours.</h2>
+            <p className="mt-4 text-white/85 text-[16px] md:text-[18px] max-w-[52ch] leading-[1.5]">Verified rooms, protected bonds, and people who have your back from day one.</p>
+          </motion.div>
+        </motion.div>
+      </div>
     </section>
   );
 }
@@ -751,6 +778,9 @@ export default function Home() {
         </motion.div>
         <OwnerMarquee />
       </section>
+
+      {/* 12b · BELONG BAND (scroll-scrub scale + parallax) */}
+      <BelongBand />
 
       {/* 13 · CTA */}
       <section className="mood-field-strong border-t border-[var(--color-line)]">
