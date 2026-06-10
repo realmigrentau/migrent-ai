@@ -23,15 +23,15 @@
   --color-primary-soft: #cbe3e6;
   --color-primary-fg: #f3faf9;
 
-  /* ── Accent: sea-green (trust, verified, success) ── */
-  --color-accent-50: #e9f3f0;
-  --color-accent-100: #d2e7e0;
-  --color-accent-500: #208073;
-  --color-accent-600: #1a6a5f;
-  --color-accent-700: #15544b;
+  /* ── Accent: light ocean blue (trust, verified, success) ── */
+  --color-accent-50: #e9f4fb;
+  --color-accent-100: #d2e9f7;
+  --color-accent-500: #2e9bd0;
+  --color-accent-600: #2380b3;
+  --color-accent-700: #1c6691;
   --color-accent: var(--color-accent-500);
-  --color-accent-soft: #d2e7e0;
-  --color-accent-fg: #f2f9f6;
+  --color-accent-soft: #d2e9f7;
+  --color-accent-fg: #f3fafd;
 
   /* ── Legacy "brand" alias - kept so existing utilities like
         text-brand / bg-brand keep working without touching call sites.
@@ -154,13 +154,13 @@ html.dark {
   --color-primary-fg: #03171d;
   --color-primary-soft: #08303c;
 
-  /* sea-green for trust/verified - also high contrast */
-  --color-accent-50: #04221a;
-  --color-accent-100: #062c22;
-  --color-accent-500: #3ce0a6;
-  --color-accent: #3ce0a6;
-  --color-accent-soft: #062c22;
-  --color-accent-fg: #03150e;
+  /* light blue for trust/verified - high contrast on black */
+  --color-accent-50: #06222b;
+  --color-accent-100: #082f3b;
+  --color-accent-500: #5cc8f0;
+  --color-accent: #5cc8f0;
+  --color-accent-soft: #082f3b;
+  --color-accent-fg: #03171d;
 
   --color-warn-50: #221a09;
   --color-danger-500: #f47b6c;

@@ -130,11 +130,30 @@ const WHO_ITEMS: PanelItem[] = [
   { n: "04", icon: UsersRound, title: "New families", body: "A little more space, the right suburb for school and work, and a lease you can actually understand." },
 ];
 
+function PinnedCard({ it, label, compact }: { it: PanelItem; label: string; compact?: boolean }) {
+  const Icon = it.icon;
+  return (
+    <article className={`relative overflow-hidden shrink-0 rounded-[var(--radius-xl)] border border-[var(--color-line)] bg-[var(--color-surface-2)] shadow-[var(--shadow-card)] ${compact ? "w-[80vw] sm:w-[360px] p-8" : "w-[min(86vw,560px)] p-9 md:p-11"}`}>
+      <span className="absolute -right-5 -bottom-9 font-serif leading-none text-[var(--color-primary)] opacity-[0.06] select-none pointer-events-none" style={{ fontSize: compact ? "9rem" : "14rem" }}>{it.n}</span>
+      <div className="relative">
+        <div className="font-mono text-[var(--color-primary)] text-[13px] tracking-[0.2em] mb-5">{it.n} · {label}</div>
+        <div className={`rounded-[var(--radius-xl)] bg-[var(--color-primary-50)] text-[var(--color-primary)] flex items-center justify-center mb-6 ${compact ? "w-12 h-12" : "w-14 h-14"}`}>
+          <Icon className={compact ? "w-6 h-6" : "w-7 h-7"} strokeWidth={1.6} />
+        </div>
+        <h3 className={`font-serif tracking-[-0.03em] text-[var(--color-ink)] leading-[0.98] ${compact ? "text-[30px]" : "text-[38px] md:text-[48px]"}`}>{it.title}</h3>
+        <p className={`text-[var(--color-ink-2)] leading-[1.55] ${compact ? "mt-3 text-[15px]" : "mt-4 text-[17px] max-w-[42ch]"}`}>{it.body}</p>
+      </div>
+    </article>
+  );
+}
+
 function PinnedHorizontal({ eyebrow, heading, label, items }: { eyebrow: string; heading: string; label: string; items: PanelItem[] }) {
   const ref = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotion();
   const [pinned, setPinned] = useState(false);
   const [active, setActive] = useState(0);
+  const [maxX, setMaxX] = useState(0);
   const n = items.length;
 
   useEffect(() => {
@@ -144,8 +163,18 @@ function PinnedHorizontal({ eyebrow, heading, label, items }: { eyebrow: string;
     return () => window.removeEventListener("resize", m);
   }, [reduced]);
 
+  useEffect(() => {
+    const measure = () => {
+      if (trackRef.current) setMaxX(Math.max(0, trackRef.current.scrollWidth - window.innerWidth + 40));
+    };
+    measure();
+    const t = setTimeout(measure, 250);
+    window.addEventListener("resize", measure);
+    return () => { window.removeEventListener("resize", measure); clearTimeout(t); };
+  }, [pinned, n]);
+
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
-  const x = useTransform(scrollYProgress, [0, 1], ["0%", `-${((n - 1) / n) * 100}%`]);
+  const x = useTransform(scrollYProgress, [0, 1], [0, -maxX]);
   useMotionValueEvent(scrollYProgress, "change", (v) => setActive(Math.min(n - 1, Math.max(0, Math.round(v * (n - 1))))));
 
   const Header = (
@@ -173,58 +202,52 @@ function PinnedHorizontal({ eyebrow, heading, label, items }: { eyebrow: string;
     </div>
   );
 
-  const Panel = (it: PanelItem) => {
-    const Icon = it.icon;
-    return (
-      <div key={it.n} className="w-screen shrink-0 px-6 md:px-10 lg:px-14">
-        <div className="max-w-[1280px] mx-auto grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
-          <div>
-            <div className="font-mono text-[var(--color-primary)] text-[13px] tracking-[0.2em] mb-6">{it.n} · {label}</div>
-            <div className="w-16 h-16 rounded-[var(--radius-xl)] bg-[var(--color-primary-50)] text-[var(--color-primary)] flex items-center justify-center mb-7"><Icon className="w-8 h-8" strokeWidth={1.6} /></div>
-            <h3 className="font-serif text-[clamp(2.6rem,6vw,4.6rem)] leading-[0.95] tracking-[-0.03em] text-[var(--color-ink)]">{it.title}</h3>
-            <p className="mt-5 text-[18px] leading-[1.55] text-[var(--color-ink-2)] max-w-[40ch]">{it.body}</p>
-          </div>
-          <div className="hidden lg:flex justify-center">
-            <div className="relative w-full max-w-[440px] aspect-square rounded-[28px] ocean-card border border-[var(--color-line)] overflow-hidden flex items-center justify-center">
-              <span className="font-serif leading-none text-[var(--color-primary)] opacity-[0.13] select-none" style={{ fontSize: "16rem" }}>{it.n}</span>
-              <Icon className="absolute w-24 h-24 text-[var(--color-primary)]" strokeWidth={1.1} />
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
   if (!pinned) {
     return (
       <section className="mood-field py-16 border-y border-[var(--color-line)]">
         {Header}
         <div className="hscroll mt-9 px-6 md:px-10 lg:px-14">
-          {items.map((it) => {
-            const Icon = it.icon;
-            return (
-              <article key={it.n} className="w-[80vw] sm:w-[400px] shrink-0 bg-[var(--color-surface-2)] border border-[var(--color-line)] rounded-[var(--radius-xl)] p-8 shadow-[var(--shadow-card)]">
-                <div className="font-mono text-[var(--color-primary)] text-[12px] tracking-[0.2em] mb-4">{it.n} · {label}</div>
-                <div className="w-12 h-12 rounded-[var(--radius-card)] bg-[var(--color-primary-50)] text-[var(--color-primary)] flex items-center justify-center mb-5"><Icon className="w-6 h-6" strokeWidth={1.7} /></div>
-                <h3 className="font-serif text-[30px] tracking-[-0.02em] text-[var(--color-ink)] leading-none">{it.title}</h3>
-                <p className="mt-3 text-[15px] leading-[1.55] text-[var(--color-ink-2)]">{it.body}</p>
-              </article>
-            );
-          })}
+          {items.map((it) => <PinnedCard key={it.n} it={it} label={label} compact />)}
         </div>
       </section>
     );
   }
 
   return (
-    <section ref={ref} className="mood-field relative border-y border-[var(--color-line)]" style={{ height: `${n * 95}vh` }}>
-      <div className="sticky top-0 h-screen flex flex-col justify-center overflow-hidden pt-20 pb-12">
-        <div className="shrink-0 pb-10">{Header}</div>
-        <motion.div style={{ x }} className="flex">{items.map(Panel)}</motion.div>
-        <div className="max-w-[1280px] mx-auto px-6 md:px-10 lg:px-14 w-full mt-8 shrink-0">
-          <span className="font-mono text-[11px] tracking-[0.18em] text-[var(--color-ink-3)]">SCROLL TO EXPLORE →</span>
+    <section ref={ref} className="mood-field relative border-y border-[var(--color-line)]" style={{ height: `${n * 52}vh` }}>
+      <div className="sticky top-0 h-screen flex flex-col justify-center overflow-hidden pt-20 pb-10">
+        <div className="shrink-0 pb-8">{Header}</div>
+        <motion.div ref={trackRef} style={{ x }} className="flex gap-6 px-6 md:px-10 lg:px-14 items-stretch">
+          {items.map((it) => <PinnedCard key={it.n} it={it} label={label} />)}
+        </motion.div>
+        <div className="max-w-[1280px] mx-auto px-6 md:px-10 lg:px-14 w-full mt-7 shrink-0">
+          <span className="font-mono text-[11px] tracking-[0.18em] text-[var(--color-ink-3)]">KEEP SCROLLING →</span>
         </div>
       </div>
+    </section>
+  );
+}
+
+/* ─────────────────────────────────────────────
+   Scroll-drift marquee - a DIFFERENT Lenis-style effect. A big serif
+   ribbon of value-props that slides as the page scrolls past it.
+   ───────────────────────────────────────────── */
+function ScrollMarquee({ words }: { words: string[] }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const reduced = useReducedMotion();
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
+  const x = useTransform(scrollYProgress, [0, 1], reduced ? ["0%", "0%"] : ["8%", "-32%"]);
+  const row = [...words, ...words];
+  return (
+    <section ref={ref} className="bg-[var(--color-bg)] border-y border-[var(--color-line)] py-14 md:py-20 overflow-hidden">
+      <motion.div style={{ x }} className="flex items-center gap-8 whitespace-nowrap w-max">
+        {row.map((w, i) => (
+          <span key={i} className="inline-flex items-center gap-8 font-serif text-[clamp(2rem,5vw,4rem)] tracking-[-0.02em] text-[var(--color-ink)]">
+            {w}
+            <span className="text-[var(--color-accent)] text-[0.6em]" aria-hidden="true">✦</span>
+          </span>
+        ))}
+      </motion.div>
     </section>
   );
 }
@@ -475,6 +498,9 @@ export default function Home() {
       {/* 3 · HOW IT WORKS (pinned horizontal) */}
       <PinnedHorizontal eyebrow="How it works" heading="Four steps to a room you can trust." label="STEP" items={HOW_ITEMS} />
 
+      {/* 3b · VALUE MARQUEE (scroll-drift) */}
+      <ScrollMarquee words={["Verified hosts", "Bond protected", "No rental history", "Mentors included", "Secure payments", "$0 renter fees"]} />
+
       {/* 4 · EVERYTHING YOU GET (sticky-scroll) */}
       <section className="bg-[var(--color-bg)]">
         <div className="max-w-[1280px] mx-auto px-6 md:px-10 lg:px-14 py-20 md:py-28">
@@ -534,6 +560,34 @@ export default function Home() {
               ))}
             </div>
           ) : null}
+        </div>
+      </section>
+
+      {/* 5b · WHY MIGRENT (comparison) */}
+      <section className="bg-[var(--color-bg)]">
+        <div className="max-w-[1280px] mx-auto px-6 md:px-10 lg:px-14 py-20 md:py-28">
+          <motion.div {...reveal} className="mb-10">
+            <div className="eyebrow mb-2.5">Why MigRent</div>
+            <h2 className="font-serif text-[34px] md:text-[48px] tracking-[-0.025em] leading-[1.02] text-[var(--color-ink)]">A fairer way to find a home.</h2>
+          </motion.div>
+          <div className="grid md:grid-cols-2 gap-5">
+            <motion.div {...reveal} className="rounded-[var(--radius-xl)] border border-[var(--color-line)] bg-[var(--color-surface)] p-8">
+              <div className="font-mono text-[11px] tracking-[0.16em] uppercase text-[var(--color-ink-3)] mb-5">The usual way</div>
+              <ul className="space-y-4">
+                {["Months of payslips and a local rental ledger", "Bond paid straight into a landlord's account", "Unverified listings, and scams to watch for", "Figuring out a new country on your own"].map((t) => (
+                  <li key={t} className="flex gap-3 text-[15px] text-[var(--color-ink-2)] leading-[1.5]"><span className="text-[var(--color-ink-4)] mt-0.5">✕</span> {t}</li>
+                ))}
+              </ul>
+            </motion.div>
+            <motion.div {...reveal} transition={{ ...reveal.transition, delay: 0.1 }} className="ocean-card rounded-[var(--radius-xl)] border border-[var(--color-line)] shadow-[var(--shadow-card)] p-8">
+              <div className="eyebrow mb-5">The MigRent way</div>
+              <ul className="space-y-4">
+                {["No rental history or credit file needed", "Bond held safely in independent escrow", "Every host ID-verified before listing", "A mentor who has made the same move"].map((t) => (
+                  <li key={t} className="flex gap-3 text-[15px] text-[var(--color-ink)] leading-[1.5] font-medium"><Check className="w-4 h-4 text-[var(--color-accent)] mt-0.5 shrink-0" strokeWidth={2.4} /> {t}</li>
+                ))}
+              </ul>
+            </motion.div>
+          </div>
         </div>
       </section>
 
@@ -633,6 +687,35 @@ export default function Home() {
                 <div className="eyebrow mb-2">{p.tag}</div>
                 <h3 className="font-serif text-[26px] tracking-[-0.015em] text-[var(--color-ink)] leading-[1.1] flex-1">{p.title}</h3>
                 <Link href={p.href} className="btn-primary h-11 px-5 text-sm mt-7 self-start">{p.cta} <ArrowRight className="w-3.5 h-3.5" /></Link>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 10b · GUIDES & RESOURCES */}
+      <section className="bg-[var(--color-surface)] border-y border-[var(--color-line)]">
+        <div className="max-w-[1280px] mx-auto px-6 md:px-10 lg:px-14 py-20 md:py-28">
+          <motion.div {...reveal} className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-9">
+            <div>
+              <div className="eyebrow mb-2.5">Guides &amp; resources</div>
+              <h2 className="font-serif text-[34px] md:text-[48px] tracking-[-0.025em] leading-[1.02] text-[var(--color-ink)]">Everything you need to land well.</h2>
+            </div>
+            <Link href="/guides" className="text-[var(--color-primary)] font-semibold text-sm inline-flex items-center gap-1.5 hover:gap-2.5 transition-all shrink-0">All guides <ArrowRight className="w-3.5 h-3.5" /></Link>
+          </motion.div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {[
+              { icon: FileCheck2, t: "Your first week", d: "A checklist for the days right after you land." },
+              { icon: KeyRound, t: "Understanding your lease", d: "What to read before you sign anything." },
+              { icon: MapPin, t: "Choosing a suburb", d: "Match budget, commute, and community." },
+              { icon: ShieldCheck, t: "Tenant rights", d: "What you're entitled to as a renter in Australia." },
+            ].map((g, i) => (
+              <motion.div key={g.t} {...reveal} transition={{ ...reveal.transition, delay: (i % 4) * 0.05 }}>
+                <Link href="/guides" className="card-lift block h-full bg-[var(--color-surface-2)] border border-[var(--color-line)] rounded-[var(--radius-xl)] p-6 hover:border-[var(--color-primary-200)] transition-colors">
+                  <div className="w-11 h-11 rounded-[var(--radius-card)] bg-[var(--color-primary-50)] text-[var(--color-primary)] flex items-center justify-center mb-4"><g.icon className="w-5 h-5" strokeWidth={1.8} /></div>
+                  <h3 className="font-serif text-[20px] tracking-[-0.01em] text-[var(--color-ink)] leading-[1.15]">{g.t}</h3>
+                  <p className="text-[13.5px] text-[var(--color-ink-2)] mt-1.5 leading-[1.5]">{g.d}</p>
+                </Link>
               </motion.div>
             ))}
           </div>
