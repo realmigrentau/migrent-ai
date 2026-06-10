@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Head from "next/head";
 import { useEffect, useRef, useState } from "react";
-import { motion, useScroll, useTransform, useReducedMotion, useMotionValueEvent, type MotionValue } from "framer-motion";
+import { motion, useScroll, useTransform, useReducedMotion, type MotionValue } from "framer-motion";
 import {
   ShieldCheck,
   Check,
@@ -114,13 +114,13 @@ function HomeListingCard({ listing }: { listing: Listing }) {
    which one you are on; each panel is a full two-column scene so there
    is no empty space. Mobile / reduced-motion -> swipeable snap row.
    ───────────────────────────────────────────── */
-type PanelItem = { n: string; icon: LucideIcon; title: string; body: string };
+type PanelItem = { n: string; icon: LucideIcon; title: string; body: string; extra?: string[] };
 
 const HOW_ITEMS: PanelItem[] = [
-  { n: "01", icon: Search, title: "Search", body: "Filter by budget, suburb, and what matters - no rental history needed, pet-friendly, bills included." },
-  { n: "02", icon: ShieldCheck, title: "Verify", body: "Every host is ID-checked with proof of property before a single room goes live." },
-  { n: "03", icon: Lock, title: "Book", body: "Pay securely through Stripe. Your bond is held in independent escrow, never the landlord's account." },
-  { n: "04", icon: KeyRound, title: "Settle", body: "Real support, clear dispute guidance, and mentors who have made the same move before you." },
+  { n: "01", icon: Search, title: "Search", body: "Filter by budget, suburb, and what matters, then find a room that fits how you actually live.", extra: ["No history needed", "Pet-friendly", "Bills included", "Near transport"] },
+  { n: "02", icon: ShieldCheck, title: "Verify", body: "Every host is ID-checked with proof of property before a single room goes live, so you always know who you are dealing with.", extra: ["Government ID", "Proof of property", "Ongoing checks"] },
+  { n: "03", icon: Lock, title: "Book", body: "Pay securely through Stripe. Your bond is held in independent escrow, never in the landlord's account.", extra: ["Stripe secure", "Bond in escrow", "Clear agreement"] },
+  { n: "04", icon: KeyRound, title: "Settle", body: "Move in with real support behind you - clear dispute guidance and mentors who have made the same move.", extra: ["Dispute guidance", "Mentor support", "Real humans"] },
 ];
 
 const WHO_ITEMS: PanelItem[] = [
@@ -130,98 +130,46 @@ const WHO_ITEMS: PanelItem[] = [
   { n: "04", icon: UsersRound, title: "New families", body: "A little more space, the right suburb for school and work, and a lease you can actually understand." },
 ];
 
-function PinnedCard({ it, label, compact }: { it: PanelItem; label: string; compact?: boolean }) {
-  const Icon = it.icon;
+function StepsGrid({ items }: { items: PanelItem[] }) {
   return (
-    <article className={`relative overflow-hidden shrink-0 rounded-[var(--radius-xl)] border border-[var(--color-line)] bg-[var(--color-surface-2)] shadow-[var(--shadow-card)] ${compact ? "w-[80vw] sm:w-[360px] p-8" : "w-[min(90vw,640px)] p-9 md:p-12"}`}>
-      <span className="absolute -right-5 -bottom-9 font-serif leading-none text-[var(--color-primary)] opacity-[0.06] select-none pointer-events-none" style={{ fontSize: compact ? "9rem" : "14rem" }}>{it.n}</span>
-      <div className="relative">
-        <div className="font-mono text-[var(--color-primary)] text-[13px] tracking-[0.2em] mb-5">{it.n} · {label}</div>
-        <div className={`rounded-[var(--radius-xl)] bg-[var(--color-primary-50)] text-[var(--color-primary)] flex items-center justify-center mb-6 ${compact ? "w-12 h-12" : "w-14 h-14"}`}>
-          <Icon className={compact ? "w-6 h-6" : "w-7 h-7"} strokeWidth={1.6} />
-        </div>
-        <h3 className={`font-serif tracking-[-0.03em] text-[var(--color-ink)] leading-[0.98] ${compact ? "text-[30px]" : "text-[38px] md:text-[48px]"}`}>{it.title}</h3>
-        <p className={`text-[var(--color-ink-2)] leading-[1.55] ${compact ? "mt-3 text-[15px]" : "mt-4 text-[17px] max-w-[42ch]"}`}>{it.body}</p>
-      </div>
-    </article>
-  );
-}
-
-function PinnedHorizontal({ eyebrow, heading, label, items }: { eyebrow: string; heading: string; label: string; items: PanelItem[] }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const trackRef = useRef<HTMLDivElement>(null);
-  const reduced = useReducedMotion();
-  const [pinned, setPinned] = useState(false);
-  const [active, setActive] = useState(0);
-  const [maxX, setMaxX] = useState(0);
-  const n = items.length;
-
-  useEffect(() => {
-    const m = () => setPinned(window.innerWidth >= 1024 && !reduced);
-    m();
-    window.addEventListener("resize", m);
-    return () => window.removeEventListener("resize", m);
-  }, [reduced]);
-
-  useEffect(() => {
-    const measure = () => {
-      if (trackRef.current) setMaxX(Math.max(0, trackRef.current.scrollWidth - window.innerWidth + 40));
-    };
-    measure();
-    const t = setTimeout(measure, 250);
-    window.addEventListener("resize", measure);
-    return () => { window.removeEventListener("resize", measure); clearTimeout(t); };
-  }, [pinned, n]);
-
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
-  const x = useTransform(scrollYProgress, [0, 1], [0, -maxX]);
-  useMotionValueEvent(scrollYProgress, "change", (v) => setActive(Math.min(n - 1, Math.max(0, Math.round(v * (n - 1))))));
-
-  const Header = (
-    <div className="max-w-[1280px] mx-auto px-6 md:px-10 lg:px-14 w-full">
-      <div className="flex flex-wrap items-end justify-between gap-5">
-        <div>
-          <div className="eyebrow mb-3">{eyebrow}</div>
-          <h2 className="font-serif text-[32px] md:text-[48px] leading-[1.0] tracking-[-0.03em] text-[var(--color-ink)] max-w-[16ch]">{heading}</h2>
-        </div>
-        {pinned && (
-          <div className="hidden lg:flex items-center gap-2">
-            {items.map((it, i) => (
-              <div key={it.n} className="flex items-center gap-2">
-                <span className={`font-mono text-[12px] tracking-[0.12em] transition-colors duration-300 ${i <= active ? "text-[var(--color-primary)]" : "text-[var(--color-ink-4)]"}`}>{it.n}</span>
-                {i < n - 1 && (
-                  <span className="block w-8 h-[2px] rounded-full bg-[var(--color-line-2)] overflow-hidden">
-                    <span className="block h-full bg-[var(--color-primary)] transition-all duration-500" style={{ width: i < active ? "100%" : "0%" }} />
-                  </span>
-                )}
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-    </div>
-  );
-
-  if (!pinned) {
-    return (
-      <section className="mood-field py-16 border-y border-[var(--color-line)]">
-        {Header}
-        <div className="hscroll mt-9 px-6 md:px-10 lg:px-14">
-          {items.map((it) => <PinnedCard key={it.n} it={it} label={label} compact />)}
-        </div>
-      </section>
-    );
-  }
-
-  return (
-    <section ref={ref} className="mood-field relative border-y border-[var(--color-line)]" style={{ height: `${n * 82}vh` }}>
-      <div className="sticky top-0 h-screen flex flex-col justify-center overflow-hidden pt-20 pb-10">
-        <div className="shrink-0 pb-8">{Header}</div>
-        <motion.div ref={trackRef} style={{ x }} className="flex gap-6 px-6 md:px-10 lg:px-14 items-stretch">
-          {items.map((it) => <PinnedCard key={it.n} it={it} label={label} />)}
+    <section className="mood-field border-y border-[var(--color-line)]">
+      <div className="max-w-[1280px] mx-auto px-6 md:px-10 lg:px-14 py-20 md:py-28">
+        <motion.div {...reveal} className="mb-12">
+          <div className="eyebrow mb-3">How it works</div>
+          <h2 className="font-serif text-[34px] md:text-[52px] leading-[1.0] tracking-[-0.03em] text-[var(--color-ink)] max-w-[16ch]">Four steps to a room you can trust.</h2>
+          <p className="mt-4 text-[16px] md:text-[17px] text-[var(--color-ink-2)] leading-[1.6] max-w-[56ch]">No paper applications and no rental ledger you don't have yet - just a clear path from searching to settled.</p>
         </motion.div>
-        <div className="max-w-[1280px] mx-auto px-6 md:px-10 lg:px-14 w-full mt-7 shrink-0">
-          <span className="font-mono text-[11px] tracking-[0.18em] text-[var(--color-ink-3)]">KEEP SCROLLING →</span>
+        <div className="grid md:grid-cols-2 gap-5">
+          {items.map((it, i) => {
+            const Icon = it.icon;
+            return (
+              <motion.article
+                key={it.n}
+                {...reveal}
+                transition={{ ...reveal.transition, delay: (i % 2) * 0.08 }}
+                className="card-lift relative overflow-hidden rounded-[var(--radius-xl)] border border-[var(--color-line)] bg-[var(--color-surface-2)] shadow-[var(--shadow-card)] p-8 md:p-10"
+              >
+                <span className="absolute -right-4 -bottom-8 font-serif leading-none text-[var(--color-primary)] opacity-[0.06] select-none pointer-events-none" style={{ fontSize: "12rem" }}>{it.n}</span>
+                <div className="relative">
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="w-12 h-12 rounded-[var(--radius-card)] bg-[var(--color-primary-50)] text-[var(--color-primary)] flex items-center justify-center"><Icon className="w-6 h-6" strokeWidth={1.7} /></div>
+                    <div className="font-mono text-[var(--color-primary)] text-[12px] tracking-[0.2em]">{it.n} · STEP</div>
+                  </div>
+                  <h3 className="font-serif text-[30px] md:text-[38px] tracking-[-0.02em] text-[var(--color-ink)] leading-[1.0]">{it.title}</h3>
+                  <p className="mt-3 text-[16px] text-[var(--color-ink-2)] leading-[1.55] max-w-[46ch]">{it.body}</p>
+                  {it.extra && (
+                    <div className="mt-6 pt-5 border-t border-[var(--color-line)] flex flex-wrap gap-2">
+                      {it.extra.map((e) => (
+                        <span key={e} className="inline-flex items-center gap-1.5 text-[12.5px] font-medium text-[var(--color-ink-2)] bg-[var(--color-surface)] border border-[var(--color-line)] rounded-full px-3 py-1.5">
+                          <Check className="w-3 h-3 text-[var(--color-accent)]" strokeWidth={2.8} /> {e}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </motion.article>
+            );
+          })}
         </div>
       </div>
     </section>
@@ -522,8 +470,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 3 · HOW IT WORKS (pinned horizontal) */}
-      <PinnedHorizontal eyebrow="How it works" heading="Four steps to a room you can trust." label="STEP" items={HOW_ITEMS} />
+      {/* 3 · HOW IT WORKS (steps grid) */}
+      <StepsGrid items={HOW_ITEMS} />
 
       {/* 3b · VALUE MARQUEE (scroll-drift) */}
       <ScrollMarquee words={["Verified hosts", "Bond protected", "No rental history", "Mentors included", "Secure payments", "$0 renter fees"]} />
