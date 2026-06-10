@@ -117,279 +117,69 @@
 }
 
 /* ══════════════════════════════════════════════════════════════
-   LIGHT PALETTE OVERLAYS
-   Apply via [data-palette="sand|cloud|mint|sky|blush|paper"] on <html>.
-   The default (no attribute) is Sky.
-   These only override the surface/ink/primary tokens; the rest stays.
+   DARK THEME  ·  Sand & Ocean (single theme)
+   One premium warm-dark: deep espresso canvas, layered elevation,
+   glowing ocean-teal + sea-green accents, warm-cream ink. No palette
+   variants - this is THE dark mode.
    ══════════════════════════════════════════════════════════════ */
-
-html[data-palette="sand"] {
-  --color-bg: #f5f1e8;
-  --color-surface: #fbf8f0;
-  --color-surface-2: #ffffff;
-  --color-surface-muted: #efeadd;
-  --color-surface-warm: #f5f1e8;
-  --color-surface-sunk: #efeadd;
-  --color-ink: #14181c;
-  --color-ink-2: #44494f;
-  --color-ink-3: #6f7480;
-  --color-ink-4: #9aa0a8;
-  --color-line: #e7e0cf;
-  --color-line-2: #d6cdb6;
-  --color-hairline: #e7e0cf;
-  --color-primary: #0e2237;
-  --color-primary-500: #1a3454;
-  --color-primary-600: #0e2237;
-  --color-primary-700: #081626;
-  --color-primary-fg: #faf6e8;
-  --color-primary-soft: #e2e7ee;
-}
-
-html[data-palette="cloud"] {
-  --color-bg: #eff2f6;
-  --color-surface: #f7f9fc;
-  --color-surface-2: #ffffff;
-  --color-surface-muted: #e6eaf0;
-  --color-surface-warm: #eff2f6;
-  --color-surface-sunk: #e6eaf0;
-  --color-ink: #0f172a;
-  --color-ink-2: #3d4759;
-  --color-ink-3: #6a7383;
-  --color-ink-4: #95a0b1;
-  --color-line: #dfe4ec;
-  --color-line-2: #c8d0db;
-  --color-hairline: #dfe4ec;
-  --color-primary: #1e3a5f;
-  --color-primary-500: #2a4d78;
-  --color-primary-600: #1e3a5f;
-  --color-primary-700: #142a47;
-  --color-primary-fg: #f4f7fb;
-  --color-primary-soft: #dce4ef;
-}
-
-html[data-palette="mint"] {
-  --color-bg: #e8f0ea;
-  --color-surface: #f3f8f4;
-  --color-surface-2: #ffffff;
-  --color-surface-muted: #dde7df;
-  --color-surface-warm: #e8f0ea;
-  --color-surface-sunk: #dde7df;
-  --color-ink: #142019;
-  --color-ink-2: #3b4a40;
-  --color-ink-3: #6a786f;
-  --color-ink-4: #95a39a;
-  --color-line: #d4dfd6;
-  --color-line-2: #b9c8bd;
-  --color-hairline: #d4dfd6;
-  --color-primary: #1f5538;
-  --color-primary-500: #2a6b48;
-  --color-primary-600: #1f5538;
-  --color-primary-700: #154028;
-  --color-primary-fg: #f3f8f4;
-  --color-primary-soft: #d6e4da;
-}
-
-html[data-palette="blush"] {
-  --color-bg: #f4e7e3;
-  --color-surface: #faf1ee;
-  --color-surface-2: #ffffff;
-  --color-surface-muted: #ecdcd6;
-  --color-surface-warm: #f4e7e3;
-  --color-surface-sunk: #ecdcd6;
-  --color-ink: #2a1818;
-  --color-ink-2: #54393b;
-  --color-ink-3: #836666;
-  --color-ink-4: #ab9292;
-  --color-line: #e6d0c9;
-  --color-line-2: #d2b4ab;
-  --color-hairline: #e6d0c9;
-  --color-primary: #6b2c3a;
-  --color-primary-500: #8a3a4c;
-  --color-primary-600: #6b2c3a;
-  --color-primary-700: #51202b;
-  --color-primary-fg: #faf1ee;
-  --color-primary-soft: #ead2cf;
-}
-
-html[data-palette="paper"] {
-  --color-bg: #f4f4f2;
-  --color-surface: #fafaf9;
-  --color-surface-2: #ffffff;
-  --color-surface-muted: #e9e9e6;
-  --color-surface-warm: #f4f4f2;
-  --color-surface-sunk: #e9e9e6;
-  --color-ink: #18181b;
-  --color-ink-2: #3f3f46;
-  --color-ink-3: #71717a;
-  --color-ink-4: #9ca3af;
-  --color-line: #e3e3e0;
-  --color-line-2: #c8c8c4;
-  --color-hairline: #e3e3e0;
-  --color-primary: #18181b;
-  --color-primary-500: #2a2a2e;
-  --color-primary-600: #18181b;
-  --color-primary-700: #0a0a0c;
-  --color-primary-fg: #fafaf9;
-  --color-primary-soft: #e3e3e0;
-}
-
-/* ══════════════════════════════════════════════════════════════
-   DARK THEME OVERRIDES
-   Each palette gets its own dark variant tinted in the same family.
-   html.dark always beats html[data-palette] specificity-wise so dark
-   mode wins regardless of the chosen palette.
-   ══════════════════════════════════════════════════════════════ */
-
-/* Default dark = Sand & Ocean dark (warm charcoal + ocean teal) */
 html.dark {
-  --color-ink: #efe7d6;
-  --color-ink-2: #b6ad9b;
-  --color-ink-muted: #847c6e;
-  --color-ink-3: #847c6e;
-  --color-ink-4: #5c5448;
+  /* warm-cream ink, never pure white */
+  --color-ink: #f1ebdd;
+  --color-ink-2: #c0b7a4;
+  --color-ink-muted: #8c8474;
+  --color-ink-3: #8c8474;
+  --color-ink-4: #615749;
 
-  --color-bg: #13110d;
-  --color-surface: #1b1812;
-  --color-surface-2: #24201a;
-  --color-surface-muted: #0d0b08;
-  --color-surface-warm: #1b1812;
-  --color-surface-sunk: #0d0b08;
+  /* deep warm espresso canvas with clear elevation tiers */
+  --color-bg: #100e0b;           /* canvas */
+  --color-surface: #18150f;      /* paper */
+  --color-surface-2: #221e16;    /* elevated card */
+  --color-surface-muted: #0b0907;
+  --color-surface-warm: #1d1812;
+  --color-surface-sunk: #0a0806;
 
-  --color-line: #2c271e;
-  --color-line-2: #3c362a;
-  --color-hairline: #2c271e;
+  --color-line: #2c2720;         /* warm hairline */
+  --color-line-2: #403930;
+  --color-hairline: #2c2720;
 
-  --color-primary: #5bb6c7;
-  --color-primary-500: #74c4d3;
-  --color-primary-600: #5bb6c7;
-  --color-primary-700: #3f97a8;
-  --color-primary-fg: #08191d;
-  --color-primary-soft: #14323a;
+  /* accents glow a touch brighter on the dark canvas */
+  --color-primary-50: #11313a;
+  --color-primary-100: #143b45;
+  --color-primary-200: #1d5563;
+  --color-primary-400: #3fa6b8;
+  --color-primary-500: #74d2e0;
+  --color-primary-600: #57c3d3;
+  --color-primary-700: #3c98a8;
+  --color-primary: #57c3d3;
+  --color-primary-fg: #07171b;
+  --color-primary-soft: #123139;
 
-  --color-accent: #5cc0a0;
-  --color-accent-soft: #15241f;
-  --color-accent-fg: #07140f;
+  --color-accent-50: #102720;
+  --color-accent-100: #14271f;
+  --color-accent-500: #5fcaa8;
+  --color-accent: #5fcaa8;
+  --color-accent-soft: #14271f;
+  --color-accent-fg: #06140f;
 
-  --color-danger-500: #e07b6f;
-  --color-warn-500: #d99657;
-  --color-info-500: #5bb6c7;
+  --color-warn-50: #2a1f10;
+  --color-danger-500: #e8857a;
+  --color-warn-500: #e3a463;
+  --color-info-500: #57c3d3;
+
+  /* premium depth: shadows read on dark via lift, not grey borders */
+  --shadow-soft: 0 1px 0 rgb(0 0 0 / 0.4), 0 1px 3px rgb(0 0 0 / 0.4);
+  --shadow-card: 0 2px 6px rgb(0 0 0 / 0.45), 0 12px 28px -10px rgb(0 0 0 / 0.6);
+  --shadow-pop: 0 12px 32px rgb(0 0 0 / 0.55), 0 2px 8px rgb(0 0 0 / 0.5);
+  --shadow-modal: 0 24px 60px rgb(0 0 0 / 0.7);
 }
 
-/* Sand-dark = warm charcoal */
-html.dark[data-palette="sand"] {
-  --color-ink: #ede6d4;
-  --color-ink-2: #b8b2a2;
-  --color-ink-3: #8a8578;
-  --color-ink-4: #5f5b52;
-  --color-bg: #0f1316;
-  --color-surface: #161c20;
-  --color-surface-2: #1d242a;
-  --color-surface-muted: #0b0f12;
-  --color-surface-warm: #161c20;
-  --color-surface-sunk: #0b0f12;
-  --color-line: #262d33;
-  --color-line-2: #364048;
-  --color-hairline: #262d33;
-  --color-primary: #c9d6ea;
-  --color-primary-500: #dde6f4;
-  --color-primary-600: #c9d6ea;
-  --color-primary-700: #aab9d0;
-  --color-primary-fg: #0a1320;
-  --color-primary-soft: #1f2a3a;
-}
-
-/* Cloud-dark = cool slate */
-html.dark[data-palette="cloud"] {
-  --color-ink: #e6ebf3;
-  --color-ink-2: #aab4c4;
-  --color-ink-3: #6e7a8f;
-  --color-ink-4: #4f5a6e;
-  --color-bg: #0e131c;
-  --color-surface: #161c2a;
-  --color-surface-2: #1d2538;
-  --color-surface-muted: #080c14;
-  --color-surface-warm: #161c2a;
-  --color-surface-sunk: #080c14;
-  --color-line: #232c3f;
-  --color-line-2: #354160;
-  --color-hairline: #232c3f;
-  --color-primary: #a8bce0;
-  --color-primary-500: #c1d2eb;
-  --color-primary-600: #a8bce0;
-  --color-primary-700: #859ac6;
-  --color-primary-fg: #0e131c;
-  --color-primary-soft: #1d2538;
-}
-
-/* Mint-dark = deep forest */
-html.dark[data-palette="mint"] {
-  --color-ink: #d8ead8;
-  --color-ink-2: #a4b9a8;
-  --color-ink-3: #6e8473;
-  --color-ink-4: #4f6256;
-  --color-bg: #0c1410;
-  --color-surface: #131e16;
-  --color-surface-2: #1a281e;
-  --color-surface-muted: #060c08;
-  --color-surface-warm: #131e16;
-  --color-surface-sunk: #060c08;
-  --color-line: #1e2e23;
-  --color-line-2: #2f4434;
-  --color-hairline: #1e2e23;
-  --color-primary: #8fc4a4;
-  --color-primary-500: #a8d4ba;
-  --color-primary-600: #8fc4a4;
-  --color-primary-700: #6ea584;
-  --color-primary-fg: #0c1410;
-  --color-primary-soft: #1a281e;
-  --color-accent: #d6a063;
-  --color-accent-soft: #2c1f10;
-}
-
-/* Blush-dark = deep wine */
-html.dark[data-palette="blush"] {
-  --color-ink: #f1d8d4;
-  --color-ink-2: #c2a4a0;
-  --color-ink-3: #8a6d6a;
-  --color-ink-4: #5f4f4d;
-  --color-bg: #1a0e10;
-  --color-surface: #261518;
-  --color-surface-2: #321c20;
-  --color-surface-muted: #100608;
-  --color-surface-warm: #261518;
-  --color-surface-sunk: #100608;
-  --color-line: #3a2128;
-  --color-line-2: #4f2e37;
-  --color-hairline: #3a2128;
-  --color-primary: #e09bab;
-  --color-primary-500: #ecb4c2;
-  --color-primary-600: #e09bab;
-  --color-primary-700: #c47a8b;
-  --color-primary-fg: #1a0e10;
-  --color-primary-soft: #321c20;
-}
-
-/* Paper-dark = pure black */
-html.dark[data-palette="paper"] {
-  --color-ink: #f4f4f2;
-  --color-ink-2: #b8b8b4;
-  --color-ink-3: #71717a;
-  --color-ink-4: #4f4f56;
-  --color-bg: #050505;
-  --color-surface: #0d0d0e;
-  --color-surface-2: #18181b;
-  --color-surface-muted: #020202;
-  --color-surface-warm: #0d0d0e;
-  --color-surface-sunk: #020202;
-  --color-line: #1f1f22;
-  --color-line-2: #2e2e32;
-  --color-hairline: #1f1f22;
-  --color-primary: #f4f4f2;
-  --color-primary-500: #ffffff;
-  --color-primary-600: #f4f4f2;
-  --color-primary-700: #c8c8c4;
-  --color-primary-fg: #0a0a0a;
-  --color-primary-soft: #18181b;
+/* Dark canvas gets a faint warm bloom so it feels designed, not flat */
+html.dark body {
+  background-image:
+    radial-gradient(70% 55% at 8% -5%, color-mix(in oklab, var(--color-primary) 12%, transparent), transparent 60%),
+    radial-gradient(60% 50% at 100% 0%, color-mix(in oklab, var(--color-warn-500) 9%, transparent), transparent 58%);
+  background-attachment: fixed;
+  background-repeat: no-repeat;
 }
 
 /* ══════════════════════════════════════════════════════════════

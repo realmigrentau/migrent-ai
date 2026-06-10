@@ -30,7 +30,13 @@ archetypes and hero treatment.
 - Content pages (legal, guides, blog, faq): **Long Document** - one editorial
   column, Fraunces headings, generous measure, mono eyebrows.
 
-## Theme (Sand & Ocean)
+## Theme (Sand & Ocean) - SINGLE THEME
+There is ONE theme. The old swappable palettes (sand/cloud/mint/blush/paper/sky)
+were removed (CSS overlays, the settings palette picker, and the _document
+bootstrap). Light = Sand & Ocean; dark = one premium warm-dark (deep espresso
+canvas, layered elevation, glowing teal/sea-green accents, faint warm bloom).
+Do not reintroduce data-palette variants.
+
 OKLCH source of truth (the live tokens in globals.css are hex equivalents to match
 the existing file convention).
 

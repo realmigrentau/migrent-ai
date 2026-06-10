@@ -15,7 +15,6 @@ import {
   Check,
   Save,
 } from "lucide-react";
-import { usePalette, PALETTES, type Palette as PaletteId } from "../../hooks/usePalette";
 
 interface PreferencesTabProps {
   theme: string;
@@ -73,7 +72,6 @@ export default function PreferencesTab({
   const [timezone, setTimezone] = useState(profile?.timezone || "Australia/Sydney");
   const [region, setRegion] = useState("sydney");
   const [showShortcuts, setShowShortcuts] = useState(false);
-  const { palette, setPalette } = usePalette();
 
   const handleSave = async () => {
     await updateProfile({
@@ -147,109 +145,6 @@ export default function PreferencesTab({
         </div>
       </GlassCard>
 
-      {/* Color palette */}
-      <GlassCard delay={0.07}>
-        <div className="flex items-start gap-4 mb-4">
-          <div className="w-10 h-10 rounded-[10px] bg-[var(--color-surface-sunk)] flex items-center justify-center shrink-0 text-[var(--color-ink-2)]">
-            <Palette className="w-5 h-5" />
-          </div>
-          <div>
-            <h3 className="font-semibold text-[var(--color-ink)] tracking-[-0.005em]">Color palette</h3>
-            <p className="text-xs text-[var(--color-ink-3)]">
-              Six curated combinations. Each passes WCAG AA contrast.
-              {theme === "dark" && " Switch to light mode to preview palettes."}
-            </p>
-          </div>
-        </div>
-        <div
-          className="ml-14 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"
-          style={{
-            opacity: theme === "dark" ? 0.45 : 1,
-            pointerEvents: theme === "dark" ? "none" : "auto",
-          }}
-        >
-          {PALETTES.map((p) => {
-            const active = palette === p.id;
-            return (
-              <button
-                key={p.id}
-                type="button"
-                onClick={() => setPalette(p.id as PaletteId)}
-                className={`text-left p-3 rounded-[12px] border-2 transition-colors flex flex-col gap-3 ${
-                  active
-                    ? "border-[var(--color-ink)]"
-                    : "border-[var(--color-line)] hover:border-[var(--color-line-2)]"
-                }`}
-              >
-                {/* Mini product preview */}
-                <div
-                  className="rounded-[6px] overflow-hidden h-[88px] p-2 flex flex-col gap-1.5"
-                  style={{ background: p.swatch[0], border: `1px solid ${p.swatch[2]}1a` }}
-                >
-                  <div className="flex items-center gap-1">
-                    <div className="h-1 w-[18px] rounded-[1px]" style={{ background: p.swatch[2] }} />
-                    <div className="h-1 w-[11px] rounded-[1px]" style={{ background: `${p.swatch[2]}aa` }} />
-                    <div className="flex-1" />
-                    <div className="w-3.5 h-3.5 rounded-full" style={{ background: p.swatch[4] }} />
-                  </div>
-                  <div
-                    className="flex-1 rounded p-1.5 flex flex-col justify-between"
-                    style={{ background: p.swatch[1] }}
-                  >
-                    <div className="flex flex-col gap-1">
-                      <div className="h-1 w-[70%] rounded-[1px]" style={{ background: p.swatch[2] }} />
-                      <div className="h-0.5 w-[90%] rounded-[1px]" style={{ background: `${p.swatch[2]}88` }} />
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <div className="h-1 w-7 rounded-[1px]" style={{ background: p.swatch[2] }} />
-                      <div
-                        className="px-1.5 py-0.5 rounded-[3px] font-bold"
-                        style={{
-                          background: p.swatch[3],
-                          color: p.swatch[1],
-                          fontSize: 7,
-                        }}
-                      >
-                        APPLY
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div>
-                  <div className="flex items-center justify-between gap-1.5">
-                    <div className="text-[13.5px] font-semibold text-[var(--color-ink)]">{p.name}</div>
-                    {p.tag === "Recommended" && (
-                      <span className="text-[9px] font-semibold uppercase tracking-[0.04em] px-1.5 py-0.5 rounded-full bg-[var(--color-accent-soft)] text-[var(--color-accent)]">
-                        ✓ {p.tag}
-                      </span>
-                    )}
-                    {p.tag === "Original" && (
-                      <span className="text-[9px] font-semibold uppercase tracking-[0.04em] px-1.5 py-0.5 rounded-full bg-[var(--color-surface-sunk)] text-[var(--color-ink-2)]">
-                        {p.tag}
-                      </span>
-                    )}
-                  </div>
-                  <div className="text-[11.5px] text-[var(--color-ink-3)] mt-0.5 leading-[1.35]">{p.desc}</div>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  {p.swatch.map((c, i) => (
-                    <div
-                      key={i}
-                      className="w-3.5 h-3.5 rounded-full"
-                      style={{ background: c, border: "1px solid var(--color-line)" }}
-                    />
-                  ))}
-                  {active && (
-                    <span className="ml-auto inline-flex items-center gap-1 text-[10.5px] font-bold text-[var(--color-accent)]">
-                      <Check className="w-2.5 h-2.5" /> Active
-                    </span>
-                  )}
-                </div>
-              </button>
-            );
-          })}
-        </div>
-      </GlassCard>
 
       {/* Region & Timezone */}
       <GlassCard delay={0.15}>
