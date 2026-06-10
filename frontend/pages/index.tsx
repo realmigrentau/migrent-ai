@@ -201,28 +201,51 @@ function ScrollMarquee({ words }: { words: string[] }) {
 }
 
 /* ─────────────────────────────────────────────
-   Expanding media band - scroll-scrub scale + parallax caption. The
-   video panel grows as it centers and the caption drifts. Another Lenis move.
+   Parallax gallery - two rows of suburb tiles drifting in OPPOSITE
+   directions as you scroll (a signature Lenis-demo move). Reliable:
+   just scroll-linked translateX, no pinning.
    ───────────────────────────────────────────── */
-function BelongBand() {
+const GALLERY: { s: string; c: string }[] = [
+  { s: "Marrickville", c: "Sydney" }, { s: "Carlton", c: "Melbourne" }, { s: "West End", c: "Brisbane" },
+  { s: "Newtown", c: "Sydney" }, { s: "Brunswick", c: "Melbourne" }, { s: "South Bank", c: "Brisbane" },
+  { s: "Footscray", c: "Melbourne" }, { s: "Surry Hills", c: "Sydney" }, { s: "Fitzroy", c: "Melbourne" },
+  { s: "Glebe", c: "Sydney" }, { s: "St Kilda", c: "Melbourne" }, { s: "Paddington", c: "Brisbane" },
+];
+
+function GalleryTile({ s, c }: { s: string; c: string }) {
+  return (
+    <div className="shrink-0 w-[260px] sm:w-[300px]">
+      <div className="photo-placeholder h-[200px] rounded-[var(--radius-xl)] relative overflow-hidden border border-[var(--color-line)]">
+        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" aria-hidden="true" />
+        <div className="absolute inset-0 flex flex-col justify-end p-5">
+          <div className="font-serif text-[22px] text-white leading-none tracking-[-0.01em]">{s}</div>
+          <div className="font-mono text-[11px] text-white/80 mt-1.5 tracking-[0.08em]">{c.toUpperCase()}</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ParallaxGallery() {
   const ref = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
-  const scale = useTransform(scrollYProgress, [0, 0.45, 1], reduced ? [1, 1, 1] : [0.9, 1, 1.05]);
-  const y = useTransform(scrollYProgress, [0, 1], reduced ? [0, 0] : [50, -50]);
+  const xA = useTransform(scrollYProgress, [0, 1], reduced ? ["0%", "0%"] : ["-14%", "2%"]);
+  const xB = useTransform(scrollYProgress, [0, 1], reduced ? ["0%", "0%"] : ["2%", "-14%"]);
+  const rowA = GALLERY.slice(0, 6);
+  const rowB = GALLERY.slice(6);
   return (
-    <section ref={ref} className="bg-[var(--color-bg)] py-20 md:py-28 overflow-hidden">
-      <div className="max-w-[1280px] mx-auto px-6 md:px-10 lg:px-14">
-        <motion.div style={{ scale }} className="relative rounded-[28px] overflow-hidden border border-[var(--color-line)] shadow-[var(--shadow-pop)] aspect-[16/11] md:aspect-[21/9] bg-[var(--color-ink)]">
-          <video autoPlay muted loop playsInline aria-hidden="true" className="absolute inset-0 w-full h-full object-cover" src={VIDEO_SRC} />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#06121a]/78 via-[#06121a]/25 to-transparent" aria-hidden="true" />
-          <motion.div style={{ y }} className="absolute inset-0 flex flex-col justify-end p-8 md:p-14">
-            <div className="font-mono text-[12px] tracking-[0.2em] text-white/80 mb-4">A PLACE TO BELONG</div>
-            <h2 className="font-serif text-[clamp(2rem,5vw,4.2rem)] leading-[1.0] tracking-[-0.03em] text-white max-w-[18ch]">More than a room. Somewhere that feels like yours.</h2>
-            <p className="mt-4 text-white/85 text-[16px] md:text-[18px] max-w-[52ch] leading-[1.5]">Verified rooms, protected bonds, and people who have your back from day one.</p>
-          </motion.div>
-        </motion.div>
+    <section ref={ref} className="bg-[var(--color-bg)] py-20 md:py-28 overflow-hidden border-y border-[var(--color-line)]">
+      <div className="max-w-[1280px] mx-auto px-6 md:px-10 lg:px-14 mb-10">
+        <div className="eyebrow mb-3">A glimpse of home</div>
+        <h2 className="font-serif text-[34px] md:text-[52px] leading-[1.0] tracking-[-0.03em] text-[var(--color-ink)] max-w-[18ch]">Real rooms, in real neighbourhoods.</h2>
       </div>
+      <motion.div style={{ x: xA }} className="flex gap-5 mb-5 w-max will-change-transform">
+        {[...rowA, ...rowA].map((t, i) => <GalleryTile key={`a${i}`} s={t.s} c={t.c} />)}
+      </motion.div>
+      <motion.div style={{ x: xB }} className="flex gap-5 w-max will-change-transform">
+        {[...rowB, ...rowB].map((t, i) => <GalleryTile key={`b${i}`} s={t.s} c={t.c} />)}
+      </motion.div>
     </section>
   );
 }
@@ -727,8 +750,8 @@ export default function Home() {
         <OwnerMarquee />
       </section>
 
-      {/* 12b · BELONG BAND (scroll-scrub scale + parallax) */}
-      <BelongBand />
+      {/* 12b · PARALLAX GALLERY (opposite-drift rows) */}
+      <ParallaxGallery />
 
       {/* 13 · CTA */}
       <section className="mood-field-strong border-t border-[var(--color-line)]">
