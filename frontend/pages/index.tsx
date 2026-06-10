@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Head from "next/head";
 import { useEffect, useRef, useState } from "react";
-import { motion, useScroll, useTransform, useReducedMotion, type MotionValue } from "framer-motion";
+import { motion, useScroll, useTransform, useReducedMotion, useMotionValueEvent, type MotionValue } from "framer-motion";
 import {
   ShieldCheck,
   Check,
@@ -22,6 +22,9 @@ import {
   Compass,
   UsersRound,
   FileCheck2,
+  GraduationCap,
+  Luggage,
+  type LucideIcon,
 } from "lucide-react";
 import { searchListings } from "../lib/api";
 import OwnerMarquee from "../components/OwnerMarquee";
@@ -105,21 +108,34 @@ function HomeListingCard({ listing }: { listing: Listing }) {
 }
 
 /* ─────────────────────────────────────────────
-   EFFECT 2 · Pinned horizontal "How it works"
+   Pinned horizontal scroller (reusable)
    Panels slide sideways as you scroll DOWN. The first panel is fully
-   in view at the start (x: 0%), then it scrolls left through the rest.
+   in view at the start (x: 0%); a progress rail shows all N steps and
+   which one you are on; each panel is a full two-column scene so there
+   is no empty space. Mobile / reduced-motion -> swipeable snap row.
    ───────────────────────────────────────────── */
-const steps = [
-  { n: "01", icon: Search, title: "Search", body: "Filter by budget, suburb, and what matters: no rental history needed, pet-friendly, bills included." },
+type PanelItem = { n: string; icon: LucideIcon; title: string; body: string };
+
+const HOW_ITEMS: PanelItem[] = [
+  { n: "01", icon: Search, title: "Search", body: "Filter by budget, suburb, and what matters - no rental history needed, pet-friendly, bills included." },
   { n: "02", icon: ShieldCheck, title: "Verify", body: "Every host is ID-checked with proof of property before a single room goes live." },
   { n: "03", icon: Lock, title: "Book", body: "Pay securely through Stripe. Your bond is held in independent escrow, never the landlord's account." },
-  { n: "04", icon: KeyRound, title: "Settle", body: "Real support, clear dispute guidance, and mentors who have made the same move." },
+  { n: "04", icon: KeyRound, title: "Settle", body: "Real support, clear dispute guidance, and mentors who have made the same move before you." },
 ];
 
-function HowItWorks() {
+const WHO_ITEMS: PanelItem[] = [
+  { n: "01", icon: Compass, title: "New migrants", body: "Just landed, no local rental history yet, and looking for somewhere safe to start your life here." },
+  { n: "02", icon: GraduationCap, title: "Students", body: "Near campus, on a student budget, often booking a room before you have even arrived in the country." },
+  { n: "03", icon: Luggage, title: "Working holiday", body: "Flexible stays across new cities, with hosts who understand that your plans keep moving." },
+  { n: "04", icon: UsersRound, title: "New families", body: "A little more space, the right suburb for school and work, and a lease you can actually understand." },
+];
+
+function PinnedHorizontal({ eyebrow, heading, label, items }: { eyebrow: string; heading: string; label: string; items: PanelItem[] }) {
   const ref = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotion();
   const [pinned, setPinned] = useState(false);
+  const [active, setActive] = useState(0);
+  const n = items.length;
 
   useEffect(() => {
     const m = () => setPinned(window.innerWidth >= 1024 && !reduced);
@@ -129,45 +145,69 @@ function HowItWorks() {
   }, [reduced]);
 
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
-  // track is steps.length panels wide; move from first to last
-  const x = useTransform(scrollYProgress, [0, 1], ["0%", `-${((steps.length - 1) / steps.length) * 100}%`]);
+  const x = useTransform(scrollYProgress, [0, 1], ["0%", `-${((n - 1) / n) * 100}%`]);
+  useMotionValueEvent(scrollYProgress, "change", (v) => setActive(Math.min(n - 1, Math.max(0, Math.round(v * (n - 1))))));
 
-  const panel = (s: (typeof steps)[number]) => {
-    const Icon = s.icon;
-    return (
-      <div key={s.n} className="w-screen shrink-0 flex items-center justify-center px-6">
-        <div className="w-full max-w-[560px]">
-          <div className="font-mono text-[var(--color-primary)] text-[13px] tracking-[0.2em] mb-6">{s.n} · STEP</div>
-          <div className="w-16 h-16 rounded-[var(--radius-xl)] bg-[var(--color-primary-50)] text-[var(--color-primary)] flex items-center justify-center mb-7">
-            <Icon className="w-8 h-8" strokeWidth={1.6} />
+  const Header = (
+    <div className="max-w-[1280px] mx-auto px-6 md:px-10 lg:px-14 w-full">
+      <div className="flex flex-wrap items-end justify-between gap-5">
+        <div>
+          <div className="eyebrow mb-3">{eyebrow}</div>
+          <h2 className="font-serif text-[32px] md:text-[48px] leading-[1.0] tracking-[-0.03em] text-[var(--color-ink)] max-w-[16ch]">{heading}</h2>
+        </div>
+        {pinned && (
+          <div className="hidden lg:flex items-center gap-2">
+            {items.map((it, i) => (
+              <div key={it.n} className="flex items-center gap-2">
+                <span className={`font-mono text-[12px] tracking-[0.12em] transition-colors duration-300 ${i <= active ? "text-[var(--color-primary)]" : "text-[var(--color-ink-4)]"}`}>{it.n}</span>
+                {i < n - 1 && (
+                  <span className="block w-8 h-[2px] rounded-full bg-[var(--color-line-2)] overflow-hidden">
+                    <span className="block h-full bg-[var(--color-primary)] transition-all duration-500" style={{ width: i < active ? "100%" : "0%" }} />
+                  </span>
+                )}
+              </div>
+            ))}
           </div>
-          <h3 className="font-serif text-[clamp(2.4rem,6vw,4.5rem)] leading-[0.98] tracking-[-0.03em] text-[var(--color-ink)]">{s.title}</h3>
-          <p className="mt-5 text-[18px] leading-[1.55] text-[var(--color-ink-2)] max-w-[42ch]">{s.body}</p>
+        )}
+      </div>
+    </div>
+  );
+
+  const Panel = (it: PanelItem) => {
+    const Icon = it.icon;
+    return (
+      <div key={it.n} className="w-screen shrink-0 px-6 md:px-10 lg:px-14">
+        <div className="max-w-[1280px] mx-auto grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
+          <div>
+            <div className="font-mono text-[var(--color-primary)] text-[13px] tracking-[0.2em] mb-6">{it.n} · {label}</div>
+            <div className="w-16 h-16 rounded-[var(--radius-xl)] bg-[var(--color-primary-50)] text-[var(--color-primary)] flex items-center justify-center mb-7"><Icon className="w-8 h-8" strokeWidth={1.6} /></div>
+            <h3 className="font-serif text-[clamp(2.6rem,6vw,4.6rem)] leading-[0.95] tracking-[-0.03em] text-[var(--color-ink)]">{it.title}</h3>
+            <p className="mt-5 text-[18px] leading-[1.55] text-[var(--color-ink-2)] max-w-[40ch]">{it.body}</p>
+          </div>
+          <div className="hidden lg:flex justify-center">
+            <div className="relative w-full max-w-[440px] aspect-square rounded-[28px] mood-field-strong border border-[var(--color-line)] overflow-hidden flex items-center justify-center">
+              <span className="font-serif leading-none text-[var(--color-primary)] opacity-[0.13] select-none" style={{ fontSize: "16rem" }}>{it.n}</span>
+              <Icon className="absolute w-24 h-24 text-[var(--color-primary)]" strokeWidth={1.1} />
+            </div>
+          </div>
         </div>
       </div>
     );
   };
 
-  const header = (
-    <div className="max-w-[1280px] mx-auto px-6 md:px-10 lg:px-14">
-      <div className="eyebrow mb-3">How it works</div>
-      <h2 className="font-serif text-[34px] md:text-[52px] leading-[1.0] tracking-[-0.03em] text-[var(--color-ink)] max-w-[16ch]">Four steps to a room you can trust.</h2>
-    </div>
-  );
-
   if (!pinned) {
     return (
       <section className="mood-field py-16 border-y border-[var(--color-line)]">
-        {header}
+        {Header}
         <div className="hscroll mt-9 px-6 md:px-10 lg:px-14">
-          {steps.map((s) => {
-            const Icon = s.icon;
+          {items.map((it) => {
+            const Icon = it.icon;
             return (
-              <article key={s.n} className="w-[80vw] sm:w-[400px] shrink-0 bg-[var(--color-surface-2)] border border-[var(--color-line)] rounded-[var(--radius-xl)] p-8 shadow-[var(--shadow-card)]">
-                <div className="font-mono text-[var(--color-primary)] text-[12px] tracking-[0.2em] mb-4">{s.n} · STEP</div>
+              <article key={it.n} className="w-[80vw] sm:w-[400px] shrink-0 bg-[var(--color-surface-2)] border border-[var(--color-line)] rounded-[var(--radius-xl)] p-8 shadow-[var(--shadow-card)]">
+                <div className="font-mono text-[var(--color-primary)] text-[12px] tracking-[0.2em] mb-4">{it.n} · {label}</div>
                 <div className="w-12 h-12 rounded-[var(--radius-card)] bg-[var(--color-primary-50)] text-[var(--color-primary)] flex items-center justify-center mb-5"><Icon className="w-6 h-6" strokeWidth={1.7} /></div>
-                <h3 className="font-serif text-[30px] tracking-[-0.02em] text-[var(--color-ink)] leading-none">{s.title}</h3>
-                <p className="mt-3 text-[15px] leading-[1.55] text-[var(--color-ink-2)]">{s.body}</p>
+                <h3 className="font-serif text-[30px] tracking-[-0.02em] text-[var(--color-ink)] leading-none">{it.title}</h3>
+                <p className="mt-3 text-[15px] leading-[1.55] text-[var(--color-ink-2)]">{it.body}</p>
               </article>
             );
           })}
@@ -177,12 +217,13 @@ function HowItWorks() {
   }
 
   return (
-    <section ref={ref} className="mood-field relative border-y border-[var(--color-line)]" style={{ height: `${steps.length * 90}vh` }}>
-      <div className="sticky top-0 h-screen flex flex-col justify-center overflow-hidden pt-16">
-        <div className="pb-12 shrink-0">{header}</div>
-        <motion.div style={{ x }} className="flex">
-          {steps.map(panel)}
-        </motion.div>
+    <section ref={ref} className="mood-field relative border-y border-[var(--color-line)]" style={{ height: `${n * 95}vh` }}>
+      <div className="sticky top-0 h-screen flex flex-col justify-center overflow-hidden pt-20 pb-12">
+        <div className="shrink-0 pb-10">{Header}</div>
+        <motion.div style={{ x }} className="flex">{items.map(Panel)}</motion.div>
+        <div className="max-w-[1280px] mx-auto px-6 md:px-10 lg:px-14 w-full mt-8 shrink-0">
+          <span className="font-mono text-[11px] tracking-[0.18em] text-[var(--color-ink-3)]">SCROLL TO EXPLORE →</span>
+        </div>
       </div>
     </section>
   );
@@ -397,7 +438,7 @@ export default function Home() {
       </section>
 
       {/* 3 · HOW IT WORKS (pinned horizontal) */}
-      <HowItWorks />
+      <PinnedHorizontal eyebrow="How it works" heading="Four steps to a room you can trust." label="STEP" items={HOW_ITEMS} />
 
       {/* 4 · EVERYTHING YOU GET (sticky-scroll) */}
       <section className="bg-[var(--color-bg)]">
@@ -536,6 +577,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* 9b · WHO IT'S FOR (pinned horizontal) */}
+      <PinnedHorizontal eyebrow="Who it's for" heading="Built for everyone arriving in Australia." label="WHO" items={WHO_ITEMS} />
 
       {/* 10 · TWO PATHS */}
       <section className="bg-[var(--color-bg)]">
