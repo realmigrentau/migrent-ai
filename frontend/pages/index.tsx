@@ -27,7 +27,6 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { searchListings } from "../lib/api";
-import OwnerMarquee from "../components/OwnerMarquee";
 
 type Listing = {
   id: string;
@@ -321,6 +320,53 @@ function ScrollStatement({ text, eyebrow }: { text: string; eyebrow: string }) {
 /* ─────────────────────────────────────────────
    Page
    ───────────────────────────────────────────── */
+/* ─────────────────────────────────────────────
+   Curtain reveal - lines slide up from behind a mask as you scroll
+   (an Awwwards / Lenis-style text reveal, distinct from the word-fill).
+   ───────────────────────────────────────────── */
+function CurtainLine({ children, progress, range }: { children: string; progress: MotionValue<number>; range: [number, number] }) {
+  const y = useTransform(progress, range, ["115%", "0%"]);
+  const opacity = useTransform(progress, range, [0, 1]);
+  return (
+    <span className="block overflow-hidden pb-[0.08em]">
+      <motion.span style={{ y, opacity }} className="block">{children}</motion.span>
+    </span>
+  );
+}
+
+function VerifiedCurtain() {
+  const ref = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start 0.85", "end 0.5"] });
+  const lines = ["Every owner, checked.", "Government ID, proof of property.", "Verified before a room goes live."];
+  const points = [
+    { icon: BadgeCheck, t: "Identity verified" },
+    { icon: FileCheck2, t: "Property confirmed" },
+    { icon: ShieldCheck, t: "Ongoing monitoring" },
+  ];
+  return (
+    <section ref={ref} className="bg-[var(--color-surface)] border-y border-[var(--color-line)]">
+      <div className="max-w-[1100px] mx-auto px-6 md:px-10 lg:px-14 py-24 md:py-32">
+        <div className="eyebrow mb-6">Verified owners</div>
+        <div className="font-serif text-[clamp(2rem,5.4vw,4.2rem)] leading-[1.06] tracking-[-0.03em] text-[var(--color-ink)]">
+          {lines.map((l, i) => {
+            const start = i / lines.length;
+            const end = start + 1 / lines.length;
+            return <CurtainLine key={i} progress={scrollYProgress} range={[start, end]}>{l}</CurtainLine>;
+          })}
+        </div>
+        <div className="mt-12 flex flex-wrap gap-x-8 gap-y-4">
+          {points.map((p) => (
+            <span key={p.t} className="inline-flex items-center gap-2.5 text-[15px] font-medium text-[var(--color-ink-2)]">
+              <span className="w-9 h-9 rounded-full bg-[var(--color-accent-soft)] text-[var(--color-accent)] flex items-center justify-center"><p.icon className="w-[18px] h-[18px]" strokeWidth={1.9} /></span>
+              {p.t}
+            </span>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export default function Home() {
   const [budget, setBudget] = useState(350);
   const [city, setCity] = useState("Melbourne, VIC");
@@ -741,14 +787,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 12 · VERIFIED OWNERS MARQUEE */}
-      <section className="bg-[var(--color-bg)] py-14">
-        <motion.div {...reveal} className="max-w-[1280px] mx-auto px-6 md:px-10 lg:px-14 mb-7">
-          <div className="eyebrow mb-2.5">Verified owners</div>
-          <h2 className="font-serif text-[28px] md:text-[40px] tracking-[-0.02em] leading-[1.05] text-[var(--color-ink)]">Rooms from people who passed our checks.</h2>
-        </motion.div>
-        <OwnerMarquee />
-      </section>
+      {/* 12 · VERIFIED OWNERS (curtain reveal) */}
+      <VerifiedCurtain />
 
       {/* 12b · PARALLAX GALLERY (opposite-drift rows) */}
       <ParallaxGallery />
