@@ -19,7 +19,8 @@ export default function Layout({ children }: { children: ReactNode }) {
   const isHomePage = router.pathname === "/";
   const isDashboard = router.pathname.startsWith("/dashboard");
   const isPricing = router.pathname === "/pricing";
-  const isFullWidth = isAdminRoute || isHomePage || isPricing;
+  const isMarketing = ["/for-seekers", "/for-owners", "/about", "/features"].includes(router.pathname);
+  const isFullWidth = isAdminRoute || isHomePage || isPricing || isMarketing;
 
   return (
     <div className="min-h-screen flex flex-col bg-[var(--color-bg)] text-[var(--color-ink)]">

@@ -40,15 +40,15 @@ export default function About() {
         {/* Hero */}
         <section className="relative text-center py-16 overflow-hidden">
           <div className="absolute top-10 left-10 w-72 h-72 bg-[var(--color-primary)]/10 dark:bg-[var(--color-primary)]/5 hidden " />
-          <div className="absolute bottom-10 right-10 w-96 h-96 bg-blue-500/10 dark:bg-blue-500/5 hidden " style={{ animationDelay: "1s" }} />
+          <div className="absolute bottom-10 right-10 w-96 h-96 bg-[var(--color-primary)]/10 hidden " style={{ animationDelay: "1s" }} />
           <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="relative z-10 max-w-3xl mx-auto">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 border border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)] text-xs font-medium text-[var(--color-primary)] dark:text-[var(--color-primary)] mb-6">
               {t("about.badge")}
             </div>
-            <h1 className="text-4xl sm:text-5xl font-semibold tracking-tight leading-tight text-slate-900 dark:text-white">
+            <h1 className="font-serif text-[42px] sm:text-[56px] font-medium tracking-[-0.025em] leading-[1.0] text-[var(--color-ink)]">
               {t("about.headline1")} {t("about.headlineAccent")} {t("about.headline2")}
             </h1>
-            <p className="mt-6 text-lg text-slate-500 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
+            <p className="mt-6 text-lg text-[var(--color-ink-3)] max-w-2xl mx-auto leading-relaxed">
               {t("about.subtitle")}
             </p>
           </motion.div>
@@ -60,8 +60,8 @@ export default function About() {
             {stats.map((stat, i) => (
               <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="card p-4 rounded-2xl text-center">
                 <p className="text-2xl font-bold text-[var(--color-primary)]">{stat.value}</p>
-                <p className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white mt-1">{stat.label}</p>
-                <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{stat.detail}</p>
+                <p className="text-xs font-bold uppercase tracking-wider text-[var(--color-ink)] mt-1">{stat.label}</p>
+                <p className="text-xs text-[var(--color-ink-3)] mt-0.5">{stat.detail}</p>
               </motion.div>
             ))}
           </div>
@@ -70,10 +70,10 @@ export default function About() {
         {/* The Story */}
         <section className="max-w-3xl mx-auto">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} className="card p-6 md:p-8 rounded-2xl space-y-5">
-            <motion.h2 custom={0} variants={fadeUp} className="text-2xl font-semibold tracking-tight text-slate-900 dark:text-white">
+            <motion.h2 custom={0} variants={fadeUp} className="font-serif text-[30px] md:text-[38px] tracking-[-0.02em] text-[var(--color-ink)]">
               {t("about.storyTitle")} {t("about.storyAccent")}
             </motion.h2>
-            <motion.div custom={1} variants={fadeUp} className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-4">
+            <motion.div custom={1} variants={fadeUp} className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-4">
               <p>
                 {t("about.storyP1")}
               </p>
@@ -93,8 +93,8 @@ export default function About() {
         {/* Mission */}
         <section className="max-w-3xl mx-auto">
           <div className="card p-6 md:p-8 rounded-2xl bg-[var(--color-primary-soft)] from-[var(--color-primary-soft)] to-[var(--color-primary-soft)]/50 dark:from-[var(--color-primary)]/10 dark:to-[var(--color-primary)]/5 border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)] space-y-4">
-            <h2 className="text-xl font-semibold tracking-tight text-slate-900 dark:text-white">{t("about.missionTitle")}</h2>
-            <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+            <h2 className="font-serif text-[26px] tracking-[-0.015em] text-[var(--color-ink)]">{t("about.missionTitle")}</h2>
+            <p className="text-sm text-[var(--color-ink-2)] leading-relaxed">
               {t("about.missionText")}
             </p>
           </div>
@@ -102,7 +102,7 @@ export default function About() {
 
         {/* Values */}
         <section className="max-w-3xl mx-auto">
-          <h2 className="text-3xl font-semibold tracking-tight text-slate-900 dark:text-white mb-8 text-center">
+          <h2 className="font-serif text-[32px] md:text-[44px] tracking-[-0.02em] text-[var(--color-ink)] mb-8 text-center">
             {t("about.valuesTitle")} {t("about.valuesAccent")}
           </h2>
           <div className="grid sm:grid-cols-2 gap-4">
@@ -113,8 +113,8 @@ export default function About() {
                     <path strokeLinecap="round" strokeLinejoin="round" d={item.icon} />
                   </svg>
                 </div>
-                <h3 className="font-semibold text-slate-900 dark:text-white text-sm mb-1">{item.title}</h3>
-                <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">{item.desc}</p>
+                <h3 className="font-semibold text-[var(--color-ink)] text-sm mb-1">{item.title}</h3>
+                <p className="text-sm text-[var(--color-ink-3)] leading-relaxed">{item.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -123,19 +123,19 @@ export default function About() {
         {/* How It Works Quick */}
         <section className="max-w-3xl mx-auto">
           <div className="card p-6 rounded-2xl space-y-4">
-            <h2 className="text-xl font-semibold tracking-tight text-slate-900 dark:text-white">{t("about.howTitle")}</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
+            <h2 className="font-serif text-[26px] tracking-[-0.015em] text-[var(--color-ink)]">{t("about.howTitle")}</h2>
+            <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
               <p>{t("about.howDesc")}</p>
               <div className="grid sm:grid-cols-2 gap-3">
                 <div className="card-subtle p-4 rounded-xl border-l-2 border-l-[var(--color-primary)]">
-                  <h3 className="font-semibold text-slate-800 dark:text-slate-200 text-sm mb-1">{t("about.howSeekerTitle")}</h3>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">{t("about.howSeekerDesc")}</p>
+                  <h3 className="font-semibold text-[var(--color-ink)] text-sm mb-1">{t("about.howSeekerTitle")}</h3>
+                  <p className="text-xs text-[var(--color-ink-3)]">{t("about.howSeekerDesc")}</p>
                   <Link href="/for-seekers" className="text-xs text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors mt-1 inline-block">{t("about.howSeekerLink")}</Link>
                 </div>
-                <div className="card-subtle p-4 rounded-xl border-l-2 border-l-blue-500">
-                  <h3 className="font-semibold text-slate-800 dark:text-slate-200 text-sm mb-1">{t("about.howOwnerTitle")}</h3>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">{t("about.howOwnerDesc")}</p>
-                  <Link href="/for-owners" className="text-xs text-blue-500 hover:text-blue-600 dark:hover:text-blue-400 underline underline-offset-2 transition-colors mt-1 inline-block">{t("about.howOwnerLink")}</Link>
+                <div className="card-subtle p-4 rounded-xl border-l-2 border-l-[var(--color-primary)]">
+                  <h3 className="font-semibold text-[var(--color-ink)] text-sm mb-1">{t("about.howOwnerTitle")}</h3>
+                  <p className="text-xs text-[var(--color-ink-3)]">{t("about.howOwnerDesc")}</p>
+                  <Link href="/for-owners" className="text-xs text-[var(--color-primary)] hover:opacity-80 underline underline-offset-2 transition-colors mt-1 inline-block">{t("about.howOwnerLink")}</Link>
                 </div>
               </div>
             </div>
@@ -145,31 +145,31 @@ export default function About() {
         {/* Business Details */}
         <section className="max-w-3xl mx-auto">
           <div className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white">{t("about.businessTitle")}</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-1">
+            <h2 className="font-serif text-[22px] tracking-[-0.01em] text-[var(--color-ink)]">{t("about.businessTitle")}</h2>
+            <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-1">
               <div className="grid sm:grid-cols-2 gap-4">
                 <div>
-                  <span className="text-xs font-medium uppercase tracking-wider text-slate-400 dark:text-slate-500">{t("about.businessName")}</span>
-                  <p className="font-semibold text-slate-900 dark:text-white">MigRent AI</p>
+                  <span className="text-xs font-medium uppercase tracking-wider text-[var(--color-ink-3)]">{t("about.businessName")}</span>
+                  <p className="font-semibold text-[var(--color-ink)]">MigRent AI</p>
                 </div>
                 <div>
-                  <span className="text-xs font-medium uppercase tracking-wider text-slate-400 dark:text-slate-500">{t("about.abn")}</span>
-                  <p className="font-semibold text-slate-900 dark:text-white">22 669 566 941</p>
+                  <span className="text-xs font-medium uppercase tracking-wider text-[var(--color-ink-3)]">{t("about.abn")}</span>
+                  <p className="font-semibold text-[var(--color-ink)]">22 669 566 941</p>
                 </div>
                 <div>
-                  <span className="text-xs font-medium uppercase tracking-wider text-slate-400 dark:text-slate-500">{t("about.structure")}</span>
+                  <span className="text-xs font-medium uppercase tracking-wider text-[var(--color-ink-3)]">{t("about.structure")}</span>
                   <p>{t("about.structureValue")}</p>
                 </div>
                 <div>
-                  <span className="text-xs font-medium uppercase tracking-wider text-slate-400 dark:text-slate-500">{t("about.location")}</span>
+                  <span className="text-xs font-medium uppercase tracking-wider text-[var(--color-ink-3)]">{t("about.location")}</span>
                   <p>{t("about.locationValue")}</p>
                 </div>
                 <div>
-                  <span className="text-xs font-medium uppercase tracking-wider text-slate-400 dark:text-slate-500">{t("about.markets")}</span>
+                  <span className="text-xs font-medium uppercase tracking-wider text-[var(--color-ink-3)]">{t("about.markets")}</span>
                   <p>{t("about.marketsValue")}</p>
                 </div>
                 <div>
-                  <span className="text-xs font-medium uppercase tracking-wider text-slate-400 dark:text-slate-500">{t("about.emailLabel")}</span>
+                  <span className="text-xs font-medium uppercase tracking-wider text-[var(--color-ink-3)]">{t("about.emailLabel")}</span>
                   <p><a href="https://mail.google.com/mail/?view=cm&fs=1&to=migrentau@gmail.com" target="_blank" rel="noopener noreferrer" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">migrentau@gmail.com</a></p>
                 </div>
               </div>
@@ -179,18 +179,18 @@ export default function About() {
 
         {/* Disclaimer */}
         <section className="max-w-3xl mx-auto">
-          <div className="card-subtle p-5 rounded-2xl border-l-2 border-l-amber-500">
-            <p className="text-sm text-slate-500 dark:text-slate-400">
-              <strong className="text-slate-700 dark:text-slate-300">{t("about.disclaimerLabel")}</strong> {t("about.disclaimerText")}
+          <div className="card-subtle p-5 rounded-2xl border-l-2 border-l-[var(--color-warn-500)]">
+            <p className="text-sm text-[var(--color-ink-3)]">
+              <strong className="text-[var(--color-ink-2)]">{t("about.disclaimerLabel")}</strong> {t("about.disclaimerText")}
             </p>
           </div>
         </section>
 
         {/* CTA */}
         <section className="max-w-3xl mx-auto pb-8">
-          <div className="card p-8 rounded-2xl bg-[var(--color-primary-soft)] from-[var(--color-primary-soft)] via-white to-blue-50 dark:from-[var(--color-primary)]/10 dark:via-slate-900 dark:to-[var(--color-primary)]/10 text-center">
-            <h2 className="text-2xl font-semibold tracking-tight text-slate-900 dark:text-white mb-3">{t("about.ctaTitle")}</h2>
-            <p className="text-sm text-slate-600 dark:text-slate-300 mb-6">{t("about.ctaSubtitle")}</p>
+          <div className="card p-8 rounded-2xl bg-[var(--color-primary-soft)] text-center">
+            <h2 className="font-serif text-[30px] md:text-[38px] tracking-[-0.02em] text-[var(--color-ink)] mb-3">{t("about.ctaTitle")}</h2>
+            <p className="text-sm text-[var(--color-ink-2)] mb-6">{t("about.ctaSubtitle")}</p>
             <div className="flex gap-3 justify-center flex-col sm:flex-row">
               <Link href="/dashboard" className="inline-block btn-primary text-sm px-8 py-2.5 rounded-[10px]">
                 {t("about.seekerCta")}

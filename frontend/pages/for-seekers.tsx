@@ -1,152 +1,217 @@
 import Link from "next/link";
-import { motion, type Variants } from "framer-motion";
 import Head from "next/head";
-import { useTranslation } from "react-i18next";
+import { motion } from "framer-motion";
+import {
+  Search,
+  ShieldCheck,
+  Lock,
+  KeyRound,
+  Check,
+  ArrowRight,
+  FileCheck2,
+  Wallet,
+  HeartHandshake,
+  MessagesSquare,
+  MapPin,
+  BadgeCheck,
+} from "lucide-react";
 
-const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 30 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: { delay: i * 0.1, duration: 0.5, ease: "easeOut" },
-  }),
+/* Hallmark · genre: editorial · design-system: design.md · designed-as-app
+ * macrostructure: Marquee Hero family (marketing) · page: for-seekers */
+
+const reveal = {
+  initial: { opacity: 0, y: 24 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true, margin: "-60px" },
+  transition: { duration: 0.7, ease: [0.2, 0.7, 0.3, 1] as const },
 };
 
+const steps = [
+  { n: "01", icon: Search, title: "Search honestly", body: "Filter by budget, suburb, and move-in date - then by what actually matters to a new arrival.", extra: ["No history needed", "Pet-friendly", "Bills included", "Near transport"] },
+  { n: "02", icon: ShieldCheck, title: "Meet verified hosts", body: "Every host passes government ID and proof-of-property checks before their room goes live.", extra: ["Government ID", "Proof of property", "Ongoing checks"] },
+  { n: "03", icon: Lock, title: "Apply and book safely", body: "Message hosts, apply in one place, and pay through Stripe. Your bond goes into independent escrow.", extra: ["Stripe secure", "Bond in escrow", "Clear agreement"] },
+  { n: "04", icon: KeyRound, title: "Move in supported", body: "Real support and dispute guidance, plus mentors who made the same move before you.", extra: ["Dispute guidance", "Mentor support", "Real humans"] },
+];
+
+const benefits = [
+  { icon: FileCheck2, title: "Your visa is enough", body: "Filter for hosts who welcome first-time renters with no Australian rental ledger or credit file." },
+  { icon: Lock, title: "Bond protection", body: "Your bond is held by an independent escrow partner, never the landlord's bank account." },
+  { icon: Wallet, title: "$0 renter fees", body: "Browsing, messaging, and applying are free. No platform service fee for renters." },
+  { icon: BadgeCheck, title: "Verified, always", body: "You will never message an unverified host. Every listing belongs to a checked owner." },
+  { icon: HeartHandshake, title: "Mentors included", body: "Get help reading a lease, opening a bank account, or picking a suburb from someone who has done it." },
+  { icon: MessagesSquare, title: "Real support", body: "A human team and clear dispute guidance if anything goes sideways." },
+];
+
+const filters = [
+  "No rental history needed",
+  "Bills included",
+  "Pet-friendly",
+  "Near universities",
+  "Near public transport",
+  "Furnished rooms",
+  "Female-only households",
+  "Instant book",
+];
+
 export default function ForSeekers() {
-  const { t } = useTranslation();
-
-  const steps = [
-    { num: t("forSeekers.step1Num"), title: t("forSeekers.step1Title"), desc: t("forSeekers.step1Desc"), icon: "M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" },
-    { num: t("forSeekers.step2Num"), title: t("forSeekers.step2Title"), desc: t("forSeekers.step2Desc"), icon: "M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" },
-    { num: t("forSeekers.step3Num"), title: t("forSeekers.step3Title"), desc: t("forSeekers.step3Desc"), icon: "M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" },
-    { num: t("forSeekers.step4Num"), title: t("forSeekers.step4Title"), desc: t("forSeekers.step4Desc"), icon: "M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" },
-  ];
-
-  const benefits = [
-    { title: t("forSeekers.ben1Title"), desc: t("forSeekers.ben1Desc"), icon: "S" },
-    { title: t("forSeekers.ben2Title"), desc: t("forSeekers.ben2Desc"), icon: "N" },
-    { title: t("forSeekers.ben3Title"), desc: t("forSeekers.ben3Desc"), icon: "V" },
-    { title: t("forSeekers.ben4Title"), desc: t("forSeekers.ben4Desc"), icon: "$" },
-    { title: t("forSeekers.ben5Title"), desc: t("forSeekers.ben5Desc"), icon: "F" },
-    { title: t("forSeekers.ben6Title"), desc: t("forSeekers.ben6Desc"), icon: "C" },
-  ];
-
   return (
     <>
       <Head>
-        <title>For Seekers | MigRent AI</title>
-        <meta name="description" content="Find your room with MigRent AI. AI-powered matching for migrants, students, and professionals across Australia." />
+        <title>For Seekers - Find a room you can trust | MigRent</title>
+        <meta name="description" content="Verified rooms for migrants, students, and new arrivals across Australia. No rental history or local credit file needed. Bond held in escrow, $0 renter fees." />
       </Head>
 
-      <div className="space-y-16">
-        {/* Hero */}
-        <section className="relative text-center py-16 overflow-hidden">
-          <div className="absolute top-10 left-10 w-72 h-72 bg-[var(--color-primary)]/10 dark:bg-[var(--color-primary)]/5 hidden " />
-          <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="relative z-10 max-w-3xl mx-auto">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 border border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)] text-xs font-medium text-[var(--color-primary)] dark:text-[var(--color-primary)] mb-6">
-              <span className="w-2 h-2 rounded-full bg-[var(--color-primary)] animate-pulse" />
-              {t("forSeekers.badge")}
-            </div>
-            <h1 className="text-4xl sm:text-5xl font-semibold tracking-tight leading-tight text-slate-900 dark:text-white">
-              {t("forSeekers.headline1")} {t("forSeekers.headline2")}
+      {/* 1 · HERO */}
+      <section className="mood-field border-b border-[var(--color-line)]">
+        <div className="max-w-[1280px] mx-auto px-6 md:px-10 lg:px-14 py-16 md:py-24">
+          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: [0.2, 0.7, 0.3, 1] }} className="max-w-[820px]">
+            <div className="eyebrow mb-5">For seekers · Free to use</div>
+            <h1 className="font-serif text-[44px] sm:text-[58px] xl:text-[68px] font-medium leading-[0.98] tracking-[-0.025em] text-[var(--color-ink)] [overflow-wrap:anywhere]">
+              Find your room.
+              <br />
+              <span className="text-[var(--color-primary)]">Feel at home.</span>
             </h1>
-            <p className="mt-6 text-lg text-slate-500 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
-              {t("forSeekers.subtitle")}
+            <p className="mt-6 text-[17px] sm:text-[18px] text-[var(--color-ink-2)] max-w-[52ch] leading-[1.55]">
+              Verified rooms across Australia for migrants, students, and new arrivals - with no rental history or local credit file needed.
             </p>
-            <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/dashboard" className="inline-block btn-primary text-sm px-8 py-2.5 rounded-[10px]">
-                {t("forSeekers.startSearching")}
-              </Link>
-              <Link href="/pricing" className="inline-block btn-secondary text-sm px-8 py-2.5 rounded-[10px]">
-                {t("forSeekers.viewPricing")}
-              </Link>
+            <div className="flex flex-wrap gap-3 mt-8">
+              <Link href="/seeker/search" className="btn-primary h-12 px-7 text-[15px]">Start searching <ArrowRight className="w-4 h-4" /></Link>
+              <Link href="/pricing" className="btn-secondary h-12 px-7 text-[15px]">View pricing</Link>
+            </div>
+            <div className="mt-7 flex flex-wrap gap-x-5 gap-y-2.5">
+              {[
+                { icon: BadgeCheck, label: "ID-verified hosts" },
+                { icon: Lock, label: "Bond in escrow" },
+                { icon: Wallet, label: "$0 renter fees" },
+              ].map((c) => (
+                <span key={c.label} className="inline-flex items-center gap-2 text-[13.5px] font-medium text-[var(--color-ink-2)]">
+                  <c.icon className="w-4 h-4 text-[var(--color-accent)]" /> {c.label}
+                </span>
+              ))}
             </div>
           </motion.div>
-        </section>
+        </div>
+      </section>
 
-        {/* How It Works */}
-        <section className="max-w-3xl mx-auto">
-          <motion.h2 initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0} variants={fadeUp} className="text-3xl font-semibold tracking-tight text-slate-900 dark:text-white mb-8 text-center">
-            {t("forSeekers.howTitle")} {t("forSeekers.howAccent")}
-          </motion.h2>
-          <div className="space-y-4">
-            {steps.map((step, i) => (
-              <motion.div key={step.num} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i} variants={fadeUp} className="card card-lift p-5 rounded-2xl flex gap-4 items-start">
-                <div className="w-10 h-10 rounded-xl bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 border border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)] flex items-center justify-center shrink-0">
-                  <svg className="w-5 h-5 text-[var(--color-primary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d={step.icon} />
-                  </svg>
-                </div>
-                <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="text-xs font-bold text-[var(--color-primary)] dark:text-[var(--color-primary)]/70">{step.num}</span>
-                    <h3 className="font-semibold text-slate-900 dark:text-white text-sm">{step.title}</h3>
+      {/* 2 · HOW IT WORKS (steps grid, same language as homepage) */}
+      <section className="bg-[var(--color-surface)] border-b border-[var(--color-line)]">
+        <div className="max-w-[1280px] mx-auto px-6 md:px-10 lg:px-14 py-20 md:py-28">
+          <motion.div {...reveal} className="mb-12">
+            <div className="eyebrow mb-3">How it works</div>
+            <h2 className="font-serif text-[34px] md:text-[52px] leading-[1.0] tracking-[-0.03em] text-[var(--color-ink)] max-w-[16ch]">From searching to settled.</h2>
+          </motion.div>
+          <div className="grid md:grid-cols-2 gap-5">
+            {steps.map((it, i) => {
+              const Icon = it.icon;
+              return (
+                <motion.article key={it.n} {...reveal} transition={{ ...reveal.transition, delay: (i % 2) * 0.08 }} className="card-lift relative overflow-hidden rounded-[var(--radius-xl)] border border-[var(--color-line)] bg-[var(--color-surface-2)] shadow-[var(--shadow-card)] p-8 md:p-10">
+                  <span className="absolute -right-4 -bottom-8 font-serif leading-none text-[var(--color-primary)] opacity-[0.06] select-none pointer-events-none" style={{ fontSize: "12rem" }}>{it.n}</span>
+                  <div className="relative">
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="w-12 h-12 rounded-[var(--radius-card)] bg-[var(--color-primary-50)] text-[var(--color-primary)] flex items-center justify-center"><Icon className="w-6 h-6" strokeWidth={1.7} /></div>
+                      <div className="font-mono text-[var(--color-primary)] text-[12px] tracking-[0.2em]">{it.n} · STEP</div>
+                    </div>
+                    <h3 className="font-serif text-[30px] md:text-[36px] tracking-[-0.02em] text-[var(--color-ink)] leading-[1.0]">{it.title}</h3>
+                    <p className="mt-3 text-[16px] text-[var(--color-ink-2)] leading-[1.55] max-w-[46ch]">{it.body}</p>
+                    <div className="mt-6 pt-5 border-t border-[var(--color-line)] flex flex-wrap gap-2">
+                      {it.extra.map((e) => (
+                        <span key={e} className="inline-flex items-center gap-1.5 text-[12.5px] font-medium text-[var(--color-ink-2)] bg-[var(--color-surface)] border border-[var(--color-line)] rounded-full px-3 py-1.5">
+                          <Check className="w-3 h-3 text-[var(--color-accent)]" strokeWidth={2.8} /> {e}
+                        </span>
+                      ))}
+                    </div>
                   </div>
-                  <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">{step.desc}</p>
-                </div>
-              </motion.div>
-            ))}
+                </motion.article>
+              );
+            })}
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* Benefits */}
-        <section className="max-w-3xl mx-auto">
-          <h2 className="text-3xl font-semibold tracking-tight text-slate-900 dark:text-white mb-8 text-center">
-            {t("forSeekers.benefitsTitle")} {t("forSeekers.benefitsAccent")}
-          </h2>
-          <div className="grid sm:grid-cols-2 gap-4">
-            {benefits.map((item, i) => (
-              <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} whileHover={{ y: -4 }} className="card-subtle p-5 rounded-xl group hover:shadow-md dark:hover:bg-white/[0.06] transition-all">
-                <div className="w-10 h-10 rounded-xl bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 border border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)] flex items-center justify-center text-[var(--color-primary)] dark:text-[var(--color-primary)] font-bold text-sm mb-3 group-hover:border-[var(--color-line-2)] dark:group-hover:border-[var(--color-line-2)]/40 transition-colors">
-                  {item.icon}
-                </div>
-                <h3 className="text-slate-900 dark:text-white font-semibold text-sm">{item.title}</h3>
-                <p className="text-slate-500 dark:text-slate-400 text-xs mt-1 leading-relaxed">{item.desc}</p>
-              </motion.div>
-            ))}
-          </div>
-        </section>
-
-        {/* Search Filters Showcase */}
-        <section className="max-w-3xl mx-auto">
-          <div className="card p-6 rounded-2xl space-y-4">
-            <h2 className="text-xl font-semibold tracking-tight text-slate-900 dark:text-white">{t("forSeekers.filtersTitle")}</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
-              <p>{t("forSeekers.filtersIntro")}</p>
-              <div className="grid sm:grid-cols-2 gap-3">
-                {[
-                  t("forSeekers.filter1"),
-                  t("forSeekers.filter2"),
-                  t("forSeekers.filter3"),
-                  t("forSeekers.filter4"),
-                  t("forSeekers.filter5"),
-                  t("forSeekers.filter6"),
-                  t("forSeekers.filter7"),
-                  t("forSeekers.filter8"),
-                ].map((filter) => (
-                  <div key={filter} className="flex items-center gap-2 card-subtle p-3 rounded-lg">
-                    <svg className="w-4 h-4 text-[var(--color-primary)] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                    </svg>
-                    <span className="text-sm">{filter}</span>
-                  </div>
-                ))}
-              </div>
+      {/* 3 · BENEFITS */}
+      <section>
+        <div className="max-w-[1280px] mx-auto px-6 md:px-10 lg:px-14 py-20 md:py-28">
+          <div className="grid lg:grid-cols-[0.85fr_1.15fr] gap-10 lg:gap-16">
+            <motion.div {...reveal} className="lg:sticky lg:top-24 lg:self-start">
+              <div className="eyebrow mb-3">Why seekers choose MigRent</div>
+              <h2 className="font-serif text-[34px] md:text-[52px] leading-[1.0] tracking-[-0.03em] text-[var(--color-ink)]">Built for your first rental here.</h2>
+              <p className="mt-5 text-[16px] text-[var(--color-ink-2)] leading-[1.6] max-w-[42ch]">Everything the usual market makes hard, made simple and safe.</p>
+              <Link href="/seeker/search" className="btn-primary h-11 px-5 text-sm mt-7">Browse rooms <ArrowRight className="w-3.5 h-3.5" /></Link>
+            </motion.div>
+            <div className="grid sm:grid-cols-2 gap-4">
+              {benefits.map((o, i) => (
+                <motion.div key={o.title} {...reveal} transition={{ ...reveal.transition, delay: (i % 2) * 0.06 }} className="card-lift bg-[var(--color-surface-2)] border border-[var(--color-line)] rounded-[var(--radius-xl)] p-6">
+                  <div className="w-11 h-11 rounded-[var(--radius-card)] bg-[var(--color-primary-50)] text-[var(--color-primary)] flex items-center justify-center mb-4"><o.icon className="w-5 h-5" strokeWidth={1.8} /></div>
+                  <h3 className="font-serif text-[20px] tracking-[-0.01em] text-[var(--color-ink)] leading-[1.15]">{o.title}</h3>
+                  <p className="text-[13.5px] text-[var(--color-ink-2)] mt-1.5 leading-[1.5]">{o.body}</p>
+                </motion.div>
+              ))}
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* CTA */}
-        <section className="max-w-3xl mx-auto pb-8">
-          <div className="card p-8 rounded-2xl bg-[var(--color-primary-soft)] from-[var(--color-primary-soft)] to-[var(--color-primary-soft)]/50 dark:from-[var(--color-primary)]/10 dark:to-[var(--color-primary)]/5 border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)] text-center">
-            <h2 className="text-2xl font-semibold tracking-tight text-slate-900 dark:text-white mb-3">{t("forSeekers.ctaTitle")}</h2>
-            <p className="text-sm text-slate-600 dark:text-slate-300 mb-6 max-w-md mx-auto">{t("forSeekers.ctaSubtitle")}</p>
-            <Link href="/dashboard" className="inline-block btn-primary text-sm px-8 py-2.5 rounded-[10px]">
-              {t("forSeekers.ctaCta")}
-            </Link>
+      {/* 4 · FILTERS */}
+      <section className="mood-field-strong border-y border-[var(--color-line)]">
+        <div className="max-w-[1280px] mx-auto px-6 md:px-10 lg:px-14 py-20 md:py-28">
+          <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+            <motion.div {...reveal}>
+              <div className="eyebrow mb-3">Search that gets it</div>
+              <h2 className="font-serif text-[34px] md:text-[48px] leading-[1.0] tracking-[-0.03em] text-[var(--color-ink)]">Filters made for arriving.</h2>
+              <p className="mt-5 text-[16px] text-[var(--color-ink-2)] leading-[1.6] max-w-[44ch]">
+                Most rental sites filter by price and bedrooms. MigRent also filters by the things that decide whether a place works for someone new to the country.
+              </p>
+              <Link href="/seeker/search" className="btn-primary h-11 px-5 text-sm mt-7">Try the search <ArrowRight className="w-3.5 h-3.5" /></Link>
+            </motion.div>
+            <motion.div {...reveal} transition={{ ...reveal.transition, delay: 0.1 }} className="flex flex-wrap gap-2.5">
+              {filters.map((f) => (
+                <span key={f} className="inline-flex items-center gap-2 text-[14px] font-medium text-[var(--color-ink)] bg-[var(--color-surface-2)] border border-[var(--color-line)] rounded-full px-4 py-2.5 shadow-[var(--shadow-soft)]">
+                  <Check className="w-3.5 h-3.5 text-[var(--color-accent)]" strokeWidth={2.6} /> {f}
+                </span>
+              ))}
+            </motion.div>
           </div>
-        </section>
-      </div>
+        </div>
+      </section>
+
+      {/* 5 · WHERE */}
+      <section>
+        <div className="max-w-[1280px] mx-auto px-6 md:px-10 lg:px-14 py-20 md:py-28">
+          <motion.div {...reveal} className="mb-9">
+            <div className="eyebrow mb-2.5">Where you can live</div>
+            <h2 className="font-serif text-[34px] md:text-[48px] tracking-[-0.025em] leading-[1.02] text-[var(--color-ink)]">Rooms across Australia's biggest cities.</h2>
+          </motion.div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              { city: "Sydney", note: "Surry Hills to Parramatta" },
+              { city: "Melbourne", note: "Carlton to Footscray" },
+              { city: "Brisbane", note: "West End to South Bank" },
+              { city: "More soon", note: "Perth & Adelaide next" },
+            ].map((c, i) => (
+              <motion.div key={c.city} {...reveal} transition={{ ...reveal.transition, delay: i * 0.06 }} className="bg-[var(--color-surface-2)] border border-[var(--color-line)] rounded-[var(--radius-xl)] p-6 card-lift">
+                <MapPin className="w-5 h-5 text-[var(--color-primary)] mb-4" />
+                <div className="font-serif text-[24px] tracking-[-0.015em] text-[var(--color-ink)] leading-none">{c.city}</div>
+                <div className="text-[13px] text-[var(--color-ink-3)] mt-2 leading-[1.4]">{c.note}</div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 6 · CTA */}
+      <section className="mood-field-strong border-t border-[var(--color-line)]">
+        <div className="max-w-[1280px] mx-auto px-6 md:px-10 lg:px-14 py-20 md:py-28">
+          <motion.div {...reveal} className="max-w-[760px]">
+            <div className="eyebrow mb-5">Free to browse · No credit file needed</div>
+            <h2 className="font-serif text-[40px] md:text-[60px] leading-[0.98] tracking-[-0.03em] text-[var(--color-ink)]">Ready to find your room?</h2>
+            <p className="mt-5 text-[17px] text-[var(--color-ink-2)] leading-[1.55] max-w-[560px]">Join migrants, students, and professionals who found a home they can trust through MigRent.</p>
+            <div className="flex flex-wrap gap-3 mt-8">
+              <Link href="/seeker/search" className="btn-primary h-12 px-7 text-[15px]">Start searching <ArrowRight className="w-4 h-4" /></Link>
+              <Link href="/faq" className="btn-secondary h-12 px-7 text-[15px]">Questions? Read the FAQ</Link>
+            </div>
+          </motion.div>
+        </div>
+      </section>
     </>
   );
 }

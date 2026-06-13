@@ -1,151 +1,188 @@
 import Link from "next/link";
-import { motion, type Variants } from "framer-motion";
 import Head from "next/head";
-import { useTranslation } from "react-i18next";
+import { motion } from "framer-motion";
+import {
+  Home,
+  ShieldCheck,
+  Lock,
+  Check,
+  ArrowRight,
+  Wallet,
+  MessagesSquare,
+  BadgeCheck,
+  UsersRound,
+  CalendarCheck,
+  FileCheck2,
+} from "lucide-react";
 
-const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 30 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: { delay: i * 0.1, duration: 0.5, ease: "easeOut" },
-  }),
+/* Hallmark · genre: editorial · design-system: design.md · designed-as-app
+ * macrostructure: Marquee Hero family (marketing) · page: for-owners */
+
+const reveal = {
+  initial: { opacity: 0, y: 24 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true, margin: "-60px" },
+  transition: { duration: 0.7, ease: [0.2, 0.7, 0.3, 1] as const },
 };
 
+const steps = [
+  { n: "01", icon: Home, title: "List your room", body: "Photos, price, house rules, and who the place suits - your listing is live the same day you verify.", extra: ["Free to list", "Same-day setup", "Edit any time"] },
+  { n: "02", icon: BadgeCheck, title: "Get verified", body: "A quick government ID and proof-of-property check. It is what makes your listing stand out as safe.", extra: ["Government ID", "Proof of property", "Verified badge"] },
+  { n: "03", icon: UsersRound, title: "Meet real seekers", body: "Receive enquiries from genuine, motivated renters - students, professionals, and new arrivals.", extra: ["Serious enquiries", "Profiles up front", "Message in-app"] },
+  { n: "04", icon: CalendarCheck, title: "Book with confidence", body: "Accept a request or use instant book. Payments run through Stripe with a clear agreement.", extra: ["Stripe secure", "Instant book", "Clear terms"] },
+];
+
+const benefits = [
+  { icon: UsersRound, title: "Tenants you can trust", body: "Seeker profiles show verification status and references up front, so you choose with confidence." },
+  { icon: Wallet, title: "Simple, fair pricing", body: "Free to list. A one-time AUD $99 fee per property when you find your tenant - no commissions, no subscriptions." },
+  { icon: Lock, title: "Protected payments", body: "Rent and bond flow through Stripe, with the bond held in independent escrow for both sides." },
+  { icon: ShieldCheck, title: "A safer marketplace", body: "Verification on both sides keeps scammers out - and keeps your enquiries genuine." },
+  { icon: MessagesSquare, title: "Everything in one place", body: "Listings, enquiries, bookings, and payments managed from one clean dashboard." },
+  { icon: FileCheck2, title: "Help when you need it", body: "Real support and clear dispute guidance, written in plain English." },
+];
+
 export default function ForOwners() {
-  const { t } = useTranslation();
-
-  const steps = [
-    { num: t("forOwners.step1Num"), title: t("forOwners.step1Title"), desc: t("forOwners.step1Desc"), icon: "M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" },
-    { num: t("forOwners.step2Num"), title: t("forOwners.step2Title"), desc: t("forOwners.step2Desc"), icon: "M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" },
-    { num: t("forOwners.step3Num"), title: t("forOwners.step3Title"), desc: t("forOwners.step3Desc"), icon: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" },
-    { num: t("forOwners.step4Num"), title: t("forOwners.step4Title"), desc: t("forOwners.step4Desc"), icon: "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" },
-  ];
-
-  const benefits = [
-    { title: t("forOwners.ben1Title"), desc: t("forOwners.ben1Desc"), icon: "R" },
-    { title: t("forOwners.ben2Title"), desc: t("forOwners.ben2Desc"), icon: "A" },
-    { title: t("forOwners.ben3Title"), desc: t("forOwners.ben3Desc"), icon: "$" },
-    { title: t("forOwners.ben4Title"), desc: t("forOwners.ben4Desc"), icon: "K" },
-    { title: t("forOwners.ben5Title"), desc: t("forOwners.ben5Desc"), icon: "C" },
-    { title: t("forOwners.ben6Title"), desc: t("forOwners.ben6Desc"), icon: "T" },
-  ];
-
   return (
     <>
       <Head>
-        <title>For Owners | MigRent AI</title>
-        <meta name="description" content="List your room on MigRent AI. Reach verified seekers, AI matching, one-time AUD $99 fee. Start earning today." />
+        <title>For Owners - Fill your room with the right tenant | MigRent</title>
+        <meta name="description" content="List your room on MigRent and reach verified, motivated renters. Free to list, one-time AUD $99 fee per property match. Secure payments and bond escrow built in." />
       </Head>
 
-      <div className="space-y-16">
-        {/* Hero */}
-        <section className="relative text-center py-16 overflow-hidden">
-          <div className="absolute top-10 right-10 w-72 h-72 bg-blue-500/10 dark:bg-blue-500/5 hidden " />
-          <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="relative z-10 max-w-3xl mx-auto">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 dark:bg-blue-500/10 border border-blue-100 dark:border-blue-500/20 text-xs font-medium text-blue-600 dark:text-blue-400 mb-6">
-              <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-              {t("forOwners.badge")}
-            </div>
-            <h1 className="text-4xl sm:text-5xl font-semibold tracking-tight leading-tight text-slate-900 dark:text-white">
-              {t("forOwners.headline1")} {t("forOwners.headline2")}
+      {/* 1 · HERO */}
+      <section className="mood-field border-b border-[var(--color-line)]">
+        <div className="max-w-[1280px] mx-auto px-6 md:px-10 lg:px-14 py-16 md:py-24">
+          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: [0.2, 0.7, 0.3, 1] }} className="max-w-[820px]">
+            <div className="eyebrow mb-5">For owners · Free to list</div>
+            <h1 className="font-serif text-[44px] sm:text-[58px] xl:text-[68px] font-medium leading-[0.98] tracking-[-0.025em] text-[var(--color-ink)] [overflow-wrap:anywhere]">
+              List your room.
+              <br />
+              <span className="text-[var(--color-primary)]">Find great tenants.</span>
             </h1>
-            <p className="mt-6 text-lg text-slate-500 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
-              {t("forOwners.subtitle")}
+            <p className="mt-6 text-[17px] sm:text-[18px] text-[var(--color-ink-2)] max-w-[52ch] leading-[1.55]">
+              Reach verified, motivated renters across Australia. Free to list, with secure payments and bond escrow built in.
             </p>
-            <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/owner/dashboard" className="inline-block btn-primary text-sm px-8 py-2.5 rounded-[10px]">
-                {t("forOwners.startListing")}
-              </Link>
-              <Link href="/pricing" className="inline-block btn-secondary text-sm px-8 py-2.5 rounded-[10px]">
-                {t("forOwners.viewPricing")}
-              </Link>
+            <div className="flex flex-wrap gap-3 mt-8">
+              <Link href="/owner/dashboard" className="btn-primary h-12 px-7 text-[15px]">Start listing <ArrowRight className="w-4 h-4" /></Link>
+              <Link href="/pricing" className="btn-secondary h-12 px-7 text-[15px]">View pricing</Link>
+            </div>
+            <div className="mt-7 flex flex-wrap gap-x-5 gap-y-2.5">
+              {[
+                { icon: Wallet, label: "Free to list" },
+                { icon: BadgeCheck, label: "Verified seekers" },
+                { icon: Lock, label: "Payments via Stripe" },
+              ].map((c) => (
+                <span key={c.label} className="inline-flex items-center gap-2 text-[13.5px] font-medium text-[var(--color-ink-2)]">
+                  <c.icon className="w-4 h-4 text-[var(--color-accent)]" /> {c.label}
+                </span>
+              ))}
             </div>
           </motion.div>
-        </section>
+        </div>
+      </section>
 
-        {/* How It Works */}
-        <section className="max-w-3xl mx-auto">
-          <motion.h2 initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0} variants={fadeUp} className="text-3xl font-semibold tracking-tight text-slate-900 dark:text-white mb-8 text-center">
-            {t("forOwners.howTitle")} {t("forOwners.howAccent")}
-          </motion.h2>
-          <div className="space-y-4">
-            {steps.map((step, i) => (
-              <motion.div key={step.num} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i} variants={fadeUp} className="card card-lift p-5 rounded-2xl flex gap-4 items-start">
-                <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-500/10 border border-blue-100 dark:border-blue-500/20 flex items-center justify-center shrink-0">
-                  <svg className="w-5 h-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d={step.icon} />
-                  </svg>
-                </div>
-                <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="text-xs font-bold text-blue-400 dark:text-blue-500/70">{step.num}</span>
-                    <h3 className="font-semibold text-slate-900 dark:text-white text-sm">{step.title}</h3>
+      {/* 2 · HOW IT WORKS */}
+      <section className="bg-[var(--color-surface)] border-b border-[var(--color-line)]">
+        <div className="max-w-[1280px] mx-auto px-6 md:px-10 lg:px-14 py-20 md:py-28">
+          <motion.div {...reveal} className="mb-12">
+            <div className="eyebrow mb-3">How it works</div>
+            <h2 className="font-serif text-[34px] md:text-[52px] leading-[1.0] tracking-[-0.03em] text-[var(--color-ink)] max-w-[16ch]">From listing to move-in.</h2>
+          </motion.div>
+          <div className="grid md:grid-cols-2 gap-5">
+            {steps.map((it, i) => {
+              const Icon = it.icon;
+              return (
+                <motion.article key={it.n} {...reveal} transition={{ ...reveal.transition, delay: (i % 2) * 0.08 }} className="card-lift relative overflow-hidden rounded-[var(--radius-xl)] border border-[var(--color-line)] bg-[var(--color-surface-2)] shadow-[var(--shadow-card)] p-8 md:p-10">
+                  <span className="absolute -right-4 -bottom-8 font-serif leading-none text-[var(--color-primary)] opacity-[0.06] select-none pointer-events-none" style={{ fontSize: "12rem" }}>{it.n}</span>
+                  <div className="relative">
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="w-12 h-12 rounded-[var(--radius-card)] bg-[var(--color-primary-50)] text-[var(--color-primary)] flex items-center justify-center"><Icon className="w-6 h-6" strokeWidth={1.7} /></div>
+                      <div className="font-mono text-[var(--color-primary)] text-[12px] tracking-[0.2em]">{it.n} · STEP</div>
+                    </div>
+                    <h3 className="font-serif text-[30px] md:text-[36px] tracking-[-0.02em] text-[var(--color-ink)] leading-[1.0]">{it.title}</h3>
+                    <p className="mt-3 text-[16px] text-[var(--color-ink-2)] leading-[1.55] max-w-[46ch]">{it.body}</p>
+                    <div className="mt-6 pt-5 border-t border-[var(--color-line)] flex flex-wrap gap-2">
+                      {it.extra.map((e) => (
+                        <span key={e} className="inline-flex items-center gap-1.5 text-[12.5px] font-medium text-[var(--color-ink-2)] bg-[var(--color-surface)] border border-[var(--color-line)] rounded-full px-3 py-1.5">
+                          <Check className="w-3 h-3 text-[var(--color-accent)]" strokeWidth={2.8} /> {e}
+                        </span>
+                      ))}
+                    </div>
                   </div>
-                  <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">{step.desc}</p>
-                </div>
-              </motion.div>
-            ))}
+                </motion.article>
+              );
+            })}
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* Benefits */}
-        <section className="max-w-3xl mx-auto">
-          <h2 className="text-3xl font-semibold tracking-tight text-slate-900 dark:text-white mb-8 text-center">
-            {t("forOwners.benefitsTitle")} {t("forOwners.benefitsAccent")}
-          </h2>
-          <div className="grid sm:grid-cols-2 gap-4">
-            {benefits.map((item, i) => (
-              <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} whileHover={{ y: -4 }} className="card-subtle p-5 rounded-xl group hover:shadow-md dark:hover:bg-white/[0.06] transition-all">
-                <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-500/10 border border-blue-100 dark:border-blue-500/20 flex items-center justify-center text-blue-500 dark:text-blue-400 font-bold text-sm mb-3 group-hover:border-blue-300 dark:group-hover:border-blue-400/40 transition-colors">
-                  {item.icon}
-                </div>
-                <h3 className="text-slate-900 dark:text-white font-semibold text-sm">{item.title}</h3>
-                <p className="text-slate-500 dark:text-slate-400 text-xs mt-1 leading-relaxed">{item.desc}</p>
-              </motion.div>
-            ))}
-          </div>
-        </section>
-
-        {/* Earnings Calculator */}
-        <section className="max-w-3xl mx-auto">
-          <div className="card p-6 rounded-2xl space-y-4">
-            <h2 className="text-xl font-semibold tracking-tight text-slate-900 dark:text-white">{t("forOwners.earningsTitle")}</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
-              <p>{t("forOwners.earningsIntro")}</p>
-              <div className="grid sm:grid-cols-3 gap-4">
-                <div className="card-subtle p-4 rounded-xl text-center">
-                  <p className="text-2xl font-bold text-blue-500">$200</p>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{t("forOwners.earningsBudget")}</p>
-                  <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{t("forOwners.earningsBudgetYear")}</p>
-                </div>
-                <div className="card-subtle p-4 rounded-xl text-center border border-blue-200 dark:border-blue-500/30">
-                  <p className="text-2xl font-bold text-blue-500">$280</p>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{t("forOwners.earningsAvg")}</p>
-                  <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{t("forOwners.earningsAvgYear")}</p>
-                </div>
-                <div className="card-subtle p-4 rounded-xl text-center">
-                  <p className="text-2xl font-bold text-blue-500">$400</p>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{t("forOwners.earningsPremium")}</p>
-                  <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{t("forOwners.earningsPremiumYear")}</p>
-                </div>
-              </div>
-              <p className="text-xs text-slate-400 dark:text-slate-500">{t("forOwners.earningsNote")}</p>
+      {/* 3 · BENEFITS */}
+      <section>
+        <div className="max-w-[1280px] mx-auto px-6 md:px-10 lg:px-14 py-20 md:py-28">
+          <div className="grid lg:grid-cols-[0.85fr_1.15fr] gap-10 lg:gap-16">
+            <motion.div {...reveal} className="lg:sticky lg:top-24 lg:self-start">
+              <div className="eyebrow mb-3">Why owners choose MigRent</div>
+              <h2 className="font-serif text-[34px] md:text-[52px] leading-[1.0] tracking-[-0.03em] text-[var(--color-ink)]">Your room, in safe hands.</h2>
+              <p className="mt-5 text-[16px] text-[var(--color-ink-2)] leading-[1.6] max-w-[42ch]">A marketplace where verification works both ways - so the people in your home are who they say they are.</p>
+              <Link href="/owner/dashboard" className="btn-primary h-11 px-5 text-sm mt-7">List a room <ArrowRight className="w-3.5 h-3.5" /></Link>
+            </motion.div>
+            <div className="grid sm:grid-cols-2 gap-4">
+              {benefits.map((o, i) => (
+                <motion.div key={o.title} {...reveal} transition={{ ...reveal.transition, delay: (i % 2) * 0.06 }} className="card-lift bg-[var(--color-surface-2)] border border-[var(--color-line)] rounded-[var(--radius-xl)] p-6">
+                  <div className="w-11 h-11 rounded-[var(--radius-card)] bg-[var(--color-primary-50)] text-[var(--color-primary)] flex items-center justify-center mb-4"><o.icon className="w-5 h-5" strokeWidth={1.8} /></div>
+                  <h3 className="font-serif text-[20px] tracking-[-0.01em] text-[var(--color-ink)] leading-[1.15]">{o.title}</h3>
+                  <p className="text-[13.5px] text-[var(--color-ink-2)] mt-1.5 leading-[1.5]">{o.body}</p>
+                </motion.div>
+              ))}
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* CTA */}
-        <section className="max-w-3xl mx-auto pb-8">
-          <div className="card p-8 rounded-2xl bg-[var(--color-primary-soft)] from-blue-50 to-blue-100/50 dark:from-[var(--color-primary)]/10 dark:to-[var(--color-primary)]/5 border-blue-200 dark:border-blue-500/20 text-center">
-            <h2 className="text-2xl font-semibold tracking-tight text-slate-900 dark:text-white mb-3">{t("forOwners.ctaTitle")}</h2>
-            <p className="text-sm text-slate-600 dark:text-slate-300 mb-6 max-w-md mx-auto">{t("forOwners.ctaSubtitle")}</p>
-            <Link href="/owner/dashboard" className="inline-block btn-primary text-sm px-8 py-2.5 rounded-[10px]">
-              {t("forOwners.ctaCta")}
-            </Link>
+      {/* 4 · PRICING SNAPSHOT */}
+      <section className="mood-field-strong border-y border-[var(--color-line)]">
+        <div className="max-w-[1280px] mx-auto px-6 md:px-10 lg:px-14 py-20 md:py-28">
+          <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+            <motion.div {...reveal}>
+              <div className="eyebrow mb-3">Simple pricing</div>
+              <h2 className="font-serif text-[34px] md:text-[48px] leading-[1.0] tracking-[-0.03em] text-[var(--color-ink)]">One fee. Only when it works.</h2>
+              <p className="mt-5 text-[16px] text-[var(--color-ink-2)] leading-[1.6] max-w-[44ch]">
+                Listing is free. You pay a one-time AUD $99 fee per property when you find your tenant - no subscriptions, no commissions on rent, no hidden costs.
+              </p>
+              <Link href="/pricing" className="btn-primary h-11 px-5 text-sm mt-7">See full pricing <ArrowRight className="w-3.5 h-3.5" /></Link>
+            </motion.div>
+            <motion.div {...reveal} transition={{ ...reveal.transition, delay: 0.1 }} className="ocean-card rounded-[var(--radius-xl)] border border-[var(--color-line)] shadow-[var(--shadow-card)] p-8">
+              <div className="flex items-baseline gap-2">
+                <span className="font-serif text-[64px] leading-none tracking-[-0.03em] text-[var(--color-ink)]">$99</span>
+                <span className="font-mono text-[13px] text-[var(--color-ink-2)]">AUD · one-time, per property</span>
+              </div>
+              <hr className="rule-soft my-6" />
+              <ul className="space-y-3.5">
+                {["Free to list, free to edit", "Pay only when you match with a tenant", "No commission on weekly rent", "Secure payments and bond escrow included"].map((t) => (
+                  <li key={t} className="flex gap-3 text-[15px] text-[var(--color-ink)] leading-[1.5] font-medium">
+                    <Check className="w-4 h-4 text-[var(--color-accent)] mt-0.5 shrink-0" strokeWidth={2.4} /> {t}
+                  </li>
+                ))}
+              </ul>
+            </motion.div>
           </div>
-        </section>
-      </div>
+        </div>
+      </section>
+
+      {/* 5 · CTA */}
+      <section className="mood-field-strong border-t border-[var(--color-line)]">
+        <div className="max-w-[1280px] mx-auto px-6 md:px-10 lg:px-14 py-20 md:py-28">
+          <motion.div {...reveal} className="max-w-[760px]">
+            <div className="eyebrow mb-5">Free to list · Verified seekers</div>
+            <h2 className="font-serif text-[40px] md:text-[60px] leading-[0.98] tracking-[-0.03em] text-[var(--color-ink)]">Ready to list your room?</h2>
+            <p className="mt-5 text-[17px] text-[var(--color-ink-2)] leading-[1.55] max-w-[560px]">Join hosts across Australia opening their doors to verified renters - and getting paid safely.</p>
+            <div className="flex flex-wrap gap-3 mt-8">
+              <Link href="/owner/dashboard" className="btn-primary h-12 px-7 text-[15px]">Start hosting <ArrowRight className="w-4 h-4" /></Link>
+              <Link href="/contact" className="btn-secondary h-12 px-7 text-[15px]">Talk to us first</Link>
+            </div>
+          </motion.div>
+        </div>
+      </section>
     </>
   );
 }

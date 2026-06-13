@@ -30,7 +30,7 @@ function MockAIMatching() {
           </div>
           <div className={`text-xs font-bold px-2.5 py-1 rounded-full ${
             score >= 95 ? "bg-green-400/20 text-green-200" :
-            score >= 90 ? "bg-blue-400/20 text-blue-200" :
+            score >= 90 ? "bg-[var(--color-primary-400)]/20 text-[var(--color-primary-200)]" :
             "bg-amber-400/20 text-amber-200"
           }`}>
             {score}%
@@ -323,8 +323,8 @@ const features = [
     bulletsKey: "features.verifiedHosts.bullets",
     icon: "M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z",
     color: "from-[var(--color-primary)] to-[var(--color-primary)]",
-    iconColor: "text-blue-500",
-    bgColor: "bg-blue-50 dark:bg-blue-500/10",
+    iconColor: "text-[var(--color-primary)]",
+    bgColor: "bg-[var(--color-primary-50)]",
     headline: "100% verified hosts only",
     subline: "Every owner is identity-checked before listing",
     MockUI: MockVerified,
@@ -361,9 +361,9 @@ const features = [
     descKey: "features.superhost.desc",
     bulletsKey: "features.superhost.bullets",
     icon: "M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z",
-    color: "from-amber-500 to-orange-500",
-    iconColor: "text-amber-500",
-    bgColor: "bg-amber-50 dark:bg-amber-500/10",
+    color: "from-[var(--color-warn-500)] to-[var(--color-coral-500)]",
+    iconColor: "text-[var(--color-warn-500)]",
+    bgColor: "bg-[var(--color-warn-50)]",
     headline: "Superhost badge program",
     subline: "Recognising the top 5% of trusted owners",
     MockUI: MockSuperhost,
@@ -437,8 +437,8 @@ export default function Features() {
             </div>
 
             <h1 className="font-serif text-[44px] sm:text-[60px] md:text-[84px] leading-[0.98] tracking-[-0.025em] text-[var(--color-ink)] text-balance">
-              Powerful features{" "}
-              <span className="italic text-[var(--color-ink-2)]">for MigRent AI.</span>
+              Powerful features,{" "}
+              <span className="text-[var(--color-primary)]">built for arriving.</span>
             </h1>
 
             <p className="mt-6 text-lg md:text-xl text-[var(--color-ink-2)] max-w-2xl leading-relaxed">
@@ -453,9 +453,9 @@ export default function Features() {
                     whileHover={{ scale: 1.05, y: -2 }}
                     whileTap={{ scale: 0.97 }}
                     className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-medium border transition-all cursor-pointer
-                      bg-white dark:bg-white/5 border-slate-200 dark:border-slate-700
-                      hover:border-slate-300 dark:hover:border-slate-600 hover:shadow-md
-                      text-slate-600 dark:text-slate-300`}
+                      bg-[var(--color-surface-2)] border-[var(--color-line)]
+                      hover:border-[var(--color-line-2)] hover:shadow-md
+                      text-[var(--color-ink-2)]`}
                   >
                     <svg className={`w-3.5 h-3.5 ${f.iconColor}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d={f.icon} />
@@ -515,21 +515,21 @@ export default function Features() {
                     </svg>
                   </div>
 
-                  <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 dark:text-white">
+                  <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-[var(--color-ink)]">
                     {feature.headline}
                   </h2>
-                  <p className="text-sm text-slate-400 dark:text-slate-500 mt-1 font-medium">
+                  <p className="text-sm text-[var(--color-ink-3)] mt-1 font-medium">
                     {feature.subline}
                   </p>
 
-                  <p className="mt-4 text-base text-slate-500 dark:text-slate-400 leading-relaxed">
+                  <p className="mt-4 text-base text-[var(--color-ink-3)] leading-relaxed">
                     {t(feature.descKey)}
                   </p>
 
                   <ul className="mt-6 space-y-3">
                     {Array.isArray(bullets) &&
                       bullets.map((bullet, bi) => (
-                        <li key={bi} className="flex items-center gap-3 text-sm text-slate-600 dark:text-slate-300">
+                        <li key={bi} className="flex items-center gap-3 text-sm text-[var(--color-ink-2)]">
                           <span className={`w-5 h-5 rounded-full ${feature.bgColor} flex items-center justify-center shrink-0`}>
                             <svg className={`w-3 h-3 ${feature.iconColor}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                               <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
@@ -565,7 +565,7 @@ export default function Features() {
             transition={{ duration: 0.6 }}
             className="rounded-2xl bg-[var(--color-primary)] from-[var(--color-primary)] via-[var(--color-primary)] to-[var(--color-primary)] p-[1px]"
           >
-            <div className="rounded-2xl bg-white dark:bg-slate-900 p-8 md:p-10">
+            <div className="rounded-2xl bg-[var(--color-surface-2)] p-8 md:p-10">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
                 {[
                   { value: "50K+", label: "Rooms listed" },
@@ -583,7 +583,7 @@ export default function Features() {
                     <div className="text-2xl md:text-3xl font-black bg-[var(--color-primary)] from-[var(--color-primary)] to-[var(--color-primary)] bg-clip-text text-transparent">
                       {stat.value}
                     </div>
-                    <div className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-medium">{stat.label}</div>
+                    <div className="text-xs text-[var(--color-ink-3)] mt-1 font-medium">{stat.label}</div>
                   </motion.div>
                 ))}
               </div>
@@ -600,10 +600,10 @@ export default function Features() {
             transition={{ duration: 0.6 }}
             className="max-w-lg mx-auto"
           >
-            <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 dark:text-white">
+            <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-[var(--color-ink)]">
               {t("features.cta.title")}
             </h2>
-            <p className="mt-3 text-slate-500 dark:text-slate-400">
+            <p className="mt-3 text-[var(--color-ink-3)]">
               {t("features.cta.subtitle")}
             </p>
             <Link href="/signup">

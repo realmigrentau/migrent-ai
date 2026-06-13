@@ -45,32 +45,32 @@ export default function Pricing() {
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="relative rounded-2xl overflow-hidden bg-slate-900 dark:bg-slate-800"
+            className="relative rounded-2xl overflow-hidden bg-[var(--color-ink)]"
           >
             <div className="text-center py-14 px-6">
-              <h2 className="text-3xl sm:text-4xl font-semibold text-white mb-4 tracking-tight">
+              <h2 className="text-3xl sm:text-4xl font-semibold text-[var(--color-bg)] mb-4 tracking-tight">
                 Ready to get started?
               </h2>
-              <p className="text-white/70 text-sm sm:text-base max-w-lg mx-auto mb-8">
+              <p className="text-[var(--color-bg)]/70 text-sm sm:text-base max-w-lg mx-auto mb-8">
                 Join thousands of hosts and seekers across Australia.
                 List your property for free or start your search today.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <Link href="/signup">
-                  <span className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl text-sm font-semibold bg-white text-slate-900 hover:bg-slate-100 transition-colors">
+                  <span className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl text-sm font-semibold bg-[var(--color-bg)] text-[var(--color-ink)] hover:opacity-90 transition-colors">
                     List Your Room Free
                     <ArrowRight className="w-4 h-4" />
                   </span>
                 </Link>
                 <Link href="#calculator">
-                  <span className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl text-sm font-semibold bg-white/10 text-white border border-white/20 hover:bg-white/20 transition-colors">
+                  <span className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl text-sm font-semibold bg-[var(--color-bg)]/10 text-[var(--color-bg)] border border-[var(--color-bg)]/20 hover:bg-[var(--color-bg)]/20 transition-colors">
                     <Calculator className="w-4 h-4" />
                     Earnings Calculator
                   </span>
                 </Link>
                 <Link href="/contact">
-                  <span className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl text-sm font-semibold bg-white/10 text-white border border-white/20 hover:bg-white/20 transition-colors">
+                  <span className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl text-sm font-semibold bg-[var(--color-bg)]/10 text-[var(--color-bg)] border border-[var(--color-bg)]/20 hover:bg-[var(--color-bg)]/20 transition-colors">
                     <MessageCircle className="w-4 h-4" />
                     Talk to Sales
                   </span>
