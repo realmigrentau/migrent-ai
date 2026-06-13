@@ -39,18 +39,18 @@ const seekerVerifiedFeatures = [
 
 function FeatureItem({ text, color }: { text: string; color: "blue" | "rose" | "emerald" }) {
   const colorClasses = {
-    blue: "text-blue-500",
+    blue: "text-[var(--color-primary)]",
     rose: "text-[var(--color-primary)]",
     emerald: "text-[var(--color-accent)]",
   };
   const bgClasses = {
-    blue: "bg-blue-50 dark:bg-blue-500/20",
+    blue: "bg-blue-50 dark:bg-[var(--color-primary)]/20",
     rose: "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/20",
     emerald: "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/20",
   };
 
   return (
-    <li className="flex items-start gap-2.5 text-sm text-slate-600 dark:text-slate-300">
+    <li className="flex items-start gap-2.5 text-sm text-[var(--color-ink-2)]">
       <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${bgClasses[color]}`}>
         <Check className={`w-3 h-3 ${colorClasses[color]}`} strokeWidth={3} />
       </div>
@@ -68,10 +68,10 @@ export default function PricingTables() {
         viewport={{ once: true }}
         className="text-center mb-12"
       >
-        <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-slate-900 dark:text-white">
+        <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-[var(--color-ink)]">
           Choose your plan
         </h2>
-        <p className="mt-3 text-slate-500 dark:text-slate-400 text-sm max-w-lg mx-auto">
+        <p className="mt-3 text-[var(--color-ink-3)] text-sm max-w-lg mx-auto">
           Transparent pricing for owners and seekers. No subscription traps, ever.
         </p>
       </motion.div>
@@ -85,26 +85,26 @@ export default function PricingTables() {
           transition={{ delay: 0.1 }}
           className="card p-8 rounded-2xl border-t-2 border-t-blue-500 relative"
         >
-          <div className="absolute top-4 right-4 flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-500/20 border border-blue-100 dark:border-blue-500/30">
-            <Crown className="w-3 h-3 text-blue-500" />
-            <span className="text-xs font-semibold text-blue-600 dark:text-blue-400">
+          <div className="absolute top-4 right-4 flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 dark:bg-[var(--color-primary)]/20 border border-blue-100 dark:border-blue-500/30">
+            <Crown className="w-3 h-3 text-[var(--color-primary)]" />
+            <span className="text-xs font-semibold text-[var(--color-primary)]">
               Property Owners
             </span>
           </div>
 
           <div className="mb-2">
-            <h3 className="text-xl font-semibold text-slate-900 dark:text-white">
+            <h3 className="text-xl font-semibold text-[var(--color-ink)]">
               Pay-Per-Match
             </h3>
-            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+            <p className="text-sm text-[var(--color-ink-3)] mt-1">
               Only pay when you successfully find a tenant
             </p>
           </div>
 
-          <div className="my-6 pb-6 border-b border-slate-100 dark:border-slate-800">
+          <div className="my-6 pb-6 border-b border-[var(--color-line)]">
             <div className="flex items-baseline gap-1">
-              <span className="text-5xl font-bold text-blue-600 dark:text-blue-400">$99</span>
-              <span className="text-sm font-medium text-slate-400 dark:text-slate-500">AUD</span>
+              <span className="text-5xl font-bold text-[var(--color-primary)]">$99</span>
+              <span className="text-sm font-medium text-[var(--color-ink-3)]">AUD</span>
             </div>
             <p className="text-xs text-[var(--color-accent)] dark:text-[var(--color-accent)] font-medium mt-2">
               One-time per property &bull; Charged only on match
@@ -143,17 +143,17 @@ export default function PricingTables() {
             </div>
 
             <div className="mb-2">
-              <h3 className="text-xl font-semibold text-slate-900 dark:text-white">Free Forever</h3>
-              <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+              <h3 className="text-xl font-semibold text-[var(--color-ink)]">Free Forever</h3>
+              <p className="text-sm text-[var(--color-ink-3)] mt-1">
                 Search, apply, and book - completely free
               </p>
             </div>
 
-            <div className="my-6 pb-6 border-b border-slate-100 dark:border-slate-800">
+            <div className="my-6 pb-6 border-b border-[var(--color-line)]">
               <div className="flex items-baseline gap-1">
                 <span className="text-5xl font-bold text-[var(--color-primary)]">$0</span>
               </div>
-              <p className="text-xs text-slate-400 dark:text-slate-500 font-medium mt-2">
+              <p className="text-xs text-[var(--color-ink-3)] font-medium mt-2">
                 No credit card required &bull; No limits
               </p>
             </div>
@@ -187,15 +187,15 @@ export default function PricingTables() {
 
             <div className="flex items-start justify-between mt-2">
               <div>
-                <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
+                <h3 className="text-lg font-semibold text-[var(--color-ink)]">
                   Verified Seeker Badge
                 </h3>
-                <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
+                <p className="text-sm text-[var(--color-ink-3)] mt-0.5">
                   Stand out and get matched faster
                 </p>
               </div>
               <div className="text-right">
-                <span className="text-3xl font-bold text-slate-900 dark:text-white">$19</span>
+                <span className="text-3xl font-bold text-[var(--color-ink)]">$19</span>
                 <p className="text-xs text-[var(--color-accent)] dark:text-[var(--color-accent)] font-medium">
                   One-time
                 </p>
@@ -204,7 +204,7 @@ export default function PricingTables() {
 
             <div className="mt-5 grid grid-cols-2 gap-2">
               {seekerVerifiedFeatures.map((feature) => (
-                <div key={feature} className="flex items-start gap-2 text-xs text-slate-600 dark:text-slate-300">
+                <div key={feature} className="flex items-start gap-2 text-xs text-[var(--color-ink-2)]">
                   <Check className="w-3.5 h-3.5 text-[var(--color-accent)] shrink-0 mt-0.5" strokeWidth={2.5} />
                   {feature}
                 </div>

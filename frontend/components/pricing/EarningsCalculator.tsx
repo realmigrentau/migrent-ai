@@ -22,10 +22,10 @@ function SliderInput({
   return (
     <div>
       <div className="flex items-center justify-between mb-2">
-        <label className="text-sm font-medium text-slate-600 dark:text-slate-300">
+        <label className="text-sm font-medium text-[var(--color-ink-2)]">
           {label}
         </label>
-        <span className="text-sm font-bold text-slate-900 dark:text-white">
+        <span className="text-sm font-bold text-[var(--color-ink)]">
           {unit === "$" ? `$${value.toLocaleString()}` : `${value}${unit}`}
         </span>
       </div>
@@ -36,9 +36,9 @@ function SliderInput({
         step={step}
         value={value}
         onChange={(e) => onChange(Number(e.target.value))}
-        className="w-full h-2 rounded-full appearance-none cursor-pointer bg-slate-200 dark:bg-slate-700 accent-[var(--color-primary)]"
+        className="w-full h-2 rounded-full appearance-none cursor-pointer bg-[var(--color-line)] accent-[var(--color-primary)]"
       />
-      <div className="flex justify-between text-xs text-slate-400 mt-1">
+      <div className="flex justify-between text-xs text-[var(--color-ink-3)] mt-1">
         <span>{unit === "$" ? `$${min}` : `${min}${unit}`}</span>
         <span>{unit === "$" ? `$${max}` : `${max}${unit}`}</span>
       </div>
@@ -63,7 +63,7 @@ function StatCard({
     indigo: "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/20 text-[var(--color-primary)] dark:text-[var(--color-primary)]",
     emerald: "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/20 text-[var(--color-accent)] dark:text-[var(--color-accent)]",
     pink: "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary-soft)]0/20 text-[var(--color-primary)] dark:text-[var(--color-primary)]",
-    amber: "bg-amber-100 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400",
+    amber: "bg-[var(--color-warn-50)] text-[var(--color-warn-600)]",
   };
 
   return (
@@ -77,10 +77,10 @@ function StatCard({
       <div className={`w-10 h-10 rounded-xl ${bgClasses[color]} flex items-center justify-center mx-auto mb-2`}>
         <Icon className="w-5 h-5" />
       </div>
-      <div className="text-2xl font-semibold text-slate-900 dark:text-white">
+      <div className="text-2xl font-semibold text-[var(--color-ink)]">
         {value}
       </div>
-      <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+      <div className="text-xs text-[var(--color-ink-3)] mt-1">
         {label}
       </div>
     </motion.div>
@@ -104,10 +104,10 @@ export default function EarningsCalculator() {
             Interactive Calculator
           </span>
         </div>
-        <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-slate-900 dark:text-white">
+        <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-[var(--color-ink)]">
           Owner Earnings Calculator
         </h2>
-        <p className="mt-3 text-slate-500 dark:text-slate-400 text-sm max-w-lg mx-auto">
+        <p className="mt-3 text-[var(--color-ink-3)] text-sm max-w-lg mx-auto">
           See how much you could earn renting on MigRent. Adjust the sliders to match your property.
         </p>
       </motion.div>
@@ -180,7 +180,7 @@ export default function EarningsCalculator() {
             >
               <div className="flex items-center gap-2 mb-3">
                 <div className="w-8 h-8 rounded-lg bg-[var(--color-accent-soft)]0 flex items-center justify-center">
-                  <DollarSign className="w-4 h-4 text-white" />
+                  <DollarSign className="w-4 h-4 text-[var(--color-primary-fg)]" />
                 </div>
                 <span className="text-sm font-semibold text-[var(--color-accent)] dark:text-[var(--color-accent)]">
                   Your Annual Take-Home
@@ -194,7 +194,7 @@ export default function EarningsCalculator() {
               </div>
             </motion.div>
 
-            <p className="text-xs text-slate-400 dark:text-slate-500 text-center">
+            <p className="text-xs text-[var(--color-ink-3)] text-center">
               MigRent fee is a one-time $99 per property, charged only when matched with a tenant.
             </p>
           </div>

@@ -32,10 +32,10 @@ function CellValue({ value, highlight }: { value: boolean | string; highlight?: 
         <Check className="w-3.5 h-3.5 text-[var(--color-primary)] dark:text-[var(--color-primary)]" strokeWidth={3} />
       </div>
     ) : (
-      <Check className="w-4 h-4 text-slate-300 dark:text-slate-600 mx-auto" strokeWidth={2} />
+      <Check className="w-4 h-4 text-[var(--color-ink-4)] mx-auto" strokeWidth={2} />
     );
   }
-  return <X className="w-4 h-4 text-slate-200 dark:text-slate-700 mx-auto" strokeWidth={2} />;
+  return <X className="w-4 h-4 text-[var(--color-ink-4)] mx-auto" strokeWidth={2} />;
 }
 
 export default function ComparisonTable() {
@@ -47,10 +47,10 @@ export default function ComparisonTable() {
         viewport={{ once: true }}
         className="text-center mb-10"
       >
-        <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-slate-900 dark:text-white">
+        <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-[var(--color-ink)]">
           Why MigRent?
         </h2>
-        <p className="mt-3 text-slate-500 dark:text-slate-400 text-sm max-w-lg mx-auto">
+        <p className="mt-3 text-[var(--color-ink-3)] text-sm max-w-lg mx-auto">
           See how we compare to traditional rental platforms in Australia.
         </p>
       </motion.div>
@@ -65,28 +65,28 @@ export default function ComparisonTable() {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-slate-200 dark:border-slate-700">
-                <th className="text-left p-4 font-bold text-slate-900 dark:text-white min-w-[180px]">
+              <tr className="border-b border-[var(--color-line)]">
+                <th className="text-left p-4 font-bold text-[var(--color-ink)] min-w-[180px]">
                   Feature
                 </th>
-                <th className="text-center p-4 font-medium text-slate-400 min-w-[90px]">
+                <th className="text-center p-4 font-medium text-[var(--color-ink-3)] min-w-[90px]">
                   Gumtree
                 </th>
-                <th className="text-center p-4 font-medium text-slate-400 min-w-[90px]">
+                <th className="text-center p-4 font-medium text-[var(--color-ink-3)] min-w-[90px]">
                   Facebook
                 </th>
-                <th className="text-center p-4 font-medium text-slate-400 min-w-[90px]">
+                <th className="text-center p-4 font-medium text-[var(--color-ink-3)] min-w-[90px]">
                   Domain
                 </th>
                 <th className="text-center p-4 min-w-[100px]">
                   <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--color-primary)]">
-                    <Sparkles className="w-3 h-3 text-white" />
-                    <span className="font-semibold text-white">MigRent</span>
+                    <Sparkles className="w-3 h-3 text-[var(--color-primary-fg)]" />
+                    <span className="font-semibold text-[var(--color-primary-fg)]">MigRent</span>
                   </div>
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-50 dark:divide-slate-800/50">
+            <tbody className="divide-y divide-[var(--color-line)]">
               {rows.map((row, i) => (
                 <motion.tr
                   key={row.feature}
@@ -94,9 +94,9 @@ export default function ComparisonTable() {
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: 0.05 * i }}
-                  className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors"
+                  className="hover:bg-[var(--color-surface)] transition-colors"
                 >
-                  <td className="p-4 text-slate-600 dark:text-slate-300 font-medium">
+                  <td className="p-4 text-[var(--color-ink-2)] font-medium">
                     {row.feature}
                   </td>
                   <td className="p-4 text-center">

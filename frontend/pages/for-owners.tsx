@@ -14,16 +14,11 @@ import {
   CalendarCheck,
   FileCheck2,
 } from "lucide-react";
+import PageSubnav from "../components/ui/PageSubnav";
+import { reveal, ScrollStatement, ScrollMarquee } from "../components/marketing/motion";
 
 /* Hallmark · genre: editorial · design-system: design.md · designed-as-app
  * macrostructure: Marquee Hero family (marketing) · page: for-owners */
-
-const reveal = {
-  initial: { opacity: 0, y: 24 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, margin: "-60px" },
-  transition: { duration: 0.7, ease: [0.2, 0.7, 0.3, 1] as const },
-};
 
 const steps = [
   { n: "01", icon: Home, title: "List your room", body: "Photos, price, house rules, and who the place suits - your listing is live the same day you verify.", extra: ["Free to list", "Same-day setup", "Edit any time"] },
@@ -49,40 +44,94 @@ export default function ForOwners() {
         <meta name="description" content="List your room on MigRent and reach verified, motivated renters. Free to list, one-time AUD $99 fee per property match. Secure payments and bond escrow built in." />
       </Head>
 
-      {/* 1 · HERO */}
-      <section className="mood-field border-b border-[var(--color-line)]">
+      <PageSubnav
+        title="For Owners"
+        links={[
+          { label: "How it works", href: "#how" },
+          { label: "Why MigRent", href: "#why" },
+          { label: "Pricing", href: "#pricing" },
+        ]}
+        cta={{ label: "Start listing", href: "/owner/dashboard" }}
+      />
+
+      {/* 1 · HERO - owner-dashboard mock split (distinct from homepage + seekers) */}
+      <section className="mood-field border-b border-[var(--color-line)] overflow-hidden">
         <div className="max-w-[1280px] mx-auto px-6 md:px-10 lg:px-14 py-16 md:py-24">
-          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: [0.2, 0.7, 0.3, 1] }} className="max-w-[820px]">
-            <div className="eyebrow mb-5">For owners · Free to list</div>
-            <h1 className="font-serif text-[44px] sm:text-[58px] xl:text-[68px] font-medium leading-[0.98] tracking-[-0.025em] text-[var(--color-ink)] [overflow-wrap:anywhere]">
-              List your room.
-              <br />
-              <span className="text-[var(--color-primary)]">Find great tenants.</span>
-            </h1>
-            <p className="mt-6 text-[17px] sm:text-[18px] text-[var(--color-ink-2)] max-w-[52ch] leading-[1.55]">
-              Reach verified, motivated renters across Australia. Free to list, with secure payments and bond escrow built in.
-            </p>
-            <div className="flex flex-wrap gap-3 mt-8">
-              <Link href="/owner/dashboard" className="btn-primary h-12 px-7 text-[15px]">Start listing <ArrowRight className="w-4 h-4" /></Link>
-              <Link href="/pricing" className="btn-secondary h-12 px-7 text-[15px]">View pricing</Link>
-            </div>
-            <div className="mt-7 flex flex-wrap gap-x-5 gap-y-2.5">
-              {[
-                { icon: Wallet, label: "Free to list" },
-                { icon: BadgeCheck, label: "Verified seekers" },
-                { icon: Lock, label: "Payments via Stripe" },
-              ].map((c) => (
-                <span key={c.label} className="inline-flex items-center gap-2 text-[13.5px] font-medium text-[var(--color-ink-2)]">
-                  <c.icon className="w-4 h-4 text-[var(--color-accent)]" /> {c.label}
-                </span>
-              ))}
-            </div>
-          </motion.div>
+          <div className="grid lg:grid-cols-[1.05fr_0.95fr] gap-12 lg:gap-16 items-center">
+            <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: [0.2, 0.7, 0.3, 1] }}>
+              <div className="eyebrow mb-5">For owners · Free to list</div>
+              <h1 className="font-serif text-[44px] sm:text-[58px] xl:text-[64px] font-medium leading-[0.98] tracking-[-0.025em] text-[var(--color-ink)] [overflow-wrap:anywhere]">
+                List your room.
+                <br />
+                <span className="text-[var(--color-primary)]">Find great tenants.</span>
+              </h1>
+              <p className="mt-6 text-[17px] sm:text-[18px] text-[var(--color-ink-2)] max-w-[48ch] leading-[1.55]">
+                Reach verified, motivated renters across Australia. Free to list, with secure payments and bond escrow built in.
+              </p>
+              <div className="flex flex-wrap gap-3 mt-8">
+                <Link href="/owner/dashboard" className="btn-primary h-12 px-7 text-[15px]">Start listing <ArrowRight className="w-4 h-4" /></Link>
+                <Link href="/pricing" className="btn-secondary h-12 px-7 text-[15px]">View pricing</Link>
+              </div>
+              <div className="mt-7 flex flex-wrap gap-x-5 gap-y-2.5">
+                {[
+                  { icon: Wallet, label: "Free to list" },
+                  { icon: BadgeCheck, label: "Verified seekers" },
+                  { icon: Lock, label: "Payments via Stripe" },
+                ].map((c) => (
+                  <span key={c.label} className="inline-flex items-center gap-2 text-[13.5px] font-medium text-[var(--color-ink-2)]">
+                    <c.icon className="w-4 h-4 text-[var(--color-accent)]" /> {c.label}
+                  </span>
+                ))}
+              </div>
+            </motion.div>
+
+            {/* Enquiries mock - hand-built, token-only */}
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.15, ease: [0.2, 0.7, 0.3, 1] }}
+              className="relative hidden sm:block"
+              aria-hidden="true"
+            >
+              <div className="rounded-[var(--radius-xl)] border border-[var(--color-line)] bg-[var(--color-surface-2)] shadow-[var(--shadow-pop)] p-6">
+                <div className="flex items-center justify-between mb-5">
+                  <div>
+                    <div className="eyebrow">Your listing</div>
+                    <div className="font-serif text-[20px] text-[var(--color-ink)] mt-1 leading-tight">Garden room · Brunswick</div>
+                  </div>
+                  <span className="inline-flex items-center gap-1.5 text-[11.5px] font-semibold text-[var(--color-accent)] bg-[var(--color-accent-soft)] rounded-full px-2.5 py-1">
+                    <Check className="w-3 h-3" strokeWidth={2.8} /> Live
+                  </span>
+                </div>
+                <div className="space-y-3">
+                  {[
+                    { name: "Aisha K.", note: "Verified seeker · wants March move-in", tone: "bg-[var(--color-primary-soft)] text-[var(--color-primary)]", initial: "A" },
+                    { name: "Lucas M.", note: "Verified seeker · asked about bills", tone: "bg-[var(--color-accent-soft)] text-[var(--color-accent)]", initial: "L" },
+                    { name: "Mei T.", note: "Verified seeker · requested a viewing", tone: "bg-[var(--color-warn-50)] text-[var(--color-warn-500)]", initial: "M" },
+                  ].map((e) => (
+                    <div key={e.name} className="flex items-center gap-3 rounded-[var(--radius-card)] border border-[var(--color-line)] bg-[var(--color-surface)] px-4 py-3">
+                      <span className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-[13px] shrink-0 ${e.tone}`}>{e.initial}</span>
+                      <div className="min-w-0">
+                        <div className="text-[13.5px] font-semibold text-[var(--color-ink)] leading-tight">{e.name}</div>
+                        <div className="text-[12px] text-[var(--color-ink-3)] leading-tight mt-0.5 truncate">{e.note}</div>
+                      </div>
+                      <ArrowRight className="w-4 h-4 text-[var(--color-primary)] ml-auto shrink-0" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+              {/* floating fee chip */}
+              <div className="absolute -bottom-5 right-6 bg-[var(--color-surface-2)]/95 backdrop-blur rounded-full border border-[var(--color-line)] shadow-[var(--shadow-card)] px-4 py-2.5 flex items-center gap-2">
+                <Wallet className="w-4 h-4 text-[var(--color-primary)]" />
+                <span className="text-[12.5px] font-semibold text-[var(--color-ink)]">$99 once · only when you match</span>
+              </div>
+            </motion.div>
+          </div>
         </div>
       </section>
 
       {/* 2 · HOW IT WORKS */}
-      <section className="bg-[var(--color-surface)] border-b border-[var(--color-line)]">
+      <section id="how" className="bg-[var(--color-surface)] border-b border-[var(--color-line)] scroll-mt-[76px]">
         <div className="max-w-[1280px] mx-auto px-6 md:px-10 lg:px-14 py-20 md:py-28">
           <motion.div {...reveal} className="mb-12">
             <div className="eyebrow mb-3">How it works</div>
@@ -116,8 +165,11 @@ export default function ForOwners() {
         </div>
       </section>
 
+      {/* 2b · VALUE MARQUEE (scroll-drift) */}
+      <ScrollMarquee words={["Free to list", "Verified seekers", "No rent commission", "Stripe payments", "Bond escrow"]} />
+
       {/* 3 · BENEFITS */}
-      <section>
+      <section id="why" className="scroll-mt-[76px]">
         <div className="max-w-[1280px] mx-auto px-6 md:px-10 lg:px-14 py-20 md:py-28">
           <div className="grid lg:grid-cols-[0.85fr_1.15fr] gap-10 lg:gap-16">
             <motion.div {...reveal} className="lg:sticky lg:top-24 lg:self-start">
@@ -139,8 +191,14 @@ export default function ForOwners() {
         </div>
       </section>
 
+      {/* 3b · STATEMENT (word-fill) */}
+      <ScrollStatement
+        eyebrow="Why hosts join"
+        text="Your spare room can change someone's first year in Australia. We make sure it is safe, paid on time, and worth your while."
+      />
+
       {/* 4 · PRICING SNAPSHOT */}
-      <section className="mood-field-strong border-y border-[var(--color-line)]">
+      <section id="pricing" className="mood-field-strong border-y border-[var(--color-line)] scroll-mt-[76px]">
         <div className="max-w-[1280px] mx-auto px-6 md:px-10 lg:px-14 py-20 md:py-28">
           <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
             <motion.div {...reveal}>

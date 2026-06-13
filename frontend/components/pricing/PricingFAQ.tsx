@@ -70,9 +70,9 @@ function FAQAccordionItem({ item, isOpen, onToggle }: { item: FAQItem; isOpen: b
     >
       <button
         onClick={onToggle}
-        className="w-full flex items-center justify-between p-5 text-left hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors"
+        className="w-full flex items-center justify-between p-5 text-left hover:bg-[var(--color-surface)] transition-colors"
       >
-        <span className="font-semibold text-sm text-slate-900 dark:text-white pr-4">
+        <span className="font-semibold text-sm text-[var(--color-ink)] pr-4">
           {item.question}
         </span>
         <motion.div
@@ -80,7 +80,7 @@ function FAQAccordionItem({ item, isOpen, onToggle }: { item: FAQItem; isOpen: b
           transition={{ duration: 0.2 }}
           className="shrink-0"
         >
-          <ChevronDown className="w-4 h-4 text-slate-400" />
+          <ChevronDown className="w-4 h-4 text-[var(--color-ink-3)]" />
         </motion.div>
       </button>
       <AnimatePresence initial={false}>
@@ -92,7 +92,7 @@ function FAQAccordionItem({ item, isOpen, onToggle }: { item: FAQItem; isOpen: b
             transition={{ duration: 0.25, ease: "easeInOut" }}
             className="overflow-hidden"
           >
-            <p className="px-5 pb-5 text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+            <p className="px-5 pb-5 text-sm text-[var(--color-ink-3)] leading-relaxed">
               {item.answer}
             </p>
           </motion.div>
@@ -113,13 +113,13 @@ export default function PricingFAQ() {
         viewport={{ once: true }}
         className="text-center mb-10"
       >
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20 mb-4">
-          <HelpCircle className="w-3.5 h-3.5 text-amber-500" />
-          <span className="text-xs font-semibold text-amber-600 dark:text-amber-400">
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[var(--color-warn-50)] border border-[var(--color-line-2)] mb-4">
+          <HelpCircle className="w-3.5 h-3.5 text-[var(--color-warn-500)]" />
+          <span className="text-xs font-semibold text-[var(--color-warn-600)]">
             Got questions?
           </span>
         </div>
-        <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-slate-900 dark:text-white">
+        <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-[var(--color-ink)]">
           Frequently Asked Questions
         </h2>
       </motion.div>
