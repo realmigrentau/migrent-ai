@@ -70,13 +70,13 @@ export default function ComparisonTable() {
                   Feature
                 </th>
                 <th className="text-center p-4 font-medium text-[var(--color-ink-3)] min-w-[90px]">
-                  Gumtree
+                  Classifieds
                 </th>
-                <th className="text-center p-4 font-medium text-[var(--color-ink-3)] min-w-[90px]">
-                  Facebook
+                <th className="text-center p-4 font-medium text-[var(--color-ink-3)] min-w-[100px]">
+                  Community groups
                 </th>
-                <th className="text-center p-4 font-medium text-[var(--color-ink-3)] min-w-[90px]">
-                  Domain
+                <th className="text-center p-4 font-medium text-[var(--color-ink-3)] min-w-[100px]">
+                  Agency portals
                 </th>
                 <th className="text-center p-4 min-w-[100px]">
                   <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--color-primary)]">

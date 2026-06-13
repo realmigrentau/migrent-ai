@@ -1,6 +1,8 @@
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { useCalculator } from "../../hooks/useCalculator";
-import { Calculator, TrendingUp, DollarSign, Minus } from "lucide-react";
+import { useOwner } from "../../hooks/useOwner";
+import { Calculator, TrendingUp, DollarSign, Minus, Lock, ArrowRight } from "lucide-react";
 
 function SliderInput({
   label,
@@ -52,17 +54,19 @@ function StatCard({
   icon: Icon,
   color,
   delay,
+  blurred,
 }: {
   label: string;
   value: string;
   icon: typeof TrendingUp;
   color: string;
   delay: number;
+  blurred?: boolean;
 }) {
   const bgClasses: Record<string, string> = {
-    indigo: "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/20 text-[var(--color-primary)] dark:text-[var(--color-primary)]",
-    emerald: "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/20 text-[var(--color-accent)] dark:text-[var(--color-accent)]",
-    pink: "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary-soft)]0/20 text-[var(--color-primary)] dark:text-[var(--color-primary)]",
+    indigo: "bg-[var(--color-primary-soft)] text-[var(--color-primary)]",
+    emerald: "bg-[var(--color-accent-soft)] text-[var(--color-accent)]",
+    pink: "bg-[var(--color-primary-soft)] text-[var(--color-primary)]",
     amber: "bg-[var(--color-warn-50)] text-[var(--color-warn-600)]",
   };
 
@@ -77,7 +81,7 @@ function StatCard({
       <div className={`w-10 h-10 rounded-xl ${bgClasses[color]} flex items-center justify-center mx-auto mb-2`}>
         <Icon className="w-5 h-5" />
       </div>
-      <div className="text-2xl font-semibold text-[var(--color-ink)]">
+      <div className={`text-2xl font-semibold text-[var(--color-ink)] ${blurred ? "blur-[7px] select-none" : ""}`} aria-hidden={blurred ? "true" : undefined}>
         {value}
       </div>
       <div className="text-xs text-[var(--color-ink-3)] mt-1">
@@ -89,6 +93,10 @@ function StatCard({
 
 export default function EarningsCalculator() {
   const { inputs, outputs, updateInput } = useCalculator();
+  const { isOwner, loading } = useOwner();
+  // Everyone can play with the sliders; the dollar results stay blurred
+  // until you are signed in as an owner.
+  const locked = loading || !isOwner;
 
   return (
     <section id="calculator" className="max-w-5xl mx-auto px-4 scroll-mt-24">
@@ -160,6 +168,7 @@ export default function EarningsCalculator() {
                 icon={TrendingUp}
                 color="indigo"
                 delay={0.15}
+                blurred={locked}
               />
               <StatCard
                 label="MigRent Fee"
@@ -167,6 +176,7 @@ export default function EarningsCalculator() {
                 icon={Minus}
                 color="pink"
                 delay={0.2}
+                blurred={locked}
               />
             </div>
 
@@ -176,22 +186,31 @@ export default function EarningsCalculator() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.25 }}
-              className="p-6 rounded-xl bg-[var(--color-primary-soft)] from-emerald-50 via-emerald-100/50 to-teal-50 dark:from-[var(--color-accent)]/10 dark:via-[var(--color-accent)]/5 dark:to-teal-500/5 border border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)]"
+              className="relative p-6 rounded-xl ocean-card border border-[var(--color-accent-soft)] overflow-hidden"
             >
               <div className="flex items-center gap-2 mb-3">
-                <div className="w-8 h-8 rounded-lg bg-[var(--color-accent-soft)]0 flex items-center justify-center">
-                  <DollarSign className="w-4 h-4 text-[var(--color-primary-fg)]" />
+                <div className="w-8 h-8 rounded-lg bg-[var(--color-accent)] flex items-center justify-center">
+                  <DollarSign className="w-4 h-4 text-[var(--color-accent-fg)]" />
                 </div>
-                <span className="text-sm font-semibold text-[var(--color-accent)] dark:text-[var(--color-accent)]">
+                <span className="text-sm font-semibold text-[var(--color-ink)]">
                   Your Annual Take-Home
                 </span>
               </div>
-              <div className="text-4xl font-semibold text-[var(--color-accent)] dark:text-[var(--color-accent)]">
+              <div className={`font-serif text-4xl text-[var(--color-ink)] tracking-[-0.02em] ${locked ? "blur-[10px] select-none" : ""}`} aria-hidden={locked ? "true" : undefined}>
                 ${outputs.annualTakeHome.toLocaleString()}
               </div>
-              <div className="text-sm text-[var(--color-accent)] dark:text-[var(--color-accent)] mt-1">
+              <div className={`text-sm text-[var(--color-ink-2)] mt-1 ${locked ? "blur-[6px] select-none" : ""}`} aria-hidden={locked ? "true" : undefined}>
                 ~${outputs.monthlyTakeHome.toLocaleString()}/month after one-time fees
               </div>
+              {locked && !loading && (
+                <div className="mt-4 flex items-center gap-3 rounded-[var(--radius-card)] bg-[var(--color-surface-2)]/90 backdrop-blur border border-[var(--color-line)] px-4 py-3">
+                  <Lock className="w-4 h-4 text-[var(--color-primary)] shrink-0" />
+                  <span className="text-[13px] text-[var(--color-ink-2)] leading-snug">Sign in as an owner to reveal your numbers.</span>
+                  <Link href="/signup" className="ml-auto inline-flex items-center gap-1 text-[13px] font-semibold text-[var(--color-primary)] whitespace-nowrap hover:opacity-80">
+                    Sign in <ArrowRight className="w-3.5 h-3.5" />
+                  </Link>
+                </div>
+              )}
             </motion.div>
 
             <p className="text-xs text-[var(--color-ink-3)] text-center">

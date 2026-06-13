@@ -16,7 +16,6 @@ import EarningsCalculator from "../components/pricing/EarningsCalculator";
 import ComparisonTable from "../components/pricing/ComparisonTable";
 import PricingFAQ from "../components/pricing/PricingFAQ";
 import TestimonialCarousel from "../components/pricing/TestimonialCarousel";
-import OwnerGuard from "../components/OwnerGuard";
 import PageSubnav from "../components/ui/PageSubnav";
 import { reveal, ScrollStatement } from "../components/marketing/motion";
 
@@ -161,12 +160,7 @@ export default function Pricing() {
             <div className="eyebrow mb-2.5">For owners</div>
             <h2 className="font-serif text-[34px] md:text-[48px] tracking-[-0.025em] leading-[1.02] text-[var(--color-ink)]">What could your room earn?</h2>
           </motion.div>
-          <OwnerGuard
-            teaserTitle="Owner Earnings Calculator"
-            teaserDescription="Sign up as a property owner to estimate your rental earnings with our interactive calculator."
-          >
-            <EarningsCalculator />
-          </OwnerGuard>
+          <EarningsCalculator />
         </div>
       </section>
 
