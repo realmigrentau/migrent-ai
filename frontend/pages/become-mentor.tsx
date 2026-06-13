@@ -171,10 +171,10 @@ export default function BecomeMentorPage() {
           <div className="w-16 h-16 rounded-2xl bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/20 flex items-center justify-center mx-auto">
             <CheckCircle2 className="w-8 h-8 text-[var(--color-accent)] dark:text-[var(--color-accent)]" />
           </div>
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
+          <h1 className="text-2xl font-bold text-[var(--color-ink)]">
             You are a registered mentor
           </h1>
-          <p className="text-slate-600 dark:text-slate-300">
+          <p className="text-[var(--color-ink-2)]">
             Suburb: {existingMentor.suburb} - Rate: ${(existingMentor.hourly_rate / 100).toFixed(0)}/session
           </p>
           <div className="flex flex-wrap gap-3 justify-center">
@@ -193,7 +193,7 @@ export default function BecomeMentorPage() {
             <motion.button
               whileHover={{ scale: 1.03 }}
               onClick={() => router.push("/mentors")}
-              className="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-semibold px-6 py-2.5 rounded-xl text-sm"
+              className="bg-[var(--color-surface-muted)] text-[var(--color-ink-2)] font-semibold px-6 py-2.5 rounded-xl text-sm"
             >
               View Mentor Directory
             </motion.button>
@@ -215,14 +215,14 @@ export default function BecomeMentorPage() {
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ type: "spring", stiffness: 200 }}
-            className="w-20 h-20 rounded-2xl bg-[var(--color-primary-soft)] from-[var(--color-accent)] to-teal-500 flex items-center justify-center mx-auto"
+            className="w-20 h-20 rounded-2xl bg-[var(--color-primary-soft)] from-[var(--color-accent)] to-[var(--color-primary)] flex items-center justify-center mx-auto"
           >
             <CheckCircle2 className="w-10 h-10 text-white" />
           </motion.div>
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
+          <h1 className="text-2xl font-bold text-[var(--color-ink)]">
             Welcome to the Mentor Network!
           </h1>
-          <p className="text-slate-600 dark:text-slate-300 max-w-md mx-auto">
+          <p className="text-[var(--color-ink-2)] max-w-md mx-auto">
             Your mentor profile is live. New arrivals in your suburb can now find and book sessions with you.
           </p>
           <div className="flex flex-wrap gap-3 justify-center">
@@ -238,7 +238,7 @@ export default function BecomeMentorPage() {
             <motion.button
               whileHover={{ scale: 1.03 }}
               onClick={() => router.push("/mentors")}
-              className="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-semibold px-6 py-2.5 rounded-xl text-sm"
+              className="bg-[var(--color-surface-muted)] text-[var(--color-ink-2)] font-semibold px-6 py-2.5 rounded-xl text-sm"
             >
               View Directory
             </motion.button>
@@ -265,10 +265,10 @@ export default function BecomeMentorPage() {
           <div className="w-16 h-16 rounded-2xl bg-[var(--color-primary-soft)] from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center mx-auto">
             <Heart className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-white">
+          <h1 className="text-3xl font-bold text-[var(--color-ink)]">
             Become a Local Mentor
           </h1>
-          <p className="text-slate-600 dark:text-slate-300">
+          <p className="text-[var(--color-ink-2)]">
             Help newcomers settle in. Earn $20-$30 per session. Make a difference.
           </p>
         </motion.div>
@@ -278,11 +278,11 @@ export default function BecomeMentorPage() {
           {[
             { icon: <DollarSign className="w-5 h-5" />, label: "Earn $20-30/session", color: "text-[var(--color-accent)]" },
             { icon: <Users className="w-5 h-5" />, label: "Help your community", color: "text-[var(--color-primary)]" },
-            { icon: <Star className="w-5 h-5" />, label: "Build your reputation", color: "text-amber-500" },
+            { icon: <Star className="w-5 h-5" />, label: "Build your reputation", color: "text-[var(--color-warn-500)]" },
           ].map((item) => (
             <div key={item.label} className="card p-3 text-center">
               <div className={`${item.color} mx-auto mb-1`}>{item.icon}</div>
-              <p className="text-xs font-medium text-slate-700 dark:text-slate-300">{item.label}</p>
+              <p className="text-xs font-medium text-[var(--color-ink-2)]">{item.label}</p>
             </div>
           ))}
         </div>
@@ -295,13 +295,13 @@ export default function BecomeMentorPage() {
                 className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${
                   step >= s
                     ? "bg-[var(--color-primary)] text-white"
-                    : "bg-slate-200 dark:bg-slate-700 text-slate-500"
+                    : "bg-[var(--color-line)] text-[var(--color-ink-3)]"
                 }`}
               >
                 {step > s ? <CheckCircle2 className="w-4 h-4" /> : s}
               </div>
               {s < 3 && (
-                <div className={`flex-1 h-0.5 rounded ${step > s ? "bg-[var(--color-primary)]" : "bg-slate-200 dark:bg-slate-700"}`} />
+                <div className={`flex-1 h-0.5 rounded ${step > s ? "bg-[var(--color-primary)]" : "bg-[var(--color-line)]"}`} />
               )}
             </div>
           ))}
@@ -314,13 +314,13 @@ export default function BecomeMentorPage() {
             animate={{ opacity: 1, x: 0 }}
             className="card p-6 space-y-4"
           >
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <h2 className="text-lg font-bold text-[var(--color-ink)] flex items-center gap-2">
               <MapPin className="w-5 h-5 text-[var(--color-primary)]" />
               Your Location
             </h2>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+              <label className="block text-sm font-medium text-[var(--color-ink-2)] mb-1">
                 Suburb *
               </label>
               <input
@@ -328,12 +328,12 @@ export default function BecomeMentorPage() {
                 value={suburb}
                 onChange={(e) => setSuburb(e.target.value)}
                 placeholder="e.g. Kellyville"
-                className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-[var(--color-ink)]/30 focus:border-transparent outline-none"
+                className="w-full px-4 py-2.5 bg-[var(--color-surface)] border border-[var(--color-line)] rounded-xl text-sm focus:ring-2 focus:ring-[var(--color-ink)]/30 focus:border-transparent outline-none"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+              <label className="block text-sm font-medium text-[var(--color-ink-2)] mb-1">
                 Postcode
               </label>
               <input
@@ -342,7 +342,7 @@ export default function BecomeMentorPage() {
                 onChange={(e) => setPostcode(e.target.value)}
                 placeholder="e.g. 2155"
                 maxLength={4}
-                className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-[var(--color-ink)]/30 focus:border-transparent outline-none"
+                className="w-full px-4 py-2.5 bg-[var(--color-surface)] border border-[var(--color-line)] rounded-xl text-sm focus:ring-2 focus:ring-[var(--color-ink)]/30 focus:border-transparent outline-none"
               />
             </div>
 
@@ -368,13 +368,13 @@ export default function BecomeMentorPage() {
             animate={{ opacity: 1, x: 0 }}
             className="card p-6 space-y-5"
           >
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <h2 className="text-lg font-bold text-[var(--color-ink)] flex items-center gap-2">
               <Globe className="w-5 h-5 text-[var(--color-primary)]" />
               Languages & Expertise
             </h2>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+              <label className="block text-sm font-medium text-[var(--color-ink-2)] mb-2">
                 Languages you speak *
               </label>
               <div className="flex flex-wrap gap-2">
@@ -385,7 +385,7 @@ export default function BecomeMentorPage() {
                     className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
                       languages.includes(lang)
                         ? "bg-[var(--color-primary)] text-white"
-                        : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200"
+                        : "bg-[var(--color-surface-muted)] text-[var(--color-ink-2)] hover:bg-[var(--color-surface-muted)]"
                     }`}
                   >
                     {lang}
@@ -395,7 +395,7 @@ export default function BecomeMentorPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+              <label className="block text-sm font-medium text-[var(--color-ink-2)] mb-2">
                 What can you help with?
               </label>
               <div className="flex flex-wrap gap-2">
@@ -406,7 +406,7 @@ export default function BecomeMentorPage() {
                     className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
                       specialties.includes(spec)
                         ? "bg-[var(--color-accent)] text-white"
-                        : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200"
+                        : "bg-[var(--color-surface-muted)] text-[var(--color-ink-2)] hover:bg-[var(--color-surface-muted)]"
                     }`}
                   >
                     {spec}
@@ -419,7 +419,7 @@ export default function BecomeMentorPage() {
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 onClick={() => setStep(1)}
-                className="flex-1 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-semibold py-3 rounded-xl text-sm"
+                className="flex-1 bg-[var(--color-surface-muted)] text-[var(--color-ink-2)] font-semibold py-3 rounded-xl text-sm"
               >
                 Back
               </motion.button>
@@ -446,13 +446,13 @@ export default function BecomeMentorPage() {
             animate={{ opacity: 1, x: 0 }}
             className="card p-6 space-y-4"
           >
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <h2 className="text-lg font-bold text-[var(--color-ink)] flex items-center gap-2">
               <Sparkles className="w-5 h-5 text-[var(--color-primary)]" />
               About You & Pricing
             </h2>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+              <label className="block text-sm font-medium text-[var(--color-ink-2)] mb-1">
                 Bio - tell new arrivals about yourself
               </label>
               <textarea
@@ -461,12 +461,12 @@ export default function BecomeMentorPage() {
                 placeholder="e.g. I've lived in Kellyville for 10 years. I know every cafe, park, and shortcut. Originally from India, I speak Hindi and English fluently."
                 rows={4}
                 maxLength={2000}
-                className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-[var(--color-ink)]/30 focus:border-transparent outline-none resize-none"
+                className="w-full px-4 py-2.5 bg-[var(--color-surface)] border border-[var(--color-line)] rounded-xl text-sm focus:ring-2 focus:ring-[var(--color-ink)]/30 focus:border-transparent outline-none resize-none"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+              <label className="block text-sm font-medium text-[var(--color-ink-2)] mb-1">
                 Session rate (AUD) - you keep 70%
               </label>
               <div className="flex items-center gap-4">
@@ -482,7 +482,7 @@ export default function BecomeMentorPage() {
                   ${hourlyRate}
                 </div>
               </div>
-              <div className="flex justify-between text-xs text-slate-500 mt-1">
+              <div className="flex justify-between text-xs text-[var(--color-ink-3)] mt-1">
                 <span>You earn: ${Math.round(hourlyRate * 0.7)}</span>
                 <span>Platform fee: ${Math.round(hourlyRate * 0.3)}</span>
               </div>
@@ -492,7 +492,7 @@ export default function BecomeMentorPage() {
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 onClick={() => setStep(2)}
-                className="flex-1 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-semibold py-3 rounded-xl text-sm"
+                className="flex-1 bg-[var(--color-surface-muted)] text-[var(--color-ink-2)] font-semibold py-3 rounded-xl text-sm"
               >
                 Back
               </motion.button>
@@ -501,7 +501,7 @@ export default function BecomeMentorPage() {
                 whileTap={{ scale: 0.98 }}
                 onClick={handleSubmit}
                 disabled={loading}
-                className="flex-1 bg-[var(--color-primary)] from-[var(--color-primary)] to-pink-600 hover:from-rose-700 hover:to-pink-700 text-white font-semibold py-3 rounded-xl text-sm transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                className="flex-1 bg-[var(--color-primary)] text-white font-semibold py-3 rounded-xl text-sm transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 {loading ? (
                   <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />

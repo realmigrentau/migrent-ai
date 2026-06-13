@@ -78,10 +78,10 @@ export default function MentorsPage() {
           <div className="w-16 h-16 rounded-2xl bg-[var(--color-primary-soft)] from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center mx-auto">
             <Users className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-white">
+          <h1 className="text-3xl font-bold text-[var(--color-ink)]">
             Find a Local Mentor
           </h1>
-          <p className="text-slate-600 dark:text-slate-300 max-w-lg mx-auto">
+          <p className="text-[var(--color-ink-2)] max-w-lg mx-auto">
             Connect with verified locals who know your suburb inside out.
             Get help with settling in, local tips, and navigating your new neighbourhood.
           </p>
@@ -101,19 +101,19 @@ export default function MentorsPage() {
         <form onSubmit={handleSearch} className="card p-4">
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="flex-1 relative">
-              <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-ink-3)]" />
               <input
                 type="text"
                 value={suburb}
                 onChange={(e) => setSuburb(e.target.value)}
                 placeholder="Search by suburb (e.g. Kellyville)"
-                className="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-[var(--color-ink)]/30 focus:border-transparent outline-none"
+                className="w-full pl-10 pr-4 py-2.5 bg-[var(--color-surface)] border border-[var(--color-line)] rounded-xl text-sm focus:ring-2 focus:ring-[var(--color-ink)]/30 focus:border-transparent outline-none"
               />
             </div>
             <select
               value={language}
               onChange={(e) => setLanguage(e.target.value)}
-              className="px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-[var(--color-ink)]/30 focus:border-transparent outline-none"
+              className="px-4 py-2.5 bg-[var(--color-surface)] border border-[var(--color-line)] rounded-xl text-sm focus:ring-2 focus:ring-[var(--color-ink)]/30 focus:border-transparent outline-none"
             >
               <option value="">All Languages</option>
               {popularLanguages.map((lang) => (
@@ -146,7 +146,7 @@ export default function MentorsPage() {
               className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
                 searchSuburb === s
                   ? "bg-[var(--color-primary)] text-white"
-                  : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"
+                  : "bg-[var(--color-surface-muted)] text-[var(--color-ink-2)] hover:bg-[var(--color-surface-muted)]"
               }`}
             >
               {s}
@@ -173,7 +173,7 @@ export default function MentorsPage() {
           </div>
         ) : mentors.length > 0 ? (
           <div className="space-y-3">
-            <p className="text-sm text-slate-500 dark:text-slate-400">
+            <p className="text-sm text-[var(--color-ink-3)]">
               {mentors.length} mentor{mentors.length !== 1 ? "s" : ""} found
               {searchSuburb ? ` in ${searchSuburb}` : ""}
             </p>
@@ -201,13 +201,13 @@ export default function MentorsPage() {
             animate={{ opacity: 1 }}
             className="card p-8 text-center"
           >
-            <div className="w-14 h-14 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center mx-auto mb-4">
-              <Users className="w-7 h-7 text-slate-400" />
+            <div className="w-14 h-14 rounded-2xl bg-[var(--color-surface-muted)] flex items-center justify-center mx-auto mb-4">
+              <Users className="w-7 h-7 text-[var(--color-ink-3)]" />
             </div>
-            <h3 className="font-bold text-slate-900 dark:text-white mb-2">
+            <h3 className="font-bold text-[var(--color-ink)] mb-2">
               No mentors found
             </h3>
-            <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">
+            <p className="text-sm text-[var(--color-ink-3)] mb-4">
               {searchSuburb
                 ? `No mentors available in ${searchSuburb} yet. Be the first!`
                 : "No mentors available yet. Be the first to help newcomers!"}
@@ -226,7 +226,7 @@ export default function MentorsPage() {
 
         {/* How it works */}
         <div className="card p-6">
-          <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+          <h2 className="text-lg font-bold text-[var(--color-ink)] mb-4 flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-[var(--color-primary)]" />
             How It Works
           </h2>
@@ -240,8 +240,8 @@ export default function MentorsPage() {
                 <div className="w-10 h-10 rounded-full bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/20 text-[var(--color-primary)] dark:text-[var(--color-primary)] flex items-center justify-center mx-auto font-bold text-sm">
                   {item.step}
                 </div>
-                <h3 className="font-semibold text-sm text-slate-900 dark:text-white">{item.title}</h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400">{item.desc}</p>
+                <h3 className="font-semibold text-sm text-[var(--color-ink)]">{item.title}</h3>
+                <p className="text-xs text-[var(--color-ink-3)]">{item.desc}</p>
               </div>
             ))}
           </div>

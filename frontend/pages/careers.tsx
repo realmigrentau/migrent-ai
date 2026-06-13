@@ -30,10 +30,10 @@ export default function Careers() {
               {t("careers.badge")}
             </div>
             <h1 className="text-4xl sm:text-5xl font-semibold tracking-tight leading-tight">
-              <span className="text-slate-900 dark:text-white">{t("careers.headline1")}</span>{" "}
+              <span className="text-[var(--color-ink)]">{t("careers.headline1")}</span>{" "}
               {t("careers.headlineAccent")}
             </h1>
-            <p className="mt-6 text-lg text-slate-500 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
+            <p className="mt-6 text-lg text-[var(--color-ink-3)] max-w-2xl mx-auto leading-relaxed">
               {t("careers.subtitle")}
             </p>
           </motion.div>
@@ -41,7 +41,7 @@ export default function Careers() {
 
         {/* Values */}
         <section className="max-w-3xl mx-auto">
-          <h2 className="text-3xl font-semibold tracking-tight text-slate-900 dark:text-white mb-8 text-center">
+          <h2 className="text-3xl font-semibold tracking-tight text-[var(--color-ink)] mb-8 text-center">
             {t("careers.valuesTitle")} {t("careers.valuesAccent")}
           </h2>
           <div className="grid sm:grid-cols-2 gap-4">
@@ -52,8 +52,8 @@ export default function Careers() {
                     <path strokeLinecap="round" strokeLinejoin="round" d={item.icon} />
                   </svg>
                 </div>
-                <h3 className="font-bold text-slate-900 dark:text-white text-sm mb-1">{item.title}</h3>
-                <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">{item.desc}</p>
+                <h3 className="font-bold text-[var(--color-ink)] text-sm mb-1">{item.title}</h3>
+                <p className="text-sm text-[var(--color-ink-3)] leading-relaxed">{item.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -62,8 +62,8 @@ export default function Careers() {
         {/* About the Team */}
         <section className="max-w-3xl mx-auto">
           <div className="card p-6 rounded-2xl space-y-4">
-            <h2 className="text-xl font-bold text-slate-900 dark:text-white">{t("careers.teamTitle")}</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
+            <h2 className="text-xl font-bold text-[var(--color-ink)]">{t("careers.teamTitle")}</h2>
+            <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
               <p>
                 {t("careers.teamP1")}
               </p>
@@ -76,27 +76,27 @@ export default function Careers() {
 
         {/* Current Openings */}
         <section className="max-w-3xl mx-auto">
-          <h2 className="text-2xl font-semibold tracking-tight text-slate-900 dark:text-white mb-6 text-center">
+          <h2 className="text-2xl font-semibold tracking-tight text-[var(--color-ink)] mb-6 text-center">
             {t("careers.openingsTitle")}
           </h2>
           <div className="space-y-3">
             <div className="card p-5 rounded-2xl">
               <div className="flex items-center justify-between gap-4">
                 <div>
-                  <h3 className="font-bold text-slate-900 dark:text-white text-sm">{t("careers.volunteerTitle")}</h3>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{t("careers.volunteerMeta")}</p>
+                  <h3 className="font-bold text-[var(--color-ink)] text-sm">{t("careers.volunteerTitle")}</h3>
+                  <p className="text-xs text-[var(--color-ink-3)] mt-0.5">{t("careers.volunteerMeta")}</p>
                 </div>
                 <span className="px-2.5 py-0.5 rounded-full bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 text-xs font-semibold text-[var(--color-accent)] dark:text-[var(--color-accent)] shrink-0">
                   {t("careers.volunteerOpen")}
                 </span>
               </div>
-              <p className="text-sm text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
+              <p className="text-sm text-[var(--color-ink-3)] mt-2 leading-relaxed">
                 {t("careers.volunteerDesc")}
               </p>
             </div>
 
             <div className="card-subtle p-5 rounded-2xl">
-              <p className="text-sm text-slate-500 dark:text-slate-400 text-center">
+              <p className="text-sm text-[var(--color-ink-3)] text-center">
                 {t("careers.morePositions")}
               </p>
             </div>
@@ -106,8 +106,8 @@ export default function Careers() {
         {/* CTA */}
         <section className="max-w-3xl mx-auto pb-8">
           <div className="card p-8 rounded-2xl bg-[var(--color-primary-soft)] from-[var(--color-primary-soft)] to-[var(--color-primary-soft)]/50 dark:from-[var(--color-primary)]/10 dark:to-[var(--color-primary)]/5 border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)] text-center">
-            <h2 className="text-2xl font-semibold text-slate-900 dark:text-white mb-3">{t("careers.ctaTitle")}</h2>
-            <p className="text-sm text-slate-600 dark:text-slate-300 mb-6 max-w-md mx-auto">{t("careers.ctaSubtitle")}</p>
+            <h2 className="text-2xl font-semibold text-[var(--color-ink)] mb-3">{t("careers.ctaTitle")}</h2>
+            <p className="text-sm text-[var(--color-ink-2)] mb-6 max-w-md mx-auto">{t("careers.ctaSubtitle")}</p>
             <a href="https://mail.google.com/mail/?view=cm&fs=1&to=migrentau@gmail.com&su=Careers%20at%20MigRent%20AI" target="_blank" rel="noopener noreferrer">
               <motion.span whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }} className="inline-block btn-primary text-sm px-8 py-3 rounded-xl">
                 {t("careers.ctaCta")}

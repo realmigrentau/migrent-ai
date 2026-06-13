@@ -10,13 +10,13 @@ function FAQItem({ q, a }: { q: string; a: string }) {
     <div className="card rounded-xl overflow-hidden">
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between p-4 text-left hover:bg-slate-50 dark:hover:bg-white/5 transition-colors"
+        className="w-full flex items-center justify-between p-4 text-left hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-surface-muted)] transition-colors"
       >
-        <h3 className="font-semibold text-slate-900 dark:text-white text-sm pr-4">{q}</h3>
+        <h3 className="font-semibold text-[var(--color-ink)] text-sm pr-4">{q}</h3>
         <motion.span
           animate={{ rotate: open ? 180 : 0 }}
           transition={{ duration: 0.2 }}
-          className="text-slate-400 shrink-0"
+          className="text-[var(--color-ink-3)] shrink-0"
         >
           &#x25BE;
         </motion.span>
@@ -30,7 +30,7 @@ function FAQItem({ q, a }: { q: string; a: string }) {
             transition={{ duration: 0.2 }}
             className="overflow-hidden"
           >
-            <p className="px-4 pb-4 text-sm text-slate-500 dark:text-slate-400 leading-relaxed">{a}</p>
+            <p className="px-4 pb-4 text-sm text-[var(--color-ink-3)] leading-relaxed">{a}</p>
           </motion.div>
         )}
       </AnimatePresence>
@@ -141,16 +141,16 @@ export default function FAQ() {
         {/* Hero */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-500/10 border border-amber-100 dark:border-amber-500/20 flex items-center justify-center">
-              <svg className="w-5 h-5 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <div className="w-10 h-10 rounded-xl bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/10 border border-[var(--color-line-2)] flex items-center justify-center">
+              <svg className="w-5 h-5 text-[var(--color-warn-500)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
             <div>
-              <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white">
+              <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-[var(--color-ink)]">
                 {t("faq.title")} {t("faq.titleAccent")}
               </h1>
-              <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">{faqCategories.reduce((sum, cat) => sum + cat.items.length, 0)}+ {t("faq.countSuffix")}</p>
+              <p className="text-sm text-[var(--color-ink-3)] mt-1">{faqCategories.reduce((sum, cat) => sum + cat.items.length, 0)}+ {t("faq.countSuffix")}</p>
             </div>
           </div>
 
@@ -169,7 +169,7 @@ export default function FAQ() {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="space-y-10">
           {filteredCategories.map((category) => (
             <section key={category.title} className="space-y-3">
-              <h2 className="text-xl font-semibold tracking-tight text-slate-900 dark:text-white">{category.title}</h2>
+              <h2 className="text-xl font-semibold tracking-tight text-[var(--color-ink)]">{category.title}</h2>
               <div className="space-y-2">
                 {category.items.map((item, i) => (
                   <FAQItem key={i} q={item.q} a={item.a} />
@@ -180,14 +180,14 @@ export default function FAQ() {
 
           {filteredCategories.length === 0 && (
             <div className="text-center py-12">
-              <p className="text-slate-500 dark:text-slate-400 text-sm">{t("faq.noResults")} <Link href="/contact" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">{t("faq.contactUs")}</Link>.</p>
+              <p className="text-[var(--color-ink-3)] text-sm">{t("faq.noResults")} <Link href="/contact" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">{t("faq.contactUs")}</Link>.</p>
             </div>
           )}
 
           {/* CTA */}
-          <div className="card p-6 rounded-2xl bg-[var(--color-primary-soft)] from-amber-50 to-amber-100/50 dark:from-amber-500/10 dark:to-amber-600/5 border-amber-200 dark:border-amber-500/20 text-center">
-            <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">{t("faq.stillTitle")}</h3>
-            <p className="text-sm text-slate-600 dark:text-slate-300 mb-4">{t("faq.stillSubtitle")}</p>
+          <div className="card p-6 rounded-2xl bg-[var(--color-primary-soft)] bg-[var(--color-warn-50)] border-[var(--color-line-2)] text-center">
+            <h3 className="text-lg font-bold text-[var(--color-ink)] mb-2">{t("faq.stillTitle")}</h3>
+            <p className="text-sm text-[var(--color-ink-2)] mb-4">{t("faq.stillSubtitle")}</p>
             <Link href="/contact">
               <motion.span whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }} className="inline-block btn-primary text-sm px-6 py-2.5 rounded-xl">
                 {t("faq.stillCta")}

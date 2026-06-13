@@ -2,6 +2,7 @@ import Link from "next/link";
 import { motion, type Variants } from "framer-motion";
 import Head from "next/head";
 import { useTranslation } from "react-i18next";
+import PageSubnav from "../components/ui/PageSubnav";
 
 const fadeUp: Variants = {
   hidden: { opacity: 0, y: 30 },
@@ -36,6 +37,18 @@ export default function About() {
         <meta name="description" content="MigRent AI - founded in Sydney by an entrepreneur building an AI-powered rental marketplace for migrants and students across Australia." />
       </Head>
 
+      <PageSubnav
+        title="About"
+        links={[
+          { label: "Story", href: "#story" },
+          { label: "Mission", href: "#mission" },
+          { label: "Values", href: "#values" },
+          { label: "Business", href: "#business" },
+        ]}
+        cta={{ label: "Sign up", href: "/signup" }}
+        threshold={360}
+      />
+
       <div className="space-y-16">
         {/* Hero */}
         <section className="relative text-center py-16 overflow-hidden">
@@ -68,7 +81,7 @@ export default function About() {
         </section>
 
         {/* The Story */}
-        <section className="max-w-3xl mx-auto">
+        <section id="story" className="max-w-3xl mx-auto scroll-mt-[76px]">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} className="card p-6 md:p-8 rounded-2xl space-y-5">
             <motion.h2 custom={0} variants={fadeUp} className="font-serif text-[30px] md:text-[38px] tracking-[-0.02em] text-[var(--color-ink)]">
               {t("about.storyTitle")} {t("about.storyAccent")}
@@ -91,7 +104,7 @@ export default function About() {
         </section>
 
         {/* Mission */}
-        <section className="max-w-3xl mx-auto">
+        <section id="mission" className="max-w-3xl mx-auto scroll-mt-[76px]">
           <div className="card p-6 md:p-8 rounded-2xl bg-[var(--color-primary-soft)] from-[var(--color-primary-soft)] to-[var(--color-primary-soft)]/50 dark:from-[var(--color-primary)]/10 dark:to-[var(--color-primary)]/5 border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)] space-y-4">
             <h2 className="font-serif text-[26px] tracking-[-0.015em] text-[var(--color-ink)]">{t("about.missionTitle")}</h2>
             <p className="text-sm text-[var(--color-ink-2)] leading-relaxed">
@@ -101,7 +114,7 @@ export default function About() {
         </section>
 
         {/* Values */}
-        <section className="max-w-3xl mx-auto">
+        <section id="values" className="max-w-3xl mx-auto scroll-mt-[76px]">
           <h2 className="font-serif text-[32px] md:text-[44px] tracking-[-0.02em] text-[var(--color-ink)] mb-8 text-center">
             {t("about.valuesTitle")} {t("about.valuesAccent")}
           </h2>
@@ -143,7 +156,7 @@ export default function About() {
         </section>
 
         {/* Business Details */}
-        <section className="max-w-3xl mx-auto">
+        <section id="business" className="max-w-3xl mx-auto scroll-mt-[76px]">
           <div className="card p-6 rounded-2xl space-y-3">
             <h2 className="font-serif text-[22px] tracking-[-0.01em] text-[var(--color-ink)]">{t("about.businessTitle")}</h2>
             <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-1">
