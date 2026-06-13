@@ -27,6 +27,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { searchListings } from "../lib/api";
+import PageSubnav from "../components/ui/PageSubnav";
 
 type Listing = {
   id: string;
@@ -464,6 +465,18 @@ export default function Home() {
         <meta name="twitter:image" content="/og-default.png" />
       </Head>
 
+      <PageSubnav
+        title="MigRent"
+        links={[
+          { label: "How it works", href: "#how" },
+          { label: "Browse", href: "#browse" },
+          { label: "Mentors", href: "#mentors" },
+          { label: "FAQ", href: "#faq" },
+        ]}
+        cta={{ label: "Start searching", href: "/seeker/search" }}
+        threshold={700}
+      />
+
       {/* 1 · HERO (parallax video) */}
       <section ref={heroRef} className="mood-field border-b border-[var(--color-line)]">
         <div className="max-w-[1280px] mx-auto px-6 md:px-10 lg:px-14 py-12 md:py-16 lg:py-20">
@@ -540,7 +553,7 @@ export default function Home() {
       </section>
 
       {/* 3 · HOW IT WORKS (steps grid) */}
-      <StepsGrid items={HOW_ITEMS} />
+      <div id="how" className="scroll-mt-[76px]"><StepsGrid items={HOW_ITEMS} /></div>
 
       {/* 3b · VALUE MARQUEE (scroll-drift) */}
       <ScrollMarquee words={["Verified hosts", "Bond protected", "No rental history", "Mentors included", "Secure payments", "$0 renter fees"]} />
@@ -569,7 +582,7 @@ export default function Home() {
       </section>
 
       {/* 5 · BROWSE */}
-      <section className="bg-[var(--color-surface)] border-y border-[var(--color-line)]">
+      <section id="browse" className="bg-[var(--color-surface)] border-y border-[var(--color-line)] scroll-mt-[76px]">
         <div className="max-w-[1280px] mx-auto px-6 md:px-10 lg:px-14 py-20 md:py-28">
           <motion.div {...reveal} className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-8">
             <div>
@@ -661,7 +674,7 @@ export default function Home() {
       </section>
 
       {/* 8 · MENTORS */}
-      <section className="bg-[var(--color-bg)]">
+      <section id="mentors" className="bg-[var(--color-bg)] scroll-mt-[76px]">
         <div className="max-w-[1280px] mx-auto px-6 md:px-10 lg:px-14 py-20 md:py-28">
           <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
             <motion.div {...reveal}>
@@ -767,7 +780,7 @@ export default function Home() {
       </section>
 
       {/* 11 · FAQ */}
-      <section className="bg-[var(--color-surface)] border-y border-[var(--color-line)]">
+      <section id="faq" className="bg-[var(--color-surface)] border-y border-[var(--color-line)] scroll-mt-[76px]">
         <div className="max-w-[1280px] mx-auto px-6 md:px-10 lg:px-14 py-20 md:py-28">
           <div className="grid lg:grid-cols-[0.8fr_1.2fr] gap-10 lg:gap-16">
             <motion.div {...reveal}>
