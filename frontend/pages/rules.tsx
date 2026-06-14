@@ -13,13 +13,13 @@ function CollapsibleSection({ title, children, defaultOpen = false }: SectionPro
     <div className="card rounded-2xl overflow-hidden">
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between p-5 text-left hover:bg-slate-50 dark:hover:bg-white/5 transition-colors"
+        className="w-full flex items-center justify-between p-5 text-left hover:bg-[var(--color-surface)] dark:hover:bg-white/5 transition-colors"
       >
-        <h2 className="text-lg font-bold text-slate-900 dark:text-white">{title}</h2>
+        <h2 className="text-lg font-bold text-[var(--color-ink)]">{title}</h2>
         <motion.span
           animate={{ rotate: open ? 180 : 0 }}
           transition={{ duration: 0.2 }}
-          className="text-slate-400 text-xl shrink-0 ml-4"
+          className="text-[var(--color-ink-3)] text-xl shrink-0 ml-4"
         >
           &#x25BE;
         </motion.span>
@@ -33,7 +33,7 @@ function CollapsibleSection({ title, children, defaultOpen = false }: SectionPro
             transition={{ duration: 0.3 }}
             className="overflow-hidden"
           >
-            <div className="px-5 pb-5 text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
+            <div className="px-5 pb-5 text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
               {children}
             </div>
           </motion.div>
@@ -51,10 +51,10 @@ export default function Rules() {
         animate={{ opacity: 1, y: 0 }}
         className="mb-8"
       >
-        <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white">
+        <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-[var(--color-ink)]">
           Platform Rules
         </h1>
-        <p className="text-slate-500 dark:text-slate-400 mt-2 text-sm">Guidelines for a safe and fair community</p>
+        <p className="text-[var(--color-ink-3)] mt-2 text-sm">Guidelines for a safe and fair community</p>
       </motion.div>
 
       <CollapsibleSection title="Rules for Seekers" defaultOpen>

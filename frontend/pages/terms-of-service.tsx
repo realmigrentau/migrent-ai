@@ -14,16 +14,16 @@ export default function TermsOfService() {
         {/* Hero */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-500/10 border border-blue-100 dark:border-blue-500/20 flex items-center justify-center">
-              <svg className="w-5 h-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <div className="w-10 h-10 rounded-xl bg-[var(--color-primary-50)] dark:bg-[var(--color-primary)]/10 border border-[var(--color-primary-100)] dark:border-[var(--color-line)] flex items-center justify-center">
+              <svg className="w-5 h-5 text-[var(--color-primary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
             </div>
             <div>
-              <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white">
+              <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-[var(--color-ink)]">
                 Terms of Service
               </h1>
-              <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Last updated: March 2026</p>
+              <p className="text-sm text-[var(--color-ink-3)] mt-1">Last updated: March 2026</p>
             </div>
           </div>
         </motion.div>
@@ -31,16 +31,16 @@ export default function TermsOfService() {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="space-y-8">
           {/* Acceptance */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">1. Acceptance of Terms</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
+            <h2 className="text-lg font-bold text-[var(--color-ink)]">1. Acceptance of Terms</h2>
+            <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
               <p>By accessing or using MigRent AI (&quot;the Platform&quot;), you agree to be bound by these Terms of Service. If you do not agree to these terms, you must not use the Platform. MigRent AI is operated under ABN 22 669 566 941, based in Sydney, Australia.</p>
             </div>
           </section>
 
           {/* Platform Role */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">2. Platform Role - Online Introduction Service</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
+            <h2 className="text-lg font-bold text-[var(--color-ink)]">2. Platform Role - Online Introduction Service</h2>
+            <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
               <p>MigRent AI is an <strong>online introduction service only</strong>. We connect room owners with accommodation seekers for short- to medium-term rooms. We are not:</p>
               <ul className="list-disc list-inside space-y-1.5">
                 <li>A real estate agent, property manager, or letting agent</li>
@@ -55,8 +55,8 @@ export default function TermsOfService() {
 
           {/* Accounts */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">3. User Accounts</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
+            <h2 className="text-lg font-bold text-[var(--color-ink)]">3. User Accounts</h2>
+            <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
               <p>To use certain features, you must create an account. You agree to:</p>
               <ul className="list-disc list-inside space-y-1.5">
                 <li>Provide accurate, current, and complete information</li>
@@ -71,19 +71,19 @@ export default function TermsOfService() {
 
           {/* User/Owner Obligations Table */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">4. User Obligations</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
+            <h2 className="text-lg font-bold text-[var(--color-ink)]">4. User Obligations</h2>
+            <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
               <p>By using MigRent, you acknowledge and agree to the following responsibilities based on your role:</p>
               <div className="overflow-x-auto">
                 <table className="w-full text-sm border-collapse">
                   <thead>
-                    <tr className="border-b border-slate-200 dark:border-slate-700">
-                      <th className="text-left py-3 px-3 font-semibold text-slate-800 dark:text-slate-200">Obligation</th>
-                      <th className="text-center py-3 px-3 font-semibold text-slate-800 dark:text-slate-200">Owner</th>
-                      <th className="text-center py-3 px-3 font-semibold text-slate-800 dark:text-slate-200">Seeker</th>
+                    <tr className="border-b border-[var(--color-line)]">
+                      <th className="text-left py-3 px-3 font-semibold text-[var(--color-ink)]">Obligation</th>
+                      <th className="text-center py-3 px-3 font-semibold text-[var(--color-ink)]">Owner</th>
+                      <th className="text-center py-3 px-3 font-semibold text-[var(--color-ink)]">Seeker</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                  <tbody className="divide-y divide-[var(--color-line)] dark:divide-[var(--color-line)]">
                     <tr>
                       <td className="py-2.5 px-3">Provide accurate listing/profile information</td>
                       <td className="py-2.5 px-3 text-center text-[var(--color-accent)]">Yes</td>
@@ -102,16 +102,16 @@ export default function TermsOfService() {
                     <tr>
                       <td className="py-2.5 px-3">Pay applicable platform fees</td>
                       <td className="py-2.5 px-3 text-center text-[var(--color-accent)]">$99/deal</td>
-                      <td className="py-2.5 px-3 text-center text-slate-400">$19 optional</td>
+                      <td className="py-2.5 px-3 text-center text-[var(--color-ink-3)]">$19 optional</td>
                     </tr>
                     <tr>
                       <td className="py-2.5 px-3">Ensure property meets safety and habitability standards</td>
                       <td className="py-2.5 px-3 text-center text-[var(--color-accent)]">Yes</td>
-                      <td className="py-2.5 px-3 text-center text-slate-400">N/A</td>
+                      <td className="py-2.5 px-3 text-center text-[var(--color-ink-3)]">N/A</td>
                     </tr>
                     <tr>
                       <td className="py-2.5 px-3">Conduct personal inspection before committing</td>
-                      <td className="py-2.5 px-3 text-center text-slate-400">N/A</td>
+                      <td className="py-2.5 px-3 text-center text-[var(--color-ink-3)]">N/A</td>
                       <td className="py-2.5 px-3 text-center text-[var(--color-accent)]">Yes</td>
                     </tr>
                     <tr>
@@ -132,18 +132,18 @@ export default function TermsOfService() {
 
           {/* Fees */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">5. Platform Fees &amp; Payments</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
+            <h2 className="text-lg font-bold text-[var(--color-ink)]">5. Platform Fees &amp; Payments</h2>
+            <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
               <div className="card-subtle p-4 rounded-xl">
-                <h3 className="font-semibold text-slate-800 dark:text-slate-200 mb-2">Owner Fees</h3>
+                <h3 className="font-semibold text-[var(--color-ink)] mb-2">Owner Fees</h3>
                 <p>Owners agree to pay a one-time AUD $99 platform fee per successful match made through MigRent. This fee is charged at the time a deal is confirmed through the platform. MigRent charges flat fees only - we do not take a percentage of rent.</p>
               </div>
               <div className="card-subtle p-4 rounded-xl">
-                <h3 className="font-semibold text-slate-800 dark:text-slate-200 mb-2">Seeker Fees</h3>
+                <h3 className="font-semibold text-[var(--color-ink)] mb-2">Seeker Fees</h3>
                 <p>Seekers may be presented with an optional one-time AUD $19 verification fee. This is always clearly disclosed before payment and is optional.</p>
               </div>
               <div className="card-subtle p-4 rounded-xl border-l-2 border-l-amber-500">
-                <h3 className="font-semibold text-amber-600 dark:text-amber-400 mb-2">Fee Circumvention</h3>
+                <h3 className="font-semibold text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)] mb-2">Fee Circumvention</h3>
                 <p>Users must not use MigRent to locate or contact another user and then intentionally complete the arrangement entirely outside the platform to avoid fees. Suspected circumvention may result in account suspension or termination.</p>
               </div>
               <p>All payments are processed securely through Stripe. MigRent does not store your full credit card details.</p>
@@ -152,8 +152,8 @@ export default function TermsOfService() {
 
           {/* Refunds */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">6. Refund Policy</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
+            <h2 className="text-lg font-bold text-[var(--color-ink)]">6. Refund Policy</h2>
+            <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
               <p>Platform fees are generally non-refundable once a deal is confirmed and payment is processed. In exceptional circumstances, refunds may be considered at the sole discretion of MigRent AI.</p>
               <p>Stripe receipts are automatically sent to the email address associated with your account. For refund inquiries, contact <a href="mailto:migrentau@gmail.com" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">migrentau@gmail.com</a>.</p>
             </div>
@@ -161,8 +161,8 @@ export default function TermsOfService() {
 
           {/* Listings */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">7. Listings &amp; Content</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
+            <h2 className="text-lg font-bold text-[var(--color-ink)]">7. Listings &amp; Content</h2>
+            <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
               <p>Users are solely responsible for the accuracy of all content they post, including listing descriptions, photos, pricing, and profile information. You agree not to post:</p>
               <ul className="list-disc list-inside space-y-1.5">
                 <li>False, misleading, or deceptive information</li>
@@ -176,8 +176,8 @@ export default function TermsOfService() {
 
           {/* No Warranty */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">8. No Warranty</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
+            <h2 className="text-lg font-bold text-[var(--color-ink)]">8. No Warranty</h2>
+            <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
               <p>The Platform is provided on an &quot;as is&quot; and &quot;as available&quot; basis. To the maximum extent permitted by law, MigRent makes no warranties, express or implied, including but not limited to:</p>
               <ul className="list-disc list-inside space-y-1.5">
                 <li>The condition, safety, quality, or legality of any listed property</li>
@@ -191,8 +191,8 @@ export default function TermsOfService() {
 
           {/* Liability */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">9. Limitation of Liability</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
+            <h2 className="text-lg font-bold text-[var(--color-ink)]">9. Limitation of Liability</h2>
+            <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
               <p>To the maximum extent permitted by Australian law (including the Australian Consumer Law):</p>
               <ul className="list-disc list-inside space-y-1.5">
                 <li>MigRent excludes all liability for indirect, incidental, special, consequential, or punitive damages arising from or related to your use of the Platform</li>
@@ -210,8 +210,8 @@ export default function TermsOfService() {
 
           {/* Indemnity */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">10. Indemnity</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
+            <h2 className="text-lg font-bold text-[var(--color-ink)]">10. Indemnity</h2>
+            <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
               <p>You agree to indemnify, defend, and hold harmless MigRent AI, its officers, directors, employees, and agents from and against any and all claims, liabilities, damages, losses, costs, and expenses (including reasonable legal fees) arising out of or in connection with:</p>
               <ul className="list-disc list-inside space-y-1.5">
                 <li>Your use of or conduct on the Platform</li>
@@ -227,8 +227,8 @@ export default function TermsOfService() {
 
           {/* Regulatory */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">11. Regulatory Compliance</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
+            <h2 className="text-lg font-bold text-[var(--color-ink)]">11. Regulatory Compliance</h2>
+            <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
               <p>Users are responsible for complying with all applicable local, state, and federal laws, including but not limited to:</p>
               <ul className="list-disc list-inside space-y-1.5">
                 <li>Short-term rental accommodation (STRA) regulations - see our <Link href="/code-of-conduct" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">STRA Code of Conduct</Link> page</li>
@@ -242,8 +242,8 @@ export default function TermsOfService() {
 
           {/* Suspension */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">12. Suspension &amp; Termination</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
+            <h2 className="text-lg font-bold text-[var(--color-ink)]">12. Suspension &amp; Termination</h2>
+            <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
               <p>MigRent may suspend or terminate your account at any time for:</p>
               <ul className="list-disc list-inside space-y-1.5">
                 <li>Breach of these Terms or Community Guidelines</li>
@@ -257,13 +257,13 @@ export default function TermsOfService() {
 
           {/* Dispute Resolution & Arbitration */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">13. Dispute Resolution &amp; Arbitration</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
+            <h2 className="text-lg font-bold text-[var(--color-ink)]">13. Dispute Resolution &amp; Arbitration</h2>
+            <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
               <p>Any dispute, controversy, or claim arising out of or relating to these Terms or your use of the Platform shall be resolved as follows:</p>
               <div className="card-subtle p-4 rounded-xl space-y-2">
-                <p><strong className="text-slate-800 dark:text-slate-200">Step 1 - Direct Resolution:</strong> Contact the other party directly to attempt resolution.</p>
-                <p><strong className="text-slate-800 dark:text-slate-200">Step 2 - MigRent Mediation:</strong> If unresolved within 14 days, contact MigRent at <a href="mailto:migrentau@gmail.com" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">migrentau@gmail.com</a> for informal mediation assistance.</p>
-                <p><strong className="text-slate-800 dark:text-slate-200">Step 3 - Binding Arbitration:</strong> If mediation fails within 30 days, any remaining dispute shall be finally resolved by binding arbitration administered by the Australian Centre for International Commercial Arbitration (ACICA) in accordance with ACICA Arbitration Rules. The seat of arbitration shall be Sydney, NSW. The language of arbitration shall be English.</p>
+                <p><strong className="text-[var(--color-ink)]">Step 1 - Direct Resolution:</strong> Contact the other party directly to attempt resolution.</p>
+                <p><strong className="text-[var(--color-ink)]">Step 2 - MigRent Mediation:</strong> If unresolved within 14 days, contact MigRent at <a href="mailto:migrentau@gmail.com" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">migrentau@gmail.com</a> for informal mediation assistance.</p>
+                <p><strong className="text-[var(--color-ink)]">Step 3 - Binding Arbitration:</strong> If mediation fails within 30 days, any remaining dispute shall be finally resolved by binding arbitration administered by the Australian Centre for International Commercial Arbitration (ACICA) in accordance with ACICA Arbitration Rules. The seat of arbitration shall be Sydney, NSW. The language of arbitration shall be English.</p>
               </div>
               <p>To the extent permitted by law, you agree to waive any right to participate in a class action, representative proceeding, or class-wide arbitration. See our <Link href="/support-disputes" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">Dispute Resolution</Link> page for full details.</p>
             </div>
@@ -271,34 +271,34 @@ export default function TermsOfService() {
 
           {/* Governing Law */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">14. Governing Law</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
+            <h2 className="text-lg font-bold text-[var(--color-ink)]">14. Governing Law</h2>
+            <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
               <p>These Terms are governed by and construed in accordance with the laws of New South Wales, Australia, without regard to conflict of law principles. Subject to the arbitration clause above, any disputes shall be subject to the exclusive jurisdiction of the courts of New South Wales.</p>
             </div>
           </section>
 
           {/* Severability */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">15. Severability</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
+            <h2 className="text-lg font-bold text-[var(--color-ink)]">15. Severability</h2>
+            <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
               <p>If any provision of these Terms is found to be invalid, illegal, or unenforceable by a court of competent jurisdiction, such invalidity shall not affect the remaining provisions, which shall continue in full force and effect. The invalid provision shall be modified to the minimum extent necessary to make it valid and enforceable while preserving the original intent.</p>
             </div>
           </section>
 
           {/* Changes */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">16. Changes to Terms</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
+            <h2 className="text-lg font-bold text-[var(--color-ink)]">16. Changes to Terms</h2>
+            <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
               <p>We may update these Terms from time to time. We will notify users of material changes via email or a notice on the platform. Continued use of the platform after changes constitutes acceptance of the updated Terms.</p>
             </div>
           </section>
 
           {/* Contact */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">17. Contact</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+            <h2 className="text-lg font-bold text-[var(--color-ink)]">17. Contact</h2>
+            <div className="text-sm text-[var(--color-ink-2)] leading-relaxed">
               <div className="card-subtle p-4 rounded-xl space-y-1">
-                <p className="font-semibold text-slate-800 dark:text-slate-200">MigRent AI</p>
+                <p className="font-semibold text-[var(--color-ink)]">MigRent AI</p>
                 <p>ABN: 22 669 566 941</p>
                 <p>Email: <a href="mailto:migrentau@gmail.com" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">migrentau@gmail.com</a></p>
                 <p>Location: Sydney, Australia</p>
@@ -307,14 +307,14 @@ export default function TermsOfService() {
           </section>
 
           {/* Legal Disclaimer */}
-          <div className="card-subtle p-4 rounded-xl text-xs text-slate-400 dark:text-slate-500 leading-relaxed">
+          <div className="card-subtle p-4 rounded-xl text-xs text-[var(--color-ink-3)] leading-relaxed">
             <p>This document is for informational purposes and constitutes the binding terms between you and MigRent AI. MigRent recommends that users seek independent legal advice regarding their own obligations under applicable tenancy and rental laws. Last reviewed by MigRent: March 2026.</p>
           </div>
 
           {/* CTA */}
-          <div className="card p-6 rounded-2xl bg-[var(--color-primary-soft)] from-blue-50 to-blue-100/50 dark:from-[var(--color-primary)]/10 dark:to-[var(--color-primary)]/5 border-blue-200 dark:border-blue-500/20 text-center">
-            <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Questions about our terms?</h3>
-            <p className="text-sm text-slate-600 dark:text-slate-300 mb-4">Our team is happy to clarify anything.</p>
+          <div className="card p-6 rounded-2xl bg-[var(--color-primary-soft)] from-[var(--color-primary-50)] to-[var(--color-primary-100)] dark:from-[var(--color-primary)]/10 dark:to-[var(--color-primary)]/5 border-[var(--color-primary-100)] dark:border-[var(--color-line)] text-center">
+            <h3 className="text-lg font-bold text-[var(--color-ink)] mb-2">Questions about our terms?</h3>
+            <p className="text-sm text-[var(--color-ink-2)] mb-4">Our team is happy to clarify anything.</p>
             <Link href="/contact">
               <motion.span whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }} className="inline-block btn-primary text-sm px-6 py-2.5 rounded-xl">
                 Contact Us

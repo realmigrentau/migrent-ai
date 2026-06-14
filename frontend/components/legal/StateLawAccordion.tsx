@@ -27,22 +27,22 @@ export default function StateLawAccordion({
         return (
           <div
             key={index}
-            className="card rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700/50"
+            className="card rounded-xl overflow-hidden border border-[var(--color-line)]/50"
           >
             <button
               onClick={() => setOpenIndex(isOpen ? null : index)}
-              className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+              className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-[var(--color-surface)]/50 transition-colors"
             >
               <div className="flex items-center gap-3">
                 {item.icon && (
-                  <span className="text-rose-500 flex-shrink-0">{item.icon}</span>
+                  <span className="text-[var(--color-primary)] flex-shrink-0">{item.icon}</span>
                 )}
-                <span className="text-sm font-semibold text-slate-900 dark:text-white">
+                <span className="text-sm font-semibold text-[var(--color-ink)]">
                   {item.title}
                 </span>
               </div>
               <ChevronDown
-                className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${
+                className={`w-4 h-4 text-[var(--color-ink-3)] transition-transform duration-200 ${
                   isOpen ? "rotate-180" : ""
                 }`}
               />
@@ -55,7 +55,7 @@ export default function StateLawAccordion({
                   exit={{ height: 0, opacity: 0 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <div className="px-5 pb-5 text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
+                  <div className="px-5 pb-5 text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
                     {item.content}
                   </div>
                 </motion.div>

@@ -20,10 +20,10 @@ export default function PrivacyPolicy() {
               </svg>
             </div>
             <div>
-              <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white">
+              <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-[var(--color-ink)]">
                 Privacy Policy
               </h1>
-              <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Last updated: March 2026</p>
+              <p className="text-sm text-[var(--color-ink-3)] mt-1">Last updated: March 2026</p>
             </div>
           </div>
         </motion.div>
@@ -31,8 +31,8 @@ export default function PrivacyPolicy() {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="space-y-8">
           {/* Introduction */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">1. Introduction</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
+            <h2 className="text-lg font-bold text-[var(--color-ink)]">1. Introduction</h2>
+            <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
               <p>MigRent AI (&quot;we&quot;, &quot;us&quot;, &quot;our&quot;) is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our platform at migrent-ai.vercel.app.</p>
               <p>MigRent AI operates under ABN 22 669 566 941 and is based in Sydney, Australia. We comply with the Australian Privacy Act 1988 (Cth), the Australian Privacy Principles (APPs), and applicable GDPR provisions for users located in the European Economic Area (EEA).</p>
               <p>MigRent AI is an online introduction service only. We facilitate connections between room owners and accommodation seekers. We do not collect rent, bonds, or manage tenancy agreements.</p>
@@ -41,10 +41,10 @@ export default function PrivacyPolicy() {
 
           {/* Data We Collect */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">2. Information We Collect</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-4">
+            <h2 className="text-lg font-bold text-[var(--color-ink)]">2. Information We Collect</h2>
+            <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-4">
               <div>
-                <h3 className="font-semibold text-slate-800 dark:text-slate-200 mb-2">Account Information</h3>
+                <h3 className="font-semibold text-[var(--color-ink)] mb-2">Account Information</h3>
                 <ul className="list-disc list-inside space-y-1.5">
                   <li>Email address (required for account creation)</li>
                   <li>Legal name and preferred name (collected during onboarding)</li>
@@ -55,7 +55,7 @@ export default function PrivacyPolicy() {
                 </ul>
               </div>
               <div>
-                <h3 className="font-semibold text-slate-800 dark:text-slate-200 mb-2">Listing &amp; Search Data</h3>
+                <h3 className="font-semibold text-[var(--color-ink)] mb-2">Listing &amp; Search Data</h3>
                 <ul className="list-disc list-inside space-y-1.5">
                   <li>Property listing details (address, description, photos, pricing)</li>
                   <li>Search preferences and filters</li>
@@ -64,7 +64,7 @@ export default function PrivacyPolicy() {
                 </ul>
               </div>
               <div>
-                <h3 className="font-semibold text-slate-800 dark:text-slate-200 mb-2">Verification Data</h3>
+                <h3 className="font-semibold text-[var(--color-ink)] mb-2">Verification Data</h3>
                 <ul className="list-disc list-inside space-y-1.5">
                   <li>Identity verification status (pass/fail, not raw documents)</li>
                   <li>Visa status verification metadata</li>
@@ -72,7 +72,7 @@ export default function PrivacyPolicy() {
                 </ul>
               </div>
               <div>
-                <h3 className="font-semibold text-slate-800 dark:text-slate-200 mb-2">Technical &amp; Usage Data</h3>
+                <h3 className="font-semibold text-[var(--color-ink)] mb-2">Technical &amp; Usage Data</h3>
                 <ul className="list-disc list-inside space-y-1.5">
                   <li>Device type, browser, and operating system</li>
                   <li>IP address and approximate location</li>
@@ -81,7 +81,7 @@ export default function PrivacyPolicy() {
                 </ul>
               </div>
               <div>
-                <h3 className="font-semibold text-slate-800 dark:text-slate-200 mb-2">Payment Data</h3>
+                <h3 className="font-semibold text-[var(--color-ink)] mb-2">Payment Data</h3>
                 <ul className="list-disc list-inside space-y-1.5">
                   <li>Payment metadata (transaction ID, amount, date) via Stripe</li>
                   <li>We do not store full credit card numbers - all payment processing is handled by Stripe</li>
@@ -92,8 +92,8 @@ export default function PrivacyPolicy() {
 
           {/* How We Use Data */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">3. How We Use Your Information</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-2">
+            <h2 className="text-lg font-bold text-[var(--color-ink)]">3. How We Use Your Information</h2>
+            <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-2">
               <ul className="list-disc list-inside space-y-1.5">
                 <li>To operate the MigRent platform and provide our matching services</li>
                 <li>To create and manage your account</li>
@@ -111,19 +111,19 @@ export default function PrivacyPolicy() {
 
           {/* Third Parties */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">4. Third-Party Services</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
+            <h2 className="text-lg font-bold text-[var(--color-ink)]">4. Third-Party Services</h2>
+            <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
               <p>We use the following third-party services that may process your data:</p>
               <div className="overflow-x-auto">
                 <table className="w-full text-sm border-collapse">
                   <thead>
-                    <tr className="border-b border-slate-200 dark:border-slate-700">
-                      <th className="text-left py-3 px-3 font-semibold text-slate-800 dark:text-slate-200">Service</th>
-                      <th className="text-left py-3 px-3 font-semibold text-slate-800 dark:text-slate-200">Purpose</th>
-                      <th className="text-left py-3 px-3 font-semibold text-slate-800 dark:text-slate-200">Data Shared</th>
+                    <tr className="border-b border-[var(--color-line)]">
+                      <th className="text-left py-3 px-3 font-semibold text-[var(--color-ink)]">Service</th>
+                      <th className="text-left py-3 px-3 font-semibold text-[var(--color-ink)]">Purpose</th>
+                      <th className="text-left py-3 px-3 font-semibold text-[var(--color-ink)]">Data Shared</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                  <tbody className="divide-y divide-[var(--color-line)] dark:divide-[var(--color-line)]">
                     <tr>
                       <td className="py-2.5 px-3 font-medium">Supabase</td>
                       <td className="py-2.5 px-3">Database hosting &amp; authentication</td>
@@ -158,8 +158,8 @@ export default function PrivacyPolicy() {
 
           {/* Data Sharing */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">5. Data Sharing with Other Users</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
+            <h2 className="text-lg font-bold text-[var(--color-ink)]">5. Data Sharing with Other Users</h2>
+            <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
               <p>When you use MigRent, certain profile information is visible to other users to facilitate connections:</p>
               <ul className="list-disc list-inside space-y-1.5">
                 <li><strong>Public profile:</strong> Preferred name, profile photo, bio, preferences, and verification status</li>
@@ -172,18 +172,18 @@ export default function PrivacyPolicy() {
 
           {/* Data Retention */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">6. Data Retention</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
+            <h2 className="text-lg font-bold text-[var(--color-ink)]">6. Data Retention</h2>
+            <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
               <p>We retain your personal information according to the following schedule:</p>
               <div className="overflow-x-auto">
                 <table className="w-full text-sm border-collapse">
                   <thead>
-                    <tr className="border-b border-slate-200 dark:border-slate-700">
-                      <th className="text-left py-3 px-3 font-semibold text-slate-800 dark:text-slate-200">Data Type</th>
-                      <th className="text-left py-3 px-3 font-semibold text-slate-800 dark:text-slate-200">Retention Period</th>
+                    <tr className="border-b border-[var(--color-line)]">
+                      <th className="text-left py-3 px-3 font-semibold text-[var(--color-ink)]">Data Type</th>
+                      <th className="text-left py-3 px-3 font-semibold text-[var(--color-ink)]">Retention Period</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                  <tbody className="divide-y divide-[var(--color-line)] dark:divide-[var(--color-line)]">
                     <tr>
                       <td className="py-2.5 px-3">Account and profile data</td>
                       <td className="py-2.5 px-3">While account is active + 30 days after deletion request</td>
@@ -213,8 +213,8 @@ export default function PrivacyPolicy() {
 
           {/* Your Rights */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">7. Your Rights</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
+            <h2 className="text-lg font-bold text-[var(--color-ink)]">7. Your Rights</h2>
+            <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
               <p>Under the Australian Privacy Act and Australian Privacy Principles (APPs), you have the right to:</p>
               <ul className="list-disc list-inside space-y-1.5">
                 <li><strong>Access (APP 12)</strong> - Request a copy of the personal data we hold about you</li>
@@ -228,8 +228,8 @@ export default function PrivacyPolicy() {
 
           {/* GDPR */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">8. GDPR Rights (EU/EEA Users)</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
+            <h2 className="text-lg font-bold text-[var(--color-ink)]">8. GDPR Rights (EU/EEA Users)</h2>
+            <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
               <p>If you are located in the European Economic Area (EEA), you have additional rights under the General Data Protection Regulation (GDPR). As MigRent serves migrants who may originate from EU/EEA countries, we extend these protections:</p>
               <ul className="list-disc list-inside space-y-1.5">
                 <li><strong>Right to Portability</strong> - Request your data in a machine-readable format (JSON or CSV)</li>
@@ -239,7 +239,7 @@ export default function PrivacyPolicy() {
                 <li><strong>Right to Withdraw Consent</strong> - Withdraw consent at any time where processing is based on consent</li>
               </ul>
               <div className="card-subtle p-4 rounded-xl">
-                <h3 className="font-semibold text-slate-800 dark:text-slate-200 mb-2">Legal Basis for Processing (GDPR Article 6)</h3>
+                <h3 className="font-semibold text-[var(--color-ink)] mb-2">Legal Basis for Processing (GDPR Article 6)</h3>
                 <ul className="list-disc list-inside space-y-1.5">
                   <li><strong>Contract:</strong> Processing necessary to provide our service (account, matching, messaging)</li>
                   <li><strong>Legitimate Interest:</strong> Fraud prevention, platform security, service improvement</li>
@@ -253,8 +253,8 @@ export default function PrivacyPolicy() {
 
           {/* Cookies */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">9. Cookies &amp; Tracking</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
+            <h2 className="text-lg font-bold text-[var(--color-ink)]">9. Cookies &amp; Tracking</h2>
+            <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
               <p>We use essential cookies to maintain your session and preferences (such as dark mode and language). We use Vercel Analytics for anonymous usage statistics. We do not use advertising cookies or sell your data to advertisers.</p>
               <p>For more details, see our <Link href="/cookie-policy" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">Cookie Policy</Link>.</p>
             </div>
@@ -262,8 +262,8 @@ export default function PrivacyPolicy() {
 
           {/* Security */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">10. Security</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
+            <h2 className="text-lg font-bold text-[var(--color-ink)]">10. Security</h2>
+            <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
               <p>We implement industry-standard security measures including:</p>
               <ul className="list-disc list-inside space-y-1.5">
                 <li>Encryption in transit (TLS/HTTPS) for all data transfers</li>
@@ -278,28 +278,28 @@ export default function PrivacyPolicy() {
 
           {/* Contact */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">11. Contact Us</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
+            <h2 className="text-lg font-bold text-[var(--color-ink)]">11. Contact Us</h2>
+            <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
               <p>If you have questions about this Privacy Policy or wish to exercise your rights, contact us:</p>
               <div className="card-subtle p-4 rounded-xl space-y-1">
-                <p className="font-semibold text-slate-800 dark:text-slate-200">MigRent AI - Privacy Inquiries</p>
+                <p className="font-semibold text-[var(--color-ink)]">MigRent AI - Privacy Inquiries</p>
                 <p>ABN: 22 669 566 941</p>
                 <p>Email: <a href="mailto:migrentau@gmail.com" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">migrentau@gmail.com</a></p>
                 <p>Location: Sydney, Australia</p>
               </div>
-              <p className="text-xs text-slate-400 dark:text-slate-500">You may also contact the Office of the Australian Information Commissioner (OAIC) at <a href="https://www.oaic.gov.au" target="_blank" rel="noopener noreferrer" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">www.oaic.gov.au</a> if you believe your privacy has been breached.</p>
+              <p className="text-xs text-[var(--color-ink-3)]">You may also contact the Office of the Australian Information Commissioner (OAIC) at <a href="https://www.oaic.gov.au" target="_blank" rel="noopener noreferrer" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">www.oaic.gov.au</a> if you believe your privacy has been breached.</p>
             </div>
           </section>
 
           {/* Legal Disclaimer */}
-          <div className="card-subtle p-4 rounded-xl text-xs text-slate-400 dark:text-slate-500 leading-relaxed">
+          <div className="card-subtle p-4 rounded-xl text-xs text-[var(--color-ink-3)] leading-relaxed">
             <p>This privacy policy is provided for informational purposes. MigRent recommends consulting a qualified privacy law professional for specific legal advice. Last reviewed: March 2026.</p>
           </div>
 
           {/* CTA */}
           <div className="card p-6 rounded-2xl bg-[var(--color-primary-soft)] from-[var(--color-primary-soft)] to-[var(--color-primary-soft)]/50 dark:from-[var(--color-primary)]/10 dark:to-[var(--color-primary)]/5 border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)] text-center">
-            <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Ready to get started?</h3>
-            <p className="text-sm text-slate-600 dark:text-slate-300 mb-4">Join thousands of migrants finding rooms across Australia.</p>
+            <h3 className="text-lg font-bold text-[var(--color-ink)] mb-2">Ready to get started?</h3>
+            <p className="text-sm text-[var(--color-ink-2)] mb-4">Join thousands of migrants finding rooms across Australia.</p>
             <div className="flex gap-3 justify-center">
               <Link href="/signup">
                 <motion.span whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }} className="inline-block btn-primary text-sm px-6 py-2.5 rounded-xl">

@@ -14,16 +14,16 @@ export default function AbnTerms() {
         {/* Hero */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-500/10 border border-slate-200 dark:border-slate-500/20 flex items-center justify-center">
-              <svg className="w-5 h-5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <div className="w-10 h-10 rounded-xl bg-[var(--color-surface-muted)] dark:bg-[var(--color-surface)]0/10 border border-[var(--color-line)] dark:border-[var(--color-line)] flex items-center justify-center">
+              <svg className="w-5 h-5 text-[var(--color-ink-3)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3H21m-3.75 3H21" />
               </svg>
             </div>
             <div>
-              <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white">
+              <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-[var(--color-ink)]">
                 ABN &amp; Business Details
               </h1>
-              <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Last updated: March 2026</p>
+              <p className="text-sm text-[var(--color-ink-3)] mt-1">Last updated: March 2026</p>
             </div>
           </div>
         </motion.div>
@@ -31,37 +31,37 @@ export default function AbnTerms() {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="space-y-8">
           {/* Business Details */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">Business Information</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
+            <h2 className="text-lg font-bold text-[var(--color-ink)]">Business Information</h2>
+            <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
               <div className="overflow-x-auto">
                 <table className="w-full text-sm border-collapse">
-                  <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                  <tbody className="divide-y divide-[var(--color-line)] dark:divide-[var(--color-line)]">
                     <tr>
-                      <td className="py-3 px-3 font-semibold text-slate-800 dark:text-slate-200 w-1/3">Business Name</td>
+                      <td className="py-3 px-3 font-semibold text-[var(--color-ink)] w-1/3">Business Name</td>
                       <td className="py-3 px-3">MigRent AI</td>
                     </tr>
                     <tr>
-                      <td className="py-3 px-3 font-semibold text-slate-800 dark:text-slate-200">ABN</td>
+                      <td className="py-3 px-3 font-semibold text-[var(--color-ink)]">ABN</td>
                       <td className="py-3 px-3 font-mono">22 669 566 941</td>
                     </tr>
                     <tr>
-                      <td className="py-3 px-3 font-semibold text-slate-800 dark:text-slate-200">Entity Type</td>
+                      <td className="py-3 px-3 font-semibold text-[var(--color-ink)]">Entity Type</td>
                       <td className="py-3 px-3">Sole Trader</td>
                     </tr>
                     <tr>
-                      <td className="py-3 px-3 font-semibold text-slate-800 dark:text-slate-200">GST Registered</td>
+                      <td className="py-3 px-3 font-semibold text-[var(--color-ink)]">GST Registered</td>
                       <td className="py-3 px-3">No (below GST threshold)</td>
                     </tr>
                     <tr>
-                      <td className="py-3 px-3 font-semibold text-slate-800 dark:text-slate-200">Location</td>
+                      <td className="py-3 px-3 font-semibold text-[var(--color-ink)]">Location</td>
                       <td className="py-3 px-3">Sydney, New South Wales, Australia</td>
                     </tr>
                     <tr>
-                      <td className="py-3 px-3 font-semibold text-slate-800 dark:text-slate-200">Website</td>
+                      <td className="py-3 px-3 font-semibold text-[var(--color-ink)]">Website</td>
                       <td className="py-3 px-3">migrent-ai.vercel.app</td>
                     </tr>
                     <tr>
-                      <td className="py-3 px-3 font-semibold text-slate-800 dark:text-slate-200">Contact Email</td>
+                      <td className="py-3 px-3 font-semibold text-[var(--color-ink)]">Contact Email</td>
                       <td className="py-3 px-3"><a href="mailto:migrentau@gmail.com" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">migrentau@gmail.com</a></td>
                     </tr>
                   </tbody>
@@ -72,8 +72,8 @@ export default function AbnTerms() {
 
           {/* Nature of Business */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">Nature of Business</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
+            <h2 className="text-lg font-bold text-[var(--color-ink)]">Nature of Business</h2>
+            <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
               <p>MigRent AI operates as an <strong>online introduction service</strong> for accommodation. We are:</p>
               <ul className="list-disc list-inside space-y-1.5">
                 <li>A technology platform that connects room owners with accommodation seekers</li>
@@ -86,29 +86,29 @@ export default function AbnTerms() {
 
           {/* Fee Structure */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">Fee Structure</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
+            <h2 className="text-lg font-bold text-[var(--color-ink)]">Fee Structure</h2>
+            <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
               <p>MigRent charges flat platform fees only. We do not take a percentage of rent or any ongoing commissions.</p>
               <div className="overflow-x-auto">
                 <table className="w-full text-sm border-collapse">
                   <thead>
-                    <tr className="border-b-2 border-slate-200 dark:border-slate-700">
-                      <th className="text-left py-3 px-3 font-semibold text-slate-800 dark:text-slate-200">Fee</th>
-                      <th className="text-left py-3 px-3 font-semibold text-slate-800 dark:text-slate-200">Amount</th>
-                      <th className="text-left py-3 px-3 font-semibold text-slate-800 dark:text-slate-200">Who Pays</th>
-                      <th className="text-left py-3 px-3 font-semibold text-slate-800 dark:text-slate-200">When</th>
+                    <tr className="border-b-2 border-[var(--color-line)]">
+                      <th className="text-left py-3 px-3 font-semibold text-[var(--color-ink)]">Fee</th>
+                      <th className="text-left py-3 px-3 font-semibold text-[var(--color-ink)]">Amount</th>
+                      <th className="text-left py-3 px-3 font-semibold text-[var(--color-ink)]">Who Pays</th>
+                      <th className="text-left py-3 px-3 font-semibold text-[var(--color-ink)]">When</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                  <tbody className="divide-y divide-[var(--color-line)] dark:divide-[var(--color-line)]">
                     <tr>
                       <td className="py-2.5 px-3 font-medium">Deal Confirmation Fee</td>
-                      <td className="py-2.5 px-3 font-semibold text-slate-800 dark:text-slate-200">AUD $99</td>
+                      <td className="py-2.5 px-3 font-semibold text-[var(--color-ink)]">AUD $99</td>
                       <td className="py-2.5 px-3">Owner</td>
                       <td className="py-2.5 px-3">Per successful match / deal</td>
                     </tr>
                     <tr>
                       <td className="py-2.5 px-3 font-medium">Verification Fee (optional)</td>
-                      <td className="py-2.5 px-3 font-semibold text-slate-800 dark:text-slate-200">AUD $19</td>
+                      <td className="py-2.5 px-3 font-semibold text-[var(--color-ink)]">AUD $19</td>
                       <td className="py-2.5 px-3">Seeker</td>
                       <td className="py-2.5 px-3">One-time, optional</td>
                     </tr>
@@ -138,8 +138,8 @@ export default function AbnTerms() {
 
           {/* Payment Terms */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">Payment Terms</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
+            <h2 className="text-lg font-bold text-[var(--color-ink)]">Payment Terms</h2>
+            <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
               <ul className="list-disc list-inside space-y-1.5">
                 <li>All payments are processed securely via <strong>Stripe</strong></li>
                 <li>Accepted payment methods: Visa, Mastercard, American Express (via Stripe)</li>
@@ -153,16 +153,16 @@ export default function AbnTerms() {
 
           {/* GST Note */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">GST Information</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
+            <h2 className="text-lg font-bold text-[var(--color-ink)]">GST Information</h2>
+            <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
               <p>MigRent AI is currently not registered for GST as annual turnover is below the $75,000 threshold. If and when MigRent becomes GST registered, fees will be updated to include GST and tax invoices will be provided.</p>
             </div>
           </section>
 
           {/* ABN Lookup */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">Verify Our ABN</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
+            <h2 className="text-lg font-bold text-[var(--color-ink)]">Verify Our ABN</h2>
+            <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
               <p>You can verify MigRent&apos;s ABN on the Australian Business Register:</p>
               <a href="https://abr.business.gov.au" target="_blank" rel="noopener noreferrer" className="inline-block text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">abr.business.gov.au</a>
               <p>Search for ABN: <span className="font-mono font-semibold">22 669 566 941</span></p>
@@ -170,14 +170,14 @@ export default function AbnTerms() {
           </section>
 
           {/* Legal Disclaimer */}
-          <div className="card-subtle p-4 rounded-xl text-xs text-slate-400 dark:text-slate-500 leading-relaxed">
+          <div className="card-subtle p-4 rounded-xl text-xs text-[var(--color-ink-3)] leading-relaxed">
             <p>For full terms governing your use of MigRent, see our <Link href="/terms-of-service" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">Terms of Service</Link>. Last reviewed: March 2026.</p>
           </div>
 
           {/* CTA */}
-          <div className="card p-6 rounded-2xl bg-[var(--color-primary-soft)] from-slate-50 to-slate-100/50 dark:from-slate-500/10 dark:to-slate-600/5 border-slate-200 dark:border-slate-500/20 text-center">
-            <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Business enquiries?</h3>
-            <p className="text-sm text-slate-600 dark:text-slate-300 mb-4">Get in touch with our team.</p>
+          <div className="card p-6 rounded-2xl bg-[var(--color-primary-soft)] from-[var(--color-surface)] to-[var(--color-surface-muted)] dark:from-[var(--color-surface)]0/10 dark:to-[var(--color-surface)] border-[var(--color-line)] dark:border-[var(--color-line)] text-center">
+            <h3 className="text-lg font-bold text-[var(--color-ink)] mb-2">Business enquiries?</h3>
+            <p className="text-sm text-[var(--color-ink-2)] mb-4">Get in touch with our team.</p>
             <Link href="/contact">
               <motion.span whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }} className="inline-block btn-primary text-sm px-6 py-2.5 rounded-xl">
                 Contact Us

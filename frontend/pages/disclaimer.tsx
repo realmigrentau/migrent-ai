@@ -14,16 +14,16 @@ export default function Disclaimer() {
         {/* Hero */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-500/10 border border-amber-100 dark:border-amber-500/20 flex items-center justify-center">
-              <svg className="w-5 h-5 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <div className="w-10 h-10 rounded-xl bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/10 border border-[var(--color-line-2)] dark:border-[var(--color-line)] flex items-center justify-center">
+              <svg className="w-5 h-5 text-[var(--color-warn-500)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
               </svg>
             </div>
             <div>
-              <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white">
+              <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-[var(--color-ink)]">
                 Platform Disclaimer
               </h1>
-              <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Last updated: March 2026</p>
+              <p className="text-sm text-[var(--color-ink-3)] mt-1">Last updated: March 2026</p>
             </div>
           </div>
         </motion.div>
@@ -31,8 +31,8 @@ export default function Disclaimer() {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="space-y-8">
           {/* Key Disclaimer */}
           <section className="card p-6 rounded-2xl space-y-3 border-l-4 border-l-amber-500">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">Important Notice</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
+            <h2 className="text-lg font-bold text-[var(--color-ink)]">Important Notice</h2>
+            <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
               <p>MigRent AI is an <strong>online introduction service only</strong>. We connect room owners with accommodation seekers. We do NOT:</p>
               <ul className="list-disc list-inside space-y-1.5">
                 <li>Guarantee the condition, safety, legality, or suitability of any property</li>
@@ -47,8 +47,8 @@ export default function Disclaimer() {
 
           {/* Property Disclaimer */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">1. Property Condition - &quot;As Is&quot;</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
+            <h2 className="text-lg font-bold text-[var(--color-ink)]">1. Property Condition - &quot;As Is&quot;</h2>
+            <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
               <p>All properties listed on MigRent are presented on an &quot;as is&quot; basis. MigRent does not inspect, verify, or warrant the condition of any property. This includes but is not limited to:</p>
               <ul className="list-disc list-inside space-y-1.5">
                 <li>Structural integrity and building compliance</li>
@@ -66,8 +66,8 @@ export default function Disclaimer() {
 
           {/* User Interactions */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">2. User Interactions</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
+            <h2 className="text-lg font-bold text-[var(--color-ink)]">2. User Interactions</h2>
+            <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
               <p>MigRent is not responsible for:</p>
               <ul className="list-disc list-inside space-y-1.5">
                 <li>Scams, fraud, or misrepresentation by any user</li>
@@ -82,8 +82,8 @@ export default function Disclaimer() {
 
           {/* Financial Disclaimer */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">3. Financial Disclaimer</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
+            <h2 className="text-lg font-bold text-[var(--color-ink)]">3. Financial Disclaimer</h2>
+            <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
               <p>MigRent charges flat platform fees only ($99 per deal for owners, $19 optional for seekers). We do not:</p>
               <ul className="list-disc list-inside space-y-1.5">
                 <li>Collect, hold, or manage rent payments</li>
@@ -98,16 +98,16 @@ export default function Disclaimer() {
 
           {/* No Legal Advice */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">4. No Legal Advice</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
+            <h2 className="text-lg font-bold text-[var(--color-ink)]">4. No Legal Advice</h2>
+            <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
               <p>Information provided on MigRent, including our <Link href="/rental-laws" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">rental laws guide</Link> and <Link href="/code-of-conduct" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">STRA code of conduct</Link>, is for general informational purposes only. It does not constitute legal advice. You should seek independent legal advice for your specific circumstances.</p>
             </div>
           </section>
 
           {/* Limitation of Liability */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">5. Limitation of Liability</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
+            <h2 className="text-lg font-bold text-[var(--color-ink)]">5. Limitation of Liability</h2>
+            <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
               <p>To the maximum extent permitted by Australian law:</p>
               <ul className="list-disc list-inside space-y-1.5">
                 <li>MigRent excludes all liability for indirect, incidental, special, consequential, or punitive damages</li>
@@ -120,8 +120,8 @@ export default function Disclaimer() {
 
           {/* Your Responsibilities */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">6. Your Responsibilities</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
+            <h2 className="text-lg font-bold text-[var(--color-ink)]">6. Your Responsibilities</h2>
+            <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
               <p>As a user of MigRent, you are responsible for:</p>
               <ul className="list-disc list-inside space-y-1.5">
                 <li>Conducting your own due diligence on properties and users</li>
@@ -134,14 +134,14 @@ export default function Disclaimer() {
           </section>
 
           {/* Legal Disclaimer */}
-          <div className="card-subtle p-4 rounded-xl text-xs text-slate-400 dark:text-slate-500 leading-relaxed">
+          <div className="card-subtle p-4 rounded-xl text-xs text-[var(--color-ink-3)] leading-relaxed">
             <p>This disclaimer is part of MigRent&apos;s <Link href="/terms-of-service" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">Terms of Service</Link>. For full legal terms, please refer to our Terms of Service. MigRent recommends consulting a qualified Australian lawyer for specific legal advice. Last reviewed: March 2026.</p>
           </div>
 
           {/* CTA */}
-          <div className="card p-6 rounded-2xl bg-[var(--color-primary-soft)] from-amber-50 to-amber-100/50 dark:from-amber-500/10 dark:to-amber-600/5 border-amber-200 dark:border-amber-500/20 text-center">
-            <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Have questions?</h3>
-            <p className="text-sm text-slate-600 dark:text-slate-300 mb-4">Our team can help clarify our platform policies.</p>
+          <div className="card p-6 rounded-2xl bg-[var(--color-primary-soft)] from-[var(--color-warn-50)] to-[var(--color-warn-50)] dark:from-[var(--color-warn-50)]0/10 dark:to-[var(--color-surface)] border-[var(--color-line-2)] dark:border-[var(--color-line)] text-center">
+            <h3 className="text-lg font-bold text-[var(--color-ink)] mb-2">Have questions?</h3>
+            <p className="text-sm text-[var(--color-ink-2)] mb-4">Our team can help clarify our platform policies.</p>
             <Link href="/contact">
               <motion.span whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }} className="inline-block btn-primary text-sm px-6 py-2.5 rounded-xl">
                 Contact Us

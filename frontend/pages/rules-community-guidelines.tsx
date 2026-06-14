@@ -20,10 +20,10 @@ export default function RulesCommunityGuidelines() {
               </svg>
             </div>
             <div>
-              <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white">
+              <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-[var(--color-ink)]">
                 Community Guidelines
               </h1>
-              <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Rules for a safe and fair community</p>
+              <p className="text-sm text-[var(--color-ink-3)] mt-1">Rules for a safe and fair community</p>
             </div>
           </div>
         </motion.div>
@@ -31,16 +31,16 @@ export default function RulesCommunityGuidelines() {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="space-y-8">
           {/* Intro */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">Our Community Standards</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
+            <h2 className="text-lg font-bold text-[var(--color-ink)]">Our Community Standards</h2>
+            <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
               <p>MigRent AI is built on trust, respect, and transparency. These guidelines apply to all users - both owners and seekers. Violations may result in content removal, account suspension, or termination.</p>
             </div>
           </section>
 
           {/* General Rules */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">General Rules (All Users)</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-2">
+            <h2 className="text-lg font-bold text-[var(--color-ink)]">General Rules (All Users)</h2>
+            <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-2">
               <ul className="list-disc list-inside space-y-1.5">
                 <li>Be truthful and accurate in your profile and all communications</li>
                 <li>Treat all users with respect regardless of background, nationality, religion, or gender</li>
@@ -57,7 +57,7 @@ export default function RulesCommunityGuidelines() {
           {/* Seeker Rules */}
           <section className="card p-6 rounded-2xl space-y-3 border-l-2 border-l-[var(--color-primary)]">
             <h2 className="text-lg font-bold text-[var(--color-primary)]">Rules for Seekers</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-2">
+            <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-2">
               <ul className="list-disc list-inside space-y-1.5">
                 <li>Be truthful and accurate in your profile and during any verification process</li>
                 <li>Respect house rules, neighbours, and applicable tenancy or lodging laws</li>
@@ -72,8 +72,8 @@ export default function RulesCommunityGuidelines() {
 
           {/* Owner Rules */}
           <section className="card p-6 rounded-2xl space-y-3 border-l-2 border-l-blue-500">
-            <h2 className="text-lg font-bold text-blue-500">Rules for Owners</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-2">
+            <h2 className="text-lg font-bold text-[var(--color-primary)]">Rules for Owners</h2>
+            <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-2">
               <ul className="list-disc list-inside space-y-1.5">
                 <li>Provide accurate and up-to-date listing information (location, price, photos, conditions)</li>
                 <li>Do not post misleading photos or descriptions</li>
@@ -89,8 +89,8 @@ export default function RulesCommunityGuidelines() {
 
           {/* Listing Standards */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">Listing Standards</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
+            <h2 className="text-lg font-bold text-[var(--color-ink)]">Listing Standards</h2>
+            <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
               <p>All listings must meet the following minimum standards:</p>
               <ul className="list-disc list-inside space-y-1.5">
                 <li><strong>Accuracy</strong> - Photos must be current and representative of the actual space</li>
@@ -105,8 +105,8 @@ export default function RulesCommunityGuidelines() {
 
           {/* Dispute Resolution */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">Dispute Resolution</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
+            <h2 className="text-lg font-bold text-[var(--color-ink)]">Dispute Resolution</h2>
+            <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
               <p>MigRent encourages users to resolve disputes directly and amicably. If you cannot reach a resolution:</p>
               <ol className="list-decimal list-inside space-y-1.5">
                 <li>Attempt direct communication with the other party</li>
@@ -120,8 +120,8 @@ export default function RulesCommunityGuidelines() {
 
           {/* Regulatory */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">Regulatory Compliance</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
+            <h2 className="text-lg font-bold text-[var(--color-ink)]">Regulatory Compliance</h2>
+            <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
               <p>Owners are responsible for complying with any local regulations that may apply, including:</p>
               <ul className="list-disc list-inside space-y-1.5">
                 <li>Short-term rental accommodation (STRA) registration in NSW</li>
@@ -135,8 +135,8 @@ export default function RulesCommunityGuidelines() {
 
           {/* Enforcement */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">Enforcement</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
+            <h2 className="text-lg font-bold text-[var(--color-ink)]">Enforcement</h2>
+            <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
               <p>MigRent may take the following actions for guideline violations:</p>
               <ul className="list-disc list-inside space-y-1.5">
                 <li><strong>Warning</strong> - First-time or minor violations</li>
@@ -149,8 +149,8 @@ export default function RulesCommunityGuidelines() {
 
           {/* CTA */}
           <div className="card p-6 rounded-2xl bg-[var(--color-primary-soft)] from-violet-50 to-violet-100/50 dark:from-[var(--color-primary)]/10 dark:to-[var(--color-primary)]/5 border-[var(--color-primary-soft)] dark:border-[var(--color-primary)]/20 text-center">
-            <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Join a trusted community</h3>
-            <p className="text-sm text-slate-600 dark:text-slate-300 mb-4">Sign up and start connecting with verified users.</p>
+            <h3 className="text-lg font-bold text-[var(--color-ink)] mb-2">Join a trusted community</h3>
+            <p className="text-sm text-[var(--color-ink-2)] mb-4">Sign up and start connecting with verified users.</p>
             <div className="flex gap-3 justify-center">
               <Link href="/signup">
                 <motion.span whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }} className="inline-block btn-primary text-sm px-6 py-2.5 rounded-xl">

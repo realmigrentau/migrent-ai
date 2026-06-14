@@ -20,10 +20,10 @@ export default function CodeOfConduct() {
               </svg>
             </div>
             <div>
-              <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white">
+              <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-[var(--color-ink)]">
                 STRA Code of Conduct
               </h1>
-              <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Last updated: March 2026</p>
+              <p className="text-sm text-[var(--color-ink-3)] mt-1">Last updated: March 2026</p>
             </div>
           </div>
         </motion.div>
@@ -31,8 +31,8 @@ export default function CodeOfConduct() {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="space-y-8">
           {/* Introduction */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">About the NSW STRA Code</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
+            <h2 className="text-lg font-bold text-[var(--color-ink)]">About the NSW STRA Code</h2>
+            <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
               <p>New South Wales has a mandatory Code of Conduct for Short-Term Rental Accommodation (STRA) under the Fair Trading Regulation. This code applies to hosts, guests, and booking platforms operating in NSW.</p>
               <p>This page is a <strong>summary only</strong>. For the full official code, visit the <a href="https://www.nsw.gov.au/housing-and-construction/short-term-rental-accommodation" target="_blank" rel="noopener noreferrer" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">NSW Government STRA page</a>.</p>
               <p>MigRent is an introduction service. While some listings on MigRent may fall under STRA regulations, we inform all users of their obligations under the code.</p>
@@ -41,8 +41,8 @@ export default function CodeOfConduct() {
 
           {/* Host Obligations */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">Host (Owner) Obligations</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
+            <h2 className="text-lg font-bold text-[var(--color-ink)]">Host (Owner) Obligations</h2>
+            <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
               <p>If your listing qualifies as STRA in NSW, as a host you must:</p>
               <ul className="list-disc list-inside space-y-1.5">
                 <li><strong>Register on the NSW STRA Register</strong> before listing your property</li>
@@ -59,8 +59,8 @@ export default function CodeOfConduct() {
 
           {/* Guest Obligations */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">Guest (Seeker) Obligations</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
+            <h2 className="text-lg font-bold text-[var(--color-ink)]">Guest (Seeker) Obligations</h2>
+            <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
               <p>As a guest staying in STRA in NSW, you must:</p>
               <ul className="list-disc list-inside space-y-1.5">
                 <li><strong>Follow house rules:</strong> Comply with all house rules provided by the host</li>
@@ -75,8 +75,8 @@ export default function CodeOfConduct() {
 
           {/* Platform Obligations */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">Booking Platform Obligations</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
+            <h2 className="text-lg font-bold text-[var(--color-ink)]">Booking Platform Obligations</h2>
+            <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
               <p>Under the NSW STRA framework, booking platforms must:</p>
               <ul className="list-disc list-inside space-y-1.5">
                 <li>Verify that hosts display a valid STRA registration number (where applicable)</li>
@@ -90,8 +90,8 @@ export default function CodeOfConduct() {
 
           {/* Penalties */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">Penalties for Non-Compliance</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
+            <h2 className="text-lg font-bold text-[var(--color-ink)]">Penalties for Non-Compliance</h2>
+            <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
               <p>Failure to comply with the NSW STRA Code of Conduct may result in:</p>
               <ul className="list-disc list-inside space-y-1.5">
                 <li>Penalty notices from NSW Fair Trading</li>
@@ -103,22 +103,22 @@ export default function CodeOfConduct() {
 
           {/* Other States */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">Other States</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
+            <h2 className="text-lg font-bold text-[var(--color-ink)]">Other States</h2>
+            <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
               <p>This page focuses on NSW as it has the most comprehensive STRA framework. Other states have varying levels of STRA regulation. See our <Link href="/rental-laws" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">Australian Rental Laws Guide</Link> for an overview of each state.</p>
               <p>Regardless of your state, MigRent expects all users to comply with local laws and our <Link href="/rules-community-guidelines" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">Community Guidelines</Link>.</p>
             </div>
           </section>
 
           {/* Legal Disclaimer */}
-          <div className="card-subtle p-4 rounded-xl text-xs text-slate-400 dark:text-slate-500 leading-relaxed">
+          <div className="card-subtle p-4 rounded-xl text-xs text-[var(--color-ink-3)] leading-relaxed">
             <p>This is a summary of the NSW STRA Code of Conduct for informational purposes only. It does not constitute legal advice. For the official code, visit nsw.gov.au. Laws and regulations may change - always verify current requirements. Last reviewed: March 2026.</p>
           </div>
 
           {/* CTA */}
-          <div className="card p-6 rounded-2xl bg-[var(--color-primary-soft)] from-emerald-50 to-[var(--color-accent-soft)]/50 dark:from-[var(--color-accent)]/10 dark:to-emerald-600/5 border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)] text-center">
-            <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Report a code violation?</h3>
-            <p className="text-sm text-slate-600 dark:text-slate-300 mb-4">Help us maintain a safe and compliant community.</p>
+          <div className="card p-6 rounded-2xl bg-[var(--color-primary-soft)] from-[var(--color-accent-50)] to-[var(--color-accent-soft)]/50 dark:from-[var(--color-accent)]/10 dark:to-[var(--color-surface)] border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)] text-center">
+            <h3 className="text-lg font-bold text-[var(--color-ink)] mb-2">Report a code violation?</h3>
+            <p className="text-sm text-[var(--color-ink-2)] mb-4">Help us maintain a safe and compliant community.</p>
             <Link href="/safety-reporting">
               <motion.span whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }} className="inline-block btn-primary text-sm px-6 py-2.5 rounded-xl">
                 Report an Issue

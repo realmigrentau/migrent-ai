@@ -14,8 +14,8 @@ interface LegalPageHeroProps {
 
 export default function LegalPageHero({
   icon,
-  iconBgClass = "bg-blue-50 dark:bg-blue-500/10",
-  iconBorderClass = "border-blue-100 dark:border-blue-500/20",
+  iconBgClass = "bg-[var(--color-primary-50)] dark:bg-[var(--color-primary)]/10",
+  iconBorderClass = "border-[var(--color-primary-100)] dark:border-[var(--color-line)]",
   title,
   titleAccent,
   titleSuffix,
@@ -31,17 +31,17 @@ export default function LegalPageHero({
           {icon}
         </div>
         <div>
-          <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white">
+          <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-[var(--color-ink)]">
             {title} {titleAccent}
             {titleSuffix ? ` ${titleSuffix}` : ""}
           </h1>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+          <p className="text-sm text-[var(--color-ink-3)] mt-1">
             Last updated: {lastUpdated}
           </p>
         </div>
       </div>
       {subtitle && (
-        <p className="text-sm text-slate-500 dark:text-slate-400 mt-2 max-w-2xl">
+        <p className="text-sm text-[var(--color-ink-3)] mt-2 max-w-2xl">
           {subtitle}
         </p>
       )}

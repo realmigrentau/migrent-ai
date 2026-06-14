@@ -45,15 +45,15 @@ export default function StateTabNav({ activeState, onStateChange }: StateTabNavP
   return (
     <div>
       {/* Desktop tabs */}
-      <div className="hidden md:flex flex-wrap gap-1 p-1 rounded-xl bg-slate-100 dark:bg-slate-800/50">
+      <div className="hidden md:flex flex-wrap gap-1 p-1 rounded-xl bg-[var(--color-surface-muted)]/50">
         {STATES.map((state) => (
           <button
             key={state.code}
             onClick={() => onStateChange(state.code)}
             className={`px-4 py-2.5 rounded-lg text-sm font-medium transition-all ${
               activeState === state.code
-                ? "bg-white dark:bg-slate-700 text-rose-600 dark:text-rose-400 shadow-sm"
-                : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-slate-700/50"
+                ? "bg-white dark:bg-[var(--color-surface-muted)] text-[var(--color-primary)] dark:text-[var(--color-primary)] shadow-sm"
+                : "text-[var(--color-ink-2)] hover:text-[var(--color-ink)] dark:hover:text-white hover:bg-white/50 dark:hover:bg-[var(--color-surface-muted)]"
             }`}
           >
             <span className="font-bold">{state.code.toUpperCase()}</span>
@@ -65,10 +65,10 @@ export default function StateTabNav({ activeState, onStateChange }: StateTabNavP
       <div className="md:hidden relative">
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
-          className="w-full flex items-center justify-between px-4 py-3 rounded-xl bg-slate-100 dark:bg-slate-800/50 text-sm font-medium text-slate-900 dark:text-white"
+          className="w-full flex items-center justify-between px-4 py-3 rounded-xl bg-[var(--color-surface-muted)]/50 text-sm font-medium text-[var(--color-ink)]"
         >
           <span>
-            <span className="font-bold text-rose-600 dark:text-rose-400">
+            <span className="font-bold text-[var(--color-primary)] dark:text-[var(--color-primary)]">
               {activeState.toUpperCase()}
             </span>{" "}
             - {activeName}
@@ -78,7 +78,7 @@ export default function StateTabNav({ activeState, onStateChange }: StateTabNavP
           />
         </button>
         {mobileOpen && (
-          <div className="absolute top-full left-0 right-0 mt-1 z-20 bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 overflow-hidden">
+          <div className="absolute top-full left-0 right-0 mt-1 z-20 bg-[var(--color-surface-2)] rounded-xl shadow-lg border border-[var(--color-line)] overflow-hidden">
             {STATES.map((state) => (
               <button
                 key={state.code}
@@ -88,8 +88,8 @@ export default function StateTabNav({ activeState, onStateChange }: StateTabNavP
                 }}
                 className={`w-full text-left px-4 py-3 text-sm transition-colors ${
                   activeState === state.code
-                    ? "bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400 font-medium"
-                    : "text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50"
+                    ? "bg-[var(--color-primary-50)] text-[var(--color-primary)] dark:text-[var(--color-primary)] font-medium"
+                    : "text-[var(--color-ink-2)] hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-surface-muted)]"
                 }`}
               >
                 <span className="font-bold">{state.code.toUpperCase()}</span> - {state.name}

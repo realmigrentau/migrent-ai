@@ -14,20 +14,20 @@ const severityConfig: Record<
 > = {
   warning: {
     borderColor: "border-l-amber-500",
-    iconColor: "text-amber-500",
-    bgColor: "bg-amber-50/50 dark:bg-amber-500/5",
+    iconColor: "text-[var(--color-warn-500)]",
+    bgColor: "bg-[var(--color-warn-50)]/50 dark:bg-[var(--color-warn-50)]0/5",
     Icon: AlertTriangle,
   },
   info: {
     borderColor: "border-l-blue-500",
-    iconColor: "text-blue-500",
-    bgColor: "bg-blue-50/50 dark:bg-blue-500/5",
+    iconColor: "text-[var(--color-primary)]",
+    bgColor: "bg-[var(--color-primary-50)]/50 dark:bg-[var(--color-primary)]/5",
     Icon: Info,
   },
   safety: {
     borderColor: "border-l-emerald-500",
-    iconColor: "text-emerald-500",
-    bgColor: "bg-emerald-50/50 dark:bg-emerald-500/5",
+    iconColor: "text-[var(--color-accent)]",
+    bgColor: "bg-[var(--color-accent-50)]/50 dark:bg-[var(--color-accent-50)]0/5",
     Icon: Shield,
   },
 };
@@ -48,9 +48,9 @@ export default function DisclaimerBanner({
         <Icon className={`w-5 h-5 ${config.iconColor} flex-shrink-0 mt-0.5`} />
         <div className="space-y-2">
           {title && (
-            <h3 className="text-sm font-bold text-slate-900 dark:text-white">{title}</h3>
+            <h3 className="text-sm font-bold text-[var(--color-ink)]">{title}</h3>
           )}
-          <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+          <div className="text-sm text-[var(--color-ink-2)] leading-relaxed">
             {children}
           </div>
         </div>

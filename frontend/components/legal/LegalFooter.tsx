@@ -22,7 +22,7 @@ export default function LegalFooter() {
         <Link
           key={link.href}
           href={link.href}
-          className="text-xs text-slate-500 dark:text-slate-400 hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] transition-colors"
+          className="text-xs text-[var(--color-ink-3)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] transition-colors"
         >
           {link.label}
         </Link>

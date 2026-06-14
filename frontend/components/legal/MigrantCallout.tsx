@@ -13,18 +13,18 @@ export default function MigrantCallout({
   showInterpreterLine = true,
 }: MigrantCalloutProps) {
   return (
-    <div className="card p-5 rounded-2xl border-l-4 border-l-teal-500 bg-teal-50/50 dark:bg-teal-500/5 space-y-3">
+    <div className="card p-5 rounded-2xl border-l-4 border-l-teal-500 bg-[var(--color-primary-50)] dark:bg-[var(--color-primary-50)] space-y-3">
       <div className="flex items-center gap-2">
-        <Globe className="w-5 h-5 text-teal-600 dark:text-teal-400" />
-        <h3 className="text-sm font-bold text-slate-900 dark:text-white">{title}</h3>
+        <Globe className="w-5 h-5 text-[var(--color-primary)] dark:text-[var(--color-primary)]" />
+        <h3 className="text-sm font-bold text-[var(--color-ink)]">{title}</h3>
       </div>
-      <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-2">
+      <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-2">
         {children}
       </div>
       {showInterpreterLine && (
-        <div className="flex items-center gap-2 pt-2 border-t border-teal-200/50 dark:border-teal-500/20">
-          <Phone className="w-4 h-4 text-teal-600 dark:text-teal-400" />
-          <p className="text-xs text-teal-700 dark:text-teal-300 font-medium">
+        <div className="flex items-center gap-2 pt-2 border-t border-[var(--color-primary-100)] dark:border-[var(--color-line)]">
+          <Phone className="w-4 h-4 text-[var(--color-primary)] dark:text-[var(--color-primary)]" />
+          <p className="text-xs text-[var(--color-primary-700)] dark:text-[var(--color-primary)] font-medium">
             Free interpreter service: TIS National - 131 450
           </p>
         </div>

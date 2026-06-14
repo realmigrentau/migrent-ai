@@ -20,10 +20,10 @@ export default function NoAgency() {
               </svg>
             </div>
             <div>
-              <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white">
+              <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-[var(--color-ink)]">
                 We Are Not Your Agent
               </h1>
-              <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Last updated: March 2026</p>
+              <p className="text-sm text-[var(--color-ink-3)] mt-1">Last updated: March 2026</p>
             </div>
           </div>
         </motion.div>
@@ -31,16 +31,16 @@ export default function NoAgency() {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="space-y-8">
           {/* Key Statement */}
           <section className="card p-6 rounded-2xl space-y-3 border-l-4 border-l-violet-500">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">MigRent is a Facilitator, Not an Agent</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
+            <h2 className="text-lg font-bold text-[var(--color-ink)]">MigRent is a Facilitator, Not an Agent</h2>
+            <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
               <p>MigRent AI operates as an <strong>online introduction service</strong> (similar to platforms like Flatmates.com.au). We are not a real estate agent, property manager, landlord, or letting agent. We do not hold a real estate licence and are not required to under Australian law.</p>
             </div>
           </section>
 
           {/* What We Do */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">What MigRent Does</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
+            <h2 className="text-lg font-bold text-[var(--color-ink)]">What MigRent Does</h2>
+            <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
               <ul className="list-disc list-inside space-y-1.5">
                 <li>Provides an online platform where room owners can list available rooms</li>
                 <li>Allows accommodation seekers to search and filter listings</li>
@@ -53,8 +53,8 @@ export default function NoAgency() {
 
           {/* What We Don't Do */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">What MigRent Does NOT Do</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
+            <h2 className="text-lg font-bold text-[var(--color-ink)]">What MigRent Does NOT Do</h2>
+            <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
               <ul className="list-disc list-inside space-y-1.5">
                 <li>Act as your agent, representative, or fiduciary in any capacity</li>
                 <li>Negotiate rental terms, prices, or conditions on your behalf</li>
@@ -70,8 +70,8 @@ export default function NoAgency() {
 
           {/* Legal Basis */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">Legal Basis</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
+            <h2 className="text-lg font-bold text-[var(--color-ink)]">Legal Basis</h2>
+            <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
               <p>Under the Property and Stock Agents Act 2002 (NSW) and equivalent legislation in other states, a real estate agent licence is required for persons who:</p>
               <ul className="list-disc list-inside space-y-1.5">
                 <li>Negotiate the sale or lease of property on behalf of another person</li>
@@ -80,17 +80,17 @@ export default function NoAgency() {
               </ul>
               <p>MigRent does none of the above. We are an online matching and introduction platform. Users make their own direct arrangements after being introduced through our service. No agency relationship is created between MigRent and any user.</p>
               <div className="card-subtle p-4 rounded-xl">
-                <h3 className="font-semibold text-slate-800 dark:text-slate-200 mb-2">Comparison: Introduction Service vs Agent</h3>
+                <h3 className="font-semibold text-[var(--color-ink)] mb-2">Comparison: Introduction Service vs Agent</h3>
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm border-collapse">
                     <thead>
-                      <tr className="border-b border-slate-200 dark:border-slate-700">
-                        <th className="text-left py-2 px-2 font-semibold text-slate-800 dark:text-slate-200">Activity</th>
-                        <th className="text-center py-2 px-2 font-semibold text-slate-800 dark:text-slate-200">Agent</th>
+                      <tr className="border-b border-[var(--color-line)]">
+                        <th className="text-left py-2 px-2 font-semibold text-[var(--color-ink)]">Activity</th>
+                        <th className="text-center py-2 px-2 font-semibold text-[var(--color-ink)]">Agent</th>
                         <th className="text-center py-2 px-2 font-semibold text-[var(--color-accent)] dark:text-[var(--color-accent)]">MigRent</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                    <tbody className="divide-y divide-[var(--color-line)] dark:divide-[var(--color-line)]">
                       <tr>
                         <td className="py-2 px-2">Introduces parties</td>
                         <td className="py-2 px-2 text-center">Yes</td>
@@ -135,8 +135,8 @@ export default function NoAgency() {
 
           {/* Your Responsibility */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">Your Responsibility</h2>
-            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
+            <h2 className="text-lg font-bold text-[var(--color-ink)]">Your Responsibility</h2>
+            <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
               <p>Because MigRent is not your agent, you are fully responsible for:</p>
               <ul className="list-disc list-inside space-y-1.5">
                 <li>Negotiating your own rental terms directly with the other party</li>
@@ -150,14 +150,14 @@ export default function NoAgency() {
           </section>
 
           {/* Legal Disclaimer */}
-          <div className="card-subtle p-4 rounded-xl text-xs text-slate-400 dark:text-slate-500 leading-relaxed">
+          <div className="card-subtle p-4 rounded-xl text-xs text-[var(--color-ink-3)] leading-relaxed">
             <p>This page is for informational purposes only and does not constitute legal advice. MigRent recommends consulting a qualified Australian lawyer regarding your obligations. Last reviewed: March 2026.</p>
           </div>
 
           {/* CTA */}
           <div className="card p-6 rounded-2xl bg-[var(--color-primary-soft)] from-violet-50 to-violet-100/50 dark:from-[var(--color-primary)]/10 dark:to-[var(--color-primary)]/5 border-[var(--color-primary-soft)] dark:border-[var(--color-primary)]/20 text-center">
-            <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Questions about our model?</h3>
-            <p className="text-sm text-slate-600 dark:text-slate-300 mb-4">We&apos;re happy to explain how MigRent works.</p>
+            <h3 className="text-lg font-bold text-[var(--color-ink)] mb-2">Questions about our model?</h3>
+            <p className="text-sm text-[var(--color-ink-2)] mb-4">We&apos;re happy to explain how MigRent works.</p>
             <Link href="/contact">
               <motion.span whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }} className="inline-block btn-primary text-sm px-6 py-2.5 rounded-xl">
                 Contact Us
