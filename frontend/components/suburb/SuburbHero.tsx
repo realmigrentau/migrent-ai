@@ -24,7 +24,7 @@ export default function SuburbHero({
   const primaryStation = nearestStations[0];
 
   return (
-    <section className="relative overflow-hidden rounded-2xl bg-[var(--color-primary-soft)] from-teal-600 via-teal-700 to-emerald-800 text-white">
+    <section className="relative overflow-hidden rounded-2xl bg-[var(--color-primary-soft)] from-[var(--color-primary)] via-[var(--color-primary-700)] to-[var(--color-accent-700)] text-white">
       {/* Background pattern */}
       <div className="absolute inset-0 opacity-10">
         <div
@@ -38,7 +38,7 @@ export default function SuburbHero({
       </div>
 
       <div className="relative px-6 py-12 sm:px-10 sm:py-16 lg:px-16 lg:py-20">
-        <div className="flex items-center gap-2 text-teal-200 text-sm font-medium mb-4">
+        <div className="flex items-center gap-2 text-[var(--color-primary-100)] text-sm font-medium mb-4">
           <MapPin className="w-4 h-4" />
           <span>Sydney, NSW</span>
         </div>
@@ -47,18 +47,18 @@ export default function SuburbHero({
           {name} Rooms for Rent
         </h1>
 
-        <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-lg text-teal-100 mb-8">
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-lg text-[var(--color-primary-fg)] mb-8">
           <span className="flex items-center gap-2">
             Median room: <strong className="text-white">${medianRent}/wk</strong>
           </span>
-          <span className="hidden sm:inline text-teal-300">|</span>
+          <span className="hidden sm:inline text-[var(--color-primary-100)]">|</span>
           <span className="flex items-center gap-2">
             <TrendingDown className="w-4 h-4" />
             {vacancyRate}% vacancy
           </span>
           {primaryStation && (
             <>
-              <span className="hidden sm:inline text-teal-300">|</span>
+              <span className="hidden sm:inline text-[var(--color-primary-100)]">|</span>
               <span className="flex items-center gap-2">
                 <Train className="w-4 h-4" />
                 Near {primaryStation.name} Station
@@ -70,7 +70,7 @@ export default function SuburbHero({
         <div className="flex flex-wrap gap-4">
           <a
             href="#listings"
-            className="inline-flex items-center px-6 py-3 bg-white font-semibold rounded-xl hover:bg-teal-50 transition-colors"
+            className="inline-flex items-center px-6 py-3 bg-white font-semibold rounded-xl hover:bg-[var(--color-primary-50)] transition-colors"
             style={{ color: "#0f766e" }}
           >
             View {listingsCount} Available Rooms

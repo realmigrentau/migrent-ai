@@ -14,11 +14,11 @@ const fadeUp: Variants = {
 };
 
 const categoryColors: Record<BlogCategory, string> = {
-  Guide: "bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400",
-  Market: "bg-green-50 dark:bg-green-500/10 text-green-600 dark:text-green-400",
-  Safety: "bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400",
+  Guide: "bg-[var(--color-primary-50)] dark:bg-[var(--color-primary)]/10 text-[var(--color-primary)] dark:text-[var(--color-primary)]",
+  Market: "bg-[var(--color-accent-50)] dark:bg-[var(--color-accent-50)]0/10 text-[var(--color-accent)] dark:text-[var(--color-accent)]",
+  Safety: "bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-50)]0/10 text-[var(--color-danger-500)] dark:text-[var(--color-danger-500)]",
   News: "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary-soft)]0/10 text-[var(--color-primary)] dark:text-[var(--color-primary)]",
-  Tips: "bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400",
+  Tips: "bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/10 text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)]",
 };
 
 const categories: (BlogCategory | "All")[] = ["All", "Guide", "Market", "Safety", "News", "Tips"];
@@ -58,7 +58,7 @@ export default function BlogIndex() {
               </span>
             </h1>
 
-            <p className="mt-6 text-lg md:text-xl text-slate-500 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
+            <p className="mt-6 text-lg md:text-xl text-[var(--color-ink-3)] max-w-2xl mx-auto leading-relaxed">
               Practical advice and community stories to help you navigate housing in Australia.
             </p>
 
@@ -71,7 +71,7 @@ export default function BlogIndex() {
                   className={`px-4 py-2 rounded-full text-xs font-medium border transition-all cursor-pointer ${
                     activeCategory === cat
                       ? "bg-[var(--color-primary)] text-white border-[var(--color-primary)]"
-                      : "bg-white dark:bg-white/5 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-600"
+                      : "bg-white dark:bg-white/5 border-[var(--color-line)] text-[var(--color-ink-2)] hover:border-[var(--color-line-2)] dark:hover:border-[var(--color-line-2)]"
                   }`}
                 >
                   {cat === "All" ? "All Posts" : cat}
@@ -107,19 +107,19 @@ export default function BlogIndex() {
                         <span className={`text-[10px] font-semibold px-2.5 py-1 rounded-full ${categoryColors[post.category]}`}>
                           {post.category}
                         </span>
-                        <span className="text-[10px] text-slate-400 dark:text-slate-500">{post.date}</span>
+                        <span className="text-[10px] text-[var(--color-ink-3)]">{post.date}</span>
                       </div>
 
-                      <h3 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-[var(--color-primary)] dark:group-hover:text-[var(--color-primary)] transition-colors">
+                      <h3 className="text-lg font-bold text-[var(--color-ink)] group-hover:text-[var(--color-primary)] dark:group-hover:text-[var(--color-primary)] transition-colors">
                         {post.title}
                       </h3>
 
-                      <p className="text-sm text-slate-500 dark:text-slate-400 mt-2 leading-relaxed flex-1">
+                      <p className="text-sm text-[var(--color-ink-3)] mt-2 leading-relaxed flex-1">
                         {post.excerpt}
                       </p>
 
-                      <div className="flex items-center justify-between mt-4 pt-4 border-t border-slate-100 dark:border-slate-800">
-                        <div className="text-xs text-slate-400 dark:text-slate-500">
+                      <div className="flex items-center justify-between mt-4 pt-4 border-t border-[var(--color-line)]">
+                        <div className="text-xs text-[var(--color-ink-3)]">
                           {post.author} &middot; {post.readTime}
                         </div>
                         <span className="text-xs font-medium text-[var(--color-primary)] dark:text-[var(--color-primary)] group-hover:translate-x-1 transition-transform flex items-center gap-1">
@@ -138,7 +138,7 @@ export default function BlogIndex() {
 
           {filteredPosts.length === 0 && (
             <div className="text-center py-12">
-              <p className="text-slate-400 dark:text-slate-500">No posts found in this category.</p>
+              <p className="text-[var(--color-ink-3)]">No posts found in this category.</p>
             </div>
           )}
         </section>
@@ -152,10 +152,10 @@ export default function BlogIndex() {
             transition={{ duration: 0.6 }}
             className="max-w-lg mx-auto"
           >
-            <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 dark:text-white">
+            <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-[var(--color-ink)]">
               Want to contribute?
             </h2>
-            <p className="mt-3 text-slate-500 dark:text-slate-400">
+            <p className="mt-3 text-[var(--color-ink-3)]">
               Have a story or tip to share? We&apos;d love to feature your experience.
             </p>
             <Link href="/contact">

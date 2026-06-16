@@ -76,14 +76,14 @@ export default function ROICalculator() {
           transition={{ duration: 0.5 }}
           className="text-center mb-12"
         >
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-green-50 dark:bg-green-500/10 border border-green-100 dark:border-green-500/20 text-xs font-medium text-green-600 dark:text-green-400 mb-4">
-            <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[var(--color-accent-50)] dark:bg-[var(--color-accent-50)]0/10 border border-[var(--color-accent-100)] dark:border-[var(--color-accent)]/20 text-xs font-medium text-[var(--color-accent)] dark:text-[var(--color-accent)] mb-4">
+            <span className="w-2 h-2 rounded-full bg-[var(--color-accent-50)]0 animate-pulse" />
             ROI Calculator
           </div>
-          <h1 className="text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white">
-            Estimate Your <span className="bg-[var(--color-primary)] from-green-500 to-[var(--color-accent)] bg-clip-text text-transparent">Rental Income</span>
+          <h1 className="text-3xl md:text-4xl font-black tracking-tight text-[var(--color-ink)]">
+            Estimate Your <span className="bg-[var(--color-primary)] from-[var(--color-accent)] to-[var(--color-accent)] bg-clip-text text-transparent">Rental Income</span>
           </h1>
-          <p className="mt-3 text-slate-500 dark:text-slate-400 max-w-xl mx-auto">
+          <p className="mt-3 text-[var(--color-ink-3)] max-w-xl mx-auto">
             Calculate potential returns from listing your spare room on MigRent AI.
           </p>
         </motion.div>
@@ -97,11 +97,11 @@ export default function ROICalculator() {
             className="lg:col-span-2 space-y-6"
           >
             <div className="card rounded-2xl p-6 space-y-5">
-              <h2 className="text-lg font-bold text-slate-900 dark:text-white">Property Details</h2>
+              <h2 className="text-lg font-bold text-[var(--color-ink)]">Property Details</h2>
 
               {/* Suburb */}
               <div>
-                <label className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 block">Suburb</label>
+                <label className="text-sm font-medium text-[var(--color-ink-2)] mb-1.5 block">Suburb</label>
                 <select
                   value={selectedSuburb}
                   onChange={(e) => { setSelectedSuburb(e.target.value); setCustomRent(null); }}
@@ -115,7 +115,7 @@ export default function ROICalculator() {
 
               {/* Room Type */}
               <div>
-                <label className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 block">Room Type</label>
+                <label className="text-sm font-medium text-[var(--color-ink-2)] mb-1.5 block">Room Type</label>
                 <div className="grid grid-cols-2 gap-2">
                   {roomTypes.map((rt) => (
                     <button
@@ -123,8 +123,8 @@ export default function ROICalculator() {
                       onClick={() => { setRoomType(rt); setCustomRent(null); }}
                       className={`text-xs font-medium px-3 py-2 rounded-lg border transition-all ${
                         roomType === rt
-                          ? "border-green-500 bg-green-50 dark:bg-green-500/10 text-green-600 dark:text-green-400"
-                          : "border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:border-slate-300 dark:hover:border-slate-600"
+                          ? "border-[var(--color-accent)] bg-[var(--color-accent-50)] dark:bg-[var(--color-accent-50)]0/10 text-[var(--color-accent)] dark:text-[var(--color-accent)]"
+                          : "border-[var(--color-line)] text-[var(--color-ink-3)] hover:border-[var(--color-line-2)] dark:hover:border-[var(--color-line-2)]"
                       }`}
                     >
                       {roomTypeLabels[rt]}
@@ -135,9 +135,9 @@ export default function ROICalculator() {
 
               {/* Weekly Rent */}
               <div>
-                <label className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 flex items-center justify-between">
+                <label className="text-sm font-medium text-[var(--color-ink-2)] mb-1.5 flex items-center justify-between">
                   Weekly Rent
-                  <span className="text-green-500 font-bold">${weeklyRent}/wk</span>
+                  <span className="text-[var(--color-accent)] font-bold">${weeklyRent}/wk</span>
                 </label>
                 <input
                   type="range"
@@ -147,7 +147,7 @@ export default function ROICalculator() {
                   onChange={(e) => setCustomRent(Number(e.target.value))}
                   className="w-full accent-green-500"
                 />
-                <div className="flex justify-between text-[10px] text-slate-400 mt-1">
+                <div className="flex justify-between text-[10px] text-[var(--color-ink-3)] mt-1">
                   <span>$100</span>
                   <span>$800</span>
                 </div>
@@ -155,9 +155,9 @@ export default function ROICalculator() {
 
               {/* Property Value */}
               <div>
-                <label className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 flex items-center justify-between">
+                <label className="text-sm font-medium text-[var(--color-ink-2)] mb-1.5 flex items-center justify-between">
                   Property Value
-                  <span className="text-green-500 font-bold">${((customPropertyValue ?? propertyValue) / 1000).toFixed(0)}K</span>
+                  <span className="text-[var(--color-accent)] font-bold">${((customPropertyValue ?? propertyValue) / 1000).toFixed(0)}K</span>
                 </label>
                 <input
                   type="range"
@@ -168,7 +168,7 @@ export default function ROICalculator() {
                   onChange={(e) => setCustomPropertyValue(Number(e.target.value))}
                   className="w-full accent-green-500"
                 />
-                <div className="flex justify-between text-[10px] text-slate-400 mt-1">
+                <div className="flex justify-between text-[10px] text-[var(--color-ink-3)] mt-1">
                   <span>$200K</span>
                   <span>$3M</span>
                 </div>
@@ -176,9 +176,9 @@ export default function ROICalculator() {
 
               {/* Occupancy Rate */}
               <div>
-                <label className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 flex items-center justify-between">
+                <label className="text-sm font-medium text-[var(--color-ink-2)] mb-1.5 flex items-center justify-between">
                   Occupancy Rate
-                  <span className="text-green-500 font-bold">{occupancy}%</span>
+                  <span className="text-[var(--color-accent)] font-bold">{occupancy}%</span>
                 </label>
                 <input
                   type="range"
@@ -188,14 +188,14 @@ export default function ROICalculator() {
                   onChange={(e) => setOccupancy(Number(e.target.value))}
                   className="w-full accent-green-500"
                 />
-                <div className="flex justify-between text-[10px] text-slate-400 mt-1">
+                <div className="flex justify-between text-[10px] text-[var(--color-ink-3)] mt-1">
                   <span>50%</span>
                   <span>100%</span>
                 </div>
               </div>
             </div>
 
-            <p className="text-[10px] text-slate-400 dark:text-slate-500">
+            <p className="text-[10px] text-[var(--color-ink-3)]">
               * Estimates based on Sydney metro averages. Actual returns may vary. Data last updated Feb 2026.
             </p>
           </motion.div>
@@ -210,54 +210,54 @@ export default function ROICalculator() {
             {/* Key metrics */}
             <div className="grid grid-cols-2 gap-4">
               <div className="card rounded-2xl p-5 text-center">
-                <div className="text-3xl font-black bg-[var(--color-primary)] from-green-500 to-[var(--color-accent)] bg-clip-text text-transparent">
+                <div className="text-3xl font-black bg-[var(--color-primary)] from-[var(--color-accent)] to-[var(--color-accent)] bg-clip-text text-transparent">
                   {results.grossYield.toFixed(1)}%
                 </div>
-                <div className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-medium">Gross Yield</div>
+                <div className="text-xs text-[var(--color-ink-3)] mt-1 font-medium">Gross Yield</div>
               </div>
               <div className="card rounded-2xl p-5 text-center">
-                <div className="text-3xl font-black bg-[var(--color-primary)] from-green-500 to-[var(--color-accent)] bg-clip-text text-transparent">
+                <div className="text-3xl font-black bg-[var(--color-primary)] from-[var(--color-accent)] to-[var(--color-accent)] bg-clip-text text-transparent">
                   {results.netYield.toFixed(1)}%
                 </div>
-                <div className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-medium">Net Yield</div>
+                <div className="text-xs text-[var(--color-ink-3)] mt-1 font-medium">Net Yield</div>
               </div>
               <div className="card rounded-2xl p-5 text-center">
-                <div className="text-2xl font-black text-slate-900 dark:text-white">
+                <div className="text-2xl font-black text-[var(--color-ink)]">
                   ${results.monthlyIncome.toFixed(0)}
                 </div>
-                <div className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-medium">Monthly Income</div>
+                <div className="text-xs text-[var(--color-ink-3)] mt-1 font-medium">Monthly Income</div>
               </div>
               <div className="card rounded-2xl p-5 text-center">
-                <div className="text-2xl font-black text-slate-900 dark:text-white">
+                <div className="text-2xl font-black text-[var(--color-ink)]">
                   ${results.annualIncome.toFixed(0)}
                 </div>
-                <div className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-medium">Annual Income</div>
+                <div className="text-xs text-[var(--color-ink-3)] mt-1 font-medium">Annual Income</div>
               </div>
             </div>
 
             {/* Income breakdown */}
             <div className="card rounded-2xl p-6">
-              <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-4">Income Breakdown</h3>
+              <h3 className="text-sm font-bold text-[var(--color-ink)] mb-4">Income Breakdown</h3>
               <div className="space-y-3">
                 <div className="flex justify-between text-sm">
-                  <span className="text-slate-500 dark:text-slate-400">Gross Annual Income</span>
-                  <span className="font-semibold text-slate-900 dark:text-white">${results.annualIncome.toFixed(0)}</span>
+                  <span className="text-[var(--color-ink-3)]">Gross Annual Income</span>
+                  <span className="font-semibold text-[var(--color-ink)]">${results.annualIncome.toFixed(0)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-slate-500 dark:text-slate-400">Est. Expenses (15%)</span>
-                  <span className="font-semibold text-red-500">-${results.estimatedExpenses.toFixed(0)}</span>
+                  <span className="text-[var(--color-ink-3)]">Est. Expenses (15%)</span>
+                  <span className="font-semibold text-[var(--color-danger-500)]">-${results.estimatedExpenses.toFixed(0)}</span>
                 </div>
-                <div className="h-px bg-slate-200 dark:bg-slate-700" />
+                <div className="h-px bg-[var(--color-surface-muted)] dark:bg-[var(--color-surface-muted)]" />
                 <div className="flex justify-between text-sm">
-                  <span className="font-semibold text-slate-900 dark:text-white">Net Annual Income</span>
-                  <span className="font-bold text-green-500">${results.netIncome.toFixed(0)}</span>
+                  <span className="font-semibold text-[var(--color-ink)]">Net Annual Income</span>
+                  <span className="font-bold text-[var(--color-accent)]">${results.netIncome.toFixed(0)}</span>
                 </div>
               </div>
             </div>
 
             {/* Room type comparison chart */}
             <div className="card rounded-2xl p-6">
-              <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-4">
+              <h3 className="text-sm font-bold text-[var(--color-ink)] mb-4">
                 Room Type Comparison - {selectedSuburb}
               </h3>
               <div className="h-64">
@@ -294,8 +294,8 @@ export default function ROICalculator() {
           viewport={{ once: true }}
           className="text-center mt-16 py-12"
         >
-          <h2 className="text-2xl font-black text-slate-900 dark:text-white">Ready to start earning?</h2>
-          <p className="text-slate-500 dark:text-slate-400 mt-2">List your spare room on MigRent AI in minutes.</p>
+          <h2 className="text-2xl font-black text-[var(--color-ink)]">Ready to start earning?</h2>
+          <p className="text-[var(--color-ink-3)] mt-2">List your spare room on MigRent AI in minutes.</p>
           <Link href="/signup">
             <motion.span whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }} className="inline-block mt-6 btn-primary text-base px-8 py-3.5 rounded-xl">
               List Your Room

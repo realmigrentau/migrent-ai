@@ -31,32 +31,32 @@ export default function TransportCalculator({
 
   return (
     <section className="scroll-mt-8">
-      <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-6">
+      <h2 className="text-2xl font-bold text-[var(--color-ink)] mb-6">
         Transport & Commute
       </h2>
 
       <div className="grid md:grid-cols-2 gap-6">
         {/* Nearest Stations */}
-        <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6">
-          <h3 className="font-semibold text-slate-900 dark:text-white flex items-center gap-2 mb-4">
-            <Train className="w-5 h-5 text-teal-500" />
+        <div className="rounded-xl border border-[var(--color-line)] bg-[var(--color-surface-2)] p-6">
+          <h3 className="font-semibold text-[var(--color-ink)] flex items-center gap-2 mb-4">
+            <Train className="w-5 h-5 text-[var(--color-primary)]" />
             Nearest Stations
           </h3>
           <div className="space-y-3">
             {stations.map((station, i) => (
               <div
                 key={station.name}
-                className="flex items-center justify-between p-3 rounded-lg bg-slate-50 dark:bg-slate-700/50"
+                className="flex items-center justify-between p-3 rounded-lg bg-[var(--color-surface)] dark:bg-[var(--color-surface-muted)]/50"
               >
                 <div>
-                  <p className="font-medium text-slate-900 dark:text-white">
+                  <p className="font-medium text-[var(--color-ink)]">
                     {station.name} Station
                   </p>
-                  <p className="text-sm text-slate-500 dark:text-slate-400">
+                  <p className="text-sm text-[var(--color-ink-3)]">
                     {station.line}
                   </p>
                 </div>
-                <div className="flex items-center gap-1 text-sm font-medium text-teal-600 dark:text-teal-400">
+                <div className="flex items-center gap-1 text-sm font-medium text-[var(--color-primary)] dark:text-[var(--color-primary)]">
                   <Clock className="w-3.5 h-3.5" />
                   {station.walk_min} min walk
                 </div>
@@ -64,8 +64,8 @@ export default function TransportCalculator({
             ))}
           </div>
           {transportScore && (
-            <div className="mt-4 p-3 rounded-lg bg-teal-50 dark:bg-teal-900/20 text-center">
-              <p className="text-sm text-teal-700 dark:text-teal-400">
+            <div className="mt-4 p-3 rounded-lg bg-[var(--color-primary-50)] dark:bg-[var(--color-primary-50)] text-center">
+              <p className="text-sm text-[var(--color-primary-700)] dark:text-[var(--color-primary)]">
                 Transport Score:{" "}
                 <span className="font-bold text-lg">{transportScore}/10</span>
               </p>
@@ -74,9 +74,9 @@ export default function TransportCalculator({
         </div>
 
         {/* Commute Calculator */}
-        <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6">
-          <h3 className="font-semibold text-slate-900 dark:text-white flex items-center gap-2 mb-4">
-            <MapPin className="w-5 h-5 text-teal-500" />
+        <div className="rounded-xl border border-[var(--color-line)] bg-[var(--color-surface-2)] p-6">
+          <h3 className="font-semibold text-[var(--color-ink)] flex items-center gap-2 mb-4">
+            <MapPin className="w-5 h-5 text-[var(--color-primary)]" />
             Commute Times from {suburbName}
           </h3>
           <div className="space-y-2">
@@ -86,23 +86,23 @@ export default function TransportCalculator({
                 onClick={() => setSelectedDest(i)}
                 className={`w-full flex items-center justify-between p-3 rounded-lg text-left transition-colors ${
                   selectedDest === i
-                    ? "bg-teal-50 dark:bg-teal-900/30 border border-teal-200 dark:border-teal-800"
-                    : "hover:bg-slate-50 dark:hover:bg-slate-700/50"
+                    ? "bg-[var(--color-primary-50)] dark:bg-[var(--color-primary-50)] border border-[var(--color-primary-100)] dark:border-[var(--color-line)]"
+                    : "hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-surface-muted)]"
                 }`}
               >
                 <div className="flex items-center gap-2">
                   <ArrowRight
                     className={`w-4 h-4 ${
                       selectedDest === i
-                        ? "text-teal-500"
-                        : "text-slate-400"
+                        ? "text-[var(--color-primary)]"
+                        : "text-[var(--color-ink-3)]"
                     }`}
                   />
                   <span
                     className={`text-sm ${
                       selectedDest === i
-                        ? "font-medium text-teal-700 dark:text-teal-400"
-                        : "text-slate-700 dark:text-slate-300"
+                        ? "font-medium text-[var(--color-primary-700)] dark:text-[var(--color-primary)]"
+                        : "text-[var(--color-ink-2)]"
                     }`}
                   >
                     {dest.name}
@@ -111,8 +111,8 @@ export default function TransportCalculator({
                 <span
                   className={`text-sm font-semibold ${
                     selectedDest === i
-                      ? "text-teal-600 dark:text-teal-400"
-                      : "text-slate-500 dark:text-slate-400"
+                      ? "text-[var(--color-primary)] dark:text-[var(--color-primary)]"
+                      : "text-[var(--color-ink-3)]"
                   }`}
                 >
                   ~{dest.time_from_kellyville} min
@@ -120,7 +120,7 @@ export default function TransportCalculator({
               </button>
             ))}
           </div>
-          <p className="text-xs text-slate-400 mt-4">
+          <p className="text-xs text-[var(--color-ink-3)] mt-4">
             Times are approximate via public transport during peak hours
           </p>
         </div>

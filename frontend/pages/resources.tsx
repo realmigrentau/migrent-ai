@@ -56,7 +56,7 @@ function MockCalculator() {
         <div className="h-px bg-white/10" />
         <div className="flex items-center justify-between">
           <span className="text-white/60 text-xs">Annual ROI</span>
-          <span className="text-green-300 text-sm font-bold">5.2%</span>
+          <span className="text-[var(--color-accent)] text-sm font-bold">5.2%</span>
         </div>
       </div>
       <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
@@ -64,7 +64,7 @@ function MockCalculator() {
           initial={{ width: 0 }}
           animate={{ width: "52%" }}
           transition={{ duration: 2, ease: "easeOut", repeat: Infinity, repeatType: "reverse" }}
-          className="h-full bg-[var(--color-primary)] from-green-400 to-[var(--color-accent)] rounded-full"
+          className="h-full bg-[var(--color-primary)] from-[var(--color-accent)] to-[var(--color-accent)] rounded-full"
         />
       </div>
       <div className="text-white/40 text-[10px]">Based on Sydney metro averages</div>
@@ -76,20 +76,20 @@ function MockAPIDocs() {
   return (
     <div className="w-full h-full flex flex-col gap-3 p-6 font-mono">
       <div className="flex items-center gap-2 mb-1">
-        <div className="w-2 h-2 rounded-full bg-green-400" />
+        <div className="w-2 h-2 rounded-full bg-[var(--color-accent)]" />
         <span className="text-white/80 text-xs font-sans font-semibold uppercase tracking-wider">API v2</span>
       </div>
       <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 text-[10px] space-y-1">
-        <div className="text-blue-300">GET <span className="text-white/60">/api/v2/listings</span></div>
-        <div className="text-green-300">POST <span className="text-white/60">/api/v2/bookings</span></div>
-        <div className="text-amber-300">PUT <span className="text-white/60">/api/v2/profile</span></div>
+        <div className="text-[var(--color-primary)]">GET <span className="text-white/60">/api/v2/listings</span></div>
+        <div className="text-[var(--color-accent)]">POST <span className="text-white/60">/api/v2/bookings</span></div>
+        <div className="text-[var(--color-warn-500)]">PUT <span className="text-white/60">/api/v2/profile</span></div>
       </div>
       <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3">
         <div className="text-white/40 text-[9px] mb-1">Response</div>
-        <div className="text-[10px] text-green-300">{`{`}</div>
+        <div className="text-[10px] text-[var(--color-accent)]">{`{`}</div>
         <div className="text-[10px] text-white/60 pl-3">{`"status": "200 OK",`}</div>
         <div className="text-[10px] text-white/60 pl-3">{`"data": [...],`}</div>
-        <div className="text-[10px] text-green-300">{`}`}</div>
+        <div className="text-[10px] text-[var(--color-accent)]">{`}`}</div>
       </div>
     </div>
   );
@@ -103,8 +103,8 @@ function MockDiscord() {
         <div>
           <div className="text-white/90 text-sm font-semibold">MigRent Community</div>
           <div className="flex items-center gap-1">
-            <span className="w-2 h-2 rounded-full bg-green-400" />
-            <span className="text-green-300 text-[10px]">2,847 online</span>
+            <span className="w-2 h-2 rounded-full bg-[var(--color-accent)]" />
+            <span className="text-[var(--color-accent)] text-[10px]">2,847 online</span>
           </div>
         </div>
       </div>
@@ -132,7 +132,7 @@ function MockCareers() {
   return (
     <div className="w-full h-full flex flex-col gap-3 p-6">
       <div className="flex items-center gap-2 mb-1">
-        <svg className="w-5 h-5 text-amber-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <svg className="w-5 h-5 text-[var(--color-warn-500)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
         </svg>
         <span className="text-white/80 text-xs font-semibold uppercase tracking-wider">Open Roles</span>
@@ -172,10 +172,10 @@ function MockRentalLaws() {
       ].map((item, i) => (
         <div key={i} className="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-xl p-2.5">
           <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 ${
-            item.done ? "bg-green-400/20" : "bg-white/10"
+            item.done ? "bg-[var(--color-accent)]/20" : "bg-white/10"
           }`}>
             {item.done ? (
-              <svg className="w-3 h-3 text-green-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+              <svg className="w-3 h-3 text-[var(--color-accent)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
               </svg>
             ) : (
@@ -215,9 +215,9 @@ const resources = [
     titleKey: "resources.calculator.title",
     descKey: "resources.calculator.desc",
     icon: "M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z",
-    color: "from-green-500 to-[var(--color-accent)]",
-    iconColor: "text-green-500",
-    bgColor: "bg-green-50 dark:bg-green-500/10",
+    color: "from-[var(--color-accent)] to-[var(--color-accent)]",
+    iconColor: "text-[var(--color-accent)]",
+    bgColor: "bg-[var(--color-accent-50)] dark:bg-[var(--color-accent-50)]0/10",
     headline: "Owner ROI Calculator",
     subline: "Estimate returns on your spare room listing",
     MockUI: MockCalculator,
@@ -234,8 +234,8 @@ const resources = [
     descKey: "resources.apiDocs.desc",
     icon: "M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4",
     color: "from-[var(--color-primary)] to-[var(--color-primary)]",
-    iconColor: "text-blue-500",
-    bgColor: "bg-blue-50 dark:bg-blue-500/10",
+    iconColor: "text-[var(--color-primary)]",
+    bgColor: "bg-[var(--color-primary-50)] dark:bg-[var(--color-primary)]/10",
     headline: "Developer API Docs",
     subline: "Build integrations on the MigRent platform",
     MockUI: MockAPIDocs,
@@ -269,9 +269,9 @@ const resources = [
     titleKey: "resources.careers.title",
     descKey: "resources.careers.desc",
     icon: "M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z",
-    color: "from-amber-500 to-orange-500",
-    iconColor: "text-amber-500",
-    bgColor: "bg-amber-50 dark:bg-amber-500/10",
+    color: "from-[var(--color-warn-500)] to-[var(--color-warn-500)]",
+    iconColor: "text-[var(--color-warn-500)]",
+    bgColor: "bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/10",
     headline: "Join MigRent AI Team",
     subline: "Help migrants find home - based in Sydney",
     MockUI: MockCareers,
@@ -287,9 +287,9 @@ const resources = [
     titleKey: "resources.rentalLaws.title",
     descKey: "resources.rentalLaws.desc",
     icon: "M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3",
-    color: "from-cyan-500 to-teal-500",
-    iconColor: "text-cyan-500",
-    bgColor: "bg-cyan-50 dark:bg-cyan-500/10",
+    color: "from-[var(--color-primary)] to-[var(--color-primary)]",
+    iconColor: "text-[var(--color-primary)]",
+    bgColor: "bg-[var(--color-primary-50)] dark:bg-[var(--color-primary-50)]0/10",
     headline: "Australian Rental Laws for Migrants",
     subline: "Know your rights as a renter in Australia",
     MockUI: MockRentalLaws,
@@ -316,8 +316,8 @@ export default function Resources() {
         {/* ── Hero ───────────────────────────────────────────────── */}
         <section className="relative text-center py-20 overflow-hidden">
           <div className="absolute top-0 left-1/4 w-96 h-96 bg-[var(--color-primary-soft)]0/15 dark:bg-[var(--color-primary-soft)]0/8 hidden " />
-          <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-cyan-500/12 dark:bg-cyan-500/6 hidden " style={{ animationDelay: "1s" }} />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-violet-400/5 dark:bg-[var(--color-primary)]/5 hidden " />
+          <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-[var(--color-primary-50)]0/12 dark:bg-[var(--color-primary-50)]0/6 hidden " style={{ animationDelay: "1s" }} />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[var(--color-primary)]/5 dark:bg-[var(--color-primary)]/5 hidden " />
 
           <motion.div
             initial={{ opacity: 0, y: 40 }}
@@ -325,20 +325,20 @@ export default function Resources() {
             transition={{ duration: 0.8 }}
             className="relative z-10 max-w-3xl mx-auto"
           >
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary-soft)]0/10 border border-purple-100 dark:border-[var(--color-primary)]/20 text-xs font-medium text-[var(--color-primary)] dark:text-[var(--color-primary)] mb-6">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary-soft)]0/10 border border-[var(--color-primary-100)] dark:border-[var(--color-primary)]/20 text-xs font-medium text-[var(--color-primary)] dark:text-[var(--color-primary)] mb-6">
               <span className="w-2 h-2 rounded-full bg-[var(--color-primary-soft)]0 animate-pulse" />
               {t("resources.heroBadge")}
             </div>
 
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight leading-tight">
-              <span className="bg-[var(--color-primary)] from-[var(--color-primary)] via-[var(--color-primary)] to-cyan-500 bg-clip-text text-transparent">
+              <span className="bg-[var(--color-primary)] from-[var(--color-primary)] via-[var(--color-primary)] to-[var(--color-primary)] bg-clip-text text-transparent">
                 Resources for MigRent
               </span>
               <br />
-              <span className="text-slate-900 dark:text-white">Hosts & Seekers</span>
+              <span className="text-[var(--color-ink)]">Hosts & Seekers</span>
             </h1>
 
-            <p className="mt-6 text-lg md:text-xl text-slate-500 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
+            <p className="mt-6 text-lg md:text-xl text-[var(--color-ink-3)] max-w-2xl mx-auto leading-relaxed">
               {t("resources.heroSubtitle")}
             </p>
 
@@ -350,9 +350,9 @@ export default function Resources() {
                     whileHover={{ scale: 1.05, y: -2 }}
                     whileTap={{ scale: 0.97 }}
                     className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-medium border transition-all cursor-pointer
-                      bg-white dark:bg-white/5 border-slate-200 dark:border-slate-700
-                      hover:border-slate-300 dark:hover:border-slate-600 hover:shadow-md
-                      text-slate-600 dark:text-slate-300`}
+                      bg-white dark:bg-white/5 border-[var(--color-line)]
+                      hover:border-[var(--color-line-2)] dark:hover:border-[var(--color-line-2)] hover:shadow-md
+                      text-[var(--color-ink-2)]`}
                   >
                     <svg className={`w-3.5 h-3.5 ${r.iconColor}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d={r.icon} />
@@ -409,20 +409,20 @@ export default function Resources() {
                     </svg>
                   </div>
 
-                  <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 dark:text-white">
+                  <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-[var(--color-ink)]">
                     {resource.headline}
                   </h2>
-                  <p className="text-sm text-slate-400 dark:text-slate-500 mt-1 font-medium">
+                  <p className="text-sm text-[var(--color-ink-3)] mt-1 font-medium">
                     {resource.subline}
                   </p>
 
-                  <p className="mt-4 text-base text-slate-500 dark:text-slate-400 leading-relaxed">
+                  <p className="mt-4 text-base text-[var(--color-ink-3)] leading-relaxed">
                     {t(resource.descKey)}
                   </p>
 
                   <ul className="mt-6 space-y-3">
                     {resource.bullets.map((bullet, bi) => (
-                      <li key={bi} className="flex items-center gap-3 text-sm text-slate-600 dark:text-slate-300">
+                      <li key={bi} className="flex items-center gap-3 text-sm text-[var(--color-ink-2)]">
                         <span className={`w-5 h-5 rounded-full ${resource.bgColor} flex items-center justify-center shrink-0`}>
                           <svg className={`w-3 h-3 ${resource.iconColor}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
@@ -444,7 +444,7 @@ export default function Resources() {
                       </motion.span>
                     </Link>
                   ) : (
-                    <span className="inline-flex items-center gap-1 mt-6 text-xs font-medium text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-white/5 px-3 py-1.5 rounded-full">
+                    <span className="inline-flex items-center gap-1 mt-6 text-xs font-medium text-[var(--color-ink-3)] bg-[var(--color-surface-muted)] dark:bg-white/5 px-3 py-1.5 rounded-full">
                       <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
@@ -464,9 +464,9 @@ export default function Resources() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="rounded-2xl bg-[var(--color-primary)] from-[var(--color-primary)] via-[var(--color-primary)] to-cyan-500 p-[1px]"
+            className="rounded-2xl bg-[var(--color-primary)] from-[var(--color-primary)] via-[var(--color-primary)] to-[var(--color-primary)] p-[1px]"
           >
-            <div className="rounded-2xl bg-white dark:bg-slate-900 p-8 md:p-10">
+            <div className="rounded-2xl bg-[var(--color-surface-2)] p-8 md:p-10">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
                 {[
                   { value: "6", label: "Resource categories" },
@@ -481,10 +481,10 @@ export default function Resources() {
                     viewport={{ once: true }}
                     transition={{ delay: si * 0.1, duration: 0.5 }}
                   >
-                    <div className="text-2xl md:text-3xl font-black bg-[var(--color-primary)] from-[var(--color-primary)] to-cyan-500 bg-clip-text text-transparent">
+                    <div className="text-2xl md:text-3xl font-black bg-[var(--color-primary)] from-[var(--color-primary)] to-[var(--color-primary)] bg-clip-text text-transparent">
                       {stat.value}
                     </div>
-                    <div className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-medium">{stat.label}</div>
+                    <div className="text-xs text-[var(--color-ink-3)] mt-1 font-medium">{stat.label}</div>
                   </motion.div>
                 ))}
               </div>
@@ -501,10 +501,10 @@ export default function Resources() {
             transition={{ duration: 0.6 }}
             className="max-w-lg mx-auto"
           >
-            <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 dark:text-white">
+            <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-[var(--color-ink)]">
               {t("resources.cta.title")}
             </h2>
-            <p className="mt-3 text-slate-500 dark:text-slate-400">
+            <p className="mt-3 text-[var(--color-ink-3)]">
               {t("resources.cta.subtitle")}
             </p>
             <Link href="/contact">

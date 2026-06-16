@@ -60,17 +60,17 @@ export default function DemographicsCharts({
 
   return (
     <section className="scroll-mt-8">
-      <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-6">
+      <h2 className="text-2xl font-bold text-[var(--color-ink)] mb-6">
         Demographics & Rent Trends
       </h2>
 
       <div className="grid md:grid-cols-2 gap-6">
         {/* Population Breakdown */}
-        <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6">
-          <h3 className="font-semibold text-slate-900 dark:text-white mb-2">
+        <div className="rounded-xl border border-[var(--color-line)] bg-[var(--color-surface-2)] p-6">
+          <h3 className="font-semibold text-[var(--color-ink)] mb-2">
             Population Breakdown
           </h3>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">
+          <p className="text-sm text-[var(--color-ink-3)] mb-4">
             {demographics.overseas_born_pct}% overseas born (ABS Census)
           </p>
           <div className="flex items-center justify-center">
@@ -107,27 +107,27 @@ export default function DemographicsCharts({
                   className="w-2.5 h-2.5 rounded-full"
                   style={{ backgroundColor: COLORS[i % COLORS.length] }}
                 />
-                <span className="text-slate-600 dark:text-slate-400">
+                <span className="text-[var(--color-ink-2)]">
                   {entry.name} ({entry.value}%)
                 </span>
               </div>
             ))}
           </div>
 
-          <div className="grid grid-cols-2 gap-3 mt-5 pt-4 border-t border-slate-100 dark:border-slate-700">
+          <div className="grid grid-cols-2 gap-3 mt-5 pt-4 border-t border-[var(--color-line)]">
             <div className="text-center">
-              <p className="text-lg font-bold text-slate-900 dark:text-white">
+              <p className="text-lg font-bold text-[var(--color-ink)]">
                 {demographics.median_age}
               </p>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
+              <p className="text-xs text-[var(--color-ink-3)]">
                 Median Age
               </p>
             </div>
             <div className="text-center">
-              <p className="text-lg font-bold text-slate-900 dark:text-white">
+              <p className="text-lg font-bold text-[var(--color-ink)]">
                 {demographics.avg_household_size}
               </p>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
+              <p className="text-xs text-[var(--color-ink-3)]">
                 Avg Household
               </p>
             </div>
@@ -135,11 +135,11 @@ export default function DemographicsCharts({
         </div>
 
         {/* Rent Trend */}
-        <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6">
-          <h3 className="font-semibold text-slate-900 dark:text-white mb-2">
+        <div className="rounded-xl border border-[var(--color-line)] bg-[var(--color-surface-2)] p-6">
+          <h3 className="font-semibold text-[var(--color-ink)] mb-2">
             Room Rent Trend
           </h3>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">
+          <p className="text-sm text-[var(--color-ink-3)] mb-4">
             Median weekly room rent - last 6 months
           </p>
           <ResponsiveContainer width="100%" height={260}>
@@ -176,7 +176,7 @@ export default function DemographicsCharts({
               />
             </LineChart>
           </ResponsiveContainer>
-          <p className="text-xs text-slate-400 mt-2 text-center">
+          <p className="text-xs text-[var(--color-ink-3)] mt-2 text-center">
             Source: MigRent listings data for {suburbName}
           </p>
         </div>

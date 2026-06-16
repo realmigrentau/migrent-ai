@@ -85,10 +85,10 @@ export default function SuburbPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950">
+      <div className="min-h-screen flex items-center justify-center bg-[var(--color-surface)] dark:bg-[var(--color-bg)]">
         <div className="flex flex-col items-center gap-4">
-          <Loader2 className="w-8 h-8 text-teal-500 animate-spin" />
-          <p className="text-slate-500">Loading suburb data...</p>
+          <Loader2 className="w-8 h-8 text-[var(--color-primary)] animate-spin" />
+          <p className="text-[var(--color-ink-3)]">Loading suburb data...</p>
         </div>
       </div>
     );
@@ -96,17 +96,17 @@ export default function SuburbPage() {
 
   if (error || !suburb) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950">
+      <div className="min-h-screen flex items-center justify-center bg-[var(--color-surface)] dark:bg-[var(--color-bg)]">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">
+          <h1 className="text-2xl font-bold text-[var(--color-ink)] mb-2">
             {error || "Suburb not found"}
           </h1>
-          <p className="text-slate-500 mb-6">
+          <p className="text-[var(--color-ink-3)] mb-6">
             We don't have data for this suburb yet.
           </p>
           <Link
             href="/"
-            className="inline-flex items-center gap-2 text-teal-600 hover:text-teal-700 font-medium"
+            className="inline-flex items-center gap-2 text-[var(--color-primary)] hover:text-[var(--color-primary-700)] font-medium"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to home
@@ -178,12 +178,12 @@ export default function SuburbPage() {
         )}
       </Head>
 
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
+      <div className="min-h-screen bg-[var(--color-surface)] dark:bg-[var(--color-bg)]">
         {/* Back nav */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
           <Link
             href="/"
-            className="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-teal-600 transition-colors mb-6"
+            className="inline-flex items-center gap-2 text-sm text-[var(--color-ink-3)] hover:text-[var(--color-primary)] transition-colors mb-6"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to MigRent
@@ -235,18 +235,18 @@ export default function SuburbPage() {
           <SuburbFAQ faqs={suburb.faq} suburbName={suburb.name} />
 
           {/* Bottom CTA */}
-          <section className="rounded-2xl bg-[var(--color-primary)] from-teal-600 to-emerald-600 p-8 sm:p-12 text-center text-white">
+          <section className="rounded-2xl bg-[var(--color-primary)] from-[var(--color-primary)] to-[var(--color-accent)] p-8 sm:p-12 text-center text-white">
             <h2 className="text-2xl sm:text-3xl font-bold mb-3">
               Ready to find your room in {suburb.name}?
             </h2>
-            <p className="text-teal-100 mb-6 max-w-xl mx-auto">
+            <p className="text-[var(--color-primary-fg)] mb-6 max-w-xl mx-auto">
               Join thousands of migrants and students who found their home through
               MigRent. Verified listings, no scams.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <Link
                 href="/auth/register"
-                className="inline-flex items-center px-8 py-3 bg-white font-semibold rounded-xl hover:bg-teal-50 transition-colors"
+                className="inline-flex items-center px-8 py-3 bg-white font-semibold rounded-xl hover:bg-[var(--color-primary-50)] transition-colors"
                 style={{ color: "#0f766e" }}
               >
                 Sign Up Free

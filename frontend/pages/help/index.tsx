@@ -51,11 +51,11 @@ const AUDIENCE_LABEL: Record<string, string> = {
 };
 
 const TYPE_COLORS: Record<string, string> = {
-  guide: "bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400",
-  faq: "bg-[var(--color-accent-soft)] text-[var(--color-accent)] dark:bg-emerald-900/20 dark:text-[var(--color-accent)]",
-  troubleshoot: "bg-amber-50 text-amber-600 dark:bg-amber-900/20 dark:text-amber-400",
+  guide: "bg-[var(--color-primary-50)] text-[var(--color-primary)] dark:bg-[var(--color-surface-muted)] dark:text-[var(--color-primary)]",
+  faq: "bg-[var(--color-accent-soft)] text-[var(--color-accent)] dark:bg-[var(--color-surface-muted)] dark:text-[var(--color-accent)]",
+  troubleshoot: "bg-[var(--color-warn-50)] text-[var(--color-warn-600)] dark:bg-[var(--color-surface-muted)] dark:text-[var(--color-warn-500)]",
   policy: "bg-[var(--color-primary-soft)] text-[var(--color-primary)] dark:bg-primary-900/20 dark:text-[var(--color-primary)]",
-  safety: "bg-[var(--color-primary-soft)] text-[var(--color-primary)] dark:bg-rose-900/20 dark:text-[var(--color-primary)]",
+  safety: "bg-[var(--color-primary-soft)] text-[var(--color-primary)] dark:bg-[var(--color-surface-muted)] dark:text-[var(--color-primary)]",
 };
 
 function FAQItem({ faq, index }: { faq: typeof QUICK_FAQS[0]; index: number }) {
@@ -65,17 +65,17 @@ function FAQItem({ faq, index }: { faq: typeof QUICK_FAQS[0]; index: number }) {
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.04 }}
-      className="border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden"
+      className="border border-[var(--color-line)] rounded-xl overflow-hidden"
     >
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between px-5 py-4 text-left bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+        className="w-full flex items-center justify-between px-5 py-4 text-left bg-[var(--color-surface-2)] hover:bg-[var(--color-surface)]/50 transition-colors"
       >
-        <span className="font-medium text-sm text-slate-900 dark:text-white pr-4">
+        <span className="font-medium text-sm text-[var(--color-ink)] pr-4">
           {faq.question}
         </span>
         <ChevronDown
-          className={`w-4 h-4 text-slate-400 shrink-0 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+          className={`w-4 h-4 text-[var(--color-ink-3)] shrink-0 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
         />
       </button>
       <AnimatePresence initial={false}>
@@ -88,7 +88,7 @@ function FAQItem({ faq, index }: { faq: typeof QUICK_FAQS[0]; index: number }) {
             transition={{ duration: 0.2, ease: "easeInOut" }}
             className="overflow-hidden"
           >
-            <div className="px-5 pb-4 pt-1 text-sm text-slate-600 dark:text-slate-300 leading-relaxed bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800">
+            <div className="px-5 pb-4 pt-1 text-sm text-[var(--color-ink-2)] leading-relaxed bg-[var(--color-surface-2)] border-t border-[var(--color-line)]">
               {faq.answer}
             </div>
           </motion.div>
@@ -106,33 +106,33 @@ function ArticleCard({ article, index }: { article: StaticHelpArticle; index: nu
       transition={{ delay: index * 0.06 }}
     >
       <Link href={`/help/${article.slug}`}>
-        <div className="group p-4 rounded-xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-[var(--color-primary-soft)] dark:hover:border-primary-700 hover:shadow-md transition-all cursor-pointer">
+        <div className="group p-4 rounded-xl border border-[var(--color-line)] bg-[var(--color-surface-2)] hover:border-[var(--color-primary-soft)] dark:hover:border-primary-700 hover:shadow-md transition-all cursor-pointer">
           <div className="flex items-start gap-3">
             <div className="shrink-0 mt-0.5">
-              <BookOpen className="w-4 h-4 text-slate-400 group-hover:text-[var(--color-primary)] transition-colors" />
+              <BookOpen className="w-4 h-4 text-[var(--color-ink-3)] group-hover:text-[var(--color-primary)] transition-colors" />
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="font-semibold text-sm text-slate-900 dark:text-white group-hover:text-[var(--color-primary)] dark:group-hover:text-[var(--color-primary)] transition-colors mb-1 leading-snug">
+              <h3 className="font-semibold text-sm text-[var(--color-ink)] group-hover:text-[var(--color-primary)] dark:group-hover:text-[var(--color-primary)] transition-colors mb-1 leading-snug">
                 {article.title}
               </h3>
-              <p className="text-xs text-slate-400 dark:text-slate-500 line-clamp-2 leading-relaxed mb-2">
+              <p className="text-xs text-[var(--color-ink-3)] line-clamp-2 leading-relaxed mb-2">
                 {article.summary}
               </p>
               <div className="flex items-center gap-2 flex-wrap">
                 <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${TYPE_COLORS[article.type] || TYPE_COLORS.guide}`}>
                   {article.type === "faq" ? "FAQ" : article.type.charAt(0).toUpperCase() + article.type.slice(1)}
                 </span>
-                <span className="flex items-center gap-1 text-[10px] text-slate-400">
+                <span className="flex items-center gap-1 text-[10px] text-[var(--color-ink-3)]">
                   <Clock className="w-3 h-3" />
                   {article.readingTime} min read
                 </span>
-                <span className="flex items-center gap-1 text-[10px] text-slate-400">
+                <span className="flex items-center gap-1 text-[10px] text-[var(--color-ink-3)]">
                   <Users className="w-3 h-3" />
                   {AUDIENCE_LABEL[article.audience]}
                 </span>
               </div>
             </div>
-            <ChevronRight className="w-4 h-4 text-slate-300 dark:text-slate-600 group-hover:text-[var(--color-primary)] transition-colors shrink-0 mt-1" />
+            <ChevronRight className="w-4 h-4 text-[var(--color-ink-4)] group-hover:text-[var(--color-primary)] transition-colors shrink-0 mt-1" />
           </div>
         </div>
       </Link>
@@ -189,27 +189,27 @@ export default function HelpCenter() {
             <h1 className="text-3xl md:text-4xl font-black mb-2 tracking-tight">
               How can we help?
             </h1>
-            <p className="text-indigo-100 text-sm md:text-base mb-6 max-w-lg">
+            <p className="text-[var(--color-primary-fg)] text-sm md:text-base mb-6 max-w-lg">
               Search our help articles, browse by category, or contact our support team.
             </p>
 
             {/* Search */}
             <div className="relative max-w-xl">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--color-ink-3)]" />
               <input
                 ref={searchRef}
                 type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search for help - e.g. verify identity, cancel booking..."
-                className="w-full pl-12 pr-10 py-3.5 rounded-xl text-slate-900 dark:text-white bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] shadow-lg placeholder:text-slate-400"
+                className="w-full pl-12 pr-10 py-3.5 rounded-xl text-[var(--color-ink)] bg-[var(--color-surface-2)] border border-[var(--color-line)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] shadow-lg placeholder:text-[var(--color-ink-3)]"
               />
               {query && (
                 <button
                   onClick={() => setQuery("")}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-[var(--color-surface-muted)] transition-colors"
                 >
-                  <X className="w-4 h-4 text-slate-400" />
+                  <X className="w-4 h-4 text-[var(--color-ink-3)]" />
                 </button>
               )}
             </div>
@@ -243,7 +243,7 @@ export default function HelpCenter() {
               className="space-y-3"
             >
               <div className="flex items-center justify-between">
-                <h2 className="text-base font-bold text-slate-900 dark:text-white">
+                <h2 className="text-base font-bold text-[var(--color-ink)]">
                   {searching
                     ? "Searching..."
                     : searchResults.length > 0
@@ -252,7 +252,7 @@ export default function HelpCenter() {
                 </h2>
                 <button
                   onClick={() => setQuery("")}
-                  className="text-xs text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+                  className="text-xs text-[var(--color-ink-3)] hover:text-[var(--color-ink-2)] dark:hover:text-[var(--color-ink-4)] transition-colors"
                 >
                   Clear search
                 </button>
@@ -261,7 +261,7 @@ export default function HelpCenter() {
               {searching && (
                 <div className="space-y-3">
                   {[1, 2, 3].map((i) => (
-                    <div key={i} className="h-20 rounded-xl bg-slate-100 dark:bg-slate-800 animate-pulse" />
+                    <div key={i} className="h-20 rounded-xl bg-[var(--color-surface-muted)] animate-pulse" />
                   ))}
                 </div>
               )}
@@ -275,12 +275,12 @@ export default function HelpCenter() {
               )}
 
               {!searching && searchResults.length === 0 && (
-                <div className="text-center py-12 rounded-2xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900">
-                  <div className="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center mx-auto mb-3">
-                    <Search className="w-5 h-5 text-slate-400" />
+                <div className="text-center py-12 rounded-2xl border border-[var(--color-line)] bg-[var(--color-surface-2)]">
+                  <div className="w-12 h-12 rounded-full bg-[var(--color-surface-muted)] flex items-center justify-center mx-auto mb-3">
+                    <Search className="w-5 h-5 text-[var(--color-ink-3)]" />
                   </div>
-                  <h3 className="font-semibold text-slate-900 dark:text-white mb-1">No results found</h3>
-                  <p className="text-sm text-slate-500 mb-4">
+                  <h3 className="font-semibold text-[var(--color-ink)] mb-1">No results found</h3>
+                  <p className="text-sm text-[var(--color-ink-3)] mb-4">
                     We couldn't find an article matching "{query}". Try different keywords or browse the categories below.
                   </p>
                   <Link
@@ -301,7 +301,7 @@ export default function HelpCenter() {
           <>
             {/* Categories */}
             <section>
-              <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-4">Browse by category</h2>
+              <h2 className="text-lg font-bold text-[var(--color-ink)] mb-4">Browse by category</h2>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 {HELP_CATEGORIES.map((cat, i) => (
                   <motion.div
@@ -311,14 +311,14 @@ export default function HelpCenter() {
                     transition={{ delay: i * 0.04 }}
                   >
                     <Link href={`/help/category/${cat.slug}`}>
-                      <div className="group p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-[var(--color-primary-soft)] dark:hover:border-primary-700 hover:shadow-md transition-all cursor-pointer h-full">
+                      <div className="group p-4 rounded-xl border border-[var(--color-line)] bg-[var(--color-surface-2)] hover:border-[var(--color-primary-soft)] dark:hover:border-primary-700 hover:shadow-md transition-all cursor-pointer h-full">
                         <div className={`w-9 h-9 rounded-lg bg-[var(--color-primary-soft)] ${cat.gradient} flex items-center justify-center mb-3 shadow-sm`}>
                           {CATEGORY_ICONS[cat.icon]}
                         </div>
-                        <h3 className="font-semibold text-xs text-slate-900 dark:text-white group-hover:text-[var(--color-primary)] dark:group-hover:text-[var(--color-primary)] transition-colors mb-1 leading-snug">
+                        <h3 className="font-semibold text-xs text-[var(--color-ink)] group-hover:text-[var(--color-primary)] dark:group-hover:text-[var(--color-primary)] transition-colors mb-1 leading-snug">
                           {cat.name}
                         </h3>
-                        <p className="text-[10px] text-slate-400">
+                        <p className="text-[10px] text-[var(--color-ink-3)]">
                           {cat.articleCount} article{cat.articleCount !== 1 ? "s" : ""}
                         </p>
                       </div>
@@ -331,7 +331,7 @@ export default function HelpCenter() {
             {/* Featured / recommended for your role */}
             <section>
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-bold text-slate-900 dark:text-white">
+                <h2 className="text-lg font-bold text-[var(--color-ink)]">
                   {role === "owner" ? "Owner essentials" : "Recommended for you"}
                 </h2>
                 <Link
@@ -351,7 +351,7 @@ export default function HelpCenter() {
 
             {/* Quick FAQ accordion */}
             <section>
-              <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-4">
+              <h2 className="text-lg font-bold text-[var(--color-ink)] mb-4">
                 Quick answers
               </h2>
               <div className="space-y-2">
@@ -362,14 +362,14 @@ export default function HelpCenter() {
             </section>
 
             {/* Escalation / Contact support */}
-            <section className="rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
-              <div className="bg-[var(--color-primary)] from-slate-50 to-indigo-50/40 dark:from-slate-900 dark:to-primary-900/10 p-6 md:p-8">
+            <section className="rounded-2xl border border-[var(--color-line)] overflow-hidden">
+              <div className="bg-[var(--color-primary)] from-[var(--color-surface)] to-[var(--color-primary-50)] dark:from-[var(--color-surface)] dark:to-primary-900/10 p-6 md:p-8">
                 <div className="flex flex-col md:flex-row items-start md:items-center gap-6 md:gap-10">
                   <div className="flex-1">
-                    <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-1">
+                    <h2 className="text-lg font-bold text-[var(--color-ink)] mb-1">
                       Still need help?
                     </h2>
-                    <p className="text-sm text-slate-500 dark:text-slate-400">
+                    <p className="text-sm text-[var(--color-ink-3)]">
                       Our support team is here for you. We typically respond within 24 hours on business days.
                     </p>
                   </div>
@@ -383,7 +383,7 @@ export default function HelpCenter() {
                     </Link>
                     <a
                       href="mailto:support@migrent.com.au"
-                      className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold transition-colors shadow-sm"
+                      className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-[var(--color-surface-2)] hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-surface-muted)] text-[var(--color-ink-2)] border border-[var(--color-line)] rounded-xl text-sm font-semibold transition-colors shadow-sm"
                     >
                       <Mail className="w-4 h-4" />
                       Email support
@@ -391,18 +391,18 @@ export default function HelpCenter() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-3 gap-3 mt-6 pt-6 border-t border-slate-200 dark:border-slate-700">
+                <div className="grid grid-cols-3 gap-3 mt-6 pt-6 border-t border-[var(--color-line)]">
                   <div className="text-center">
                     <p className="text-xl font-black text-[var(--color-primary)] dark:text-[var(--color-primary)]">24h</p>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Response time</p>
+                    <p className="text-xs text-[var(--color-ink-3)] mt-0.5">Response time</p>
                   </div>
-                  <div className="text-center border-x border-slate-200 dark:border-slate-700">
+                  <div className="text-center border-x border-[var(--color-line)]">
                     <p className="text-xl font-black text-[var(--color-primary)] dark:text-[var(--color-primary)]">5 days</p>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Mon - Fri support</p>
+                    <p className="text-xs text-[var(--color-ink-3)] mt-0.5">Mon - Fri support</p>
                   </div>
                   <div className="text-center">
                     <p className="text-xl font-black text-[var(--color-primary)] dark:text-[var(--color-primary)]">AU</p>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Australia-based</p>
+                    <p className="text-xs text-[var(--color-ink-3)] mt-0.5">Australia-based</p>
                   </div>
                 </div>
               </div>

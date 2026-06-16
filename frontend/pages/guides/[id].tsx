@@ -7,8 +7,8 @@ import TableOfContents from "../../components/content/TableOfContents";
 import { getGuideById, getAllGuides } from "../../data/guidesContent";
 
 const difficultyColors: Record<string, string> = {
-  Beginner: "bg-green-50 dark:bg-green-500/10 text-green-600 dark:text-green-400",
-  Intermediate: "bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400",
+  Beginner: "bg-[var(--color-accent-50)] dark:bg-[var(--color-accent-50)]0/10 text-[var(--color-accent)] dark:text-[var(--color-accent)]",
+  Intermediate: "bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/10 text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)]",
   Advanced: "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary-soft)]0/10 text-[var(--color-primary)] dark:text-[var(--color-primary)]",
 };
 
@@ -21,7 +21,7 @@ export default function GuidePage() {
   if (!guide) {
     return (
       <div className="text-center py-20">
-        <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">Guide not found</h1>
+        <h1 className="text-2xl font-bold text-[var(--color-ink)] mb-4">Guide not found</h1>
         <Link href="/guides" className="btn-primary px-6 py-2.5 rounded-xl inline-block">
           Back to Guides
         </Link>
@@ -101,23 +101,23 @@ export default function GuidePage() {
                   <span className={`w-8 h-8 rounded-full bg-[var(--color-primary-soft)] ${guide.gradient} flex items-center justify-center text-sm font-bold text-white shrink-0 mt-0.5`}>
                     {i + 1}
                   </span>
-                  <h2 className="text-xl font-bold text-slate-900 dark:text-white">{section.title}</h2>
+                  <h2 className="text-xl font-bold text-[var(--color-ink)]">{section.title}</h2>
                 </div>
                 <div className="pl-12 space-y-4">
                   {section.content.map((paragraph, pi) => (
-                    <p key={pi} className="text-slate-600 dark:text-slate-400 leading-relaxed">
+                    <p key={pi} className="text-[var(--color-ink-2)] leading-relaxed">
                       {paragraph}
                     </p>
                   ))}
                   {section.tip && (
-                    <div className={`rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 p-4 mt-4`}>
+                    <div className={`rounded-xl border border-[var(--color-line)] bg-[var(--color-surface)] p-4 mt-4`}>
                       <div className="flex items-center gap-2 mb-2">
                         <svg className={`w-4 h-4 ${guide.color}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
                         </svg>
-                        <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">Tip</span>
+                        <span className="text-sm font-semibold text-[var(--color-ink-2)]">Tip</span>
                       </div>
-                      <p className="text-sm text-slate-500 dark:text-slate-400">{section.tip}</p>
+                      <p className="text-sm text-[var(--color-ink-3)]">{section.tip}</p>
                     </div>
                   )}
                 </div>
@@ -126,8 +126,8 @@ export default function GuidePage() {
 
             {/* Related guides */}
             {relatedGuides.length > 0 && (
-              <section className="mt-16 pt-8 border-t border-slate-200 dark:border-slate-700">
-                <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4">Related Guides</h3>
+              <section className="mt-16 pt-8 border-t border-[var(--color-line)]">
+                <h3 className="text-lg font-bold text-[var(--color-ink)] mb-4">Related Guides</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {relatedGuides.map((rg) =>
                     rg ? (
@@ -142,8 +142,8 @@ export default function GuidePage() {
                             </svg>
                           </div>
                           <div>
-                            <div className="text-sm font-semibold text-slate-900 dark:text-white">{rg.title}</div>
-                            <div className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
+                            <div className="text-sm font-semibold text-[var(--color-ink)]">{rg.title}</div>
+                            <div className="text-xs text-[var(--color-ink-3)] mt-0.5">
                               {rg.difficulty} &middot; {rg.readTime}
                             </div>
                           </div>

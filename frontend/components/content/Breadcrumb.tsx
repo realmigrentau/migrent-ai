@@ -7,8 +7,8 @@ interface BreadcrumbItem {
 
 export default function Breadcrumb({ items }: { items: BreadcrumbItem[] }) {
   return (
-    <nav className="flex items-center gap-2 text-xs text-slate-400 dark:text-slate-500 mb-8">
-      <Link href="/" className="hover:text-slate-600 dark:hover:text-slate-300 transition-colors">
+    <nav className="flex items-center gap-2 text-xs text-[var(--color-ink-3)] mb-8">
+      <Link href="/" className="hover:text-[var(--color-ink-2)] dark:hover:text-[var(--color-ink-4)] transition-colors">
         Home
       </Link>
       {items.map((item, i) => (
@@ -17,11 +17,11 @@ export default function Breadcrumb({ items }: { items: BreadcrumbItem[] }) {
             <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
           </svg>
           {item.href ? (
-            <Link href={item.href} className="hover:text-slate-600 dark:hover:text-slate-300 transition-colors">
+            <Link href={item.href} className="hover:text-[var(--color-ink-2)] dark:hover:text-[var(--color-ink-4)] transition-colors">
               {item.label}
             </Link>
           ) : (
-            <span className="text-slate-600 dark:text-slate-300 font-medium">{item.label}</span>
+            <span className="text-[var(--color-ink-2)] font-medium">{item.label}</span>
           )}
         </span>
       ))}

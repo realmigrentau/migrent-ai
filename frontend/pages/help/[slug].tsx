@@ -44,11 +44,11 @@ const CATEGORY_ICONS: Record<string, React.ReactNode> = {
 };
 
 const TYPE_BADGE: Record<string, { label: string; color: string }> = {
-  guide: { label: "Step-by-step guide", color: "bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400" },
-  faq: { label: "Quick answer", color: "bg-[var(--color-accent-soft)] text-[var(--color-accent)] dark:bg-emerald-900/20 dark:text-[var(--color-accent)]" },
-  troubleshoot: { label: "Troubleshooting", color: "bg-amber-50 text-amber-600 dark:bg-amber-900/20 dark:text-amber-400" },
+  guide: { label: "Step-by-step guide", color: "bg-[var(--color-primary-50)] text-[var(--color-primary)] dark:bg-[var(--color-surface-muted)] dark:text-[var(--color-primary)]" },
+  faq: { label: "Quick answer", color: "bg-[var(--color-accent-soft)] text-[var(--color-accent)] dark:bg-[var(--color-surface-muted)] dark:text-[var(--color-accent)]" },
+  troubleshoot: { label: "Troubleshooting", color: "bg-[var(--color-warn-50)] text-[var(--color-warn-600)] dark:bg-[var(--color-surface-muted)] dark:text-[var(--color-warn-500)]" },
   policy: { label: "Policy & Legal", color: "bg-[var(--color-primary-soft)] text-[var(--color-primary)] dark:bg-primary-900/20 dark:text-[var(--color-primary)]" },
-  safety: { label: "Safety", color: "bg-[var(--color-primary-soft)] text-[var(--color-primary)] dark:bg-rose-900/20 dark:text-[var(--color-primary)]" },
+  safety: { label: "Safety", color: "bg-[var(--color-primary-soft)] text-[var(--color-primary)] dark:bg-[var(--color-surface-muted)] dark:text-[var(--color-primary)]" },
 };
 
 const AUDIENCE_LABEL: Record<string, string> = {
@@ -62,14 +62,14 @@ function renderBody(body: string) {
   return blocks.map((block, i) => {
     if (block.startsWith("## ")) {
       return (
-        <h2 key={i} className="text-xl font-bold text-slate-900 dark:text-white mt-8 mb-3 first:mt-0">
+        <h2 key={i} className="text-xl font-bold text-[var(--color-ink)] mt-8 mb-3 first:mt-0">
           {block.replace("## ", "")}
         </h2>
       );
     }
     if (block.startsWith("### ")) {
       return (
-        <h3 key={i} className="text-base font-semibold text-slate-800 dark:text-slate-100 mt-5 mb-2">
+        <h3 key={i} className="text-base font-semibold text-[var(--color-ink)] mt-5 mb-2">
           {block.replace("### ", "")}
         </h3>
       );
@@ -79,7 +79,7 @@ function renderBody(body: string) {
       return (
         <ul key={i} className="space-y-1.5 my-3">
           {items.map((line, j) => (
-            <li key={j} className="flex items-start gap-2 text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+            <li key={j} className="flex items-start gap-2 text-sm text-[var(--color-ink-2)] leading-relaxed">
               <CheckCircle2 className="w-4 h-4 text-[var(--color-primary)] shrink-0 mt-0.5" />
               <span>{line.replace(/^- /, "")}</span>
             </li>
@@ -89,7 +89,7 @@ function renderBody(body: string) {
     }
     if (block.trim() === "") return null;
     return (
-      <p key={i} className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed my-3">
+      <p key={i} className="text-sm text-[var(--color-ink-2)] leading-relaxed my-3">
         {block}
       </p>
     );
@@ -99,18 +99,18 @@ function renderBody(body: string) {
 function RelatedArticleRow({ article }: { article: StaticHelpArticle }) {
   return (
     <Link href={`/help/${article.slug}`}>
-      <div className="group flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer">
-        <BookOpen className="w-4 h-4 text-slate-400 group-hover:text-[var(--color-primary)] transition-colors shrink-0 mt-0.5" />
+      <div className="group flex items-start gap-3 p-3 rounded-xl hover:bg-[var(--color-surface)]/50 transition-colors cursor-pointer">
+        <BookOpen className="w-4 h-4 text-[var(--color-ink-3)] group-hover:text-[var(--color-primary)] transition-colors shrink-0 mt-0.5" />
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium text-slate-700 dark:text-slate-200 group-hover:text-[var(--color-primary)] dark:group-hover:text-[var(--color-primary)] transition-colors leading-snug">
+          <p className="text-sm font-medium text-[var(--color-ink-2)] group-hover:text-[var(--color-primary)] dark:group-hover:text-[var(--color-primary)] transition-colors leading-snug">
             {article.title}
           </p>
-          <p className="text-[11px] text-slate-400 mt-0.5 flex items-center gap-1">
+          <p className="text-[11px] text-[var(--color-ink-3)] mt-0.5 flex items-center gap-1">
             <Clock className="w-3 h-3" />
             {article.readingTime} min
           </p>
         </div>
-        <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-[var(--color-primary)] transition-colors shrink-0" />
+        <ChevronRight className="w-4 h-4 text-[var(--color-ink-4)] group-hover:text-[var(--color-primary)] transition-colors shrink-0" />
       </div>
     </Link>
   );
@@ -134,13 +134,13 @@ export default function HelpArticlePage() {
           <title>Article not found - MigRent Help</title>
         </Head>
         <div className="max-w-2xl mx-auto text-center py-20">
-          <div className="w-16 h-16 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center mx-auto mb-4">
-            <BookOpen className="w-7 h-7 text-slate-400" />
+          <div className="w-16 h-16 rounded-2xl bg-[var(--color-surface-muted)] flex items-center justify-center mx-auto mb-4">
+            <BookOpen className="w-7 h-7 text-[var(--color-ink-3)]" />
           </div>
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">
+          <h1 className="text-2xl font-bold text-[var(--color-ink)] mb-2">
             Article not found
           </h1>
-          <p className="text-slate-500 dark:text-slate-400 mb-6 text-sm">
+          <p className="text-[var(--color-ink-3)] mb-6 text-sm">
             This article doesn't exist or may have been moved. Try searching the Help Center.
           </p>
           <Link
@@ -172,7 +172,7 @@ export default function HelpArticlePage() {
           {/* Main article column */}
           <div>
             {/* Breadcrumb */}
-            <nav className="flex items-center gap-1.5 text-xs text-slate-400 mb-6 flex-wrap">
+            <nav className="flex items-center gap-1.5 text-xs text-[var(--color-ink-3)] mb-6 flex-wrap">
               <Link href="/help" className="hover:text-[var(--color-primary)] transition-colors font-medium">
                 Help Center
               </Link>
@@ -188,7 +188,7 @@ export default function HelpArticlePage() {
                   <ChevronRight className="w-3 h-3" />
                 </>
               )}
-              <span className="text-slate-600 dark:text-slate-300 truncate max-w-[200px]">
+              <span className="text-[var(--color-ink-2)] truncate max-w-[200px]">
                 {article.title}
               </span>
             </nav>
@@ -200,22 +200,22 @@ export default function HelpArticlePage() {
                   {typeBadge.label}
                 </span>
                 {article.audience !== "both" && (
-                  <span className="text-[11px] font-medium px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 flex items-center gap-1">
+                  <span className="text-[11px] font-medium px-2.5 py-1 rounded-full bg-[var(--color-surface-muted)] text-[var(--color-ink-3)] flex items-center gap-1">
                     <Users className="w-3 h-3" />
                     {AUDIENCE_LABEL[article.audience]}
                   </span>
                 )}
               </div>
 
-              <h1 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white mb-3 leading-tight">
+              <h1 className="text-2xl md:text-3xl font-black text-[var(--color-ink)] mb-3 leading-tight">
                 {article.title}
               </h1>
 
-              <p className="text-sm text-slate-500 dark:text-slate-400 mb-4 leading-relaxed">
+              <p className="text-sm text-[var(--color-ink-3)] mb-4 leading-relaxed">
                 {article.summary}
               </p>
 
-              <div className="flex items-center gap-4 text-xs text-slate-400 pb-6 border-b border-slate-100 dark:border-slate-800">
+              <div className="flex items-center gap-4 text-xs text-[var(--color-ink-3)] pb-6 border-b border-[var(--color-line)]">
                 <span className="flex items-center gap-1">
                   <Clock className="w-3.5 h-3.5" />
                   {article.readingTime} min read
@@ -233,12 +233,12 @@ export default function HelpArticlePage() {
 
               {/* Tags */}
               {article.tags.length > 0 && (
-                <div className="flex items-center gap-2 flex-wrap mt-8 pt-6 border-t border-slate-100 dark:border-slate-800">
-                  <span className="text-xs text-slate-400">Tags:</span>
+                <div className="flex items-center gap-2 flex-wrap mt-8 pt-6 border-t border-[var(--color-line)]">
+                  <span className="text-xs text-[var(--color-ink-3)]">Tags:</span>
                   {article.tags.map((tag) => (
                     <span
                       key={tag}
-                      className="text-[11px] px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400"
+                      className="text-[11px] px-2 py-0.5 rounded-md bg-[var(--color-surface-muted)] text-[var(--color-ink-3)]"
                     >
                       {tag}
                     </span>
@@ -247,23 +247,23 @@ export default function HelpArticlePage() {
               )}
 
               {/* Helpful feedback */}
-              <div className="mt-8 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/40 text-center">
+              <div className="mt-8 p-5 rounded-2xl border border-[var(--color-line)] bg-[var(--color-surface)]/40 text-center">
                 {voted === null ? (
                   <>
-                    <p className="text-sm font-semibold text-slate-800 dark:text-slate-100 mb-3">
+                    <p className="text-sm font-semibold text-[var(--color-ink)] mb-3">
                       Was this article helpful?
                     </p>
                     <div className="flex items-center justify-center gap-3">
                       <button
                         onClick={() => setVoted(true)}
-                        className="flex items-center gap-2 px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-emerald-400 hover:bg-[var(--color-accent-soft)] dark:hover:bg-emerald-900/20 text-sm text-slate-600 dark:text-slate-300 transition-colors font-medium"
+                        className="flex items-center gap-2 px-4 py-2 rounded-xl border border-[var(--color-line)] bg-[var(--color-surface-2)] hover:border-[var(--color-accent)] hover:bg-[var(--color-accent-soft)] dark:hover:bg-[var(--color-surface-muted)] text-sm text-[var(--color-ink-2)] transition-colors font-medium"
                       >
                         <ThumbsUp className="w-4 h-4 text-[var(--color-accent)]" />
                         Yes, helpful
                       </button>
                       <button
                         onClick={() => setVoted(false)}
-                        className="flex items-center gap-2 px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-[var(--color-line-2)] hover:bg-[var(--color-primary-soft)] dark:hover:bg-rose-900/20 text-sm text-slate-600 dark:text-slate-300 transition-colors font-medium"
+                        className="flex items-center gap-2 px-4 py-2 rounded-xl border border-[var(--color-line)] bg-[var(--color-surface-2)] hover:border-[var(--color-line-2)] hover:bg-[var(--color-primary-soft)] dark:hover:bg-[var(--color-surface-muted)] text-sm text-[var(--color-ink-2)] transition-colors font-medium"
                       >
                         <ThumbsDown className="w-4 h-4 text-[var(--color-primary)]" />
                         Not helpful
@@ -277,7 +277,7 @@ export default function HelpArticlePage() {
                   </div>
                 ) : (
                   <div className="space-y-2">
-                    <p className="text-sm font-medium text-slate-700 dark:text-slate-200">
+                    <p className="text-sm font-medium text-[var(--color-ink-2)]">
                       We'll work on improving this article.
                     </p>
                     <Link
@@ -291,11 +291,11 @@ export default function HelpArticlePage() {
               </div>
 
               {/* Bottom escalation */}
-              <div className="mt-6 p-5 rounded-2xl bg-[var(--color-primary)] from-indigo-50 to-blue-50 dark:from-primary-900/20 dark:to-blue-900/20 border border-[var(--color-primary-soft)] dark:border-primary-900/40">
-                <h3 className="font-bold text-slate-900 dark:text-white text-sm mb-1">
+              <div className="mt-6 p-5 rounded-2xl bg-[var(--color-primary)] from-[var(--color-primary-50)] to-[var(--color-primary-50)] dark:from-primary-900/20 dark:to-[var(--color-surface-muted)] border border-[var(--color-primary-soft)] dark:border-primary-900/40">
+                <h3 className="font-bold text-[var(--color-ink)] text-sm mb-1">
                   Still need help with this?
                 </h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mb-3">
+                <p className="text-xs text-[var(--color-ink-3)] mb-3">
                   Our support team responds within 24 hours.
                 </p>
                 <div className="flex flex-wrap gap-2">
@@ -308,7 +308,7 @@ export default function HelpArticlePage() {
                   </Link>
                   <a
                     href="mailto:support@migrent.com.au"
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-xs font-semibold transition-colors"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-surface-2)] hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-surface-muted)] border border-[var(--color-line)] text-[var(--color-ink-2)] rounded-lg text-xs font-semibold transition-colors"
                   >
                     <Mail className="w-3.5 h-3.5" />
                     Email support
@@ -320,7 +320,7 @@ export default function HelpArticlePage() {
               <div className="mt-6">
                 <Link
                   href="/help"
-                  className="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] transition-colors font-medium"
+                  className="inline-flex items-center gap-2 text-sm text-[var(--color-ink-3)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] transition-colors font-medium"
                 >
                   <ArrowLeft className="w-4 h-4" />
                   Back to Help Center
@@ -335,7 +335,7 @@ export default function HelpArticlePage() {
 
               {/* Category card */}
               {category && (
-                <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-hidden">
+                <div className="rounded-2xl border border-[var(--color-line)] bg-[var(--color-surface-2)] overflow-hidden">
                   <div className={`bg-[var(--color-primary-soft)] ${category.gradient} p-4`}>
                     <div className="flex items-center gap-2 text-white">
                       {CATEGORY_ICONS[category.icon]}
@@ -359,9 +359,9 @@ export default function HelpArticlePage() {
 
               {/* Related articles */}
               {related.length > 0 && (
-                <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-hidden">
-                  <div className="px-4 py-3 border-b border-slate-100 dark:border-slate-800">
-                    <h3 className="font-bold text-sm text-slate-900 dark:text-white">Related articles</h3>
+                <div className="rounded-2xl border border-[var(--color-line)] bg-[var(--color-surface-2)] overflow-hidden">
+                  <div className="px-4 py-3 border-b border-[var(--color-line)]">
+                    <h3 className="font-bold text-sm text-[var(--color-ink)]">Related articles</h3>
                   </div>
                   <div className="p-2">
                     {related.map((a) => (
@@ -372,11 +372,11 @@ export default function HelpArticlePage() {
               )}
 
               {/* Contact card */}
-              <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4">
-                <h3 className="font-bold text-sm text-slate-900 dark:text-white mb-1">
+              <div className="rounded-2xl border border-[var(--color-line)] bg-[var(--color-surface-2)] p-4">
+                <h3 className="font-bold text-sm text-[var(--color-ink)] mb-1">
                   Contact support
                 </h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mb-3">
+                <p className="text-xs text-[var(--color-ink-3)] mb-3">
                   Can't find what you need? We respond within 24 hours.
                 </p>
                 <Link

@@ -57,16 +57,16 @@ export default function LiveListings({ suburbName, listingsCount }: LiveListings
     <section id="listings" className="scroll-mt-8">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
+          <h2 className="text-2xl font-bold text-[var(--color-ink)]">
             Available Rooms
           </h2>
-          <p className="text-slate-500 dark:text-slate-400 mt-1">
+          <p className="text-[var(--color-ink-3)] mt-1">
             {listingsCount} verified rooms in {suburbName}
           </p>
         </div>
         <button
           onClick={() => setShowFilters(!showFilters)}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-[var(--color-line)] text-sm font-medium text-[var(--color-ink-2)] hover:bg-[var(--color-surface)] transition-colors"
         >
           <SlidersHorizontal className="w-4 h-4" />
           Filters
@@ -74,9 +74,9 @@ export default function LiveListings({ suburbName, listingsCount }: LiveListings
       </div>
 
       {showFilters && (
-        <div className="flex flex-wrap gap-4 mb-6 p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
+        <div className="flex flex-wrap gap-4 mb-6 p-4 rounded-xl bg-[var(--color-surface)] border border-[var(--color-line)]">
           <div className="flex items-center gap-3">
-            <label className="text-sm font-medium text-slate-700 dark:text-slate-300">
+            <label className="text-sm font-medium text-[var(--color-ink-2)]">
               Max price:
             </label>
             <input
@@ -88,14 +88,14 @@ export default function LiveListings({ suburbName, listingsCount }: LiveListings
               onChange={(e) => setMaxPrice(Number(e.target.value))}
               className="w-32 accent-teal-600"
             />
-            <span className="text-sm font-semibold text-teal-600">${maxPrice}/wk</span>
+            <span className="text-sm font-semibold text-[var(--color-primary)]">${maxPrice}/wk</span>
           </div>
-          <label className="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-300 cursor-pointer">
+          <label className="flex items-center gap-2 text-sm text-[var(--color-ink-2)] cursor-pointer">
             <input
               type="checkbox"
               checked={furnishedOnly}
               onChange={(e) => setFurnishedOnly(e.target.checked)}
-              className="rounded border-slate-300 text-teal-600 focus:ring-teal-500"
+              className="rounded border-[var(--color-line-2)] text-[var(--color-primary)] focus:ring-[var(--color-primary)]"
             />
             Furnished only
           </label>
@@ -107,17 +107,17 @@ export default function LiveListings({ suburbName, listingsCount }: LiveListings
           {[1, 2, 3].map((i) => (
             <div
               key={i}
-              className="animate-pulse rounded-xl bg-slate-200 dark:bg-slate-700 h-72"
+              className="animate-pulse rounded-xl bg-[var(--color-surface-muted)] dark:bg-[var(--color-surface-muted)] h-72"
             />
           ))}
         </div>
       ) : filtered.length === 0 ? (
-        <div className="text-center py-16 rounded-xl border-2 border-dashed border-slate-200 dark:border-slate-700">
-          <Home className="w-12 h-12 text-slate-400 mx-auto mb-4" />
-          <p className="text-slate-500 dark:text-slate-400 text-lg">
+        <div className="text-center py-16 rounded-xl border-2 border-dashed border-[var(--color-line)]">
+          <Home className="w-12 h-12 text-[var(--color-ink-3)] mx-auto mb-4" />
+          <p className="text-[var(--color-ink-3)] text-lg">
             No rooms matching your filters right now
           </p>
-          <p className="text-slate-400 dark:text-slate-500 text-sm mt-2">
+          <p className="text-[var(--color-ink-3)] text-sm mt-2">
             Try adjusting your filters or check back soon
           </p>
         </div>
@@ -127,9 +127,9 @@ export default function LiveListings({ suburbName, listingsCount }: LiveListings
             <Link
               key={listing.id}
               href={`/listing/${listing.id}`}
-              className="group rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+              className="group rounded-xl border border-[var(--color-line)] bg-[var(--color-surface-2)] overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
             >
-              <div className="aspect-[4/3] bg-slate-100 dark:bg-slate-700 relative overflow-hidden">
+              <div className="aspect-[4/3] bg-[var(--color-surface-muted)] relative overflow-hidden">
                 {listing.images?.[0] ? (
                   <img
                     src={listing.images[0]}
@@ -138,29 +138,29 @@ export default function LiveListings({ suburbName, listingsCount }: LiveListings
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
-                    <Home className="w-12 h-12 text-slate-300 dark:text-slate-600" />
+                    <Home className="w-12 h-12 text-[var(--color-ink-4)]" />
                   </div>
                 )}
-                <div className="absolute top-3 right-3 bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-bold text-teal-700 dark:text-teal-400">
+                <div className="absolute top-3 right-3 bg-white/90 dark:bg-[var(--color-surface)]/90 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-bold text-[var(--color-primary-700)] dark:text-[var(--color-primary)]">
                   ${listing.weekly_price}/wk
                 </div>
               </div>
               <div className="p-4">
-                <h3 className="font-semibold text-slate-900 dark:text-white truncate">
+                <h3 className="font-semibold text-[var(--color-ink)] truncate">
                   {listing.title || listing.address}
                 </h3>
-                <p className="flex items-center gap-1 text-sm text-slate-500 dark:text-slate-400 mt-1">
+                <p className="flex items-center gap-1 text-sm text-[var(--color-ink-3)] mt-1">
                   <MapPin className="w-3.5 h-3.5" />
                   {listing.address}
                 </p>
                 <div className="flex items-center gap-2 mt-3">
                   {listing.furnished && (
-                    <span className="text-xs px-2 py-0.5 rounded-full bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-400">
+                    <span className="text-xs px-2 py-0.5 rounded-full bg-[var(--color-primary-50)] dark:bg-[var(--color-primary-50)] text-[var(--color-primary-700)] dark:text-[var(--color-primary)]">
                       Furnished
                     </span>
                   )}
                   {listing.nearest_transport && (
-                    <span className="text-xs px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400">
+                    <span className="text-xs px-2 py-0.5 rounded-full bg-[var(--color-primary-50)] dark:bg-[var(--color-surface-muted)] text-[var(--color-primary-700)] dark:text-[var(--color-primary)]">
                       {listing.station_distance_min}min to station
                     </span>
                   )}
@@ -175,7 +175,7 @@ export default function LiveListings({ suburbName, listingsCount }: LiveListings
         <div className="text-center mt-8">
           <Link
             href={`/listings?suburb=${encodeURIComponent(suburbName)}`}
-            className="inline-flex items-center gap-2 px-6 py-3 bg-teal-600 text-white font-semibold rounded-xl hover:bg-teal-700 transition-colors"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-[var(--color-primary)] text-white font-semibold rounded-xl hover:bg-[var(--color-primary-700)] transition-colors"
           >
             <Search className="w-4 h-4" />
             View All Rooms in {suburbName}
