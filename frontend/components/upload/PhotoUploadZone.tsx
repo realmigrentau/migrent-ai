@@ -150,13 +150,13 @@ export default function PhotoUploadZone({
           ${
             isDragging
               ? "border-[var(--color-line-2)] dark:border-[var(--color-primary)] bg-[var(--color-primary-soft)]/50 dark:bg-[var(--color-primary)]/10 photo-drop-glow"
-              : "border-slate-300 dark:border-slate-600 hover:border-[var(--color-line-2)] dark:hover:border-[var(--color-primary)]/40"
+              : "border-[var(--color-line-2)] hover:border-[var(--color-line-2)] dark:hover:border-[var(--color-primary)]/40"
           }
           ${photos.length >= maxFiles ? "opacity-50 pointer-events-none" : ""}
         `}
       >
         {/* Glassmorphism background */}
-        <div className="absolute inset-0 bg-[var(--color-primary-soft)] from-white/80 to-slate-50/80 dark:from-slate-800/80 dark:to-slate-900/80 backdrop-blur-sm" />
+        <div className="absolute inset-0 bg-[var(--color-primary-soft)] from-white/80 to-slate-50/80 dark:from-[var(--color-ink)]/80 dark:to-slate-900/80 backdrop-blur-sm" />
 
         <div className="relative z-10">
           <div
@@ -164,14 +164,14 @@ export default function PhotoUploadZone({
             ${
               isDragging
                 ? "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/20 scale-110"
-                : "bg-slate-100 dark:bg-slate-800 group-hover:bg-[var(--color-primary-soft)] dark:group-hover:bg-[var(--color-primary)]/10"
+                : "bg-[var(--color-surface-muted)] group-hover:bg-[var(--color-primary-soft)] dark:group-hover:bg-[var(--color-primary)]/10"
             }`}
           >
             <svg
               className={`w-8 h-8 transition-colors duration-300 ${
                 isDragging
                   ? "text-[var(--color-primary)]"
-                  : "text-slate-400 dark:text-slate-500 group-hover:text-[var(--color-primary)]"
+                  : "text-[var(--color-ink-3)] group-hover:text-[var(--color-primary)]"
               }`}
               fill="none"
               viewBox="0 0 24 24"
@@ -186,12 +186,12 @@ export default function PhotoUploadZone({
             </svg>
           </div>
 
-          <p className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+          <p className="text-sm font-medium text-[var(--color-ink-2)] mb-1">
             {isDragging
               ? "Drop your photos here"
               : `Drop ${minFiles}-${maxFiles} photos here`}
           </p>
-          <p className="text-xs text-slate-400 dark:text-slate-500">
+          <p className="text-xs text-[var(--color-ink-3)]">
             or click to browse - JPG, PNG, WebP up to 10MB each
           </p>
           {photos.length > 0 && (
@@ -217,7 +217,7 @@ export default function PhotoUploadZone({
         <motion.p
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-xs text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20 rounded-xl px-3 py-2"
+          className="text-xs text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)] bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/10 border border-[var(--color-line-2)] dark:border-[var(--color-warn-500)]/20 rounded-xl px-3 py-2"
         >
           Add at least {minFiles} photos to continue. You have {photos.length} so
           far.
@@ -228,7 +228,7 @@ export default function PhotoUploadZone({
         <motion.p
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-xs text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-500/10 border border-teal-200 dark:border-teal-500/20 rounded-xl px-3 py-2"
+          className="text-xs text-[var(--color-primary)] dark:text-[var(--color-primary)] bg-[var(--color-primary-50)] dark:bg-[var(--color-primary-50)]0/10 border border-[var(--color-primary-100)] dark:border-teal-500/20 rounded-xl px-3 py-2"
         >
           Pro tip: First photo becomes the hero image. Drag to reorder.
         </motion.p>
@@ -268,7 +268,7 @@ export default function PhotoUploadZone({
                 onDragEnd={() => setDragOverIndex(null)}
                 className={`
                   relative group aspect-square rounded-xl overflow-hidden cursor-grab active:cursor-grabbing
-                  bg-slate-100 dark:bg-slate-800 border-2 transition-all
+                  bg-[var(--color-surface-muted)] border-2 transition-all
                   ${
                     dragOverIndex === index
                       ? "border-[var(--color-line-2)] dark:border-[var(--color-primary)] scale-105"
@@ -352,8 +352,8 @@ export default function PhotoUploadZone({
 
                 {/* Error overlay */}
                 {photo.status === "error" && (
-                  <div className="absolute inset-0 bg-red-500/20 flex items-center justify-center">
-                    <div className="w-6 h-6 rounded-full bg-red-500 flex items-center justify-center">
+                  <div className="absolute inset-0 bg-[var(--color-danger-50)]0/20 flex items-center justify-center">
+                    <div className="w-6 h-6 rounded-full bg-[var(--color-danger-50)]0 flex items-center justify-center">
                       <span className="text-white text-xs font-bold">!</span>
                     </div>
                   </div>
@@ -366,7 +366,7 @@ export default function PhotoUploadZone({
                       e.stopPropagation();
                       removePhoto(photo.id);
                     }}
-                    className="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-black/60 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-xs hover:bg-red-500"
+                    className="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-black/60 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-xs hover:bg-[var(--color-danger-50)]0"
                   >
                     &times;
                   </button>
@@ -386,7 +386,7 @@ export default function PhotoUploadZone({
           whileTap={{ scale: 0.98 }}
           onClick={handleUpload}
           disabled={uploading}
-          className="w-full py-3 rounded-xl text-sm font-semibold text-white bg-[var(--color-primary)] from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 transition-all shadow-lg shadow-teal-500/20 disabled:opacity-50"
+          className="w-full py-3 rounded-xl text-sm font-semibold text-white bg-[var(--color-primary)] from-[var(--color-primary-50)]0 to-teal-600 hover:from-[var(--color-primary)] hover:to-teal-700 transition-all shadow-lg shadow-teal-500/20 disabled:opacity-50"
         >
           Upload {photos.length} photos
         </motion.button>
@@ -400,16 +400,16 @@ export default function PhotoUploadZone({
           className="space-y-2"
         >
           <div className="flex items-center justify-between text-xs">
-            <span className="text-slate-500 dark:text-slate-400">
+            <span className="text-[var(--color-ink-3)]">
               Uploading {photos.length} photos...
             </span>
-            <span className="text-teal-600 dark:text-teal-400 font-medium">
+            <span className="text-[var(--color-primary)] dark:text-[var(--color-primary)] font-medium">
               {overallProgress}%
             </span>
           </div>
-          <div className="h-2 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
+          <div className="h-2 rounded-full bg-[var(--color-line)] overflow-hidden">
             <motion.div
-              className="h-full rounded-full bg-[var(--color-primary)] from-teal-400 to-teal-500"
+              className="h-full rounded-full bg-[var(--color-primary)] from-teal-400 to-[var(--color-primary)]"
               initial={{ width: 0 }}
               animate={{ width: `${overallProgress}%` }}
               transition={{ duration: 0.3 }}
@@ -449,7 +449,7 @@ export default function PhotoUploadZone({
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="text-xs text-red-500 dark:text-red-400"
+          className="text-xs text-[var(--color-danger-500)] dark:text-[var(--color-danger-500)]"
         >
           Some photos failed to upload. Click upload to retry.
         </motion.p>

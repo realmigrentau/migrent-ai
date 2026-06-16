@@ -23,10 +23,10 @@ const STATUS_CONFIG: Record<string, {
   icon: ReactElement;
 }> = {
   pending_approval: {
-    bg: "bg-amber-50 dark:bg-amber-500/10",
-    border: "border-amber-200 dark:border-amber-500/20",
-    iconColor: "text-amber-500",
-    textColor: "text-amber-800 dark:text-amber-300",
+    bg: "bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/10",
+    border: "border-[var(--color-line-2)] dark:border-[var(--color-warn-500)]/20",
+    iconColor: "text-[var(--color-warn-500)]",
+    textColor: "text-amber-800 dark:text-[var(--color-warn-500)]",
     title: "Pending Review",
     description: "Your listing is being reviewed by our team. This usually takes less than 24 hours.",
     icon: (
@@ -49,10 +49,10 @@ const STATUS_CONFIG: Record<string, {
     ),
   },
   flagged: {
-    bg: "bg-orange-50 dark:bg-orange-500/10",
-    border: "border-orange-200 dark:border-orange-500/20",
-    iconColor: "text-orange-500",
-    textColor: "text-orange-800 dark:text-orange-300",
+    bg: "bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]",
+    border: "border-[var(--color-line-2)] dark:border-[var(--color-warn-500)]/20",
+    iconColor: "text-[var(--color-warn-500)]",
+    textColor: "text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)]",
     title: "Under Review",
     description: "Your listing is being reviewed by our team. You will be notified once the review is complete.",
     icon: (
@@ -62,10 +62,10 @@ const STATUS_CONFIG: Record<string, {
     ),
   },
   hidden: {
-    bg: "bg-orange-50 dark:bg-orange-500/10",
-    border: "border-orange-200 dark:border-orange-500/20",
-    iconColor: "text-orange-500",
-    textColor: "text-orange-800 dark:text-orange-300",
+    bg: "bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]",
+    border: "border-[var(--color-line-2)] dark:border-[var(--color-warn-500)]/20",
+    iconColor: "text-[var(--color-warn-500)]",
+    textColor: "text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)]",
     title: "Under Review",
     description: "Your listing is temporarily not visible while our team reviews it. We will be in touch shortly.",
     icon: (
@@ -75,9 +75,9 @@ const STATUS_CONFIG: Record<string, {
     ),
   },
   changes_requested: {
-    bg: "bg-blue-50 dark:bg-blue-500/10",
-    border: "border-blue-200 dark:border-blue-500/20",
-    iconColor: "text-blue-500",
+    bg: "bg-[var(--color-primary-50)] dark:bg-[var(--color-primary)]/10",
+    border: "border-[var(--color-primary-100)] dark:border-[var(--color-primary)]/20",
+    iconColor: "text-[var(--color-primary)]",
     textColor: "text-blue-800 dark:text-blue-300",
     title: "Changes Requested",
     description: "Our team has requested some updates before your listing can go live.",
@@ -88,10 +88,10 @@ const STATUS_CONFIG: Record<string, {
     ),
   },
   rejected: {
-    bg: "bg-red-50 dark:bg-red-500/10",
-    border: "border-red-200 dark:border-red-500/20",
-    iconColor: "text-red-500",
-    textColor: "text-red-800 dark:text-red-300",
+    bg: "bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-50)]0/10",
+    border: "border-[var(--color-danger-500)]/30 dark:border-[var(--color-danger-500)]/20",
+    iconColor: "text-[var(--color-danger-500)]",
+    textColor: "text-[var(--color-danger-600)] dark:text-[var(--color-danger-500)]",
     title: "Not Approved",
     description: "Your listing was not approved. You can update it and resubmit for review.",
     icon: (
@@ -101,10 +101,10 @@ const STATUS_CONFIG: Record<string, {
     ),
   },
   delete_requested: {
-    bg: "bg-red-50 dark:bg-red-500/10",
-    border: "border-red-200 dark:border-red-500/20",
-    iconColor: "text-red-500",
-    textColor: "text-red-800 dark:text-red-300",
+    bg: "bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-50)]0/10",
+    border: "border-[var(--color-danger-500)]/30 dark:border-[var(--color-danger-500)]/20",
+    iconColor: "text-[var(--color-danger-500)]",
+    textColor: "text-[var(--color-danger-600)] dark:text-[var(--color-danger-500)]",
     title: "Under Review",
     description: "Your listing is currently under review by our team.",
     icon: (
@@ -114,10 +114,10 @@ const STATUS_CONFIG: Record<string, {
     ),
   },
   deleted: {
-    bg: "bg-slate-50 dark:bg-slate-500/10",
-    border: "border-slate-200 dark:border-slate-500/20",
-    iconColor: "text-slate-500",
-    textColor: "text-slate-700 dark:text-slate-400",
+    bg: "bg-[var(--color-surface)] dark:bg-[var(--color-surface)]0/10",
+    border: "border-[var(--color-line)] dark:border-slate-500/20",
+    iconColor: "text-[var(--color-ink-3)]",
+    textColor: "text-[var(--color-ink-2)] dark:text-[var(--color-ink-3)]",
     title: "Removed",
     description: "This listing has been removed. If you believe this was a mistake, please contact support.",
     icon: (
@@ -156,10 +156,10 @@ export default function ModerationStatusBanner({
           {/* Show moderation notes/reason if available */}
           {(status === "changes_requested" || status === "rejected") && moderationNotes && (
             <div className="mt-3 p-3 bg-white/60 dark:bg-white/5 rounded-lg">
-              <p className="text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">
+              <p className="text-xs font-medium text-[var(--color-ink-3)] mb-1">
                 Feedback from our team:
               </p>
-              <p className="text-sm text-slate-700 dark:text-slate-300">
+              <p className="text-sm text-[var(--color-ink-2)]">
                 {moderationNotes}
               </p>
             </div>
@@ -167,10 +167,10 @@ export default function ModerationStatusBanner({
 
           {status === "rejected" && moderationReason && !moderationNotes && (
             <div className="mt-3 p-3 bg-white/60 dark:bg-white/5 rounded-lg">
-              <p className="text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">
+              <p className="text-xs font-medium text-[var(--color-ink-3)] mb-1">
                 Reason:
               </p>
-              <p className="text-sm text-slate-700 dark:text-slate-300">
+              <p className="text-sm text-[var(--color-ink-2)]">
                 {moderationReason}
               </p>
             </div>

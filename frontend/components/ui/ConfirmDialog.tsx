@@ -173,7 +173,7 @@ export function ConfirmProvider({ children }: { children: ReactNode }) {
               type="button"
               aria-label="Close dialog"
               onClick={() => close(false)}
-              className="absolute inset-0 bg-slate-900/55 backdrop-blur-sm"
+              className="absolute inset-0 bg-[var(--color-ink)]/55 backdrop-blur-sm"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -189,7 +189,7 @@ export function ConfirmProvider({ children }: { children: ReactNode }) {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 8, scale: 0.98 }}
               transition={{ type: "spring", stiffness: 380, damping: 32 }}
-              className="relative w-full max-w-md rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-700/70 shadow-2xl p-6 sm:p-7"
+              className="relative w-full max-w-md rounded-2xl bg-[var(--color-surface-2)] border border-[var(--color-line)]/70 dark:border-[var(--color-line)]/70 shadow-2xl p-6 sm:p-7"
             >
               <div className="flex items-start gap-4">
                 <span
@@ -197,7 +197,7 @@ export function ConfirmProvider({ children }: { children: ReactNode }) {
                   className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${
                     active.tone === "danger"
                       ? "bg-rose-50 text-rose-600 dark:bg-rose-500/15 dark:text-rose-300"
-                      : "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-200"
+                      : "bg-[var(--color-surface-muted)] text-[var(--color-ink-2)] dark:bg-[var(--color-surface-muted)] dark:text-[var(--color-ink-4)]"
                   }`}
                 >
                   {active.tone === "danger" ? (
@@ -213,14 +213,14 @@ export function ConfirmProvider({ children }: { children: ReactNode }) {
                 <div className="flex-1 min-w-0">
                   <h2
                     id="confirm-dialog-title"
-                    className="text-base font-semibold tracking-tight text-slate-900 dark:text-white"
+                    className="text-base font-semibold tracking-tight text-[var(--color-ink)]"
                   >
                     {active.title}
                   </h2>
                   {active.description && (
                     <p
                       id="confirm-dialog-desc"
-                      className="mt-1.5 text-sm text-slate-600 dark:text-slate-400 leading-relaxed"
+                      className="mt-1.5 text-sm text-[var(--color-ink-2)] leading-relaxed"
                     >
                       {active.description}
                     </p>
@@ -233,7 +233,7 @@ export function ConfirmProvider({ children }: { children: ReactNode }) {
                   ref={cancelBtnRef}
                   type="button"
                   onClick={() => close(false)}
-                  className="inline-flex justify-center items-center h-11 px-5 rounded-xl text-sm font-semibold text-slate-700 dark:text-slate-200 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 transition-colors"
+                  className="inline-flex justify-center items-center h-11 px-5 rounded-xl text-sm font-semibold text-[var(--color-ink-2)] bg-[var(--color-surface-muted)] hover:bg-[var(--color-surface-muted)] dark:bg-[var(--color-surface-muted)] dark:hover:bg-[var(--color-surface-muted)] transition-colors"
                 >
                   {active.cancelLabel}
                 </button>
@@ -244,7 +244,7 @@ export function ConfirmProvider({ children }: { children: ReactNode }) {
                   className={`inline-flex justify-center items-center h-11 px-5 rounded-xl text-sm font-semibold text-white transition-colors shadow-sm ${
                     active.tone === "danger"
                       ? "bg-rose-600 hover:bg-rose-700"
-                      : "bg-slate-900 hover:bg-slate-800 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100"
+                      : "bg-[var(--color-ink)] hover:bg-[var(--color-ink)] dark:bg-white dark:text-[var(--color-ink)] dark:hover:bg-[var(--color-surface-muted)]"
                   }`}
                 >
                   {active.confirmLabel}

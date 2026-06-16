@@ -68,8 +68,8 @@ export default function ListingHero({
 
   if (!hasImages) {
     return (
-      <div className="aspect-[16/9] rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
-        <span className="text-slate-400 text-sm">No photos available</span>
+      <div className="aspect-[16/9] rounded-2xl bg-[var(--color-surface-muted)] flex items-center justify-center">
+        <span className="text-[var(--color-ink-3)] text-sm">No photos available</span>
       </div>
     );
   }
@@ -95,7 +95,7 @@ export default function ListingHero({
           {/* Badges */}
           <div className="absolute top-4 left-4 flex items-center gap-2">
             {instantBook && (
-              <span className="flex items-center gap-1 text-xs font-semibold text-amber-800 bg-amber-100/90 backdrop-blur-sm px-3 py-1.5 rounded-full">
+              <span className="flex items-center gap-1 text-xs font-semibold text-amber-800 bg-[var(--color-warn-50)]/90 backdrop-blur-sm px-3 py-1.5 rounded-full">
                 <Zap className="w-3 h-3" />
                 Instant Book
               </span>
@@ -131,18 +131,18 @@ export default function ListingHero({
                   e.stopPropagation();
                   goTo(-1);
                 }}
-                className="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-md hover:bg-white"
+                className="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/80 dark:bg-[var(--color-surface)]/80 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-md hover:bg-white"
               >
-                <ChevronLeft className="w-4 h-4 text-slate-700 dark:text-slate-200" />
+                <ChevronLeft className="w-4 h-4 text-[var(--color-ink-2)]" />
               </button>
               <button
                 onClick={(e) => {
                   e.stopPropagation();
                   goTo(1);
                 }}
-                className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-md hover:bg-white"
+                className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/80 dark:bg-[var(--color-surface)]/80 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-md hover:bg-white"
               >
-                <ChevronRight className="w-4 h-4 text-slate-700 dark:text-slate-200" />
+                <ChevronRight className="w-4 h-4 text-[var(--color-ink-2)]" />
               </button>
             </>
           )}

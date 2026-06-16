@@ -56,12 +56,12 @@ export default function SeekerDashboard() {
         <motion.div
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800 rounded-2xl p-6 md:p-8"
+          className="bg-[var(--color-surface-2)] border border-[var(--color-line)]/70 dark:border-slate-800 rounded-2xl p-6 md:p-8"
         >
-          <h1 className="text-2xl md:text-3xl font-semibold tracking-tight text-slate-900 dark:text-white">
+          <h1 className="text-2xl md:text-3xl font-semibold tracking-tight text-[var(--color-ink)]">
             Hi {displayName || "there"} <span className="inline-block">&#128075;</span>
           </h1>
-          <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
+          <p className="mt-2 text-sm text-[var(--color-ink-2)]">
             {metrics ? (
               <>
                 {metrics.recommended > 0 && (
@@ -70,10 +70,10 @@ export default function SeekerDashboard() {
                   </span>
                 )}
                 {metrics.recommended > 0 && metrics.pending_requests > 0 && (
-                  <span className="text-slate-400"> &middot; </span>
+                  <span className="text-[var(--color-ink-3)]"> &middot; </span>
                 )}
                 {metrics.pending_requests > 0 && (
-                  <span className="font-medium text-amber-600 dark:text-amber-400">
+                  <span className="font-medium text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)]">
                     {metrics.pending_requests} booking request
                     {metrics.pending_requests !== 1 ? "s" : ""} pending
                   </span>
@@ -91,7 +91,7 @@ export default function SeekerDashboard() {
           <div className="mt-5 max-w-md">
             <button
               onClick={() => router.push("/seeker/search")}
-              className="w-full flex items-center gap-3 px-4 h-11 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200/70 dark:border-slate-800 text-slate-500 hover:border-slate-300 dark:hover:border-slate-700 transition-colors text-left"
+              className="w-full flex items-center gap-3 px-4 h-11 rounded-xl bg-[var(--color-surface)] border border-[var(--color-line)]/70 dark:border-slate-800 text-[var(--color-ink-3)] hover:border-[var(--color-line-2)] dark:hover:border-slate-700 transition-colors text-left"
             >
               <Search className="w-4 h-4" />
               <span className="text-sm">Search rooms by suburb or postcode...</span>
@@ -107,7 +107,7 @@ export default function SeekerDashboard() {
         {/* 3. Bookings Section */}
         <section>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold tracking-tight text-slate-900 dark:text-white">
+            <h2 className="text-xl font-semibold tracking-tight text-[var(--color-ink)]">
               My Bookings
             </h2>
             {bookings.length > 0 && (
@@ -131,7 +131,7 @@ export default function SeekerDashboard() {
         {/* 4. Saved Listings (Wishlist) */}
         <section>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
+            <h2 className="text-xl font-semibold tracking-tight text-[var(--color-ink)] flex items-center gap-2">
               <Heart className="w-5 h-5 text-[var(--color-primary)]" />
               Saved Listings
             </h2>
@@ -152,11 +152,11 @@ export default function SeekerDashboard() {
         <section>
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h2 className="text-xl font-semibold tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
+              <h2 className="text-xl font-semibold tracking-tight text-[var(--color-ink)] flex items-center gap-2">
                 <Star className="w-5 h-5 text-[var(--color-primary)]" />
                 Perfect for You
               </h2>
-              <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
+              <p className="text-xs text-[var(--color-ink-3)] mt-1">
                 AI-suggested based on your preferences
               </p>
             </div>
@@ -166,7 +166,7 @@ export default function SeekerDashboard() {
 
         {/* 6. Quick Actions */}
         <section>
-          <h2 className="text-xl font-semibold tracking-tight text-slate-900 dark:text-white mb-4">
+          <h2 className="text-xl font-semibold tracking-tight text-[var(--color-ink)] mb-4">
             Quick Actions
           </h2>
           <div className="grid sm:grid-cols-3 gap-3">
@@ -208,10 +208,10 @@ export default function SeekerDashboard() {
                     >
                       {action.icon}
                     </div>
-                    <h3 className="font-semibold text-slate-900 dark:text-white text-sm tracking-tight">
+                    <h3 className="font-semibold text-[var(--color-ink)] text-sm tracking-tight">
                       {action.label}
                     </h3>
-                    <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
+                    <p className="text-xs text-[var(--color-ink-2)] mt-0.5">
                       {action.desc}
                     </p>
                   </div>
@@ -222,7 +222,7 @@ export default function SeekerDashboard() {
         </section>
 
         {/* Platform fee info */}
-        <section className="card-subtle p-5 rounded-2xl text-sm text-slate-500 dark:text-slate-400">
+        <section className="card-subtle p-5 rounded-2xl text-sm text-[var(--color-ink-3)]">
           <p>
             When you successfully secure a place through MigRent, a small
             one-time platform fee of AUD 19 may be offered. This fee is optional
@@ -231,7 +231,7 @@ export default function SeekerDashboard() {
         </section>
 
         {/* Disclaimers */}
-        <section className="text-xs text-slate-400 dark:text-slate-500 space-y-2 pb-4">
+        <section className="text-xs text-[var(--color-ink-3)] space-y-2 pb-4">
           <p>
             Match scores and any suggestions are assistive only and do not
             constitute advice or guarantees.

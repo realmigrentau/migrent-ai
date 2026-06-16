@@ -17,14 +17,14 @@ export default function ServerError() {
           transition={{ duration: 0.5 }}
           className="text-center max-w-md"
         >
-          <div className="w-20 h-20 rounded-2xl bg-amber-50 dark:bg-amber-500/10 border border-amber-100 dark:border-amber-500/20 flex items-center justify-center mx-auto mb-6">
-            <span className="text-4xl font-black text-amber-500">500</span>
+          <div className="w-20 h-20 rounded-2xl bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/10 border border-[var(--color-line-2)] dark:border-[var(--color-warn-500)]/20 flex items-center justify-center mx-auto mb-6">
+            <span className="text-4xl font-black text-[var(--color-warn-500)]">500</span>
           </div>
 
-          <h1 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white mb-3">
+          <h1 className="text-2xl font-black tracking-tight text-[var(--color-ink)] mb-3">
             Something went wrong
           </h1>
-          <p className="text-slate-500 dark:text-slate-400 mb-8">
+          <p className="text-[var(--color-ink-3)] mb-8">
             We are working on fixing this. Please try again in a moment.
           </p>
 

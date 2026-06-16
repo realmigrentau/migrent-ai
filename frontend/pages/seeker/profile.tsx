@@ -209,8 +209,8 @@ export default function SeekerProfilePage() {
   if (!session)
     return (
       <div className="card p-8 rounded-2xl text-center max-w-md mx-auto mt-12">
-        <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Sign in required</h2>
-        <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">
+        <h2 className="text-lg font-bold text-[var(--color-ink)] mb-2">Sign in required</h2>
+        <p className="text-sm text-[var(--color-ink-3)] mb-4">
           You need to sign in to edit your profile.
         </p>
         <Link href="/signin" className="btn-primary py-3 px-6 rounded-xl text-sm inline-block">
@@ -222,10 +222,10 @@ export default function SeekerProfilePage() {
   return (
     <div className="max-w-2xl mx-auto space-y-8">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-        <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white">
+        <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-[var(--color-ink)]">
           My Profile
         </h1>
-        <p className="text-sm text-slate-500 dark:text-slate-400 mt-2">
+        <p className="text-sm text-[var(--color-ink-3)] mt-2">
           Build your tenant profile to stand out to owners.
         </p>
       </motion.div>
@@ -267,15 +267,15 @@ export default function SeekerProfilePage() {
             />
           </div>
           <div className="flex-1">
-            <h2 className="text-xl font-bold text-slate-900 dark:text-white">{profile.name || "Your Name"}</h2>
-            <p className="text-sm text-slate-500 dark:text-slate-400">{profile.occupation || "Add your occupation"}</p>
+            <h2 className="text-xl font-bold text-[var(--color-ink)]">{profile.name || "Your Name"}</h2>
+            <p className="text-sm text-[var(--color-ink-3)]">{profile.occupation || "Add your occupation"}</p>
             {/* Badges as pills */}
             {earnedBadgeKeys.length > 0 && (
               <div className="flex flex-wrap gap-1.5 mt-2">
                 {earnedBadgeKeys.map((badge) => (
                   <span
                     key={badge}
-                    className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-500/20"
+                    className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/10 text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)] border border-[var(--color-line-2)] dark:border-[var(--color-warn-500)]/20"
                   >
                     {badge}
                   </span>
@@ -288,7 +288,7 @@ export default function SeekerProfilePage() {
                 {profile.uselessSkill}
               </span>
             )}
-            <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">Click photo to change</p>
+            <p className="text-xs text-[var(--color-ink-3)] mt-1">Click photo to change</p>
           </div>
         </div>
       </motion.section>
@@ -300,7 +300,7 @@ export default function SeekerProfilePage() {
         transition={{ delay: 0.08 }}
         className="card p-6 rounded-2xl space-y-4"
       >
-        <h2 className="text-lg font-bold text-slate-900 dark:text-white">About me</h2>
+        <h2 className="text-lg font-bold text-[var(--color-ink)]">About me</h2>
         <textarea
           value={profile.bio}
           onChange={(e) => update("bio", e.target.value.slice(0, 200))}
@@ -309,9 +309,9 @@ export default function SeekerProfilePage() {
           className="input-field text-sm"
           maxLength={200}
         />
-        <p className="text-xs text-slate-400 dark:text-slate-500">{profile.bio.length}/200</p>
+        <p className="text-xs text-[var(--color-ink-3)]">{profile.bio.length}/200</p>
         <div>
-          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
+          <label className="block text-sm font-medium text-[var(--color-ink-2)] mb-1.5">
             My most useless skill
           </label>
           <input
@@ -321,7 +321,7 @@ export default function SeekerProfilePage() {
             placeholder="e.g. I can solve a Rubik's cube blindfolded, I can name every country backwards..."
             className="input-field text-sm"
           />
-          <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-1">This is a fun ice-breaker that owners love</p>
+          <p className="text-[11px] text-[var(--color-ink-3)] mt-1">This is a fun ice-breaker that owners love</p>
         </div>
       </motion.section>
 
@@ -332,8 +332,8 @@ export default function SeekerProfilePage() {
         transition={{ delay: 0.1 }}
         className="card p-6 rounded-2xl space-y-4"
       >
-        <h2 className="text-lg font-bold text-slate-900 dark:text-white">Interests</h2>
-        <p className="text-sm text-slate-500 dark:text-slate-400">Pick what you enjoy (max 5) - helps find like-minded housemates.</p>
+        <h2 className="text-lg font-bold text-[var(--color-ink)]">Interests</h2>
+        <p className="text-sm text-[var(--color-ink-3)]">Pick what you enjoy (max 5) - helps find like-minded housemates.</p>
         <div className="flex flex-wrap gap-2">
           {INTEREST_OPTIONS.map((item) => {
             const active = profile.interests.includes(item);
@@ -346,8 +346,8 @@ export default function SeekerProfilePage() {
                   active
                     ? "bg-[var(--color-primary)] text-white shadow-sm"
                     : profile.interests.length >= 5
-                    ? "bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 border border-slate-200 dark:border-slate-700 cursor-not-allowed"
-                    : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-[var(--color-line-2)] dark:hover:border-[var(--color-primary)]/30"
+                    ? "bg-[var(--color-surface-muted)] text-[var(--color-ink-3)] border border-[var(--color-line)] cursor-not-allowed"
+                    : "bg-[var(--color-surface-muted)] text-[var(--color-ink-2)] border border-[var(--color-line)] hover:border-[var(--color-line-2)] dark:hover:border-[var(--color-primary)]/30"
                 }`}
               >
                 {active ? "✓ " : ""}{item}
@@ -355,7 +355,7 @@ export default function SeekerProfilePage() {
             );
           })}
         </div>
-        <p className="text-xs text-slate-400">{profile.interests.length}/5 selected</p>
+        <p className="text-xs text-[var(--color-ink-3)]">{profile.interests.length}/5 selected</p>
       </motion.section>
 
       {/* Badges */}
@@ -365,8 +365,8 @@ export default function SeekerProfilePage() {
         transition={{ delay: 0.12 }}
         className="card p-6 rounded-2xl space-y-4"
       >
-        <h2 className="text-lg font-bold text-slate-900 dark:text-white">Badges</h2>
-        <p className="text-sm text-slate-500 dark:text-slate-400">Earn badges as you use MigRent. They show on your profile to owners.</p>
+        <h2 className="text-lg font-bold text-[var(--color-ink)]">Badges</h2>
+        <p className="text-sm text-[var(--color-ink-3)]">Earn badges as you use MigRent. They show on your profile to owners.</p>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           {SEEKER_BADGES.map((badge) => {
             const earned = earnedBadgeKeys.includes(badge.key);
@@ -376,14 +376,14 @@ export default function SeekerProfilePage() {
                 className={`relative p-4 rounded-xl border text-center transition-all ${
                   earned
                     ? "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)]"
-                    : "bg-slate-50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 opacity-50"
+                    : "bg-[var(--color-surface)] border-[var(--color-line)] opacity-50"
                 }`}
               >
                 <div className="text-2xl mb-1.5">{badge.icon}</div>
-                <h4 className={`text-sm font-bold ${earned ? "text-[var(--color-primary)] dark:text-[var(--color-primary)]" : "text-slate-400 dark:text-slate-500"}`}>
+                <h4 className={`text-sm font-bold ${earned ? "text-[var(--color-primary)] dark:text-[var(--color-primary)]" : "text-[var(--color-ink-3)]"}`}>
                   {badge.label}
                 </h4>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">{badge.desc}</p>
+                <p className="text-[11px] text-[var(--color-ink-3)] mt-0.5">{badge.desc}</p>
                 {earned && (
                   <div className="absolute top-2 right-2">
                     <span className="text-[var(--color-accent)] text-xs font-bold">✓</span>
@@ -391,7 +391,7 @@ export default function SeekerProfilePage() {
                 )}
                 {!earned && (
                   <div className="absolute top-2 right-2">
-                    <svg className="w-3.5 h-3.5 text-slate-300 dark:text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <svg className="w-3.5 h-3.5 text-[var(--color-ink-4)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                     </svg>
                   </div>
@@ -409,15 +409,15 @@ export default function SeekerProfilePage() {
         transition={{ delay: 0.16 }}
         className="card-subtle p-4 rounded-xl"
       >
-        <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">Verification status</h3>
+        <h3 className="text-sm font-semibold text-[var(--color-ink-2)] mb-3">Verification status</h3>
         <div className="flex flex-wrap gap-2">
           <span className="px-3 py-1.5 rounded-full text-xs font-semibold bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 text-[var(--color-accent)] dark:text-[var(--color-accent)] border border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)]">
             ✓ Email verified
           </span>
-          <span className="px-3 py-1.5 rounded-full text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
+          <span className="px-3 py-1.5 rounded-full text-xs font-semibold bg-[var(--color-surface-muted)] text-[var(--color-ink-3)] border border-[var(--color-line)]">
             ○ ID not verified
           </span>
-          <span className="px-3 py-1.5 rounded-full text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
+          <span className="px-3 py-1.5 rounded-full text-xs font-semibold bg-[var(--color-surface-muted)] text-[var(--color-ink-3)] border border-[var(--color-line)]">
             ○ Income not verified
           </span>
         </div>
@@ -430,10 +430,10 @@ export default function SeekerProfilePage() {
         transition={{ delay: 0.18 }}
         className="card p-6 rounded-2xl space-y-4"
       >
-        <h2 className="text-lg font-bold text-slate-900 dark:text-white">Personal information</h2>
+        <h2 className="text-lg font-bold text-[var(--color-ink)]">Personal information</h2>
         <div className="grid sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Full name</label>
+            <label className="block text-sm font-medium text-[var(--color-ink-2)] mb-1.5">Full name</label>
             <input
               type="text"
               value={profile.name}
@@ -443,7 +443,7 @@ export default function SeekerProfilePage() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Age</label>
+            <label className="block text-sm font-medium text-[var(--color-ink-2)] mb-1.5">Age</label>
             <input
               type="number"
               value={profile.age}
@@ -453,7 +453,7 @@ export default function SeekerProfilePage() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Occupation</label>
+            <label className="block text-sm font-medium text-[var(--color-ink-2)] mb-1.5">Occupation</label>
             <input
               type="text"
               value={profile.occupation}
@@ -463,7 +463,7 @@ export default function SeekerProfilePage() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Visa type</label>
+            <label className="block text-sm font-medium text-[var(--color-ink-2)] mb-1.5">Visa type</label>
             <select
               value={profile.visaType}
               onChange={(e) => update("visaType", e.target.value)}
@@ -489,10 +489,10 @@ export default function SeekerProfilePage() {
         transition={{ delay: 0.2 }}
         className="card p-6 rounded-2xl space-y-4"
       >
-        <h2 className="text-lg font-bold text-slate-900 dark:text-white">Preferences</h2>
+        <h2 className="text-lg font-bold text-[var(--color-ink)]">Preferences</h2>
         <div className="grid sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
+            <label className="block text-sm font-medium text-[var(--color-ink-2)] mb-1.5">
               Budget range ($/wk)
             </label>
             <div className="flex items-center gap-2">
@@ -503,7 +503,7 @@ export default function SeekerProfilePage() {
                 placeholder="150"
                 className="input-field"
               />
-              <span className="text-slate-400">–</span>
+              <span className="text-[var(--color-ink-3)]">–</span>
               <input
                 type="number"
                 value={profile.budgetMax}
@@ -514,7 +514,7 @@ export default function SeekerProfilePage() {
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Move-in date</label>
+            <label className="block text-sm font-medium text-[var(--color-ink-2)] mb-1.5">Move-in date</label>
             <input
               type="date"
               value={profile.moveInDate}
@@ -524,7 +524,7 @@ export default function SeekerProfilePage() {
           </div>
         </div>
         <div>
-          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
+          <label className="block text-sm font-medium text-[var(--color-ink-2)] mb-1.5">
             Preferred suburbs
           </label>
           <input
@@ -544,8 +544,8 @@ export default function SeekerProfilePage() {
         transition={{ delay: 0.22 }}
         className="card p-6 rounded-2xl space-y-4"
       >
-        <h2 className="text-lg font-bold text-slate-900 dark:text-white">Lifestyle</h2>
-        <p className="text-sm text-slate-500 dark:text-slate-400">Select tags that describe you.</p>
+        <h2 className="text-lg font-bold text-[var(--color-ink)]">Lifestyle</h2>
+        <p className="text-sm text-[var(--color-ink-3)]">Select tags that describe you.</p>
         <div className="flex flex-wrap gap-2">
           {LIFESTYLE_OPTIONS.map((item) => {
             const active = profile.lifestyle.includes(item);
@@ -556,7 +556,7 @@ export default function SeekerProfilePage() {
                 className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
                   active
                     ? "bg-[var(--color-primary)] text-white"
-                    : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-[var(--color-line-2)] dark:hover:border-[var(--color-primary)]/30"
+                    : "bg-[var(--color-surface-muted)] text-[var(--color-ink-2)] border border-[var(--color-line)] hover:border-[var(--color-line-2)] dark:hover:border-[var(--color-primary)]/30"
                 }`}
               >
                 {active ? "✓ " : ""}{item}

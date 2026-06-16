@@ -61,7 +61,7 @@ export default function AvatarWithVerification({
         {/* Verified check badge */}
         {isVerified && (
           <div
-            className="absolute -bottom-0.5 -right-0.5 bg-white dark:bg-slate-900 rounded-full p-0.5"
+            className="absolute -bottom-0.5 -right-0.5 bg-[var(--color-surface-2)] rounded-full p-0.5"
             style={{
               width: size * 0.35,
               height: size * 0.35,

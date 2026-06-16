@@ -36,7 +36,7 @@ function StarPicker({ value, onChange, label, size = "lg" }: {
 
   return (
     <div>
-      <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-2">
+      <label className="block text-sm font-medium text-[var(--color-ink-2)] mb-2">
         {label}
       </label>
       <div className="flex gap-1">
@@ -52,8 +52,8 @@ function StarPicker({ value, onChange, label, size = "lg" }: {
             <svg
               className={`${starSize} transition-colors ${
                 star <= (hover || value)
-                  ? "text-amber-400"
-                  : "text-slate-200 dark:text-slate-700"
+                  ? "text-[var(--color-warn-500)]"
+                  : "text-[var(--color-ink-4)] dark:text-[var(--color-ink-2)]"
               }`}
               viewBox="0 0 24 24"
               fill="currentColor"
@@ -63,7 +63,7 @@ function StarPicker({ value, onChange, label, size = "lg" }: {
           </button>
         ))}
         {value > 0 && (
-          <span className="ml-2 text-sm text-slate-500 dark:text-slate-400 self-center">
+          <span className="ml-2 text-sm text-[var(--color-ink-3)] self-center">
             {value}/5
           </span>
         )}
@@ -120,7 +120,7 @@ export default function ReviewForm({
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Context info */}
       <div className="card-subtle p-4 rounded-xl">
-        <p className="text-sm text-slate-600 dark:text-slate-300">
+        <p className="text-sm text-[var(--color-ink-2)]">
           {isSeeker ? (
             <>Reviewing <strong>{otherUserName}</strong>{listingTitle ? <> for <strong>{listingTitle}</strong></> : null}</>
           ) : (
@@ -143,7 +143,7 @@ export default function ReviewForm({
           />
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-2">
+            <label className="block text-sm font-medium text-[var(--color-ink-2)] mb-2">
               Communication Language
             </label>
             <select
@@ -171,7 +171,7 @@ export default function ReviewForm({
 
       {/* Review text */}
       <div>
-        <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-2">
+        <label className="block text-sm font-medium text-[var(--color-ink-2)] mb-2">
           Your Review
         </label>
         <textarea
@@ -186,14 +186,14 @@ export default function ReviewForm({
           maxLength={2000}
           className="input-field resize-none"
         />
-        <p className="text-xs text-slate-400 mt-1 text-right">
+        <p className="text-xs text-[var(--color-ink-3)] mt-1 text-right">
           {reviewText.length}/2000
         </p>
       </div>
 
       {error && (
-        <div className="p-3 rounded-xl bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20">
-          <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+        <div className="p-3 rounded-xl bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-50)]0/10 border border-[var(--color-danger-500)]/30 dark:border-[var(--color-danger-500)]/20">
+          <p className="text-sm text-[var(--color-danger-500)] dark:text-[var(--color-danger-500)]">{error}</p>
         </div>
       )}
 

@@ -15,7 +15,7 @@ function StarDisplay({ rating, size = "sm" }: { rating: number; size?: "sm" | "x
         <svg
           key={s}
           className={`${starSize} ${
-            s <= rating ? "text-amber-400" : "text-slate-200 dark:text-slate-700"
+            s <= rating ? "text-[var(--color-warn-500)]" : "text-[var(--color-ink-4)] dark:text-[var(--color-ink-2)]"
           }`}
           viewBox="0 0 24 24"
           fill="currentColor"
@@ -64,14 +64,14 @@ export default function ReviewCard({ review, showListingContext }: ReviewCardPro
       {/* Header: stars + time */}
       <div className="flex items-start justify-between">
         <StarDisplay rating={review.rating} />
-        <span className="text-[10px] text-slate-400 dark:text-slate-500">
+        <span className="text-[10px] text-[var(--color-ink-3)]">
           {formatTimeAgo(review.created_at)}
         </span>
       </div>
 
       {/* Review text */}
       {review.review_text && (
-        <p className="mt-3 text-sm text-slate-700 dark:text-slate-200 leading-relaxed">
+        <p className="mt-3 text-sm text-[var(--color-ink-2)] leading-relaxed">
           &ldquo;{review.review_text}&rdquo;
         </p>
       )}
@@ -79,7 +79,7 @@ export default function ReviewCard({ review, showListingContext }: ReviewCardPro
       {/* Sub-ratings */}
       <div className="mt-3 flex flex-wrap gap-2">
         {isSeeker && review.migrant_friendliness && (
-          <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-teal-50 dark:bg-teal-500/10 text-xs text-teal-700 dark:text-teal-300">
+          <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-[var(--color-primary-50)] dark:bg-[var(--color-primary-50)]0/10 text-xs text-[var(--color-primary-700)] dark:text-teal-300">
             <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor">
               <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
             </svg>
@@ -87,7 +87,7 @@ export default function ReviewCard({ review, showListingContext }: ReviewCardPro
           </span>
         )}
         {isSeeker && review.communication_language && (
-          <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-blue-50 dark:bg-blue-500/10 text-xs text-blue-700 dark:text-blue-300">
+          <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-[var(--color-primary-50)] dark:bg-[var(--color-primary)]/10 text-xs text-[var(--color-primary-700)] dark:text-blue-300">
             <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor">
               <path d="M12.87 15.07l-2.54-2.51.03-.03A17.52 17.52 0 0014.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z" />
             </svg>
@@ -105,14 +105,14 @@ export default function ReviewCard({ review, showListingContext }: ReviewCardPro
           </span>
         )}
         {!isSeeker && review.payment_rating && (
-          <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-amber-50 dark:bg-amber-500/10 text-xs text-amber-700 dark:text-amber-300">
+          <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/10 text-xs text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)]">
             Payment {review.payment_rating}/5
           </span>
         )}
       </div>
 
       {/* Reviewer info */}
-      <div className="flex items-center justify-between mt-4 pt-3 border-t border-slate-100 dark:border-slate-800">
+      <div className="flex items-center justify-between mt-4 pt-3 border-t border-[var(--color-line)]">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-full bg-[var(--color-primary-soft)] from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center overflow-hidden">
             {review.reviewer_photo ? (
@@ -124,10 +124,10 @@ export default function ReviewCard({ review, showListingContext }: ReviewCardPro
             )}
           </div>
           <div>
-            <p className="text-xs font-semibold text-slate-900 dark:text-white">
+            <p className="text-xs font-semibold text-[var(--color-ink)]">
               {review.reviewer_name || "Anonymous"}
             </p>
-            <p className="text-[10px] text-slate-400">
+            <p className="text-[10px] text-[var(--color-ink-3)]">
               {isSeeker ? "Tenant" : "Owner"}
             </p>
           </div>
@@ -137,7 +137,7 @@ export default function ReviewCard({ review, showListingContext }: ReviewCardPro
         {!flagged && !showFlagInput && (
           <button
             onClick={() => setShowFlagInput(true)}
-            className="text-xs text-slate-400 hover:text-red-500 transition-colors"
+            className="text-xs text-[var(--color-ink-3)] hover:text-[var(--color-danger-500)] transition-colors"
             title="Report this review"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -146,7 +146,7 @@ export default function ReviewCard({ review, showListingContext }: ReviewCardPro
           </button>
         )}
         {flagged && (
-          <span className="text-xs text-red-400">Reported</span>
+          <span className="text-xs text-[var(--color-danger-500)]">Reported</span>
         )}
       </div>
 
@@ -169,13 +169,13 @@ export default function ReviewCard({ review, showListingContext }: ReviewCardPro
             <button
               onClick={handleFlag}
               disabled={flagging || flagReason.length < 5}
-              className="text-xs px-3 py-1.5 rounded-lg bg-red-500 text-white hover:bg-red-600 disabled:opacity-50 transition-colors"
+              className="text-xs px-3 py-1.5 rounded-lg bg-[var(--color-danger-50)]0 text-white hover:bg-[var(--color-danger-500)] disabled:opacity-50 transition-colors"
             >
               {flagging ? "Reporting..." : "Report"}
             </button>
             <button
               onClick={() => { setShowFlagInput(false); setFlagReason(""); }}
-              className="text-xs px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+              className="text-xs px-3 py-1.5 rounded-lg bg-[var(--color-surface-muted)] text-[var(--color-ink-2)] hover:bg-[var(--color-surface-muted)] transition-colors"
             >
               Cancel
             </button>

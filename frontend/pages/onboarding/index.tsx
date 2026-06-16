@@ -265,9 +265,9 @@ export default function OnboardingPage() {
 
   if (!isReady) {
     return (
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center p-4">
         <div className="text-center">
-          <div className="w-10 h-10 border-2 border-slate-300 dark:border-slate-600 border-t-slate-600 dark:border-t-slate-300 rounded-full animate-spin mx-auto" />
+          <div className="w-10 h-10 border-2 border-[var(--color-line-2)] border-t-slate-600 dark:border-t-slate-300 rounded-full animate-spin mx-auto" />
           <p className="text-sm text-[var(--color-ink-2)] mt-4">Loading...</p>
         </div>
       </div>
@@ -439,13 +439,13 @@ export default function OnboardingPage() {
                       placeholder="Auto-detected from your suburb"
                       className={`w-full px-3.5 py-2.5 bg-[var(--color-surface-sunk)] border rounded-lg text-sm cursor-default ${
                         stationError && !stationLoading
-                          ? "border-amber-300 dark:border-amber-600 text-amber-600 dark:text-amber-400"
+                          ? "border-amber-300 dark:border-amber-600 text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)]"
                           : "border-[var(--color-line)] text-[var(--color-ink-2)]"
                       }`}
                     />
                     {stationLoading && (
                       <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                        <div className="w-4 h-4 border-2 border-slate-300 dark:border-slate-600 border-t-slate-600 dark:border-t-slate-300 rounded-full animate-spin" />
+                        <div className="w-4 h-4 border-2 border-[var(--color-line-2)] border-t-slate-600 dark:border-t-slate-300 rounded-full animate-spin" />
                       </div>
                     )}
                   </div>
@@ -509,7 +509,7 @@ export default function OnboardingPage() {
                   className="px-6 mt-4"
                 >
                   <div className="flex items-center gap-2 text-sm text-[var(--color-ink-2)]">
-                    <div className="w-3.5 h-3.5 border-2 border-slate-300 dark:border-slate-600 border-t-slate-600 dark:border-t-slate-300 rounded-full animate-spin" />
+                    <div className="w-3.5 h-3.5 border-2 border-[var(--color-line-2)] border-t-slate-600 dark:border-t-slate-300 rounded-full animate-spin" />
                     Verifying your details...
                   </div>
                 </motion.div>
@@ -589,7 +589,7 @@ function FormField({
     <div>
       <label className="block text-[12.5px] font-semibold text-[var(--color-ink-2)] mb-1.5">
         {label}
-        {required && <span className="text-red-400 ml-0.5">*</span>}
+        {required && <span className="text-[var(--color-danger-500)] ml-0.5">*</span>}
       </label>
       <input
         type={type}
@@ -599,12 +599,12 @@ function FormField({
         maxLength={maxLength}
         className={`w-full px-3.5 py-2.5 border rounded-lg text-sm transition-colors outline-none ${
           error
-            ? "border-red-300 dark:border-red-700 bg-red-50/50 dark:bg-red-950/30 text-slate-900 dark:text-slate-100 focus:border-red-400 dark:focus:border-red-600 focus:ring-1 focus:ring-red-100 dark:focus:ring-red-900/50"
-            : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:border-slate-400 dark:focus:border-slate-500 focus:ring-1 focus:ring-slate-100 dark:focus:ring-slate-700/50"
+            ? "border-[var(--color-danger-500)]/30 dark:border-red-700 bg-[var(--color-danger-50)]/50 dark:bg-red-950/30 text-[var(--color-ink)] dark:text-[var(--color-primary-fg)] focus:border-red-400 dark:focus:border-red-600 focus:ring-1 focus:ring-red-100 dark:focus:ring-red-900/50"
+            : "border-[var(--color-line)] bg-[var(--color-surface-2)] text-[var(--color-ink)] dark:text-[var(--color-primary-fg)] focus:border-slate-400 dark:focus:border-slate-500 focus:ring-1 focus:ring-slate-100 dark:focus:ring-slate-700/50"
         }`}
       />
       {hint && !error && (
-        <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">{hint}</p>
+        <p className="text-xs text-[var(--color-ink-3)] mt-1">{hint}</p>
       )}
       <AnimatePresence>
         {error && (
@@ -612,7 +612,7 @@ function FormField({
             initial={{ opacity: 0, y: -4 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -4 }}
-            className="text-xs text-red-500 dark:text-red-400 mt-1"
+            className="text-xs text-[var(--color-danger-500)] dark:text-[var(--color-danger-500)] mt-1"
           >
             {error}
           </motion.p>

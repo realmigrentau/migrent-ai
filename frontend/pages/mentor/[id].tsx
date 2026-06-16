@@ -125,7 +125,7 @@ export default function MentorProfilePage() {
   if (!mentor) {
     return (
       <div className="max-w-3xl mx-auto px-4 py-12 text-center">
-        <h1 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Mentor not found</h1>
+        <h1 className="text-xl font-bold text-[var(--color-ink)] mb-2">Mentor not found</h1>
         <Link href="/mentors" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] text-sm font-medium">
           Back to directory
         </Link>
@@ -146,7 +146,7 @@ export default function MentorProfilePage() {
 
       <div className="max-w-3xl mx-auto px-4 py-8 space-y-6">
         {/* Back */}
-        <Link href="/mentors" className="inline-flex items-center gap-1 text-sm text-slate-500 hover:text-[var(--color-primary)] transition-colors">
+        <Link href="/mentors" className="inline-flex items-center gap-1 text-sm text-[var(--color-ink-3)] hover:text-[var(--color-primary)] transition-colors">
           <ChevronLeft className="w-4 h-4" />
           Back to mentors
         </Link>
@@ -171,7 +171,7 @@ export default function MentorProfilePage() {
 
             <div className="flex-1 space-y-2">
               <div className="flex items-center gap-2 flex-wrap">
-                <h1 className="text-xl font-bold text-slate-900 dark:text-white">{name}</h1>
+                <h1 className="text-xl font-bold text-[var(--color-ink)]">{name}</h1>
                 {mentor.profiles?.verified && (
                   <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/20 text-[var(--color-accent)] dark:text-[var(--color-accent)]">
                     <Shield className="w-3 h-3" />
@@ -180,14 +180,14 @@ export default function MentorProfilePage() {
                 )}
               </div>
 
-              <div className="flex items-center gap-3 text-sm text-slate-500 dark:text-slate-400 flex-wrap">
+              <div className="flex items-center gap-3 text-sm text-[var(--color-ink-3)] flex-wrap">
                 <span className="flex items-center gap-1">
                   <MapPin className="w-4 h-4" />
                   {mentor.suburb}{mentor.postcode ? ` (${mentor.postcode})` : ""}
                 </span>
                 {mentor.rating > 0 && (
                   <span className="flex items-center gap-1">
-                    <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
+                    <Star className="w-4 h-4 text-[var(--color-warn-500)] fill-amber-500" />
                     {mentor.rating.toFixed(1)} ({mentor.review_count} review{mentor.review_count !== 1 ? "s" : ""})
                   </span>
                 )}
@@ -212,7 +212,7 @@ export default function MentorProfilePage() {
               <div className="bg-[var(--color-primary)] text-white font-bold text-xl px-5 py-2 rounded-xl inline-block">
                 {priceDisplay}
               </div>
-              <p className="text-xs text-slate-500 mt-1">per session</p>
+              <p className="text-xs text-[var(--color-ink-3)] mt-1">per session</p>
             </div>
           </div>
         </motion.div>
@@ -225,8 +225,8 @@ export default function MentorProfilePage() {
             transition={{ delay: 0.1 }}
             className="card p-6"
           >
-            <h2 className="text-base font-bold text-slate-900 dark:text-white mb-3">About {name}</h2>
-            <p className="text-sm text-slate-600 dark:text-slate-300 whitespace-pre-line leading-relaxed">
+            <h2 className="text-base font-bold text-[var(--color-ink)] mb-3">About {name}</h2>
+            <p className="text-sm text-[var(--color-ink-2)] whitespace-pre-line leading-relaxed">
               {mentor.bio}
             </p>
           </motion.div>
@@ -240,7 +240,7 @@ export default function MentorProfilePage() {
             transition={{ delay: 0.15 }}
             className="card p-6"
           >
-            <h2 className="text-base font-bold text-slate-900 dark:text-white mb-3">Can Help With</h2>
+            <h2 className="text-base font-bold text-[var(--color-ink)] mb-3">Can Help With</h2>
             <div className="flex flex-wrap gap-2">
               {mentor.specialties.map((spec) => (
                 <span
@@ -261,14 +261,14 @@ export default function MentorProfilePage() {
           transition={{ delay: 0.2 }}
           className="card p-6 space-y-4"
         >
-          <h2 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+          <h2 className="text-base font-bold text-[var(--color-ink)] flex items-center gap-2">
             <Calendar className="w-5 h-5 text-[var(--color-primary)]" />
             Book a Session
           </h2>
 
           {/* Session type */}
           <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+            <label className="block text-sm font-medium text-[var(--color-ink-2)] mb-2">
               Session Type
             </label>
             <div className="grid grid-cols-3 gap-2">
@@ -283,7 +283,7 @@ export default function MentorProfilePage() {
                   className={`flex flex-col items-center gap-1.5 p-3 rounded-xl text-xs font-medium transition-colors ${
                     sessionType === type.value
                       ? "bg-[var(--color-primary)] text-white"
-                      : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200"
+                      : "bg-[var(--color-surface-muted)] text-[var(--color-ink-2)] hover:bg-[var(--color-surface-muted)]"
                   }`}
                 >
                   {type.icon}
@@ -295,20 +295,20 @@ export default function MentorProfilePage() {
 
           {/* Schedule */}
           <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+            <label className="block text-sm font-medium text-[var(--color-ink-2)] mb-1">
               Preferred Date & Time (optional)
             </label>
             <input
               type="datetime-local"
               value={scheduledAt}
               onChange={(e) => setScheduledAt(e.target.value)}
-              className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-[var(--color-ink)]/30 focus:border-transparent outline-none"
+              className="w-full px-4 py-2.5 bg-[var(--color-surface)] border border-[var(--color-line)] rounded-xl text-sm focus:ring-2 focus:ring-[var(--color-ink)]/30 focus:border-transparent outline-none"
             />
           </div>
 
           {/* Notes */}
           <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+            <label className="block text-sm font-medium text-[var(--color-ink-2)] mb-1">
               Message for {name} (optional)
             </label>
             <textarea
@@ -317,18 +317,18 @@ export default function MentorProfilePage() {
               placeholder="e.g. I just arrived from India and need help finding groceries and setting up Medicare..."
               rows={3}
               maxLength={1000}
-              className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-[var(--color-ink)]/30 focus:border-transparent outline-none resize-none"
+              className="w-full px-4 py-2.5 bg-[var(--color-surface)] border border-[var(--color-line)] rounded-xl text-sm focus:ring-2 focus:ring-[var(--color-ink)]/30 focus:border-transparent outline-none resize-none"
             />
           </div>
 
           {/* Price summary */}
-          <div className="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-4 flex items-center justify-between">
+          <div className="bg-[var(--color-surface)] rounded-xl p-4 flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-slate-700 dark:text-slate-300">Session total</p>
-              <p className="text-xs text-slate-500">Secure payment via Stripe</p>
+              <p className="text-sm font-medium text-[var(--color-ink-2)]">Session total</p>
+              <p className="text-xs text-[var(--color-ink-3)]">Secure payment via Stripe</p>
             </div>
             <div className="text-right">
-              <p className="text-xl font-bold text-slate-900 dark:text-white">{priceDisplay} AUD</p>
+              <p className="text-xl font-bold text-[var(--color-ink)]">{priceDisplay} AUD</p>
             </div>
           </div>
 
@@ -337,7 +337,7 @@ export default function MentorProfilePage() {
             whileTap={{ scale: 0.98 }}
             onClick={handleBook}
             disabled={booking}
-            className="w-full bg-[var(--color-primary)] from-[var(--color-primary)] to-pink-600 hover:from-primary-700 hover:to-pink-700 text-white font-semibold py-3 rounded-xl text-sm transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+            className="w-full bg-[var(--color-primary)] from-[var(--color-primary)] to-[var(--color-primary)] hover:from-primary-700 hover:to-pink-700 text-white font-semibold py-3 rounded-xl text-sm transition-all disabled:opacity-50 flex items-center justify-center gap-2"
           >
             {booking ? (
               <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -358,13 +358,13 @@ export default function MentorProfilePage() {
             transition={{ delay: 0.25 }}
             className="card p-6"
           >
-            <h2 className="text-base font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-              <Star className="w-5 h-5 text-amber-500" />
+            <h2 className="text-base font-bold text-[var(--color-ink)] mb-4 flex items-center gap-2">
+              <Star className="w-5 h-5 text-[var(--color-warn-500)]" />
               Reviews ({mentor.review_count})
             </h2>
             <div className="space-y-4">
               {mentor.reviews.map((review) => (
-                <div key={review.id} className="border-b border-slate-100 dark:border-slate-800 last:border-0 pb-4 last:pb-0">
+                <div key={review.id} className="border-b border-[var(--color-line)] last:border-0 pb-4 last:pb-0">
                   <div className="flex items-center gap-2 mb-2">
                     <div className="w-7 h-7 rounded-full bg-[var(--color-primary-soft)] from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center overflow-hidden">
                       {review.profiles?.custom_pfp ? (
@@ -375,7 +375,7 @@ export default function MentorProfilePage() {
                         </span>
                       )}
                     </div>
-                    <span className="text-sm font-medium text-slate-900 dark:text-white">
+                    <span className="text-sm font-medium text-[var(--color-ink)]">
                       {review.profiles?.name || "Anonymous"}
                     </span>
                     <div className="flex items-center gap-0.5">
@@ -384,15 +384,15 @@ export default function MentorProfilePage() {
                           key={i}
                           className={`w-3 h-3 ${
                             i < review.rating
-                              ? "text-amber-500 fill-amber-500"
-                              : "text-slate-300 dark:text-slate-600"
+                              ? "text-[var(--color-warn-500)] fill-amber-500"
+                              : "text-[var(--color-ink-4)]"
                           }`}
                         />
                       ))}
                     </div>
                   </div>
                   {review.comment && (
-                    <p className="text-sm text-slate-600 dark:text-slate-300">{review.comment}</p>
+                    <p className="text-sm text-[var(--color-ink-2)]">{review.comment}</p>
                   )}
                 </div>
               ))}

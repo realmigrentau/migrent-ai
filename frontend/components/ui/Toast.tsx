@@ -76,20 +76,20 @@ const ICONS: Record<ToastVariant, ReactNode> = {
 
 const VARIANT_STYLES: Record<ToastVariant, string> = {
   success:
-    "bg-emerald-50/95 dark:bg-emerald-500/15 border-emerald-200 dark:border-emerald-500/30 text-emerald-900 dark:text-emerald-100",
+    "bg-[var(--color-accent-50)]/95 dark:bg-[var(--color-accent-50)]0/15 border-[var(--color-accent-100)] dark:border-emerald-500/30 text-emerald-900 dark:text-emerald-100",
   error:
     "bg-rose-50/95 dark:bg-rose-500/15 border-rose-200 dark:border-rose-500/30 text-rose-900 dark:text-rose-100",
   info:
-    "bg-slate-50/95 dark:bg-slate-800/95 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100",
+    "bg-[var(--color-surface)]/95 dark:bg-[var(--color-surface-muted)]/95 border-[var(--color-line)] text-[var(--color-ink)] dark:text-[var(--color-primary-fg)]",
   warning:
-    "bg-amber-50/95 dark:bg-amber-500/15 border-amber-200 dark:border-amber-500/30 text-amber-900 dark:text-amber-100",
+    "bg-[var(--color-warn-50)]/95 dark:bg-[var(--color-warn-50)]0/15 border-[var(--color-line-2)] dark:border-amber-500/30 text-[var(--color-warn-600)] dark:text-amber-100",
 };
 
 const ICON_BG: Record<ToastVariant, string> = {
-  success: "bg-emerald-500 text-white",
+  success: "bg-[var(--color-accent-50)]0 text-white",
   error: "bg-rose-500 text-white",
-  info: "bg-slate-700 text-white dark:bg-slate-200 dark:text-slate-900",
-  warning: "bg-amber-500 text-white",
+  info: "bg-[var(--color-surface-muted)] text-white dark:bg-[var(--color-surface-muted)] dark:text-[var(--color-ink)]",
+  warning: "bg-[var(--color-warn-50)]0 text-white",
 };
 
 export function ToastProvider({ children }: { children: ReactNode }) {

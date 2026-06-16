@@ -111,7 +111,7 @@ export default function OwnerDashboard() {
   return (
     <div className="space-y-10">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-        <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white">
+        <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-[var(--color-ink)]">
           Owner Dashboard
         </h1>
       </motion.div>
@@ -124,7 +124,7 @@ export default function OwnerDashboard() {
           transition={{ delay: 0.1 }}
           className="card p-6 rounded-2xl max-w-md"
         >
-          <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-4">Sign in or register</h2>
+          <h2 className="text-lg font-bold text-[var(--color-ink)] mb-4">Sign in or register</h2>
           <div className="space-y-3">
             <input
               type="email"
@@ -160,10 +160,10 @@ export default function OwnerDashboard() {
             </div>
             <div className="relative py-2">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-slate-200 dark:border-slate-700" />
+                <div className="w-full border-t border-[var(--color-line)]" />
               </div>
               <div className="relative flex justify-center text-xs">
-                <span className="px-3 text-slate-400 dark:text-slate-500 bg-white dark:bg-slate-900 rounded-full">or</span>
+                <span className="px-3 text-[var(--color-ink-3)] bg-[var(--color-surface-2)] rounded-full">or</span>
               </div>
             </div>
             <SignInButton redirectTo={typeof window !== "undefined" ? window.location.href : undefined} />
@@ -182,7 +182,7 @@ export default function OwnerDashboard() {
                 className={`text-sm p-3 rounded-xl ${
                   authError.includes("Check your email")
                     ? "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 border border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)] text-[var(--color-accent)] dark:text-[var(--color-accent)]"
-                    : "bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 text-red-600 dark:text-red-400"
+                    : "bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-50)]0/10 border border-[var(--color-danger-500)]/30 dark:border-[var(--color-danger-500)]/20 text-[var(--color-danger-500)] dark:text-[var(--color-danger-500)]"
                 }`}
               >
                 {authError}
@@ -197,10 +197,10 @@ export default function OwnerDashboard() {
           className="card-subtle p-4 rounded-xl flex items-center gap-3"
         >
           <div className="pulse-dot" />
-          <span className="text-sm text-slate-600 dark:text-slate-300">
-            Signed in as <strong className="text-slate-900 dark:text-white">{user?.email}</strong>
+          <span className="text-sm text-[var(--color-ink-2)]">
+            Signed in as <strong className="text-[var(--color-ink)]">{user?.email}</strong>
           </span>
-          <Link href="/account/settings" className="text-slate-500 hover:text-[var(--color-primary)] text-sm transition-colors ml-auto">
+          <Link href="/account/settings" className="text-[var(--color-ink-3)] hover:text-[var(--color-primary)] text-sm transition-colors ml-auto">
             Settings
           </Link>
           <button onClick={signOut} className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] text-sm underline underline-offset-2 transition-colors">
@@ -229,11 +229,11 @@ export default function OwnerDashboard() {
               transition={{ duration: 0.15 }}
               className="card p-5 rounded-2xl hover:shadow-md dark:hover:shadow-2xl group cursor-pointer block"
             >
-              <svg className="w-8 h-8 text-blue-500 mb-3 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <svg className="w-8 h-8 text-[var(--color-primary)] mb-3 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d={card.icon} />
               </svg>
-              <h3 className="font-bold text-slate-900 dark:text-white text-sm">{card.label}</h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{card.desc}</p>
+              <h3 className="font-bold text-[var(--color-ink)] text-sm">{card.label}</h3>
+              <p className="text-xs text-[var(--color-ink-3)] mt-0.5">{card.desc}</p>
             </motion.a>
           ))}
         </motion.section>
@@ -245,10 +245,10 @@ export default function OwnerDashboard() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
       >
-        <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-3">
+        <h2 className="text-xl font-bold text-[var(--color-ink)] mb-3">
           Why use MigRent as an owner
         </h2>
-        <p className="text-sm text-slate-500 dark:text-slate-400 mb-4 leading-relaxed">
+        <p className="text-sm text-[var(--color-ink-3)] mb-4 leading-relaxed">
           MigRent brings more serious, better-fit enquiries through simple
           profiles and optional verification. AI-assisted matching means less
           time filtering. You only pay a one-time AUD 99 fee on successful
@@ -268,9 +268,9 @@ export default function OwnerDashboard() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.05 }}
-              className="flex gap-2 items-start text-sm text-slate-600 dark:text-slate-300"
+              className="flex gap-2 items-start text-sm text-[var(--color-ink-2)]"
             >
-              <span className="text-blue-500 mt-0.5 shrink-0">&#x2713;</span>
+              <span className="text-[var(--color-primary)] mt-0.5 shrink-0">&#x2713;</span>
               {text}
             </motion.div>
           ))}
@@ -283,7 +283,7 @@ export default function OwnerDashboard() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-4">Create a listing</h2>
+          <h2 className="text-xl font-bold text-[var(--color-ink)] mb-4">Create a listing</h2>
           <div className="card p-6 rounded-2xl max-w-md space-y-4">
             <input
               type="text"
@@ -328,7 +328,7 @@ export default function OwnerDashboard() {
                 className={`text-sm p-3 rounded-xl ${
                   formMsg.includes("created")
                     ? "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 border border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)] text-[var(--color-accent)] dark:text-[var(--color-accent)]"
-                    : "bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20 text-amber-600 dark:text-amber-400"
+                    : "bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/10 border border-[var(--color-line-2)] dark:border-[var(--color-warn-500)]/20 text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)]"
                 }`}
               >
                 {formMsg}
@@ -341,7 +341,7 @@ export default function OwnerDashboard() {
       {/* Listings */}
       {session && listings.length > 0 && (
         <section>
-          <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-4">Your listings</h2>
+          <h2 className="text-xl font-bold text-[var(--color-ink)] mb-4">Your listings</h2>
           <div className="grid sm:grid-cols-2 gap-4">
             {listings.map((l: any, i: number) => (
               <ListingCard
@@ -362,13 +362,13 @@ export default function OwnerDashboard() {
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        className="card-subtle p-6 rounded-2xl space-y-3 text-sm text-slate-500 dark:text-slate-400"
+        className="card-subtle p-6 rounded-2xl space-y-3 text-sm text-[var(--color-ink-3)]"
       >
-        <div className="inline-flex items-center px-3 py-1 rounded-full text-xs bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+        <div className="inline-flex items-center px-3 py-1 rounded-full text-xs bg-[var(--color-surface-muted)] text-[var(--color-ink)] dark:text-[var(--color-ink-4)] border border-[var(--color-line)]">
           MigRent AI ABN: 22 669 566 941
         </div>
         <p>
-          <strong className="text-slate-700 dark:text-slate-300">Platform fee:</strong> MigRent charges a one-time AUD 99
+          <strong className="text-[var(--color-ink-2)]">Platform fee:</strong> MigRent charges a one-time AUD 99
           platform fee to owners when you successfully match with a tenant via
           the platform.
         </p>
@@ -394,17 +394,17 @@ export default function OwnerDashboard() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="border border-red-200 dark:border-red-500/20 rounded-2xl p-6 space-y-4"
+          className="border border-[var(--color-danger-500)]/30 dark:border-[var(--color-danger-500)]/20 rounded-2xl p-6 space-y-4"
         >
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-red-50 dark:bg-red-500/10 flex items-center justify-center">
-              <svg className="w-5 h-5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <div className="w-10 h-10 rounded-xl bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-50)]0/10 flex items-center justify-center">
+              <svg className="w-5 h-5 text-[var(--color-danger-500)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
               </svg>
             </div>
             <div>
-              <h3 className="font-bold text-slate-900 dark:text-white text-sm">Delete Owner Account</h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400">Remove your owner status and all associated data</p>
+              <h3 className="font-bold text-[var(--color-ink)] text-sm">Delete Owner Account</h3>
+              <p className="text-xs text-[var(--color-ink-3)]">Remove your owner status and all associated data</p>
             </div>
           </div>
 
@@ -413,7 +413,7 @@ export default function OwnerDashboard() {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => setShowDeleteConfirm(true)}
-              className="px-5 py-2.5 rounded-xl text-sm font-semibold text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 hover:bg-red-100 dark:hover:bg-red-500/20 transition-colors"
+              className="px-5 py-2.5 rounded-xl text-sm font-semibold text-[var(--color-danger-500)] dark:text-[var(--color-danger-500)] bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-50)]0/10 border border-[var(--color-danger-500)]/30 dark:border-[var(--color-danger-500)]/20 hover:bg-[var(--color-danger-50)] dark:hover:bg-[var(--color-danger-50)]0/20 transition-colors"
             >
               Delete Owner Account
             </motion.button>
@@ -421,9 +421,9 @@ export default function OwnerDashboard() {
             <motion.div
               initial={{ opacity: 0, y: -5 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 rounded-xl p-4 space-y-3"
+              className="bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-50)]0/10 border border-[var(--color-danger-500)]/30 dark:border-[var(--color-danger-500)]/20 rounded-xl p-4 space-y-3"
             >
-              <p className="text-sm text-red-700 dark:text-red-300 font-medium">
+              <p className="text-sm text-[var(--color-danger-600)] dark:text-[var(--color-danger-500)] font-medium">
                 Are you sure? This will remove your owner account and you will lose access to all owner features.
               </p>
               <div className="flex gap-3">
@@ -432,7 +432,7 @@ export default function OwnerDashboard() {
                   whileTap={{ scale: 0.98 }}
                   onClick={handleDeleteOwnerAccount}
                   disabled={deleting}
-                  className="px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-red-500 hover:bg-red-600 transition-colors disabled:opacity-50"
+                  className="px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-[var(--color-danger-50)]0 hover:bg-[var(--color-danger-500)] transition-colors disabled:opacity-50"
                 >
                   {deleting ? "Deleting..." : "Yes, delete my owner account"}
                 </motion.button>
@@ -440,7 +440,7 @@ export default function OwnerDashboard() {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => setShowDeleteConfirm(false)}
-                  className="px-5 py-2.5 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
+                  className="px-5 py-2.5 rounded-xl text-sm font-semibold text-[var(--color-ink-2)] bg-[var(--color-surface-2)] border border-[var(--color-line)] hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-surface-muted)] transition-colors"
                 >
                   Cancel
                 </motion.button>

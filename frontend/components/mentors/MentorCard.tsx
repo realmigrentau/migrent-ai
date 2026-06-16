@@ -56,7 +56,7 @@ export default function MentorCard({
             {/* Info */}
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1">
-                <h3 className="font-bold text-slate-900 dark:text-white text-sm truncate">
+                <h3 className="font-bold text-[var(--color-ink)] text-sm truncate">
                   {name}
                 </h3>
                 {verified && (
@@ -66,20 +66,20 @@ export default function MentorCard({
                 )}
               </div>
 
-              <div className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400 mb-2">
+              <div className="flex items-center gap-1.5 text-xs text-[var(--color-ink-3)] mb-2">
                 <MapPin className="w-3 h-3" />
                 <span>{suburb}</span>
                 {rating > 0 && (
                   <>
                     <span className="mx-1">-</span>
-                    <Star className="w-3 h-3 text-amber-500 fill-amber-500" />
+                    <Star className="w-3 h-3 text-[var(--color-warn-500)] fill-amber-500" />
                     <span>{rating.toFixed(1)} ({reviewCount})</span>
                   </>
                 )}
               </div>
 
               {bio && (
-                <p className="text-xs text-slate-600 dark:text-slate-300 line-clamp-2 mb-2">
+                <p className="text-xs text-[var(--color-ink-2)] line-clamp-2 mb-2">
                   {bio}
                 </p>
               )}
@@ -98,7 +98,7 @@ export default function MentorCard({
                 {specialties.slice(0, 2).map((spec) => (
                   <span
                     key={spec}
-                    className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700"
+                    className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-[var(--color-surface-muted)] text-[var(--color-ink-2)] border border-[var(--color-line)]"
                   >
                     {spec}
                   </span>
@@ -111,8 +111,8 @@ export default function MentorCard({
               <div className="bg-[var(--color-primary)] text-white font-bold text-sm px-3 py-1 rounded-xl">
                 {priceDisplay}
               </div>
-              <span className="text-[10px] text-slate-400 dark:text-slate-500">per session</span>
-              <ChevronRight className="w-4 h-4 text-slate-300 dark:text-slate-600 group-hover:text-[var(--color-primary)] transition-colors mt-1" />
+              <span className="text-[10px] text-[var(--color-ink-3)]">per session</span>
+              <ChevronRight className="w-4 h-4 text-[var(--color-ink-4)] group-hover:text-[var(--color-primary)] transition-colors mt-1" />
             </div>
           </div>
         </div>

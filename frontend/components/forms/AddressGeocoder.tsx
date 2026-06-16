@@ -139,7 +139,7 @@ export default function AddressGeocoder({ onSelect, initialValue = "" }: Address
 
   return (
     <div ref={wrapperRef} className="relative">
-      <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1.5">
+      <label className="block text-sm font-semibold text-[var(--color-ink-2)] mb-1.5">
         Address
       </label>
       <div className="relative">
@@ -149,7 +149,7 @@ export default function AddressGeocoder({ onSelect, initialValue = "" }: Address
           onChange={(e) => handleInputChange(e.target.value)}
           onFocus={() => suggestions.length > 0 && setShowDropdown(true)}
           placeholder="Start typing an Australian address..."
-          className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-[var(--color-ink)]/30/20 focus:border-[var(--color-line-2)] transition-all text-sm"
+          className="w-full px-4 py-3 rounded-xl border border-[var(--color-line)] bg-[var(--color-surface-2)] text-[var(--color-ink)] placeholder:text-[var(--color-ink-3)] dark:placeholder:text-[var(--color-ink-3)] focus:outline-none focus:ring-2 focus:ring-[var(--color-ink)]/30/20 focus:border-[var(--color-line-2)] transition-all text-sm"
         />
         {loading && (
           <div className="absolute right-3 top-1/2 -translate-y-1/2">
@@ -160,20 +160,20 @@ export default function AddressGeocoder({ onSelect, initialValue = "" }: Address
 
       {/* Autocomplete dropdown */}
       {showDropdown && suggestions.length > 0 && (
-        <div className="absolute z-50 w-full mt-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-lg overflow-hidden">
+        <div className="absolute z-50 w-full mt-1 bg-[var(--color-surface-2)] border border-[var(--color-line)] rounded-xl shadow-lg overflow-hidden">
           {suggestions.map((feature, i) => (
             <button
               key={i}
               type="button"
               onClick={() => handleSelect(feature)}
-              className="w-full text-left px-4 py-3 hover:bg-[var(--color-primary-soft)] dark:hover:bg-slate-700 transition-colors border-b border-slate-100 dark:border-slate-700 last:border-b-0"
+              className="w-full text-left px-4 py-3 hover:bg-[var(--color-primary-soft)] dark:hover:bg-[var(--color-surface-muted)] transition-colors border-b border-[var(--color-line)] last:border-b-0"
             >
               <div className="flex items-start gap-2">
                 <svg className="w-4 h-4 mt-0.5 text-[var(--color-primary)] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
-                <span className="text-sm text-slate-700 dark:text-slate-200">{feature.place_name}</span>
+                <span className="text-sm text-[var(--color-ink-2)]">{feature.place_name}</span>
               </div>
             </button>
           ))}
@@ -182,17 +182,17 @@ export default function AddressGeocoder({ onSelect, initialValue = "" }: Address
 
       {/* Station info pill */}
       {stationLoading && (
-        <div className="mt-2 flex items-center gap-2 text-xs text-slate-400">
-          <div className="w-3 h-3 border-2 border-slate-300 border-t-slate-500 rounded-full animate-spin" />
+        <div className="mt-2 flex items-center gap-2 text-xs text-[var(--color-ink-3)]">
+          <div className="w-3 h-3 border-2 border-[var(--color-line-2)] border-t-slate-500 rounded-full animate-spin" />
           Finding nearest station...
         </div>
       )}
       {stationInfo && !stationLoading && (
-        <div className="mt-2 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-50 dark:bg-blue-500/10 border border-blue-100 dark:border-blue-500/20">
-          <svg className="w-3.5 h-3.5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <div className="mt-2 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--color-primary-50)] dark:bg-[var(--color-primary)]/10 border border-[var(--color-primary-100)] dark:border-[var(--color-primary)]/20">
+          <svg className="w-3.5 h-3.5 text-[var(--color-primary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M8 7h8m-8 4h4m4-8H6a2 2 0 00-2 2v14l4-3h10a2 2 0 002-2V5a2 2 0 00-2-2z" />
           </svg>
-          <span className="text-xs font-medium text-blue-700 dark:text-blue-300">
+          <span className="text-xs font-medium text-[var(--color-primary-700)] dark:text-blue-300">
             {stationInfo.minutes} min walk to {stationInfo.name}
           </span>
         </div>

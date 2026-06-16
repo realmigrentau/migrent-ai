@@ -40,10 +40,10 @@ function VisaMatchBadge({ score }: { score: number }) {
     color = "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 text-[var(--color-accent)] dark:text-[var(--color-accent)] border border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)]";
     label = "Excellent match";
   } else if (score >= 70) {
-    color = "bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-500/20";
+    color = "bg-[var(--color-primary-50)] dark:bg-[var(--color-primary)]/10 text-[var(--color-primary)] dark:text-[var(--color-primary)] border border-[var(--color-primary-100)] dark:border-[var(--color-primary)]/20";
     label = "Good match";
   } else if (score >= 55) {
-    color = "bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-500/20";
+    color = "bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/10 text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)] border border-[var(--color-line-2)] dark:border-[var(--color-warn-500)]/20";
     label = "Fair match";
   }
 
@@ -83,7 +83,7 @@ export default function VisaRecommendations() {
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {[1, 2, 3].map((i) => (
             <div key={i} className="rounded-xl overflow-hidden animate-pulse">
-              <div className="h-28 bg-slate-200 dark:bg-slate-700" />
+              <div className="h-28 bg-[var(--color-line)]" />
               <div className="p-3 space-y-2">
                 <div className="shimmer h-4 w-3/4 rounded" />
                 <div className="shimmer h-3 w-1/2 rounded" />
@@ -123,7 +123,7 @@ export default function VisaRecommendations() {
             <Link href={`/listing/${listing.id}`}>
               <div className="rounded-xl overflow-hidden border border-[var(--color-line)] group hover:shadow-md hover:border-[var(--color-line-2)] dark:hover:border-[var(--color-primary)]/30 transition-all bg-[var(--color-surface)]">
                 {/* Image */}
-                <div className="relative h-28 bg-slate-200 dark:bg-slate-700">
+                <div className="relative h-28 bg-[var(--color-line)]">
                   {listing.images?.[0] ? (
                     <img
                       src={listing.images[0]}
@@ -131,7 +131,7 @@ export default function VisaRecommendations() {
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-slate-400">
+                    <div className="w-full h-full flex items-center justify-center text-[var(--color-ink-3)]">
                       <MapPin className="w-8 h-8" />
                     </div>
                   )}
@@ -149,7 +149,7 @@ export default function VisaRecommendations() {
                       </span>
                     )}
                     {listing.near_cbd && (
-                      <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-blue-500/90 text-white">
+                      <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-[var(--color-primary)]/90 text-white">
                         Near CBD
                       </span>
                     )}
@@ -186,7 +186,7 @@ export default function VisaRecommendations() {
                       </span>
                     )}
                     {listing.owner?.verified && (
-                      <span className="text-xs text-blue-500 flex items-center gap-1">
+                      <span className="text-xs text-[var(--color-primary)] flex items-center gap-1">
                         <ShieldCheck className="w-3 h-3" />
                         Verified
                       </span>

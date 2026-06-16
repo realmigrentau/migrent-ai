@@ -58,7 +58,7 @@ export default function ProfileCompleteness({ profile, role, loading }: ProfileC
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="3"
-                className="text-slate-100 dark:text-slate-800"
+                className="text-[var(--color-primary-fg)] dark:text-[var(--color-ink)]"
               />
               <motion.circle
                 cx="24" cy="24" r="20"
@@ -109,13 +109,13 @@ export default function ProfileCompleteness({ profile, role, loading }: ProfileC
           {profile.missingFields.slice(0, 3).map((field, i) => (
             <Link key={field} href={profileHref}>
               <div
-                className="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group cursor-pointer"
+                className="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-[var(--color-surface)]/50 transition-colors group cursor-pointer"
               >
-                <Circle className="w-4 h-4 text-slate-300 dark:text-slate-600 shrink-0" />
-                <span className="text-sm text-slate-600 dark:text-slate-300 group-hover:text-[var(--color-primary)] dark:group-hover:text-[var(--color-primary)] transition-colors">
+                <Circle className="w-4 h-4 text-[var(--color-ink-4)] shrink-0" />
+                <span className="text-sm text-[var(--color-ink-2)] group-hover:text-[var(--color-primary)] dark:group-hover:text-[var(--color-primary)] transition-colors">
                   Add {field.toLowerCase()}
                 </span>
-                <ChevronRight className="w-3 h-3 ml-auto text-slate-300 dark:text-slate-600 group-hover:text-[var(--color-primary)] transition-colors" />
+                <ChevronRight className="w-3 h-3 ml-auto text-[var(--color-ink-4)] group-hover:text-[var(--color-primary)] transition-colors" />
               </div>
             </Link>
           ))}
@@ -174,7 +174,7 @@ export default function ProfileCompleteness({ profile, role, loading }: ProfileC
                 key={badge}
                 initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
-                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-500/20"
+                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/10 text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)] border border-[var(--color-line-2)] dark:border-[var(--color-warn-500)]/20"
               >
                 <Trophy className="w-3 h-3" />
                 {badge}
@@ -189,7 +189,7 @@ export default function ProfileCompleteness({ profile, role, loading }: ProfileC
         <Link href={profileHref}>
           <motion.div
             whileHover={{ y: -1 }}
-            className="flex items-center gap-3 p-3 rounded-xl bg-[var(--color-surface-sunk)] hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer group"
+            className="flex items-center gap-3 p-3 rounded-xl bg-[var(--color-surface-sunk)] hover:bg-[var(--color-surface-muted)] transition-colors cursor-pointer group"
           >
             <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-sm overflow-hidden shrink-0 ${
               profile.photo ? "" : "bg-[var(--color-primary-soft)] from-[var(--color-primary)] to-[var(--color-primary)]"
@@ -201,7 +201,7 @@ export default function ProfileCompleteness({ profile, role, loading }: ProfileC
               )}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-slate-800 dark:text-slate-100 truncate">
+              <p className="text-sm font-semibold text-[var(--color-ink)] truncate">
                 {profile.name}
               </p>
               <p className="text-xs text-[var(--color-ink-3)] truncate">
@@ -213,7 +213,7 @@ export default function ProfileCompleteness({ profile, role, loading }: ProfileC
                 {profile.uselessSkill}
               </span>
             )}
-            <ChevronRight className="w-4 h-4 text-slate-300 dark:text-slate-600 group-hover:text-[var(--color-primary)] transition-colors shrink-0" />
+            <ChevronRight className="w-4 h-4 text-[var(--color-ink-4)] group-hover:text-[var(--color-primary)] transition-colors shrink-0" />
           </motion.div>
         </Link>
       )}
@@ -235,7 +235,7 @@ function VerificationBadge({
       className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border ${
         verified
           ? "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 text-[var(--color-accent)] dark:text-[var(--color-accent)] border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)]"
-          : "bg-slate-50 dark:bg-slate-800 text-[var(--color-ink-3)] border-[var(--color-line)]"
+          : "bg-[var(--color-surface)] text-[var(--color-ink-3)] border-[var(--color-line)]"
       }`}
     >
       {verified ? <CheckCircle2 className="w-3 h-3" /> : icon}

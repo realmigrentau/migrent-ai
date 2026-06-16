@@ -27,26 +27,26 @@ const STATUS_CONFIG: Record<
   PENDING_OWNER: {
     label: "Awaiting owner response",
     icon: Clock,
-    color: "text-amber-600 dark:text-amber-400",
-    bg: "bg-amber-50 dark:bg-amber-500/10",
+    color: "text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)]",
+    bg: "bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/10",
   },
   OWNER_ACCEPTED: {
     label: "Accepted - Complete payment",
     icon: CreditCard,
-    color: "text-blue-600 dark:text-blue-400",
-    bg: "bg-blue-50 dark:bg-blue-500/10",
+    color: "text-[var(--color-primary)] dark:text-[var(--color-primary)]",
+    bg: "bg-[var(--color-primary-50)] dark:bg-[var(--color-primary)]/10",
   },
   OWNER_DECLINED: {
     label: "Declined by owner",
     icon: XCircle,
-    color: "text-red-500 dark:text-red-400",
-    bg: "bg-red-50 dark:bg-red-500/10",
+    color: "text-[var(--color-danger-500)] dark:text-[var(--color-danger-500)]",
+    bg: "bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-50)]0/10",
   },
   SEEKER_CANCELLED: {
     label: "Cancelled",
     icon: Ban,
-    color: "text-slate-500 dark:text-slate-400",
-    bg: "bg-slate-100 dark:bg-slate-800/50",
+    color: "text-[var(--color-ink-3)]",
+    bg: "bg-[var(--color-surface-muted)]/50",
   },
   PAID: {
     label: "Confirmed",
@@ -57,14 +57,14 @@ const STATUS_CONFIG: Record<
   COMPLETED: {
     label: "Stay completed",
     icon: CheckCircle,
-    color: "text-slate-600 dark:text-slate-400",
-    bg: "bg-slate-100 dark:bg-slate-800/50",
+    color: "text-[var(--color-ink-2)]",
+    bg: "bg-[var(--color-surface-muted)]/50",
   },
   EXPIRED: {
     label: "Expired",
     icon: Clock,
-    color: "text-slate-400",
-    bg: "bg-slate-100 dark:bg-slate-800/50",
+    color: "text-[var(--color-ink-3)]",
+    bg: "bg-[var(--color-surface-muted)]/50",
   },
 };
 
@@ -107,8 +107,8 @@ export default function SeekerBookingsTable({
   if (bookings.length === 0) {
     return (
       <div className="card rounded-xl p-8 text-center">
-        <Calendar className="w-10 h-10 mx-auto text-slate-300 dark:text-slate-600 mb-3" />
-        <p className="text-sm text-slate-500 dark:text-slate-400">
+        <Calendar className="w-10 h-10 mx-auto text-[var(--color-ink-4)] mb-3" />
+        <p className="text-sm text-[var(--color-ink-3)]">
           No bookings yet. Browse listings and send your first booking request!
         </p>
       </div>
@@ -129,11 +129,11 @@ export default function SeekerBookingsTable({
             key={booking.id}
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            className="card rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700"
+            className="card rounded-xl overflow-hidden border border-[var(--color-line)]"
           >
             {/* Main row */}
             <div
-              className="p-4 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors"
+              className="p-4 cursor-pointer hover:bg-[var(--color-surface)]/30 transition-colors"
               onClick={() => setExpandedId(isExpanded ? null : booking.id)}
             >
               <div className="flex items-center justify-between gap-4">
@@ -147,10 +147,10 @@ export default function SeekerBookingsTable({
                     />
                   )}
                   <div className="min-w-0">
-                    <p className="text-sm font-semibold text-slate-900 dark:text-white truncate">
+                    <p className="text-sm font-semibold text-[var(--color-ink)] truncate">
                       {booking.listing?.title || booking.listing?.address || "Listing"}
                     </p>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                    <p className="text-xs text-[var(--color-ink-3)] mt-0.5">
                       {booking.check_in_date} to {booking.check_out_date}
                     </p>
                   </div>
@@ -164,9 +164,9 @@ export default function SeekerBookingsTable({
                     {status.label}
                   </span>
                   {isExpanded ? (
-                    <ChevronUp className="w-4 h-4 text-slate-400" />
+                    <ChevronUp className="w-4 h-4 text-[var(--color-ink-3)]" />
                   ) : (
-                    <ChevronDown className="w-4 h-4 text-slate-400" />
+                    <ChevronDown className="w-4 h-4 text-[var(--color-ink-3)]" />
                   )}
                 </div>
               </div>
@@ -174,40 +174,40 @@ export default function SeekerBookingsTable({
 
             {/* Expanded details */}
             {isExpanded && (
-              <div className="border-t border-slate-200 dark:border-slate-700 p-4 space-y-3">
+              <div className="border-t border-[var(--color-line)] p-4 space-y-3">
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
                   <div>
-                    <p className="text-xs text-slate-400 mb-0.5">Owner</p>
-                    <p className="font-medium text-slate-900 dark:text-white">
+                    <p className="text-xs text-[var(--color-ink-3)] mb-0.5">Owner</p>
+                    <p className="font-medium text-[var(--color-ink)]">
                       {booking.other_party?.name || "Owner"}
                       {booking.other_party?.verified && (
-                        <span className="ml-1 text-blue-500" title="Verified">
+                        <span className="ml-1 text-[var(--color-primary)]" title="Verified">
                           &#10003;
                         </span>
                       )}
                     </p>
                   </div>
                   <div>
-                    <p className="text-xs text-slate-400 mb-0.5">Guests</p>
-                    <p className="font-medium text-slate-900 dark:text-white">
+                    <p className="text-xs text-[var(--color-ink-3)] mb-0.5">Guests</p>
+                    <p className="font-medium text-[var(--color-ink)]">
                       {booking.guests}
                     </p>
                   </div>
                   <div>
-                    <p className="text-xs text-slate-400 mb-0.5">Weekly rate</p>
-                    <p className="font-medium text-slate-900 dark:text-white">
+                    <p className="text-xs text-[var(--color-ink-3)] mb-0.5">Weekly rate</p>
+                    <p className="font-medium text-[var(--color-ink)]">
                       AUD ${booking.weekly_price_at_time?.toLocaleString()}
                     </p>
                   </div>
                   <div>
-                    <p className="text-xs text-slate-400 mb-0.5">Est. total rent</p>
+                    <p className="text-xs text-[var(--color-ink-3)] mb-0.5">Est. total rent</p>
                     <p className="font-medium text-[var(--color-accent)] dark:text-[var(--color-accent)]">
                       AUD ${booking.total_price?.toLocaleString()}
                     </p>
                   </div>
                 </div>
 
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-[var(--color-ink-3)]">
                   Requested{" "}
                   {new Date(booking.created_at).toLocaleDateString("en-AU", {
                     day: "numeric",
@@ -238,10 +238,10 @@ export default function SeekerBookingsTable({
                       whileTap={{ scale: 0.98 }}
                       onClick={() => handleCancel(booking.id)}
                       disabled={cancelLoading === booking.id}
-                      className={`${needsPayment ? "" : "flex-1"} py-2.5 px-4 rounded-xl text-sm font-semibold border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50 flex items-center justify-center gap-2 disabled:opacity-50`}
+                      className={`${needsPayment ? "" : "flex-1"} py-2.5 px-4 rounded-xl text-sm font-semibold border border-[var(--color-line)] text-[var(--color-ink-2)] hover:bg-[var(--color-surface)]/50 flex items-center justify-center gap-2 disabled:opacity-50`}
                     >
                       {cancelLoading === booking.id ? (
-                        <span className="w-4 h-4 border-2 border-slate-300 border-t-slate-600 rounded-full animate-spin" />
+                        <span className="w-4 h-4 border-2 border-[var(--color-line-2)] border-t-slate-600 rounded-full animate-spin" />
                       ) : (
                         <Ban className="w-4 h-4" />
                       )}

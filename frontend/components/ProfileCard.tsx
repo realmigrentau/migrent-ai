@@ -48,12 +48,12 @@ export default function ProfileCard({
           <div className="flex items-center gap-2 flex-wrap">
             <Link
               href={`/users/profile/${userId}`}
-              className="text-base font-bold text-slate-900 dark:text-white hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] transition-colors truncate"
+              className="text-base font-bold text-[var(--color-ink)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] transition-colors truncate"
             >
               {displayName}
             </Link>
             {isSuperhost && (
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-500/20">
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/10 text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)] border border-[var(--color-line-2)] dark:border-[var(--color-warn-500)]/20">
                 <svg
                   className="w-3 h-3"
                   viewBox="0 0 24 24"
@@ -67,10 +67,10 @@ export default function ProfileCard({
           </div>
 
           {/* Stats row */}
-          <div className="flex items-center gap-3 mt-1.5 text-sm text-slate-500 dark:text-slate-400">
+          <div className="flex items-center gap-3 mt-1.5 text-sm text-[var(--color-ink-3)]">
             {reviewsCount > 0 && (
               <span className="flex items-center gap-1">
-                <span className="font-semibold text-slate-700 dark:text-slate-200">
+                <span className="font-semibold text-[var(--color-ink-2)]">
                   {reviewsCount}
                 </span>{" "}
                 Review{reviewsCount !== 1 ? "s" : ""}
@@ -78,11 +78,11 @@ export default function ProfileCard({
             )}
             {averageRating > 0 && (
               <span className="flex items-center gap-1">
-                <span className="font-semibold text-slate-700 dark:text-slate-200">
+                <span className="font-semibold text-[var(--color-ink-2)]">
                   {averageRating.toFixed(2)}
                 </span>
                 <svg
-                  className="w-3.5 h-3.5 text-amber-400"
+                  className="w-3.5 h-3.5 text-[var(--color-warn-500)]"
                   viewBox="0 0 24 24"
                   fill="currentColor"
                 >
@@ -95,12 +95,12 @@ export default function ProfileCard({
           {/* Hosting + verified row */}
           <div className="flex items-center gap-3 mt-1.5 flex-wrap">
             {monthsHosting > 0 && (
-              <span className="text-xs text-slate-400 dark:text-slate-500">
+              <span className="text-xs text-[var(--color-ink-3)]">
                 {monthsHosting} month{monthsHosting !== 1 ? "s" : ""} hosting
               </span>
             )}
             {isVerified && verifiedLabel && (
-              <span className="inline-flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400">
+              <span className="inline-flex items-center gap-1 text-xs text-[var(--color-ink-3)]">
                 Verified {verifiedLabel}
                 <svg
                   className="w-3.5 h-3.5 text-[var(--color-primary)]"

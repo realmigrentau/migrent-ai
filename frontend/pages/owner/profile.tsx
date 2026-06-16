@@ -139,8 +139,8 @@ export default function OwnerProfilePage() {
   if (!session)
     return (
       <div className="card p-8 rounded-2xl text-center max-w-md mx-auto mt-12">
-        <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Sign in required</h2>
-        <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">Sign in to manage your owner profile.</p>
+        <h2 className="text-lg font-bold text-[var(--color-ink)] mb-2">Sign in required</h2>
+        <p className="text-sm text-[var(--color-ink-3)] mb-4">Sign in to manage your owner profile.</p>
         <Link href="/signin" className="btn-primary py-3 px-6 rounded-xl text-sm inline-block">Sign in</Link>
       </div>
     );
@@ -148,10 +148,10 @@ export default function OwnerProfilePage() {
   return (
     <div className="max-w-2xl mx-auto space-y-8">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-        <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white">
+        <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-[var(--color-ink)]">
           Owner Profile
         </h1>
-        <p className="text-sm text-slate-500 dark:text-slate-400 mt-2">
+        <p className="text-sm text-[var(--color-ink-3)] mt-2">
           Your profile is shown to seekers when they view your listings.
         </p>
       </motion.div>
@@ -193,15 +193,15 @@ export default function OwnerProfilePage() {
             />
           </div>
           <div className="flex-1">
-            <h2 className="text-xl font-bold text-slate-900 dark:text-white">{profile.name || "Your Name"}</h2>
-            <p className="text-sm text-slate-500 dark:text-slate-400">Property owner</p>
+            <h2 className="text-xl font-bold text-[var(--color-ink)]">{profile.name || "Your Name"}</h2>
+            <p className="text-sm text-[var(--color-ink-3)]">Property owner</p>
             {/* Badges as pills */}
             {earnedBadgeKeys.length > 0 && (
               <div className="flex flex-wrap gap-1.5 mt-2">
                 {earnedBadgeKeys.map((badge) => (
                   <span
                     key={badge}
-                    className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-500/20"
+                    className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[var(--color-primary-50)] dark:bg-[var(--color-primary)]/10 text-[var(--color-primary)] dark:text-[var(--color-primary)] border border-[var(--color-primary-100)] dark:border-[var(--color-primary)]/20"
                   >
                     {badge}
                   </span>
@@ -214,7 +214,7 @@ export default function OwnerProfilePage() {
                 {profile.uselessSkill}
               </span>
             )}
-            <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">Click photo to change</p>
+            <p className="text-xs text-[var(--color-ink-3)] mt-1">Click photo to change</p>
           </div>
         </div>
       </motion.section>
@@ -226,7 +226,7 @@ export default function OwnerProfilePage() {
         transition={{ delay: 0.07 }}
         className="card-subtle p-4 rounded-xl"
       >
-        <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">Verification badges</h3>
+        <h3 className="text-sm font-semibold text-[var(--color-ink-2)] mb-3">Verification badges</h3>
         <div className="flex flex-wrap gap-2">
           <span className="px-3 py-1.5 rounded-full text-xs font-semibold bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 text-[var(--color-accent)] dark:text-[var(--color-accent)] border border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)]">
             ✓ Email verified
@@ -234,7 +234,7 @@ export default function OwnerProfilePage() {
           <span className="px-3 py-1.5 rounded-full text-xs font-semibold bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 text-[var(--color-accent)] dark:text-[var(--color-accent)] border border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)]">
             ✓ Identity verified
           </span>
-          <span className="px-3 py-1.5 rounded-full text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
+          <span className="px-3 py-1.5 rounded-full text-xs font-semibold bg-[var(--color-surface-muted)] text-[var(--color-ink-3)] border border-[var(--color-line)]">
             ○ Property not verified
           </span>
         </div>
@@ -247,8 +247,8 @@ export default function OwnerProfilePage() {
         transition={{ delay: 0.08 }}
         className="card p-6 rounded-2xl space-y-4"
       >
-        <h2 className="text-lg font-bold text-slate-900 dark:text-white">Badges</h2>
-        <p className="text-sm text-slate-500 dark:text-slate-400">Earn badges as you host on MigRent. Complete the requirements to unlock them.</p>
+        <h2 className="text-lg font-bold text-[var(--color-ink)]">Badges</h2>
+        <p className="text-sm text-[var(--color-ink-3)]">Earn badges as you host on MigRent. Complete the requirements to unlock them.</p>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           {OWNER_BADGES.map((badge) => {
             const earned = earnedBadgeKeys.includes(badge.key);
@@ -257,22 +257,22 @@ export default function OwnerProfilePage() {
                 key={badge.id}
                 className={`relative p-4 rounded-xl border text-center transition-all ${
                   earned
-                    ? "bg-blue-50 dark:bg-blue-500/10 border-blue-200 dark:border-blue-500/20"
-                    : "bg-slate-50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 opacity-50"
+                    ? "bg-[var(--color-primary-50)] dark:bg-[var(--color-primary)]/10 border-[var(--color-primary-100)] dark:border-[var(--color-primary)]/20"
+                    : "bg-[var(--color-surface)] border-[var(--color-line)] opacity-50"
                 }`}
               >
                 <div className="text-2xl mb-1.5">{badge.icon}</div>
-                <h4 className={`text-sm font-bold ${earned ? "text-blue-600 dark:text-blue-400" : "text-slate-400 dark:text-slate-500"}`}>
+                <h4 className={`text-sm font-bold ${earned ? "text-[var(--color-primary)] dark:text-[var(--color-primary)]" : "text-[var(--color-ink-3)]"}`}>
                   {badge.label}
                 </h4>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 leading-tight">{badge.desc}</p>
+                <p className="text-[11px] text-[var(--color-ink-3)] mt-0.5 leading-tight">{badge.desc}</p>
                 {earned ? (
                   <div className="absolute top-2 right-2">
                     <span className="text-[var(--color-accent)] text-xs font-bold">✓</span>
                   </div>
                 ) : (
                   <div className="absolute top-2 right-2">
-                    <svg className="w-3.5 h-3.5 text-slate-300 dark:text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <svg className="w-3.5 h-3.5 text-[var(--color-ink-4)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                     </svg>
                   </div>
@@ -290,7 +290,7 @@ export default function OwnerProfilePage() {
         transition={{ delay: 0.09 }}
         className="card p-6 rounded-2xl space-y-4"
       >
-        <h2 className="text-lg font-bold text-slate-900 dark:text-white">About me</h2>
+        <h2 className="text-lg font-bold text-[var(--color-ink)]">About me</h2>
         <textarea
           value={profile.aboutMe}
           onChange={(e) => update("aboutMe", e.target.value.slice(0, 200))}
@@ -299,9 +299,9 @@ export default function OwnerProfilePage() {
           className="input-field text-sm"
           maxLength={200}
         />
-        <p className="text-xs text-slate-400">{profile.aboutMe.length}/200</p>
+        <p className="text-xs text-[var(--color-ink-3)]">{profile.aboutMe.length}/200</p>
         <div>
-          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
+          <label className="block text-sm font-medium text-[var(--color-ink-2)] mb-1.5">
             My most useless skill
           </label>
           <input
@@ -311,7 +311,7 @@ export default function OwnerProfilePage() {
             placeholder='e.g. "Can juggle 3 oranges"'
             className="input-field text-sm"
           />
-          <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-1">A fun ice-breaker shown on your profile</p>
+          <p className="text-[11px] text-[var(--color-ink-3)] mt-1">A fun ice-breaker shown on your profile</p>
         </div>
       </motion.section>
 
@@ -322,14 +322,14 @@ export default function OwnerProfilePage() {
         transition={{ delay: 0.1 }}
         className="card p-6 rounded-2xl space-y-4"
       >
-        <h2 className="text-lg font-bold text-slate-900 dark:text-white">My Properties</h2>
-        <p className="text-sm text-slate-500 dark:text-slate-400">Track how many properties and rooms you own or manage.</p>
+        <h2 className="text-lg font-bold text-[var(--color-ink)]">My Properties</h2>
+        <p className="text-sm text-[var(--color-ink-3)]">Track how many properties and rooms you own or manage.</p>
 
         {/* Rooms */}
-        <div className="rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+        <div className="rounded-xl border border-[var(--color-line)] overflow-hidden">
           <button
             onClick={() => setRoomsOpen(!roomsOpen)}
-            className="w-full flex items-center justify-between p-4 text-left hover:bg-slate-50 dark:hover:bg-white/5 transition-colors"
+            className="w-full flex items-center justify-between p-4 text-left hover:bg-[var(--color-surface)] dark:hover:bg-white/5 transition-colors"
           >
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 border border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)] flex items-center justify-center">
@@ -338,11 +338,11 @@ export default function OwnerProfilePage() {
                 </svg>
               </div>
               <div>
-                <span className="text-sm font-semibold text-slate-900 dark:text-white">Rooms</span>
-                <span className="ml-2 text-xs text-slate-400 dark:text-slate-500">({profile.roomsOwned})</span>
+                <span className="text-sm font-semibold text-[var(--color-ink)]">Rooms</span>
+                <span className="ml-2 text-xs text-[var(--color-ink-3)]">({profile.roomsOwned})</span>
               </div>
             </div>
-            <svg className={`w-4 h-4 text-slate-400 transition-transform ${roomsOpen ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <svg className={`w-4 h-4 text-[var(--color-ink-3)] transition-transform ${roomsOpen ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
             </svg>
           </button>
@@ -356,18 +356,18 @@ export default function OwnerProfilePage() {
                 className="overflow-hidden"
               >
                 <div className="px-4 pb-4 flex items-center gap-4">
-                  <p className="text-sm text-slate-500 dark:text-slate-400 flex-1">How many rooms do you have?</p>
+                  <p className="text-sm text-[var(--color-ink-3)] flex-1">How many rooms do you have?</p>
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => update("roomsOwned", Math.max(0, profile.roomsOwned - 1))}
-                      className="w-8 h-8 rounded-lg border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-lg font-medium"
+                      className="w-8 h-8 rounded-lg border border-[var(--color-line)] flex items-center justify-center text-[var(--color-ink-3)] hover:bg-[var(--color-surface-muted)] transition-colors text-lg font-medium"
                     >
                       −
                     </button>
-                    <span className="w-10 text-center text-lg font-bold text-slate-900 dark:text-white">{profile.roomsOwned}</span>
+                    <span className="w-10 text-center text-lg font-bold text-[var(--color-ink)]">{profile.roomsOwned}</span>
                     <button
                       onClick={() => update("roomsOwned", profile.roomsOwned + 1)}
-                      className="w-8 h-8 rounded-lg border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-lg font-medium"
+                      className="w-8 h-8 rounded-lg border border-[var(--color-line)] flex items-center justify-center text-[var(--color-ink-3)] hover:bg-[var(--color-surface-muted)] transition-colors text-lg font-medium"
                     >
                       +
                     </button>
@@ -379,23 +379,23 @@ export default function OwnerProfilePage() {
         </div>
 
         {/* Properties */}
-        <div className="rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+        <div className="rounded-xl border border-[var(--color-line)] overflow-hidden">
           <button
             onClick={() => setPropsOpen(!propsOpen)}
-            className="w-full flex items-center justify-between p-4 text-left hover:bg-slate-50 dark:hover:bg-white/5 transition-colors"
+            className="w-full flex items-center justify-between p-4 text-left hover:bg-[var(--color-surface)] dark:hover:bg-white/5 transition-colors"
           >
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-500/10 border border-blue-100 dark:border-blue-500/20 flex items-center justify-center">
-                <svg className="w-5 h-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <div className="w-10 h-10 rounded-xl bg-[var(--color-primary-50)] dark:bg-[var(--color-primary)]/10 border border-[var(--color-primary-100)] dark:border-[var(--color-primary)]/20 flex items-center justify-center">
+                <svg className="w-5 h-5 text-[var(--color-primary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                 </svg>
               </div>
               <div>
-                <span className="text-sm font-semibold text-slate-900 dark:text-white">Properties</span>
-                <span className="ml-2 text-xs text-slate-400 dark:text-slate-500">({profile.propertiesOwned})</span>
+                <span className="text-sm font-semibold text-[var(--color-ink)]">Properties</span>
+                <span className="ml-2 text-xs text-[var(--color-ink-3)]">({profile.propertiesOwned})</span>
               </div>
             </div>
-            <svg className={`w-4 h-4 text-slate-400 transition-transform ${propsOpen ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <svg className={`w-4 h-4 text-[var(--color-ink-3)] transition-transform ${propsOpen ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
             </svg>
           </button>
@@ -409,18 +409,18 @@ export default function OwnerProfilePage() {
                 className="overflow-hidden"
               >
                 <div className="px-4 pb-4 flex items-center gap-4">
-                  <p className="text-sm text-slate-500 dark:text-slate-400 flex-1">How many properties do you own?</p>
+                  <p className="text-sm text-[var(--color-ink-3)] flex-1">How many properties do you own?</p>
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => update("propertiesOwned", Math.max(0, profile.propertiesOwned - 1))}
-                      className="w-8 h-8 rounded-lg border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-lg font-medium"
+                      className="w-8 h-8 rounded-lg border border-[var(--color-line)] flex items-center justify-center text-[var(--color-ink-3)] hover:bg-[var(--color-surface-muted)] transition-colors text-lg font-medium"
                     >
                       −
                     </button>
-                    <span className="w-10 text-center text-lg font-bold text-slate-900 dark:text-white">{profile.propertiesOwned}</span>
+                    <span className="w-10 text-center text-lg font-bold text-[var(--color-ink)]">{profile.propertiesOwned}</span>
                     <button
                       onClick={() => update("propertiesOwned", profile.propertiesOwned + 1)}
-                      className="w-8 h-8 rounded-lg border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-lg font-medium"
+                      className="w-8 h-8 rounded-lg border border-[var(--color-line)] flex items-center justify-center text-[var(--color-ink-3)] hover:bg-[var(--color-surface-muted)] transition-colors text-lg font-medium"
                     >
                       +
                     </button>
@@ -439,9 +439,9 @@ export default function OwnerProfilePage() {
         transition={{ delay: 0.12 }}
         className="card p-6 rounded-2xl space-y-4"
       >
-        <h2 className="text-lg font-bold text-slate-900 dark:text-white">Profile information</h2>
+        <h2 className="text-lg font-bold text-[var(--color-ink)]">Profile information</h2>
         <div>
-          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Display name</label>
+          <label className="block text-sm font-medium text-[var(--color-ink-2)] mb-1.5">Display name</label>
           <input
             type="text"
             value={profile.name}
@@ -451,7 +451,7 @@ export default function OwnerProfilePage() {
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Bio</label>
+          <label className="block text-sm font-medium text-[var(--color-ink-2)] mb-1.5">Bio</label>
           <textarea
             value={profile.bio}
             onChange={(e) => update("bio", e.target.value)}
@@ -461,7 +461,7 @@ export default function OwnerProfilePage() {
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Contact phone (optional)</label>
+          <label className="block text-sm font-medium text-[var(--color-ink-2)] mb-1.5">Contact phone (optional)</label>
           <input
             type="tel"
             value={profile.phone}
@@ -479,12 +479,12 @@ export default function OwnerProfilePage() {
         transition={{ delay: 0.15 }}
         className="card p-6 rounded-2xl"
       >
-        <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Tenant reviews</h2>
+        <h2 className="text-lg font-bold text-[var(--color-ink)] mb-2">Tenant reviews</h2>
         <div className="text-center py-6">
-          <svg className="w-10 h-10 mx-auto text-slate-300 dark:text-slate-600 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+          <svg className="w-10 h-10 mx-auto text-[var(--color-ink-4)] mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
           </svg>
-          <p className="text-sm text-slate-500 dark:text-slate-400">No reviews yet. Reviews will appear after completed deals.</p>
+          <p className="text-sm text-[var(--color-ink-3)]">No reviews yet. Reviews will appear after completed deals.</p>
         </div>
       </motion.section>
 
@@ -495,20 +495,20 @@ export default function OwnerProfilePage() {
         transition={{ delay: 0.2 }}
         className="card p-6 rounded-2xl space-y-4"
       >
-        <h2 className="text-lg font-bold text-slate-900 dark:text-white">Notification settings</h2>
-        <label className="flex items-center justify-between p-3 rounded-xl border border-slate-200 dark:border-slate-700 cursor-pointer">
-          <span className="text-sm text-slate-700 dark:text-slate-300">Email notifications for new applicants</span>
+        <h2 className="text-lg font-bold text-[var(--color-ink)]">Notification settings</h2>
+        <label className="flex items-center justify-between p-3 rounded-xl border border-[var(--color-line)] cursor-pointer">
+          <span className="text-sm text-[var(--color-ink-2)]">Email notifications for new applicants</span>
           <input
             type="checkbox"
             checked={profile.notifyEmail}
             onChange={(e) => update("notifyEmail", e.target.checked)}
-            className="w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-[var(--color-primary)] focus:ring-[var(--color-ink)]/30"
+            className="w-4 h-4 rounded border-[var(--color-line-2)] text-[var(--color-primary)] focus:ring-[var(--color-ink)]/30"
           />
         </label>
-        <label className="flex items-center justify-between p-3 rounded-xl border border-slate-200 dark:border-slate-700 cursor-not-allowed opacity-70">
-          <span className="text-sm text-slate-700 dark:text-slate-300 inline-flex items-center gap-2">
+        <label className="flex items-center justify-between p-3 rounded-xl border border-[var(--color-line)] cursor-not-allowed opacity-70">
+          <span className="text-sm text-[var(--color-ink-2)] inline-flex items-center gap-2">
             SMS notifications
-            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-medium uppercase tracking-wide">In next release</span>
+            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-[var(--color-surface-muted)] text-[var(--color-ink-3)] font-medium uppercase tracking-wide">In next release</span>
           </span>
           <input
             type="checkbox"
@@ -516,12 +516,12 @@ export default function OwnerProfilePage() {
             onChange={(e) => update("notifySms", e.target.checked)}
             disabled
             aria-label="SMS notifications (not yet available)"
-            className="w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-[var(--color-primary)] focus:ring-[var(--color-ink)]/30 opacity-50"
+            className="w-4 h-4 rounded border-[var(--color-line-2)] text-[var(--color-primary)] focus:ring-[var(--color-ink)]/30 opacity-50"
           />
         </label>
         <div className="card-subtle p-4 rounded-xl">
-          <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Payout details</h3>
-          <p className="text-xs text-slate-500 dark:text-slate-400">
+          <h3 className="text-sm font-semibold text-[var(--color-ink-2)] mb-1">Payout details</h3>
+          <p className="text-xs text-[var(--color-ink-3)]">
             Payout setup via Stripe will be available for future deals. All rent is arranged directly between you and the tenant.
           </p>
         </div>

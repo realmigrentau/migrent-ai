@@ -123,7 +123,7 @@ export default function SupportWidget() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className="fixed bottom-24 right-6 z-50 w-[28rem] h-[38rem] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-2xl flex flex-col overflow-hidden"
+            className="fixed bottom-24 right-6 z-50 w-[28rem] h-[38rem] bg-[var(--color-surface-2)] border border-[var(--color-line)] rounded-2xl shadow-2xl flex flex-col overflow-hidden"
           >
             {/* Header */}
             <div className="bg-[var(--color-primary)] from-[var(--color-primary)] to-[var(--color-primary)] text-white px-5 py-4">
@@ -144,7 +144,7 @@ export default function SupportWidget() {
             </div>
 
             {/* Tabs */}
-            <div className="flex border-b border-slate-200 dark:border-slate-700">
+            <div className="flex border-b border-[var(--color-line)]">
               {([
                 { key: "chat" as Tab, label: "AI Assistant", icon: "M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 00-2.455 2.456z" },
                 { key: "contact" as Tab, label: "Contact Support", icon: "M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" },
@@ -155,7 +155,7 @@ export default function SupportWidget() {
                   className={`flex-1 py-2.5 text-sm font-medium transition-colors flex items-center justify-center gap-1.5 ${
                     tab === t.key
                       ? "text-[var(--color-primary)] border-b-2 border-[var(--color-primary)]"
-                      : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
+                      : "text-[var(--color-ink-3)] hover:text-[var(--color-ink-2)] dark:hover:text-[var(--color-ink-4)]"
                   }`}
                 >
                   <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -177,7 +177,7 @@ export default function SupportWidget() {
                       <div className={`max-w-[85%] px-4 py-2.5 rounded-2xl text-sm whitespace-pre-line leading-relaxed ${
                         msg.from === "user"
                           ? "bg-[var(--color-primary)] text-white rounded-br-md"
-                          : "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-bl-md"
+                          : "bg-[var(--color-surface-muted)] text-[var(--color-ink-2)] rounded-bl-md"
                       }`}>
                         {msg.text}
                       </div>
@@ -187,7 +187,7 @@ export default function SupportWidget() {
                   {/* Typing indicator */}
                   {typing && (
                     <div className="flex justify-start">
-                      <div className="bg-slate-100 dark:bg-slate-800 rounded-2xl rounded-bl-md px-4 py-3 flex items-center gap-1">
+                      <div className="bg-[var(--color-surface-muted)] rounded-2xl rounded-bl-md px-4 py-3 flex items-center gap-1">
                         <span className="w-2 h-2 rounded-full bg-slate-400 animate-bounce" style={{ animationDelay: "0ms" }} />
                         <span className="w-2 h-2 rounded-full bg-slate-400 animate-bounce" style={{ animationDelay: "150ms" }} />
                         <span className="w-2 h-2 rounded-full bg-slate-400 animate-bounce" style={{ animationDelay: "300ms" }} />
@@ -199,7 +199,7 @@ export default function SupportWidget() {
                 </div>
 
                 {/* Input */}
-                <div className="p-3 border-t border-slate-200 dark:border-slate-700">
+                <div className="p-3 border-t border-[var(--color-line)]">
                   <div className="flex gap-2">
                     <input
                       type="text"
@@ -207,7 +207,7 @@ export default function SupportWidget() {
                       onChange={(e) => setChatInput(e.target.value)}
                       onKeyDown={(e) => e.key === "Enter" && handleSend()}
                       placeholder="Ask a question..."
-                      className="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-ink)]/30"
+                      className="flex-1 px-4 py-2.5 rounded-xl border border-[var(--color-line)] bg-[var(--color-surface)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-ink)]/30"
                     />
                     <button
                       onClick={handleSend}
@@ -219,7 +219,7 @@ export default function SupportWidget() {
                       </svg>
                     </button>
                   </div>
-                  <p className="text-[10px] text-slate-400 mt-1.5 text-center">
+                  <p className="text-[10px] text-[var(--color-ink-3)] mt-1.5 text-center">
                     AI assistant - for human support, use the Contact tab
                   </p>
                 </div>
@@ -229,16 +229,16 @@ export default function SupportWidget() {
               <div className="flex-1 overflow-y-auto p-4">
                 {submitted ? (
                   <div className="text-center py-10">
-                    <div className="w-14 h-14 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center mx-auto mb-4">
-                      <svg className="w-7 h-7 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <div className="w-14 h-14 rounded-full bg-[var(--color-accent-50)] dark:bg-green-900/30 flex items-center justify-center mx-auto mb-4">
+                      <svg className="w-7 h-7 text-[var(--color-accent)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                       </svg>
                     </div>
-                    <h4 className="font-bold text-lg text-slate-900 dark:text-white">Request submitted!</h4>
-                    <p className="text-sm text-slate-500 mt-2">
+                    <h4 className="font-bold text-lg text-[var(--color-ink)]">Request submitted!</h4>
+                    <p className="text-sm text-[var(--color-ink-3)] mt-2">
                       Ticket ID: <span className="font-mono font-semibold text-[var(--color-primary)]">{ticketId}</span>
                     </p>
-                    <p className="text-xs text-slate-400 mt-2">We'll get back to you within 24 hours.</p>
+                    <p className="text-xs text-[var(--color-ink-3)] mt-2">We'll get back to you within 24 hours.</p>
                     {session && (
                       <a
                         href="/support/tickets"
@@ -250,7 +250,7 @@ export default function SupportWidget() {
                   </div>
                 ) : (
                   <form onSubmit={handleSubmit} className="space-y-3">
-                    <p className="text-xs text-slate-500 mb-1">Submit a support request and we'll respond within 24 hours.</p>
+                    <p className="text-xs text-[var(--color-ink-3)] mb-1">Submit a support request and we'll respond within 24 hours.</p>
 
                     {/* Guest fields */}
                     {!session && (
@@ -261,7 +261,7 @@ export default function SupportWidget() {
                           onChange={(e) => setName(e.target.value)}
                           placeholder="Your name"
                           required
-                          className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-ink)]/30"
+                          className="w-full px-3 py-2.5 rounded-xl border border-[var(--color-line)] bg-[var(--color-surface)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-ink)]/30"
                         />
                         <input
                           type="email"
@@ -269,7 +269,7 @@ export default function SupportWidget() {
                           onChange={(e) => setEmail(e.target.value)}
                           placeholder="Your email"
                           required
-                          className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-ink)]/30"
+                          className="w-full px-3 py-2.5 rounded-xl border border-[var(--color-line)] bg-[var(--color-surface)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-ink)]/30"
                         />
                       </div>
                     )}
@@ -277,7 +277,7 @@ export default function SupportWidget() {
                     <select
                       value={category}
                       onChange={(e) => setCategory(e.target.value)}
-                      className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-ink)]/30"
+                      className="w-full px-3 py-2.5 rounded-xl border border-[var(--color-line)] bg-[var(--color-surface)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-ink)]/30"
                     >
                       <option value="feedback">General Feedback</option>
                       <option value="billing">Billing / Payments</option>
@@ -295,7 +295,7 @@ export default function SupportWidget() {
                       placeholder="Subject"
                       required
                       minLength={3}
-                      className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-ink)]/30"
+                      className="w-full px-3 py-2.5 rounded-xl border border-[var(--color-line)] bg-[var(--color-surface)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-ink)]/30"
                     />
 
                     <textarea
@@ -305,7 +305,7 @@ export default function SupportWidget() {
                       required
                       minLength={10}
                       rows={5}
-                      className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-ink)]/30 resize-none"
+                      className="w-full px-3 py-2.5 rounded-xl border border-[var(--color-line)] bg-[var(--color-surface)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-ink)]/30 resize-none"
                     />
 
                     <button

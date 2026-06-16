@@ -160,7 +160,7 @@ export default function PaymentSuccess() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
-          className="text-3xl md:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white"
+          className="text-3xl md:text-4xl font-semibold tracking-tight text-[var(--color-ink)]"
         >
           Deal Confirmed!
         </motion.h1>
@@ -169,7 +169,7 @@ export default function PaymentSuccess() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.8 }}
-          className="text-lg text-slate-600 dark:text-slate-300 font-medium"
+          className="text-lg text-[var(--color-ink-2)] font-medium"
         >
           Welcome to your new home.
         </motion.p>
@@ -178,7 +178,7 @@ export default function PaymentSuccess() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.0 }}
-          className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed max-w-md mx-auto"
+          className="text-sm text-[var(--color-ink-3)] leading-relaxed max-w-md mx-auto"
         >
           Your payment has been processed and the deal is confirmed.
           Both parties will receive a confirmation email with dates, total, and contact info shortly.
@@ -189,7 +189,7 @@ export default function PaymentSuccess() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1.1 }}
-            className="text-xs text-slate-400 dark:text-slate-500 font-mono"
+            className="text-xs text-[var(--color-ink-3)] font-mono"
           >
             Reference: {sessionId.slice(0, 20)}...
           </motion.p>

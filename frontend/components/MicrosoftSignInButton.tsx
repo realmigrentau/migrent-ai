@@ -23,7 +23,7 @@ export default function MicrosoftSignInButton({ redirectTo, disabled }: Microsof
       whileTap={disabled ? {} : { scale: 0.99 }}
       onClick={handleMicrosoftSignIn}
       disabled={disabled}
-      className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+      className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-xl bg-[var(--color-surface-2)] border border-[var(--color-line)] text-sm font-semibold text-[var(--color-ink-2)] hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-surface-muted)] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
     >
       <svg width="18" height="18" viewBox="0 0 21 21">
         <rect x="1" y="1" width="9" height="9" fill="#f25022" />

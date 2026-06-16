@@ -83,7 +83,7 @@ export default function CollectionsBar({
               className={`relative flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all shrink-0 group ${
                 isActive
                   ? "text-white shadow-lg"
-                  : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600"
+                  : "bg-[var(--color-surface-2)] text-[var(--color-ink-2)] border border-[var(--color-line)] hover:border-[var(--color-line-2)] dark:hover:border-[var(--color-line-2)]"
               }`}
               style={
                 isActive
@@ -102,7 +102,7 @@ export default function CollectionsBar({
                 <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-bold ${
                   isActive
                     ? "bg-white/20 text-white"
-                    : "bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400"
+                    : "bg-[var(--color-surface-muted)] text-[var(--color-ink-3)]"
                 }`}>
                   {collection.count}
                 </span>
@@ -124,7 +124,7 @@ export default function CollectionsBar({
                   }}
                   aria-label={`Delete ${collection.name} collection`}
                   className={`ml-1 p-0.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity ${
-                    isActive ? "text-white/60 hover:text-white" : "text-slate-400 hover:text-red-500"
+                    isActive ? "text-white/60 hover:text-white" : "text-[var(--color-ink-3)] hover:text-[var(--color-danger-500)]"
                   }`}
                 >
                   <X className="w-3 h-3" />
@@ -140,7 +140,7 @@ export default function CollectionsBar({
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: collections.length * 0.04 }}
           onClick={() => setShowAddModal(true)}
-          className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap border-2 border-dashed border-slate-200 dark:border-slate-700 text-slate-400 hover:border-[var(--color-line-2)] hover:text-[var(--color-primary)] dark:hover:border-[var(--color-primary)]/30 dark:hover:text-[var(--color-primary)] transition-all shrink-0"
+          className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap border-2 border-dashed border-[var(--color-line)] text-[var(--color-ink-3)] hover:border-[var(--color-line-2)] hover:text-[var(--color-primary)] dark:hover:border-[var(--color-primary)]/30 dark:hover:text-[var(--color-primary)] transition-all shrink-0"
         >
           <Plus className="w-3.5 h-3.5" />
           New
@@ -160,15 +160,15 @@ export default function CollectionsBar({
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Palette className="w-4 h-4 text-[var(--color-primary)]" />
-                  <h3 className="text-sm font-bold text-slate-900 dark:text-white">
+                  <h3 className="text-sm font-bold text-[var(--color-ink)]">
                     New Collection
                   </h3>
                 </div>
                 <button
                   onClick={() => setShowAddModal(false)}
-                  className="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                  className="p-1 rounded-lg hover:bg-[var(--color-surface-muted)] transition-colors"
                 >
-                  <X className="w-4 h-4 text-slate-400" />
+                  <X className="w-4 h-4 text-[var(--color-ink-3)]" />
                 </button>
               </div>
 
@@ -185,7 +185,7 @@ export default function CollectionsBar({
 
               {/* Color picker */}
               <div>
-                <p className="text-xs text-slate-400 mb-2">Colour</p>
+                <p className="text-xs text-[var(--color-ink-3)] mb-2">Colour</p>
                 <div className="flex flex-wrap gap-2">
                   {COLLECTION_GRADIENTS.map((g, i) => (
                     <button
@@ -204,7 +204,7 @@ export default function CollectionsBar({
 
               {/* Emoji picker */}
               <div>
-                <p className="text-xs text-slate-400 mb-2">Icon</p>
+                <p className="text-xs text-[var(--color-ink-3)] mb-2">Icon</p>
                 <div className="flex gap-2">
                   {COLLECTION_EMOJIS.map((e) => (
                     <button
@@ -213,7 +213,7 @@ export default function CollectionsBar({
                       className={`p-2 rounded-xl transition-all ${
                         selectedEmoji === e.id
                           ? "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 text-[var(--color-primary)] border border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)] scale-110"
-                          : "bg-slate-50 dark:bg-slate-800 text-slate-400 border border-transparent hover:text-slate-600 dark:hover:text-slate-200"
+                          : "bg-[var(--color-surface)] text-[var(--color-ink-3)] border border-transparent hover:text-[var(--color-ink-2)] dark:hover:text-[var(--color-ink-4)]"
                       }`}
                     >
                       {EMOJI_MAP[e.id]}

@@ -131,10 +131,10 @@ export default function SeekerSearchExtended() {
   return (
     <div className="space-y-6">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-        <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white">
+        <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-[var(--color-ink)]">
           Find a Room
         </h1>
-        <p className="text-sm text-slate-500 dark:text-slate-400 mt-2">
+        <p className="text-sm text-[var(--color-ink-3)] mt-2">
           Search by destination, dates, and group size.
         </p>
       </motion.div>
@@ -149,7 +149,7 @@ export default function SeekerSearchExtended() {
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {/* Destinations */}
           <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+            <label className="block text-sm font-medium text-[var(--color-ink-2)] mb-2">
               Where to?
             </label>
             <select
@@ -168,14 +168,14 @@ export default function SeekerSearchExtended() {
                 </option>
               ))}
             </select>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+            <p className="text-xs text-[var(--color-ink-3)] mt-1">
               Hold Ctrl/Cmd to select multiple
             </p>
           </div>
 
           {/* Check-in */}
           <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+            <label className="block text-sm font-medium text-[var(--color-ink-2)] mb-2">
               Check-in
             </label>
             <input
@@ -188,7 +188,7 @@ export default function SeekerSearchExtended() {
 
           {/* Check-out */}
           <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+            <label className="block text-sm font-medium text-[var(--color-ink-2)] mb-2">
               Check-out
             </label>
             <input
@@ -201,13 +201,13 @@ export default function SeekerSearchExtended() {
 
           {/* Guests */}
           <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+            <label className="block text-sm font-medium text-[var(--color-ink-2)] mb-2">
               Guests
             </label>
             <select className="input-field">
               <option>{adults + children + infants} guests</option>
             </select>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+            <p className="text-xs text-[var(--color-ink-3)] mt-1">
               {adults} adults, {children} children, {infants} infants
             </p>
           </div>
@@ -216,7 +216,7 @@ export default function SeekerSearchExtended() {
         <div className="grid sm:grid-cols-3 gap-4">
           {/* Price */}
           <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+            <label className="block text-sm font-medium text-[var(--color-ink-2)] mb-2">
               Max price: AUD ${maxPrice}/week
             </label>
             <input
@@ -232,7 +232,7 @@ export default function SeekerSearchExtended() {
 
           {/* Adults */}
           <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+            <label className="block text-sm font-medium text-[var(--color-ink-2)] mb-2">
               Adults (18+)
             </label>
             <div className="flex items-center gap-2">
@@ -254,7 +254,7 @@ export default function SeekerSearchExtended() {
 
           {/* Children */}
           <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+            <label className="block text-sm font-medium text-[var(--color-ink-2)] mb-2">
               Children (2-17)
             </label>
             <div className="flex items-center gap-2">
@@ -302,7 +302,7 @@ export default function SeekerSearchExtended() {
           </motion.button>
         </div>
         {locationError && (
-          <p role="alert" className="mt-3 text-sm text-rose-600 dark:text-rose-400">
+          <p role="alert" className="mt-3 text-sm text-rose-600 dark:text-[var(--color-primary)]">
             {locationError}
           </p>
         )}
@@ -334,7 +334,7 @@ export default function SeekerSearchExtended() {
               className="card p-8 rounded-2xl text-center"
             >
               <svg
-                className="w-12 h-12 mx-auto text-slate-300 dark:text-slate-600 mb-3"
+                className="w-12 h-12 mx-auto text-[var(--color-ink-4)] mb-3"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -346,10 +346,10 @@ export default function SeekerSearchExtended() {
                   d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
                 />
               </svg>
-              <h3 className="font-bold text-slate-900 dark:text-white mb-1">
+              <h3 className="font-bold text-[var(--color-ink)] mb-1">
                 No rooms found
               </h3>
-              <p className="text-sm text-slate-500 dark:text-slate-400">
+              <p className="text-sm text-[var(--color-ink-3)]">
                 Try adjusting your filters or searching a different area.
               </p>
             </motion.div>
@@ -364,7 +364,7 @@ export default function SeekerSearchExtended() {
                 className="card p-5 rounded-2xl group"
               >
                 <div className="flex gap-4">
-                  <div className="w-28 h-20 sm:w-36 sm:h-24 shrink-0 rounded-xl bg-slate-100 dark:bg-slate-800 overflow-hidden">
+                  <div className="w-28 h-20 sm:w-36 sm:h-24 shrink-0 rounded-xl bg-[var(--color-surface-muted)] overflow-hidden">
                     <img
                       src={listing.photos[0]}
                       alt={listing.address}
@@ -376,10 +376,10 @@ export default function SeekerSearchExtended() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between gap-2">
                       <div>
-                        <h3 className="font-bold text-slate-900 dark:text-white text-sm sm:text-base truncate">
+                        <h3 className="font-bold text-[var(--color-ink)] text-sm sm:text-base truncate">
                           {listing.address}
                         </h3>
-                        <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+                        <p className="text-xs sm:text-sm text-[var(--color-ink-3)]">
                           {listing.suburb}, {listing.postcode}
                         </p>
                       </div>
@@ -394,16 +394,16 @@ export default function SeekerSearchExtended() {
                     </div>
 
                     <div className="flex flex-wrap gap-1.5 mt-2">
-                      <span className="px-2 py-0.5 rounded-full text-xs bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 capitalize">
+                      <span className="px-2 py-0.5 rounded-full text-xs bg-[var(--color-surface-muted)] text-[var(--color-ink-2)] capitalize">
                         {listing.roomType}
                       </span>
                       {listing.furnished && (
-                        <span className="px-2 py-0.5 rounded-full text-xs bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+                        <span className="px-2 py-0.5 rounded-full text-xs bg-[var(--color-surface-muted)] text-[var(--color-ink-2)]">
                           Furnished
                         </span>
                       )}
                       {listing.billsIncluded && (
-                        <span className="px-2 py-0.5 rounded-full text-xs bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+                        <span className="px-2 py-0.5 rounded-full text-xs bg-[var(--color-surface-muted)] text-[var(--color-ink-2)]">
                           Bills incl.
                         </span>
                       )}
@@ -414,13 +414,13 @@ export default function SeekerSearchExtended() {
                       )}
                     </div>
 
-                    <p className="text-sm text-slate-600 dark:text-slate-300 mt-2 line-clamp-1 hidden sm:block">
+                    <p className="text-sm text-[var(--color-ink-2)] mt-2 line-clamp-1 hidden sm:block">
                       {listing.description}
                     </p>
                   </div>
                 </div>
 
-                <div className="flex gap-2 mt-3 pt-3 border-t border-slate-100 dark:border-slate-800">
+                <div className="flex gap-2 mt-3 pt-3 border-t border-[var(--color-line)]">
                   <Link
                     href={`/listing/${listing.id}`}
                     className="btn-primary py-2 px-4 rounded-lg text-xs flex-1 text-center"
@@ -442,7 +442,7 @@ export default function SeekerSearchExtended() {
             ))
           )}
           {!searched && (
-            <p className="text-sm text-slate-400 dark:text-slate-500 text-center py-4">
+            <p className="text-sm text-[var(--color-ink-3)] text-center py-4">
               Start searching to see available rooms.
             </p>
           )}
@@ -456,13 +456,13 @@ export default function SeekerSearchExtended() {
             {/* Wishlist */}
             {saved.size > 0 && (
               <Link href="/seeker/wishlist" className="card p-4 rounded-2xl block">
-                <p className="text-sm font-bold text-slate-900 dark:text-white">
+                <p className="text-sm font-bold text-[var(--color-ink)]">
                   Wishlist
                 </p>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
+                <p className="text-xs text-[var(--color-ink-3)]">
                   {saved.size} saved items
                 </p>
-                <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800">
+                <div className="mt-3 pt-3 border-t border-[var(--color-line)]">
                   <button className="text-xs text-[var(--color-primary)] hover:text-[var(--color-primary)] font-semibold">
                     View all →
                   </button>

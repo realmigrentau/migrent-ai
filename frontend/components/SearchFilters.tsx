@@ -60,7 +60,7 @@ export default function SearchFilters({ onSearch, loading }: SearchFiltersProps)
       <div className="flex gap-3">
         <div className="relative flex-1">
           <svg
-            className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400"
+            className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--color-ink-3)]"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -157,22 +157,22 @@ export default function SearchFilters({ onSearch, loading }: SearchFiltersProps)
           <option value="4.5">4.5+ stars</option>
         </select>
 
-        <label className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300 cursor-pointer">
+        <label className="flex items-center gap-2 text-sm text-[var(--color-ink-2)] cursor-pointer">
           <input
             type="checkbox"
             checked={filters.femaleOnly}
             onChange={(e) => update("femaleOnly", e.target.checked)}
-            className="w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-[var(--color-primary)] focus:ring-[var(--color-ink)]/30"
+            className="w-4 h-4 rounded border-[var(--color-line-2)] text-[var(--color-primary)] focus:ring-[var(--color-ink)]/30"
           />
           Female-only
         </label>
 
-        <label className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300 cursor-pointer">
+        <label className="flex items-center gap-2 text-sm text-[var(--color-ink-2)] cursor-pointer">
           <input
             type="checkbox"
             checked={filters.nearStation}
             onChange={(e) => update("nearStation", e.target.checked)}
-            className="w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-blue-500 focus:ring-blue-500"
+            className="w-4 h-4 rounded border-[var(--color-line-2)] text-[var(--color-primary)] focus:ring-[var(--color-primary)]"
           />
           Near station
         </label>
@@ -265,22 +265,22 @@ export default function SearchFilters({ onSearch, loading }: SearchFiltersProps)
                   <option value="4.5">4.5+ stars</option>
                 </select>
 
-                <label className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300 cursor-pointer">
+                <label className="flex items-center gap-2 text-sm text-[var(--color-ink-2)] cursor-pointer">
                   <input
                     type="checkbox"
                     checked={filters.femaleOnly}
                     onChange={(e) => update("femaleOnly", e.target.checked)}
-                    className="w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-[var(--color-primary)] focus:ring-[var(--color-ink)]/30"
+                    className="w-4 h-4 rounded border-[var(--color-line-2)] text-[var(--color-primary)] focus:ring-[var(--color-ink)]/30"
                   />
                   Female-only
                 </label>
 
-                <label className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300 cursor-pointer">
+                <label className="flex items-center gap-2 text-sm text-[var(--color-ink-2)] cursor-pointer">
                   <input
                     type="checkbox"
                     checked={filters.nearStation}
                     onChange={(e) => update("nearStation", e.target.checked)}
-                    className="w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-blue-500 focus:ring-blue-500"
+                    className="w-4 h-4 rounded border-[var(--color-line-2)] text-[var(--color-primary)] focus:ring-[var(--color-primary)]"
                   />
                   Near station
                 </label>

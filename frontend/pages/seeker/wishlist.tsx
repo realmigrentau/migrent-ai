@@ -132,7 +132,7 @@ export default function WishlistPage() {
           >
             {/* Search */}
             <div className="relative flex-1 w-full sm:max-w-xs">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-ink-3)]" />
               <input
                 type="text"
                 value={searchQuery}
@@ -145,7 +145,7 @@ export default function WishlistPage() {
             <div className="flex items-center gap-2 w-full sm:w-auto">
               {/* Sort */}
               <div className="relative flex-1 sm:flex-none">
-                <ArrowUpDown className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400 pointer-events-none" />
+                <ArrowUpDown className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[var(--color-ink-3)] pointer-events-none" />
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value as SortOption)}
@@ -165,13 +165,13 @@ export default function WishlistPage() {
               </div>
 
               {/* View mode */}
-              <div className="flex items-center rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+              <div className="flex items-center rounded-xl border border-[var(--color-line)] overflow-hidden">
                 <button
                   onClick={() => setViewMode("grid")}
                   className={`p-2.5 transition-colors ${
                     viewMode === "grid"
                       ? "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 text-[var(--color-primary)]"
-                      : "text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+                      : "text-[var(--color-ink-3)] hover:text-[var(--color-ink-2)] dark:hover:text-[var(--color-ink-4)]"
                   }`}
                 >
                   <LayoutGrid className="w-4 h-4" />
@@ -181,7 +181,7 @@ export default function WishlistPage() {
                   className={`p-2.5 transition-colors ${
                     viewMode === "list"
                       ? "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 text-[var(--color-primary)]"
-                      : "text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+                      : "text-[var(--color-ink-3)] hover:text-[var(--color-ink-2)] dark:hover:text-[var(--color-ink-4)]"
                   }`}
                 >
                   <List className="w-4 h-4" />
@@ -197,7 +197,7 @@ export default function WishlistPage() {
                 className={`flex items-center gap-1.5 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all ${
                   compareMode
                     ? "bg-[var(--color-primary)] text-white shadow-lg shadow-[var(--color-primary)]/20"
-                    : "bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 hover:border-[var(--color-line-2)] dark:hover:border-[var(--color-primary)]/30"
+                    : "bg-[var(--color-surface-2)] text-[var(--color-ink-3)] border border-[var(--color-line)] hover:border-[var(--color-line-2)] dark:hover:border-[var(--color-primary)]/30"
                 }`}
               >
                 <Columns3 className="w-3.5 h-3.5" />
@@ -207,7 +207,7 @@ export default function WishlistPage() {
               {/* Activity bell (mobile) */}
               <button
                 onClick={() => setShowActivityFeed(true)}
-                className="relative p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-400 hover:text-[var(--color-primary)] transition-colors lg:hidden"
+                className="relative p-2.5 rounded-xl bg-[var(--color-surface-2)] border border-[var(--color-line)] text-[var(--color-ink-3)] hover:text-[var(--color-primary)] transition-colors lg:hidden"
               >
                 <Bell className="w-4 h-4" />
                 {unreadActivityCount > 0 && (
@@ -247,10 +247,10 @@ export default function WishlistPage() {
               <div className="w-20 h-20 mx-auto rounded-2xl bg-[var(--color-primary-soft)] from-[var(--color-primary-soft)] to-pink-100 dark:from-rose-900/30 dark:to-pink-900/30 flex items-center justify-center mb-5">
                 <Heart className="w-10 h-10 text-[var(--color-primary)]" />
               </div>
-              <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">
+              <h3 className="text-xl font-bold text-[var(--color-ink)] mb-2">
                 {searchQuery ? "No matches found" : activeCollection !== "all" ? "No listings in this collection" : "Your wishlist is empty"}
               </h3>
-              <p className="text-sm text-slate-500 dark:text-slate-400 mb-6 max-w-sm mx-auto">
+              <p className="text-sm text-[var(--color-ink-3)] mb-6 max-w-sm mx-auto">
                 {searchQuery
                   ? "Try a different search term or clear your filters."
                   : activeCollection !== "all"

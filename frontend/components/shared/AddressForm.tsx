@@ -24,8 +24,8 @@ export default function AddressForm({ profile }: AddressFormProps) {
             <MapPin className="w-5 h-5 text-white" />
           </div>
           <div>
-            <h3 className="font-bold text-slate-900 dark:text-white">Residential Address</h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400">Only visible to verified users</p>
+            <h3 className="font-bold text-[var(--color-ink)]">Residential Address</h3>
+            <p className="text-xs text-[var(--color-ink-3)]">Only visible to verified users</p>
           </div>
         </div>
         <div className="ml-14 space-y-3">
@@ -34,39 +34,39 @@ export default function AddressForm({ profile }: AddressFormProps) {
             value={address}
             disabled
             placeholder="Set during onboarding"
-            className="input-field bg-slate-50 dark:bg-slate-800/50 cursor-not-allowed"
+            className="input-field bg-[var(--color-surface)] cursor-not-allowed"
           />
           {profile?.suburb_city && (
-            <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
-              <span className="text-slate-400">Suburb/City:</span>
+            <div className="flex items-center gap-2 text-sm text-[var(--color-ink-2)]">
+              <span className="text-[var(--color-ink-3)]">Suburb/City:</span>
               <span>{profile.suburb_city}</span>
             </div>
           )}
           {profile?.nearest_station && (
-            <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
-              <span className="text-slate-400">Nearest station:</span>
+            <div className="flex items-center gap-2 text-sm text-[var(--color-ink-2)]">
+              <span className="text-[var(--color-ink-3)]">Nearest station:</span>
               <span>{profile.nearest_station}</span>
             </div>
           )}
-          <p className="text-[10px] text-slate-400">Address is locked after onboarding. Contact support to change.</p>
+          <p className="text-[10px] text-[var(--color-ink-3)]">Address is locked after onboarding. Contact support to change.</p>
         </div>
       </div>
 
       {/* Phone */}
       <div className="card p-5 rounded-2xl">
         <div className="flex items-start gap-4">
-          <div className="w-10 h-10 rounded-xl bg-[var(--color-primary-soft)] from-[var(--color-accent)] to-green-500 flex items-center justify-center shadow-lg shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-[var(--color-primary-soft)] from-[var(--color-accent)] to-[var(--color-accent)] flex items-center justify-center shadow-lg shrink-0">
             <Phone className="w-5 h-5 text-white" />
           </div>
           <div className="flex-1">
-            <h3 className="font-bold text-slate-900 dark:text-white">Phone</h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mb-2">Set during onboarding</p>
+            <h3 className="font-bold text-[var(--color-ink)]">Phone</h3>
+            <p className="text-xs text-[var(--color-ink-3)] mb-2">Set during onboarding</p>
             <input
               type="text"
               value={profile?.phone || (profile?.phones && profile.phones[0]) || ""}
               disabled
               placeholder="Not set"
-              className="input-field bg-slate-50 dark:bg-slate-800/50 cursor-not-allowed"
+              className="input-field bg-[var(--color-surface)] cursor-not-allowed"
             />
           </div>
         </div>
@@ -79,13 +79,13 @@ export default function AddressForm({ profile }: AddressFormProps) {
             <Mail className="w-5 h-5 text-white" />
           </div>
           <div className="flex-1">
-            <h3 className="font-bold text-slate-900 dark:text-white">Email</h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mb-2">Your account email</p>
+            <h3 className="font-bold text-[var(--color-ink)]">Email</h3>
+            <p className="text-xs text-[var(--color-ink-3)] mb-2">Your account email</p>
             <input
               type="text"
               value={profile?.email || ""}
               disabled
-              className="input-field bg-slate-50 dark:bg-slate-800/50 cursor-not-allowed"
+              className="input-field bg-[var(--color-surface)] cursor-not-allowed"
             />
           </div>
         </div>
@@ -99,9 +99,9 @@ export default function AddressForm({ profile }: AddressFormProps) {
               <Shield className="w-5 h-5 text-white" />
             </div>
             <div className="flex-1">
-              <h3 className="font-bold text-slate-900 dark:text-white">Emergency Contact</h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mb-2">Set during onboarding</p>
-              <div className="space-y-1 text-sm text-slate-600 dark:text-slate-300">
+              <h3 className="font-bold text-[var(--color-ink)]">Emergency Contact</h3>
+              <p className="text-xs text-[var(--color-ink-3)] mb-2">Set during onboarding</p>
+              <div className="space-y-1 text-sm text-[var(--color-ink-2)]">
                 {profile.emergency_contact.name && (
                   <p>Name: {profile.emergency_contact.name}</p>
                 )}

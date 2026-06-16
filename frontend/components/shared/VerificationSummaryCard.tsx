@@ -23,19 +23,19 @@ export default function VerificationSummaryCard({ profile }: VerificationSummary
   return (
     <div className="card p-5 rounded-2xl">
       <div className="flex items-center gap-3 mb-4">
-        <div className="w-10 h-10 rounded-xl bg-[var(--color-primary-soft)] from-[var(--color-accent)] to-teal-500 flex items-center justify-center shadow-lg shrink-0">
+        <div className="w-10 h-10 rounded-xl bg-[var(--color-primary-soft)] from-[var(--color-accent)] to-[var(--color-primary)] flex items-center justify-center shadow-lg shrink-0">
           <Shield className="w-5 h-5 text-white" />
         </div>
         <div>
-          <h3 className="font-bold text-slate-900 dark:text-white">Verification Status</h3>
-          <p className="text-xs text-slate-500 dark:text-slate-400">{done}/{checks.length} completed - {pct}%</p>
+          <h3 className="font-bold text-[var(--color-ink)]">Verification Status</h3>
+          <p className="text-xs text-[var(--color-ink-3)]">{done}/{checks.length} completed - {pct}%</p>
         </div>
       </div>
 
       {/* Progress bar */}
-      <div className="w-full h-2 bg-slate-100 dark:bg-slate-800 rounded-full mb-4 overflow-hidden">
+      <div className="w-full h-2 bg-[var(--color-surface-muted)] rounded-full mb-4 overflow-hidden">
         <div
-          className="h-full bg-[var(--color-primary)] from-[var(--color-accent)] to-teal-500 rounded-full transition-all duration-500"
+          className="h-full bg-[var(--color-primary)] from-[var(--color-accent)] to-[var(--color-primary)] rounded-full transition-all duration-500"
           style={{ width: `${pct}%` }}
         />
       </div>
@@ -46,9 +46,9 @@ export default function VerificationSummaryCard({ profile }: VerificationSummary
             {c.done ? (
               <CheckCircle2 className="w-4 h-4 text-[var(--color-accent)]" />
             ) : (
-              <XCircle className="w-4 h-4 text-slate-300 dark:text-slate-600" />
+              <XCircle className="w-4 h-4 text-[var(--color-ink-4)]" />
             )}
-            <span className={c.done ? "text-slate-700 dark:text-slate-300" : "text-slate-400 dark:text-slate-500"}>
+            <span className={c.done ? "text-[var(--color-ink-2)]" : "text-[var(--color-ink-3)]"}>
               {c.label}
             </span>
           </div>

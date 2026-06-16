@@ -91,8 +91,8 @@ export default function CommunityHighlights() {
             onClick={() => setActiveTab("listers")}
             className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-colors ${
               activeTab === "listers"
-                ? "bg-white dark:bg-slate-700 text-[var(--color-primary)] dark:text-[var(--color-primary)] shadow-sm"
-                : "text-[var(--color-ink-3)] hover:text-slate-700 dark:hover:text-slate-200"
+                ? "bg-[var(--color-surface-2)] text-[var(--color-primary)] dark:text-[var(--color-primary)] shadow-sm"
+                : "text-[var(--color-ink-3)] hover:text-[var(--color-ink-2)] dark:hover:text-[var(--color-ink-4)]"
             }`}
           >
             <Crown className="w-3.5 h-3.5" />
@@ -102,8 +102,8 @@ export default function CommunityHighlights() {
             onClick={() => setActiveTab("members")}
             className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-colors ${
               activeTab === "members"
-                ? "bg-white dark:bg-slate-700 text-[var(--color-primary)] dark:text-[var(--color-primary)] shadow-sm"
-                : "text-[var(--color-ink-3)] hover:text-slate-700 dark:hover:text-slate-200"
+                ? "bg-[var(--color-surface-2)] text-[var(--color-primary)] dark:text-[var(--color-primary)] shadow-sm"
+                : "text-[var(--color-ink-3)] hover:text-[var(--color-ink-2)] dark:hover:text-[var(--color-ink-4)]"
             }`}
           >
             <Star className="w-3.5 h-3.5" />
@@ -134,14 +134,14 @@ export default function CommunityHighlights() {
             <div key={profile.id}>
               <Link
                 href={`/users/profile/${profile.id}`}
-                className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group"
+                className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-[var(--color-surface)]/50 transition-colors group"
               >
                 {/* Rank */}
                 <span className={`w-6 text-center text-xs font-bold shrink-0 ${
-                  i === 0 ? "text-amber-500" : i === 1 ? "text-slate-400" : i === 2 ? "text-amber-700 dark:text-amber-600" : "text-slate-300 dark:text-slate-600"
+                  i === 0 ? "text-[var(--color-warn-500)]" : i === 1 ? "text-[var(--color-ink-3)]" : i === 2 ? "text-[var(--color-warn-600)] dark:text-[var(--color-warn-600)]" : "text-[var(--color-ink-4)]"
                 }`}>
                   {i === 0 ? (
-                    <Crown className="w-4 h-4 mx-auto text-amber-500" />
+                    <Crown className="w-4 h-4 mx-auto text-[var(--color-warn-500)]" />
                   ) : (
                     `#${i + 1}`
                   )}
@@ -160,7 +160,7 @@ export default function CommunityHighlights() {
 
                 {/* Info */}
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-slate-800 dark:text-slate-100 truncate group-hover:text-[var(--color-primary)] dark:group-hover:text-[var(--color-primary)] transition-colors">
+                  <p className="text-sm font-semibold text-[var(--color-ink)] truncate group-hover:text-[var(--color-primary)] dark:group-hover:text-[var(--color-primary)] transition-colors">
                     {displayName}
                   </p>
                   <p className="text-xs text-[var(--color-ink-3)] truncate">
@@ -172,7 +172,7 @@ export default function CommunityHighlights() {
 
                 {/* Badge pill */}
                 {badgeCount > 0 && (
-                  <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-500/20 shrink-0">
+                  <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/10 text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)] border border-[var(--color-line-2)] dark:border-[var(--color-warn-500)]/20 shrink-0">
                     <Trophy className="w-2.5 h-2.5" />
                     {badgeCount}
                   </span>
@@ -185,7 +185,7 @@ export default function CommunityHighlights() {
                   </span>
                 )}
 
-                <ChevronRight className="w-3.5 h-3.5 text-slate-300 dark:text-slate-600 group-hover:text-[var(--color-primary)] transition-colors shrink-0" />
+                <ChevronRight className="w-3.5 h-3.5 text-[var(--color-ink-4)] group-hover:text-[var(--color-primary)] transition-colors shrink-0" />
               </Link>
             </div>
           );

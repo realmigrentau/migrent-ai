@@ -100,14 +100,14 @@ export default function VerificationCarousel({ profile, badges, onVerifyClick }:
             }}
             className={`shrink-0 flex items-center gap-2.5 px-4 py-3 rounded-2xl border transition-all ${
               item.verified
-                ? "bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 hover:shadow-md"
-                : "bg-slate-50 dark:bg-slate-900 border-dashed border-slate-300 dark:border-slate-700 opacity-60"
+                ? "bg-[var(--color-surface-2)]/50 border-[var(--color-line)] hover:shadow-md"
+                : "bg-[var(--color-surface)] border-dashed border-[var(--color-line-2)] dark:border-[var(--color-line)] opacity-60"
             }`}
           >
             <span className="text-xl">{item.icon}</span>
             <div className="text-left">
               <p className={`text-xs font-semibold ${
-                item.verified ? "text-slate-900 dark:text-white" : "text-slate-400 dark:text-slate-500"
+                item.verified ? "text-[var(--color-ink)]" : "text-[var(--color-ink-3)]"
               }`}>
                 {item.label}
               </p>
@@ -117,11 +117,11 @@ export default function VerificationCarousel({ profile, badges, onVerifyClick }:
                     <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                   </svg>
                 ) : (
-                  <svg className="w-3 h-3 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <svg className="w-3 h-3 text-[var(--color-ink-3)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 )}
-                <span className={`text-[10px] ${item.verified ? "text-[var(--color-accent)] dark:text-[var(--color-accent)]" : "text-slate-400"}`}>
+                <span className={`text-[10px] ${item.verified ? "text-[var(--color-accent)] dark:text-[var(--color-accent)]" : "text-[var(--color-ink-3)]"}`}>
                   {item.verified ? "Confirmed" : "Pending"}
                 </span>
               </div>
@@ -140,10 +140,10 @@ export default function VerificationCarousel({ profile, badges, onVerifyClick }:
             transition={{ duration: 0.2 }}
             className="overflow-hidden"
           >
-            <div className="mt-3 p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
+            <div className="mt-3 p-4 rounded-xl bg-[var(--color-surface)] border border-[var(--color-line)]">
               <div className="flex items-center gap-2">
                 <span className="text-lg">{selectedItem.icon}</span>
-                <p className="text-sm text-slate-700 dark:text-slate-200">{selectedItem.detail}</p>
+                <p className="text-sm text-[var(--color-ink-2)]">{selectedItem.detail}</p>
               </div>
             </div>
           </motion.div>

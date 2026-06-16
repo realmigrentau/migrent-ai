@@ -76,19 +76,19 @@ function AmenityItem({
         className={`w-4.5 h-4.5 ${
           available
             ? "text-[var(--color-accent)]"
-            : "text-slate-300 dark:text-slate-600"
+            : "text-[var(--color-ink-4)]"
         }`}
       />
       <span
         className={`text-sm ${
           available
-            ? "text-slate-700 dark:text-slate-200"
-            : "text-slate-400 dark:text-slate-500 line-through"
+            ? "text-[var(--color-ink-2)]"
+            : "text-[var(--color-ink-3)] line-through"
         }`}
       >
         {label}
         {detail && available && (
-          <span className="text-slate-400 dark:text-slate-500 ml-1">
+          <span className="text-[var(--color-ink-3)] ml-1">
             ({detail})
           </span>
         )}
@@ -144,19 +144,19 @@ export default function KeyDetails({ listing }: KeyDetailsProps) {
     <div className="space-y-6">
       {/* Price card */}
       <GlassCard gradient="emerald" padding="md">
-        <h3 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-3">
+        <h3 className="text-sm font-semibold text-[var(--color-ink-3)] uppercase tracking-wide mb-3">
           <DollarSign className="w-4 h-4 inline -mt-0.5 mr-1" />
           Pricing
         </h3>
         <div className="flex items-baseline gap-1">
-          <span className="text-3xl font-black text-slate-900 dark:text-white">
+          <span className="text-3xl font-black text-[var(--color-ink)]">
             ${weeklyTotal}
           </span>
-          <span className="text-sm text-slate-500 dark:text-slate-400">
+          <span className="text-sm text-[var(--color-ink-3)]">
             / week
           </span>
         </div>
-        <div className="mt-2 text-sm text-slate-600 dark:text-slate-300">
+        <div className="mt-2 text-sm text-[var(--color-ink-2)]">
           {listing.bills_included ? (
             <span className="text-[var(--color-accent)] dark:text-[var(--color-accent)] font-medium">
               Bills included
@@ -169,33 +169,33 @@ export default function KeyDetails({ listing }: KeyDetailsProps) {
 
       {/* Property specs */}
       <GlassCard padding="md">
-        <h3 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-3">
+        <h3 className="text-sm font-semibold text-[var(--color-ink-3)] uppercase tracking-wide mb-3">
           Property
         </h3>
-        <div className="flex flex-wrap gap-4 text-sm text-slate-700 dark:text-slate-200">
+        <div className="flex flex-wrap gap-4 text-sm text-[var(--color-ink-2)]">
           {listing.property_type && (
             <div className="flex items-center gap-1.5">
-              <Home className="w-4 h-4 text-slate-400" />
+              <Home className="w-4 h-4 text-[var(--color-ink-3)]" />
               {listing.property_type}
               {listing.place_type && ` - ${listing.place_type}`}
             </div>
           )}
           {listing.bedrooms != null && (
             <div className="flex items-center gap-1.5">
-              <Bed className="w-4 h-4 text-slate-400" />
+              <Bed className="w-4 h-4 text-[var(--color-ink-3)]" />
               {listing.bedrooms} bed{listing.bedrooms !== 1 ? "s" : ""}
             </div>
           )}
           {listing.bathrooms != null && (
             <div className="flex items-center gap-1.5">
-              <Bath className="w-4 h-4 text-slate-400" />
+              <Bath className="w-4 h-4 text-[var(--color-ink-3)]" />
               {listing.bathrooms} bath
               {listing.bathroom_type && ` (${listing.bathroom_type})`}
             </div>
           )}
           {listing.max_guests != null && (
             <div className="flex items-center gap-1.5">
-              <Users className="w-4 h-4 text-slate-400" />
+              <Users className="w-4 h-4 text-[var(--color-ink-3)]" />
               Max {listing.max_guests} guest
               {listing.max_guests !== 1 ? "s" : ""}
             </div>
@@ -206,7 +206,7 @@ export default function KeyDetails({ listing }: KeyDetailsProps) {
       {/* Highlights */}
       {listing.highlights && listing.highlights.length > 0 && (
         <div>
-          <h3 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-3">
+          <h3 className="text-sm font-semibold text-[var(--color-ink-3)] uppercase tracking-wide mb-3">
             Highlights
           </h3>
           <div className="flex flex-wrap gap-2">
@@ -224,7 +224,7 @@ export default function KeyDetails({ listing }: KeyDetailsProps) {
 
       {/* Amenities grid */}
       <GlassCard padding="md">
-        <h3 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-2">
+        <h3 className="text-sm font-semibold text-[var(--color-ink-3)] uppercase tracking-wide mb-2">
           Amenities
         </h3>
         <div className="grid grid-cols-2 gap-x-4">
@@ -299,15 +299,15 @@ export default function KeyDetails({ listing }: KeyDetailsProps) {
       {/* Availability */}
       {(listing.available_from || listing.min_stay_weeks) && (
         <GlassCard padding="md">
-          <h3 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-3">
+          <h3 className="text-sm font-semibold text-[var(--color-ink-3)] uppercase tracking-wide mb-3">
             <Calendar className="w-4 h-4 inline -mt-0.5 mr-1" />
             Availability
           </h3>
-          <div className="space-y-2 text-sm text-slate-600 dark:text-slate-300">
+          <div className="space-y-2 text-sm text-[var(--color-ink-2)]">
             {listing.available_from && (
               <p>
                 Available from{" "}
-                <span className="font-medium text-slate-900 dark:text-white">
+                <span className="font-medium text-[var(--color-ink)]">
                   {new Date(listing.available_from).toLocaleDateString(
                     "en-AU",
                     { day: "numeric", month: "short", year: "numeric" }
@@ -318,7 +318,7 @@ export default function KeyDetails({ listing }: KeyDetailsProps) {
             {listing.available_to && (
               <p>
                 Until{" "}
-                <span className="font-medium text-slate-900 dark:text-white">
+                <span className="font-medium text-[var(--color-ink)]">
                   {new Date(listing.available_to).toLocaleDateString("en-AU", {
                     day: "numeric",
                     month: "short",
@@ -344,24 +344,24 @@ export default function KeyDetails({ listing }: KeyDetailsProps) {
       {(listing.nearest_transport ||
         (listing.latitude && listing.longitude)) && (
         <GlassCard padding="md">
-          <h3 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-3">
+          <h3 className="text-sm font-semibold text-[var(--color-ink-3)] uppercase tracking-wide mb-3">
             <Train className="w-4 h-4 inline -mt-0.5 mr-1" />
             Location
           </h3>
           {listing.nearest_transport && (
-            <p className="text-sm text-slate-600 dark:text-slate-300 mb-3">
+            <p className="text-sm text-[var(--color-ink-2)] mb-3">
               {listing.nearest_transport}
             </p>
           )}
           {listing.neighbourhood_vibe && (
-            <p className="text-sm text-slate-500 dark:text-slate-400 mb-3">
+            <p className="text-sm text-[var(--color-ink-3)] mb-3">
               Vibe: {listing.neighbourhood_vibe}
             </p>
           )}
           {listing.latitude && listing.longitude && (
             <div
               ref={mapContainer}
-              className="w-full h-48 rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-800"
+              className="w-full h-48 rounded-xl overflow-hidden bg-[var(--color-surface-muted)]"
             />
           )}
         </GlassCard>
@@ -374,10 +374,10 @@ export default function KeyDetails({ listing }: KeyDetailsProps) {
         listing.security_cameras ||
         listing.other_safety_details) && (
         <GlassCard padding="md">
-          <h3 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-3">
+          <h3 className="text-sm font-semibold text-[var(--color-ink-3)] uppercase tracking-wide mb-3">
             House Rules & Safety
           </h3>
-          <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-300">
+          <ul className="space-y-2 text-sm text-[var(--color-ink-2)]">
             {listing.no_smoking && <li>No smoking on premises</li>}
             {listing.quiet_hours && (
               <li>Quiet hours: {listing.quiet_hours}</li>

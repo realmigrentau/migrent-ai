@@ -52,7 +52,7 @@ export default function VerificationModal({
             onClick={onClose}
           >
             <div
-              className="w-full max-w-sm bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden"
+              className="w-full max-w-sm bg-[var(--color-surface-2)] rounded-2xl shadow-2xl border border-[var(--color-line)] overflow-hidden"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Header */}
@@ -72,12 +72,12 @@ export default function VerificationModal({
                       )}
                     </div>
                     <div>
-                      <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+                      <h3 className="text-lg font-bold text-[var(--color-ink)]">
                         {profile.name || "User"}
                       </h3>
                       {profile.is_verified && profile.verifiedLabel ? (
                         <div className="flex items-center gap-1.5 mt-1">
-                          <span className="text-sm text-slate-600 dark:text-slate-300">
+                          <span className="text-sm text-[var(--color-ink-2)]">
                             Verified {profile.verifiedLabel}
                           </span>
                           <svg
@@ -89,7 +89,7 @@ export default function VerificationModal({
                           </svg>
                         </div>
                       ) : (
-                        <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                        <p className="text-sm text-[var(--color-ink-3)] mt-1">
                           Not yet verified
                         </p>
                       )}
@@ -99,7 +99,7 @@ export default function VerificationModal({
                   {/* Close button */}
                   <button
                     onClick={onClose}
-                    className="w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                    className="w-8 h-8 rounded-full flex items-center justify-center text-[var(--color-ink-3)] hover:text-[var(--color-ink-2)] dark:hover:text-[var(--color-ink-4)] hover:bg-[var(--color-surface-muted)] transition-colors"
                   >
                     <svg
                       className="w-5 h-5"
@@ -119,13 +119,13 @@ export default function VerificationModal({
               </div>
 
               {/* Divider */}
-              <div className="border-t border-slate-100 dark:border-slate-800" />
+              <div className="border-t border-[var(--color-line)]" />
 
               {/* Content */}
               <div className="p-6 pt-4 space-y-4">
                 {profile.is_verified ? (
                   <>
-                    <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                    <p className="text-sm text-[var(--color-ink-2)] leading-relaxed">
                       Our identity verification process checks that a person is
                       who they say they are. It confirms that there&apos;s a
                       real person behind this account and helps keep our
@@ -140,7 +140,7 @@ export default function VerificationModal({
                   </>
                 ) : (
                   <>
-                    <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                    <p className="text-sm text-[var(--color-ink-2)] leading-relaxed">
                       This user hasn&apos;t completed identity verification yet.
                       Verified users have confirmed their identity through
                       government ID or phone verification.
@@ -169,7 +169,7 @@ export default function VerificationModal({
               </div>
 
               {/* Auto-close progress bar */}
-              <div className="h-1 bg-slate-100 dark:bg-slate-800">
+              <div className="h-1 bg-[var(--color-surface-muted)]">
                 <motion.div
                   initial={{ width: "100%" }}
                   animate={{ width: "0%" }}

@@ -44,7 +44,7 @@ function FeatureItem({ text, color }: { text: string; color: "blue" | "rose" | "
     emerald: "text-[var(--color-accent)]",
   };
   const bgClasses = {
-    blue: "bg-blue-50 dark:bg-[var(--color-primary)]/20",
+    blue: "bg-[var(--color-primary-50)] dark:bg-[var(--color-primary)]/20",
     rose: "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/20",
     emerald: "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/20",
   };
@@ -85,7 +85,7 @@ export default function PricingTables() {
           transition={{ delay: 0.1 }}
           className="card p-8 rounded-2xl border-t-2 border-t-blue-500 relative"
         >
-          <div className="absolute top-4 right-4 flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 dark:bg-[var(--color-primary)]/20 border border-blue-100 dark:border-blue-500/30">
+          <div className="absolute top-4 right-4 flex items-center gap-1.5 px-3 py-1 rounded-full bg-[var(--color-primary-50)] dark:bg-[var(--color-primary)]/20 border border-[var(--color-primary-100)] dark:border-blue-500/30">
             <Crown className="w-3 h-3 text-[var(--color-primary)]" />
             <span className="text-xs font-semibold text-[var(--color-primary)]">
               Property Owners
@@ -119,7 +119,7 @@ export default function PricingTables() {
 
           <Link
             href="/signup"
-            className="block w-full text-center py-2.5 rounded-[10px] text-sm font-semibold bg-blue-600 hover:bg-blue-700 text-white transition-colors"
+            className="block w-full text-center py-2.5 rounded-[10px] text-sm font-semibold bg-[var(--color-primary)] hover:bg-blue-700 text-white transition-colors"
           >
             Start Listing Free
           </Link>

@@ -156,9 +156,9 @@ export default function ProfileForm({
             </div>
             <button
               onClick={() => fileInputRef.current?.click()}
-              className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-white dark:bg-slate-800 border-2 border-white dark:border-slate-900 shadow-lg flex items-center justify-center hover:scale-110 transition-transform"
+              className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-[var(--color-surface-2)] border-2 border-white dark:border-slate-900 shadow-lg flex items-center justify-center hover:scale-110 transition-transform"
             >
-              <Camera className="w-4 h-4 text-slate-600 dark:text-slate-300" />
+              <Camera className="w-4 h-4 text-[var(--color-ink-2)]" />
             </button>
             <input
               ref={fileInputRef}
@@ -169,15 +169,15 @@ export default function ProfileForm({
             />
           </div>
           <div className="flex-1 text-center sm:text-left">
-            <h2 className="text-xl font-bold text-slate-900 dark:text-white">
+            <h2 className="text-xl font-bold text-[var(--color-ink)]">
               {profile?.preferred_name || profile?.legal_name || profile?.name || "Your Name"}
             </h2>
             {profile?.legal_name && profile.legal_name !== profile.preferred_name && (
-              <p className="text-sm text-slate-500 dark:text-slate-400">
+              <p className="text-sm text-[var(--color-ink-3)]">
                 Legal: {profile.legal_name}
               </p>
             )}
-            <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
+            <p className="text-xs text-[var(--color-ink-3)] mt-1">
               Name is set during onboarding
             </p>
           </div>
@@ -191,8 +191,8 @@ export default function ProfileForm({
             <Pen className="w-5 h-5 text-white" />
           </div>
           <div>
-            <h3 className="font-bold text-slate-900 dark:text-white">About Me</h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400">Tell others about yourself</p>
+            <h3 className="font-bold text-[var(--color-ink)]">About Me</h3>
+            <p className="text-xs text-[var(--color-ink-3)]">Tell others about yourself</p>
           </div>
         </div>
         <div className="ml-14">
@@ -205,8 +205,8 @@ export default function ProfileForm({
             className="input-field resize-none"
           />
           <div className="flex justify-between mt-1.5">
-            <p className="text-[10px] text-slate-400">Markdown supported</p>
-            <p className="text-[10px] text-slate-400">{aboutMe.length}/500</p>
+            <p className="text-[10px] text-[var(--color-ink-3)]">Markdown supported</p>
+            <p className="text-[10px] text-[var(--color-ink-3)]">{aboutMe.length}/500</p>
           </div>
         </div>
       </div>
@@ -218,8 +218,8 @@ export default function ProfileForm({
             <Briefcase className="w-5 h-5 text-white" />
           </div>
           <div className="flex-1">
-            <h3 className="font-bold text-slate-900 dark:text-white">Occupation</h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mb-2">What do you do?</p>
+            <h3 className="font-bold text-[var(--color-ink)]">Occupation</h3>
+            <p className="text-xs text-[var(--color-ink-3)] mb-2">What do you do?</p>
             <input
               type="text"
               value={occupation}
@@ -235,14 +235,14 @@ export default function ProfileForm({
       {/* Interests */}
       <div className="card p-5 rounded-2xl">
         <div className="flex items-start gap-4 mb-3">
-          <div className="w-10 h-10 rounded-xl bg-[var(--color-primary-soft)] from-[var(--color-accent)] to-teal-500 flex items-center justify-center shadow-lg shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-[var(--color-primary-soft)] from-[var(--color-accent)] to-[var(--color-primary)] flex items-center justify-center shadow-lg shrink-0">
             <Heart className="w-5 h-5 text-white" />
           </div>
           <div className="flex-1">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="font-bold text-slate-900 dark:text-white">Interests</h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400">Help us find your perfect match</p>
+                <h3 className="font-bold text-[var(--color-ink)]">Interests</h3>
+                <p className="text-xs text-[var(--color-ink-3)]">Help us find your perfect match</p>
               </div>
               <button
                 onClick={() => setShowInterestsModal(true)}
@@ -258,7 +258,7 @@ export default function ProfileForm({
             interests.map((interest) => (
               <span
                 key={interest}
-                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium bg-[var(--color-primary)] from-[var(--color-primary-soft)] to-pink-50 dark:from-[var(--color-primary)]/10 dark:to-[var(--color-primary)]/10 text-[var(--color-primary)] dark:text-[var(--color-primary)] border border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)]"
+                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium bg-[var(--color-primary)] from-[var(--color-primary-soft)] to-[var(--color-primary-50)] dark:from-[var(--color-primary)]/10 dark:to-[var(--color-primary)]/10 text-[var(--color-primary)] dark:text-[var(--color-primary)] border border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)]"
               >
                 {interest}
                 <button onClick={() => toggleInterest(interest)} className="hover:text-rose-900">
@@ -267,7 +267,7 @@ export default function ProfileForm({
               </span>
             ))
           ) : (
-            <p className="text-sm text-slate-400 dark:text-slate-500 italic">No interests added yet</p>
+            <p className="text-sm text-[var(--color-ink-3)] italic">No interests added yet</p>
           )}
         </div>
       </div>
@@ -276,14 +276,14 @@ export default function ProfileForm({
       {seekerMode && (
         <div className="card p-5 rounded-2xl">
           <div className="flex items-start gap-4 mb-3">
-            <div className="w-10 h-10 rounded-xl bg-[var(--color-primary-soft)] from-amber-400 to-orange-500 flex items-center justify-center shadow-lg shrink-0">
+            <div className="w-10 h-10 rounded-xl bg-[var(--color-primary-soft)] from-[var(--color-warn-500)] to-[var(--color-warn-500)] flex items-center justify-center shadow-lg shrink-0">
               <Heart className="w-5 h-5 text-white" />
             </div>
             <div className="flex-1">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="font-bold text-slate-900 dark:text-white">Lifestyle</h3>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">Help owners know what to expect</p>
+                  <h3 className="font-bold text-[var(--color-ink)]">Lifestyle</h3>
+                  <p className="text-xs text-[var(--color-ink-3)]">Help owners know what to expect</p>
                 </div>
                 <button
                   onClick={() => setShowLifestyleModal(true)}
@@ -299,16 +299,16 @@ export default function ProfileForm({
               lifestyle.map((item) => (
                 <span
                   key={item}
-                  className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium bg-[var(--color-primary)] from-amber-50 to-orange-50 dark:from-amber-500/10 dark:to-orange-500/10 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-500/20"
+                  className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium bg-[var(--color-primary)] from-[var(--color-warn-50)] to-[var(--color-warn-50)] dark:from-[var(--color-warn-50)]0/10 dark:to-[var(--color-warn-500)]/10 text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)] border border-[var(--color-line-2)] dark:border-[var(--color-warn-500)]/20"
                 >
                   {item}
-                  <button onClick={() => toggleLifestyle(item)} className="hover:text-amber-900">
+                  <button onClick={() => toggleLifestyle(item)} className="hover:text-[var(--color-warn-600)]">
                     <X className="w-3 h-3" />
                   </button>
                 </span>
               ))
             ) : (
-              <p className="text-sm text-slate-400 dark:text-slate-500 italic">No lifestyle tags added yet</p>
+              <p className="text-sm text-[var(--color-ink-3)] italic">No lifestyle tags added yet</p>
             )}
           </div>
         </div>
@@ -317,12 +317,12 @@ export default function ProfileForm({
       {/* Most Useless Skill */}
       <div className="card p-5 rounded-2xl">
         <div className="flex items-start gap-4">
-          <div className="w-10 h-10 rounded-xl bg-[var(--color-primary-soft)] from-yellow-400 to-orange-500 flex items-center justify-center shadow-lg shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-[var(--color-primary-soft)] from-yellow-400 to-[var(--color-warn-500)] flex items-center justify-center shadow-lg shrink-0">
             <Wand2 className="w-5 h-5 text-white" />
           </div>
           <div className="flex-1">
-            <h3 className="font-bold text-slate-900 dark:text-white">Most Useless Skill</h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mb-2">The sillier the better</p>
+            <h3 className="font-bold text-[var(--color-ink)]">Most Useless Skill</h3>
+            <p className="text-xs text-[var(--color-ink-3)] mb-2">The sillier the better</p>
             <input
               type="text"
               value={mostUselessSkill}
@@ -342,8 +342,8 @@ export default function ProfileForm({
             <Globe className="w-5 h-5 text-white" />
           </div>
           <div>
-            <h3 className="font-bold text-slate-900 dark:text-white">Social Links</h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400">Connect your social profiles</p>
+            <h3 className="font-bold text-[var(--color-ink)]">Social Links</h3>
+            <p className="text-xs text-[var(--color-ink-3)]">Connect your social profiles</p>
           </div>
         </div>
         <div className="ml-14 space-y-3">
@@ -388,7 +388,7 @@ export default function ProfileForm({
             animate={{ opacity: 1, y: 0 }}
             className="mb-2 text-center"
           >
-            <span className="text-xs text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-500/10 px-3 py-1 rounded-full border border-amber-200 dark:border-amber-500/20">
+            <span className="text-xs text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)] bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/10 px-3 py-1 rounded-full border border-[var(--color-line-2)] dark:border-[var(--color-warn-500)]/20">
               You have unsaved changes
             </span>
           </motion.div>
@@ -420,11 +420,11 @@ export default function ProfileForm({
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               className="fixed inset-x-4 top-[15%] sm:inset-x-auto sm:left-1/2 sm:-translate-x-1/2 sm:w-[480px] z-50"
             >
-              <div className="backdrop-blur-xl bg-white/95 dark:bg-slate-900/95 rounded-2xl shadow-2xl border border-white/20 dark:border-slate-700/50 p-6">
+              <div className="backdrop-blur-xl bg-white/95 dark:bg-[var(--color-surface)]/95 rounded-2xl shadow-2xl border border-white/20 dark:border-[var(--color-line)]/50 p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-bold text-slate-900 dark:text-white">Select Interests</h3>
-                  <button onClick={() => setShowInterestsModal(false)} className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">
-                    <X className="w-4 h-4 text-slate-500" />
+                  <h3 className="font-bold text-[var(--color-ink)]">Select Interests</h3>
+                  <button onClick={() => setShowInterestsModal(false)} className="p-1.5 rounded-lg hover:bg-[var(--color-surface-muted)]">
+                    <X className="w-4 h-4 text-[var(--color-ink-3)]" />
                   </button>
                 </div>
                 <div className="flex flex-wrap gap-2 max-h-[40vh] overflow-y-auto">
@@ -437,7 +437,7 @@ export default function ProfileForm({
                         className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${
                           selected
                             ? "bg-[var(--color-primary)] text-white border-[var(--color-primary)] shadow-md"
-                            : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-[var(--color-line-2)] dark:hover:border-[var(--color-primary)]/30"
+                            : "bg-[var(--color-surface-2)] text-[var(--color-ink-2)] border-[var(--color-line)] hover:border-[var(--color-line-2)] dark:hover:border-[var(--color-primary)]/30"
                         }`}
                       >
                         {opt}
@@ -445,7 +445,7 @@ export default function ProfileForm({
                     );
                   })}
                 </div>
-                <p className="text-[10px] text-slate-400 mt-3">{interests.length} selected</p>
+                <p className="text-[10px] text-[var(--color-ink-3)] mt-3">{interests.length} selected</p>
               </div>
             </motion.div>
           </>
@@ -469,11 +469,11 @@ export default function ProfileForm({
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               className="fixed inset-x-4 top-[15%] sm:inset-x-auto sm:left-1/2 sm:-translate-x-1/2 sm:w-[480px] z-50"
             >
-              <div className="backdrop-blur-xl bg-white/95 dark:bg-slate-900/95 rounded-2xl shadow-2xl border border-white/20 dark:border-slate-700/50 p-6">
+              <div className="backdrop-blur-xl bg-white/95 dark:bg-[var(--color-surface)]/95 rounded-2xl shadow-2xl border border-white/20 dark:border-[var(--color-line)]/50 p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-bold text-slate-900 dark:text-white">Select Lifestyle Tags</h3>
-                  <button onClick={() => setShowLifestyleModal(false)} className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">
-                    <X className="w-4 h-4 text-slate-500" />
+                  <h3 className="font-bold text-[var(--color-ink)]">Select Lifestyle Tags</h3>
+                  <button onClick={() => setShowLifestyleModal(false)} className="p-1.5 rounded-lg hover:bg-[var(--color-surface-muted)]">
+                    <X className="w-4 h-4 text-[var(--color-ink-3)]" />
                   </button>
                 </div>
                 <div className="flex flex-wrap gap-2 max-h-[40vh] overflow-y-auto">
@@ -485,8 +485,8 @@ export default function ProfileForm({
                         onClick={() => toggleLifestyle(opt)}
                         className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${
                           selected
-                            ? "bg-amber-500 text-white border-amber-500 shadow-md"
-                            : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-amber-300 dark:hover:border-amber-500/30"
+                            ? "bg-[var(--color-warn-50)]0 text-white border-amber-500 shadow-md"
+                            : "bg-[var(--color-surface-2)] text-[var(--color-ink-2)] border-[var(--color-line)] hover:border-amber-300 dark:hover:border-amber-500/30"
                         }`}
                       >
                         {opt}
@@ -494,7 +494,7 @@ export default function ProfileForm({
                     );
                   })}
                 </div>
-                <p className="text-[10px] text-slate-400 mt-3">{lifestyle.length} selected</p>
+                <p className="text-[10px] text-[var(--color-ink-3)] mt-3">{lifestyle.length} selected</p>
               </div>
             </motion.div>
           </>

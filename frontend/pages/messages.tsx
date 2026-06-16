@@ -197,10 +197,10 @@ export default function MessagesPage() {
           <div className="w-20 h-20 mx-auto rounded-2xl bg-[var(--color-primary)] flex items-center justify-center mb-6">
             <MessageCircle className="w-10 h-10 text-white" />
           </div>
-          <h2 className="text-xl font-semibold tracking-tight text-slate-900 dark:text-white mb-2">
+          <h2 className="text-xl font-semibold tracking-tight text-[var(--color-ink)] mb-2">
             Sign in to Messages
           </h2>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mb-6">
+          <p className="text-sm text-[var(--color-ink-3)] mb-6">
             Connect with hosts and seekers securely.
           </p>
           <Link
@@ -273,7 +273,7 @@ export default function MessagesPage() {
                       <div className="w-2 h-2 rounded-full bg-[var(--color-primary)] animate-bounce" style={{ animationDelay: "150ms" }} />
                       <div className="w-2 h-2 rounded-full bg-[var(--color-primary)] animate-bounce" style={{ animationDelay: "300ms" }} />
                     </div>
-                    <p className="text-xs text-slate-400">Loading messages...</p>
+                    <p className="text-xs text-[var(--color-ink-3)]">Loading messages...</p>
                   </div>
                 ) : messages.length === 0 ? (
                   <ChatEmpty
@@ -449,7 +449,7 @@ export default function MessagesPage() {
 // ═══════════════════════════════════════════════════════════════
 function WelcomeScreen() {
   return (
-    <div className="flex-1 flex flex-col items-center justify-center bg-[var(--color-primary-soft)] from-slate-50 via-white to-indigo-50/30 dark:from-slate-900 dark:via-slate-900 dark:to-indigo-950/20 px-8 rounded-r-2xl">
+    <div className="flex-1 flex flex-col items-center justify-center bg-[var(--color-primary-soft)] from-[var(--color-surface)] via-white to-indigo-50/30 dark:from-slate-900 dark:via-slate-900 dark:to-indigo-950/20 px-8 rounded-r-2xl">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -487,17 +487,17 @@ function WelcomeScreen() {
           </motion.div>
         </div>
 
-        <h2 className="text-2xl font-semibold tracking-tight text-slate-900 dark:text-white mb-3">
+        <h2 className="text-2xl font-semibold tracking-tight text-[var(--color-ink)] mb-3">
           Your Messages
         </h2>
-        <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed mb-8 max-w-sm mx-auto">
+        <p className="text-[var(--color-ink-3)] text-sm leading-relaxed mb-8 max-w-sm mx-auto">
           Select a conversation to start messaging. Connect with hosts and seekers securely and instantly.
         </p>
 
         {/* Feature highlights */}
         <div className="grid grid-cols-3 gap-4 max-w-sm mx-auto">
           {[
-            { icon: Zap, label: "Instant", sublabel: "Real-time chat", color: "from-amber-400 to-orange-500" },
+            { icon: Zap, label: "Instant", sublabel: "Real-time chat", color: "from-[var(--color-warn-500)] to-[var(--color-warn-500)]" },
             { icon: Shield, label: "Secure", sublabel: "Private messages", color: "from-[var(--color-accent)] to-[var(--color-accent)]" },
             { icon: Send, label: "Rich", sublabel: "Files & media", color: "from-[var(--color-primary)] to-[var(--color-primary)]" },
           ].map(({ icon: Icon, label, sublabel, color }) => (
@@ -505,8 +505,8 @@ function WelcomeScreen() {
               <div className={`w-12 h-12 mx-auto mb-2 rounded-xl bg-[var(--color-primary-soft)] ${color} flex items-center justify-center shadow-lg`}>
                 <Icon className="w-5 h-5 text-white" />
               </div>
-              <p className="text-xs font-bold text-slate-700 dark:text-slate-200">{label}</p>
-              <p className="text-[10px] text-slate-400">{sublabel}</p>
+              <p className="text-xs font-bold text-[var(--color-ink-2)]">{label}</p>
+              <p className="text-[10px] text-[var(--color-ink-3)]">{sublabel}</p>
             </div>
           ))}
         </div>
@@ -529,10 +529,10 @@ function ChatEmpty({ userName }: { userName: string }) {
         <div className="w-20 h-20 mx-auto mb-5 rounded-2xl bg-[var(--color-primary-soft)] from-[var(--color-primary-soft)] to-[var(--color-accent-soft)] dark:from-[var(--color-primary)]/10 dark:to-[var(--color-accent)]/10 flex items-center justify-center rotate-3">
           <Send className="w-8 h-8 text-[var(--color-primary)] -rotate-3" />
         </div>
-        <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">
+        <h3 className="text-lg font-bold text-[var(--color-ink)] mb-2">
           Start the conversation
         </h3>
-        <p className="text-sm text-slate-500 dark:text-slate-400">
+        <p className="text-sm text-[var(--color-ink-3)]">
           Say hi to <span className="font-semibold text-[var(--color-primary)]">{userName}</span> and get the conversation going!
         </p>
       </motion.div>

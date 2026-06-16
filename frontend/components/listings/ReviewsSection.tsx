@@ -22,8 +22,8 @@ function StarRating({ rating }: { rating: number }) {
           key={star}
           className={`w-3.5 h-3.5 ${
             star <= rating
-              ? "text-amber-400 fill-amber-400"
-              : "text-slate-200 dark:text-slate-700"
+              ? "text-[var(--color-warn-500)] fill-amber-400"
+              : "text-[var(--color-ink-4)] dark:text-[var(--color-ink-2)]"
           }`}
         />
       ))}
@@ -52,7 +52,7 @@ function ReviewCard({
     <motion.div
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
-      className="py-4 border-b border-slate-100 dark:border-slate-800 last:border-0"
+      className="py-4 border-b border-[var(--color-line)] last:border-0"
     >
       <div className="flex items-start gap-3">
         {review.reviewer_photo ? (
@@ -69,10 +69,10 @@ function ReviewCard({
 
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between">
-            <p className="font-semibold text-sm text-slate-900 dark:text-white">
+            <p className="font-semibold text-sm text-[var(--color-ink)]">
               {review.reviewer_name || "Anonymous"}
             </p>
-            <span className="text-xs text-slate-400 dark:text-slate-500">
+            <span className="text-xs text-[var(--color-ink-3)]">
               {relativeDate}
             </span>
           </div>
@@ -81,14 +81,14 @@ function ReviewCard({
             <StarRating rating={review.rating} />
             {review.migrant_friendliness != null &&
               review.migrant_friendliness > 0 && (
-                <span className="text-xs text-teal-600 dark:text-teal-400 font-medium">
+                <span className="text-xs text-[var(--color-primary)] dark:text-[var(--color-primary)] font-medium">
                   Migrant friendly: {review.migrant_friendliness}/5
                 </span>
               )}
           </div>
 
           {review.review_text && (
-            <p className="mt-2 text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+            <p className="mt-2 text-sm text-[var(--color-ink-2)] leading-relaxed">
               {review.review_text}
             </p>
           )}
@@ -138,12 +138,12 @@ export default function ReviewsSection({
   if (loading && reviews.length === 0) {
     return (
       <div className="space-y-4">
-        <h2 className="text-lg font-bold text-slate-900 dark:text-white">
+        <h2 className="text-lg font-bold text-[var(--color-ink)]">
           Reviews
         </h2>
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 animate-pulse" />
-          <div className="flex-1 h-4 bg-slate-100 dark:bg-slate-800 rounded animate-pulse" />
+          <div className="w-8 h-8 rounded-full bg-[var(--color-surface-muted)] animate-pulse" />
+          <div className="flex-1 h-4 bg-[var(--color-surface-muted)] rounded animate-pulse" />
         </div>
       </div>
     );
@@ -151,7 +151,7 @@ export default function ReviewsSection({
 
   return (
     <div>
-      <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-4">
+      <h2 className="text-lg font-bold text-[var(--color-ink)] mb-4">
         Reviews
       </h2>
 
@@ -185,7 +185,7 @@ export default function ReviewsSection({
           )}
         </div>
       ) : (
-        <p className="mt-3 text-sm text-slate-400 dark:text-slate-500">
+        <p className="mt-3 text-sm text-[var(--color-ink-3)]">
           No reviews yet. Be the first to book and review this place.
         </p>
       )}

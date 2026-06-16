@@ -62,14 +62,14 @@ export default function NotificationsTab({
       label: "Payments Received",
       description: "When you receive a payout or payment",
       icon: DollarSign,
-      gradient: "from-[var(--color-accent)] to-teal-500",
+      gradient: "from-[var(--color-accent)] to-[var(--color-primary)]",
     },
     {
       key: "email_verification",
       label: "Verification Updates",
       description: "Status changes for your identity verification",
       icon: Shield,
-      gradient: "from-amber-400 to-orange-500",
+      gradient: "from-[var(--color-warn-500)] to-[var(--color-warn-500)]",
     },
     {
       key: "email_messages",
@@ -99,7 +99,7 @@ export default function NotificationsTab({
       label: "New Matches",
       description: "When AI finds a matching room for you",
       icon: Zap,
-      gradient: "from-yellow-400 to-amber-500",
+      gradient: "from-yellow-400 to-[var(--color-warn-500)]",
     },
     {
       key: "push_host_responses",
@@ -126,8 +126,8 @@ export default function NotificationsTab({
             <Mail className="w-5 h-5 text-white" />
           </div>
           <div>
-            <h3 className="font-bold text-slate-900 dark:text-white">Email Notifications</h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400">Choose what emails you'd like to receive</p>
+            <h3 className="font-bold text-[var(--color-ink)]">Email Notifications</h3>
+            <p className="text-xs text-[var(--color-ink-3)]">Choose what emails you'd like to receive</p>
           </div>
         </div>
 
@@ -140,15 +140,15 @@ export default function NotificationsTab({
                 initial={{ opacity: 0, x: -8 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.1 + i * 0.04 }}
-                className="flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group"
+                className="flex items-center justify-between p-3 rounded-xl hover:bg-[var(--color-surface)]/50 transition-colors group"
               >
                 <div className="flex items-center gap-3 flex-1 min-w-0">
                   <div className={`w-8 h-8 rounded-lg bg-[var(--color-primary-soft)] ${pref.gradient} flex items-center justify-center shadow-sm shrink-0`}>
                     <Icon className="w-4 h-4 text-white" />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-sm font-medium text-slate-900 dark:text-white">{pref.label}</p>
-                    <p className="text-[11px] text-slate-400 dark:text-slate-500 truncate">{pref.description}</p>
+                    <p className="text-sm font-medium text-[var(--color-ink)]">{pref.label}</p>
+                    <p className="text-[11px] text-[var(--color-ink-3)] truncate">{pref.description}</p>
                   </div>
                 </div>
                 <ToggleSwitch
@@ -164,12 +164,12 @@ export default function NotificationsTab({
       {/* Push Notifications */}
       <GlassCard delay={0.15}>
         <div className="flex items-start gap-4 mb-5">
-          <div className="w-10 h-10 rounded-xl bg-[var(--color-primary-soft)] from-amber-400 to-orange-500 flex items-center justify-center shadow-lg shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-[var(--color-primary-soft)] from-[var(--color-warn-500)] to-[var(--color-warn-500)] flex items-center justify-center shadow-lg shrink-0">
             <Smartphone className="w-5 h-5 text-white" />
           </div>
           <div>
-            <h3 className="font-bold text-slate-900 dark:text-white">Push Notifications</h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400">Real-time alerts on your device</p>
+            <h3 className="font-bold text-[var(--color-ink)]">Push Notifications</h3>
+            <p className="text-xs text-[var(--color-ink-3)]">Real-time alerts on your device</p>
           </div>
         </div>
 
@@ -182,15 +182,15 @@ export default function NotificationsTab({
                 initial={{ opacity: 0, x: -8 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.2 + i * 0.04 }}
-                className="flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+                className="flex items-center justify-between p-3 rounded-xl hover:bg-[var(--color-surface)]/50 transition-colors"
               >
                 <div className="flex items-center gap-3 flex-1 min-w-0">
                   <div className={`w-8 h-8 rounded-lg bg-[var(--color-primary-soft)] ${pref.gradient} flex items-center justify-center shadow-sm shrink-0`}>
                     <Icon className="w-4 h-4 text-white" />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-sm font-medium text-slate-900 dark:text-white">{pref.label}</p>
-                    <p className="text-[11px] text-slate-400 dark:text-slate-500 truncate">{pref.description}</p>
+                    <p className="text-sm font-medium text-[var(--color-ink)]">{pref.label}</p>
+                    <p className="text-[11px] text-[var(--color-ink-3)] truncate">{pref.description}</p>
                   </div>
                 </div>
                 <ToggleSwitch
@@ -206,12 +206,12 @@ export default function NotificationsTab({
       {/* Smart System Info */}
       <GlassCard delay={0.25} gradient="emerald">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[var(--color-primary-soft)] from-[var(--color-accent)] to-teal-500 flex items-center justify-center shadow-lg shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-[var(--color-primary-soft)] from-[var(--color-accent)] to-[var(--color-primary)] flex items-center justify-center shadow-lg shrink-0">
             <Zap className="w-5 h-5 text-white" />
           </div>
           <div className="flex-1">
-            <h3 className="text-sm font-bold text-slate-900 dark:text-white">Smart Notifications</h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
+            <h3 className="text-sm font-bold text-[var(--color-ink)]">Smart Notifications</h3>
+            <p className="text-xs text-[var(--color-ink-3)]">
               Emails powered by our intelligent automation system for optimal delivery
             </p>
           </div>

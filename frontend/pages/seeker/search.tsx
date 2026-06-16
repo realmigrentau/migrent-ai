@@ -550,7 +550,7 @@ export default function SeekerSearch() {
           {searchType === "nearMe" && userLocation && (
             <p className="text-xs text-[var(--color-accent)] dark:text-[var(--color-accent)] flex items-center gap-1"><span>&#10003;</span> Using your location</p>
           )}
-          {searchType === "nearMe" && locationError && <p className="text-xs text-red-500">{locationError}</p>}
+          {searchType === "nearMe" && locationError && <p className="text-xs text-[var(--color-danger-500)]">{locationError}</p>}
           {searchType === "suburb" && (
             <input type="text" value={suburbName} onChange={(e) => setSuburbName(e.target.value)} placeholder="e.g. Kellyville, Parramatta..." className="input-field text-sm" />
           )}
@@ -991,7 +991,7 @@ export default function SeekerSearch() {
                             {listing.verified && <span className="px-2 py-0.5 rounded-full text-[11px] bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent)]/10 text-[var(--color-accent)] dark:text-[var(--color-accent)]">&#10003; Verified</span>}
                             {listing.genderPreference === "female" && <span className="px-2 py-0.5 rounded-full text-[11px] bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 text-[var(--color-primary)] dark:text-[var(--color-primary)]">Female only</span>}
                             {listing.petsAllowed && <span className="px-2 py-0.5 rounded-full text-[11px] bg-[var(--color-warn-50)] text-[var(--color-warn-600)]">Pets OK</span>}
-                            {listing.parking && <span className="px-2 py-0.5 rounded-full text-[11px] bg-cyan-50 dark:bg-cyan-500/10 text-cyan-600 dark:text-cyan-400">Parking</span>}
+                            {listing.parking && <span className="px-2 py-0.5 rounded-full text-[11px] bg-[var(--color-primary-50)] dark:bg-[var(--color-primary-50)]0/10 text-[var(--color-primary)] dark:text-cyan-400">Parking</span>}
                           </div>
 
                           {/* Match score + reasons (only shown in Best match sort) */}

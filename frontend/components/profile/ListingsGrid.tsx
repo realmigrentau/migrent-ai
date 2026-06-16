@@ -14,13 +14,13 @@ export default function ListingsGrid({ listings, loading, hasMore, onLoadMore, o
   if (!loading && listings.length === 0) {
     return (
       <div className="card-subtle p-8 rounded-2xl text-center">
-        <div className="w-14 h-14 mx-auto mb-3 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
-          <svg className="w-7 h-7 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <div className="w-14 h-14 mx-auto mb-3 rounded-2xl bg-[var(--color-surface-muted)] flex items-center justify-center">
+          <svg className="w-7 h-7 text-[var(--color-ink-3)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
           </svg>
         </div>
-        <p className="text-sm font-medium text-slate-600 dark:text-slate-300">{ownerName} hasn&apos;t listed any properties yet</p>
-        <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">Check back later for new listings</p>
+        <p className="text-sm font-medium text-[var(--color-ink-2)]">{ownerName} hasn&apos;t listed any properties yet</p>
+        <p className="text-xs text-[var(--color-ink-3)] mt-1">Check back later for new listings</p>
       </div>
     );
   }
@@ -49,7 +49,7 @@ export default function ListingsGrid({ listings, loading, hasMore, onLoadMore, o
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={onLoadMore}
-            className="px-6 py-2.5 rounded-xl text-sm font-semibold border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+            className="px-6 py-2.5 rounded-xl text-sm font-semibold border border-[var(--color-line)] text-[var(--color-ink-2)] hover:bg-[var(--color-surface)] transition-colors"
           >
             Load more listings
           </motion.button>
@@ -72,7 +72,7 @@ function ListingItem({ listing, index }: { listing: ProfileListing; index: numbe
       <Link href={`/owner/listings/${listing.id}`} className="block group">
         <div className="card rounded-2xl overflow-hidden hover:shadow-lg dark:hover:shadow-2xl transition-all">
           {/* Photo */}
-          <div className="aspect-[4/3] bg-slate-100 dark:bg-slate-800 relative overflow-hidden">
+          <div className="aspect-[4/3] bg-[var(--color-surface-muted)] relative overflow-hidden">
             {photo ? (
               <img
                 src={photo}
@@ -86,21 +86,21 @@ function ListingItem({ listing, index }: { listing: ProfileListing; index: numbe
               </div>
             )}
             {/* Price badge */}
-            <div className="absolute top-3 left-3 px-3 py-1.5 rounded-lg bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm shadow-md">
-              <span className="text-sm font-bold text-slate-900 dark:text-white">${listing.weekly_price}</span>
-              <span className="text-xs text-slate-500 dark:text-slate-400">/wk</span>
+            <div className="absolute top-3 left-3 px-3 py-1.5 rounded-lg bg-white/90 dark:bg-[var(--color-surface)]/90 backdrop-blur-sm shadow-md">
+              <span className="text-sm font-bold text-[var(--color-ink)]">${listing.weekly_price}</span>
+              <span className="text-xs text-[var(--color-ink-3)]">/wk</span>
             </div>
           </div>
 
           {/* Info */}
           <div className="p-4">
-            <h3 className="font-bold text-sm text-slate-900 dark:text-white truncate group-hover:text-[var(--color-primary)] dark:group-hover:text-[var(--color-primary)] transition-colors">
+            <h3 className="font-bold text-sm text-[var(--color-ink)] truncate group-hover:text-[var(--color-primary)] dark:group-hover:text-[var(--color-primary)] transition-colors">
               {listing.title}
             </h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 truncate">
+            <p className="text-xs text-[var(--color-ink-3)] mt-1 truncate">
               {listing.address} · {listing.postcode}
             </p>
-            <div className="flex items-center gap-2 mt-2 text-xs text-slate-500 dark:text-slate-400">
+            <div className="flex items-center gap-2 mt-2 text-xs text-[var(--color-ink-3)]">
               <span>{listing.bedrooms} bed{listing.bedrooms !== 1 ? "s" : ""}</span>
               <span className="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-600" />
               <span>{listing.bathrooms} bath{listing.bathrooms !== 1 ? "s" : ""}</span>

@@ -97,7 +97,7 @@ export default function ReportModal({ listingId, itemType, itemId, isOpen, onClo
           onClick={handleClose}
         >
           <motion.div
-            className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl max-w-md w-full p-6 max-h-[90vh] overflow-y-auto"
+            className="bg-[var(--color-surface-2)] rounded-2xl shadow-xl max-w-md w-full p-6 max-h-[90vh] overflow-y-auto"
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
@@ -106,8 +106,8 @@ export default function ReportModal({ listingId, itemType, itemId, isOpen, onClo
             {submitted ? (
               <div className="text-center py-6">
                 <div className="text-4xl mb-3">✅</div>
-                <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">Report Submitted</h3>
-                <p className="text-slate-600 dark:text-slate-400 text-sm mb-4">
+                <h3 className="text-lg font-semibold text-[var(--color-ink)] mb-2">Report Submitted</h3>
+                <p className="text-[var(--color-ink-2)] text-sm mb-4">
                   Thank you for helping keep MigRent safe. Our team will review this {isProfile ? "profile" : "listing"}.
                 </p>
                 <button
@@ -119,10 +119,10 @@ export default function ReportModal({ listingId, itemType, itemId, isOpen, onClo
               </div>
             ) : (
               <>
-                <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-1">
+                <h3 className="text-lg font-semibold text-[var(--color-ink)] mb-1">
                   Report This {isProfile ? "Profile" : "Listing"}
                 </h3>
-                <p className="text-slate-500 dark:text-slate-400 text-sm mb-4">
+                <p className="text-[var(--color-ink-3)] text-sm mb-4">
                   Let us know why you think this {isProfile ? "profile" : "listing"} should be reviewed.
                 </p>
 
@@ -133,7 +133,7 @@ export default function ReportModal({ listingId, itemType, itemId, isOpen, onClo
                       className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition ${
                         reason === r
                           ? "border-[var(--color-primary)] bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 dark:border-[var(--color-primary)]"
-                          : "border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600"
+                          : "border-[var(--color-line)] hover:border-[var(--color-line-2)] dark:hover:border-[var(--color-line-2)]"
                       }`}
                     >
                       <input
@@ -147,7 +147,7 @@ export default function ReportModal({ listingId, itemType, itemId, isOpen, onClo
                         }}
                         className="text-[var(--color-primary)] focus:ring-[var(--color-ink)]/30 accent-[var(--color-primary)]"
                       />
-                      <span className="text-sm text-slate-700 dark:text-slate-300">{r}</span>
+                      <span className="text-sm text-[var(--color-ink-2)]">{r}</span>
                     </label>
                   ))}
                 </div>
@@ -168,7 +168,7 @@ export default function ReportModal({ listingId, itemType, itemId, isOpen, onClo
                         onChange={(e) => setOtherText(e.target.value)}
                         rows={3}
                         maxLength={500}
-                        className="w-full border-2 border-slate-900 dark:border-slate-400 rounded-lg p-3 text-sm text-slate-900 dark:text-white bg-white dark:bg-slate-800 focus:ring-2 focus:ring-[var(--color-ink)]/30 focus:border-transparent resize-none mb-4 placeholder:text-slate-400 dark:placeholder:text-slate-500"
+                        className="w-full border-2 border-slate-900 dark:border-slate-400 rounded-lg p-3 text-sm text-[var(--color-ink)] bg-[var(--color-surface-2)] focus:ring-2 focus:ring-[var(--color-ink)]/30 focus:border-transparent resize-none mb-4 placeholder:text-[var(--color-ink-3)] dark:placeholder:text-[var(--color-ink-3)]"
                       />
                     </motion.div>
                   )}
@@ -182,25 +182,25 @@ export default function ReportModal({ listingId, itemType, itemId, isOpen, onClo
                     onChange={(e) => setDetails(e.target.value)}
                     rows={3}
                     maxLength={2000}
-                    className="w-full border border-slate-200 dark:border-slate-700 rounded-lg p-3 text-sm text-slate-900 dark:text-white bg-white dark:bg-slate-800 focus:ring-2 focus:ring-[var(--color-ink)]/30 focus:border-transparent resize-none mb-4 placeholder:text-slate-400 dark:placeholder:text-slate-500"
+                    className="w-full border border-[var(--color-line)] rounded-lg p-3 text-sm text-[var(--color-ink)] bg-[var(--color-surface-2)] focus:ring-2 focus:ring-[var(--color-ink)]/30 focus:border-transparent resize-none mb-4 placeholder:text-[var(--color-ink-3)] dark:placeholder:text-[var(--color-ink-3)]"
                   />
                 )}
 
                 {error && (
-                  <p className="text-red-500 text-sm mb-3">{error}</p>
+                  <p className="text-[var(--color-danger-500)] text-sm mb-3">{error}</p>
                 )}
 
                 <div className="flex gap-3">
                   <button
                     onClick={handleClose}
-                    className="flex-1 px-4 py-2.5 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition"
+                    className="flex-1 px-4 py-2.5 border border-[var(--color-line-2)] text-[var(--color-ink-2)] rounded-lg hover:bg-[var(--color-surface)] transition"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleSubmit}
                     disabled={loading || !reason}
-                    className="flex-1 px-4 py-2.5 bg-red-600 text-white rounded-lg hover:bg-red-700 transition disabled:opacity-50"
+                    className="flex-1 px-4 py-2.5 bg-[var(--color-danger-500)] text-white rounded-lg hover:bg-red-700 transition disabled:opacity-50"
                   >
                     {loading ? "Submitting..." : "Submit Report"}
                   </button>

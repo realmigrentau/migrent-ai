@@ -103,15 +103,15 @@ export default function MagicLinkLogin() {
         transition={{ duration: 0.4 }}
         className="relative w-full max-w-md"
       >
-        <div className="bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800 p-8 rounded-2xl">
+        <div className="bg-[var(--color-surface-2)] border border-[var(--color-line)]/70 dark:border-slate-800 p-8 rounded-2xl">
           <div className="text-center mb-8">
             <div className="w-12 h-12 rounded-xl bg-[var(--color-primary)] flex items-center justify-center text-white font-semibold text-lg mx-auto mb-4">
               M
             </div>
-            <h1 className="text-2xl font-semibold tracking-tight text-slate-900 dark:text-white">
+            <h1 className="text-2xl font-semibold tracking-tight text-[var(--color-ink)]">
               Sign in to MigRent
             </h1>
-            <p className="text-slate-500 dark:text-slate-400 text-sm mt-2">
+            <p className="text-[var(--color-ink-3)] text-sm mt-2">
               {sent
                 ? "Check your inbox for the magic link."
                 : "Enter your email and we\u2019ll send you a login link."}
@@ -139,8 +139,8 @@ export default function MagicLinkLogin() {
                 <p className="text-xs text-[var(--color-accent)] dark:text-[var(--color-accent)] mt-2">
                   Click the link in the email to sign in. No password needed.
                 </p>
-                <div className="flex items-center justify-center gap-2 mt-3 text-xs text-slate-400 dark:text-slate-500">
-                  <span className="w-3 h-3 border-2 border-slate-300 dark:border-slate-600 border-t-blue-500 rounded-full animate-spin" />
+                <div className="flex items-center justify-center gap-2 mt-3 text-xs text-[var(--color-ink-3)]">
+                  <span className="w-3 h-3 border-2 border-[var(--color-line-2)] border-t-blue-500 rounded-full animate-spin" />
                   Waiting for verification...
                 </div>
               </div>
@@ -180,7 +180,7 @@ export default function MagicLinkLogin() {
                 )}
               </button>
 
-              <p className="text-center text-sm text-slate-500 dark:text-slate-400">
+              <p className="text-center text-sm text-[var(--color-ink-3)]">
                 Don&apos;t have an account?{" "}
                 <Link href="/magic-link-signup" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] font-semibold transition-colors">
                   Sign up with magic link
@@ -189,10 +189,10 @@ export default function MagicLinkLogin() {
 
               <div className="relative py-3">
                 <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-slate-200 dark:border-slate-700" />
+                  <div className="w-full border-t border-[var(--color-line)]" />
                 </div>
                 <div className="relative flex justify-center text-xs">
-                  <span className="px-3 text-slate-400 dark:text-slate-500 bg-white dark:bg-slate-900 rounded-full">or</span>
+                  <span className="px-3 text-[var(--color-ink-3)] bg-[var(--color-surface-2)] rounded-full">or</span>
                 </div>
               </div>
 
@@ -207,7 +207,7 @@ export default function MagicLinkLogin() {
                 <motion.p
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="text-sm text-center p-3 rounded-xl bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 text-red-600 dark:text-red-400"
+                  className="text-sm text-center p-3 rounded-xl bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-50)]0/10 border border-[var(--color-danger-500)]/30 dark:border-[var(--color-danger-500)]/20 text-[var(--color-danger-500)] dark:text-[var(--color-danger-500)]"
                 >
                   {msg}
                 </motion.p>

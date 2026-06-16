@@ -74,7 +74,7 @@ export default function QuickReplies({ onSelect, expanded: initialExpanded }: Qu
               {templates.length > 4 && (
                 <button
                   onClick={() => setShowAll(!showAll)}
-                  className="px-3 py-1.5 rounded-full text-[11px] font-semibold text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all border border-slate-200 dark:border-slate-700"
+                  className="px-3 py-1.5 rounded-full text-[11px] font-semibold text-[var(--color-ink-3)] hover:bg-[var(--color-surface-muted)] transition-all border border-[var(--color-line)]"
                 >
                   {showAll ? "Show less" : `+${templates.length - 4} more`}
                 </button>

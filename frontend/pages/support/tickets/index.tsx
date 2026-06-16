@@ -66,8 +66,8 @@ export default function MyTickets() {
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900 dark:text-white">My Support Tickets</h1>
-            <p className="text-sm text-slate-500 mt-1">Track your support requests</p>
+            <h1 className="text-2xl font-bold text-[var(--color-ink)]">My Support Tickets</h1>
+            <p className="text-sm text-[var(--color-ink-3)] mt-1">Track your support requests</p>
           </div>
           <button
             onClick={() => setShowForm(!showForm)}
@@ -82,12 +82,12 @@ export default function MyTickets() {
 
         {/* New ticket form */}
         {showForm && (
-          <form onSubmit={handleSubmit} className="mb-6 p-5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 space-y-3">
-            <h3 className="font-semibold text-sm text-slate-900 dark:text-white">Submit a new request</h3>
+          <form onSubmit={handleSubmit} className="mb-6 p-5 rounded-xl border border-[var(--color-line)] bg-[var(--color-surface-2)] space-y-3">
+            <h3 className="font-semibold text-sm text-[var(--color-ink)]">Submit a new request</h3>
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm"
+              className="w-full px-3 py-2 rounded-lg border border-[var(--color-line)] bg-[var(--color-surface)] text-sm"
             >
               <option value="feedback">General Feedback</option>
               <option value="billing">Billing / Payments</option>
@@ -104,7 +104,7 @@ export default function MyTickets() {
               placeholder="Subject"
               required
               minLength={3}
-              className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm"
+              className="w-full px-3 py-2 rounded-lg border border-[var(--color-line)] bg-[var(--color-surface)] text-sm"
             />
             <textarea
               value={message}
@@ -113,7 +113,7 @@ export default function MyTickets() {
               required
               minLength={10}
               rows={4}
-              className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm resize-none"
+              className="w-full px-3 py-2 rounded-lg border border-[var(--color-line)] bg-[var(--color-surface)] text-sm resize-none"
             />
             <div className="flex gap-2">
               <button
@@ -126,7 +126,7 @@ export default function MyTickets() {
               <button
                 type="button"
                 onClick={() => setShowForm(false)}
-                className="px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                className="px-4 py-2 border border-[var(--color-line)] rounded-lg text-sm text-[var(--color-ink-2)] hover:bg-[var(--color-surface)] transition-colors"
               >
                 Cancel
               </button>
@@ -138,7 +138,7 @@ export default function MyTickets() {
         {loading ? (
           <div className="space-y-3">
             {[...Array(4)].map((_, i) => (
-              <div key={i} className="h-16 rounded-xl bg-slate-100 dark:bg-slate-800 animate-pulse" />
+              <div key={i} className="h-16 rounded-xl bg-[var(--color-surface-muted)] animate-pulse" />
             ))}
           </div>
         ) : (

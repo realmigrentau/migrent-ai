@@ -111,7 +111,7 @@ export default function OwnerView({ listings, loading, profile }: OwnerViewProps
             </Link>
           </div>
         ) : (
-          <div className="divide-y divide-slate-100 dark:divide-slate-800">
+          <div className="divide-y divide-[var(--color-line)]">
             {/* Header row - desktop */}
             <div className="hidden md:grid md:grid-cols-12 gap-4 px-5 py-3 text-xs font-semibold text-[var(--color-ink-3)] uppercase tracking-wider">
               <div className="col-span-5">Property</div>
@@ -130,7 +130,7 @@ export default function OwnerView({ listings, loading, profile }: OwnerViewProps
               >
                 <Link
                   href={`/listing/${listing.id || ""}`}
-                  className="block md:grid md:grid-cols-12 gap-4 px-5 py-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group"
+                  className="block md:grid md:grid-cols-12 gap-4 px-5 py-4 hover:bg-[var(--color-surface)]/50 transition-colors group"
                 >
                   {/* Property info */}
                   <div className="col-span-5 flex items-center gap-3 mb-2 md:mb-0">
@@ -138,7 +138,7 @@ export default function OwnerView({ listings, loading, profile }: OwnerViewProps
                       <Building2 className="w-5 h-5 text-[var(--color-primary)]" />
                     </div>
                     <div className="min-w-0">
-                      <p className="text-sm font-semibold text-slate-800 dark:text-slate-100 truncate">
+                      <p className="text-sm font-semibold text-[var(--color-ink)] truncate">
                         {listing.title || listing.address || "Untitled Listing"}
                       </p>
                       <p className="text-xs text-[var(--color-ink-3)] flex items-center gap-1">
@@ -173,7 +173,7 @@ export default function OwnerView({ listings, loading, profile }: OwnerViewProps
 
                   {/* Arrow */}
                   <div className="col-span-1 hidden md:flex items-center justify-end">
-                    <ChevronRight className="w-4 h-4 text-slate-300 dark:text-slate-600 group-hover:text-[var(--color-primary)] transition-colors" />
+                    <ChevronRight className="w-4 h-4 text-[var(--color-ink-4)] group-hover:text-[var(--color-primary)] transition-colors" />
                   </div>
                 </Link>
               </motion.div>
@@ -217,7 +217,7 @@ export default function OwnerView({ listings, loading, profile }: OwnerViewProps
                 {profile.badges.map((badge) => (
                   <span
                     key={badge}
-                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-500/20"
+                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/10 text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)] border border-[var(--color-line-2)] dark:border-[var(--color-warn-500)]/20"
                   >
                     <Trophy className="w-3 h-3" />
                     {badge}

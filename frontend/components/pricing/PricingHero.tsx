@@ -6,7 +6,7 @@ export default function PricingHero() {
   return (
     <section className="relative overflow-hidden min-h-[70vh] flex items-center">
       {/* Solid dark background */}
-      <div className="absolute inset-0 bg-slate-900" />
+      <div className="absolute inset-0 bg-[var(--color-ink)]" />
 
       <div className="relative z-10 w-full max-w-5xl mx-auto px-6 sm:px-10 py-16 sm:py-24">
         {/* Centered layout */}
@@ -72,7 +72,7 @@ export default function PricingHero() {
           >
             <Link
               href="/signup"
-              className="inline-flex items-center gap-2 bg-white text-slate-900 text-sm px-8 py-2.5 rounded-[10px] font-semibold hover:bg-slate-100 transition-colors"
+              className="inline-flex items-center gap-2 bg-white text-[var(--color-ink)] text-sm px-8 py-2.5 rounded-[10px] font-semibold hover:bg-[var(--color-surface-muted)] transition-colors"
             >
               <Sparkles className="w-4 h-4" />
               Start Listing Free

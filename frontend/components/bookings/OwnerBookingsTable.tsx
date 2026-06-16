@@ -27,23 +27,23 @@ const STATUS_CONFIG: Record<
 > = {
   PENDING_OWNER: {
     label: "Awaiting your response",
-    color: "text-amber-600 dark:text-amber-400",
-    bg: "bg-amber-50 dark:bg-amber-500/10",
+    color: "text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)]",
+    bg: "bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/10",
   },
   OWNER_ACCEPTED: {
     label: "Accepted - Awaiting payment",
-    color: "text-blue-600 dark:text-blue-400",
-    bg: "bg-blue-50 dark:bg-blue-500/10",
+    color: "text-[var(--color-primary)] dark:text-[var(--color-primary)]",
+    bg: "bg-[var(--color-primary-50)] dark:bg-[var(--color-primary)]/10",
   },
   OWNER_DECLINED: {
     label: "Declined",
-    color: "text-red-600 dark:text-red-400",
-    bg: "bg-red-50 dark:bg-red-500/10",
+    color: "text-[var(--color-danger-500)] dark:text-[var(--color-danger-500)]",
+    bg: "bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-50)]0/10",
   },
   SEEKER_CANCELLED: {
     label: "Cancelled by seeker",
-    color: "text-slate-500 dark:text-slate-400",
-    bg: "bg-slate-50 dark:bg-slate-800/50",
+    color: "text-[var(--color-ink-3)]",
+    bg: "bg-[var(--color-surface)]",
   },
   PAID: {
     label: "Confirmed",
@@ -52,13 +52,13 @@ const STATUS_CONFIG: Record<
   },
   COMPLETED: {
     label: "Completed",
-    color: "text-slate-600 dark:text-slate-400",
-    bg: "bg-slate-50 dark:bg-slate-800/50",
+    color: "text-[var(--color-ink-2)]",
+    bg: "bg-[var(--color-surface)]",
   },
   EXPIRED: {
     label: "Expired",
-    color: "text-slate-400",
-    bg: "bg-slate-50 dark:bg-slate-800/50",
+    color: "text-[var(--color-ink-3)]",
+    bg: "bg-[var(--color-surface)]",
   },
 };
 
@@ -117,8 +117,8 @@ export default function OwnerBookingsTable({
   if (bookings.length === 0) {
     return (
       <div className="card rounded-xl p-8 text-center">
-        <Calendar className="w-10 h-10 mx-auto text-slate-300 dark:text-slate-600 mb-3" />
-        <p className="text-sm text-slate-500 dark:text-slate-400">
+        <Calendar className="w-10 h-10 mx-auto text-[var(--color-ink-4)] mb-3" />
+        <p className="text-sm text-[var(--color-ink-3)]">
           No booking requests yet. They will appear here when seekers request your listings.
         </p>
       </div>
@@ -139,21 +139,21 @@ export default function OwnerBookingsTable({
             animate={{ opacity: 1, y: 0 }}
             className={`card rounded-xl overflow-hidden border ${
               isPending
-                ? "border-amber-200 dark:border-amber-500/30"
-                : "border-slate-200 dark:border-slate-700"
+                ? "border-[var(--color-line-2)] dark:border-amber-500/30"
+                : "border-[var(--color-line)]"
             }`}
           >
             {/* Main row */}
             <div
-              className="p-4 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors"
+              className="p-4 cursor-pointer hover:bg-[var(--color-surface)]/30 transition-colors"
               onClick={() => setExpandedId(isExpanded ? null : booking.id)}
             >
               <div className="flex items-center justify-between gap-4">
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-slate-900 dark:text-white truncate">
+                  <p className="text-sm font-semibold text-[var(--color-ink)] truncate">
                     {booking.listing?.title || booking.listing?.address || "Listing"}
                   </p>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                  <p className="text-xs text-[var(--color-ink-3)] mt-0.5">
                     {booking.other_party?.name || "Seeker"} - {booking.guests} guest
                     {booking.guests !== 1 ? "s" : ""}
                   </p>
@@ -166,9 +166,9 @@ export default function OwnerBookingsTable({
                     {status.label}
                   </span>
                   {isExpanded ? (
-                    <ChevronUp className="w-4 h-4 text-slate-400" />
+                    <ChevronUp className="w-4 h-4 text-[var(--color-ink-3)]" />
                   ) : (
-                    <ChevronDown className="w-4 h-4 text-slate-400" />
+                    <ChevronDown className="w-4 h-4 text-[var(--color-ink-3)]" />
                   )}
                 </div>
               </div>
@@ -176,28 +176,28 @@ export default function OwnerBookingsTable({
 
             {/* Expanded details */}
             {isExpanded && (
-              <div className="border-t border-slate-200 dark:border-slate-700 p-4 space-y-3">
+              <div className="border-t border-[var(--color-line)] p-4 space-y-3">
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
                   <div>
-                    <p className="text-xs text-slate-400 mb-0.5">Check-in</p>
-                    <p className="font-medium text-slate-900 dark:text-white">
+                    <p className="text-xs text-[var(--color-ink-3)] mb-0.5">Check-in</p>
+                    <p className="font-medium text-[var(--color-ink)]">
                       {booking.check_in_date}
                     </p>
                   </div>
                   <div>
-                    <p className="text-xs text-slate-400 mb-0.5">Check-out</p>
-                    <p className="font-medium text-slate-900 dark:text-white">
+                    <p className="text-xs text-[var(--color-ink-3)] mb-0.5">Check-out</p>
+                    <p className="font-medium text-[var(--color-ink)]">
                       {booking.check_out_date}
                     </p>
                   </div>
                   <div>
-                    <p className="text-xs text-slate-400 mb-0.5">Weekly rate</p>
-                    <p className="font-medium text-slate-900 dark:text-white">
+                    <p className="text-xs text-[var(--color-ink-3)] mb-0.5">Weekly rate</p>
+                    <p className="font-medium text-[var(--color-ink)]">
                       AUD ${booking.weekly_price_at_time?.toLocaleString()}
                     </p>
                   </div>
                   <div>
-                    <p className="text-xs text-slate-400 mb-0.5">Est. total rent</p>
+                    <p className="text-xs text-[var(--color-ink-3)] mb-0.5">Est. total rent</p>
                     <p className="font-medium text-[var(--color-accent)] dark:text-[var(--color-accent)]">
                       AUD ${booking.total_price?.toLocaleString()}
                     </p>
@@ -205,18 +205,18 @@ export default function OwnerBookingsTable({
                 </div>
 
                 {booking.message_to_owner && (
-                  <div className="p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50">
-                    <p className="text-xs text-slate-400 mb-1 flex items-center gap-1">
+                  <div className="p-3 rounded-lg bg-[var(--color-surface)]">
+                    <p className="text-xs text-[var(--color-ink-3)] mb-1 flex items-center gap-1">
                       <MessageSquare className="w-3 h-3" />
                       Message from seeker
                     </p>
-                    <p className="text-sm text-slate-700 dark:text-slate-300">
+                    <p className="text-sm text-[var(--color-ink-2)]">
                       {booking.message_to_owner}
                     </p>
                   </div>
                 )}
 
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-[var(--color-ink-3)]">
                   Requested {new Date(booking.created_at).toLocaleDateString("en-AU", {
                     day: "numeric",
                     month: "short",
@@ -248,7 +248,7 @@ export default function OwnerBookingsTable({
                       whileTap={{ scale: 0.98 }}
                       onClick={() => handleDecline(booking.id)}
                       disabled={actionLoading === booking.id}
-                      className="flex-1 py-2.5 px-4 rounded-xl text-sm font-semibold border border-red-200 dark:border-red-500/30 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 flex items-center justify-center gap-2 disabled:opacity-50"
+                      className="flex-1 py-2.5 px-4 rounded-xl text-sm font-semibold border border-[var(--color-danger-500)]/30 dark:border-red-500/30 text-[var(--color-danger-500)] dark:text-[var(--color-danger-500)] hover:bg-[var(--color-danger-50)] dark:hover:bg-[var(--color-danger-50)]0/10 flex items-center justify-center gap-2 disabled:opacity-50"
                     >
                       <X className="w-4 h-4" />
                       Decline

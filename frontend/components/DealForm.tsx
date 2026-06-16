@@ -44,9 +44,9 @@ export default function DealForm({ onSubmit, loading, listingTitle, weeklyPrice 
   return (
     <form onSubmit={handleSubmit} className="card p-6 rounded-2xl space-y-5">
       <div>
-        <h3 className="text-lg font-bold text-slate-900 dark:text-white">Customise your deal</h3>
+        <h3 className="text-lg font-bold text-[var(--color-ink)]">Customise your deal</h3>
         {listingTitle && (
-          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+          <p className="text-sm text-[var(--color-ink-3)] mt-1">
             For: {listingTitle}
           </p>
         )}
@@ -55,7 +55,7 @@ export default function DealForm({ onSubmit, loading, listingTitle, weeklyPrice 
       {/* Move-in / Move-out dates */}
       <div className="grid sm:grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Move-in date *</label>
+          <label className="block text-sm font-medium text-[var(--color-ink-2)] mb-1.5">Move-in date *</label>
           <input
             type="date"
             value={form.moveInDate}
@@ -65,7 +65,7 @@ export default function DealForm({ onSubmit, loading, listingTitle, weeklyPrice 
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Move-out date (optional)</label>
+          <label className="block text-sm font-medium text-[var(--color-ink-2)] mb-1.5">Move-out date (optional)</label>
           <input
             type="date"
             value={form.moveOutDate}
@@ -87,20 +87,20 @@ export default function DealForm({ onSubmit, loading, listingTitle, weeklyPrice 
 
       {/* Number of guests */}
       <div>
-        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Number of guests</label>
+        <label className="block text-sm font-medium text-[var(--color-ink-2)] mb-1.5">Number of guests</label>
         <div className="flex items-center gap-3">
           <button
             type="button"
             onClick={() => update("numberOfGuests", Math.max(1, form.numberOfGuests - 1))}
-            className="w-8 h-8 rounded-full border border-slate-300 dark:border-slate-600 flex items-center justify-center text-slate-500 hover:border-[var(--color-line-2)] hover:text-[var(--color-primary)] transition-colors"
+            className="w-8 h-8 rounded-full border border-[var(--color-line-2)] flex items-center justify-center text-[var(--color-ink-3)] hover:border-[var(--color-line-2)] hover:text-[var(--color-primary)] transition-colors"
           >
             -
           </button>
-          <span className="w-8 text-center text-sm font-bold text-slate-900 dark:text-white">{form.numberOfGuests}</span>
+          <span className="w-8 text-center text-sm font-bold text-[var(--color-ink)]">{form.numberOfGuests}</span>
           <button
             type="button"
             onClick={() => update("numberOfGuests", Math.min(20, form.numberOfGuests + 1))}
-            className="w-8 h-8 rounded-full border border-slate-300 dark:border-slate-600 flex items-center justify-center text-slate-500 hover:border-[var(--color-line-2)] hover:text-[var(--color-primary)] transition-colors"
+            className="w-8 h-8 rounded-full border border-[var(--color-line-2)] flex items-center justify-center text-[var(--color-ink-3)] hover:border-[var(--color-line-2)] hover:text-[var(--color-primary)] transition-colors"
           >
             +
           </button>
@@ -110,7 +110,7 @@ export default function DealForm({ onSubmit, loading, listingTitle, weeklyPrice 
       {/* Guest names */}
       {form.numberOfGuests > 1 && (
         <div>
-          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Guest names (optional)</label>
+          <label className="block text-sm font-medium text-[var(--color-ink-2)] mb-1.5">Guest names (optional)</label>
           <input
             type="text"
             placeholder="e.g. John Smith, Jane Doe"
@@ -123,7 +123,7 @@ export default function DealForm({ onSubmit, loading, listingTitle, weeklyPrice 
 
       {/* Special requests */}
       <div>
-        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Special requests</label>
+        <label className="block text-sm font-medium text-[var(--color-ink-2)] mb-1.5">Special requests</label>
         <textarea
           placeholder="e.g. Early check-in, extra bedding, parking spot needed..."
           value={form.specialRequests}
@@ -132,12 +132,12 @@ export default function DealForm({ onSubmit, loading, listingTitle, weeklyPrice 
           maxLength={500}
           className="input-field"
         />
-        <p className="text-xs text-slate-400 mt-1">{form.specialRequests.length}/500</p>
+        <p className="text-xs text-[var(--color-ink-3)] mt-1">{form.specialRequests.length}/500</p>
       </div>
 
       {/* Notes */}
       <div>
-        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Additional notes (optional)</label>
+        <label className="block text-sm font-medium text-[var(--color-ink-2)] mb-1.5">Additional notes (optional)</label>
         <textarea
           placeholder="Anything else the owner should know..."
           value={form.dealNotes}
@@ -149,8 +149,8 @@ export default function DealForm({ onSubmit, loading, listingTitle, weeklyPrice 
       </div>
 
       {/* Fee notice */}
-      <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
-        <p className="text-sm text-slate-600 dark:text-slate-300">
+      <div className="p-4 rounded-xl bg-[var(--color-surface)] border border-[var(--color-line)]">
+        <p className="text-sm text-[var(--color-ink-2)]">
           A one-time <span className="font-bold">AUD $99</span> owner fee applies to confirm this deal.
           The seeker may optionally pay an <span className="font-bold">AUD $19</span> support fee after.
         </p>

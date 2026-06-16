@@ -51,8 +51,8 @@ const ownerMetrics: MetricConfig[] = [
     label: "Response Rate",
     icon: <Zap className="w-5 h-5" />,
     format: (v) => `${v}%`,
-    color: "text-amber-600 dark:text-amber-400",
-    iconBg: "bg-amber-100 dark:bg-amber-500/20",
+    color: "text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)]",
+    iconBg: "bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/20",
   },
   {
     key: "occupancyRate",
@@ -67,8 +67,8 @@ const ownerMetrics: MetricConfig[] = [
     label: "New Inquiries",
     icon: <MessageSquare className="w-5 h-5" />,
     format: (v) => String(v),
-    color: "text-blue-600 dark:text-blue-400",
-    iconBg: "bg-blue-100 dark:bg-blue-500/20",
+    color: "text-[var(--color-primary)] dark:text-[var(--color-primary)]",
+    iconBg: "bg-[var(--color-primary-100)] dark:bg-[var(--color-primary)]/20",
   },
   {
     key: "conversionRate",

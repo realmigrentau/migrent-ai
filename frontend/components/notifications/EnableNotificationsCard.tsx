@@ -103,7 +103,7 @@ export default function EnableNotificationsCard({ token }: Props) {
             </button>
           </div>
           {state === "error" && (
-            <p className="text-xs text-red-500 mt-2">
+            <p className="text-xs text-[var(--color-danger-500)] mt-2">
               Could not enable notifications. Make sure you allow them when your browser asks.
             </p>
           )}

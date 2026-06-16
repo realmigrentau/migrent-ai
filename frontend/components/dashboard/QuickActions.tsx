@@ -19,8 +19,8 @@ const actions = [
     label: "View Messages",
     desc: "Chat with interested seekers",
     icon: <MessageSquare className="w-5 h-5" />,
-    color: "text-blue-500",
-    bg: "bg-blue-50 dark:bg-blue-500/10",
+    color: "text-[var(--color-primary)]",
+    bg: "bg-[var(--color-primary-50)] dark:bg-[var(--color-primary)]/10",
     external: false,
   },
   {

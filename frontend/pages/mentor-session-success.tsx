@@ -15,16 +15,16 @@ export default function MentorSessionSuccessPage() {
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           transition={{ type: "spring", stiffness: 200 }}
-          className="w-20 h-20 rounded-2xl bg-[var(--color-primary-soft)] from-[var(--color-accent)] to-teal-500 flex items-center justify-center mx-auto"
+          className="w-20 h-20 rounded-2xl bg-[var(--color-primary-soft)] from-[var(--color-accent)] to-[var(--color-primary)] flex items-center justify-center mx-auto"
         >
           <CheckCircle2 className="w-10 h-10 text-white" />
         </motion.div>
 
-        <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
+        <h1 className="text-2xl font-bold text-[var(--color-ink)]">
           Session Booked!
         </h1>
 
-        <p className="text-slate-600 dark:text-slate-300 max-w-sm mx-auto">
+        <p className="text-[var(--color-ink-2)] max-w-sm mx-auto">
           Your mentor session has been confirmed. Your mentor will reach out to you soon with session details.
         </p>
 
@@ -41,7 +41,7 @@ export default function MentorSessionSuccessPage() {
           <Link href="/mentors">
             <motion.span
               whileHover={{ scale: 1.03 }}
-              className="inline-flex items-center gap-2 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-semibold px-6 py-2.5 rounded-xl text-sm transition-colors cursor-pointer"
+              className="inline-flex items-center gap-2 bg-[var(--color-surface-muted)] text-[var(--color-ink-2)] font-semibold px-6 py-2.5 rounded-xl text-sm transition-colors cursor-pointer"
             >
               Browse More Mentors
               <ArrowRight className="w-4 h-4" />

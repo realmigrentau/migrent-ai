@@ -28,7 +28,7 @@ function DefaultTeaser({
       viewport={{ once: true }}
       className="max-w-lg mx-auto"
     >
-      <div className="relative rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 p-8 text-center overflow-hidden">
+      <div className="relative rounded-2xl border border-[var(--color-line)] bg-[var(--color-surface)]/50 dark:bg-[var(--color-surface-muted)] p-8 text-center overflow-hidden">
         {/* Blurred decorative background */}
         <div className="absolute inset-0 backdrop-blur-sm" />
         <div className="absolute -top-10 -right-10 w-32 h-32 bg-[var(--color-primary)]/5 rounded-full blur-2xl" />
@@ -38,10 +38,10 @@ function DefaultTeaser({
           <div className="w-12 h-12 rounded-xl bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/20 flex items-center justify-center mx-auto mb-4">
             <Lock className="w-6 h-6 text-[var(--color-primary)]" />
           </div>
-          <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">
+          <h3 className="text-lg font-bold text-[var(--color-ink)] mb-2">
             {title}
           </h3>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mb-6">
+          <p className="text-sm text-[var(--color-ink-3)] mb-6">
             {description}
           </p>
           <Link href="/signup">

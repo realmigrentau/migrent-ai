@@ -3,11 +3,11 @@ import type { TicketDetail as TicketDetailType, TicketMessage } from "../../lib/
 import { replyToTicket, updateTicket, submitCSAT } from "../../lib/api";
 
 const statusColors: Record<string, string> = {
-  open: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
-  pending_customer: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400",
+  open: "bg-[var(--color-primary-100)] text-[var(--color-primary-700)] dark:bg-blue-900/30 dark:text-[var(--color-primary)]",
+  pending_customer: "bg-[var(--color-warn-50)] text-[var(--color-warn-600)] dark:bg-amber-900/30 dark:text-[var(--color-warn-500)]",
   pending_internal: "bg-[var(--color-primary-soft)] text-primary-700 dark:bg-primary-900/30 dark:text-[var(--color-primary)]",
-  resolved: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
-  closed: "bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400",
+  resolved: "bg-[var(--color-accent-50)] text-[var(--color-accent-700)] dark:bg-green-900/30 dark:text-[var(--color-accent)]",
+  closed: "bg-[var(--color-surface-muted)] text-[var(--color-ink-3)] dark:bg-[var(--color-surface-muted)] dark:text-[var(--color-ink-3)]",
 };
 
 interface Props {
@@ -65,8 +65,8 @@ export default function TicketDetailView({ ticket, token, isAgent, onUpdate }: P
       {/* Ticket Header */}
       <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
         <div>
-          <h1 className="text-xl font-bold text-slate-900 dark:text-white">{ticket.subject}</h1>
-          <div className="flex flex-wrap items-center gap-3 mt-2 text-xs text-slate-400">
+          <h1 className="text-xl font-bold text-[var(--color-ink)]">{ticket.subject}</h1>
+          <div className="flex flex-wrap items-center gap-3 mt-2 text-xs text-[var(--color-ink-3)]">
             <span className="font-mono">{ticket.id.slice(0, 8)}</span>
             <span className="capitalize">{ticket.category?.replace("_", " ")}</span>
             <span>{ticket.source.replace("_", " ")}</span>
@@ -77,7 +77,7 @@ export default function TicketDetailView({ ticket, token, isAgent, onUpdate }: P
           <span className={`px-3 py-1 rounded-full text-xs font-medium ${statusColors[ticket.status]}`}>
             {ticket.status.replace("_", " ")}
           </span>
-          <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 capitalize">
+          <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-[var(--color-surface-muted)] text-[var(--color-ink-2)] capitalize">
             {ticket.priority}
           </span>
         </div>
@@ -90,11 +90,11 @@ export default function TicketDetailView({ ticket, token, isAgent, onUpdate }: P
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-xs text-slate-500 mb-1 block">Status</label>
+              <label className="text-xs text-[var(--color-ink-3)] mb-1 block">Status</label>
               <select
                 value={newStatus}
                 onChange={(e) => setNewStatus(e.target.value)}
-                className="w-full px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm"
+                className="w-full px-3 py-1.5 rounded-lg border border-[var(--color-line)] bg-[var(--color-surface-2)] text-sm"
               >
                 <option value="open">Open</option>
                 <option value="pending_customer">Pending Customer</option>
@@ -104,11 +104,11 @@ export default function TicketDetailView({ ticket, token, isAgent, onUpdate }: P
               </select>
             </div>
             <div>
-              <label className="text-xs text-slate-500 mb-1 block">Priority</label>
+              <label className="text-xs text-[var(--color-ink-3)] mb-1 block">Priority</label>
               <select
                 value={newPriority}
                 onChange={(e) => setNewPriority(e.target.value)}
-                className="w-full px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm"
+                className="w-full px-3 py-1.5 rounded-lg border border-[var(--color-line)] bg-[var(--color-surface-2)] text-sm"
               >
                 <option value="low">Low</option>
                 <option value="normal">Normal</option>
@@ -123,7 +123,7 @@ export default function TicketDetailView({ ticket, token, isAgent, onUpdate }: P
             onChange={(e) => setInternalNote(e.target.value)}
             placeholder="Internal note (only visible to agents)..."
             rows={2}
-            className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm resize-none"
+            className="w-full px-3 py-2 rounded-lg border border-[var(--color-line)] bg-[var(--color-surface-2)] text-sm resize-none"
           />
 
           <button
@@ -134,7 +134,7 @@ export default function TicketDetailView({ ticket, token, isAgent, onUpdate }: P
           </button>
 
           {ticket.email && (
-            <p className="text-xs text-slate-400">Customer: {ticket.email}</p>
+            <p className="text-xs text-[var(--color-ink-3)]">Customer: {ticket.email}</p>
           )}
         </div>
       )}
@@ -146,25 +146,25 @@ export default function TicketDetailView({ ticket, token, isAgent, onUpdate }: P
             key={msg.id}
             className={`p-4 rounded-xl ${
               msg.is_internal
-                ? "border border-amber-200 dark:border-amber-800 bg-amber-50/50 dark:bg-amber-900/10"
+                ? "border border-[var(--color-line-2)] dark:border-amber-800 bg-[var(--color-warn-50)]/50 dark:bg-amber-900/10"
                 : msg.sender_type === "agent"
                 ? "border border-[var(--color-primary-soft)] dark:border-primary-900 bg-[var(--color-primary-soft)]/50 dark:bg-primary-900/10"
-                : "border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900"
+                : "border border-[var(--color-line)] bg-[var(--color-surface-2)]"
             }`}
           >
             <div className="flex items-center gap-2 mb-2">
               <span className={`text-xs font-medium ${
-                msg.is_internal ? "text-amber-600 dark:text-amber-400" :
+                msg.is_internal ? "text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)]" :
                 msg.sender_type === "agent" ? "text-[var(--color-primary)] dark:text-[var(--color-primary)]" :
-                "text-slate-600 dark:text-slate-400"
+                "text-[var(--color-ink-2)]"
               }`}>
                 {msg.is_internal ? "Internal Note" : msg.sender_type === "agent" ? "Support Agent" : "Customer"}
               </span>
-              <span className="text-xs text-slate-400">
+              <span className="text-xs text-[var(--color-ink-3)]">
                 {new Date(msg.created_at).toLocaleString()}
               </span>
             </div>
-            <p className="text-sm text-slate-700 dark:text-slate-300 whitespace-pre-wrap">{msg.body}</p>
+            <p className="text-sm text-[var(--color-ink-2)] whitespace-pre-wrap">{msg.body}</p>
           </div>
         ))}
       </div>
@@ -178,7 +178,7 @@ export default function TicketDetailView({ ticket, token, isAgent, onUpdate }: P
             placeholder="Write a reply..."
             required
             rows={3}
-            className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-ink)]/30 resize-none"
+            className="w-full px-4 py-3 rounded-xl border border-[var(--color-line)] bg-[var(--color-surface-2)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-ink)]/30 resize-none"
           />
           <button
             type="submit"
@@ -192,8 +192,8 @@ export default function TicketDetailView({ ticket, token, isAgent, onUpdate }: P
 
       {/* CSAT */}
       {showCSAT && (
-        <div className="p-5 rounded-xl border border-green-200 dark:border-green-800 bg-green-50/50 dark:bg-green-900/10 text-center">
-          <h3 className="font-semibold text-sm text-slate-900 dark:text-white mb-2">How was your experience?</h3>
+        <div className="p-5 rounded-xl border border-[var(--color-accent-100)] dark:border-green-800 bg-[var(--color-accent-50)]/50 dark:bg-green-900/10 text-center">
+          <h3 className="font-semibold text-sm text-[var(--color-ink)] mb-2">How was your experience?</h3>
           <div className="flex items-center justify-center gap-1 mb-3">
             {[1, 2, 3, 4, 5].map((n) => (
               <button
@@ -202,7 +202,7 @@ export default function TicketDetailView({ ticket, token, isAgent, onUpdate }: P
                 className={`w-10 h-10 rounded-lg text-lg transition-all ${
                   csatRating >= n
                     ? "bg-amber-400 text-white scale-110"
-                    : "bg-slate-100 dark:bg-slate-800 text-slate-400 hover:bg-amber-100"
+                    : "bg-[var(--color-surface-muted)] text-[var(--color-ink-3)] hover:bg-[var(--color-warn-50)]"
                 }`}
               >
                 {n}

@@ -25,15 +25,15 @@ interface Listing {
 const STATUS_STYLES: Record<string, string> = {
   active: "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 text-[var(--color-accent)] dark:text-[var(--color-accent)] border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)]",
   approved: "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 text-[var(--color-accent)] dark:text-[var(--color-accent)] border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)]",
-  pending_approval: "bg-amber-100 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-200 dark:border-amber-500/20",
-  changes_requested: "bg-orange-100 dark:bg-orange-500/10 text-orange-600 dark:text-orange-400 border-orange-200 dark:border-orange-500/20",
-  rejected: "bg-red-100 dark:bg-red-500/10 text-red-600 dark:text-red-400 border-red-200 dark:border-red-500/20",
-  paused: "bg-amber-100 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-200 dark:border-amber-500/20",
-  draft: "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700",
-  flagged: "bg-orange-100 dark:bg-orange-500/10 text-orange-600 dark:text-orange-400 border-orange-200 dark:border-orange-500/20",
-  hidden: "bg-orange-100 dark:bg-orange-500/10 text-orange-600 dark:text-orange-400 border-orange-200 dark:border-orange-500/20",
-  delete_requested: "bg-red-100 dark:bg-red-500/10 text-red-600 dark:text-red-400 border-red-200 dark:border-red-500/20",
-  deleted: "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700",
+  pending_approval: "bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/10 text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)] border-[var(--color-line-2)] dark:border-[var(--color-warn-500)]/20",
+  changes_requested: "bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)] text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)] border-[var(--color-line-2)] dark:border-[var(--color-warn-500)]/20",
+  rejected: "bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-50)]0/10 text-[var(--color-danger-500)] dark:text-[var(--color-danger-500)] border-[var(--color-danger-500)]/30 dark:border-[var(--color-danger-500)]/20",
+  paused: "bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/10 text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)] border-[var(--color-line-2)] dark:border-[var(--color-warn-500)]/20",
+  draft: "bg-[var(--color-surface-muted)] text-[var(--color-ink-3)] border-[var(--color-line)]",
+  flagged: "bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)] text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)] border-[var(--color-line-2)] dark:border-[var(--color-warn-500)]/20",
+  hidden: "bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)] text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)] border-[var(--color-line-2)] dark:border-[var(--color-warn-500)]/20",
+  delete_requested: "bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-50)]0/10 text-[var(--color-danger-500)] dark:text-[var(--color-danger-500)] border-[var(--color-danger-500)]/30 dark:border-[var(--color-danger-500)]/20",
+  deleted: "bg-[var(--color-surface-muted)] text-[var(--color-ink-3)] border-[var(--color-line)]",
 };
 
 const STATUS_LABELS: Record<string, string> = {
@@ -182,8 +182,8 @@ export default function OwnerListings() {
   if (!session)
     return (
       <div className="card p-8 rounded-2xl text-center max-w-md mx-auto mt-12">
-        <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">Sign in required</h2>
-        <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">
+        <h2 className="text-lg font-semibold text-[var(--color-ink)] mb-2">Sign in required</h2>
+        <p className="text-sm text-[var(--color-ink-3)] mb-4">
           Sign in as an owner to manage your listings.
         </p>
         <Link href="/signin" className="btn-primary py-3 px-6 rounded-xl text-sm inline-block">
@@ -197,10 +197,10 @@ export default function OwnerListings() {
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white">
+            <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-[var(--color-ink)]">
               My Listings
             </h1>
-            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+            <p className="text-sm text-[var(--color-ink-3)] mt-1">
               {listings.length} listing{listings.length !== 1 ? "s" : ""}
             </p>
           </div>
@@ -220,7 +220,7 @@ export default function OwnerListings() {
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="text-sm p-3 rounded-xl bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20 text-amber-700 dark:text-amber-400"
+          className="text-sm p-3 rounded-xl bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/10 border border-[var(--color-line-2)] dark:border-[var(--color-warn-500)]/20 text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)]"
         >
           Listing submitted! Our team will review it shortly (usually within 24 hours). You will receive an email once approved.
         </motion.p>
@@ -243,11 +243,11 @@ export default function OwnerListings() {
           animate={{ opacity: 1 }}
           className="card p-8 rounded-2xl text-center"
         >
-          <svg className="w-12 h-12 mx-auto text-slate-300 dark:text-slate-600 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+          <svg className="w-12 h-12 mx-auto text-[var(--color-ink-4)] mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
           </svg>
-          <h3 className="font-semibold text-slate-900 dark:text-white mb-1">No listings yet</h3>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">
+          <h3 className="font-semibold text-[var(--color-ink)] mb-1">No listings yet</h3>
+          <p className="text-sm text-[var(--color-ink-3)] mb-4">
             Create your first listing to start receiving applicants.
           </p>
           <Link href="/owner/listings/new" className="btn-primary py-2.5 px-5 rounded-xl text-sm inline-block">
@@ -260,45 +260,45 @@ export default function OwnerListings() {
           <div className="hidden md:block card rounded-2xl overflow-hidden">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-slate-200 dark:border-slate-700">
-                  <th className="text-left py-3 px-5 font-semibold text-slate-500 dark:text-slate-400">Listing</th>
-                  <th className="text-left py-3 px-5 font-semibold text-slate-500 dark:text-slate-400">Postcode</th>
-                  <th className="text-left py-3 px-5 font-semibold text-slate-500 dark:text-slate-400">Price</th>
-                  <th className="text-left py-3 px-5 font-semibold text-slate-500 dark:text-slate-400">Status</th>
-                  <th className="text-left py-3 px-5 font-semibold text-slate-500 dark:text-slate-400">Views</th>
-                  <th className="text-left py-3 px-5 font-semibold text-slate-500 dark:text-slate-400">Applicants</th>
+                <tr className="border-b border-[var(--color-line)]">
+                  <th className="text-left py-3 px-5 font-semibold text-[var(--color-ink-3)]">Listing</th>
+                  <th className="text-left py-3 px-5 font-semibold text-[var(--color-ink-3)]">Postcode</th>
+                  <th className="text-left py-3 px-5 font-semibold text-[var(--color-ink-3)]">Price</th>
+                  <th className="text-left py-3 px-5 font-semibold text-[var(--color-ink-3)]">Status</th>
+                  <th className="text-left py-3 px-5 font-semibold text-[var(--color-ink-3)]">Views</th>
+                  <th className="text-left py-3 px-5 font-semibold text-[var(--color-ink-3)]">Applicants</th>
                   <th className="py-3 px-5"></th>
                 </tr>
               </thead>
               <tbody>
                 {listings.map((l) => (
-                  <tr key={l.id} className="border-b border-slate-100 dark:border-slate-800 last:border-0 hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors">
+                  <tr key={l.id} className="border-b border-[var(--color-line)] last:border-0 hover:bg-[var(--color-surface)] dark:hover:bg-white/[0.02] transition-colors">
                     <td className="py-3 px-5">
                       <Link href={`/listing/${l.id}`} className="hover:text-[var(--color-primary)] transition-colors">
-                        <span className="font-semibold text-slate-900 dark:text-white">{l.title || l.address}</span>
-                        {l.suburb && <span className="text-xs text-slate-400 dark:text-slate-500 ml-2">{l.suburb}</span>}
+                        <span className="font-semibold text-[var(--color-ink)]">{l.title || l.address}</span>
+                        {l.suburb && <span className="text-xs text-[var(--color-ink-3)] ml-2">{l.suburb}</span>}
                       </Link>
                     </td>
-                    <td className="py-3 px-5 text-slate-600 dark:text-slate-300">{l.postcode}</td>
+                    <td className="py-3 px-5 text-[var(--color-ink-2)]">{l.postcode}</td>
                     <td className="py-3 px-5 text-[var(--color-primary)] dark:text-[var(--color-primary)] font-bold">${l.weeklyPrice}/wk</td>
                     <td className="py-3 px-5">
                       <span className={`px-2.5 py-1 rounded-full text-xs font-semibold border ${STATUS_STYLES[l.moderation_status || l.status || "active"] || ""}`}>
                         {STATUS_LABELS[l.moderation_status || l.status || "active"] || l.status || "active"}
                       </span>
                     </td>
-                    <td className="py-3 px-5 text-slate-600 dark:text-slate-300">{l.views ?? 0}</td>
-                    <td className="py-3 px-5 text-slate-600 dark:text-slate-300">{l.applicants ?? 0}</td>
+                    <td className="py-3 px-5 text-[var(--color-ink-2)]">{l.views ?? 0}</td>
+                    <td className="py-3 px-5 text-[var(--color-ink-2)]">{l.applicants ?? 0}</td>
                     <td className="py-3 px-5">
                       <div className="flex gap-3 justify-end">
-                        <Link href={`/owner/listings/edit/${l.id}`} className="text-xs text-blue-500 hover:text-blue-600 font-semibold transition-colors">
+                        <Link href={`/owner/listings/edit/${l.id}`} className="text-xs text-[var(--color-primary)] hover:text-[var(--color-primary)] font-semibold transition-colors">
                           Edit
                         </Link>
-                        <Link href={`/listing/${l.id}`} className="text-xs text-slate-500 hover:text-[var(--color-primary)] font-semibold transition-colors">
+                        <Link href={`/listing/${l.id}`} className="text-xs text-[var(--color-ink-3)] hover:text-[var(--color-primary)] font-semibold transition-colors">
                           View
                         </Link>
                         <button
                           onClick={() => openDeleteModal(l)}
-                          className="text-xs text-slate-400 hover:text-red-500 font-semibold transition-colors"
+                          className="text-xs text-[var(--color-ink-3)] hover:text-[var(--color-danger-500)] font-semibold transition-colors"
                         >
                           Delete
                         </button>
@@ -322,22 +322,22 @@ export default function OwnerListings() {
               >
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <h3 className="font-bold text-slate-900 dark:text-white text-sm">{l.title || l.address}</h3>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{l.suburb ? `${l.suburb}, ` : ""}{l.postcode}</p>
+                    <h3 className="font-bold text-[var(--color-ink)] text-sm">{l.title || l.address}</h3>
+                    <p className="text-xs text-[var(--color-ink-3)] mt-0.5">{l.suburb ? `${l.suburb}, ` : ""}{l.postcode}</p>
                   </div>
                   <div className="px-2.5 py-1 rounded-lg bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 border border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)]">
                     <span className="text-[var(--color-primary)] dark:text-[var(--color-primary)] font-bold text-sm">${l.weeklyPrice}/wk</span>
                   </div>
                 </div>
-                <div className="flex items-center gap-3 mt-3 text-xs text-slate-500 dark:text-slate-400">
+                <div className="flex items-center gap-3 mt-3 text-xs text-[var(--color-ink-3)]">
                   <span className={`px-2 py-0.5 rounded-full font-semibold border ${STATUS_STYLES[l.moderation_status || l.status || "active"] || ""}`}>
                     {STATUS_LABELS[l.moderation_status || l.status || "active"] || l.status || "active"}
                   </span>
                   <span>{l.views ?? 0} views</span>
                   <span>{l.applicants ?? 0} applicants</span>
                 </div>
-                <div className="flex gap-2 mt-3 pt-3 border-t border-slate-100 dark:border-slate-800">
-                  <Link href={`/owner/listings/edit/${l.id}`} className="py-2 px-4 rounded-lg text-xs flex-1 text-center border border-blue-200 dark:border-blue-500/20 text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-500/10 transition-colors font-semibold">
+                <div className="flex gap-2 mt-3 pt-3 border-t border-[var(--color-line)]">
+                  <Link href={`/owner/listings/edit/${l.id}`} className="py-2 px-4 rounded-lg text-xs flex-1 text-center border border-[var(--color-primary-100)] dark:border-[var(--color-primary)]/20 text-[var(--color-primary)] hover:bg-[var(--color-primary-50)] dark:hover:bg-[var(--color-primary)]/10 transition-colors font-semibold">
                     Edit
                   </Link>
                   <Link href={`/listing/${l.id}`} className="btn-primary py-2 px-4 rounded-lg text-xs flex-1 text-center">
@@ -345,7 +345,7 @@ export default function OwnerListings() {
                   </Link>
                   <button
                     onClick={() => openDeleteModal(l)}
-                    className="py-2 px-4 rounded-lg text-xs border border-red-200 dark:border-red-500/20 text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
+                    className="py-2 px-4 rounded-lg text-xs border border-[var(--color-danger-500)]/30 dark:border-[var(--color-danger-500)]/20 text-[var(--color-danger-500)] hover:bg-[var(--color-danger-50)] dark:hover:bg-[var(--color-danger-50)]0/10 transition-colors"
                   >
                     Delete
                   </button>
@@ -375,27 +375,27 @@ export default function OwnerListings() {
               {deleteStep === "confirm" ? (
                 <>
                   <div className="text-center">
-                    <div className="w-12 h-12 rounded-full bg-red-100 dark:bg-red-500/10 flex items-center justify-center mx-auto mb-3">
-                      <svg className="w-6 h-6 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <div className="w-12 h-12 rounded-full bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-50)]0/10 flex items-center justify-center mx-auto mb-3">
+                      <svg className="w-6 h-6 text-[var(--color-danger-500)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                       </svg>
                     </div>
-                    <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Delete this listing?</h3>
-                    <p className="text-sm text-slate-500 dark:text-slate-400 mt-2">
-                      Are you sure you want to delete <span className="font-semibold text-slate-700 dark:text-slate-300">{deleteTarget.title || deleteTarget.address}</span>?
+                    <h3 className="text-lg font-semibold text-[var(--color-ink)]">Delete this listing?</h3>
+                    <p className="text-sm text-[var(--color-ink-3)] mt-2">
+                      Are you sure you want to delete <span className="font-semibold text-[var(--color-ink-2)]">{deleteTarget.title || deleteTarget.address}</span>?
                       This action cannot be undone.
                     </p>
                   </div>
                   <div className="flex gap-3">
                     <button
                       onClick={closeDeleteModal}
-                      className="flex-1 py-2.5 px-4 rounded-xl text-sm font-semibold border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                      className="flex-1 py-2.5 px-4 rounded-xl text-sm font-semibold border border-[var(--color-line)] text-[var(--color-ink-2)] hover:bg-[var(--color-surface)] transition-colors"
                     >
                       Cancel
                     </button>
                     <button
                       onClick={() => setDeleteStep("verify")}
-                      className="flex-1 py-2.5 px-4 rounded-xl text-sm font-semibold bg-red-500 hover:bg-red-600 text-white transition-colors"
+                      className="flex-1 py-2.5 px-4 rounded-xl text-sm font-semibold bg-[var(--color-danger-50)]0 hover:bg-[var(--color-danger-500)] text-white transition-colors"
                     >
                       Yes, delete it
                     </button>
@@ -404,13 +404,13 @@ export default function OwnerListings() {
               ) : (
                 <>
                   <div className="text-center">
-                    <div className="w-12 h-12 rounded-full bg-amber-100 dark:bg-amber-500/10 flex items-center justify-center mx-auto mb-3">
-                      <svg className="w-6 h-6 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <div className="w-12 h-12 rounded-full bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/10 flex items-center justify-center mx-auto mb-3">
+                      <svg className="w-6 h-6 text-[var(--color-warn-500)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                       </svg>
                     </div>
-                    <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Confirm your identity</h3>
-                    <p className="text-sm text-slate-500 dark:text-slate-400 mt-2">
+                    <h3 className="text-lg font-semibold text-[var(--color-ink)]">Confirm your identity</h3>
+                    <p className="text-sm text-[var(--color-ink-3)] mt-2">
                       Enter your password or sign in with Google to confirm deletion.
                     </p>
                   </div>
@@ -428,13 +428,13 @@ export default function OwnerListings() {
                   </div>
 
                   {deleteError && (
-                    <p className="text-xs text-red-500 text-center">{deleteError}</p>
+                    <p className="text-xs text-[var(--color-danger-500)] text-center">{deleteError}</p>
                   )}
 
                   <button
                     onClick={handlePasswordDelete}
                     disabled={deleting || !deletePassword.trim()}
-                    className="w-full py-2.5 px-4 rounded-xl text-sm font-semibold bg-red-500 hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed text-white transition-colors flex items-center justify-center gap-2"
+                    className="w-full py-2.5 px-4 rounded-xl text-sm font-semibold bg-[var(--color-danger-50)]0 hover:bg-[var(--color-danger-500)] disabled:opacity-50 disabled:cursor-not-allowed text-white transition-colors flex items-center justify-center gap-2"
                   >
                     {deleting ? (
                       <>
@@ -447,15 +447,15 @@ export default function OwnerListings() {
                   </button>
 
                   <div className="flex items-center gap-3">
-                    <div className="flex-1 h-px bg-slate-200 dark:bg-slate-700" />
-                    <span className="text-xs text-slate-400 dark:text-slate-500">or</span>
-                    <div className="flex-1 h-px bg-slate-200 dark:bg-slate-700" />
+                    <div className="flex-1 h-px bg-[var(--color-line)]" />
+                    <span className="text-xs text-[var(--color-ink-3)]">or</span>
+                    <div className="flex-1 h-px bg-[var(--color-line)]" />
                   </div>
 
                   <button
                     onClick={handleGoogleDelete}
                     disabled={deleting}
-                    className="w-full py-2.5 px-4 rounded-xl text-sm font-semibold border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors flex items-center justify-center gap-2"
+                    className="w-full py-2.5 px-4 rounded-xl text-sm font-semibold border border-[var(--color-line)] text-[var(--color-ink-2)] hover:bg-[var(--color-surface)] transition-colors flex items-center justify-center gap-2"
                   >
                     <svg className="w-4 h-4" viewBox="0 0 24 24">
                       <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/>
@@ -468,7 +468,7 @@ export default function OwnerListings() {
 
                   <button
                     onClick={() => { setDeleteStep("confirm"); setDeletePassword(""); setDeleteError(""); }}
-                    className="w-full py-2 text-xs text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+                    className="w-full py-2 text-xs text-[var(--color-ink-3)] hover:text-[var(--color-ink-2)] dark:hover:text-[var(--color-ink-4)] transition-colors"
                   >
                     Back
                   </button>

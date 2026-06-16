@@ -28,8 +28,8 @@ export default function ReviewDealPage() {
     return (
       <div className="min-h-screen flex items-center justify-center px-4">
         <div className="card p-8 rounded-2xl max-w-md w-full text-center">
-          <h1 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Sign in Required</h1>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mb-6">Please sign in to leave a review.</p>
+          <h1 className="text-xl font-bold text-[var(--color-ink)] mb-2">Sign in Required</h1>
+          <p className="text-sm text-[var(--color-ink-3)] mb-6">Please sign in to leave a review.</p>
           <Link href="/signin" className="btn-primary py-3 px-6 rounded-xl text-sm inline-block">
             Sign In
           </Link>
@@ -42,13 +42,13 @@ export default function ReviewDealPage() {
     return (
       <div className="min-h-screen flex items-center justify-center px-4">
         <div className="card p-8 rounded-2xl max-w-md w-full text-center">
-          <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-red-50 dark:bg-red-500/10 flex items-center justify-center">
-            <svg className="w-7 h-7 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+          <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-50)]0/10 flex items-center justify-center">
+            <svg className="w-7 h-7 text-[var(--color-danger-500)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
             </svg>
           </div>
-          <h1 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Error</h1>
-          <p className="text-sm text-slate-500 dark:text-slate-400">{error}</p>
+          <h1 className="text-xl font-bold text-[var(--color-ink)] mb-2">Error</h1>
+          <p className="text-sm text-[var(--color-ink-3)]">{error}</p>
           <button onClick={() => router.back()} className="mt-4 text-sm text-[var(--color-primary)] hover:text-[var(--color-primary)]">
             Go Back
           </button>
@@ -100,10 +100,10 @@ export default function ReviewDealPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                 </svg>
               </div>
-              <h1 className="text-xl font-bold text-slate-900 dark:text-white mb-2">
+              <h1 className="text-xl font-bold text-[var(--color-ink)] mb-2">
                 Review Submitted!
               </h1>
-              <p className="text-sm text-slate-500 dark:text-slate-400 mb-6">
+              <p className="text-sm text-[var(--color-ink-3)] mb-6">
                 Thank you for sharing your experience. Your review helps build trust in the MigRent community.
               </p>
 
@@ -117,7 +117,7 @@ export default function ReviewDealPage() {
               {/* Show the other party's review if exists */}
               {context.other_review && (
                 <div className="mb-6 text-left">
-                  <p className="text-xs font-medium text-slate-500 dark:text-slate-400 mb-2">
+                  <p className="text-xs font-medium text-[var(--color-ink-3)] mb-2">
                     {context.other_user.name}'s review:
                   </p>
                   <ReviewCard review={context.other_review} />
@@ -147,15 +147,15 @@ export default function ReviewDealPage() {
         <div className="min-h-screen py-12 px-4">
           <div className="max-w-lg mx-auto">
             <div className="card p-8 rounded-2xl text-center">
-              <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-amber-50 dark:bg-amber-500/10 flex items-center justify-center">
-                <svg className="w-7 h-7 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/10 flex items-center justify-center">
+                <svg className="w-7 h-7 text-[var(--color-warn-500)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
-              <h1 className="text-xl font-bold text-slate-900 dark:text-white mb-2">
+              <h1 className="text-xl font-bold text-[var(--color-ink)] mb-2">
                 Review Not Available
               </h1>
-              <p className="text-sm text-slate-500 dark:text-slate-400">
+              <p className="text-sm text-[var(--color-ink-3)]">
                 {context.deal.status !== "completed"
                   ? "Reviews can only be submitted after the deal is completed."
                   : "You have already submitted a review for this deal."}
@@ -187,7 +187,7 @@ export default function ReviewDealPage() {
           >
             <button
               onClick={() => router.back()}
-              className="flex items-center gap-1 text-sm text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 mb-4 transition-colors"
+              className="flex items-center gap-1 text-sm text-[var(--color-ink-3)] hover:text-[var(--color-ink-2)] dark:hover:text-[var(--color-ink-4)] mb-4 transition-colors"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
@@ -195,10 +195,10 @@ export default function ReviewDealPage() {
               Back
             </button>
 
-            <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
+            <h1 className="text-2xl font-bold text-[var(--color-ink)]">
               Leave a Review
             </h1>
-            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+            <p className="text-sm text-[var(--color-ink-3)] mt-1">
               Share your experience to help the community
             </p>
           </motion.div>
@@ -221,18 +221,18 @@ export default function ReviewDealPage() {
                 )}
               </div>
               <div>
-                <p className="font-semibold text-slate-900 dark:text-white">
+                <p className="font-semibold text-[var(--color-ink)]">
                   {context.other_user.name}
                 </p>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
+                <p className="text-xs text-[var(--color-ink-3)]">
                   {context.is_owner ? "Tenant" : "Property Owner"}
                 </p>
               </div>
             </div>
             {context.listing.title && (
-              <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800">
-                <p className="text-xs text-slate-400 dark:text-slate-500">Property</p>
-                <p className="text-sm font-medium text-slate-700 dark:text-slate-200">
+              <div className="mt-3 pt-3 border-t border-[var(--color-line)]">
+                <p className="text-xs text-[var(--color-ink-3)]">Property</p>
+                <p className="text-sm font-medium text-[var(--color-ink-2)]">
                   {context.listing.title || context.listing.address}
                 </p>
               </div>
@@ -263,7 +263,7 @@ export default function ReviewDealPage() {
               transition={{ delay: 0.15 }}
               className="mt-6"
             >
-              <p className="text-xs font-medium text-slate-500 dark:text-slate-400 mb-2">
+              <p className="text-xs font-medium text-[var(--color-ink-3)] mb-2">
                 {context.other_user.name} already reviewed:
               </p>
               <ReviewCard review={context.other_review} />

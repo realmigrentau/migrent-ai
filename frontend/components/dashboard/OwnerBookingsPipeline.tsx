@@ -21,13 +21,13 @@ interface Props {
 const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
   PENDING_OWNER: {
     label: "Pending",
-    color: "text-amber-600 dark:text-amber-400",
-    bg: "bg-amber-50 dark:bg-amber-500/10",
+    color: "text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)]",
+    bg: "bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/10",
   },
   OWNER_ACCEPTED: {
     label: "Approved",
-    color: "text-blue-600 dark:text-blue-400",
-    bg: "bg-blue-50 dark:bg-blue-500/10",
+    color: "text-[var(--color-primary)] dark:text-[var(--color-primary)]",
+    bg: "bg-[var(--color-primary-50)] dark:bg-[var(--color-primary)]/10",
   },
   PAID: {
     label: "Paid",
@@ -36,13 +36,13 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }
   },
   COMPLETED: {
     label: "Completed",
-    color: "text-slate-600 dark:text-slate-300",
+    color: "text-[var(--color-ink-2)]",
     bg: "bg-[var(--color-surface-sunk)]/50",
   },
   OWNER_DECLINED: {
     label: "Declined",
-    color: "text-red-600 dark:text-red-400",
-    bg: "bg-red-50 dark:bg-red-500/10",
+    color: "text-[var(--color-danger-500)] dark:text-[var(--color-danger-500)]",
+    bg: "bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-50)]0/10",
   },
   SEEKER_CANCELLED: {
     label: "Cancelled",
@@ -51,7 +51,7 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }
   },
   EXPIRED: {
     label: "Expired",
-    color: "text-slate-400",
+    color: "text-[var(--color-ink-3)]",
     bg: "bg-[var(--color-surface-sunk)]",
   },
 };
@@ -135,7 +135,7 @@ export default function OwnerBookingsPipeline({
               className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
                 activeTab === tab.key
                   ? "bg-[var(--color-primary)] text-white"
-                  : "bg-[var(--color-surface-sunk)] text-[var(--color-ink-2)] hover:bg-slate-200 dark:hover:bg-slate-700"
+                  : "bg-[var(--color-surface-sunk)] text-[var(--color-ink-2)] hover:bg-[var(--color-surface-muted)]"
               }`}
             >
               {tab.label} ({count})
@@ -177,26 +177,26 @@ export default function OwnerBookingsPipeline({
                 animate={{ opacity: 1, y: 0 }}
                 className={`card rounded-xl overflow-hidden border transition-colors ${
                   isPending
-                    ? "border-amber-200 dark:border-amber-500/30"
+                    ? "border-[var(--color-line-2)] dark:border-amber-500/30"
                     : "border-[var(--color-line)]"
                 }`}
               >
                 {/* Desktop row */}
                 <div
-                  className="hidden md:grid grid-cols-12 gap-3 items-center p-4 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors"
+                  className="hidden md:grid grid-cols-12 gap-3 items-center p-4 cursor-pointer hover:bg-[var(--color-surface)]/30 transition-colors"
                   onClick={() =>
                     setExpandedId(isExpanded ? null : booking.id)
                   }
                 >
                   <div className="col-span-3 flex items-center gap-2 min-w-0">
-                    <div className="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center shrink-0">
+                    <div className="w-8 h-8 rounded-full bg-[var(--color-line)] flex items-center justify-center shrink-0">
                       <User className="w-4 h-4 text-[var(--color-ink-3)]" />
                     </div>
                     <div className="min-w-0">
                       <p className="text-sm font-medium text-[var(--color-ink)] truncate">
                         {booking.seeker?.name || "Seeker"}
                       </p>
-                      <p className="text-xs text-slate-400">
+                      <p className="text-xs text-[var(--color-ink-3)]">
                         {booking.guests} guest{booking.guests !== 1 ? "s" : ""}
                       </p>
                     </div>
@@ -209,10 +209,10 @@ export default function OwnerBookingsPipeline({
                     </p>
                   </div>
                   <div className="col-span-2">
-                    <p className="text-xs text-slate-600 dark:text-slate-300">
+                    <p className="text-xs text-[var(--color-ink-2)]">
                       {booking.check_in_date}
                     </p>
-                    <p className="text-xs text-slate-400">
+                    <p className="text-xs text-[var(--color-ink-3)]">
                       to {booking.check_out_date}
                     </p>
                   </div>
@@ -247,7 +247,7 @@ export default function OwnerBookingsPipeline({
                             handleDecline(booking.id);
                           }}
                           disabled={actionLoading === booking.id}
-                          className="px-3 py-1.5 rounded-lg text-xs font-medium border border-red-200 dark:border-red-500/30 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 disabled:opacity-50 flex items-center gap-1"
+                          className="px-3 py-1.5 rounded-lg text-xs font-medium border border-[var(--color-danger-500)]/30 dark:border-red-500/30 text-[var(--color-danger-500)] dark:text-[var(--color-danger-500)] hover:bg-[var(--color-danger-50)] dark:hover:bg-[var(--color-danger-50)]0/10 disabled:opacity-50 flex items-center gap-1"
                         >
                           <X className="w-3 h-3" /> Decline
                         </button>
@@ -255,9 +255,9 @@ export default function OwnerBookingsPipeline({
                     ) : (
                       <div className="flex items-center gap-1">
                         {isExpanded ? (
-                          <ChevronUp className="w-4 h-4 text-slate-400" />
+                          <ChevronUp className="w-4 h-4 text-[var(--color-ink-3)]" />
                         ) : (
-                          <ChevronDown className="w-4 h-4 text-slate-400" />
+                          <ChevronDown className="w-4 h-4 text-[var(--color-ink-3)]" />
                         )}
                       </div>
                     )}
@@ -266,7 +266,7 @@ export default function OwnerBookingsPipeline({
 
                 {/* Mobile row */}
                 <div
-                  className="md:hidden p-4 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors"
+                  className="md:hidden p-4 cursor-pointer hover:bg-[var(--color-surface)]/30 transition-colors"
                   onClick={() =>
                     setExpandedId(isExpanded ? null : booking.id)
                   }
@@ -289,9 +289,9 @@ export default function OwnerBookingsPipeline({
                         {status.label}
                       </span>
                       {isExpanded ? (
-                        <ChevronUp className="w-4 h-4 text-slate-400" />
+                        <ChevronUp className="w-4 h-4 text-[var(--color-ink-3)]" />
                       ) : (
-                        <ChevronDown className="w-4 h-4 text-slate-400" />
+                        <ChevronDown className="w-4 h-4 text-[var(--color-ink-3)]" />
                       )}
                     </div>
                   </div>
@@ -302,7 +302,7 @@ export default function OwnerBookingsPipeline({
                   <div className="border-t border-[var(--color-line)] p-4 space-y-3">
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
                       <div>
-                        <p className="text-xs text-slate-400 mb-0.5">
+                        <p className="text-xs text-[var(--color-ink-3)] mb-0.5">
                           Check-in
                         </p>
                         <p className="font-medium text-[var(--color-ink)]">
@@ -310,7 +310,7 @@ export default function OwnerBookingsPipeline({
                         </p>
                       </div>
                       <div>
-                        <p className="text-xs text-slate-400 mb-0.5">
+                        <p className="text-xs text-[var(--color-ink-3)] mb-0.5">
                           Check-out
                         </p>
                         <p className="font-medium text-[var(--color-ink)]">
@@ -318,7 +318,7 @@ export default function OwnerBookingsPipeline({
                         </p>
                       </div>
                       <div>
-                        <p className="text-xs text-slate-400 mb-0.5">
+                        <p className="text-xs text-[var(--color-ink-3)] mb-0.5">
                           Weekly rate
                         </p>
                         <p className="font-medium text-[var(--color-ink)]">
@@ -326,7 +326,7 @@ export default function OwnerBookingsPipeline({
                         </p>
                       </div>
                       <div>
-                        <p className="text-xs text-slate-400 mb-0.5">
+                        <p className="text-xs text-[var(--color-ink-3)] mb-0.5">
                           Total rent
                         </p>
                         <p className="font-medium text-[var(--color-accent)] dark:text-[var(--color-accent)]">
@@ -337,7 +337,7 @@ export default function OwnerBookingsPipeline({
 
                     {booking.message_to_owner && (
                       <div className="p-3 rounded-lg bg-[var(--color-surface-sunk)]">
-                        <p className="text-xs text-slate-400 mb-1 flex items-center gap-1">
+                        <p className="text-xs text-[var(--color-ink-3)] mb-1 flex items-center gap-1">
                           <MessageSquare className="w-3 h-3" />
                           Message from seeker
                         </p>
@@ -347,7 +347,7 @@ export default function OwnerBookingsPipeline({
                       </div>
                     )}
 
-                    <p className="text-xs text-slate-400">
+                    <p className="text-xs text-[var(--color-ink-3)]">
                       Requested{" "}
                       {new Date(booking.created_at).toLocaleDateString(
                         "en-AU",
@@ -383,7 +383,7 @@ export default function OwnerBookingsPipeline({
                           whileTap={{ scale: 0.98 }}
                           onClick={() => handleDecline(booking.id)}
                           disabled={actionLoading === booking.id}
-                          className="flex-1 py-2.5 px-4 rounded-xl text-sm font-semibold border border-red-200 dark:border-red-500/30 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 flex items-center justify-center gap-2 disabled:opacity-50"
+                          className="flex-1 py-2.5 px-4 rounded-xl text-sm font-semibold border border-[var(--color-danger-500)]/30 dark:border-red-500/30 text-[var(--color-danger-500)] dark:text-[var(--color-danger-500)] hover:bg-[var(--color-danger-50)] dark:hover:bg-[var(--color-danger-50)]0/10 flex items-center justify-center gap-2 disabled:opacity-50"
                         >
                           <X className="w-4 h-4" />
                           Decline

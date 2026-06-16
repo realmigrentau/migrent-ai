@@ -16,7 +16,7 @@ const gradientBorders: Record<string, string> = {
   rose: "border-[var(--color-primary-soft)]/50 dark:border-[var(--color-primary-soft)]",
   indigo: "border-[var(--color-primary-soft)]/50 dark:border-[var(--color-primary-soft)]",
   emerald: "border-[var(--color-accent-soft)]/50 dark:border-[var(--color-accent-soft)]",
-  amber: "border-amber-200/50 dark:border-amber-500/20",
+  amber: "border-[var(--color-line-2)]/50 dark:border-[var(--color-warn-500)]/20",
   "pink-indigo": "border-[var(--color-primary-soft)]/50 dark:border-[var(--color-primary-soft)]",
 };
 
@@ -43,10 +43,10 @@ export default function GlassCard({
       transition={{ duration: 0.4, delay, ease: [0.25, 0.46, 0.45, 0.94] }}
       onClick={onClick}
       className={`
-        backdrop-blur-xl bg-white/90 dark:bg-slate-900/90
-        border ${gradientBorders[gradient] || "border-white/20 dark:border-slate-700/50"}
+        backdrop-blur-xl bg-white/90 dark:bg-[var(--color-surface)]/90
+        border ${gradientBorders[gradient] || "border-white/20 dark:border-[var(--color-line)]/50"}
         rounded-2xl shadow-lg dark:shadow-2xl
-        ${hover ? "transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5 hover:bg-white dark:hover:bg-slate-900" : ""}
+        ${hover ? "transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5 hover:bg-white dark:hover:bg-[var(--color-ink)]" : ""}
         ${onClick ? "cursor-pointer" : ""}
         ${paddingMap[padding]}
         ${className}
@@ -71,12 +71,12 @@ export function StatusBadge({
     verified:
       "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/15 text-[var(--color-accent)] dark:text-[var(--color-accent)] border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)]",
     pending:
-      "bg-amber-100 dark:bg-amber-500/15 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-500/30",
+      "bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/15 text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)] border-[var(--color-line-2)] dark:border-amber-500/30",
     action:
       "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/15 text-[var(--color-primary)] dark:text-[var(--color-primary)] border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)]",
-    info: "bg-blue-100 dark:bg-blue-500/15 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-500/30",
+    info: "bg-[var(--color-primary-100)] dark:bg-[var(--color-primary)]/15 text-[var(--color-primary-700)] dark:text-[var(--color-primary)] border-[var(--color-primary-100)] dark:border-blue-500/30",
     inactive:
-      "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700",
+      "bg-[var(--color-surface-muted)] text-[var(--color-ink-3)] border-[var(--color-line)]",
   };
 
   return (
@@ -127,7 +127,7 @@ export function ProgressRing({
           fill="none"
           stroke="currentColor"
           strokeWidth={strokeWidth}
-          className="text-slate-200 dark:text-slate-700"
+          className="text-[var(--color-ink-4)] dark:text-[var(--color-ink-2)]"
         />
         <motion.circle
           cx={size / 2}
@@ -143,7 +143,7 @@ export function ProgressRing({
           style={{ strokeDasharray: circumference }}
         />
       </svg>
-      <span className="absolute text-sm font-bold text-slate-900 dark:text-white">
+      <span className="absolute text-sm font-bold text-[var(--color-ink)]">
         {progress}%
       </span>
     </div>

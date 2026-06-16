@@ -39,11 +39,11 @@ export default function TicketPage() {
     return (
       <div className="max-w-3xl mx-auto">
         <div className="animate-pulse space-y-4">
-          <div className="h-8 w-2/3 bg-slate-200 dark:bg-slate-800 rounded" />
-          <div className="h-4 w-1/3 bg-slate-100 dark:bg-slate-800 rounded" />
+          <div className="h-8 w-2/3 bg-[var(--color-surface-muted)] dark:bg-[var(--color-surface-muted)] rounded" />
+          <div className="h-4 w-1/3 bg-[var(--color-surface-muted)] rounded" />
           <div className="space-y-3 mt-8">
             {[...Array(3)].map((_, i) => (
-              <div key={i} className="h-24 bg-slate-100 dark:bg-slate-800 rounded-xl" />
+              <div key={i} className="h-24 bg-[var(--color-surface-muted)] rounded-xl" />
             ))}
           </div>
         </div>
@@ -54,7 +54,7 @@ export default function TicketPage() {
   if (error || !ticket) {
     return (
       <div className="text-center py-20">
-        <h1 className="text-xl font-bold text-slate-900 dark:text-white mb-2">
+        <h1 className="text-xl font-bold text-[var(--color-ink)] mb-2">
           {error || "Ticket not found"}
         </h1>
         <Link href="/support/tickets" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] font-medium text-sm">
@@ -72,10 +72,10 @@ export default function TicketPage() {
 
       <div className="max-w-3xl mx-auto">
         {/* Breadcrumb */}
-        <nav className="flex items-center gap-2 text-sm text-slate-400 mb-6">
+        <nav className="flex items-center gap-2 text-sm text-[var(--color-ink-3)] mb-6">
           <Link href="/support/tickets" className="hover:text-[var(--color-primary)] transition-colors">My Tickets</Link>
           <span>/</span>
-          <span className="text-slate-600 dark:text-slate-300 font-mono">{ticket.id.slice(0, 8)}</span>
+          <span className="text-[var(--color-ink-2)] font-mono">{ticket.id.slice(0, 8)}</span>
         </nav>
 
         <TicketDetailView

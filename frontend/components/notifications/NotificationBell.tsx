@@ -34,7 +34,7 @@ export default function NotificationBell({ unreadCount, collapsed }: Notificatio
         } ${
           open
             ? "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 text-[var(--color-primary)] dark:text-[var(--color-primary)]"
-            : "text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50"
+            : "text-[var(--color-ink-2)] hover:bg-[var(--color-surface)]/50"
         }`}
         title={collapsed ? "Notifications" : undefined}
       >

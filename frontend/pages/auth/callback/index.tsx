@@ -157,7 +157,7 @@ export default function AuthCallback() {
   return (
     <div className="min-h-[70vh] flex items-center justify-center px-4">
       {/* Floating shapes */}
-      <div className="fixed top-20 left-20 w-96 h-96 bg-blue-500/10 dark:bg-blue-500/5 hidden " />
+      <div className="fixed top-20 left-20 w-96 h-96 bg-[var(--color-primary)]/10 dark:bg-[var(--color-primary)]/5 hidden " />
       <div className="fixed bottom-20 right-20 w-96 h-96 bg-[var(--color-primary)]/10 dark:bg-[var(--color-primary)]/5 hidden " />
 
       <motion.div
@@ -180,15 +180,15 @@ export default function AuthCallback() {
                 animate={{ opacity: 1, y: 0 }}
                 className="space-y-4"
               >
-                <div className="w-10 h-10 rounded-full bg-red-100 dark:bg-red-500/20 flex items-center justify-center mx-auto">
-                  <svg className="w-5 h-5 text-red-600 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <div className="w-10 h-10 rounded-full bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-50)]0/20 flex items-center justify-center mx-auto">
+                  <svg className="w-5 h-5 text-[var(--color-danger-500)] dark:text-[var(--color-danger-500)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                   </svg>
                 </div>
-                <h1 className="text-xl font-bold text-slate-900 dark:text-white">
+                <h1 className="text-xl font-bold text-[var(--color-ink)]">
                   Link expired or invalid
                 </h1>
-                <p className="text-sm text-slate-500 dark:text-slate-400">
+                <p className="text-sm text-[var(--color-ink-3)]">
                   {error}
                 </p>
                 <div className="flex flex-col gap-2 pt-2">
@@ -209,13 +209,13 @@ export default function AuthCallback() {
               </motion.div>
             ) : (
               <div className="space-y-4">
-                <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-500/20 flex items-center justify-center mx-auto">
+                <div className="w-10 h-10 rounded-full bg-[var(--color-primary-100)] dark:bg-[var(--color-primary)]/20 flex items-center justify-center mx-auto">
                   <span className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
                 </div>
-                <h1 className="text-xl font-bold text-slate-900 dark:text-white">
+                <h1 className="text-xl font-bold text-[var(--color-ink)]">
                   Verifying your email...
                 </h1>
-                <p className="text-sm text-slate-500 dark:text-slate-400">
+                <p className="text-sm text-[var(--color-ink-3)]">
                   Just a moment while we sign you in.
                 </p>
               </div>

@@ -68,7 +68,7 @@ export default function VisaSelector({ value, onChange }: VisaSelectorProps) {
             className={`w-full text-left p-4 rounded-xl border-2 transition-all ${
               selected
                 ? "border-[var(--color-primary)] bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 shadow-sm"
-                : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-slate-300 dark:hover:border-slate-600"
+                : "border-[var(--color-line)] bg-[var(--color-surface-2)] hover:border-[var(--color-line-2)] dark:hover:border-[var(--color-line-2)]"
             }`}
           >
             <div className="flex items-center gap-3">
@@ -77,11 +77,11 @@ export default function VisaSelector({ value, onChange }: VisaSelectorProps) {
                 <p className={`text-sm font-semibold ${
                   selected
                     ? "text-[var(--color-primary)] dark:text-[var(--color-primary)]"
-                    : "text-slate-800 dark:text-slate-100"
+                    : "text-[var(--color-ink)]"
                 }`}>
                   {visa.name}
                 </p>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                <p className="text-xs text-[var(--color-ink-3)] mt-0.5">
                   {VISA_DESCRIPTIONS[visa.id] || `Up to ${visa.duration_weeks} weeks`}
                 </p>
               </div>
@@ -106,8 +106,8 @@ export default function VisaSelector({ value, onChange }: VisaSelectorProps) {
         onClick={() => onChange("")}
         className={`w-full text-left p-4 rounded-xl border-2 transition-all ${
           !value
-            ? "border-slate-400 dark:border-slate-500 bg-slate-50 dark:bg-slate-800/50"
-            : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-slate-300 dark:hover:border-slate-600"
+            ? "border-slate-400 dark:border-slate-500 bg-[var(--color-surface)]"
+            : "border-[var(--color-line)] bg-[var(--color-surface-2)] hover:border-[var(--color-line-2)] dark:hover:border-[var(--color-line-2)]"
         }`}
       >
         <div className="flex items-center gap-3">
@@ -115,12 +115,12 @@ export default function VisaSelector({ value, onChange }: VisaSelectorProps) {
           <div>
             <p className={`text-sm font-semibold ${
               !value
-                ? "text-slate-700 dark:text-slate-200"
-                : "text-slate-800 dark:text-slate-100"
+                ? "text-[var(--color-ink-2)]"
+                : "text-[var(--color-ink)]"
             }`}>
               Prefer not to say / Other
             </p>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+            <p className="text-xs text-[var(--color-ink-3)] mt-0.5">
               Skip visa-based recommendations
             </p>
           </div>

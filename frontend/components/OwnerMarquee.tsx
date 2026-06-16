@@ -39,11 +39,11 @@ function MarqueeCard({ listing }: { listing: MarqueeListing }) {
           <div>
             {/* Rating */}
             <div className="flex items-center gap-1">
-              <span className="text-amber-500 text-xs">★</span>
-              <span className="text-xs font-bold text-slate-900 dark:text-white">
+              <span className="text-[var(--color-warn-500)] text-xs">★</span>
+              <span className="text-xs font-bold text-[var(--color-ink)]">
                 {listing.rating.toFixed(2)}
               </span>
-              <span className="text-[10px] text-slate-400 dark:text-slate-500">
+              <span className="text-[10px] text-[var(--color-ink-3)]">
                 ({listing.reviewsCount})
               </span>
             </div>
@@ -57,17 +57,17 @@ function MarqueeCard({ listing }: { listing: MarqueeListing }) {
             </div>
 
             {/* Title */}
-            <h3 className="text-[11px] font-semibold text-slate-900 dark:text-white leading-tight mt-0.5 line-clamp-1">
+            <h3 className="text-[11px] font-semibold text-[var(--color-ink)] leading-tight mt-0.5 line-clamp-1">
               {listing.title}
             </h3>
           </div>
 
           {/* Bottom row */}
-          <div className="flex items-center gap-1.5 text-[10px] text-slate-500 dark:text-slate-400">
+          <div className="flex items-center gap-1.5 text-[10px] text-[var(--color-ink-3)]">
             <span>{listing.beds} bed{listing.beds > 1 ? "s" : ""}</span>
             {listing.nearestStation && (
               <>
-                <span className="text-slate-300 dark:text-slate-600">·</span>
+                <span className="text-[var(--color-ink-4)]">·</span>
                 <span className="truncate">{listing.nearestStation}</span>
               </>
             )}
@@ -92,8 +92,8 @@ function MarqueeRow({
   return (
     <div className="overflow-hidden relative group">
       {/* Fade edges */}
-      <div className="pointer-events-none absolute inset-y-0 left-0 w-16 z-10 bg-[var(--color-primary)] from-slate-50 dark:from-slate-950 to-transparent" />
-      <div className="pointer-events-none absolute inset-y-0 right-0 w-16 z-10 bg-gradient-to-l from-slate-50 dark:from-slate-950 to-transparent" />
+      <div className="pointer-events-none absolute inset-y-0 left-0 w-16 z-10 bg-[var(--color-primary)] from-[var(--color-surface)] dark:from-slate-950 to-transparent" />
+      <div className="pointer-events-none absolute inset-y-0 right-0 w-16 z-10 bg-gradient-to-l from-[var(--color-surface)] dark:from-slate-950 to-transparent" />
 
       <div className={`flex gap-4 ${animClass} group-hover:[animation-play-state:paused]`}>
         {duplicated.map((listing, i) => (

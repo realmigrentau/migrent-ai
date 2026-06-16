@@ -44,7 +44,7 @@ const iconMap: Record<string, React.ReactNode> = {
 const colorMap: Record<string, { dot: string; icon: string }> = {
   pending: {
     dot: "bg-amber-400",
-    icon: "text-amber-500 bg-amber-50 dark:bg-amber-500/10",
+    icon: "text-[var(--color-warn-500)] bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/10",
   },
   success: {
     dot: "bg-emerald-400",
@@ -52,11 +52,11 @@ const colorMap: Record<string, { dot: string; icon: string }> = {
   },
   declined: {
     dot: "bg-red-400",
-    icon: "text-red-500 bg-red-50 dark:bg-red-500/10",
+    icon: "text-[var(--color-danger-500)] bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-50)]0/10",
   },
   info: {
     dot: "bg-blue-400",
-    icon: "text-blue-500 bg-blue-50 dark:bg-blue-500/10",
+    icon: "text-[var(--color-primary)] bg-[var(--color-primary-50)] dark:bg-[var(--color-primary)]/10",
   },
 };
 
@@ -74,7 +74,7 @@ export default function ActivityTimeline({ activities, loading }: Props) {
   if (activities.length === 0) {
     return (
       <div className="card rounded-xl p-8 text-center">
-        <Calendar className="w-10 h-10 mx-auto text-slate-300 dark:text-slate-600 mb-3" />
+        <Calendar className="w-10 h-10 mx-auto text-[var(--color-ink-4)] mb-3" />
         <p className="text-sm text-[var(--color-ink-3)]">
           No recent activity. Events will appear here as your listings get
           engagement.
@@ -95,7 +95,7 @@ export default function ActivityTimeline({ activities, loading }: Props) {
             initial={{ opacity: 0, x: -8 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: i * 0.05 }}
-            className="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors"
+            className="flex items-start gap-3 p-3 rounded-xl hover:bg-[var(--color-surface)]/30 transition-colors"
           >
             {/* Timeline dot and line */}
             <div className="flex flex-col items-center shrink-0">
@@ -105,7 +105,7 @@ export default function ActivityTimeline({ activities, loading }: Props) {
                 {icon}
               </div>
               {i < activities.length - 1 && (
-                <div className="w-px h-4 bg-slate-200 dark:bg-slate-700 mt-1" />
+                <div className="w-px h-4 bg-[var(--color-line)] mt-1" />
               )}
             </div>
 

@@ -16,13 +16,13 @@ import {
 import type { WishlistListing, WishlistCollection } from "../../hooks/useWishlist";
 
 const CARD_GRADIENTS = [
-  "from-[var(--color-primary-soft)] to-pink-50 dark:from-rose-950/30 dark:to-pink-950/30",
-  "from-violet-50 to-purple-50 dark:from-violet-950/30 dark:to-purple-950/30",
-  "from-teal-50 to-emerald-50 dark:from-teal-950/30 dark:to-emerald-950/30",
-  "from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30",
-  "from-sky-50 to-blue-50 dark:from-sky-950/30 dark:to-blue-950/30",
-  "from-fuchsia-50 to-pink-50 dark:from-fuchsia-950/30 dark:to-pink-950/30",
-  "from-lime-50 to-emerald-50 dark:from-lime-950/30 dark:to-emerald-950/30",
+  "from-[var(--color-primary-soft)] to-[var(--color-primary-50)] dark:from-rose-950/30 dark:to-[var(--color-surface-muted)]",
+  "from-violet-50 to-[var(--color-primary-50)] dark:from-violet-950/30 dark:to-[var(--color-surface-muted)]",
+  "from-[var(--color-primary-50)] to-[var(--color-accent-50)] dark:from-teal-950/30 dark:to-[var(--color-surface-muted)]",
+  "from-[var(--color-warn-50)] to-[var(--color-warn-50)] dark:from-amber-950/30 dark:to-[var(--color-surface-muted)]",
+  "from-sky-50 to-[var(--color-primary-50)] dark:from-sky-950/30 dark:to-[var(--color-surface-muted)]",
+  "from-fuchsia-50 to-[var(--color-primary-50)] dark:from-fuchsia-950/30 dark:to-[var(--color-surface-muted)]",
+  "from-lime-50 to-[var(--color-accent-50)] dark:from-lime-950/30 dark:to-[var(--color-surface-muted)]",
 ];
 
 interface WishlistCardProps {
@@ -78,7 +78,7 @@ export default function WishlistCard({
           exit={{ opacity: 0, scale: 0.8, y: -20 }}
           transition={{ duration: 0.35, delay: index * 0.05 }}
           whileHover={{ y: -6, boxShadow: "0 20px 60px rgba(0,0,0,0.12)" }}
-          className={`relative rounded-2xl overflow-hidden border border-slate-200/60 dark:border-slate-700/60 bg-[var(--color-primary-soft)] ${gradientClass} group cursor-pointer`}
+          className={`relative rounded-2xl overflow-hidden border border-[var(--color-line)]/60 dark:border-[var(--color-line)]/60 bg-[var(--color-primary-soft)] ${gradientClass} group cursor-pointer`}
         >
           {/* Compare mode checkbox */}
           {compareMode && (
@@ -89,7 +89,7 @@ export default function WishlistCard({
               className={`absolute top-3 left-3 z-20 w-7 h-7 rounded-full flex items-center justify-center transition-all ${
                 isCompareSelected
                   ? "bg-[var(--color-primary)] text-white shadow-lg shadow-[var(--color-primary)]/20"
-                  : "bg-white/90 dark:bg-slate-800/90 text-slate-400 border border-slate-200 dark:border-slate-600"
+                  : "bg-white/90 dark:bg-[var(--color-surface-muted)]/90 text-[var(--color-ink-3)] border border-[var(--color-line)] dark:border-[var(--color-line-2)]"
               }`}
             >
               {isCompareSelected && <Check className="w-4 h-4" />}
@@ -97,7 +97,7 @@ export default function WishlistCard({
           )}
 
           {/* Image section */}
-          <div className="relative aspect-[4/3] overflow-hidden bg-slate-200 dark:bg-slate-800">
+          <div className="relative aspect-[4/3] overflow-hidden bg-[var(--color-surface-muted)] dark:bg-[var(--color-surface-muted)]">
             {!imgError ? (
               <img
                 src={listing.photos[0]}
@@ -107,8 +107,8 @@ export default function WishlistCard({
                 loading="lazy"
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center bg-[var(--color-primary-soft)] from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-700">
-                <MapPin className="w-12 h-12 text-slate-300 dark:text-slate-600" />
+              <div className="w-full h-full flex items-center justify-center bg-[var(--color-primary-soft)] from-slate-100 to-[var(--color-surface-muted)] dark:from-[var(--color-ink)] dark:to-[var(--color-surface-muted)]">
+                <MapPin className="w-12 h-12 text-[var(--color-ink-4)]" />
               </div>
             )}
 
@@ -122,7 +122,7 @@ export default function WishlistCard({
                 e.stopPropagation();
                 handleRemove();
               }}
-              className="absolute top-3 right-3 z-10 p-2 rounded-full bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm shadow-lg hover:scale-110 active:scale-90 transition-all"
+              className="absolute top-3 right-3 z-10 p-2 rounded-full bg-white/90 dark:bg-[var(--color-surface)]/90 backdrop-blur-sm shadow-lg hover:scale-110 active:scale-90 transition-all"
             >
               <AnimatePresence>
                 {heartBurst ? (
@@ -131,7 +131,7 @@ export default function WishlistCard({
                     animate={{ scale: [1, 1.5, 0] }}
                     transition={{ duration: 0.4 }}
                   >
-                    <Heart className="w-5 h-5 text-slate-300" />
+                    <Heart className="w-5 h-5 text-[var(--color-ink-4)]" />
                   </motion.div>
                 ) : (
                   <Heart className="w-5 h-5 fill-[var(--color-coral-500)] text-[var(--color-primary)]" />
@@ -144,7 +144,7 @@ export default function WishlistCard({
               <div className={`px-3 py-1.5 rounded-xl backdrop-blur-md shadow-lg ${
                 hasPriceDrop
                   ? "bg-[var(--color-accent-soft)]0/90 text-white"
-                  : "bg-white/90 dark:bg-slate-900/90 text-slate-900 dark:text-white"
+                  : "bg-white/90 dark:bg-[var(--color-surface)]/90 text-[var(--color-ink)]"
               }`}>
                 <span className="font-bold text-sm">${listing.weeklyPrice}</span>
                 <span className="text-xs opacity-80">/wk</span>
@@ -153,7 +153,7 @@ export default function WishlistCard({
                 <motion.div
                   initial={{ scale: 0, rotate: -12 }}
                   animate={{ scale: 1, rotate: 0 }}
-                  className="px-2 py-1 rounded-lg bg-amber-400 text-amber-900 text-xs font-bold shadow-lg flex items-center gap-1"
+                  className="px-2 py-1 rounded-lg bg-amber-400 text-[var(--color-warn-600)] text-xs font-bold shadow-lg flex items-center gap-1"
                 >
                   <TrendingDown className="w-3 h-3" />
                   -{priceDropPercent}%
@@ -163,7 +163,7 @@ export default function WishlistCard({
 
             {/* Superhost badge */}
             {listing.superhost && (
-              <div className="absolute top-3 left-3 px-2.5 py-1 rounded-lg bg-[var(--color-primary)] from-amber-400 to-orange-400 text-white text-xs font-bold shadow-lg flex items-center gap-1">
+              <div className="absolute top-3 left-3 px-2.5 py-1 rounded-lg bg-[var(--color-primary)] from-[var(--color-warn-500)] to-[var(--color-warn-500)] text-white text-xs font-bold shadow-lg flex items-center gap-1">
                 <Sparkles className="w-3 h-3" />
                 Superhost
               </div>
@@ -179,7 +179,7 @@ export default function WishlistCard({
                 Quick Book <ArrowRight className="w-3 h-3" />
               </Link>
               <button
-                className="p-1.5 rounded-xl bg-white/90 dark:bg-slate-900/90 text-slate-600 dark:text-slate-300 shadow-lg hover:scale-110 transition-transform"
+                className="p-1.5 rounded-xl bg-white/90 dark:bg-[var(--color-surface)]/90 text-[var(--color-ink-2)] shadow-lg hover:scale-110 transition-transform"
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
@@ -195,15 +195,15 @@ export default function WishlistCard({
             {/* Rating + Reviews */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-1.5">
-                <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
-                <span className="text-sm font-bold text-slate-900 dark:text-white">
+                <Star className="w-4 h-4 fill-amber-400 text-[var(--color-warn-500)]" />
+                <span className="text-sm font-bold text-[var(--color-ink)]">
                   {listing.rating}
                 </span>
-                <span className="text-xs text-slate-400">
+                <span className="text-xs text-[var(--color-ink-3)]">
                   ({listing.reviewCount})
                 </span>
                 {listing.superhost && (
-                  <span className="text-xs text-amber-500 font-medium ml-1">Superhost</span>
+                  <span className="text-xs text-[var(--color-warn-500)] font-medium ml-1">Superhost</span>
                 )}
               </div>
               {listing.verified && (
@@ -216,10 +216,10 @@ export default function WishlistCard({
 
             {/* Address */}
             <div>
-              <h3 className="font-bold text-slate-900 dark:text-white text-base leading-tight">
+              <h3 className="font-bold text-[var(--color-ink)] text-base leading-tight">
                 {listing.address}
               </h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+              <p className="text-xs text-[var(--color-ink-3)] mt-0.5">
                 {listing.suburb}, {listing.postcode}
               </p>
             </div>
@@ -227,7 +227,7 @@ export default function WishlistCard({
             {/* Original price strikethrough */}
             {hasPriceDrop && (
               <div className="flex items-center gap-2">
-                <span className="text-sm text-slate-400 line-through">${listing.originalPrice}/wk</span>
+                <span className="text-sm text-[var(--color-ink-3)] line-through">${listing.originalPrice}/wk</span>
                 <span className="text-xs font-bold text-[var(--color-accent)] bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 px-2 py-0.5 rounded-full">
                   Save ${priceSavings}/wk
                 </span>
@@ -240,7 +240,7 @@ export default function WishlistCard({
                 <div className="w-4 h-4 rounded-full bg-[var(--color-primary)] from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center">
                   <span className="text-white text-[8px] font-bold">T</span>
                 </div>
-                <span className="text-slate-600 dark:text-slate-300">
+                <span className="text-[var(--color-ink-2)]">
                   {listing.stationWalkMin}min walk to {listing.nearestStation}
                 </span>
               </div>
@@ -248,16 +248,16 @@ export default function WishlistCard({
 
             {/* Tags */}
             <div className="flex flex-wrap gap-1.5">
-              <span className="px-2 py-0.5 rounded-full text-xs bg-white/80 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 border border-slate-200/50 dark:border-slate-700/50 capitalize font-medium">
+              <span className="px-2 py-0.5 rounded-full text-xs bg-white/80 dark:bg-[var(--color-surface-muted)]/80 text-[var(--color-ink-2)] border border-[var(--color-line)]/50 dark:border-[var(--color-line)]/50 capitalize font-medium">
                 {listing.roomType}
               </span>
               {listing.furnished && (
-                <span className="px-2 py-0.5 rounded-full text-xs bg-white/80 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 border border-slate-200/50 dark:border-slate-700/50 font-medium">
+                <span className="px-2 py-0.5 rounded-full text-xs bg-white/80 dark:bg-[var(--color-surface-muted)]/80 text-[var(--color-ink-2)] border border-[var(--color-line)]/50 dark:border-[var(--color-line)]/50 font-medium">
                   Furnished
                 </span>
               )}
               {listing.billsIncluded && (
-                <span className="px-2 py-0.5 rounded-full text-xs bg-white/80 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 border border-slate-200/50 dark:border-slate-700/50 font-medium">
+                <span className="px-2 py-0.5 rounded-full text-xs bg-white/80 dark:bg-[var(--color-surface-muted)]/80 text-[var(--color-ink-2)] border border-[var(--color-line)]/50 dark:border-[var(--color-line)]/50 font-medium">
                   Bills incl.
                 </span>
               )}
@@ -269,26 +269,26 @@ export default function WishlistCard({
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.3 + index * 0.05 }}
-                className="flex items-start gap-2 p-2.5 rounded-xl bg-white/80 dark:bg-slate-800/50 border border-[var(--color-accent-soft)]/50 dark:border-[var(--color-accent-soft)]"
+                className="flex items-start gap-2 p-2.5 rounded-xl bg-white/80 dark:bg-[var(--color-surface-muted)] border border-[var(--color-accent-soft)]/50 dark:border-[var(--color-accent-soft)]"
               >
-                <div className="w-6 h-6 rounded-full bg-[var(--color-primary)] from-[var(--color-accent)] to-teal-400 flex items-center justify-center shrink-0 mt-0.5">
+                <div className="w-6 h-6 rounded-full bg-[var(--color-primary)] from-[var(--color-accent)] to-[var(--color-primary)] flex items-center justify-center shrink-0 mt-0.5">
                   <span className="text-white text-[10px] font-bold">
                     {listing.ownerName[0]}
                   </span>
                 </div>
                 <div className="min-w-0">
                   <div className="flex items-center gap-1">
-                    <span className="text-xs font-semibold text-slate-900 dark:text-white">
+                    <span className="text-xs font-semibold text-[var(--color-ink)]">
                       {listing.ownerName}
                     </span>
                     {listing.ownerVerified && (
-                      <BadgeCheck className="w-3 h-3 text-blue-500" />
+                      <BadgeCheck className="w-3 h-3 text-[var(--color-primary)]" />
                     )}
                     <span className="wl-reply-badge px-1.5 py-0.5 rounded-full text-[10px] font-bold text-[var(--color-accent)] dark:text-[var(--color-accent)] bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10">
                       Replied
                     </span>
                   </div>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-1">
+                  <p className="text-xs text-[var(--color-ink-3)] mt-0.5 line-clamp-1">
                     "{listing.ownerReply}"
                   </p>
                 </div>
@@ -296,10 +296,10 @@ export default function WishlistCard({
             )}
 
             {/* Action bar */}
-            <div className="flex items-center gap-2 pt-2 border-t border-slate-200/50 dark:border-slate-700/50">
+            <div className="flex items-center gap-2 pt-2 border-t border-[var(--color-line)]/50 dark:border-[var(--color-line)]/50">
               <Link
                 href={`/listing/${listing.id}`}
-                className="flex-1 text-center py-2 px-3 rounded-xl bg-[var(--color-primary)] from-[var(--color-primary)] to-[var(--color-primary)] hover:from-[var(--color-primary)] hover:to-pink-600 text-white text-xs font-semibold shadow-md hover:shadow-lg transition-all"
+                className="flex-1 text-center py-2 px-3 rounded-xl bg-[var(--color-primary)] from-[var(--color-primary)] to-[var(--color-primary)] hover:from-[var(--color-primary)] hover:to-[var(--color-primary)] text-white text-xs font-semibold shadow-md hover:shadow-lg transition-all"
                 onClick={(e) => e.stopPropagation()}
               >
                 View Details
@@ -313,7 +313,7 @@ export default function WishlistCard({
                     e.stopPropagation();
                     setShowCollectionMenu(!showCollectionMenu);
                   }}
-                  className="p-2 rounded-xl bg-white/80 dark:bg-slate-800/80 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 border border-slate-200/50 dark:border-slate-700/50 transition-colors"
+                  className="p-2 rounded-xl bg-white/80 dark:bg-[var(--color-surface-muted)]/80 text-[var(--color-ink-3)] hover:text-[var(--color-ink-2)] dark:hover:text-[var(--color-ink-4)] border border-[var(--color-line)]/50 dark:border-[var(--color-line)]/50 transition-colors"
                 >
                   <GripVertical className="w-4 h-4" />
                 </button>
@@ -325,9 +325,9 @@ export default function WishlistCard({
                       initial={{ opacity: 0, scale: 0.9, y: -4 }}
                       animate={{ opacity: 1, scale: 1, y: 0 }}
                       exit={{ opacity: 0, scale: 0.9, y: -4 }}
-                      className="absolute bottom-full right-0 mb-2 w-48 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-slate-200 dark:border-slate-700 overflow-hidden z-30"
+                      className="absolute bottom-full right-0 mb-2 w-48 bg-[var(--color-surface-2)] rounded-xl shadow-xl border border-[var(--color-line)] overflow-hidden z-30"
                     >
-                      <p className="px-3 py-2 text-xs font-semibold text-slate-400 border-b border-slate-100 dark:border-slate-700">
+                      <p className="px-3 py-2 text-xs font-semibold text-[var(--color-ink-3)] border-b border-[var(--color-line)]">
                         Move to collection
                       </p>
                       <button
@@ -336,8 +336,8 @@ export default function WishlistCard({
                           onMoveToCollection(listing.id, "all");
                           setShowCollectionMenu(false);
                         }}
-                        className={`w-full text-left px-3 py-2 text-xs hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors flex items-center gap-2 ${
-                          !currentCollectionId ? "text-[var(--color-primary)] font-semibold" : "text-slate-600 dark:text-slate-300"
+                        className={`w-full text-left px-3 py-2 text-xs hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-surface-muted)] transition-colors flex items-center gap-2 ${
+                          !currentCollectionId ? "text-[var(--color-primary)] font-semibold" : "text-[var(--color-ink-2)]"
                         }`}
                       >
                         <div className="w-3 h-3 rounded-full bg-[var(--color-primary)] from-[var(--color-primary)] to-[var(--color-primary)]" />
@@ -351,8 +351,8 @@ export default function WishlistCard({
                             onMoveToCollection(listing.id, c.id);
                             setShowCollectionMenu(false);
                           }}
-                          className={`w-full text-left px-3 py-2 text-xs hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors flex items-center gap-2 ${
-                            currentCollectionId === c.id ? "text-[var(--color-primary)] font-semibold" : "text-slate-600 dark:text-slate-300"
+                          className={`w-full text-left px-3 py-2 text-xs hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-surface-muted)] transition-colors flex items-center gap-2 ${
+                            currentCollectionId === c.id ? "text-[var(--color-primary)] font-semibold" : "text-[var(--color-ink-2)]"
                           }`}
                         >
                           <div className={`w-3 h-3 rounded-full bg-[var(--color-primary)] ${c.gradient}`} />

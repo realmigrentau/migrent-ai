@@ -295,7 +295,7 @@ export default function MegaNavbar() {
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: 8, scale: 0.95 }}
                       transition={{ duration: 0.15 }}
-                      className="absolute right-0 mt-2 w-56 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-xl overflow-hidden z-50"
+                      className="absolute right-0 mt-2 w-56 rounded-xl bg-[var(--color-surface-2)] border border-[var(--color-line)] shadow-xl overflow-hidden z-50"
                     >
                       <p className="px-4 pt-3 pb-2 eyebrow">
                         {t("nav.iAmA")}

@@ -10,9 +10,9 @@ export default function PaymentCancelled() {
         transition={{ duration: 0.4 }}
         className="card p-10 rounded-2xl space-y-6"
       >
-        <div className="w-16 h-16 mx-auto rounded-full bg-amber-100 dark:bg-amber-500/20 flex items-center justify-center">
+        <div className="w-16 h-16 mx-auto rounded-full bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/20 flex items-center justify-center">
           <svg
-            className="w-8 h-8 text-amber-600 dark:text-amber-400"
+            className="w-8 h-8 text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)]"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -22,11 +22,11 @@ export default function PaymentCancelled() {
           </svg>
         </div>
 
-        <h1 className="text-2xl md:text-3xl font-semibold tracking-tight text-slate-900 dark:text-white">
+        <h1 className="text-2xl md:text-3xl font-semibold tracking-tight text-[var(--color-ink)]">
           Payment Cancelled
         </h1>
 
-        <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed max-w-md mx-auto">
+        <p className="text-sm text-[var(--color-ink-3)] leading-relaxed max-w-md mx-auto">
           Your payment was not completed. No charges have been made.
           You can try again from your dashboard whenever you are ready.
         </p>
@@ -41,7 +41,7 @@ export default function PaymentCancelled() {
         </div>
       </motion.div>
 
-      <p className="text-sm text-slate-500 dark:text-slate-400">
+      <p className="text-sm text-[var(--color-ink-3)]">
         Having issues?{" "}
         <Link
           href="/about"

@@ -7,7 +7,7 @@ export default function BookingSuccessPage() {
   return (
     <>
       <SEOHead title="Booking Confirmed - MigRent" />
-      <div className="min-h-screen bg-white dark:bg-slate-950 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center p-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -22,17 +22,17 @@ export default function BookingSuccessPage() {
           </motion.div>
 
           <div>
-            <h1 className="text-2xl font-semibold tracking-tight text-slate-900 dark:text-white">
+            <h1 className="text-2xl font-semibold tracking-tight text-[var(--color-ink)]">
               Booking Confirmed!
             </h1>
-            <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
+            <p className="mt-2 text-sm text-[var(--color-ink-3)]">
               Your payment was successful and your booking is now confirmed.
               Both you and the owner will receive a confirmation email.
             </p>
           </div>
 
           <div className="card p-5 rounded-xl text-left space-y-3">
-            <h3 className="font-semibold text-slate-900 dark:text-white text-sm">
+            <h3 className="font-semibold text-[var(--color-ink)] text-sm">
               Next steps
             </h3>
             <div className="space-y-2">
@@ -40,7 +40,7 @@ export default function BookingSuccessPage() {
                 { icon: MessageSquare, text: "Message the owner to coordinate move-in details" },
                 { icon: Home, text: "Prepare your documents (ID, visa if applicable)" },
               ].map((step, i) => (
-                <div key={i} className="flex items-start gap-2 text-sm text-slate-600 dark:text-slate-300">
+                <div key={i} className="flex items-start gap-2 text-sm text-[var(--color-ink-2)]">
                   <step.icon className="w-4 h-4 text-[var(--color-accent)] mt-0.5 shrink-0" />
                   {step.text}
                 </div>
@@ -58,7 +58,7 @@ export default function BookingSuccessPage() {
             </Link>
             <Link
               href="/seeker/search"
-              className="flex-1 py-3 px-6 rounded-xl text-sm font-semibold border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 text-center hover:bg-slate-50 dark:hover:bg-slate-800/50"
+              className="flex-1 py-3 px-6 rounded-xl text-sm font-semibold border border-[var(--color-line)] text-[var(--color-ink-2)] text-center hover:bg-[var(--color-surface)]/50"
             >
               Browse More Listings
             </Link>

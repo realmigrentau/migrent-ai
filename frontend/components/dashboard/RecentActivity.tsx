@@ -31,9 +31,9 @@ const iconMap: Record<string, React.ReactNode> = {
 
 const statusColors: Record<string, string> = {
   success: "bg-[var(--color-accent-soft)] text-[var(--color-accent)] dark:bg-[var(--color-accent-soft)]0/20 dark:text-[var(--color-accent)]",
-  warning: "bg-amber-100 text-amber-600 dark:bg-amber-500/20 dark:text-amber-400",
+  warning: "bg-[var(--color-warn-50)] text-[var(--color-warn-600)] dark:bg-[var(--color-warn-50)]0/20 dark:text-[var(--color-warn-500)]",
   info: "bg-[var(--color-primary-soft)] text-[var(--color-primary)] dark:bg-[var(--color-primary)]/20 dark:text-[var(--color-primary)]",
-  pending: "bg-slate-100 text-slate-500 dark:bg-slate-700 dark:text-slate-400",
+  pending: "bg-[var(--color-surface-muted)] text-[var(--color-ink-3)] dark:bg-[var(--color-surface-muted)] dark:text-[var(--color-ink-3)]",
 };
 
 function Skeleton({ className = "" }: { className?: string }) {
@@ -94,14 +94,14 @@ export default function RecentActivity({ activity, loading }: RecentActivityProp
         {visibleItems.map((item, i) => (
           <div
             key={item.id}
-            className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer group"
+            className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-[var(--color-surface)]/50 transition-colors cursor-pointer group"
           >
             <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${statusColors[item.status]}`}>
               {iconMap[item.icon] || <Sparkles className="w-4 h-4" />}
             </div>
 
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-slate-800 dark:text-slate-100 truncate">
+              <p className="text-sm font-medium text-[var(--color-ink)] truncate">
                 {item.title}
               </p>
               <p className="text-xs text-[var(--color-ink-3)] truncate">
@@ -113,7 +113,7 @@ export default function RecentActivity({ activity, loading }: RecentActivityProp
               <span className="text-xs text-[var(--color-ink-3)] whitespace-nowrap">
                 {item.time}
               </span>
-              <ChevronRight className="w-3.5 h-3.5 text-slate-300 dark:text-slate-600 group-hover:text-[var(--color-primary)] transition-colors" />
+              <ChevronRight className="w-3.5 h-3.5 text-[var(--color-ink-4)] group-hover:text-[var(--color-primary)] transition-colors" />
             </div>
           </div>
         ))}

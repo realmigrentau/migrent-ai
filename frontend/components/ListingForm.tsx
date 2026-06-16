@@ -248,21 +248,21 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
 
   // Counter input helper
   const CounterInput = ({ label, value, onChange, min = 0 }: { label: string; value: number; onChange: (v: number) => void; min?: number }) => (
-    <div className="flex items-center justify-between p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50">
-      <span className="text-sm font-medium text-slate-700 dark:text-slate-300">{label}</span>
+    <div className="flex items-center justify-between p-3 rounded-xl border border-[var(--color-line)] bg-[var(--color-surface-2)]/50">
+      <span className="text-sm font-medium text-[var(--color-ink-2)]">{label}</span>
       <div className="flex items-center gap-3">
         <button
           type="button"
           onClick={() => onChange(Math.max(min, value - 1))}
-          className="w-8 h-8 rounded-full border border-slate-300 dark:border-slate-600 flex items-center justify-center text-slate-500 hover:border-[var(--color-line-2)] hover:text-[var(--color-primary)] transition-colors"
+          className="w-8 h-8 rounded-full border border-[var(--color-line-2)] flex items-center justify-center text-[var(--color-ink-3)] hover:border-[var(--color-line-2)] hover:text-[var(--color-primary)] transition-colors"
         >
           -
         </button>
-        <span className="w-6 text-center text-sm font-bold text-slate-900 dark:text-white">{value}</span>
+        <span className="w-6 text-center text-sm font-bold text-[var(--color-ink)]">{value}</span>
         <button
           type="button"
           onClick={() => onChange(value + 1)}
-          className="w-8 h-8 rounded-full border border-slate-300 dark:border-slate-600 flex items-center justify-center text-slate-500 hover:border-[var(--color-line-2)] hover:text-[var(--color-primary)] transition-colors"
+          className="w-8 h-8 rounded-full border border-[var(--color-line-2)] flex items-center justify-center text-[var(--color-ink-3)] hover:border-[var(--color-line-2)] hover:text-[var(--color-primary)] transition-colors"
         >
           +
         </button>
@@ -276,16 +276,16 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
       className={`flex items-center gap-3 p-4 rounded-xl border cursor-pointer transition-all ${
         checked
           ? "border-[var(--color-line-2)] dark:border-[var(--color-primary-soft)] bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/5"
-          : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50"
+          : "border-[var(--color-line)] bg-[var(--color-surface-2)]/50"
       }`}
     >
       <input
         type="checkbox"
         checked={checked}
         onChange={(e) => onChange(e.target.checked)}
-        className="w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-[var(--color-primary)] focus:ring-[var(--color-ink)]/30"
+        className="w-4 h-4 rounded border-[var(--color-line-2)] text-[var(--color-primary)] focus:ring-[var(--color-ink)]/30"
       />
-      <span className="text-sm font-medium text-slate-700 dark:text-slate-300">{label}</span>
+      <span className="text-sm font-medium text-[var(--color-ink-2)]">{label}</span>
     </label>
   );
 
@@ -304,7 +304,7 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
                     ? "bg-[var(--color-primary)] text-white"
                     : i < step
                     ? "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 text-[var(--color-accent)] dark:text-[var(--color-accent)] cursor-pointer"
-                    : "bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500"
+                    : "bg-[var(--color-surface-muted)] text-[var(--color-ink-3)]"
                 }`}
               >
                 {i < step ? (
@@ -317,7 +317,7 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
                 <span className="hidden sm:inline">{label}</span>
               </button>
               {i < STEPS.length - 1 && (
-                <div className={`w-6 h-0.5 rounded-full ${i < step ? "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/30" : "bg-slate-200 dark:bg-slate-700"}`} />
+                <div className={`w-6 h-0.5 rounded-full ${i < step ? "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/30" : "bg-[var(--color-line)]"}`} />
               )}
             </div>
           ))}
@@ -336,7 +336,7 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
             {/* ── Step 0: Basics ── */}
             {step === 0 && (
               <>
-                <h3 className="text-lg font-bold text-slate-900 dark:text-white">Basics</h3>
+                <h3 className="text-lg font-bold text-[var(--color-ink)]">Basics</h3>
 
                 {/* Address autocomplete with geocoding */}
                 <AddressGeocoder
@@ -354,7 +354,7 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
                 {/* Manual suburb/postcode override */}
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Suburb</label>
+                    <label className="block text-sm font-medium text-[var(--color-ink-2)] mb-1.5">Suburb</label>
                     <input
                       type="text"
                       placeholder="e.g. Surry Hills"
@@ -364,7 +364,7 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Postcode</label>
+                    <label className="block text-sm font-medium text-[var(--color-ink-2)] mb-1.5">Postcode</label>
                     <input
                       type="text"
                       placeholder="e.g. 2010"
@@ -377,7 +377,7 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
 
                 {/* Property type */}
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Property type</label>
+                  <label className="block text-sm font-medium text-[var(--color-ink-2)] mb-2">Property type</label>
                   <div className="flex flex-wrap gap-2">
                     {PROPERTY_TYPES.map((pt) => (
                       <button
@@ -387,7 +387,7 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
                         className={`px-4 py-2 rounded-xl text-sm font-medium border transition-all ${
                           form.propertyType === pt
                             ? "border-[var(--color-line-2)] dark:border-[var(--color-primary)]/40 bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 text-[var(--color-primary)] dark:text-[var(--color-primary)]"
-                            : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 text-slate-600 dark:text-slate-300 hover:border-slate-300"
+                            : "border-[var(--color-line)] bg-[var(--color-surface-2)]/50 text-[var(--color-ink-2)] hover:border-[var(--color-line-2)]"
                         }`}
                       >
                         {pt}
@@ -398,7 +398,7 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
 
                 {/* Place type */}
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Place type</label>
+                  <label className="block text-sm font-medium text-[var(--color-ink-2)] mb-2">Place type</label>
                   <div className="flex flex-wrap gap-2">
                     {PLACE_TYPES.map((pt) => (
                       <button
@@ -408,7 +408,7 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
                         className={`px-4 py-2 rounded-xl text-sm font-medium border transition-all ${
                           form.placeType === pt
                             ? "border-[var(--color-line-2)] dark:border-[var(--color-primary)]/40 bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 text-[var(--color-primary)] dark:text-[var(--color-primary)]"
-                            : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 text-slate-600 dark:text-slate-300 hover:border-slate-300"
+                            : "border-[var(--color-line)] bg-[var(--color-surface-2)]/50 text-[var(--color-ink-2)] hover:border-[var(--color-line-2)]"
                         }`}
                       >
                         {pt}
@@ -419,7 +419,7 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
 
                 {/* Capacity counters */}
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Capacity &amp; layout</label>
+                  <label className="block text-sm font-medium text-[var(--color-ink-2)]">Capacity &amp; layout</label>
                   <CounterInput label="Max guests" value={form.maxGuests} onChange={(v) => update("maxGuests", v)} min={1} />
                   <CounterInput label="Bedrooms" value={form.bedrooms} onChange={(v) => update("bedrooms", v)} min={1} />
                   <CounterInput label="Beds" value={form.beds} onChange={(v) => update("beds", v)} min={1} />
@@ -437,7 +437,7 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
                         className={`flex-1 py-2.5 rounded-xl text-sm font-medium border transition-all capitalize ${
                           form.bathroomType === bt
                             ? "border-[var(--color-line-2)] dark:border-[var(--color-primary)]/40 bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 text-[var(--color-primary)] dark:text-[var(--color-primary)]"
-                            : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 text-slate-600 dark:text-slate-300"
+                            : "border-[var(--color-line)] bg-[var(--color-surface-2)]/50 text-[var(--color-ink-2)]"
                         }`}
                       >
                         {bt} bathroom
@@ -448,8 +448,8 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
 
                 {/* Who else might be there */}
                 {showWhoElse && (
-                  <div className="space-y-3 p-4 rounded-xl border border-amber-200 dark:border-amber-500/20 bg-amber-50/50 dark:bg-amber-500/5">
-                    <label className="block text-sm font-semibold text-amber-700 dark:text-amber-400">Who else might be there?</label>
+                  <div className="space-y-3 p-4 rounded-xl border border-[var(--color-line-2)] dark:border-[var(--color-warn-500)]/20 bg-[var(--color-warn-50)]/50 dark:bg-[var(--color-warn-50)]0/5">
+                    <label className="block text-sm font-semibold text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)]">Who else might be there?</label>
                     <input
                       type="text"
                       placeholder='e.g. "I live here", "Family", "Other tenants"'
@@ -470,7 +470,7 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
                 {/* Price & bond */}
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Weekly price (AUD)</label>
+                    <label className="block text-sm font-medium text-[var(--color-ink-2)] mb-1.5">Weekly price (AUD)</label>
                     <input
                       type="number"
                       placeholder="250"
@@ -480,7 +480,7 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Bond</label>
+                    <label className="block text-sm font-medium text-[var(--color-ink-2)] mb-1.5">Bond</label>
                     <input
                       type="text"
                       placeholder="e.g. 4 weeks rent"
@@ -496,11 +496,11 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
             {/* ── Step 1: Details ── */}
             {step === 1 && (
               <>
-                <h3 className="text-lg font-bold text-slate-900 dark:text-white">Details</h3>
+                <h3 className="text-lg font-bold text-[var(--color-ink)]">Details</h3>
 
                 {/* Title */}
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Listing title *</label>
+                  <label className="block text-sm font-medium text-[var(--color-ink-2)] mb-1.5">Listing title *</label>
                   <input
                     type="text"
                     placeholder="e.g. Bright room near Central Station"
@@ -509,12 +509,12 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
                     maxLength={80}
                     className="input-field"
                   />
-                  <p className="text-xs text-slate-400 mt-1">{form.title.length}/80</p>
+                  <p className="text-xs text-[var(--color-ink-3)] mt-1">{form.title.length}/80</p>
                 </div>
 
                 {/* Description */}
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Quick description *</label>
+                  <label className="block text-sm font-medium text-[var(--color-ink-2)] mb-1.5">Quick description *</label>
                   <textarea
                     placeholder="Describe the room, location highlights, nearby transport..."
                     value={form.description}
@@ -537,7 +537,7 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
 
                 {/* Highlights */}
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
+                  <label className="block text-sm font-medium text-[var(--color-ink-2)] mb-1.5">
                     Highlights (3-5 best things about your place)
                   </label>
                   <div className="flex gap-2">
@@ -574,15 +574,15 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
                       ))}
                     </div>
                   )}
-                  <p className="text-xs text-slate-400 mt-1">{form.highlights.length}/5 added{form.highlights.length < 3 ? " (minimum 3)" : ""}</p>
+                  <p className="text-xs text-[var(--color-ink-3)] mt-1">{form.highlights.length}/5 added{form.highlights.length < 3 ? " (minimum 3)" : ""}</p>
                 </div>
 
                 {/* Discounts */}
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Discounts (optional)</label>
+                  <label className="block text-sm font-medium text-[var(--color-ink-2)] mb-2">Discounts (optional)</label>
                   <div className="grid sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs text-slate-500 dark:text-slate-400 mb-1">Weekly discount (%)</label>
+                      <label className="block text-xs text-[var(--color-ink-3)] mb-1">Weekly discount (%)</label>
                       <input
                         type="number"
                         placeholder="e.g. 5"
@@ -594,7 +594,7 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
                       />
                     </div>
                     <div>
-                      <label className="block text-xs text-slate-500 dark:text-slate-400 mb-1">Monthly discount (%)</label>
+                      <label className="block text-xs text-[var(--color-ink-3)] mb-1">Monthly discount (%)</label>
                       <input
                         type="number"
                         placeholder="e.g. 10"
@@ -613,15 +613,15 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
             {/* ── Step 2: Hosting ── */}
             {step === 2 && (
               <>
-                <h3 className="text-lg font-bold text-slate-900 dark:text-white">Hosting details</h3>
-                <p className="text-sm text-slate-500 dark:text-slate-400">
+                <h3 className="text-lg font-bold text-[var(--color-ink)]">Hosting details</h3>
+                <p className="text-sm text-[var(--color-ink-3)]">
                   Help seekers know when your place is available and what amenities are included.
                 </p>
 
                 {/* Availability dates */}
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Available from</label>
+                    <label className="block text-sm font-medium text-[var(--color-ink-2)] mb-1.5">Available from</label>
                     <input
                       type="date"
                       value={form.availableFrom}
@@ -630,7 +630,7 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Available to (optional)</label>
+                    <label className="block text-sm font-medium text-[var(--color-ink-2)] mb-1.5">Available to (optional)</label>
                     <input
                       type="date"
                       value={form.availableTo}
@@ -673,7 +673,7 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
 
                 {/* Extra amenities */}
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Extra amenities</label>
+                  <label className="block text-sm font-medium text-[var(--color-ink-2)] mb-2">Extra amenities</label>
                   <div className="grid sm:grid-cols-2 gap-3">
                     <ToggleCard label="Air conditioning" checked={form.airConditioning} onChange={(v) => update("airConditioning", v)} />
                     <ToggleCard label="Dishwasher" checked={form.dishwasher} onChange={(v) => update("dishwasher", v)} />
@@ -683,7 +683,7 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
 
                 {/* Laundry */}
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Laundry</label>
+                  <label className="block text-sm font-medium text-[var(--color-ink-2)] mb-2">Laundry</label>
                   <div className="flex flex-wrap gap-2">
                     {LAUNDRY_OPTIONS.map((opt) => (
                       <button
@@ -693,7 +693,7 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
                         className={`px-4 py-2 rounded-xl text-sm font-medium border transition-all ${
                           form.laundry === opt
                             ? "border-[var(--color-line-2)] dark:border-[var(--color-primary)]/40 bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 text-[var(--color-primary)] dark:text-[var(--color-primary)]"
-                            : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 text-slate-600 dark:text-slate-300 hover:border-slate-300"
+                            : "border-[var(--color-line)] bg-[var(--color-surface-2)]/50 text-[var(--color-ink-2)] hover:border-[var(--color-line-2)]"
                         }`}
                       >
                         {opt}
@@ -704,7 +704,7 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
 
                 {/* Gender preference */}
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Tenant gender preference</label>
+                  <label className="block text-sm font-medium text-[var(--color-ink-2)] mb-2">Tenant gender preference</label>
                   <div className="flex flex-wrap gap-2">
                     {GENDER_OPTIONS.map((opt) => (
                       <button
@@ -714,7 +714,7 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
                         className={`px-4 py-2 rounded-xl text-sm font-medium border transition-all ${
                           form.genderPreference === opt
                             ? "border-[var(--color-line-2)] dark:border-[var(--color-primary)]/40 bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 text-[var(--color-primary)] dark:text-[var(--color-primary)]"
-                            : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 text-slate-600 dark:text-slate-300 hover:border-slate-300"
+                            : "border-[var(--color-line)] bg-[var(--color-surface-2)]/50 text-[var(--color-ink-2)] hover:border-[var(--color-line-2)]"
                         }`}
                       >
                         {opt}
@@ -725,7 +725,7 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
 
                 {/* Transport & neighbourhood */}
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Nearest transport</label>
+                  <label className="block text-sm font-medium text-[var(--color-ink-2)] mb-1.5">Nearest transport</label>
                   <input
                     type="text"
                     placeholder="e.g. Central Station 5 min walk, Bus 370 at door"
@@ -735,7 +735,7 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Neighbourhood vibe</label>
+                  <label className="block text-sm font-medium text-[var(--color-ink-2)] mb-1.5">Neighbourhood vibe</label>
                   <input
                     type="text"
                     placeholder="e.g. Quiet residential, cafes nearby, 10 min to CBD"
@@ -750,8 +750,8 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
             {/* ── Step 3: Photos ── */}
             {step === 3 && (
               <>
-                <h3 className="text-lg font-bold text-slate-900 dark:text-white">Photos</h3>
-                <p className="text-sm text-slate-500 dark:text-slate-400">
+                <h3 className="text-lg font-bold text-[var(--color-ink)]">Photos</h3>
+                <p className="text-sm text-[var(--color-ink-3)]">
                   Add photos to help seekers visualise the room. Drag and drop or click to upload.
                 </p>
                 <PhotoUploadZone
@@ -768,10 +768,10 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
             {/* ── Step 4: Rules ── */}
             {step === 4 && (
               <>
-                <h3 className="text-lg font-bold text-slate-900 dark:text-white">House rules</h3>
+                <h3 className="text-lg font-bold text-[var(--color-ink)]">House rules</h3>
                 <ToggleCard label="No smoking" checked={form.noSmoking} onChange={(v) => update("noSmoking", v)} />
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Quiet hours</label>
+                  <label className="block text-sm font-medium text-[var(--color-ink-2)] mb-1.5">Quiet hours</label>
                   <input
                     type="text"
                     placeholder="e.g. 10pm-7am"
@@ -781,7 +781,7 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Minimum stay</label>
+                  <label className="block text-sm font-medium text-[var(--color-ink-2)] mb-1.5">Minimum stay</label>
                   <input
                     type="text"
                     value={form.minStay}
@@ -791,7 +791,7 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Tenant preferences</label>
+                  <label className="block text-sm font-medium text-[var(--color-ink-2)] mb-1.5">Tenant preferences</label>
                   <textarea
                     placeholder="e.g. Professional or student, non-smoker, tidy..."
                     value={form.tenantPrefs}
@@ -806,8 +806,8 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
             {/* ── Step 5: Safety ── */}
             {step === 5 && (
               <>
-                <h3 className="text-lg font-bold text-slate-900 dark:text-white">Safety details</h3>
-                <p className="text-sm text-slate-500 dark:text-slate-400">
+                <h3 className="text-lg font-bold text-[var(--color-ink)]">Safety details</h3>
+                <p className="text-sm text-[var(--color-ink-3)]">
                   Be transparent about safety-related aspects of the property. This builds trust with seekers.
                 </p>
 
@@ -841,7 +841,7 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
 
                 {/* Other safety */}
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Other safety details</label>
+                  <label className="block text-sm font-medium text-[var(--color-ink-2)] mb-1.5">Other safety details</label>
                   <textarea
                     placeholder="Any other safety info seekers should know about? (optional)"
                     value={form.otherSafetyDetails}
@@ -860,10 +860,10 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="p-3 rounded-xl bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20"
+            className="p-3 rounded-xl bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-50)]0/10 border border-[var(--color-danger-500)]/30 dark:border-[var(--color-danger-500)]/20"
           >
             {validationErrors.map((err, i) => (
-              <p key={i} className="text-sm text-red-600 dark:text-red-400">{err}</p>
+              <p key={i} className="text-sm text-[var(--color-danger-500)] dark:text-[var(--color-danger-500)]">{err}</p>
             ))}
           </motion.div>
         )}
@@ -910,16 +910,16 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
       {/* Side preview */}
       <div className="lg:col-span-2 hidden lg:block">
         <div className="sticky top-24">
-          <h3 className="text-sm font-semibold text-slate-500 dark:text-slate-400 mb-3">
+          <h3 className="text-sm font-semibold text-[var(--color-ink-3)] mb-3">
             How seekers see your listing
           </h3>
           <div className="card rounded-2xl overflow-hidden">
             {/* Preview photo */}
-            <div className="aspect-video bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+            <div className="aspect-video bg-[var(--color-surface-muted)] flex items-center justify-center">
               {photoPreviews.length > 0 ? (
                 <img src={photoPreviews[0]} alt="Preview" className="w-full h-full object-cover" />
               ) : (
-                <svg className="w-12 h-12 text-slate-300 dark:text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
+                <svg className="w-12 h-12 text-[var(--color-ink-4)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
               )}
@@ -927,13 +927,13 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
             <div className="p-4 space-y-3">
               <div className="flex items-start justify-between">
                 <div>
-                  <h4 className="font-bold text-slate-900 dark:text-white">
+                  <h4 className="font-bold text-[var(--color-ink)]">
                     {form.title || `${form.suburb || "Suburb"}, ${form.postcode || "0000"}`}
                   </h4>
-                  <p className="text-sm text-slate-500 dark:text-slate-400">
+                  <p className="text-sm text-[var(--color-ink-3)]">
                     {form.propertyType} &middot; {form.placeType}
                   </p>
-                  <p className="text-xs text-slate-400 dark:text-slate-500">
+                  <p className="text-xs text-[var(--color-ink-3)]">
                     {form.bedrooms} bed{form.bedrooms !== 1 ? "s" : ""} &middot; {form.bathrooms} bath &middot; {form.maxGuests} guest{form.maxGuests !== 1 ? "s" : ""}
                   </p>
                 </div>
@@ -946,25 +946,25 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
               </div>
               <div className="flex flex-wrap gap-1.5">
                 {form.furnished && (
-                  <span className="px-2 py-0.5 rounded-full text-xs bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Furnished</span>
+                  <span className="px-2 py-0.5 rounded-full text-xs bg-[var(--color-surface-muted)] text-[var(--color-ink-2)]">Furnished</span>
                 )}
                 {form.billsIncluded && (
-                  <span className="px-2 py-0.5 rounded-full text-xs bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Bills incl.</span>
+                  <span className="px-2 py-0.5 rounded-full text-xs bg-[var(--color-surface-muted)] text-[var(--color-ink-2)]">Bills incl.</span>
                 )}
                 {form.bathroomType === "private" && (
-                  <span className="px-2 py-0.5 rounded-full text-xs bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Private bath</span>
+                  <span className="px-2 py-0.5 rounded-full text-xs bg-[var(--color-surface-muted)] text-[var(--color-ink-2)]">Private bath</span>
                 )}
                 {form.parking && (
-                  <span className="px-2 py-0.5 rounded-full text-xs bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Parking</span>
+                  <span className="px-2 py-0.5 rounded-full text-xs bg-[var(--color-surface-muted)] text-[var(--color-ink-2)]">Parking</span>
                 )}
                 {form.noSmoking && (
-                  <span className="px-2 py-0.5 rounded-full text-xs bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">No smoking</span>
+                  <span className="px-2 py-0.5 rounded-full text-xs bg-[var(--color-surface-muted)] text-[var(--color-ink-2)]">No smoking</span>
                 )}
                 {form.internetIncluded && (
-                  <span className="px-2 py-0.5 rounded-full text-xs bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400">WiFi</span>
+                  <span className="px-2 py-0.5 rounded-full text-xs bg-[var(--color-primary-50)] dark:bg-[var(--color-primary)]/10 text-[var(--color-primary)] dark:text-[var(--color-primary)]">WiFi</span>
                 )}
                 {form.petsAllowed && (
-                  <span className="px-2 py-0.5 rounded-full text-xs bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400">Pets OK</span>
+                  <span className="px-2 py-0.5 rounded-full text-xs bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/10 text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)]">Pets OK</span>
                 )}
                 {form.airConditioning && (
                   <span className="px-2 py-0.5 rounded-full text-xs bg-sky-50 dark:bg-sky-500/10 text-sky-600 dark:text-sky-400">A/C</span>
@@ -983,15 +983,15 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
                 </div>
               )}
               {form.description && (
-                <p className="text-sm text-slate-600 dark:text-slate-300 line-clamp-3">{form.description}</p>
+                <p className="text-sm text-[var(--color-ink-2)] line-clamp-3">{form.description}</p>
               )}
               {form.availableFrom && (
-                <p className="text-xs text-slate-500 dark:text-slate-400">
+                <p className="text-xs text-[var(--color-ink-3)]">
                   Available: {form.availableFrom}{form.availableTo ? ` to ${form.availableTo}` : " onwards"}
                 </p>
               )}
               {form.nearestTransport && (
-                <p className="text-xs text-slate-500 dark:text-slate-400">Transport: {form.nearestTransport}</p>
+                <p className="text-xs text-[var(--color-ink-3)]">Transport: {form.nearestTransport}</p>
               )}
               {(form.weeklyDiscount || form.monthlyDiscount) && (
                 <div className="flex gap-2">
@@ -1008,7 +1008,7 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
                 </div>
               )}
               {form.minStay && (
-                <p className="text-xs text-slate-400 dark:text-slate-500">Min stay: {form.minStay}</p>
+                <p className="text-xs text-[var(--color-ink-3)]">Min stay: {form.minStay}</p>
               )}
             </div>
           </div>

@@ -108,8 +108,8 @@ export default function SupportTab({
       <div className="grid grid-cols-3 gap-3">
         {[
           { label: "Open", count: openTickets, icon: AlertCircle, color: "rose", gradient: "from-[var(--color-primary)] to-[var(--color-primary)]", bg: "bg-[var(--color-primary-soft)]/80 dark:bg-[var(--color-primary)]/10 border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)]" },
-          { label: "Pending", count: pendingTickets, icon: Clock, color: "amber", gradient: "from-amber-400 to-orange-500", bg: "bg-amber-50/80 dark:bg-amber-500/10 border-amber-100 dark:border-amber-500/20" },
-          { label: "Resolved", count: resolvedTickets, icon: CheckCircle2, color: "emerald", gradient: "from-[var(--color-accent)] to-teal-500", bg: "bg-[var(--color-accent-soft)]/80 dark:bg-[var(--color-accent-soft)]0/10 border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)]" },
+          { label: "Pending", count: pendingTickets, icon: Clock, color: "amber", gradient: "from-[var(--color-warn-500)] to-[var(--color-warn-500)]", bg: "bg-[var(--color-warn-50)]/80 dark:bg-[var(--color-warn-50)]0/10 border-[var(--color-line-2)] dark:border-[var(--color-warn-500)]/20" },
+          { label: "Resolved", count: resolvedTickets, icon: CheckCircle2, color: "emerald", gradient: "from-[var(--color-accent)] to-[var(--color-primary)]", bg: "bg-[var(--color-accent-soft)]/80 dark:bg-[var(--color-accent-soft)]0/10 border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)]" },
         ].map((stat, i) => {
           const Icon = stat.icon;
           return (
@@ -123,8 +123,8 @@ export default function SupportTab({
               <div className={`w-8 h-8 rounded-lg bg-[var(--color-primary-soft)] ${stat.gradient} flex items-center justify-center shadow-sm mx-auto mb-2`}>
                 <Icon className="w-4 h-4 text-white" />
               </div>
-              <p className="text-2xl font-bold text-slate-900 dark:text-white">{stat.count}</p>
-              <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">{stat.label}</p>
+              <p className="text-2xl font-bold text-[var(--color-ink)]">{stat.count}</p>
+              <p className="text-[10px] text-[var(--color-ink-3)] mt-0.5">{stat.label}</p>
             </motion.div>
           );
         })}
@@ -134,7 +134,7 @@ export default function SupportTab({
       <GlassCard delay={0.1}>
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-ink-3)]" />
             <input
               type="text"
               value={searchQuery}
@@ -170,20 +170,20 @@ export default function SupportTab({
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               className="fixed inset-x-4 top-[10%] sm:inset-x-auto sm:left-1/2 sm:-translate-x-1/2 sm:w-[520px] z-50"
             >
-              <div className="backdrop-blur-xl bg-white/95 dark:bg-slate-900/95 rounded-2xl shadow-2xl border border-white/20 dark:border-slate-700/50 p-6">
+              <div className="backdrop-blur-xl bg-white/95 dark:bg-[var(--color-surface)]/95 rounded-2xl shadow-2xl border border-white/20 dark:border-[var(--color-line)]/50 p-6">
                 <div className="flex items-center justify-between mb-5">
-                  <h3 className="text-lg font-bold text-slate-900 dark:text-white">New Support Ticket</h3>
+                  <h3 className="text-lg font-bold text-[var(--color-ink)]">New Support Ticket</h3>
                   <button
                     onClick={() => setShowNewTicket(false)}
-                    className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800"
+                    className="p-1.5 rounded-lg hover:bg-[var(--color-surface-muted)]"
                   >
-                    <X className="w-4 h-4 text-slate-500" />
+                    <X className="w-4 h-4 text-[var(--color-ink-3)]" />
                   </button>
                 </div>
 
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">Category</label>
+                    <label className="block text-xs font-medium text-[var(--color-ink-3)] mb-1.5">Category</label>
                     <select
                       value={ticketCategory}
                       onChange={(e) => setTicketCategory(e.target.value)}
@@ -199,7 +199,7 @@ export default function SupportTab({
                   </div>
 
                   <div>
-                    <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">Subject</label>
+                    <label className="block text-xs font-medium text-[var(--color-ink-3)] mb-1.5">Subject</label>
                     <input
                       type="text"
                       value={ticketSubject}
@@ -210,7 +210,7 @@ export default function SupportTab({
                   </div>
 
                   <div>
-                    <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">Message</label>
+                    <label className="block text-xs font-medium text-[var(--color-ink-3)] mb-1.5">Message</label>
                     <textarea
                       value={ticketMessage}
                       onChange={(e) => setTicketMessage(e.target.value)}
@@ -250,8 +250,8 @@ export default function SupportTab({
             <MessageCircle className="w-5 h-5 text-white" />
           </div>
           <div>
-            <h3 className="font-bold text-slate-900 dark:text-white">My Tickets</h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400">Your support requests</p>
+            <h3 className="font-bold text-[var(--color-ink)]">My Tickets</h3>
+            <p className="text-xs text-[var(--color-ink-3)]">Your support requests</p>
           </div>
         </div>
 
@@ -270,28 +270,28 @@ export default function SupportTab({
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2 + i * 0.04 }}
-                  className="flex items-center justify-between p-3 rounded-xl border border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer group"
+                  className="flex items-center justify-between p-3 rounded-xl border border-[var(--color-line)] hover:bg-[var(--color-surface)]/50 transition-colors cursor-pointer group"
                 >
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-0.5">
-                      <p className="text-sm font-medium text-slate-900 dark:text-white truncate">
+                      <p className="text-sm font-medium text-[var(--color-ink)] truncate">
                         {ticket.subject}
                       </p>
                       {getStatusBadge(ticket.status)}
                     </div>
-                    <p className="text-[11px] text-slate-400 truncate">
+                    <p className="text-[11px] text-[var(--color-ink-3)] truncate">
                       {ticket.category || "General"} · {new Date(ticket.created_at).toLocaleDateString("en-AU")}
                     </p>
                   </div>
-                  <ChevronRight className="w-4 h-4 text-slate-300 dark:text-slate-600 group-hover:text-slate-500 transition-colors shrink-0 ml-2" />
+                  <ChevronRight className="w-4 h-4 text-[var(--color-ink-4)] group-hover:text-[var(--color-ink-3)] transition-colors shrink-0 ml-2" />
                 </motion.div>
               ))}
             </div>
           ) : (
             <div className="text-center py-8">
-              <MessageCircle className="w-8 h-8 text-slate-300 dark:text-slate-600 mx-auto mb-2" />
-              <p className="text-sm text-slate-400 dark:text-slate-500">No tickets yet</p>
-              <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">Create one above if you need help</p>
+              <MessageCircle className="w-8 h-8 text-[var(--color-ink-4)] mx-auto mb-2" />
+              <p className="text-sm text-[var(--color-ink-3)]">No tickets yet</p>
+              <p className="text-xs text-[var(--color-ink-3)] mt-1">Create one above if you need help</p>
             </div>
           )}
         </div>
@@ -304,37 +304,37 @@ export default function SupportTab({
             <HelpCircle className="w-5 h-5 text-white" />
           </div>
           <div>
-            <h3 className="font-bold text-slate-900 dark:text-white">Quick Help</h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400">Browse help articles or contact us</p>
+            <h3 className="font-bold text-[var(--color-ink)]">Quick Help</h3>
+            <p className="text-xs text-[var(--color-ink-3)]">Browse help articles or contact us</p>
           </div>
         </div>
 
         <div className="ml-14 grid grid-cols-1 sm:grid-cols-2 gap-3">
           <a
             href="/help"
-            className="flex items-center gap-3 p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group"
+            className="flex items-center gap-3 p-3 rounded-xl border border-[var(--color-line)] hover:bg-[var(--color-surface)]/50 transition-colors group"
           >
-            <BookOpen className="w-5 h-5 text-blue-500" />
+            <BookOpen className="w-5 h-5 text-[var(--color-primary)]" />
             <div>
-              <p className="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white">
+              <p className="text-sm font-medium text-[var(--color-ink-2)] group-hover:text-[var(--color-ink)] dark:group-hover:text-white">
                 Help Centre
               </p>
-              <p className="text-[11px] text-slate-400">Browse articles</p>
+              <p className="text-[11px] text-[var(--color-ink-3)]">Browse articles</p>
             </div>
-            <ChevronRight className="w-4 h-4 text-slate-300 ml-auto" />
+            <ChevronRight className="w-4 h-4 text-[var(--color-ink-4)] ml-auto" />
           </a>
           <a
             href="/contact"
-            className="flex items-center gap-3 p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group"
+            className="flex items-center gap-3 p-3 rounded-xl border border-[var(--color-line)] hover:bg-[var(--color-surface)]/50 transition-colors group"
           >
             <Headphones className="w-5 h-5 text-[var(--color-accent)]" />
             <div>
-              <p className="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white">
+              <p className="text-sm font-medium text-[var(--color-ink-2)] group-hover:text-[var(--color-ink)] dark:group-hover:text-white">
                 Contact Support
               </p>
-              <p className="text-[11px] text-slate-400">Get in touch</p>
+              <p className="text-[11px] text-[var(--color-ink-3)]">Get in touch</p>
             </div>
-            <ChevronRight className="w-4 h-4 text-slate-300 ml-auto" />
+            <ChevronRight className="w-4 h-4 text-[var(--color-ink-4)] ml-auto" />
           </a>
         </div>
       </GlassCard>

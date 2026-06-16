@@ -199,11 +199,11 @@ export default function MessageInput({
             <div className="px-4 pt-2.5 pb-1 flex items-center gap-2">
               <div className="flex-1 pl-3 border-l-2 border-[var(--color-primary)]">
                 <p className="text-[11px] font-semibold text-[var(--color-primary)]">Replying to</p>
-                <p className="text-[12px] text-slate-500 dark:text-slate-400 truncate">{replyTo.text}</p>
+                <p className="text-[12px] text-[var(--color-ink-3)] truncate">{replyTo.text}</p>
               </div>
               <button
                 onClick={onCancelReply}
-                className="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"
+                className="p-1 rounded-lg hover:bg-[var(--color-surface-muted)] text-[var(--color-ink-3)]"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -232,16 +232,16 @@ export default function MessageInput({
                         className="w-16 h-16 rounded-xl object-cover ring-1 ring-slate-200 dark:ring-slate-700"
                       />
                     ) : (
-                      <div className="w-16 h-16 rounded-xl bg-slate-100 dark:bg-slate-800 flex flex-col items-center justify-center ring-1 ring-slate-200 dark:ring-slate-700">
-                        <FileText className="w-5 h-5 text-slate-400" />
-                        <span className="text-[9px] text-slate-400 mt-0.5 truncate max-w-[56px] px-1">
+                      <div className="w-16 h-16 rounded-xl bg-[var(--color-surface-muted)] flex flex-col items-center justify-center ring-1 ring-slate-200 dark:ring-slate-700">
+                        <FileText className="w-5 h-5 text-[var(--color-ink-3)]" />
+                        <span className="text-[9px] text-[var(--color-ink-3)] mt-0.5 truncate max-w-[56px] px-1">
                           {att.file.name.split(".").pop()?.toUpperCase()}
                         </span>
                       </div>
                     )}
                     <button
                       onClick={() => removeAttachment(att.id)}
-                      className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-red-500 text-white flex items-center justify-center opacity-0 group-hover/att:opacity-100 transition-opacity shadow-lg"
+                      className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-[var(--color-danger-50)]0 text-white flex items-center justify-center opacity-0 group-hover/att:opacity-100 transition-opacity shadow-lg"
                     >
                       <X className="w-3 h-3" />
                     </button>
@@ -251,13 +251,13 @@ export default function MessageInput({
                 {attachments.length < 10 && (
                   <button
                     onClick={() => fileInputRef.current?.click()}
-                    className="w-16 h-16 rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-600 flex items-center justify-center text-slate-400 hover:border-[var(--color-line-2)] hover:text-[var(--color-primary)] transition-all shrink-0"
+                    className="w-16 h-16 rounded-xl border-2 border-dashed border-[var(--color-line-2)] flex items-center justify-center text-[var(--color-ink-3)] hover:border-[var(--color-line-2)] hover:text-[var(--color-primary)] transition-all shrink-0"
                   >
                     <Plus className="w-5 h-5" />
                   </button>
                 )}
               </div>
-              <p className="text-[10px] text-slate-400 mt-1">
+              <p className="text-[10px] text-[var(--color-ink-3)] mt-1">
                 {attachments.length}/10 files
               </p>
             </div>
@@ -276,19 +276,19 @@ export default function MessageInput({
             className="overflow-hidden"
           >
             <div className="px-4 pt-2 pb-1 flex items-center gap-1">
-              <button onClick={() => insertFormatting("bold")} className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" title="Bold **text**">
+              <button onClick={() => insertFormatting("bold")} className="p-1.5 rounded-lg text-[var(--color-ink-3)] hover:text-[var(--color-ink-2)] dark:hover:text-white hover:bg-[var(--color-surface-muted)] transition-colors" title="Bold **text**">
                 <Bold className="w-4 h-4" />
               </button>
-              <button onClick={() => insertFormatting("italic")} className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" title="Italic *text*">
+              <button onClick={() => insertFormatting("italic")} className="p-1.5 rounded-lg text-[var(--color-ink-3)] hover:text-[var(--color-ink-2)] dark:hover:text-white hover:bg-[var(--color-surface-muted)] transition-colors" title="Italic *text*">
                 <Italic className="w-4 h-4" />
               </button>
-              <button onClick={() => insertFormatting("strikethrough")} className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" title="Strikethrough ~~text~~">
+              <button onClick={() => insertFormatting("strikethrough")} className="p-1.5 rounded-lg text-[var(--color-ink-3)] hover:text-[var(--color-ink-2)] dark:hover:text-white hover:bg-[var(--color-surface-muted)] transition-colors" title="Strikethrough ~~text~~">
                 <Strikethrough className="w-4 h-4" />
               </button>
-              <button onClick={() => insertFormatting("highlight")} className="p-1.5 rounded-lg text-slate-400 hover:text-yellow-500 hover:bg-yellow-50 dark:hover:bg-yellow-500/10 transition-colors" title="Highlight ==text==">
+              <button onClick={() => insertFormatting("highlight")} className="p-1.5 rounded-lg text-[var(--color-ink-3)] hover:text-yellow-500 hover:bg-yellow-50 dark:hover:bg-yellow-500/10 transition-colors" title="Highlight ==text==">
                 <Highlighter className="w-4 h-4" />
               </button>
-              <span className="text-[10px] text-slate-400 ml-2">Select text, then format</span>
+              <span className="text-[10px] text-[var(--color-ink-3)] ml-2">Select text, then format</span>
             </div>
           </motion.div>
         )}
@@ -303,7 +303,7 @@ export default function MessageInput({
             className={`p-2 rounded-xl transition-all shrink-0 ${
               showPlus
                 ? "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/20 text-[var(--color-primary)] dark:text-[var(--color-primary)]"
-                : "text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"
+                : "text-[var(--color-ink-3)] hover:text-[var(--color-ink-2)] dark:hover:text-white hover:bg-[var(--color-surface-muted)]"
             }`}
           >
             <Plus className="w-5 h-5" />
@@ -315,11 +315,11 @@ export default function MessageInput({
                 initial={{ opacity: 0, y: 8, scale: 0.95 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 8, scale: 0.95 }}
-                className="absolute bottom-12 left-0 w-56 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-2xl z-50 overflow-hidden py-1"
+                className="absolute bottom-12 left-0 w-56 bg-[var(--color-surface-2)] rounded-xl border border-[var(--color-line)] shadow-2xl z-50 overflow-hidden py-1"
               >
                 <button
                   onClick={() => { fileInputRef.current?.click(); setShowPlus(false); }}
-                  className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
+                  className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-[var(--color-ink-2)] hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-surface-muted)]/50 transition-colors"
                 >
                   <div className="w-8 h-8 rounded-lg bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/20 flex items-center justify-center">
                     <Paperclip className="w-4 h-4 text-[var(--color-primary)] dark:text-[var(--color-primary)]" />
@@ -332,7 +332,7 @@ export default function MessageInput({
                     fileInputRef.current?.click();
                     setShowPlus(false);
                   }}
-                  className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
+                  className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-[var(--color-ink-2)] hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-surface-muted)]/50 transition-colors"
                 >
                   <div className="w-8 h-8 rounded-lg bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/20 flex items-center justify-center">
                     <ImageIcon className="w-4 h-4 text-[var(--color-accent)] dark:text-[var(--color-accent)]" />
@@ -345,7 +345,7 @@ export default function MessageInput({
                     fileInputRef.current?.click();
                     setShowPlus(false);
                   }}
-                  className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
+                  className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-[var(--color-ink-2)] hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-surface-muted)]/50 transition-colors"
                 >
                   <div className="w-8 h-8 rounded-lg bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/20 flex items-center justify-center">
                     <FileText className="w-4 h-4 text-[var(--color-primary)] dark:text-[var(--color-primary)]" />
@@ -372,7 +372,7 @@ export default function MessageInput({
           className={`p-2 rounded-xl transition-all shrink-0 ${
             showFormatBar
               ? "text-[var(--color-primary)] bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10"
-              : "text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"
+              : "text-[var(--color-ink-3)] hover:text-[var(--color-ink-2)] dark:hover:text-white hover:bg-[var(--color-surface-muted)]"
           }`}
           title="Formatting"
         >
@@ -388,7 +388,7 @@ export default function MessageInput({
           onKeyDown={handleKeyDown}
           rows={1}
           disabled={isDisabled}
-          className="flex-1 resize-none rounded-xl bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white px-4 py-2.5 text-sm focus:ring-2 focus:ring-[var(--color-ink)]/30 focus:border-transparent placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none transition-all disabled:opacity-50"
+          className="flex-1 resize-none rounded-xl bg-[var(--color-surface-muted)]/60 border border-[var(--color-line)] text-[var(--color-ink)] px-4 py-2.5 text-sm focus:ring-2 focus:ring-[var(--color-ink)]/30 focus:border-transparent placeholder:text-[var(--color-ink-3)] dark:placeholder:text-[var(--color-ink-3)] outline-none transition-all disabled:opacity-50"
           style={{ minHeight: "42px", maxHeight: "120px" }}
         />
 
@@ -399,7 +399,7 @@ export default function MessageInput({
             className={`p-2 rounded-xl transition-all shrink-0 ${
               showMemes
                 ? "text-[var(--color-primary)] bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary-soft)]0/10"
-                : "text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"
+                : "text-[var(--color-ink-3)] hover:text-[var(--color-ink-2)] dark:hover:text-white hover:bg-[var(--color-surface-muted)]"
             }`}
             title="Quick reactions"
           >
@@ -412,17 +412,17 @@ export default function MessageInput({
                 initial={{ opacity: 0, y: 8, scale: 0.95 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 8, scale: 0.95 }}
-                className="absolute bottom-12 right-0 w-64 max-h-72 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-2xl z-50 overflow-hidden"
+                className="absolute bottom-12 right-0 w-64 max-h-72 bg-[var(--color-surface-2)] rounded-xl border border-[var(--color-line)] shadow-2xl z-50 overflow-hidden"
               >
-                <div className="px-3 py-2 border-b border-slate-100 dark:border-slate-700">
-                  <p className="text-xs font-bold text-slate-500 dark:text-slate-400">Quick Responses</p>
+                <div className="px-3 py-2 border-b border-[var(--color-line)]">
+                  <p className="text-xs font-bold text-[var(--color-ink-3)]">Quick Responses</p>
                 </div>
                 <div className="overflow-y-auto max-h-56 p-2 grid grid-cols-2 gap-1">
                   {MEME_STICKERS.map((meme) => (
                     <button
                       key={meme.value}
                       onClick={() => { insertText(meme.value); setShowMemes(false); }}
-                      className="text-left px-3 py-2 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-[var(--color-primary-soft)] dark:hover:bg-[var(--color-primary)]/10 hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] transition-colors truncate"
+                      className="text-left px-3 py-2 rounded-lg text-xs font-medium text-[var(--color-ink-2)] hover:bg-[var(--color-primary-soft)] dark:hover:bg-[var(--color-primary)]/10 hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] transition-colors truncate"
                     >
                       {meme.label}
                     </button>
@@ -440,7 +440,7 @@ export default function MessageInput({
             className={`p-2 rounded-xl transition-all shrink-0 ${
               showEmoji
                 ? "bg-yellow-50 dark:bg-yellow-500/10"
-                : "hover:bg-slate-100 dark:hover:bg-slate-800"
+                : "hover:bg-[var(--color-surface-muted)]"
             }`}
             title="Emoji"
           >
@@ -453,9 +453,9 @@ export default function MessageInput({
                 initial={{ opacity: 0, y: 8, scale: 0.95 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 8, scale: 0.95 }}
-                className="absolute bottom-12 right-0 w-80 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-2xl z-50 overflow-hidden"
+                className="absolute bottom-12 right-0 w-80 bg-[var(--color-surface-2)] rounded-xl border border-[var(--color-line)] shadow-2xl z-50 overflow-hidden"
               >
-                <div className="flex gap-0.5 px-2 pt-2 pb-1 border-b border-slate-100 dark:border-slate-700 overflow-x-auto scrollbar-hide">
+                <div className="flex gap-0.5 px-2 pt-2 pb-1 border-b border-[var(--color-line)] overflow-x-auto scrollbar-hide">
                   {EMOJI_CATEGORIES.map((cat, i) => (
                     <button
                       key={cat.label}
@@ -463,7 +463,7 @@ export default function MessageInput({
                       className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold whitespace-nowrap transition-all ${
                         emojiCategory === i
                           ? "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/20 text-[var(--color-primary)] dark:text-[var(--color-primary)]"
-                          : "text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700"
+                          : "text-[var(--color-ink-3)] hover:bg-[var(--color-surface-muted)]"
                       }`}
                     >
                       {cat.label}
@@ -475,7 +475,7 @@ export default function MessageInput({
                     <button
                       key={emoji}
                       onClick={() => insertText(emoji)}
-                      className="w-8 h-8 flex items-center justify-center text-xl hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-all hover:scale-110"
+                      className="w-8 h-8 flex items-center justify-center text-xl hover:bg-[var(--color-surface-muted)] rounded-lg transition-all hover:scale-110"
                     >
                       {emoji}
                     </button>
@@ -494,7 +494,7 @@ export default function MessageInput({
           className={`p-2.5 rounded-xl transition-all shrink-0 shadow-lg ${
             canSend
               ? "bg-[var(--color-primary)] from-[var(--color-primary)] to-[var(--color-primary)] text-white hover:shadow-[var(--color-primary)]/20 hover:shadow-xl"
-              : "bg-slate-200 dark:bg-slate-700 text-slate-400 shadow-none"
+              : "bg-[var(--color-line)] text-[var(--color-ink-3)] shadow-none"
           }`}
         >
           {sending || uploading ? (

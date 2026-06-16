@@ -184,8 +184,8 @@ export default function EditListing() {
   if (!session)
     return (
       <div className="card p-8 rounded-2xl text-center max-w-md mx-auto mt-12">
-        <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Sign in required</h2>
-        <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">Sign in as an owner to edit a listing.</p>
+        <h2 className="text-lg font-bold text-[var(--color-ink)] mb-2">Sign in required</h2>
+        <p className="text-sm text-[var(--color-ink-3)] mb-4">Sign in as an owner to edit a listing.</p>
         <Link href="/signin" className="btn-primary py-3 px-6 rounded-xl text-sm inline-block">Sign in</Link>
       </div>
     );
@@ -193,9 +193,9 @@ export default function EditListing() {
   if (notOwner)
     return (
       <div className="card p-8 rounded-2xl text-center max-w-md mx-auto mt-12">
-        <AlertTriangle className="w-12 h-12 text-amber-500 mx-auto mb-4" />
-        <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Not authorized</h2>
-        <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">You can only edit your own listings.</p>
+        <AlertTriangle className="w-12 h-12 text-[var(--color-warn-500)] mx-auto mb-4" />
+        <h2 className="text-lg font-bold text-[var(--color-ink)] mb-2">Not authorized</h2>
+        <p className="text-sm text-[var(--color-ink-3)] mb-4">You can only edit your own listings.</p>
         <Link href="/owner/listings" className="btn-primary py-3 px-6 rounded-xl text-sm inline-block">Back to listings</Link>
       </div>
     );
@@ -203,9 +203,9 @@ export default function EditListing() {
   if (error && !listing)
     return (
       <div className="card p-8 rounded-2xl text-center max-w-md mx-auto mt-12">
-        <AlertTriangle className="w-12 h-12 text-red-500 mx-auto mb-4" />
-        <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Error</h2>
-        <p className="text-sm text-red-500 mb-4">{error}</p>
+        <AlertTriangle className="w-12 h-12 text-[var(--color-danger-500)] mx-auto mb-4" />
+        <h2 className="text-lg font-bold text-[var(--color-ink)] mb-2">Error</h2>
+        <p className="text-sm text-[var(--color-danger-500)] mb-4">{error}</p>
         <Link href="/owner/listings" className="btn-primary py-3 px-6 rounded-xl text-sm inline-block">Back to listings</Link>
       </div>
     );
@@ -213,18 +213,18 @@ export default function EditListing() {
   return (
     <div className="space-y-6">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-        <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 mb-2">
+        <div className="flex items-center gap-2 text-sm text-[var(--color-ink-3)] mb-2">
           <Link href="/owner/listings" className="hover:text-[var(--color-primary)] transition-colors flex items-center gap-1">
             <ArrowLeft className="w-4 h-4" />
             My listings
           </Link>
           <span>/</span>
-          <span className="text-slate-900 dark:text-white font-medium">Edit listing</span>
+          <span className="text-[var(--color-ink)] font-medium">Edit listing</span>
         </div>
-        <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white">
+        <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-[var(--color-ink)]">
           Edit Listing
         </h1>
-        <p className="text-sm text-slate-500 dark:text-slate-400 mt-2">
+        <p className="text-sm text-[var(--color-ink-3)] mt-2">
           Update your listing details. Changes will be saved to your listing.
         </p>
       </motion.div>
@@ -269,7 +269,7 @@ export default function EditListing() {
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="text-sm p-3 rounded-xl bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 text-red-600 dark:text-red-400"
+          className="text-sm p-3 rounded-xl bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-50)]0/10 border border-[var(--color-danger-500)]/30 dark:border-[var(--color-danger-500)]/20 text-[var(--color-danger-500)] dark:text-[var(--color-danger-500)]"
         >
           {error}
         </motion.p>

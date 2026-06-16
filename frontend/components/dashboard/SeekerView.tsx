@@ -88,7 +88,7 @@ export default function SeekerView({ loading, profile }: SeekerViewProps) {
         desc: "Verified seekers are 3x more likely to be accepted",
         icon: <ShieldCheck className="w-4 h-4" />,
         href: "/dashboard/seeker-profile",
-        color: "bg-amber-100 text-amber-600 dark:bg-amber-500/20 dark:text-amber-400",
+        color: "bg-[var(--color-warn-50)] text-[var(--color-warn-600)] dark:bg-[var(--color-warn-50)]0/20 dark:text-[var(--color-warn-500)]",
         priority: 4,
       });
     }
@@ -109,7 +109,7 @@ export default function SeekerView({ loading, profile }: SeekerViewProps) {
       desc: "A complete profile increases your chances of being accepted",
       icon: <Star className="w-4 h-4" />,
       href: "/dashboard/seeker-profile",
-      color: "bg-amber-100 text-amber-600 dark:bg-amber-500/20 dark:text-amber-400",
+      color: "bg-[var(--color-warn-50)] text-[var(--color-warn-600)] dark:bg-[var(--color-warn-50)]0/20 dark:text-[var(--color-warn-500)]",
       priority: 1,
     });
   }
@@ -189,20 +189,20 @@ export default function SeekerView({ loading, profile }: SeekerViewProps) {
             >
               <Link
                 href={item.href}
-                className="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group"
+                className="flex items-center gap-3 p-3 rounded-xl hover:bg-[var(--color-surface)]/50 transition-colors group"
               >
                 <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${item.color}`}>
                   {item.icon}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">
+                  <p className="text-sm font-semibold text-[var(--color-ink)]">
                     {item.title}
                   </p>
                   <p className="text-xs text-[var(--color-ink-3)]">
                     {item.desc}
                   </p>
                 </div>
-                <ChevronRight className="w-4 h-4 text-slate-300 dark:text-slate-600 group-hover:text-[var(--color-primary)] transition-colors shrink-0" />
+                <ChevronRight className="w-4 h-4 text-[var(--color-ink-4)] group-hover:text-[var(--color-primary)] transition-colors shrink-0" />
               </Link>
             </motion.div>
           ))}
@@ -240,7 +240,7 @@ export default function SeekerView({ loading, profile }: SeekerViewProps) {
               </span>
             )}
             {profile.lifestyle.slice(0, 3).map((tag) => (
-              <span key={tag} className="px-3 py-1.5 rounded-full text-xs font-medium bg-[var(--color-surface-sunk)] text-slate-600 dark:text-slate-300 border border-[var(--color-line)]">
+              <span key={tag} className="px-3 py-1.5 rounded-full text-xs font-medium bg-[var(--color-surface-sunk)] text-[var(--color-ink-2)] border border-[var(--color-line)]">
                 {tag}
               </span>
             ))}

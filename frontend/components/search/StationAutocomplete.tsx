@@ -79,7 +79,7 @@ export default function StationAutocomplete({
     <div ref={wrapperRef} className={`relative ${className}`}>
       <div className="relative">
         <svg
-          className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"
+          className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-ink-3)]"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -110,7 +110,7 @@ export default function StationAutocomplete({
               setSuggestions([]);
               setShowDropdown(false);
             }}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-ink-3)] hover:text-[var(--color-ink-2)] dark:hover:text-[var(--color-ink-4)]"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -128,24 +128,24 @@ export default function StationAutocomplete({
             initial={{ opacity: 0, y: -4 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -4 }}
-            className="absolute z-50 mt-1 w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl shadow-lg max-h-60 overflow-y-auto"
+            className="absolute z-50 mt-1 w-full bg-[var(--color-surface-2)] border border-[var(--color-line)] rounded-xl shadow-lg max-h-60 overflow-y-auto"
           >
             {suggestions.map((station) => (
               <li key={station.id}>
                 <button
                   onClick={() => handleSelect(station)}
-                  className="w-full text-left px-4 py-2.5 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors flex items-center gap-3 first:rounded-t-xl last:rounded-b-xl"
+                  className="w-full text-left px-4 py-2.5 hover:bg-[var(--color-surface)] transition-colors flex items-center gap-3 first:rounded-t-xl last:rounded-b-xl"
                 >
-                  <div className="w-8 h-8 rounded-full bg-blue-50 dark:bg-blue-500/10 flex items-center justify-center shrink-0">
-                    <svg className="w-4 h-4 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <div className="w-8 h-8 rounded-full bg-[var(--color-primary-50)] dark:bg-[var(--color-primary)]/10 flex items-center justify-center shrink-0">
+                    <svg className="w-4 h-4 text-[var(--color-primary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M8 7h8m-8 4h4m4-8H6a2 2 0 00-2 2v14l4-3h10a2 2 0 002-2V5a2 2 0 00-2-2z" />
                     </svg>
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-slate-900 dark:text-white">
+                    <p className="text-sm font-medium text-[var(--color-ink)]">
                       {station.name} Station
                     </p>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">
+                    <p className="text-xs text-[var(--color-ink-3)]">
                       {station.line ? `${station.line} - ` : ""}{station.city}
                     </p>
                   </div>

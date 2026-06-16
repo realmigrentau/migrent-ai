@@ -7,19 +7,19 @@ export default function BookingCancelledPage() {
   return (
     <>
       <SEOHead title="Payment Cancelled - MigRent" />
-      <div className="min-h-screen bg-white dark:bg-slate-950 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center p-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="max-w-md w-full text-center space-y-6"
         >
-          <XCircle className="w-16 h-16 mx-auto text-amber-500" />
+          <XCircle className="w-16 h-16 mx-auto text-[var(--color-warn-500)]" />
 
           <div>
-            <h1 className="text-2xl font-semibold tracking-tight text-slate-900 dark:text-white">
+            <h1 className="text-2xl font-semibold tracking-tight text-[var(--color-ink)]">
               Payment Not Completed
             </h1>
-            <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
+            <p className="mt-2 text-sm text-[var(--color-ink-3)]">
               Your payment was not completed. Your booking request is still active
               and you can complete payment from your dashboard.
             </p>
@@ -35,7 +35,7 @@ export default function BookingCancelledPage() {
             </Link>
             <Link
               href="/seeker/search"
-              className="flex-1 py-3 px-6 rounded-xl text-sm font-semibold border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 text-center hover:bg-slate-50 dark:hover:bg-slate-800/50"
+              className="flex-1 py-3 px-6 rounded-xl text-sm font-semibold border border-[var(--color-line)] text-[var(--color-ink-2)] text-center hover:bg-[var(--color-surface)]/50"
             >
               Browse Listings
             </Link>

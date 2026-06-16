@@ -18,7 +18,7 @@ export default function WishlistGrid({ listings, loading, onUnsave }: Props) {
             key={i}
             className="card rounded-xl overflow-hidden animate-pulse"
           >
-            <div className="h-36 bg-slate-200 dark:bg-slate-700" />
+            <div className="h-36 bg-[var(--color-line)]" />
             <div className="p-4 space-y-3">
               <div className="shimmer h-4 w-3/4 rounded" />
               <div className="shimmer h-3 w-1/2 rounded" />
@@ -33,7 +33,7 @@ export default function WishlistGrid({ listings, loading, onUnsave }: Props) {
   if (listings.length === 0) {
     return (
       <div className="card rounded-xl p-8 text-center">
-        <Heart className="w-10 h-10 mx-auto text-slate-300 dark:text-slate-600 mb-3" />
+        <Heart className="w-10 h-10 mx-auto text-[var(--color-ink-4)] mb-3" />
         <p className="text-sm text-[var(--color-ink-3)] mb-3">
           No saved listings yet. Browse rooms and tap the heart to save them!
         </p>
@@ -58,7 +58,7 @@ export default function WishlistGrid({ listings, loading, onUnsave }: Props) {
           className="card rounded-xl overflow-hidden border border-[var(--color-line)] group hover:shadow-md transition-shadow"
         >
           {/* Image */}
-          <div className="relative h-36 bg-slate-200 dark:bg-slate-700">
+          <div className="relative h-36 bg-[var(--color-line)]">
             {listing.images?.[0] ? (
               <img
                 src={listing.images[0]}
@@ -66,7 +66,7 @@ export default function WishlistGrid({ listings, loading, onUnsave }: Props) {
                 className="w-full h-full object-cover"
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center text-slate-400">
+              <div className="w-full h-full flex items-center justify-center text-[var(--color-ink-3)]">
                 <MapPin className="w-8 h-8" />
               </div>
             )}
@@ -78,7 +78,7 @@ export default function WishlistGrid({ listings, loading, onUnsave }: Props) {
                   e.preventDefault();
                   onUnsave(listing.id);
                 }}
-                className="absolute top-2 right-2 w-8 h-8 rounded-full bg-white/90 dark:bg-slate-900/90 flex items-center justify-center hover:scale-110 transition-transform"
+                className="absolute top-2 right-2 w-8 h-8 rounded-full bg-white/90 dark:bg-[var(--color-surface)]/90 flex items-center justify-center hover:scale-110 transition-transform"
               >
                 <Heart className="w-4 h-4 text-[var(--color-primary)] fill-[var(--color-coral-500)]" />
               </button>
@@ -129,7 +129,7 @@ export default function WishlistGrid({ listings, loading, onUnsave }: Props) {
                   </span>
                 )}
                 {listing.owner?.verified && (
-                  <span className="text-xs text-blue-500 flex items-center gap-1">
+                  <span className="text-xs text-[var(--color-primary)] flex items-center gap-1">
                     <ShieldCheck className="w-3 h-3" />
                     Verified owner
                   </span>
@@ -144,13 +144,13 @@ export default function WishlistGrid({ listings, loading, onUnsave }: Props) {
       {listings.length > 4 && (
         <Link
           href="/seeker/wishlist"
-          className="card rounded-xl p-6 flex flex-col items-center justify-center text-center hover:shadow-md transition-shadow border border-dashed border-slate-300 dark:border-slate-600"
+          className="card rounded-xl p-6 flex flex-col items-center justify-center text-center hover:shadow-md transition-shadow border border-dashed border-[var(--color-line-2)]"
         >
           <Sparkles className="w-8 h-8 text-[var(--color-primary)] mb-2" />
-          <p className="text-sm font-medium text-slate-600 dark:text-slate-300">
+          <p className="text-sm font-medium text-[var(--color-ink-2)]">
             View all {listings.length} saved
           </p>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-[var(--color-ink-3)] mt-1">
             Compare side-by-side
           </p>
         </Link>

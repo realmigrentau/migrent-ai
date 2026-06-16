@@ -13,9 +13,9 @@ function MatchBadge({ score }: { score: number }) {
   if (score >= 90) {
     color = "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 text-[var(--color-accent)] dark:text-[var(--color-accent)]";
   } else if (score >= 80) {
-    color = "bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400";
+    color = "bg-[var(--color-primary-50)] dark:bg-[var(--color-primary)]/10 text-[var(--color-primary)] dark:text-[var(--color-primary)]";
   } else if (score >= 70) {
-    color = "bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400";
+    color = "bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/10 text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)]";
   }
 
   return (
@@ -34,7 +34,7 @@ export default function RecommendedMatches({ listings, loading }: Props) {
             key={i}
             className="card rounded-xl overflow-hidden animate-pulse"
           >
-            <div className="h-32 bg-slate-200 dark:bg-slate-700" />
+            <div className="h-32 bg-[var(--color-line)]" />
             <div className="p-4 space-y-3">
               <div className="shimmer h-4 w-3/4 rounded" />
               <div className="shimmer h-3 w-1/2 rounded" />
@@ -48,7 +48,7 @@ export default function RecommendedMatches({ listings, loading }: Props) {
   if (listings.length === 0) {
     return (
       <div className="card rounded-xl p-8 text-center">
-        <Star className="w-10 h-10 mx-auto text-slate-300 dark:text-slate-600 mb-3" />
+        <Star className="w-10 h-10 mx-auto text-[var(--color-ink-4)] mb-3" />
         <p className="text-sm text-[var(--color-ink-3)] mb-3">
           No recommendations yet. Complete your profile to get personalized matches!
         </p>
@@ -75,7 +75,7 @@ export default function RecommendedMatches({ listings, loading }: Props) {
             <Link href={`/listing/${listing.id}`}>
               <div className="card rounded-xl overflow-hidden border border-[var(--color-line)] group hover:shadow-md hover:border-[var(--color-line-2)] dark:hover:border-[var(--color-primary)]/30 transition-all">
                 {/* Image */}
-                <div className="relative h-32 bg-slate-200 dark:bg-slate-700">
+                <div className="relative h-32 bg-[var(--color-line)]">
                   {listing.images?.[0] ? (
                     <img
                       src={listing.images[0]}
@@ -83,7 +83,7 @@ export default function RecommendedMatches({ listings, loading }: Props) {
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-slate-400">
+                    <div className="w-full h-full flex items-center justify-center text-[var(--color-ink-3)]">
                       <MapPin className="w-8 h-8" />
                     </div>
                   )}
@@ -133,7 +133,7 @@ export default function RecommendedMatches({ listings, loading }: Props) {
                       </span>
                     )}
                     {listing.owner?.verified && (
-                      <span className="text-xs text-blue-500 flex items-center gap-1">
+                      <span className="text-xs text-[var(--color-primary)] flex items-center gap-1">
                         <ShieldCheck className="w-3 h-3" />
                         Verified
                       </span>
@@ -144,7 +144,7 @@ export default function RecommendedMatches({ listings, loading }: Props) {
                       </span>
                     )}
                     {(listing as any).visa_match && (listing as any).near_cbd && (
-                      <span className="text-xs text-blue-500 flex items-center gap-1">
+                      <span className="text-xs text-[var(--color-primary)] flex items-center gap-1">
                         Near CBD
                       </span>
                     )}

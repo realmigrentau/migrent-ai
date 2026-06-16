@@ -27,13 +27,13 @@ const STATUS_CONFIG: Record<
 > = {
   PENDING_OWNER: {
     label: "Awaiting Response",
-    color: "text-amber-600 dark:text-amber-400",
-    bg: "bg-amber-50 dark:bg-amber-500/10",
+    color: "text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)]",
+    bg: "bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/10",
   },
   OWNER_ACCEPTED: {
     label: "Pay Now",
-    color: "text-blue-600 dark:text-blue-400",
-    bg: "bg-blue-50 dark:bg-blue-500/10",
+    color: "text-[var(--color-primary)] dark:text-[var(--color-primary)]",
+    bg: "bg-[var(--color-primary-50)] dark:bg-[var(--color-primary)]/10",
   },
   PAID: {
     label: "Confirmed",
@@ -42,13 +42,13 @@ const STATUS_CONFIG: Record<
   },
   COMPLETED: {
     label: "Completed",
-    color: "text-slate-600 dark:text-slate-300",
+    color: "text-[var(--color-ink-2)]",
     bg: "bg-[var(--color-surface-sunk)]/50",
   },
   OWNER_DECLINED: {
     label: "Declined",
-    color: "text-red-600 dark:text-red-400",
-    bg: "bg-red-50 dark:bg-red-500/10",
+    color: "text-[var(--color-danger-500)] dark:text-[var(--color-danger-500)]",
+    bg: "bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-50)]0/10",
   },
   SEEKER_CANCELLED: {
     label: "Cancelled",
@@ -57,7 +57,7 @@ const STATUS_CONFIG: Record<
   },
   EXPIRED: {
     label: "Expired",
-    color: "text-slate-400",
+    color: "text-[var(--color-ink-3)]",
     bg: "bg-[var(--color-surface-sunk)]",
   },
 };
@@ -128,7 +128,7 @@ export default function DashboardSeekerBookings({
               className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
                 activeTab === tab.key
                   ? "bg-[var(--color-primary)] text-white"
-                  : "bg-[var(--color-surface-sunk)] text-[var(--color-ink-2)] hover:bg-slate-200 dark:hover:bg-slate-700"
+                  : "bg-[var(--color-surface-sunk)] text-[var(--color-ink-2)] hover:bg-[var(--color-surface-muted)]"
               }`}
             >
               {tab.label} ({count})
@@ -173,13 +173,13 @@ export default function DashboardSeekerBookings({
                 animate={{ opacity: 1, y: 0 }}
                 className={`card rounded-xl overflow-hidden border transition-colors ${
                   needsPayment
-                    ? "border-blue-200 dark:border-blue-500/30"
+                    ? "border-[var(--color-primary-100)] dark:border-blue-500/30"
                     : "border-[var(--color-line)]"
                 }`}
               >
                 {/* Desktop row */}
                 <div
-                  className="hidden md:grid grid-cols-12 gap-3 items-center p-4 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors"
+                  className="hidden md:grid grid-cols-12 gap-3 items-center p-4 cursor-pointer hover:bg-[var(--color-surface)]/30 transition-colors"
                   onClick={() =>
                     setExpandedId(isExpanded ? null : booking.id)
                   }
@@ -192,7 +192,7 @@ export default function DashboardSeekerBookings({
                         className="w-10 h-10 rounded-lg object-cover shrink-0"
                       />
                     ) : (
-                      <div className="w-10 h-10 rounded-lg bg-slate-200 dark:bg-slate-700 shrink-0" />
+                      <div className="w-10 h-10 rounded-lg bg-[var(--color-line)] shrink-0" />
                     )}
                     <div className="min-w-0">
                       <p className="text-sm font-medium text-[var(--color-ink)] truncate">
@@ -200,13 +200,13 @@ export default function DashboardSeekerBookings({
                           booking.listing?.address ||
                           "Listing"}
                       </p>
-                      <p className="text-xs text-slate-400 truncate">
+                      <p className="text-xs text-[var(--color-ink-3)] truncate">
                         {booking.listing?.city || ""}
                       </p>
                     </div>
                   </div>
                   <div className="col-span-2 flex items-center gap-2 min-w-0">
-                    <div className="w-7 h-7 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center shrink-0">
+                    <div className="w-7 h-7 rounded-full bg-[var(--color-line)] flex items-center justify-center shrink-0">
                       <User className="w-3.5 h-3.5 text-[var(--color-ink-3)]" />
                     </div>
                     <p className="text-sm text-[var(--color-ink-2)] truncate">
@@ -214,10 +214,10 @@ export default function DashboardSeekerBookings({
                     </p>
                   </div>
                   <div className="col-span-2">
-                    <p className="text-xs text-slate-600 dark:text-slate-300">
+                    <p className="text-xs text-[var(--color-ink-2)]">
                       {booking.check_in_date}
                     </p>
-                    <p className="text-xs text-slate-400">
+                    <p className="text-xs text-[var(--color-ink-3)]">
                       to {booking.check_out_date}
                     </p>
                   </div>
@@ -225,7 +225,7 @@ export default function DashboardSeekerBookings({
                     <p className="text-sm font-semibold text-[var(--color-ink)]">
                       ${booking.total_price?.toLocaleString()}
                     </p>
-                    <p className="text-xs text-slate-400">
+                    <p className="text-xs text-[var(--color-ink-3)]">
                       ${booking.weekly_price_at_time}/wk
                     </p>
                   </div>
@@ -246,7 +246,7 @@ export default function DashboardSeekerBookings({
                             "_blank"
                           );
                         }}
-                        className="px-3 py-1.5 rounded-lg text-xs font-medium bg-blue-500 text-white hover:bg-blue-600 flex items-center gap-1"
+                        className="px-3 py-1.5 rounded-lg text-xs font-medium bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary)] flex items-center gap-1"
                       >
                         <CreditCard className="w-3 h-3" /> Pay
                       </button>
@@ -258,7 +258,7 @@ export default function DashboardSeekerBookings({
                           handleCancel(booking.id);
                         }}
                         disabled={cancelLoading === booking.id}
-                        className="px-3 py-1.5 rounded-lg text-xs font-medium border border-[var(--color-line)] text-[var(--color-ink-2)] hover:bg-slate-50 dark:hover:bg-slate-800/50 disabled:opacity-50 flex items-center gap-1"
+                        className="px-3 py-1.5 rounded-lg text-xs font-medium border border-[var(--color-line)] text-[var(--color-ink-2)] hover:bg-[var(--color-surface)]/50 disabled:opacity-50 flex items-center gap-1"
                       >
                         <Ban className="w-3 h-3" /> Cancel
                       </button>
@@ -266,9 +266,9 @@ export default function DashboardSeekerBookings({
                     {!canCancel && !needsPayment && (
                       <div className="flex items-center gap-1">
                         {isExpanded ? (
-                          <ChevronUp className="w-4 h-4 text-slate-400" />
+                          <ChevronUp className="w-4 h-4 text-[var(--color-ink-3)]" />
                         ) : (
-                          <ChevronDown className="w-4 h-4 text-slate-400" />
+                          <ChevronDown className="w-4 h-4 text-[var(--color-ink-3)]" />
                         )}
                       </div>
                     )}
@@ -277,7 +277,7 @@ export default function DashboardSeekerBookings({
 
                 {/* Mobile row */}
                 <div
-                  className="md:hidden p-4 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors"
+                  className="md:hidden p-4 cursor-pointer hover:bg-[var(--color-surface)]/30 transition-colors"
                   onClick={() =>
                     setExpandedId(isExpanded ? null : booking.id)
                   }
@@ -291,7 +291,7 @@ export default function DashboardSeekerBookings({
                           className="w-12 h-12 rounded-lg object-cover shrink-0"
                         />
                       ) : (
-                        <div className="w-12 h-12 rounded-lg bg-slate-200 dark:bg-slate-700 shrink-0" />
+                        <div className="w-12 h-12 rounded-lg bg-[var(--color-line)] shrink-0" />
                       )}
                       <div className="min-w-0">
                         <p className="text-sm font-semibold text-[var(--color-ink)] truncate">
@@ -311,9 +311,9 @@ export default function DashboardSeekerBookings({
                         {status.label}
                       </span>
                       {isExpanded ? (
-                        <ChevronUp className="w-4 h-4 text-slate-400" />
+                        <ChevronUp className="w-4 h-4 text-[var(--color-ink-3)]" />
                       ) : (
-                        <ChevronDown className="w-4 h-4 text-slate-400" />
+                        <ChevronDown className="w-4 h-4 text-[var(--color-ink-3)]" />
                       )}
                     </div>
                   </div>
@@ -324,12 +324,12 @@ export default function DashboardSeekerBookings({
                   <div className="border-t border-[var(--color-line)] p-4 space-y-3">
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
                       <div>
-                        <p className="text-xs text-slate-400 mb-0.5">Owner</p>
+                        <p className="text-xs text-[var(--color-ink-3)] mb-0.5">Owner</p>
                         <p className="font-medium text-[var(--color-ink)]">
                           {booking.owner?.name || "Owner"}
                           {booking.owner?.verified && (
                             <span
-                              className="ml-1 text-blue-500"
+                              className="ml-1 text-[var(--color-primary)]"
                               title="Verified"
                             >
                               &#10003;
@@ -338,7 +338,7 @@ export default function DashboardSeekerBookings({
                         </p>
                       </div>
                       <div>
-                        <p className="text-xs text-slate-400 mb-0.5">
+                        <p className="text-xs text-[var(--color-ink-3)] mb-0.5">
                           Check-in
                         </p>
                         <p className="font-medium text-[var(--color-ink)]">
@@ -346,7 +346,7 @@ export default function DashboardSeekerBookings({
                         </p>
                       </div>
                       <div>
-                        <p className="text-xs text-slate-400 mb-0.5">
+                        <p className="text-xs text-[var(--color-ink-3)] mb-0.5">
                           Weekly rate
                         </p>
                         <p className="font-medium text-[var(--color-ink)]">
@@ -354,7 +354,7 @@ export default function DashboardSeekerBookings({
                         </p>
                       </div>
                       <div>
-                        <p className="text-xs text-slate-400 mb-0.5">
+                        <p className="text-xs text-[var(--color-ink-3)] mb-0.5">
                           Total cost
                         </p>
                         <p className="font-medium text-[var(--color-accent)] dark:text-[var(--color-accent)]">
@@ -365,7 +365,7 @@ export default function DashboardSeekerBookings({
 
                     {booking.message_to_owner && (
                       <div className="p-3 rounded-lg bg-[var(--color-surface-sunk)]">
-                        <p className="text-xs text-slate-400 mb-1 flex items-center gap-1">
+                        <p className="text-xs text-[var(--color-ink-3)] mb-1 flex items-center gap-1">
                           <MessageSquare className="w-3 h-3" />
                           Your message to owner
                         </p>
@@ -375,7 +375,7 @@ export default function DashboardSeekerBookings({
                       </div>
                     )}
 
-                    <p className="text-xs text-slate-400">
+                    <p className="text-xs text-[var(--color-ink-3)]">
                       Requested{" "}
                       {new Date(booking.created_at).toLocaleDateString(
                         "en-AU",
@@ -412,10 +412,10 @@ export default function DashboardSeekerBookings({
                           whileTap={{ scale: 0.98 }}
                           onClick={() => handleCancel(booking.id)}
                           disabled={cancelLoading === booking.id}
-                          className={`${needsPayment ? "" : "flex-1"} py-2.5 px-4 rounded-xl text-sm font-semibold border border-[var(--color-line)] text-[var(--color-ink-2)] hover:bg-slate-50 dark:hover:bg-slate-800/50 flex items-center justify-center gap-2 disabled:opacity-50`}
+                          className={`${needsPayment ? "" : "flex-1"} py-2.5 px-4 rounded-xl text-sm font-semibold border border-[var(--color-line)] text-[var(--color-ink-2)] hover:bg-[var(--color-surface)]/50 flex items-center justify-center gap-2 disabled:opacity-50`}
                         >
                           {cancelLoading === booking.id ? (
-                            <span className="w-4 h-4 border-2 border-slate-300 border-t-slate-600 rounded-full animate-spin" />
+                            <span className="w-4 h-4 border-2 border-[var(--color-line-2)] border-t-slate-600 rounded-full animate-spin" />
                           ) : (
                             <Ban className="w-4 h-4" />
                           )}

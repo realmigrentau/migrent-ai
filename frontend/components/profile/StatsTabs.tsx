@@ -25,8 +25,8 @@ export default function StatsTabs({ tabs, activeTab, onTabChange }: StatsTabsPro
               whileTap={{ scale: 0.97 }}
               className={`relative shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all whitespace-nowrap ${
                 isActive
-                  ? "bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-lg"
-                  : "bg-white dark:bg-slate-800/50 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600"
+                  ? "bg-[var(--color-ink)] dark:bg-white text-white dark:text-[var(--color-ink)] shadow-lg"
+                  : "bg-[var(--color-surface-2)]/50 text-[var(--color-ink-2)] border border-[var(--color-line)] hover:border-[var(--color-line-2)] dark:hover:border-[var(--color-line-2)]"
               }`}
             >
               <span className="text-base">{tab.icon}</span>
@@ -34,8 +34,8 @@ export default function StatsTabs({ tabs, activeTab, onTabChange }: StatsTabsPro
               {tab.count !== undefined && tab.count > 0 && (
                 <span className={`text-xs px-1.5 py-0.5 rounded-full ${
                   isActive
-                    ? "bg-white/20 text-white dark:bg-slate-900/20 dark:text-slate-900"
-                    : "bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400"
+                    ? "bg-white/20 text-white dark:bg-[var(--color-surface)]/20 dark:text-[var(--color-ink)]"
+                    : "bg-[var(--color-surface-muted)] text-[var(--color-ink-3)]"
                 }`}>
                   {tab.count}
                 </span>

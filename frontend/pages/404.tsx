@@ -21,10 +21,10 @@ export default function NotFound() {
             <span className="text-4xl font-bold text-[var(--color-primary)]">404</span>
           </div>
 
-          <h1 className="text-2xl font-semibold tracking-tight text-slate-900 dark:text-white mb-3">
+          <h1 className="text-2xl font-semibold tracking-tight text-[var(--color-ink)] mb-3">
             Page not found
           </h1>
-          <p className="text-slate-500 dark:text-slate-400 mb-8">
+          <p className="text-[var(--color-ink-3)] mb-8">
             The page you are looking for does not exist or has been moved.
           </p>
 

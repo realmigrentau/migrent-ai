@@ -32,10 +32,10 @@ interface HeroGamificationProps {
 }
 
 const LEVEL_COLORS = [
-  { bg: "from-slate-400 to-slate-500", ring: "ring-slate-300" },
+  { bg: "from-slate-400 to-[var(--color-ink-3)]", ring: "ring-slate-300" },
   { bg: "from-blue-400 to-[var(--color-primary)]", ring: "ring-blue-300" },
-  { bg: "from-[var(--color-accent)] to-teal-500", ring: "ring-emerald-300" },
-  { bg: "from-amber-400 to-orange-500", ring: "ring-amber-300" },
+  { bg: "from-[var(--color-accent)] to-[var(--color-primary)]", ring: "ring-emerald-300" },
+  { bg: "from-[var(--color-warn-500)] to-[var(--color-warn-500)]", ring: "ring-amber-300" },
   { bg: "from-[var(--color-primary)] to-[var(--color-primary)]", ring: "ring-[var(--color-line-2)]" },
   { bg: "from-violet-400 to-[var(--color-primary)]", ring: "ring-[var(--color-primary-soft)]" },
 ];
@@ -58,7 +58,7 @@ export default function HeroGamification({
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
         <div className="space-y-1">
           <div className="flex items-center gap-3">
-            <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white">
+            <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-[var(--color-ink)]">
               My Wishlist
             </h1>
             <motion.div
@@ -75,7 +75,7 @@ export default function HeroGamification({
               Lv.{level.level}
             </motion.div>
           </div>
-          <p className="text-sm text-slate-500 dark:text-slate-400">
+          <p className="text-sm text-[var(--color-ink-3)]">
             Perfect rooms waiting for you
           </p>
         </div>
@@ -84,14 +84,14 @@ export default function HeroGamification({
         <div className="flex items-center gap-2 shrink-0">
           <button
             onClick={onShare}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-[var(--color-line-2)] dark:hover:border-[var(--color-primary)]/30 hover:text-[var(--color-primary)] transition-all"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium bg-[var(--color-surface-2)] border border-[var(--color-line)] text-[var(--color-ink-2)] hover:border-[var(--color-line-2)] dark:hover:border-[var(--color-primary)]/30 hover:text-[var(--color-primary)] transition-all"
           >
             <Share2 className="w-3.5 h-3.5" />
             Share
           </button>
           <button
             onClick={onClearAll}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-400 hover:text-red-500 hover:border-red-300 dark:hover:border-red-500/30 transition-all"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium bg-[var(--color-surface-2)] border border-[var(--color-line)] text-[var(--color-ink-3)] hover:text-[var(--color-danger-500)] hover:border-[var(--color-danger-500)]/30 dark:hover:border-red-500/30 transition-all"
           >
             <Trash2 className="w-3.5 h-3.5" />
           </button>
@@ -113,21 +113,21 @@ export default function HeroGamification({
                 <Sparkles className="w-4 h-4 text-white" />
               </div>
               <div>
-                <p className="text-xs font-bold text-slate-900 dark:text-white">
+                <p className="text-xs font-bold text-[var(--color-ink)]">
                   Wishlist {level.name}
                 </p>
-                <p className="text-[10px] text-slate-400">
+                <p className="text-[10px] text-[var(--color-ink-3)]">
                   Level {level.level}
                 </p>
               </div>
             </div>
-            <span className="text-xs text-slate-400">
+            <span className="text-xs text-[var(--color-ink-3)]">
               {level.count}/{level.max}
             </span>
           </div>
 
           {/* Progress bar */}
-          <div className="relative h-2.5 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
+          <div className="relative h-2.5 rounded-full bg-[var(--color-surface-muted)] overflow-hidden">
             <motion.div
               initial={{ width: 0 }}
               animate={{ width: `${level.progress}%` }}
@@ -143,7 +143,7 @@ export default function HeroGamification({
             />
           </div>
 
-          <p className="text-[10px] text-slate-400 text-center">
+          <p className="text-[10px] text-[var(--color-ink-3)] text-center">
             {level.max - level.count} more to reach {level.name === "Legend" ? "max level" : `Level ${level.level + 1}`}
           </p>
         </motion.div>
@@ -162,11 +162,11 @@ export default function HeroGamification({
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="text-lg font-semibold text-slate-900 dark:text-white"
+              className="text-lg font-semibold text-[var(--color-ink)]"
             >
               {stats.total}
             </motion.p>
-            <p className="text-[10px] text-slate-400">Saved</p>
+            <p className="text-[10px] text-[var(--color-ink-3)]">Saved</p>
           </div>
 
           <div className="card p-3 rounded-2xl text-center group hover:border-[var(--color-accent-soft)] dark:hover:border-[var(--color-accent-soft)] transition-colors">
@@ -176,25 +176,25 @@ export default function HeroGamification({
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="text-lg font-semibold text-slate-900 dark:text-white"
+              className="text-lg font-semibold text-[var(--color-ink)]"
             >
               {stats.priceDrops}
             </motion.p>
-            <p className="text-[10px] text-slate-400">Drops</p>
+            <p className="text-[10px] text-[var(--color-ink-3)]">Drops</p>
           </div>
 
-          <div className="card p-3 rounded-2xl text-center group hover:border-blue-200 dark:hover:border-blue-500/20 transition-colors">
-            <div className="w-8 h-8 mx-auto rounded-xl bg-blue-50 dark:bg-blue-500/10 flex items-center justify-center mb-1.5 group-hover:scale-110 transition-transform">
-              <MessageCircle className="w-4 h-4 text-blue-500" />
+          <div className="card p-3 rounded-2xl text-center group hover:border-[var(--color-primary-100)] dark:hover:border-[var(--color-primary)]/20 transition-colors">
+            <div className="w-8 h-8 mx-auto rounded-xl bg-[var(--color-primary-50)] dark:bg-[var(--color-primary)]/10 flex items-center justify-center mb-1.5 group-hover:scale-110 transition-transform">
+              <MessageCircle className="w-4 h-4 text-[var(--color-primary)]" />
             </div>
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="text-lg font-semibold text-slate-900 dark:text-white"
+              className="text-lg font-semibold text-[var(--color-ink)]"
             >
               {stats.ownerReplies}
             </motion.p>
-            <p className="text-[10px] text-slate-400">Replies</p>
+            <p className="text-[10px] text-[var(--color-ink-3)]">Replies</p>
           </div>
         </motion.div>
       </div>
@@ -205,9 +205,9 @@ export default function HeroGamification({
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.35 }}
-          className="flex items-center gap-3 p-3 rounded-2xl bg-[var(--color-primary)] from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/30 border border-[var(--color-accent-soft)]/50 dark:border-[var(--color-accent-soft)]"
+          className="flex items-center gap-3 p-3 rounded-2xl bg-[var(--color-primary)] from-[var(--color-accent-50)] to-[var(--color-primary-50)] dark:from-emerald-950/30 dark:to-[var(--color-surface-muted)] border border-[var(--color-accent-soft)]/50 dark:border-[var(--color-accent-soft)]"
         >
-          <div className="w-8 h-8 rounded-xl bg-[var(--color-primary)] from-[var(--color-accent)] to-teal-400 flex items-center justify-center shadow-lg shrink-0">
+          <div className="w-8 h-8 rounded-xl bg-[var(--color-primary)] from-[var(--color-accent)] to-[var(--color-primary)] flex items-center justify-center shadow-lg shrink-0">
             <TrendingDown className="w-4 h-4 text-white" />
           </div>
           <div className="min-w-0">

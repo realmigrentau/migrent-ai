@@ -39,8 +39,8 @@ export default function OwnerProfilePage() {
   if (!session)
     return (
       <div className="card p-8 rounded-2xl text-center max-w-md mx-auto mt-12">
-        <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Sign in required</h2>
-        <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">Sign in to manage your owner profile.</p>
+        <h2 className="text-lg font-bold text-[var(--color-ink)] mb-2">Sign in required</h2>
+        <p className="text-sm text-[var(--color-ink-3)] mb-4">Sign in to manage your owner profile.</p>
         <Link href="/signin" className="btn-primary py-3 px-6 rounded-xl text-sm inline-block">Sign in</Link>
       </div>
     );
@@ -49,10 +49,10 @@ export default function OwnerProfilePage() {
     <DashboardLayout>
       <div className="max-w-2xl mx-auto space-y-8">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-          <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white">
+          <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-[var(--color-ink)]">
             Owner Profile
           </h1>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mt-2">
+          <p className="text-sm text-[var(--color-ink-3)] mt-2">
             Your profile is shown to seekers when they view your listings.
           </p>
         </motion.div>
@@ -68,8 +68,8 @@ export default function OwnerProfilePage() {
                 message.type === "success"
                   ? "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)] text-[var(--color-accent)] dark:text-[var(--color-accent)]"
                   : message.type === "error"
-                  ? "bg-red-50 dark:bg-red-500/10 border-red-200 dark:border-red-500/20 text-red-600 dark:text-red-400"
-                  : "bg-blue-50 dark:bg-blue-500/10 border-blue-200 dark:border-blue-500/20 text-blue-600 dark:text-blue-400"
+                  ? "bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-50)]0/10 border-[var(--color-danger-500)]/30 dark:border-[var(--color-danger-500)]/20 text-[var(--color-danger-500)] dark:text-[var(--color-danger-500)]"
+                  : "bg-[var(--color-primary-50)] dark:bg-[var(--color-primary)]/10 border-[var(--color-primary-100)] dark:border-[var(--color-primary)]/20 text-[var(--color-primary)] dark:text-[var(--color-primary)]"
               }`}
             >
               {message.text}
@@ -89,8 +89,8 @@ export default function OwnerProfilePage() {
           transition={{ delay: 0.08 }}
           className="card p-6 rounded-2xl space-y-4"
         >
-          <h2 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white">Badges</h2>
-          <p className="text-sm text-slate-500 dark:text-slate-400">Earn badges as you host on MigRent.</p>
+          <h2 className="text-lg font-semibold tracking-tight text-[var(--color-ink)]">Badges</h2>
+          <p className="text-sm text-[var(--color-ink-3)]">Earn badges as you host on MigRent.</p>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
             {OWNER_BADGES.map((badge) => {
               const earned = earnedBadgeKeys.includes(badge.key);
@@ -99,15 +99,15 @@ export default function OwnerProfilePage() {
                   key={badge.id}
                   className={`relative p-4 rounded-xl border text-center transition-all ${
                     earned
-                      ? "bg-blue-50 dark:bg-blue-500/10 border-blue-200 dark:border-blue-500/20"
-                      : "bg-slate-50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 opacity-50"
+                      ? "bg-[var(--color-primary-50)] dark:bg-[var(--color-primary)]/10 border-[var(--color-primary-100)] dark:border-[var(--color-primary)]/20"
+                      : "bg-[var(--color-surface)] border-[var(--color-line)] opacity-50"
                   }`}
                 >
                   <div className="text-2xl mb-1.5">{badge.icon}</div>
-                  <h4 className={`text-sm font-semibold ${earned ? "text-blue-600 dark:text-blue-400" : "text-slate-400 dark:text-slate-500"}`}>
+                  <h4 className={`text-sm font-semibold ${earned ? "text-[var(--color-primary)] dark:text-[var(--color-primary)]" : "text-[var(--color-ink-3)]"}`}>
                     {badge.label}
                   </h4>
-                  <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 leading-tight">{badge.desc}</p>
+                  <p className="text-[11px] text-[var(--color-ink-3)] mt-0.5 leading-tight">{badge.desc}</p>
                   {earned && (
                     <div className="absolute top-2 right-2">
                       <span className="text-[var(--color-accent)] text-xs font-bold">✓</span>
