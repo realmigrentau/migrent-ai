@@ -86,7 +86,7 @@ export default function SignIn() {
         </Link>
         <div>
           <div className="font-mono text-[11px] uppercase tracking-[0.08em] opacity-60">
-            From hundreds of verified hosts
+            Verified hosts across Australia
           </div>
           <h2 className="font-serif text-[56px] leading-[1.02] tracking-[-0.025em] mt-3 text-balance">
             The lease begins<br />
@@ -97,9 +97,9 @@ export default function SignIn() {
           </p>
         </div>
         <div className="flex flex-wrap gap-x-4 gap-y-1 text-[12px] opacity-60">
-          <span>18,400+ verified rooms</span>
+          <span>ID-verified hosts</span>
           <span>·</span>
-          <span>Bond Protect AU partner</span>
+          <span>Bond held in escrow</span>
           <span>·</span>
           <span>$0 renter fees</span>
         </div>

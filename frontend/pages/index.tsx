@@ -398,8 +398,6 @@ export default function Home() {
     return () => { cancelled = true; };
   }, []);
 
-  const matchCount = Math.max(1, Math.floor((budget - 100) / 7));
-
   const heroChips = [
     { icon: BadgeCheck, label: "ID-verified hosts" },
     { icon: Lock, label: "Bond in escrow" },
@@ -511,7 +509,7 @@ export default function Home() {
                   <input type="range" min={150} max={1000} step={5} value={budget} onChange={(e) => setBudget(+e.target.value)} aria-label={`Weekly budget: up to $${budget} AUD`} className="premium-range w-full mt-2.5" />
                 </div>
                 <Link href={`/seeker/search?city=${encodeURIComponent(city)}&maxPrice=${budget}`} className="mt-4 w-full bg-[var(--color-primary)] text-[var(--color-primary-fg)] text-[15px] font-semibold h-12 rounded-[var(--radius-card)] hover:bg-[var(--color-primary-500)] transition-colors inline-flex items-center justify-center gap-2">
-                  Show {matchCount} matching homes <ArrowRight className="w-4 h-4" />
+                  Search rooms up to ${budget}/wk <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
 
@@ -705,7 +703,8 @@ export default function Home() {
         <div className="max-w-[1280px] mx-auto px-6 md:px-10 lg:px-14 py-20 md:py-28">
           <motion.div {...reveal} className="mb-9">
             <div className="eyebrow mb-2.5">In their words</div>
-            <h2 className="font-serif text-[34px] md:text-[48px] tracking-[-0.025em] leading-[1.02] text-[var(--color-ink)]">The first week, told by people who lived it.</h2>
+            <h2 className="font-serif text-[34px] md:text-[48px] tracking-[-0.025em] leading-[1.02] text-[var(--color-ink)]">The first week, the way it should feel.</h2>
+            <p className="mt-3 text-[13px] text-[var(--color-ink-3)] max-w-[60ch]">Illustrative stories based on the people MigRent is built for - not real customer reviews.</p>
           </motion.div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             {stories.map((s, i) => (

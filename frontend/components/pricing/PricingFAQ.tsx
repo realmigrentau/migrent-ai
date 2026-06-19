@@ -16,7 +16,7 @@ const faqs: FAQItem[] = [
   {
     question: "Is the verification badge worth $19?",
     answer:
-      "Absolutely. Verified seekers get a green trust badge on their profile, appear higher in host search results, and receive faster responses. Hosts are 3x more likely to accept verified seekers. It's a one-time payment that stays with your account forever.",
+      "Verified seekers get a green trust badge on their profile that helps you stand out - many hosts prioritise renters who have completed ID verification. It's a one-time payment that stays with your account forever.",
   },
   {
     question: "When do owners get paid out?",

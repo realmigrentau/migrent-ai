@@ -240,8 +240,8 @@ export default function SuburbPage() {
               Ready to find your room in {suburb.name}?
             </h2>
             <p className="text-[var(--color-primary-fg)] mb-6 max-w-xl mx-auto">
-              Join thousands of migrants and students who found their home through
-              MigRent. Verified listings, no scams.
+              Find your next home with MigRent - verified listings, ID-checked
+              hosts, and no scams.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <Link

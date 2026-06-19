@@ -449,7 +449,7 @@ export default function VerificationTab({
 
           <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }} className="text-center py-3">
             <p className="text-xs text-[var(--color-ink-3)] italic">
-              Verified owners get 3x more bookings and appear higher in search results
+              Verified owners build trust with seekers and stand out in search
             </p>
           </motion.div>
         </>

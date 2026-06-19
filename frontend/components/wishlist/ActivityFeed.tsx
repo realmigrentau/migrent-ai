@@ -145,7 +145,7 @@ export default function ActivityFeed({
                 Pro Tip
               </p>
               <p className="text-xs text-[var(--color-primary)]/70 dark:text-[var(--color-primary)]/60 leading-relaxed">
-                Add a special request when messaging owners - it leads to 40% faster responses!
+                Add a special request when messaging owners - a personal note helps owners say yes.
               </p>
             </div>
           </motion.div>

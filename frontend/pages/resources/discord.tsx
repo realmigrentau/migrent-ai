@@ -44,14 +44,14 @@ const benefits = [
 ];
 
 const channels = [
-  { name: "# general", desc: "General chat and community updates", members: "2,847" },
-  { name: "# housing-tips", desc: "Share and find housing advice", members: "1,923" },
-  { name: "# sydney", desc: "Sydney-specific housing discussions", members: "1,456" },
-  { name: "# melbourne", desc: "Melbourne housing and tips", members: "1,102" },
-  { name: "# introductions", desc: "Introduce yourself to the community", members: "2,234" },
-  { name: "# visa-help", desc: "Visa and immigration questions", members: "987" },
-  { name: "# scam-alerts", desc: "Report and discuss rental scams", members: "1,567" },
-  { name: "# owner-chat", desc: "For property owners and hosts", members: "654" },
+  { name: "# general", desc: "General chat and community updates" },
+  { name: "# housing-tips", desc: "Share and find housing advice" },
+  { name: "# sydney", desc: "Sydney-specific housing discussions" },
+  { name: "# melbourne", desc: "Melbourne housing and tips" },
+  { name: "# introductions", desc: "Introduce yourself to the community" },
+  { name: "# visa-help", desc: "Visa and immigration questions" },
+  { name: "# scam-alerts", desc: "Report and discuss rental scams" },
+  { name: "# owner-chat", desc: "For property owners and hosts" },
 ];
 
 const rules = [
@@ -68,7 +68,7 @@ export default function Discord() {
     <>
       <Head>
         <title>Join MigRent Discord Community | MigRent AI</title>
-        <meta name="description" content="Connect with thousands of migrants and hosts in the MigRent Discord community." />
+        <meta name="description" content="The MigRent community Discord is launching soon - housing tips, scam alerts, and support for migrants across Australia." />
       </Head>
 
       <div className="max-w-5xl mx-auto">
@@ -88,13 +88,13 @@ export default function Discord() {
         >
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 border border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)] text-xs font-medium text-[var(--color-primary)] dark:text-[var(--color-primary)] mb-4">
             <span className="w-2 h-2 rounded-full bg-[var(--color-accent)] animate-pulse" />
-            2,847 members online
+            Launching soon
           </div>
           <h1 className="text-3xl md:text-5xl font-black tracking-tight text-[var(--color-ink)]">
             Join the <span className="bg-[var(--color-primary)] from-[var(--color-primary)] to-[var(--color-primary)] bg-clip-text text-transparent">MigRent Community</span>
           </h1>
           <p className="mt-4 text-lg text-[var(--color-ink-3)] max-w-xl mx-auto">
-            Connect with thousands of migrants and hosts. Get housing tips, share experiences, and find support.
+            Connect with migrants and hosts across Australia. Get housing tips, share experiences, and find support.
           </p>
           <div
             aria-disabled="true"
@@ -139,7 +139,7 @@ export default function Discord() {
 
         {/* Channels */}
         <section className="mb-16">
-          <h2 className="text-2xl font-semibold text-[var(--color-ink)] mb-6 text-center">Popular Channels</h2>
+          <h2 className="text-2xl font-semibold text-[var(--color-ink)] mb-6 text-center">Channels you&apos;ll find</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {channels.map((channel, i) => (
               <motion.div
@@ -158,7 +158,6 @@ export default function Discord() {
                   <div className="text-sm font-semibold text-[var(--color-ink)]">{channel.name}</div>
                   <div className="text-xs text-[var(--color-ink-3)] truncate">{channel.desc}</div>
                 </div>
-                <span className="text-[10px] text-[var(--color-ink-3)] shrink-0">{channel.members}</span>
               </motion.div>
             ))}
           </div>
@@ -198,9 +197,9 @@ export default function Discord() {
             <div className="rounded-2xl bg-[var(--color-surface-2)] p-8">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
                 {[
-                  { value: "2.8K+", label: "Members" },
+                  { value: "Soon", label: "Going live" },
                   { value: "8", label: "City channels" },
-                  { value: "24/7", label: "Active community" },
+                  { value: "AU", label: "Wide community" },
                   { value: "Free", label: "To join" },
                 ].map((stat, i) => (
                   <motion.div

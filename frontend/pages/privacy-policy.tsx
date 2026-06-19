@@ -299,7 +299,7 @@ export default function PrivacyPolicy() {
           {/* CTA */}
           <div className="card p-6 rounded-2xl bg-[var(--color-primary-soft)] from-[var(--color-primary-soft)] to-[var(--color-primary-soft)]/50 dark:from-[var(--color-primary)]/10 dark:to-[var(--color-primary)]/5 border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)] text-center">
             <h3 className="text-lg font-bold text-[var(--color-ink)] mb-2">Ready to get started?</h3>
-            <p className="text-sm text-[var(--color-ink-2)] mb-4">Join thousands of migrants finding rooms across Australia.</p>
+            <p className="text-sm text-[var(--color-ink-2)] mb-4">Find safe, verified rooms across Australia.</p>
             <div className="flex gap-3 justify-center">
               <Link href="/signup">
                 <motion.span whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }} className="inline-block btn-primary text-sm px-6 py-2.5 rounded-xl">

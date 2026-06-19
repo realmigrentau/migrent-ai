@@ -104,7 +104,7 @@ function MockDiscord() {
           <div className="text-white/90 text-sm font-semibold">MigRent Community</div>
           <div className="flex items-center gap-1">
             <span className="w-2 h-2 rounded-full bg-[var(--color-accent)]" />
-            <span className="text-[var(--color-accent)] text-[10px]">2,847 online</span>
+            <span className="text-[var(--color-accent)] text-[10px]">Launching soon</span>
           </div>
         </div>
       </div>
@@ -255,7 +255,7 @@ const resources = [
     iconColor: "text-[var(--color-primary)]",
     bgColor: "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10",
     headline: "Join MigRent Discord",
-    subline: "Connect with thousands of migrants and hosts",
+    subline: "Connect with migrants and hosts across Australia",
     MockUI: MockDiscord,
     href: "/resources/discord",
     bullets: [
@@ -471,8 +471,8 @@ export default function Resources() {
                 {[
                   { value: "6", label: "Resource categories" },
                   { value: "8", label: "Languages supported" },
-                  { value: "2.8K+", label: "Discord members" },
-                  { value: "24/7", label: "Community support" },
+                  { value: "Soon", label: "Discord community" },
+                  { value: "7 days", label: "Safety response" },
                 ].map((stat, si) => (
                   <motion.div
                     key={stat.label}

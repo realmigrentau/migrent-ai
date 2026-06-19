@@ -52,7 +52,7 @@ export default function SeekerView({ loading, profile }: SeekerViewProps) {
     if (!profile.photo) {
       recommendations.push({
         title: "Add a profile photo",
-        desc: "Profiles with photos get 5x more responses from owners",
+        desc: "A profile photo feels more personal and helps owners say yes",
         icon: <Camera className="w-4 h-4" />,
         href: "/dashboard/seeker-profile",
         color: "bg-[var(--color-primary-soft)] text-[var(--color-primary)] dark:bg-[var(--color-primary-soft)]0/20 dark:text-[var(--color-primary)]",
@@ -85,7 +85,7 @@ export default function SeekerView({ loading, profile }: SeekerViewProps) {
     if (!profile.idVerified) {
       recommendations.push({
         title: "Verify your identity",
-        desc: "Verified seekers are 3x more likely to be accepted",
+        desc: "Verifying your ID builds trust and helps you stand out to owners",
         icon: <ShieldCheck className="w-4 h-4" />,
         href: "/dashboard/seeker-profile",
         color: "bg-[var(--color-warn-50)] text-[var(--color-warn-600)] dark:bg-[var(--color-warn-50)]0/20 dark:text-[var(--color-warn-500)]",
@@ -279,7 +279,7 @@ export default function SeekerView({ loading, profile }: SeekerViewProps) {
             Find your perfect room
           </h3>
           <p className="text-sm text-[var(--color-ink-3)] max-w-xs mx-auto">
-            Search thousands of verified rooms across Australia with AI-powered matching
+            Search verified rooms across Australia with AI-powered matching
           </p>
         </motion.div>
       </Link>

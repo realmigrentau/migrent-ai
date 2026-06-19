@@ -220,7 +220,7 @@ export default function RequestToBookForm({
       <div className="flex items-start gap-3 rounded-[6px] border-l-[3px] border-l-[var(--color-accent)] bg-[var(--color-accent-soft)] px-3.5 py-2.5">
         <Shield className="w-4 h-4 text-[var(--color-accent)] mt-0.5 shrink-0" />
         <div>
-          <div className="text-[13px] font-semibold text-[var(--color-ink)]">Bond Protect AU</div>
+          <div className="text-[13px] font-semibold text-[var(--color-ink)]">Bond protection</div>
           <div className="text-[12px] text-[var(--color-ink-2)] mt-0.5 leading-relaxed">
             Bond is held by escrow, not your landlord. Released only when both parties agree.
           </div>
