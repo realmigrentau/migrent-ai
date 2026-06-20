@@ -9,4 +9,4 @@ Disallow: /signup/
 Disallow: /payment-success
 Disallow: /payment-cancelled
 
-Sitemap: https://migrent-ai.vercel.app/sitemap.xml
+Sitemap: https://migrent.vercel.app/sitemap.xml

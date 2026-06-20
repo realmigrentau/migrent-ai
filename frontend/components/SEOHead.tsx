@@ -1,4 +1,6 @@
 import Head from "next/head";
+import { useRouter } from "next/router";
+import { SITE_URL } from "../lib/site";
 
 interface SEOHeadProps {
   title?: string;
@@ -18,7 +20,7 @@ interface SEOHeadProps {
 const SITE_NAME = "Migrent - AU Housing";
 const DEFAULT_DESC =
   "Find safe, verified rooms and accommodation across Australia. Built for migrants, students and working holiday makers.";
-const DEFAULT_OG = "https://migrent-ai.vercel.app/og-default.png";
+const DEFAULT_OG = `${SITE_URL}/og-default.png`;
 
 export default function SEOHead({
   title,
@@ -28,6 +30,18 @@ export default function SEOHead({
   noIndex = false,
   listing,
 }: SEOHeadProps) {
+  const router = useRouter();
+  // Self-referencing canonical on the production domain. Skipped on noindex
+  // pages and on dynamic routes whose [param] is not yet resolved at build.
+  const path = (router?.asPath || "/").split("?")[0].split("#")[0];
+  const resolvedCanonical =
+    canonical ??
+    (noIndex || path.includes("[")
+      ? undefined
+      : path === "/"
+      ? `${SITE_URL}/`
+      : `${SITE_URL}${path}`);
+
   const fullTitle = title ? `${title} | Migrent` : SITE_NAME;
 
   const jsonLd = listing
@@ -56,7 +70,7 @@ export default function SEOHead({
       <title>{fullTitle}</title>
       <meta name="description" content={description} />
       {noIndex && <meta name="robots" content="noindex,nofollow" />}
-      {canonical && <link rel="canonical" href={canonical} />}
+      {resolvedCanonical && <link rel="canonical" href={resolvedCanonical} />}
 
       {/* Open Graph */}
       <meta property="og:type" content="website" />
@@ -64,7 +78,7 @@ export default function SEOHead({
       <meta property="og:title" content={fullTitle} />
       <meta property="og:description" content={description} />
       <meta property="og:image" content={ogImage} />
-      {canonical && <meta property="og:url" content={canonical} />}
+      {resolvedCanonical && <meta property="og:url" content={resolvedCanonical} />}
 
       {/* Twitter */}
       <meta name="twitter:card" content="summary_large_image" />

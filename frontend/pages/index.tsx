@@ -458,9 +458,7 @@ export default function Home() {
         <meta property="og:title" content="MigRent - A real home in Australia" />
         <meta property="og:description" content="Verified rooms across Australia for migrants, students, and new arrivals." />
         <meta property="og:type" content="website" />
-        <meta property="og:image" content="/og-default.png" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:image" content="/og-default.png" />
       </Head>
 
       <PageSubnav

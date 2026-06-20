@@ -245,7 +245,7 @@ export default function SuburbPage() {
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <Link
-                href="/auth/register"
+                href="/signup"
                 className="inline-flex items-center px-8 py-3 bg-white font-semibold rounded-xl hover:bg-[var(--color-primary-50)] transition-colors"
                 style={{ color: "#0f766e" }}
               >
