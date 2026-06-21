@@ -1,6 +1,5 @@
-import { useRouter } from "next/router";
-import { useState, useEffect } from "react";
-import { ArrowLeft, Loader2 } from "lucide-react";
+import type { GetStaticPaths, GetStaticProps } from "next";
+import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import Head from "next/head";
 import SEOHead from "../../components/SEOHead";
@@ -11,8 +10,9 @@ import Liveability from "../../components/suburb/Liveability";
 import TransportCalculator from "../../components/suburb/TransportCalculator";
 import DemographicsCharts from "../../components/suburb/DemographicsCharts";
 import SuburbFAQ from "../../components/suburb/SuburbFAQ";
-
+import { SITE_URL } from "../../lib/site";
 import { API_BASE_URL as BASE_URL } from "../../lib/apiBase";
+
 interface SuburbData {
   slug: string;
   name: string;
@@ -44,81 +44,15 @@ interface SuburbData {
   faq: { q: string; a: string }[];
 }
 
-export default function SuburbPage() {
-  const router = useRouter();
-  const { name } = router.query;
-  const [suburb, setSuburb] = useState<SuburbData | null>(null);
-  const [listingsCount, setListingsCount] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+interface Props {
+  suburb: SuburbData;
+  listingsCount: number;
+}
 
-  useEffect(() => {
-    if (!name || typeof name !== "string") return;
-
-    const slug = name as string;
-    async function fetchSuburb() {
-      setLoading(true);
-      setError(null);
-      try {
-        const res = await fetch(`${BASE_URL}/suburb/${encodeURIComponent(slug)}/stats`);
-        if (!res.ok) {
-          if (res.status === 404) {
-            setError("Suburb not found");
-          } else {
-            setError("Failed to load suburb data");
-          }
-          return;
-        }
-        const data = await res.json();
-        setSuburb(data.suburb);
-        setListingsCount(data.live_listings_count || 0);
-      } catch (err) {
-        console.error("Failed to fetch suburb:", err);
-        setError("Failed to load suburb data");
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchSuburb();
-  }, [name]);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-[var(--color-surface)] dark:bg-[var(--color-bg)]">
-        <div className="flex flex-col items-center gap-4">
-          <Loader2 className="w-8 h-8 text-[var(--color-primary)] animate-spin" />
-          <p className="text-[var(--color-ink-3)]">Loading suburb data...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error || !suburb) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-[var(--color-surface)] dark:bg-[var(--color-bg)]">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-[var(--color-ink)] mb-2">
-            {error || "Suburb not found"}
-          </h1>
-          <p className="text-[var(--color-ink-3)] mb-6">
-            We don't have data for this suburb yet.
-          </p>
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 text-[var(--color-primary)] hover:text-[var(--color-primary-700)] font-medium"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back to home
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
+export default function SuburbPage({ suburb, listingsCount }: Props) {
   const pageTitle = `${suburb.name} Rooms: $${suburb.median_rent_room}/wk`;
-  const pageDescription = `Find verified rooms for rent in ${suburb.name}, Sydney. Median rent $${suburb.median_rent_room}/wk, ${suburb.vacancy_rate}% vacancy rate, safety score ${suburb.safety_score}/10. ${listingsCount} rooms available now.`;
-  const canonicalUrl = `https://migrent-ai.vercel.app/suburb/${suburb.slug}`;
+  const pageDescription = `Find verified rooms for rent in ${suburb.name}, ${suburb.state}. Median rent $${suburb.median_rent_room}/wk, ${suburb.vacancy_rate}% vacancy rate, safety score ${suburb.safety_score}/10. ${listingsCount} rooms available now.`;
+  const canonicalUrl = `${SITE_URL}/suburb/${suburb.slug}`;
 
   // Schema.org structured data for local area
   const jsonLd = {
@@ -252,7 +186,7 @@ export default function SuburbPage() {
                 Sign Up Free
               </Link>
               <Link
-                href={`/listings?suburb=${encodeURIComponent(suburb.name)}`}
+                href={`/seeker/search?city=${encodeURIComponent(suburb.name)}`}
                 className="inline-flex items-center px-8 py-3 border-2 border-white/30 font-semibold rounded-xl hover:bg-white/10 transition-colors"
                 style={{ color: "#ffffff" }}
               >
@@ -265,3 +199,42 @@ export default function SuburbPage() {
     </>
   );
 }
+
+// Don't pre-render at build time: this keeps deploys independent of the
+// backend (a slow or sleeping Render instance can never fail a build).
+// Pages are generated on first request and then cached (ISR).
+export const getStaticPaths: GetStaticPaths = async () => {
+  return { paths: [], fallback: "blocking" };
+};
+
+export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
+  const slug = String(params?.name || "").toLowerCase();
+  if (!slug) return { notFound: true };
+
+  const res = await fetch(`${BASE_URL}/suburb/${encodeURIComponent(slug)}/stats`);
+
+  // Genuinely no such suburb - cache the 404 but revalidate so it recovers
+  // automatically once the suburb is added to the backend.
+  if (res.status === 404) {
+    return { notFound: true, revalidate: 3600 };
+  }
+
+  // Transient backend error: throw so the page is NOT cached and retries on
+  // the next request, instead of caching a broken or empty page.
+  if (!res.ok) {
+    throw new Error(`Suburb stats fetch failed for "${slug}": ${res.status}`);
+  }
+
+  const data = await res.json();
+  if (!data?.suburb) {
+    return { notFound: true, revalidate: 3600 };
+  }
+
+  return {
+    props: {
+      suburb: data.suburb,
+      listingsCount: data.live_listings_count || 0,
+    },
+    revalidate: 3600,
+  };
+};

@@ -1,5 +1,6 @@
 import type { GetServerSideProps } from "next";
 import { SITE_URL } from "../lib/site";
+import { API_BASE_URL } from "../lib/apiBase";
 import { getAllPosts } from "../data/blogPosts";
 import guidesContent from "../data/guidesContent";
 
@@ -56,7 +57,7 @@ function urlTag(loc: string, changefreq: string, priority: string, lastmod: stri
   </url>`;
 }
 
-function generateSitemap(): string {
+function generateSitemap(suburbSlugs: string[] = []): string {
   const lastmod = new Date().toISOString().split("T")[0];
   const tags: string[] = [];
 
@@ -70,6 +71,9 @@ function generateSitemap(): string {
   for (const guide of guidesContent) {
     tags.push(urlTag(`${SITE_URL}/guides/${guide.id}`, "monthly", "0.6", lastmod));
   }
+  for (const slug of suburbSlugs) {
+    tags.push(urlTag(`${SITE_URL}/suburb/${slug}`, "weekly", "0.7", lastmod));
+  }
 
   return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -78,12 +82,28 @@ ${tags.join("\n")}
 }
 
 export const getServerSideProps: GetServerSideProps = async ({ res }) => {
+  // Pull the live suburb list from the backend so any suburb that exists gets
+  // into the sitemap. If the backend is unreachable, ship the sitemap without
+  // suburb URLs rather than failing the whole sitemap.
+  let suburbSlugs: string[] = [];
+  try {
+    const r = await fetch(`${API_BASE_URL}/suburb/`);
+    if (r.ok) {
+      const data = await r.json();
+      suburbSlugs = (data.suburbs || [])
+        .map((s: { slug?: string }) => s.slug)
+        .filter((s: string | undefined): s is string => Boolean(s));
+    }
+  } catch {
+    // Backend unreachable - sitemap still ships with all static + content URLs.
+  }
+
   res.setHeader("Content-Type", "application/xml; charset=utf-8");
   res.setHeader(
     "Cache-Control",
     "public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400"
   );
-  res.write(generateSitemap());
+  res.write(generateSitemap(suburbSlugs));
   res.end();
   return { props: {} };
 };
