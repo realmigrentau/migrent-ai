@@ -189,7 +189,7 @@ export default function HelpCenter() {
             <h1 className="text-3xl md:text-4xl font-black mb-2 tracking-tight">
               How can we help?
             </h1>
-            <p className="text-[var(--color-primary-fg)] text-sm md:text-base mb-6 max-w-lg">
+            <p className="text-[color:var(--color-primary-fg)] text-sm md:text-base mb-6 max-w-lg">
               Search our help articles, browse by category, or contact our support team.
             </p>
 

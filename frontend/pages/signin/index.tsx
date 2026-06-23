@@ -79,7 +79,7 @@ export default function SignIn() {
       />
       <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_1fr] min-h-[calc(100vh-60px)] -mt-[60px] lg:mt-0">
       {/* Brand panel */}
-      <div className="hidden lg:flex flex-col justify-between p-14 bg-[var(--color-primary)] text-[var(--color-primary-fg)]">
+      <div className="hidden lg:flex flex-col justify-between p-14 bg-[var(--color-primary)] text-[color:var(--color-primary-fg)]">
         <Link href="/" className="inline-flex items-center gap-2.5">
           <Logo size={28} />
           <span className="font-serif text-[24px] leading-none tracking-[-0.012em]">MigRent</span>

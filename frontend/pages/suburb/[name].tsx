@@ -173,7 +173,7 @@ export default function SuburbPage({ suburb, listingsCount }: Props) {
             <h2 className="text-2xl sm:text-3xl font-bold mb-3">
               Ready to find your room in {suburb.name}?
             </h2>
-            <p className="text-[var(--color-primary-fg)] mb-6 max-w-xl mx-auto">
+            <p className="text-[color:var(--color-primary-fg)] mb-6 max-w-xl mx-auto">
               Find your next home with MigRent - verified listings, ID-checked
               hosts, and no scams.
             </p>

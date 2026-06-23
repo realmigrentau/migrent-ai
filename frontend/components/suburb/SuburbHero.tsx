@@ -47,7 +47,7 @@ export default function SuburbHero({
           {name} Rooms for Rent
         </h1>
 
-        <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-lg text-[var(--color-primary-fg)] mb-8">
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-lg text-[color:var(--color-primary-fg)] mb-8">
           <span className="flex items-center gap-2">
             Median room: <strong className="text-white">${medianRent}/wk</strong>
           </span>

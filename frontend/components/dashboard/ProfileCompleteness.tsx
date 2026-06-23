@@ -58,7 +58,7 @@ export default function ProfileCompleteness({ profile, role, loading }: ProfileC
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="3"
-                className="text-[var(--color-primary-fg)] dark:text-[var(--color-ink)]"
+                className="text-[color:var(--color-primary-fg)] dark:text-[var(--color-ink)]"
               />
               <motion.circle
                 cx="24" cy="24" r="20"

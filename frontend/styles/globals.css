@@ -62,8 +62,8 @@
   /* ── Ink + surfaces (light - Sand & Ocean default) ── */
   --color-ink: #1e2a36;          /* primary text - deep ink-navy */
   --color-ink-2: #49555f;        /* body */
-  --color-ink-muted: #6e7882;    /* muted */
-  --color-ink-3: #6e7882;
+  --color-ink-muted: #555f6a;    /* muted - darkened to meet WCAG AA (4.5:1) on light surfaces */
+  --color-ink-3: #555f6a;
   --color-ink-4: #9aa1a8;        /* placeholder */
 
   --color-bg: #eef0ea;           /* light coastal sand canvas */

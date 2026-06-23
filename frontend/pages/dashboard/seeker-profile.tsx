@@ -111,7 +111,7 @@ export default function SeekerProfilePage() {
                 )}
               </div>
               <span
-                className="absolute right-1 bottom-1 w-[26px] h-[26px] rounded-full flex items-center justify-center text-[var(--color-accent-fg)]"
+                className="absolute right-1 bottom-1 w-[26px] h-[26px] rounded-full flex items-center justify-center text-[color:var(--color-accent-fg)]"
                 style={{
                   background: "var(--color-accent)",
                   border: "3px solid var(--color-surface)",
@@ -429,7 +429,7 @@ function VerificationRow({
       ) : uploadHref ? (
         <Link
           href={uploadHref}
-          className="inline-flex items-center gap-1 h-8 px-3 rounded-[8px] bg-[var(--color-primary)] text-[var(--color-primary-fg)] text-[12.5px] font-semibold shrink-0"
+          className="inline-flex items-center gap-1 h-8 px-3 rounded-[8px] bg-[var(--color-primary)] text-[color:var(--color-primary-fg)] text-[12.5px] font-semibold shrink-0"
         >
           <Upload className="w-3 h-3" /> Upload
         </Link>

@@ -599,8 +599,8 @@ function FormField({
         maxLength={maxLength}
         className={`w-full px-3.5 py-2.5 border rounded-lg text-sm transition-colors outline-none ${
           error
-            ? "border-[var(--color-danger-500)]/30 dark:border-red-700 bg-[var(--color-danger-50)]/50 dark:bg-red-950/30 text-[var(--color-ink)] dark:text-[var(--color-primary-fg)] focus:border-red-400 dark:focus:border-red-600 focus:ring-1 focus:ring-red-100 dark:focus:ring-red-900/50"
-            : "border-[var(--color-line)] bg-[var(--color-surface-2)] text-[var(--color-ink)] dark:text-[var(--color-primary-fg)] focus:border-slate-400 dark:focus:border-slate-500 focus:ring-1 focus:ring-slate-100 dark:focus:ring-slate-700/50"
+            ? "border-[var(--color-danger-500)]/30 dark:border-red-700 bg-[var(--color-danger-50)]/50 dark:bg-red-950/30 text-[var(--color-ink)] dark:text-[color:var(--color-primary-fg)] focus:border-red-400 dark:focus:border-red-600 focus:ring-1 focus:ring-red-100 dark:focus:ring-red-900/50"
+            : "border-[var(--color-line)] bg-[var(--color-surface-2)] text-[var(--color-ink)] dark:text-[color:var(--color-primary-fg)] focus:border-slate-400 dark:focus:border-slate-500 focus:ring-1 focus:ring-slate-100 dark:focus:ring-slate-700/50"
         }`}
       />
       {hint && !error && (

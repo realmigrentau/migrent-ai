@@ -80,7 +80,7 @@ const VARIANT_STYLES: Record<ToastVariant, string> = {
   error:
     "bg-rose-50/95 dark:bg-rose-500/15 border-rose-200 dark:border-rose-500/30 text-rose-900 dark:text-rose-100",
   info:
-    "bg-[var(--color-surface)]/95 dark:bg-[var(--color-surface-muted)]/95 border-[var(--color-line)] text-[var(--color-ink)] dark:text-[var(--color-primary-fg)]",
+    "bg-[var(--color-surface)]/95 dark:bg-[var(--color-surface-muted)]/95 border-[var(--color-line)] text-[var(--color-ink)] dark:text-[color:var(--color-primary-fg)]",
   warning:
     "bg-[var(--color-warn-50)]/95 dark:bg-[var(--color-warn-50)]0/15 border-[var(--color-line-2)] dark:border-amber-500/30 text-[var(--color-warn-600)] dark:text-amber-100",
 };

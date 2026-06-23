@@ -18,7 +18,7 @@ const base =
 
 const variants: Record<Variant, string> = {
   primary:
-    'bg-[var(--color-primary)] text-[var(--color-primary-fg)] hover:bg-[var(--color-primary-500)] active:bg-[var(--color-primary-700)]',
+    'bg-[var(--color-primary)] text-[color:var(--color-primary-fg)] hover:bg-[var(--color-primary-500)] active:bg-[var(--color-primary-700)]',
   secondary:
     'bg-[var(--color-surface-2)] text-[var(--color-ink)] border border-[var(--color-line-2)] hover:bg-[var(--color-surface)] hover:border-[var(--color-ink-3)]',
   ghost:
@@ -26,7 +26,7 @@ const variants: Record<Variant, string> = {
   destructive:
     'bg-[var(--color-danger-500)] text-white hover:opacity-90',
   accent:
-    'bg-[var(--color-accent)] text-[var(--color-accent-fg)] hover:bg-[var(--color-accent-600)]',
+    'bg-[var(--color-accent)] text-[color:var(--color-accent-fg)] hover:bg-[var(--color-accent-600)]',
   link:
     'bg-transparent text-[var(--color-ink)] hover:underline underline-offset-[3px] decoration-[1.5px] !px-0',
 };

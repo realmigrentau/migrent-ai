@@ -671,7 +671,7 @@ export default function SeekerSearch() {
               <span className="text-[11px] text-[var(--color-ink-3)] self-center mr-0.5">Walk:</span>
               {(["15", "30", "any"] as const).map((val) => (
                 <button key={val} onClick={() => setStationDistanceFilter(val)}
-                  className={`px-2.5 py-1 rounded-lg text-[11px] font-medium transition-all ${stationDistanceFilter === val ? "bg-[var(--color-accent)] text-[var(--color-primary-fg)] shadow-sm" : "bg-[var(--color-surface-sunk)] text-[var(--color-ink-2)] hover:bg-[var(--color-line)]"}`}>
+                  className={`px-2.5 py-1 rounded-lg text-[11px] font-medium transition-all ${stationDistanceFilter === val ? "bg-[var(--color-accent)] text-[color:var(--color-primary-fg)] shadow-sm" : "bg-[var(--color-surface-sunk)] text-[var(--color-ink-2)] hover:bg-[var(--color-line)]"}`}>
                   {val === "15" ? "< 15 min" : val === "30" ? "< 30 min" : "Any"}
                 </button>
               ))}
@@ -970,7 +970,7 @@ export default function SeekerSearch() {
                           </button>
                           {/* Instant book badge */}
                           {listing.instantBook && (
-                            <div className="absolute bottom-3 left-3 px-2 py-1 rounded-md bg-[var(--color-accent)]/90 backdrop-blur-sm text-[var(--color-primary-fg)] text-xs font-semibold flex items-center gap-1">
+                            <div className="absolute bottom-3 left-3 px-2 py-1 rounded-md bg-[var(--color-accent)]/90 backdrop-blur-sm text-[color:var(--color-primary-fg)] text-xs font-semibold flex items-center gap-1">
                               <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
                               Instant
                             </div>

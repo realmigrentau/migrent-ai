@@ -97,7 +97,7 @@ export default function PageSubnav({
               {cta && (
                 <Link
                   href={cta.href}
-                  className="bg-[var(--color-primary)] text-[var(--color-primary-fg)] hover:bg-[var(--color-primary-500)] transition-colors h-8 px-4 rounded-full text-[12.5px] font-semibold inline-flex items-center whitespace-nowrap shrink-0"
+                  className="bg-[var(--color-primary)] text-[color:var(--color-primary-fg)] hover:bg-[var(--color-primary-500)] transition-colors h-8 px-4 rounded-full text-[12.5px] font-semibold inline-flex items-center whitespace-nowrap shrink-0"
                 >
                   {cta.label}
                 </Link>

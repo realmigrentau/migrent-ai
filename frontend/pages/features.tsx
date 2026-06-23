@@ -89,7 +89,7 @@ function MockBooking() {
         <hr className="rule-soft my-3" />
         <div className="flex justify-between text-[14px] font-semibold text-[var(--color-ink)]"><span>Move-in total</span><span className="font-mono tabular-nums">$1,860</span></div>
       </div>
-      <div className="h-11 rounded-[var(--radius-card)] bg-[var(--color-primary)] text-[var(--color-primary-fg)] flex items-center justify-center gap-2 text-[14px] font-semibold">
+      <div className="h-11 rounded-[var(--radius-card)] bg-[var(--color-primary)] text-[color:var(--color-primary-fg)] flex items-center justify-center gap-2 text-[14px] font-semibold">
         <Zap className="w-4 h-4" /> Book instantly
       </div>
       <div className="flex items-center justify-center gap-1.5 text-[11.5px] text-[var(--color-ink-3)] mt-3"><Lock className="w-3 h-3" /> Secured by Stripe</div>
@@ -108,7 +108,7 @@ function MockFilters() {
       </div>
       <div className="flex flex-wrap gap-2">
         {on.map((f) => (
-          <span key={f} className="inline-flex items-center gap-1.5 text-[12.5px] font-semibold text-[var(--color-primary-fg)] bg-[var(--color-primary)] rounded-full px-3.5 py-2">
+          <span key={f} className="inline-flex items-center gap-1.5 text-[12.5px] font-semibold text-[color:var(--color-primary-fg)] bg-[var(--color-primary)] rounded-full px-3.5 py-2">
             <Check className="w-3 h-3" strokeWidth={2.8} /> {f}
           </span>
         ))}

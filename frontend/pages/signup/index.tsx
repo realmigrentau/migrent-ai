@@ -187,7 +187,7 @@ export default function SignUp() {
       </div>
 
       {/* Brand panel (right) */}
-      <div className="hidden lg:flex flex-col justify-between p-14 bg-[var(--color-primary)] text-[var(--color-primary-fg)] order-1 lg:order-2">
+      <div className="hidden lg:flex flex-col justify-between p-14 bg-[var(--color-primary)] text-[color:var(--color-primary-fg)] order-1 lg:order-2">
         <Link href="/" className="inline-flex items-center gap-2.5">
           <Logo size={28} />
           <span className="font-serif text-[24px] leading-none tracking-[-0.012em]">MigRent</span>

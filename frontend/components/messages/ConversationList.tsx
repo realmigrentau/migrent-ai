@@ -230,7 +230,7 @@ function ThreadItem({
         {/* Verified check */}
         {!isSupport && (
           <span
-            className="absolute -right-0.5 -bottom-0.5 w-[14px] h-[14px] rounded-full flex items-center justify-center text-[var(--color-accent-fg)]"
+            className="absolute -right-0.5 -bottom-0.5 w-[14px] h-[14px] rounded-full flex items-center justify-center text-[color:var(--color-accent-fg)]"
             style={{ background: "var(--color-accent)", border: "2px solid var(--color-surface)" }}
           >
             <svg width="8" height="8" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
@@ -276,7 +276,7 @@ function ThreadItem({
             {status}
           </motion.span>
           {unread && (
-            <span className="ml-auto inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[10.5px] font-bold text-[var(--color-primary-fg)] bg-[var(--color-primary)] tabular-nums">
+            <span className="ml-auto inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[10.5px] font-bold text-[color:var(--color-primary-fg)] bg-[var(--color-primary)] tabular-nums">
               {thread.unread_count}
             </span>
           )}

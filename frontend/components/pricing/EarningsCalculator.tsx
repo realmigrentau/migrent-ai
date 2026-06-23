@@ -33,6 +33,7 @@ function SliderInput({
       </div>
       <input
         type="range"
+        aria-label={label}
         min={min}
         max={max}
         step={step}
@@ -190,7 +191,7 @@ export default function EarningsCalculator() {
             >
               <div className="flex items-center gap-2 mb-3">
                 <div className="w-8 h-8 rounded-lg bg-[var(--color-accent)] flex items-center justify-center">
-                  <DollarSign className="w-4 h-4 text-[var(--color-accent-fg)]" />
+                  <DollarSign className="w-4 h-4 text-[color:var(--color-accent-fg)]" />
                 </div>
                 <span className="text-sm font-semibold text-[var(--color-ink)]">
                   Your Annual Take-Home

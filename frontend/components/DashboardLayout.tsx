@@ -223,7 +223,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             {!sidebarCollapsed && (
               <div className="flex items-center gap-3 mb-5 pb-5 border-b border-[var(--color-line)]">
                 <div
-                  className={`w-10 h-10 rounded-[10px] flex items-center justify-center text-[var(--color-primary-fg)] font-semibold text-sm overflow-hidden shrink-0 ${
+                  className={`w-10 h-10 rounded-[10px] flex items-center justify-center text-[color:var(--color-primary-fg)] font-semibold text-sm overflow-hidden shrink-0 ${
                     profilePhoto
                       ? ""
                       : isOwner ? "bg-[var(--color-accent)]" : "bg-[var(--color-primary)]"
@@ -259,7 +259,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             {sidebarCollapsed && (
               <div className="flex justify-center mb-4 pb-4 border-b border-[var(--color-line)]">
                 <div
-                  className={`w-9 h-9 rounded-[10px] flex items-center justify-center text-[var(--color-primary-fg)] font-semibold text-xs overflow-hidden ${
+                  className={`w-9 h-9 rounded-[10px] flex items-center justify-center text-[color:var(--color-primary-fg)] font-semibold text-xs overflow-hidden ${
                     profilePhoto
                       ? ""
                       : isOwner ? "bg-[var(--color-accent)]" : "bg-[var(--color-primary)]"

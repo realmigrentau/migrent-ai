@@ -113,6 +113,7 @@ export default function MentorsPage() {
             <select
               value={language}
               onChange={(e) => setLanguage(e.target.value)}
+              aria-label="Filter mentors by language"
               className="px-4 py-2.5 bg-[var(--color-surface)] border border-[var(--color-line)] rounded-xl text-sm focus:ring-2 focus:ring-[var(--color-ink)]/30 focus:border-transparent outline-none"
             >
               <option value="">All Languages</option>

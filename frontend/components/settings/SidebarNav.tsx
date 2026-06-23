@@ -97,7 +97,7 @@ export default function SidebarNav({
                     >
                       <span className="flex-1">{item.label}</span>
                       {item.id === "support" && ticketCount > 0 && (
-                        <span className="font-mono text-[10.5px] font-bold text-[var(--color-primary-fg)] bg-[var(--color-primary)] rounded-full px-1.5 py-0.5 min-w-[18px] text-center">
+                        <span className="font-mono text-[10.5px] font-bold text-[color:var(--color-primary-fg)] bg-[var(--color-primary)] rounded-full px-1.5 py-0.5 min-w-[18px] text-center">
                           {ticketCount}
                         </span>
                       )}
@@ -177,7 +177,7 @@ export default function SidebarNav({
                             >
                               <span className="flex-1">{item.label}</span>
                               {item.id === "support" && ticketCount > 0 && (
-                                <span className="font-mono text-[10.5px] font-bold text-[var(--color-primary-fg)] bg-[var(--color-primary)] rounded-full px-1.5 py-0.5">
+                                <span className="font-mono text-[10.5px] font-bold text-[color:var(--color-primary-fg)] bg-[var(--color-primary)] rounded-full px-1.5 py-0.5">
                                   {ticketCount}
                                 </span>
                               )}

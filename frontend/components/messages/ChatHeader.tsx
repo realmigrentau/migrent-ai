@@ -101,7 +101,7 @@ export default function ChatHeader({
               )}
             </div>
             <span
-              className="absolute -right-0.5 -bottom-0.5 w-[14px] h-[14px] rounded-full flex items-center justify-center text-[var(--color-accent-fg)]"
+              className="absolute -right-0.5 -bottom-0.5 w-[14px] h-[14px] rounded-full flex items-center justify-center text-[color:var(--color-accent-fg)]"
               style={{
                 background: "var(--color-accent)",
                 border: "2px solid var(--color-surface)",

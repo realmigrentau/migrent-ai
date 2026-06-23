@@ -80,8 +80,8 @@ export default function ComparisonTable() {
                 </th>
                 <th className="text-center p-4 min-w-[100px]">
                   <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--color-primary)]">
-                    <Sparkles className="w-3 h-3 text-[var(--color-primary-fg)]" />
-                    <span className="font-semibold text-[var(--color-primary-fg)]">MigRent</span>
+                    <Sparkles className="w-3 h-3 text-[color:var(--color-primary-fg)]" />
+                    <span className="font-semibold text-[color:var(--color-primary-fg)]">MigRent</span>
                   </div>
                 </th>
               </tr>
