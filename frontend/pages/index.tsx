@@ -506,7 +506,7 @@ export default function Home() {
                   </div>
                   <input type="range" min={150} max={1000} step={5} value={budget} onChange={(e) => setBudget(+e.target.value)} aria-label={`Weekly budget: up to $${budget} AUD`} className="premium-range w-full mt-2.5" />
                 </div>
-                <Link href={`/seeker/search?city=${encodeURIComponent(city)}&maxPrice=${budget}`} className="mt-4 w-full bg-[var(--color-primary)] text-[color:var(--color-primary-fg)] text-[15px] font-semibold h-12 rounded-[var(--radius-card)] hover:bg-[var(--color-primary-500)] transition-colors inline-flex items-center justify-center gap-2">
+                <Link href={`/seeker/search?city=${encodeURIComponent(city)}&maxPrice=${budget}`} style={{ color: "var(--color-primary-fg)" }} className="mt-4 w-full bg-[var(--color-primary)] text-[color:var(--color-primary-fg)] text-[15px] font-semibold h-12 rounded-[var(--radius-card)] hover:bg-[var(--color-primary-500)] transition-colors inline-flex items-center justify-center gap-2">
                   Search rooms up to ${budget}/wk <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
