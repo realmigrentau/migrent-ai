@@ -372,6 +372,7 @@ export default function MegaNavbar() {
             ) : (
               <Link
                 href="/signup"
+                style={{ color: "var(--color-primary-fg)" }}
                 className="px-4 h-9 inline-flex items-center justify-center rounded-full text-sm font-semibold bg-[var(--color-primary)] text-[color:var(--color-primary-fg)] hover:bg-[var(--color-primary-500)] transition-colors"
               >
                 {t("nav.signUp")}
@@ -547,6 +548,7 @@ export default function MegaNavbar() {
               ) : (
                 <Link
                   href="/signup"
+                  style={{ color: "var(--color-primary-fg)" }}
                   className="block mt-2 px-4 py-2.5 rounded-full text-sm font-semibold text-center bg-[var(--color-primary)] text-[color:var(--color-primary-fg)] hover:bg-[var(--color-primary-500)] transition-colors"
                 >
                   {t("nav.signUp")}
