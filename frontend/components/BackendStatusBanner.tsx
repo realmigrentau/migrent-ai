@@ -4,6 +4,10 @@ import { API_BASE_URL as API_BASE } from "../lib/apiBase";
 const POLL_OK_MS = 60_000;
 const POLL_FAIL_MS = 15_000;
 const REQUEST_TIMEOUT_MS = 6_000;
+// Only surface the banner after several consecutive failures, so a routine
+// backend cold-start (which resolves in ~30-60s) doesn't flash a scary
+// "servers down" message at visitors who are just browsing marketing pages.
+const FAIL_THRESHOLD = 3;
 
 type Status = "unknown" | "ok" | "down";
 
@@ -28,6 +32,7 @@ export default function BackendStatusBanner() {
   const [status, setStatus] = useState<Status>("unknown");
   const [dismissed, setDismissed] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const failCount = useRef(0);
 
   useEffect(() => {
     let cancelled = false;
@@ -35,7 +40,15 @@ export default function BackendStatusBanner() {
     const tick = async () => {
       const ok = await pingHealth();
       if (cancelled) return;
-      setStatus(ok ? "ok" : "down");
+      if (ok) {
+        failCount.current = 0;
+        setStatus("ok");
+      } else {
+        failCount.current += 1;
+        // Stay quiet until the backend has been unreachable several times in
+        // a row - this rides out a normal cold-start without alarming anyone.
+        if (failCount.current >= FAIL_THRESHOLD) setStatus("down");
+      }
       timer.current = setTimeout(tick, ok ? POLL_OK_MS : POLL_FAIL_MS);
     };
 
@@ -57,11 +70,11 @@ export default function BackendStatusBanner() {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 flex items-center gap-3 text-[13px]">
         <span className="inline-flex w-2 h-2 rounded-full bg-[var(--color-warn-500)] flex-shrink-0" />
-        <span className="font-semibold text-[var(--color-warn-500)]">
-          MigRent is having trouble reaching our servers.
+        <span className="font-semibold text-[var(--color-ink)]">
+          Reconnecting to live data…
         </span>
         <span className="text-[var(--color-ink-2)] hidden sm:inline">
-          Search, messages, and bookings may be delayed. We&apos;re on it.
+          Search, messages, and bookings may be briefly delayed.
         </span>
         <div className="flex-1" />
         <button
