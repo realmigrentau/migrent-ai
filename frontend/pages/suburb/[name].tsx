@@ -91,6 +91,14 @@ export default function SuburbPage({ suburb, listingsCount }: Props) {
         }
       : null;
 
+  // Only render rich sections that actually have data, so a suburb can be
+  // added with just the core fields (rent, vacancy, safety) without showing
+  // empty or zeroed-out demographics / transport / FAQ shells.
+  const hasLiveability = (suburb.pros?.length ?? 0) > 0 || (suburb.cons?.length ?? 0) > 0;
+  const hasTransport = (suburb.nearest_stations?.length ?? 0) > 0;
+  const hasDemographics = !!suburb.demographics && Object.keys(suburb.demographics).length > 0;
+  const hasFaq = (suburb.faq?.length ?? 0) > 0;
+
   return (
     <>
       <SEOHead
@@ -148,25 +156,31 @@ export default function SuburbPage({ suburb, listingsCount }: Props) {
             listingsCount={listingsCount}
           />
 
-          <Liveability
-            pros={suburb.pros}
-            cons={suburb.cons}
-            suburbName={suburb.name}
-          />
+          {hasLiveability && (
+            <Liveability
+              pros={suburb.pros}
+              cons={suburb.cons}
+              suburbName={suburb.name}
+            />
+          )}
 
-          <TransportCalculator
-            suburbName={suburb.name}
-            stations={suburb.nearest_stations}
-            transportScore={suburb.transport_score}
-          />
+          {hasTransport && (
+            <TransportCalculator
+              suburbName={suburb.name}
+              stations={suburb.nearest_stations}
+              transportScore={suburb.transport_score}
+            />
+          )}
 
-          <DemographicsCharts
-            demographics={suburb.demographics}
-            rentTrend={suburb.rent_trend}
-            suburbName={suburb.name}
-          />
+          {hasDemographics && (
+            <DemographicsCharts
+              demographics={suburb.demographics}
+              rentTrend={suburb.rent_trend}
+              suburbName={suburb.name}
+            />
+          )}
 
-          <SuburbFAQ faqs={suburb.faq} suburbName={suburb.name} />
+          {hasFaq && <SuburbFAQ faqs={suburb.faq} suburbName={suburb.name} />}
 
           {/* Bottom CTA */}
           <section className="rounded-2xl bg-[var(--color-primary)] from-[var(--color-primary)] to-[var(--color-accent)] p-8 sm:p-12 text-center text-white">
