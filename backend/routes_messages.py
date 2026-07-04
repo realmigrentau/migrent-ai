@@ -121,7 +121,7 @@ def send_message(
                 if listing_res.data:
                     listing_title = listing_res.data[0].get("title") or listing_res.data[0].get("address")
 
-            FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:3000")
+            FRONTEND_URL = os.environ.get("FRONTEND_URL", "https://migrent.vercel.app")
             if body.listing_id:
                 thread_url = f"{FRONTEND_URL}/messages?listing={body.listing_id}&user={body.sender_id}"
             else:
@@ -146,7 +146,7 @@ def send_message(
         if sender_prof.data:
             push_sender_name = sender_prof.data[0].get("preferred_name") or sender_prof.data[0].get("name", "Someone")
 
-        FRONTEND = os.environ.get("FRONTEND_URL", "http://localhost:3000")
+        FRONTEND = os.environ.get("FRONTEND_URL", "https://migrent.vercel.app")
         if body.listing_id:
             push_url = f"{FRONTEND}/messages?listing={body.listing_id}&user={body.sender_id}"
         else:
@@ -163,7 +163,7 @@ def send_message(
 
     # In-app notification for receiver
     try:
-        FRONTEND = os.environ.get("FRONTEND_URL", "http://localhost:3000")
+        FRONTEND = os.environ.get("FRONTEND_URL", "https://migrent.vercel.app")
         if body.listing_id:
             notif_url = f"/messages?listing={body.listing_id}&user={body.sender_id}"
         else:

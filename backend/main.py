@@ -61,6 +61,7 @@ FRONTEND_URL = os.environ.get("FRONTEND_URL", "")
 ENV = os.environ.get("ENV", "development")
 
 allowed_origins = [
+    "https://migrent.vercel.app",
     "https://migrent-ai.vercel.app",
 ]
 # Only allow localhost in development

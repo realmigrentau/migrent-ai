@@ -15,7 +15,7 @@ router = APIRouter(prefix="/mentors", tags=["mentors"])
 STRIPE_SECRET_KEY = os.environ.get("STRIPE_SECRET_KEY", "")
 stripe.api_key = STRIPE_SECRET_KEY
 
-FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:3000")
+FRONTEND_URL = os.environ.get("FRONTEND_URL", "https://migrent.vercel.app")
 PLATFORM_FEE_PERCENT = 30  # MigRent takes 30%
 
 

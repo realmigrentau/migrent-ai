@@ -23,7 +23,7 @@ stripe.api_key = STRIPE_SECRET_KEY
 OWNER_FEE_AUD = 9900  # AUD 99.00 in cents
 SEEKER_FEE_AUD = 1900  # AUD 19.00 in cents
 
-FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:3000")
+FRONTEND_URL = os.environ.get("FRONTEND_URL", "https://migrent.vercel.app")
 BOOKING_SUCCESS_URL = f"{FRONTEND_URL}/booking-success?session_id={{CHECKOUT_SESSION_ID}}"
 BOOKING_CANCEL_URL = f"{FRONTEND_URL}/booking-cancelled"
 

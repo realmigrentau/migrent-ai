@@ -11,7 +11,7 @@ stripe.api_key = STRIPE_SECRET_KEY
 
 VERIFICATION_FEE_AUD = 1900  # AUD 19.00 in cents
 
-FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:3000")
+FRONTEND_URL = os.environ.get("FRONTEND_URL", "https://migrent.vercel.app")
 VERIFICATION_SUCCESS_URL = f"{FRONTEND_URL}/verification-success?session_id={{CHECKOUT_SESSION_ID}}"
 VERIFICATION_CANCEL_URL = f"{FRONTEND_URL}/verification-cancelled"
 

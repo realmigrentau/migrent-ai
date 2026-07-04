@@ -14,7 +14,7 @@ MAILJET_API_KEY = os.environ.get("MAILJET_API_KEY", "")
 MAILJET_SECRET_KEY = os.environ.get("MAILJET_SECRET_KEY", "")
 FROM_EMAIL = os.environ.get("FROM_EMAIL", "migrentau@gmail.com")
 FROM_NAME = os.environ.get("FROM_NAME", "MigRent")
-FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:3000")
+FRONTEND_URL = os.environ.get("FRONTEND_URL", "https://migrent.vercel.app")
 
 BRAND_COLOR = "#E11D48"
 BRAND_BG = "#f6f9fc"
