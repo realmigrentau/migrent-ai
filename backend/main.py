@@ -112,6 +112,7 @@ app.include_router(webhook_router)
 
 
 @app.api_route("/", methods=["GET", "HEAD"])
+@app.api_route("/health", methods=["GET", "HEAD"])
 def health():
     return {"status": "ok"}
 
