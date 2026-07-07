@@ -526,10 +526,10 @@ export default function Home() {
                   className="absolute inset-0"
                   style={{
                     background: `
-                      radial-gradient(115% 85% at 82% 12%, color-mix(in oklab, var(--color-primary) 58%, transparent), transparent 64%),
-                      radial-gradient(95% 75% at 12% 88%, color-mix(in oklab, var(--color-accent) 46%, transparent), transparent 60%),
-                      radial-gradient(70% 55% at 20% 22%, color-mix(in oklab, var(--color-warn-500) 20%, transparent), transparent 58%),
-                      var(--color-ink)`,
+                      radial-gradient(120% 90% at 78% 8%, color-mix(in oklab, var(--color-primary-400) 82%, transparent), transparent 62%),
+                      radial-gradient(105% 80% at 8% 94%, color-mix(in oklab, var(--color-accent) 62%, transparent), transparent 60%),
+                      radial-gradient(95% 60% at 58% 84%, color-mix(in oklab, var(--color-warn-500) 42%, transparent), transparent 62%),
+                      linear-gradient(168deg, color-mix(in oklab, var(--color-primary) 52%, var(--color-ink)) 0%, var(--color-ink) 80%)`,
                   }}
                 />
                 <svg aria-hidden="true" className="absolute inset-0 w-full h-full opacity-[0.08] mix-blend-overlay" xmlns="http://www.w3.org/2000/svg">
