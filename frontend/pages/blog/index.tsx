@@ -53,7 +53,7 @@ export default function BlogIndex() {
             </div>
 
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight leading-tight">
-              <span className="bg-[var(--color-primary)] from-[var(--color-primary)] via-[var(--color-primary)] to-[var(--color-primary)] bg-clip-text text-transparent">
+              <span className="text-[color:var(--color-primary)]">
                 Tips, News & Stories
               </span>
             </h1>

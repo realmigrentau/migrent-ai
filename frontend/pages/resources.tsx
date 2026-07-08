@@ -331,7 +331,7 @@ export default function Resources() {
             </div>
 
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight leading-tight">
-              <span className="bg-[var(--color-primary)] from-[var(--color-primary)] via-[var(--color-primary)] to-[var(--color-primary)] bg-clip-text text-transparent">
+              <span className="text-[color:var(--color-primary)]">
                 Resources for MigRent
               </span>
               <br />
@@ -481,7 +481,7 @@ export default function Resources() {
                     viewport={{ once: true }}
                     transition={{ delay: si * 0.1, duration: 0.5 }}
                   >
-                    <div className="text-2xl md:text-3xl font-black bg-[var(--color-primary)] from-[var(--color-primary)] to-[var(--color-primary)] bg-clip-text text-transparent">
+                    <div className="text-2xl md:text-3xl font-black text-[color:var(--color-primary)]">
                       {stat.value}
                     </div>
                     <div className="text-xs text-[var(--color-ink-3)] mt-1 font-medium">{stat.label}</div>

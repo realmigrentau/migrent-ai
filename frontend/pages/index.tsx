@@ -367,7 +367,7 @@ function VerifiedCurtain() {
 
 export default function Home() {
   const [budget, setBudget] = useState(350);
-  const [city, setCity] = useState("Melbourne, VIC");
+  const [city, setCity] = useState("Sydney");
   const [listings, setListings] = useState<Listing[]>([]);
   const [listingsLoading, setListingsLoading] = useState(true);
   const reduced = useReducedMotion();

@@ -81,7 +81,7 @@ export default function ROICalculator() {
             ROI Calculator
           </div>
           <h1 className="text-3xl md:text-4xl font-black tracking-tight text-[var(--color-ink)]">
-            Estimate Your <span className="bg-[var(--color-primary)] from-[var(--color-accent)] to-[var(--color-accent)] bg-clip-text text-transparent">Rental Income</span>
+            Estimate Your <span className="text-[color:var(--color-primary)]">Rental Income</span>
           </h1>
           <p className="mt-3 text-[var(--color-ink-3)] max-w-xl mx-auto">
             Calculate potential returns from listing your spare room on MigRent AI.
@@ -210,13 +210,13 @@ export default function ROICalculator() {
             {/* Key metrics */}
             <div className="grid grid-cols-2 gap-4">
               <div className="card rounded-2xl p-5 text-center">
-                <div className="text-3xl font-black bg-[var(--color-primary)] from-[var(--color-accent)] to-[var(--color-accent)] bg-clip-text text-transparent">
+                <div className="text-3xl font-black text-[color:var(--color-primary)]">
                   {results.grossYield.toFixed(1)}%
                 </div>
                 <div className="text-xs text-[var(--color-ink-3)] mt-1 font-medium">Gross Yield</div>
               </div>
               <div className="card rounded-2xl p-5 text-center">
-                <div className="text-3xl font-black bg-[var(--color-primary)] from-[var(--color-accent)] to-[var(--color-accent)] bg-clip-text text-transparent">
+                <div className="text-3xl font-black text-[color:var(--color-primary)]">
                   {results.netYield.toFixed(1)}%
                 </div>
                 <div className="text-xs text-[var(--color-ink-3)] mt-1 font-medium">Net Yield</div>

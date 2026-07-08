@@ -90,7 +90,7 @@ export default function SignIn() {
           </div>
           <h2 className="font-serif text-[56px] leading-[1.02] tracking-[-0.025em] mt-3 text-balance">
             The lease begins<br />
-            <span className="italic opacity-75">at hello.</span>
+            <span className="opacity-75">at hello.</span>
           </h2>
           <p className="text-[14.5px] opacity-80 mt-4 max-w-[420px] leading-[1.55]">
             MigRent helps people new to Australia find a place to live - without a rental history, a guarantor, or a stack of paperwork.
@@ -115,7 +115,9 @@ export default function SignIn() {
         >
           <div className="eyebrow">Sign in</div>
           <h1 className="font-serif text-[44px] sm:text-[48px] leading-[1.05] tracking-[-0.022em] text-[var(--color-ink)] mt-2">
-            {t("auth.signInTitle") || "Welcome back."}
+            {t("auth.signInTitle")}
+            <br />
+            <span className="text-[color:var(--color-primary)]">MigRent</span>
           </h1>
           <p className="text-[14px] text-[var(--color-ink-2)] mt-1.5">
             New here?{" "}

@@ -36,7 +36,7 @@ export default function RentalLaws() {
             Legal Guide
           </div>
           <h1 className="text-3xl md:text-4xl font-black tracking-tight text-[var(--color-ink)]">
-            Australian <span className="bg-[var(--color-primary)] from-[var(--color-primary)] to-[var(--color-primary)] bg-clip-text text-transparent">Rental Laws</span> for Migrants
+            Australian <span className="text-[color:var(--color-primary)]">Rental Laws</span> for Migrants
           </h1>
           <p className="mt-3 text-[var(--color-ink-3)] max-w-xl mx-auto">
             Know your rights as a renter in Australia. Tenancy laws, bond rules, and dispute processes by state.

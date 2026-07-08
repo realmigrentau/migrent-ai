@@ -91,7 +91,7 @@ export default function Discord() {
             Launching soon
           </div>
           <h1 className="text-3xl md:text-5xl font-black tracking-tight text-[var(--color-ink)]">
-            Join the <span className="bg-[var(--color-primary)] from-[var(--color-primary)] to-[var(--color-primary)] bg-clip-text text-transparent">MigRent Community</span>
+            Join the <span className="text-[color:var(--color-primary)]">MigRent Community</span>
           </h1>
           <p className="mt-4 text-lg text-[var(--color-ink-3)] max-w-xl mx-auto">
             Connect with migrants and hosts across Australia. Get housing tips, share experiences, and find support.
@@ -209,7 +209,7 @@ export default function Discord() {
                     viewport={{ once: true }}
                     transition={{ delay: i * 0.1 }}
                   >
-                    <div className="text-2xl font-black bg-[var(--color-primary)] from-[var(--color-primary)] to-[var(--color-primary)] bg-clip-text text-transparent">
+                    <div className="text-2xl font-black text-[color:var(--color-primary)]">
                       {stat.value}
                     </div>
                     <div className="text-xs text-[var(--color-ink-3)] mt-1 font-medium">{stat.label}</div>
