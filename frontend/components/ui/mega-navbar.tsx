@@ -7,6 +7,7 @@ import { useTheme } from "../../hooks/useTheme";
 import { useAuth } from "../../hooks/useAuth";
 import { navItems, type NavLinkDropdown } from "../../lib/navData";
 import { Logo } from "./Logo";
+import LanguageSwitcher from "./LanguageSwitcher";
 
 export default function MegaNavbar() {
   const router = useRouter();
@@ -244,6 +245,10 @@ export default function MegaNavbar() {
 
         {/* Actions (right) */}
         <ul className="hidden lg:flex items-center gap-2 justify-end">
+          {/* Language */}
+          <li>
+            <LanguageSwitcher />
+          </li>
           {/* Theme toggle */}
           {mounted && (
             <li>
@@ -381,8 +386,9 @@ export default function MegaNavbar() {
           </li>
         </ul>
 
-        {/* Mobile: toggle + hamburger */}
+        {/* Mobile: language + toggle + hamburger */}
         <div className="lg:hidden flex items-center gap-2">
+          <LanguageSwitcher />
           {mounted && (
             <button
               onClick={toggle}
