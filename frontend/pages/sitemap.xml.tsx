@@ -23,7 +23,6 @@ const STATIC_PAGES: Entry[] = [
   { path: "/resources", priority: "0.6", changefreq: "monthly" },
   { path: "/resources/roi-calculator", priority: "0.5", changefreq: "monthly" },
   { path: "/resources/rental-laws", priority: "0.5", changefreq: "monthly" },
-  { path: "/resources/api-docs", priority: "0.4", changefreq: "monthly" },
   { path: "/resources/discord", priority: "0.4", changefreq: "monthly" },
   { path: "/blog", priority: "0.7", changefreq: "weekly" },
   { path: "/help", priority: "0.6", changefreq: "monthly" },

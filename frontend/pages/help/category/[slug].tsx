@@ -2,7 +2,6 @@ import { useRouter } from "next/router";
 import Head from "next/head";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import DashboardLayout from "../../../components/DashboardLayout";
 import {
   getCategoryBySlug,
   getArticlesByCategory,
@@ -114,7 +113,7 @@ export default function HelpCategoryPage() {
 
   if (!category) {
     return (
-      <DashboardLayout>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <Head>
           <title>Category not found - MigRent Help</title>
         </Head>
@@ -134,12 +133,12 @@ export default function HelpCategoryPage() {
             Back to Help Center
           </Link>
         </div>
-      </DashboardLayout>
+      </div>
     );
   }
 
   return (
-    <DashboardLayout>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       <Head>
         <title>{category.name} - MigRent Help</title>
         <meta name="description" content={category.description} />
@@ -276,6 +275,6 @@ export default function HelpCategoryPage() {
           Back to Help Center
         </Link>
       </div>
-    </DashboardLayout>
+    </div>
   );
 }

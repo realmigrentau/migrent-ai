@@ -1,179 +1,57 @@
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import Head from "next/head";
+import Link from "next/link";
+import { Code2 } from "lucide-react";
+import SEOHead from "../../components/SEOHead";
 import Breadcrumb from "../../components/content/Breadcrumb";
-import CodeBlock from "../../components/content/CodeBlock";
-import { getAllSections, type ApiEndpoint } from "../../data/apiDocsData";
 
-const methodColors: Record<string, string> = {
-  GET: "bg-[var(--color-primary-50)] dark:bg-[var(--color-primary)]/10 text-[var(--color-primary)] dark:text-[var(--color-primary)]",
-  POST: "bg-[var(--color-accent-50)] dark:bg-[var(--color-accent-50)]0/10 text-[var(--color-accent)] dark:text-[var(--color-accent)]",
-  PUT: "bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/10 text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)]",
-  DELETE: "bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-50)]0/10 text-[var(--color-danger-500)] dark:text-[var(--color-danger-500)]",
-};
-
-function EndpointCard({ endpoint }: { endpoint: ApiEndpoint }) {
-  const [expanded, setExpanded] = useState(false);
-
-  return (
-    <div className="card rounded-xl overflow-hidden">
-      <button
-        onClick={() => setExpanded(!expanded)}
-        className="w-full flex items-center gap-3 p-4 text-left hover:bg-[var(--color-surface)] dark:hover:bg-white/5 transition-colors"
-      >
-        <span className={`text-[10px] font-bold px-2.5 py-1 rounded-md ${methodColors[endpoint.method]} shrink-0`}>
-          {endpoint.method}
-        </span>
-        <code className="text-sm font-mono text-[var(--color-ink-2)] flex-1">{endpoint.path}</code>
-        {endpoint.auth && (
-          <svg className="w-4 h-4 text-[var(--color-warn-500)] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-          </svg>
-        )}
-        <svg
-          className={`w-4 h-4 text-[var(--color-ink-3)] shrink-0 transition-transform ${expanded ? "rotate-180" : ""}`}
-          fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-        </svg>
-      </button>
-
-      <AnimatePresence>
-        {expanded && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="overflow-hidden"
-          >
-            <div className="px-4 pb-4 space-y-4 border-t border-[var(--color-line)] pt-4">
-              <p className="text-sm text-[var(--color-ink-3)]">{endpoint.description}</p>
-
-              {endpoint.params && endpoint.params.length > 0 && (
-                <div>
-                  <h4 className="text-xs font-semibold text-[var(--color-ink-2)] uppercase tracking-wider mb-2">Parameters</h4>
-                  <div className="space-y-1">
-                    {endpoint.params.map((p) => (
-                      <div key={p.name} className="flex items-start gap-2 text-xs">
-                        <code className="font-mono text-[var(--color-primary)] dark:text-[var(--color-primary)] shrink-0">{p.name}</code>
-                        <span className="text-[var(--color-ink-3)]">{p.type}</span>
-                        {p.required && <span className="text-[9px] font-bold text-[var(--color-danger-500)] bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-50)]0/10 px-1.5 rounded">required</span>}
-                        <span className="text-[var(--color-ink-3)]">{p.description}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {endpoint.requestBody && (
-                <div>
-                  <h4 className="text-xs font-semibold text-[var(--color-ink-2)] uppercase tracking-wider mb-2">Request Body</h4>
-                  <CodeBlock code={endpoint.requestBody} language="json" />
-                </div>
-              )}
-
-              <div>
-                <h4 className="text-xs font-semibold text-[var(--color-ink-2)] uppercase tracking-wider mb-2">Response</h4>
-                <CodeBlock code={endpoint.responseExample} language="json" />
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  );
-}
-
+/**
+ * Honest placeholder: a public MigRent API does not exist yet. The previous
+ * version of this page documented fictional v2 endpoints, API keys and OAuth
+ * flows - removed as part of the no-invented-content rule. Reinstate real
+ * docs here when the API ships (the old copy lives in data/apiDocsData.ts).
+ */
 export default function ApiDocs() {
-  const sections = getAllSections();
-  const [activeSection, setActiveSection] = useState(sections[0].id);
-
   return (
     <>
-      <Head>
-        <title>Developer API Docs | MigRent AI</title>
-        <meta name="description" content="Build integrations on the MigRent platform with our RESTful developer API." />
-      </Head>
-
-      <div className="max-w-6xl mx-auto">
+      <SEOHead
+        title="Developer API - in development"
+        description="The MigRent developer API is in development and not yet available."
+        noIndex
+      />
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <Breadcrumb
           items={[
             { label: "Resources", href: "/resources" },
-            { label: "API Docs" },
+            { label: "Developer API" },
           ]}
         />
 
-        {/* Hero */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-12"
-        >
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[var(--color-primary-50)] dark:bg-[var(--color-primary)]/10 border border-[var(--color-primary-100)] dark:border-[var(--color-line)] text-xs font-medium text-[var(--color-primary)] dark:text-[var(--color-primary)] mb-4">
-            <span className="w-2 h-2 rounded-full bg-[var(--color-accent)]" />
-            API v2
-          </div>
-          <h1 className="text-3xl md:text-4xl font-black tracking-tight text-[var(--color-ink)]">
-            <span className="text-[color:var(--color-primary)]">Developer</span> API Docs
+        <div className="text-center py-16">
+          <span className="mx-auto w-12 h-12 rounded-full bg-[var(--color-primary-soft)] text-[var(--color-primary)] flex items-center justify-center">
+            <Code2 className="w-6 h-6" />
+          </span>
+          <div className="eyebrow mt-6">In development</div>
+          <h1 className="font-serif text-[36px] sm:text-[44px] leading-[1.05] tracking-[-0.02em] text-[var(--color-ink)] mt-2">
+            The MigRent API is on its way.
           </h1>
-          <p className="mt-3 text-[var(--color-ink-3)] max-w-xl mx-auto">
-            Build on the MigRent platform with our RESTful API. OAuth 2.0 authentication, JSON responses, and real-time webhooks.
+          <p className="text-[15px] text-[var(--color-ink-2)] leading-[1.6] mt-4 max-w-[52ch] mx-auto">
+            We are building a developer API for listings and suburb data. It is
+            not yet available - no endpoints, keys, or tokens exist today. If
+            you would like to be notified when it ships, or you have a use case
+            in mind, we would genuinely like to hear it.
           </p>
-        </motion.div>
-
-        {/* Base URL */}
-        <div className="card rounded-xl p-4 mb-8 flex items-center gap-3">
-          <span className="text-xs font-semibold text-[var(--color-ink-3)] uppercase tracking-wider shrink-0">Base URL</span>
-          <code className="text-sm font-mono text-[var(--color-primary)] dark:text-[var(--color-primary)]">https://api.migrent.ai/v2</code>
-        </div>
-
-        <div className="flex flex-col lg:flex-row gap-8">
-          {/* Sidebar nav */}
-          <div className="lg:w-56 shrink-0">
-            <nav className="sticky top-24 space-y-1">
-              <div className="text-xs font-semibold uppercase tracking-wider text-[var(--color-ink-3)] mb-3">
-                Sections
-              </div>
-              {sections.map((section) => (
-                <a
-                  key={section.id}
-                  href={`#${section.id}`}
-                  onClick={() => setActiveSection(section.id)}
-                  className={`block px-3 py-2 rounded-lg text-sm transition-all ${
-                    activeSection === section.id
-                      ? "bg-[var(--color-primary-50)] dark:bg-[var(--color-primary)]/10 text-[var(--color-primary)] dark:text-[var(--color-primary)] font-medium"
-                      : "text-[var(--color-ink-3)] hover:text-[var(--color-ink-2)] dark:hover:text-[var(--color-ink-4)] hover:bg-[var(--color-surface)] dark:hover:bg-white/5"
-                  }`}
-                >
-                  {section.title}
-                </a>
-              ))}
-            </nav>
-          </div>
-
-          {/* Main content */}
-          <div className="flex-1 min-w-0 space-y-12">
-            {sections.map((section) => (
-              <motion.section
-                key={section.id}
-                id={section.id}
-                className="scroll-mt-24"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4 }}
-              >
-                <h2 className="text-xl font-bold text-[var(--color-ink)] mb-2">{section.title}</h2>
-                <p className="text-sm text-[var(--color-ink-3)] mb-6">{section.description}</p>
-                <div className="space-y-3">
-                  {section.endpoints.map((endpoint, i) => (
-                    <EndpointCard key={i} endpoint={endpoint} />
-                  ))}
-                </div>
-              </motion.section>
-            ))}
+          <div className="flex flex-wrap justify-center gap-3 mt-8">
+            <Link
+              href="/contact"
+              className="btn-primary h-[44px] px-6 rounded-[10px] inline-flex items-center text-[14.5px]"
+            >
+              Tell us your use case
+            </Link>
+            <Link
+              href="/resources"
+              className="h-[44px] px-6 rounded-[10px] inline-flex items-center text-[14.5px] font-semibold border border-[var(--color-line-2)] text-[var(--color-ink)] hover:bg-[var(--color-surface-2)] transition-colors"
+            >
+              Back to resources
+            </Link>
           </div>
         </div>
       </div>

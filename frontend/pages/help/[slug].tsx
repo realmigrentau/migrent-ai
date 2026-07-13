@@ -3,7 +3,6 @@ import { useRouter } from "next/router";
 import Head from "next/head";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import DashboardLayout from "../../components/DashboardLayout";
 import {
   getArticleBySlug,
   getRelatedArticles,
@@ -129,7 +128,7 @@ export default function HelpArticlePage() {
 
   if (!article) {
     return (
-      <DashboardLayout>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <Head>
           <title>Article not found - MigRent Help</title>
         </Head>
@@ -151,7 +150,7 @@ export default function HelpArticlePage() {
             Back to Help Center
           </Link>
         </div>
-      </DashboardLayout>
+      </div>
     );
   }
 
@@ -160,7 +159,7 @@ export default function HelpArticlePage() {
   const typeBadge = TYPE_BADGE[article.type] || TYPE_BADGE.guide;
 
   return (
-    <DashboardLayout>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       <Head>
         <title>{article.title} - MigRent Help</title>
         <meta name="description" content={article.summary} />
@@ -391,6 +390,6 @@ export default function HelpArticlePage() {
           </div>
         </div>
       </div>
-    </DashboardLayout>
+    </div>
   );
 }

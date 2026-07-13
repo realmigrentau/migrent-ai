@@ -2,8 +2,6 @@ import { useState, useEffect, useRef } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import DashboardLayout from "../../components/DashboardLayout";
-import { useDashboard } from "../../hooks/useDashboard";
 import {
   HELP_CATEGORIES,
   QUICK_FAQS,
@@ -141,13 +139,13 @@ function ArticleCard({ article, index }: { article: StaticHelpArticle; index: nu
 }
 
 export default function HelpCenter() {
-  const { role } = useDashboard();
   const [query, setQuery] = useState("");
   const [searchResults, setSearchResults] = useState<StaticHelpArticle[]>([]);
   const [searching, setSearching] = useState(false);
   const searchRef = useRef<HTMLInputElement>(null);
 
-  const featuredArticles = getFeaturedArticles(role);
+  // Public page - no session, so show the generic (seeker) featured set.
+  const featuredArticles = getFeaturedArticles(null);
 
   useEffect(() => {
     if (!query.trim()) {
@@ -167,7 +165,7 @@ export default function HelpCenter() {
   const showSearch = query.trim().length > 0;
 
   return (
-    <DashboardLayout>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       <Head>
         <title>Help Center - MigRent</title>
         <meta name="description" content="Find answers to common questions about MigRent - search, browse categories, or contact support." />
@@ -410,6 +408,6 @@ export default function HelpCenter() {
           </>
         )}
       </div>
-    </DashboardLayout>
+    </div>
   );
 }
