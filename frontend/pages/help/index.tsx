@@ -326,11 +326,11 @@ export default function HelpCenter() {
               </div>
             </section>
 
-            {/* Featured / recommended for your role */}
+            {/* Featured articles (public page - generic set) */}
             <section>
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-bold text-[var(--color-ink)]">
-                  {role === "owner" ? "Owner essentials" : "Recommended for you"}
+                  Recommended for you
                 </h2>
                 <Link
                   href={`/help/category/getting-started`}
