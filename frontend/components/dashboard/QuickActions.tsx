@@ -15,7 +15,7 @@ const actions = [
     external: false,
   },
   {
-    href: "/account/messages",
+    href: "/messages",
     label: "View Messages",
     desc: "Chat with interested seekers",
     icon: <MessageSquare className="w-5 h-5" />,

@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback, Fragment } from "react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "../../hooks/useAuth";
@@ -154,6 +155,7 @@ function TogglePill({ active, onClick, label }: { active: boolean; onClick: () =
 }
 
 export default function SeekerSearch() {
+  const router = useRouter();
   const { session, user } = useAuth();
   const { theme } = useTheme();
   const [results, setResults] = useState<Listing[]>([]);
@@ -942,7 +944,13 @@ export default function SeekerSearch() {
                         initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: Math.min(i * 0.03, 0.3) }}
                         whileHover={{ y: -2 }}
-                        className="card rounded-2xl overflow-hidden group">
+                        onClick={(e) => {
+                          // Whole card navigates, but defer to any real link or
+                          // button inside (save heart, View details).
+                          if ((e.target as HTMLElement).closest("a,button")) return;
+                          router.push(`/listing/${listing.id}`);
+                        }}
+                        className="card rounded-2xl overflow-hidden group cursor-pointer">
                         {/* Photo */}
                         <div className="relative w-full aspect-[16/10] bg-[var(--color-surface-muted)] overflow-hidden">
                           {listing.photos?.length > 0 ? (

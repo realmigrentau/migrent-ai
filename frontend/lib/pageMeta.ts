@@ -34,7 +34,6 @@ const ROUTES: Array<[string, PageMeta]> = [
   ["/auth/callback", { title: "Signing you in", description: "Completing your sign-in.", noIndex: true }],
 
   // Seeker
-  ["/seeker/search-extended", { title: "Search rooms", description: "Filter verified rooms across Australia by city, budget, dates, and more.", noIndex: true }],
   ["/seeker/search", { title: "Search rooms", description: "Browse verified rooms from trusted owners across Australia.", noIndex: true }],
   ["/seeker/wishlist", { title: "Your wishlist", description: "Compare and revisit the rooms you've saved.", noIndex: true }],
   ["/seeker/profile", { title: "Your profile", description: "Manage your seeker profile, preferences, and verification.", noIndex: true }],
@@ -81,7 +80,6 @@ const ROUTES: Array<[string, PageMeta]> = [
   ["/code-of-conduct", { title: "Code of conduct", description: "Our community standards." }],
   ["/anti-discrimination", { title: "Anti-discrimination policy", description: "MigRent's stance against discrimination." }],
   ["/no-agency", { title: "No-agency policy", description: "Why MigRent is not a real-estate agency." }],
-  ["/rental-laws", { title: "Australian rental laws", description: "A quick guide to renting law in Australia." }],
   ["/abn-terms", { title: "ABN terms", description: "Terms for ABN-registered hosts." }],
   ["/contact-legal", { title: "Legal contact", description: "Contact the MigRent legal team." }],
   ["/disclaimer", { title: "Disclaimer", description: "Important disclaimers about MigRent." }],

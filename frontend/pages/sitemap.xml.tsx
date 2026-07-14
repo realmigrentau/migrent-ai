@@ -31,7 +31,6 @@ const STATIC_PAGES: Entry[] = [
   { path: "/safety-reporting", priority: "0.4", changefreq: "yearly" },
   { path: "/support-disputes", priority: "0.4", changefreq: "yearly" },
   { path: "/no-agency", priority: "0.3", changefreq: "yearly" },
-  { path: "/rental-laws", priority: "0.4", changefreq: "yearly" },
   { path: "/careers", priority: "0.4", changefreq: "monthly" },
   { path: "/press", priority: "0.3", changefreq: "yearly" },
   // Legal

@@ -33,6 +33,14 @@ const nextConfig: NextConfig = {
     ],
   },
 
+  async redirects() {
+    return [
+      // Deduped pages - permanent redirects preserve old links and bookmarks.
+      { source: "/seeker/search-extended", destination: "/seeker/search", permanent: true },
+      { source: "/rental-laws", destination: "/resources/rental-laws", permanent: true },
+    ];
+  },
+
   async headers() {
     const securityHeaders = [
       { key: "X-Content-Type-Options", value: "nosniff" },

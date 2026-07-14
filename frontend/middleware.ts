@@ -15,7 +15,7 @@ const ADMIN_PATH = process.env.NEXT_PUBLIC_ADMIN_PATH || "/mazda.asgt22779412.sa
  *   get session features (best-match sort, wishlist saves).
  * - All other routes pass through.
  */
-const PUBLIC_SEEKER_PATHS = ["/seeker/search", "/seeker/search-extended"];
+const PUBLIC_SEEKER_PATHS = ["/seeker/search"];
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
