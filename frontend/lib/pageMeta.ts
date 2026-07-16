@@ -21,10 +21,9 @@ const DEFAULT: PageMeta = {
 // Map exact pathnames (or pathname prefixes) to PageMeta.
 // Order matters: more specific paths should come first.
 const ROUTES: Array<[string, PageMeta]> = [
-  // Admin (both trees) - never indexable. noindex meta is the strong signal;
-  // deliberately NOT listed in robots.txt, which would only advertise the path.
+  // Admin - never indexable. noindex meta is the strong signal; deliberately
+  // NOT listed in robots.txt, which would only advertise the path.
   ["/admin", { title: "Admin", description: "Administration.", noIndex: true }],
-  ["/mazda.asgt22779412.sara-admin", { title: "Admin", description: "Administration.", noIndex: true }],
 
   // Auth
   ["/signin", { title: "Sign in", description: "Sign in to MigRent to find verified rooms and manage your account.", noIndex: true }],

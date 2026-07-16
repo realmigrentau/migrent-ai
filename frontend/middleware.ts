@@ -2,14 +2,13 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { createMiddlewareSupabaseClient } from "./lib/supabase-middleware";
 
-const ADMIN_PATH = process.env.NEXT_PUBLIC_ADMIN_PATH || "/mazda.asgt22779412.sara-admin";
-
 /**
  * Server-side route protection middleware.
  *
  * - Dashboard routes (/dashboard/*) require an authenticated session.
  *   Unauthenticated visitors are redirected to /signin with a redirect param.
- * - Admin routes are left to client-side AdminGate (credentials checked via API).
+ * - Admin routes (/admin/*) never hit this matcher; client-side AdminGate
+ *   handles their auth via API.
  * - Search is public: browsing listings must not require an account (the
  *   pricing page promises free browsing). Signed-out visitors simply don't
  *   get session features (best-match sort, wishlist saves).
@@ -20,11 +19,6 @@ const PUBLIC_SEEKER_PATHS = ["/seeker/search"];
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const res = NextResponse.next();
-
-  // Skip admin routes - AdminGate handles its own auth via API
-  if (pathname.startsWith(ADMIN_PATH)) {
-    return res;
-  }
 
   // Public browse surfaces under /seeker
   if (PUBLIC_SEEKER_PATHS.includes(pathname)) {
@@ -65,6 +59,5 @@ export const config = {
     "/owner/:path*",
     "/seeker/:path*",
     "/account/:path*",
-    "/mazda.asgt22779412.sara-admin/:path*",
   ],
 };
