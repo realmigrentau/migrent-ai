@@ -25,6 +25,8 @@ const ROUTES: Array<[string, PageMeta]> = [
   // NOT listed in robots.txt, which would only advertise the path.
   ["/admin", { title: "Admin", description: "Administration.", noIndex: true }],
 
+  ["/suburbs", { title: "Suburb Guides - Where to Live in Australia", description: "Census-backed suburb guides for migrants and students across Sydney, Melbourne and Brisbane." }],
+
   // Auth
   ["/signin", { title: "Sign in", description: "Sign in to MigRent to find verified rooms and manage your account.", noIndex: true }],
   ["/signup", { title: "Create your account", description: "Join MigRent to find verified rooms or list your space across Australia.", noIndex: true }],

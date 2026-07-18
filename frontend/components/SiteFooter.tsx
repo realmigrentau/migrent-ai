@@ -31,6 +31,7 @@ const columns: { heading: string; links: { label: string; href: string }[] }[] =
     heading: "Explore",
     links: [
       { label: "Features", href: "/features" },
+      { label: "Suburb guides", href: "/suburbs" },
       { label: "Mentors", href: "/mentors" },
       { label: "Resources", href: "/resources" },
       { label: "Help centre", href: "/help" },

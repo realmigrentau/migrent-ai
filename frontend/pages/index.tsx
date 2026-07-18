@@ -672,10 +672,12 @@ export default function Home() {
           </motion.div>
           <motion.div style={{ y: citiesY }} className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {cities.map((c, i) => (
-              <motion.div key={c.city} {...reveal} transition={{ ...reveal.transition, delay: i * 0.06 }} className="bg-[var(--color-surface-2)] border border-[var(--color-line)] rounded-[var(--radius-xl)] p-6 card-lift">
-                <MapPin className="w-5 h-5 text-[var(--color-primary)] mb-4" />
-                <div className="font-serif text-[24px] tracking-[-0.015em] text-[var(--color-ink)] leading-none">{c.city}</div>
-                <div className="text-[13px] text-[var(--color-ink-3)] mt-2 leading-[1.4]">{c.note}</div>
+              <motion.div key={c.city} {...reveal} transition={{ ...reveal.transition, delay: i * 0.06 }}>
+                <Link href="/suburbs" className="block bg-[var(--color-surface-2)] border border-[var(--color-line)] rounded-[var(--radius-xl)] p-6 card-lift hover:border-[var(--color-line-2)] transition-colors">
+                  <MapPin className="w-5 h-5 text-[var(--color-primary)] mb-4" />
+                  <div className="font-serif text-[24px] tracking-[-0.015em] text-[var(--color-ink)] leading-none">{c.city}</div>
+                  <div className="text-[13px] text-[var(--color-ink-3)] mt-2 leading-[1.4]">{c.note}</div>
+                </Link>
               </motion.div>
             ))}
           </motion.div>

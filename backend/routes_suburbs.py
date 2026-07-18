@@ -47,7 +47,7 @@ def list_suburbs():
 
     result = (
         supabase.table("suburbs")
-        .select("slug, name, state, median_rent_room, vacancy_rate, safety_score")
+        .select("slug, name, state, median_rent_room, vacancy_rate, safety_score, migrant_pct, top_nationalities")
         .order("name")
         .execute()
     )

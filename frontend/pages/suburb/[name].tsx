@@ -124,11 +124,11 @@ export default function SuburbPage({ suburb, listingsCount }: Props) {
         {/* Back nav */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
           <Link
-            href="/"
+            href="/suburbs"
             className="inline-flex items-center gap-2 text-sm text-[var(--color-ink-3)] hover:text-[var(--color-primary)] transition-colors mb-6"
           >
             <ArrowLeft className="w-4 h-4" />
-            Back to MigRent
+            All suburb guides
           </Link>
         </div>
 
