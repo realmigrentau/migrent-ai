@@ -202,23 +202,29 @@ function ScrollMarquee({ words }: { words: string[] }) {
    directions as you scroll (a signature Lenis-demo move). Reliable:
    just scroll-linked translateX, no pinning.
    ───────────────────────────────────────────── */
-const GALLERY: { s: string; c: string }[] = [
-  { s: "Marrickville", c: "Sydney" }, { s: "Carlton", c: "Melbourne" }, { s: "West End", c: "Brisbane" },
-  { s: "Newtown", c: "Sydney" }, { s: "Brunswick", c: "Melbourne" }, { s: "South Bank", c: "Brisbane" },
-  { s: "Footscray", c: "Melbourne" }, { s: "Surry Hills", c: "Sydney" }, { s: "Fitzroy", c: "Melbourne" },
+const GALLERY: { s: string; c: string; slug?: string }[] = [
+  { s: "Marrickville", c: "Sydney", slug: "marrickville" }, { s: "Carlton", c: "Melbourne", slug: "carlton" }, { s: "West End", c: "Brisbane", slug: "west-end" },
+  { s: "Newtown", c: "Sydney", slug: "newtown" }, { s: "Brunswick", c: "Melbourne", slug: "brunswick" }, { s: "South Bank", c: "Brisbane" },
+  { s: "Footscray", c: "Melbourne", slug: "footscray" }, { s: "Surry Hills", c: "Sydney" }, { s: "Fitzroy", c: "Melbourne" },
   { s: "Glebe", c: "Sydney" }, { s: "St Kilda", c: "Melbourne" }, { s: "Paddington", c: "Brisbane" },
 ];
 
-function GalleryTile({ s, c }: { s: string; c: string }) {
-  return (
-    <div className="shrink-0 w-[260px] sm:w-[300px]">
-      <div className="photo-placeholder h-[200px] rounded-[var(--radius-xl)] relative overflow-hidden border border-[var(--color-line)]">
-        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" aria-hidden="true" />
-        <div className="absolute inset-0 flex flex-col justify-end p-5">
-          <div className="font-serif text-[22px] text-white leading-none tracking-[-0.01em]">{s}</div>
-          <div className="font-mono text-[11px] text-white/80 mt-1.5 tracking-[0.08em]">{c.toUpperCase()}</div>
+function GalleryTile({ s, c, slug }: { s: string; c: string; slug?: string }) {
+  const face = (
+    <div className="photo-placeholder h-[200px] rounded-[var(--radius-xl)] relative overflow-hidden border border-[var(--color-line)]">
+      <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" aria-hidden="true" />
+      <div className="absolute inset-0 flex flex-col justify-end p-5">
+        <div className="font-serif text-[22px] text-white leading-none tracking-[-0.01em]">{s}</div>
+        <div className="font-mono text-[11px] text-white/80 mt-1.5 tracking-[0.08em]">
+          {c.toUpperCase()}
+          {slug && <span className="text-white/90"> · GUIDE →</span>}
         </div>
       </div>
+    </div>
+  );
+  return (
+    <div className="shrink-0 w-[260px] sm:w-[300px]">
+      {slug ? <Link href={`/suburb/${slug}`} className="block card-lift">{face}</Link> : face}
     </div>
   );
 }
@@ -238,10 +244,10 @@ function ParallaxGallery() {
         <h2 className="font-serif text-[34px] md:text-[52px] leading-[1.0] tracking-[-0.03em] text-[var(--color-ink)] max-w-[18ch]">Real rooms, in real neighbourhoods.</h2>
       </div>
       <motion.div style={{ x: xA }} className="flex gap-5 mb-5 w-max will-change-transform">
-        {[...rowA, ...rowA].map((t, i) => <GalleryTile key={`a${i}`} s={t.s} c={t.c} />)}
+        {[...rowA, ...rowA].map((t, i) => <GalleryTile key={`a${i}`} s={t.s} c={t.c} slug={t.slug} />)}
       </motion.div>
       <motion.div style={{ x: xB }} className="flex gap-5 w-max will-change-transform">
-        {[...rowB, ...rowB].map((t, i) => <GalleryTile key={`b${i}`} s={t.s} c={t.c} />)}
+        {[...rowB, ...rowB].map((t, i) => <GalleryTile key={`b${i}`} s={t.s} c={t.c} slug={t.slug} />)}
       </motion.div>
     </section>
   );

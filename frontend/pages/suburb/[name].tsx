@@ -44,12 +44,20 @@ interface SuburbData {
   faq: { q: string; a: string }[];
 }
 
+interface RelatedSuburb {
+  slug: string;
+  name: string;
+  state: string;
+  median_rent_room: number;
+}
+
 interface Props {
   suburb: SuburbData;
   listingsCount: number;
+  related: RelatedSuburb[];
 }
 
-export default function SuburbPage({ suburb, listingsCount }: Props) {
+export default function SuburbPage({ suburb, listingsCount, related }: Props) {
   const pageTitle = `${suburb.name} Rooms: $${suburb.median_rent_room}/wk`;
   const pageDescription = `Find verified rooms for rent in ${suburb.name}, ${suburb.state}. Median rent $${suburb.median_rent_room}/wk, ${suburb.vacancy_rate}% vacancy rate, safety score ${suburb.safety_score}/10. ${listingsCount} rooms available now.`;
   const canonicalUrl = `${SITE_URL}/suburb/${suburb.slug}`;
@@ -182,6 +190,27 @@ export default function SuburbPage({ suburb, listingsCount }: Props) {
 
           {hasFaq && <SuburbFAQ faqs={suburb.faq} suburbName={suburb.name} />}
 
+          {/* Related guides */}
+          {related.length > 0 && (
+            <section>
+              <h2 className="font-serif text-[24px] tracking-[-0.015em] text-[var(--color-ink)] mb-4">
+                More suburb guides
+              </h2>
+              <div className="grid sm:grid-cols-3 gap-3">
+                {related.map((r) => (
+                  <Link
+                    key={r.slug}
+                    href={`/suburb/${r.slug}`}
+                    className="card-lift bg-[var(--color-surface-2)] border border-[var(--color-line)] rounded-[var(--radius-xl)] p-5 flex items-baseline justify-between gap-3 hover:border-[var(--color-line-2)] transition-colors"
+                  >
+                    <span className="font-serif text-[18px] text-[var(--color-ink)]">{r.name}</span>
+                    <span className="font-mono text-[12px] text-[var(--color-primary)] whitespace-nowrap">~${r.median_rent_room}/wk</span>
+                  </Link>
+                ))}
+              </div>
+            </section>
+          )}
+
           {/* Bottom CTA */}
           <section className="rounded-2xl bg-[var(--color-primary)] from-[var(--color-primary)] to-[var(--color-accent)] p-8 sm:p-12 text-center text-white">
             <h2 className="text-2xl sm:text-3xl font-bold mb-3">
@@ -244,10 +273,35 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
     return { notFound: true, revalidate: 3600 };
   }
 
+  // Related guides: same-state suburbs first, then others. Failure to load
+  // the list must never break the page - the strip simply doesn't render.
+  let related: RelatedSuburb[] = [];
+  try {
+    const listRes = await fetch(`${BASE_URL}/suburb/`);
+    if (listRes.ok) {
+      const list = (await listRes.json()).suburbs || [];
+      const others = list.filter((s: RelatedSuburb) => s.slug !== slug);
+      related = [
+        ...others.filter((s: RelatedSuburb) => s.state === data.suburb.state),
+        ...others.filter((s: RelatedSuburb) => s.state !== data.suburb.state),
+      ]
+        .slice(0, 3)
+        .map((s: RelatedSuburb) => ({
+          slug: s.slug,
+          name: s.name,
+          state: s.state,
+          median_rent_room: s.median_rent_room,
+        }));
+    }
+  } catch {
+    // strip omitted
+  }
+
   return {
     props: {
       suburb: data.suburb,
       listingsCount: data.live_listings_count || 0,
+      related,
     },
     revalidate: 3600,
   };
