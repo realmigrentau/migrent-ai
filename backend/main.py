@@ -39,14 +39,48 @@ from routes_notification_center import router as notification_center_router
 from routes_spam_moderation import router as spam_moderation_router
 
 # ── Startup validation ──────────────────────────────────────
-REQUIRED_ENV = ["SUPABASE_URL", "SUPABASE_ANON_KEY", "STRIPE_SECRET_KEY", "STRIPE_WEBHOOK_SECRET"]
+ENV = os.environ.get("ENV", "development")
+IS_PRODUCTION = ENV == "production"
+
+REQUIRED_ENV = [
+    "SUPABASE_URL",
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "STRIPE_SECRET_KEY",
+    "STRIPE_WEBHOOK_SECRET",
+]
 missing = [v for v in REQUIRED_ENV if not os.environ.get(v)]
 if missing:
     logger.warning(f"Missing environment variables: {', '.join(missing)} - some features will not work")
 
 logger.info(f"PORT env var = {os.environ.get('PORT', 'not set')}")
 
-app = FastAPI(title="MigRent AI", version="0.1.0")
+# ── Error tracking ──────────────────────────────────────────
+# No-op unless SENTRY_DSN is set, so local and preview runs stay quiet.
+SENTRY_DSN = os.environ.get("SENTRY_DSN", "").strip()
+if SENTRY_DSN:
+    try:
+        import sentry_sdk
+
+        sentry_sdk.init(
+            dsn=SENTRY_DSN,
+            environment=ENV,
+            traces_sample_rate=float(os.environ.get("SENTRY_TRACES_SAMPLE_RATE", "0.1")),
+            send_default_pii=False,
+        )
+        logger.info("Sentry error tracking enabled")
+    except Exception:
+        logger.exception("Sentry failed to initialise - continuing without error tracking")
+
+# The interactive API docs publish every endpoint and schema. Keep them for
+# local development, hide them in production.
+app = FastAPI(
+    title="MigRent AI",
+    version="0.1.0",
+    docs_url=None if IS_PRODUCTION else "/docs",
+    redoc_url=None if IS_PRODUCTION else "/redoc",
+    openapi_url=None if IS_PRODUCTION else "/openapi.json",
+)
 
 # ── Rate limiting ───────────────────────────────────────────
 from limiter import limiter
@@ -58,9 +92,10 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 # ── CORS ────────────────────────────────────────────────────
 FRONTEND_URL = os.environ.get("FRONTEND_URL", "")
-ENV = os.environ.get("ENV", "development")
 
 allowed_origins = [
+    "https://migrent.com.au",
+    "https://www.migrent.com.au",
     "https://migrent.vercel.app",
     "https://migrent-ai.vercel.app",
 ]

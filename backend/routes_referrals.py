@@ -2,7 +2,7 @@ import uuid
 from fastapi import APIRouter, HTTPException, Header
 from pydantic import BaseModel
 from typing import Optional
-from db import get_supabase
+from db import get_supabase_admin
 from auth_utils import get_current_user
 
 router = APIRouter(prefix="/referrals", tags=["referrals"])
@@ -16,7 +16,7 @@ class ReferralUse(BaseModel):
 def generate_referral_code(authorization: str = Header(...)):
     """Generate a unique referral code for the authenticated user."""
     user = get_current_user(authorization)
-    sb = get_supabase()
+    sb = get_supabase_admin()
 
     # Check if user already has a pending code
     existing = sb.table("referrals").select("*").eq("referrer_id", user.id).eq("status", "pending").execute()
@@ -40,7 +40,7 @@ def generate_referral_code(authorization: str = Header(...)):
 def use_referral_code(body: ReferralUse, authorization: str = Header(...)):
     """Apply a referral code during signup/onboarding."""
     user = get_current_user(authorization)
-    sb = get_supabase()
+    sb = get_supabase_admin()
 
     # Find the referral
     res = sb.table("referrals").select("*").eq("referral_code", body.referral_code).execute()
@@ -71,7 +71,7 @@ def use_referral_code(body: ReferralUse, authorization: str = Header(...)):
 def get_my_referrals(authorization: str = Header(...)):
     """Get all referral codes created by the current user."""
     user = get_current_user(authorization)
-    sb = get_supabase()
+    sb = get_supabase_admin()
 
     res = sb.table("referrals").select("*").eq("referrer_id", user.id).execute()
     return res.data or []

@@ -2,7 +2,7 @@ import os
 import stripe
 from fastapi import APIRouter, HTTPException, Header, Request
 from models import DealCreate, DealOut, DealStatus, SeekerFeeRequest
-from db import get_supabase
+from db import get_supabase_admin
 from auth_utils import get_current_user
 
 router = APIRouter(prefix="/deals", tags=["deals"])
@@ -37,7 +37,7 @@ def create_deal(
     if user_meta.get("user_type") != "owner":
         raise HTTPException(status_code=403, detail="Only owners can create deals")
 
-    sb = get_supabase()
+    sb = get_supabase_admin()
 
     # Create the deal row
     deal_row = {
@@ -125,7 +125,7 @@ def create_seeker_fee_session(
     authorization: str = Header(...),
 ):
     user = get_current_user(authorization)
-    sb = get_supabase()
+    sb = get_supabase_admin()
 
     # Fetch the deal
     res = sb.table("deals").select("*").eq("id", body.deal_id).execute()
@@ -194,7 +194,7 @@ def get_deal(
     authorization: str = Header(...),
 ):
     user = get_current_user(authorization)
-    sb = get_supabase()
+    sb = get_supabase_admin()
 
     res = sb.table("deals").select("*").eq("id", deal_id).execute()
     if not res.data:
@@ -218,7 +218,7 @@ def cancel_deal(
     authorization: str = Header(...),
 ):
     user = get_current_user(authorization)
-    sb = get_supabase()
+    sb = get_supabase_admin()
 
     res = sb.table("deals").select("*").eq("id", deal_id).execute()
     if not res.data:
@@ -291,7 +291,7 @@ async def stripe_webhook(request: Request):
             if not booking_id:
                 return {"status": "ignored"}
 
-            sb = get_supabase()
+            sb = get_supabase_admin()
             try:
                 sb.table("bookings").update(
                     {"status": "PAID"}
@@ -349,7 +349,7 @@ async def stripe_webhook(request: Request):
             if not verification_user_id:
                 return {"status": "ignored"}
 
-            sb = get_supabase()
+            sb = get_supabase_admin()
 
             # Ensure profile row exists, then set verified = true
             existing = sb.table("profiles").select("id").eq("id", verification_user_id).execute()
@@ -387,7 +387,7 @@ async def stripe_webhook(request: Request):
             # Not a MigRent session; ignore
             return {"status": "ignored"}
 
-        sb = get_supabase()
+        sb = get_supabase_admin()
 
         if fee_type == "owner":
             # Owner fee paid → mark deal as owner_paid

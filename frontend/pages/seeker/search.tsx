@@ -829,7 +829,9 @@ export default function SeekerSearch() {
       {searched && !searching && (
         <div className="flex items-center justify-between">
           <p className="text-sm font-medium text-[var(--color-ink-2)]">
-            {results.length === 0 ? "No rooms found" : `${results.length}${hasMore ? "+" : ""} rooms found`}
+            {results.length === 0
+              ? "No rooms found"
+              : `${results.length}${hasMore ? "+" : ""} ${results.length === 1 && !hasMore ? "room" : "rooms"} found`}
           </p>
           <div className="flex items-center gap-2">
             {/* Desktop sort */}

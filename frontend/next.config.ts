@@ -1,9 +1,17 @@
 import type { NextConfig } from "next";
+import { withSentryConfig } from "@sentry/nextjs";
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   productionBrowserSourceMaps: false,
+
+  // Pin the workspace root. A stray lockfile in the home directory otherwise
+  // makes Turbopack guess wrong, which caused intermittent ENOENT
+  // pages-manifest failures on local rebuilds.
+  turbopack: {
+    root: __dirname,
+  },
 
   // Strip console.log/info/debug in production builds.
   // Keep error + warn so monitoring (Sentry/Vercel) still sees real issues.
@@ -42,7 +50,40 @@ const nextConfig: NextConfig = {
   },
 
   async headers() {
+    // Content-Security-Policy, shipped in REPORT-ONLY mode.
+    // It logs violations to the browser console without blocking anything, so
+    // we can confirm nothing legitimate trips it. Once the console is clean for
+    // a week, rename the header to "Content-Security-Policy" to enforce it.
+    //
+    // Hosts allowed here, and why:
+    //   fonts.googleapis / gstatic     Fraunces, Hanken Grotesk, Space Mono
+    //   *.supabase.co                  auth, database, listing + avatar images
+    //   *.onrender.com                 the MigRent API
+    //   api.maptiler.com               search-page map tiles
+    //   *.hcaptcha.com                 signup and contact-form captcha
+    //   js/api.stripe.com              checkout
+    //   *.vercel-scripts / -insights   Web Analytics and Speed Insights
+    // 'unsafe-inline' is required for Next.js hydration payloads and the
+    // inline theme bootstrap in _document.tsx that prevents a flash of the
+    // wrong theme on first paint.
+    const csp = [
+      "default-src 'self'",
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://*.hcaptcha.com https://va.vercel-scripts.com",
+      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+      "font-src 'self' data: https://fonts.gstatic.com",
+      "img-src 'self' data: blob: https://nsnwwfbidishftlrimer.supabase.co https://images.unsplash.com https://api.maptiler.com https://*.hcaptcha.com",
+      "connect-src 'self' https://nsnwwfbidishftlrimer.supabase.co wss://nsnwwfbidishftlrimer.supabase.co https://migrent-ai-backend.onrender.com https://api.maptiler.com https://*.hcaptcha.com https://api.stripe.com https://vitals.vercel-insights.com",
+      "worker-src 'self' blob:",
+      "frame-src 'self' https://js.stripe.com https://*.hcaptcha.com",
+      "frame-ancestors 'self'",
+      "base-uri 'self'",
+      "form-action 'self'",
+      "object-src 'none'",
+      "upgrade-insecure-requests",
+    ].join("; ");
+
     const securityHeaders = [
+      { key: "Content-Security-Policy-Report-Only", value: csp },
       { key: "X-Content-Type-Options", value: "nosniff" },
       { key: "X-Frame-Options", value: "SAMEORIGIN" },
       { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
@@ -68,4 +109,15 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+// Sentry's build plugin only does work when SENTRY_AUTH_TOKEN and an org/project
+// are configured. Without them it passes the config through untouched, so the
+// build behaves exactly as before until error tracking is switched on.
+export default withSentryConfig(nextConfig, {
+  org: process.env.SENTRY_ORG,
+  project: process.env.SENTRY_PROJECT,
+  // Keep CI output readable; the plugin is noisy by default.
+  silent: !process.env.CI,
+  // Source maps are uploaded to Sentry and stripped from the public bundle, so
+  // stack traces stay readable for us without publishing our source.
+  widenClientFileUpload: true,
+});

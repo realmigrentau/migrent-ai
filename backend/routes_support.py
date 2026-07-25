@@ -3,7 +3,7 @@ import logging
 import resend
 from pydantic import BaseModel, EmailStr, Field
 from fastapi import APIRouter, HTTPException, Request
-from db import get_supabase
+from db import get_supabase_admin
 from limiter import limiter
 
 logger = logging.getLogger(__name__)
@@ -24,7 +24,7 @@ class ContactRequest(BaseModel):
 @router.post("/contact")
 @limiter.limit("3/minute")
 def submit_contact(request: Request, body: ContactRequest):
-    sb = get_supabase()
+    sb = get_supabase_admin()
     try:
         sb.table("support_requests").insert({
             "name": body.name,

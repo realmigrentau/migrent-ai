@@ -40,6 +40,12 @@ install.log
 # Build artifacts
 tsconfig.tsbuildinfo
 
+# Local editor/session backups
+.backups/
+
+# Sentry build plugin
+.sentryclirc
+
 # Claude Code worktrees + session state - never commit
 .claude/
 

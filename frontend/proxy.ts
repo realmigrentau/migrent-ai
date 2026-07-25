@@ -3,7 +3,10 @@ import type { NextRequest } from "next/server";
 import { createMiddlewareSupabaseClient } from "./lib/supabase-middleware";
 
 /**
- * Server-side route protection middleware.
+ * Server-side route protection.
+ *
+ * Next.js 16 renamed the "middleware" file convention to "proxy"; the exported
+ * function is now `proxy` rather than `middleware`. Behaviour is unchanged.
  *
  * - Dashboard routes (/dashboard/*) require an authenticated session.
  *   Unauthenticated visitors are redirected to /signin with a redirect param.
@@ -16,7 +19,7 @@ import { createMiddlewareSupabaseClient } from "./lib/supabase-middleware";
  */
 const PUBLIC_SEEKER_PATHS = ["/seeker/search"];
 
-export async function middleware(req: NextRequest) {
+export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const res = NextResponse.next();
 

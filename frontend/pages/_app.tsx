@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import type { AppProps } from "next/app";
 import { AnimatePresence, motion } from "framer-motion";
 import { HCaptchaProvider } from "@hcaptcha/react-hcaptcha/hooks";
+import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import Layout from "../components/Layout";
 import SEOHead from "../components/SEOHead";
@@ -54,6 +55,7 @@ export default function App({ Component, pageProps, router }: AppProps) {
       <ConfirmProvider>
         <SEOHead title={meta.title} description={meta.description} noIndex={meta.noIndex} />
         {inner}
+        <Analytics />
         <SpeedInsights />
       </ConfirmProvider>
     </ToastProvider>
