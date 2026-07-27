@@ -15,7 +15,7 @@ interface BannerProps {
 
 const toneMap: Record<Tone, { bg: string; border: string; fg: string }> = {
   info: {
-    bg: 'bg-[#dde4ec] dark:bg-[#182230]',
+    bg: 'bg-[var(--color-primary-soft)]',
     border: 'border-l-[var(--color-info-500)]',
     fg: 'text-[var(--color-info-500)]',
   },

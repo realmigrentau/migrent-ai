@@ -118,67 +118,83 @@
 
 /* ══════════════════════════════════════════════════════════════
    DARK THEME  ·  Sand & Ocean (single theme)
-   True high-contrast black: neutral near-black surfaces, crisp
-   near-white ink, a vivid teal/blue accent that pops off the black.
-   No warm tint. No palette variants - this is THE dark mode.
+   Per design.md: "one premium warm-dark (deep espresso canvas,
+   layered elevation, glowing teal/sea-green accents, faint warm
+   bloom)". The canvas is a tinted warm near-black, never pure #000
+   - anti-slop rule 7. Light mode is warm coastal; dark mode has to
+   be the same brand with the lights off, not a cool tech product.
+   Every value below is >= 4.5:1 on the surface it sits on.
    ══════════════════════════════════════════════════════════════ */
 html.dark {
-  /* crisp near-white ink, neutral (no warmth) */
-  --color-ink: #f6f7f9;
-  --color-ink-2: #b6bac2;
-  --color-ink-muted: #80858f;
-  --color-ink-3: #80858f;
-  --color-ink-4: #565b65;
+  /* warm off-white ink, carrying the same sand warmth as light mode */
+  --color-ink: #f5ede2;          /* 16.2:1 on canvas */
+  --color-ink-2: #c9bdae;        /* 10.2:1 */
+  --color-ink-muted: #a89b8a;    /* 6.9:1 on canvas, 5.8:1 on cards */
+  --color-ink-3: #a89b8a;
+  --color-ink-4: #948875;        /* placeholder - 4.5:1 on inputs */
 
-  /* pure-black neutral canvas with clean elevation tiers */
-  --color-bg: #050507;           /* canvas - reads as black */
-  --color-surface: #0d0e11;      /* paper */
-  --color-surface-2: #16181d;    /* elevated card */
-  --color-surface-muted: #040406;
-  --color-surface-warm: #0d0e11;
-  --color-surface-sunk: #030305;
+  /* deep espresso canvas with layered elevation tiers */
+  --color-bg: #17120e;           /* canvas - warm espresso */
+  --color-surface: #1f1913;      /* paper */
+  --color-surface-2: #2a2219;    /* elevated card */
+  --color-surface-muted: #120e0a;
+  --color-surface-warm: #241c14;
+  --color-surface-sunk: #100c08;
 
-  --color-line: #23252b;         /* neutral hairline */
-  --color-line-2: #34373f;
-  --color-hairline: #23252b;
+  --color-line: #362c22;         /* warm brown hairline */
+  --color-line-2: #4a3d30;
+  --color-hairline: #362c22;
 
-  /* vivid teal/blue accent - high contrast against the black */
-  --color-primary-50: #06222b;
-  --color-primary-100: #08303c;
-  --color-primary-200: #0f4a5b;
-  --color-primary-400: #2fa9c6;
-  --color-primary-500: #44d2ee;
-  --color-primary-600: #34c6e6;
-  --color-primary-700: #2599b4;
-  --color-primary: #34c6e6;
-  --color-primary-fg: #03171d;
-  --color-primary-soft: #08303c;
+  /* ocean teal, lifted for the dark ground - still teal, not cyan */
+  --color-primary-50: #10262d;
+  --color-primary-100: #16333c;
+  --color-primary-200: #1f4c59;
+  --color-primary-400: #3f97ac;
+  --color-primary-500: #6ec0d2;
+  --color-primary-600: #5cb3c6;
+  --color-primary-700: #4792a4;
+  --color-primary: #5cb3c6;      /* 7.8:1 on canvas */
+  --color-primary-fg: #0b1c22;   /* 7.3:1 on the teal fill */
+  --color-primary-soft: #16333c;
 
-  /* light blue for trust/verified - high contrast on black */
-  --color-accent-50: #06222b;
-  --color-accent-100: #082f3b;
+  /* light ocean blue accent - unchanged hue, re-toned for warm ground */
+  --color-accent-50: #10262d;
+  --color-accent-100: #163540;
   --color-accent-500: #5cc8f0;
-  --color-accent: #5cc8f0;
-  --color-accent-soft: #082f3b;
-  --color-accent-fg: #03171d;
+  --color-accent: #5cc8f0;       /* 9.8:1 on canvas */
+  --color-accent-soft: #163540;
+  --color-accent-fg: #06181f;
 
-  --color-warn-50: #221a09;
-  --color-danger-500: #f47b6c;
-  --color-warn-500: #e3b24a;
-  --color-info-500: #34c6e6;
+  /* sea-green trust, dune amber and coral - all three were missing from
+     dark, which is why the palette flattened to blue-on-black */
+  --color-success-500: #4fbfa5;  /* 8.4:1 */
+  --color-success-600: #3aa88f;
+  --color-success-50: #12332c;
+  --color-warn-500: #d99a52;     /* dune amber - 7.8:1 */
+  --color-warn-600: #c2833d;
+  --color-warn-50: #2a1d0c;
+  --color-coral-500: #e8796a;    /* favourites / urgency - 6.6:1 */
+  --color-coral-600: #d2604f;
+  --color-coral-100: #3a1f1a;
+  --color-coral-50: #2c1512;
+  --color-danger-500: #e8796a;
+  --color-danger-50: #2c1512;
+  --color-info-500: #5cb3c6;
 
-  /* depth via deep black shadows, not grey borders */
-  --shadow-soft: 0 1px 0 rgb(0 0 0 / 0.6), 0 1px 3px rgb(0 0 0 / 0.6);
-  --shadow-card: 0 2px 8px rgb(0 0 0 / 0.6), 0 16px 36px -12px rgb(0 0 0 / 0.8);
-  --shadow-pop: 0 16px 40px rgb(0 0 0 / 0.7), 0 2px 10px rgb(0 0 0 / 0.6);
-  --shadow-modal: 0 28px 70px rgb(0 0 0 / 0.85);
+  /* depth via warm-black shadows, not grey borders */
+  --shadow-soft: 0 1px 0 rgb(10 6 3 / 0.6), 0 1px 3px rgb(10 6 3 / 0.6);
+  --shadow-card: 0 2px 8px rgb(10 6 3 / 0.6), 0 16px 36px -12px rgb(10 6 3 / 0.8);
+  --shadow-pop: 0 16px 40px rgb(10 6 3 / 0.7), 0 2px 10px rgb(10 6 3 / 0.6);
+  --shadow-modal: 0 28px 70px rgb(10 6 3 / 0.85);
 }
 
-/* Faint cool teal depth at the very top - keeps black from feeling flat
-   without any warmth. Subtle on purpose. */
+/* The "faint warm bloom" from design.md: a low dune-amber wash at the top
+   edge over a cooler teal underlayer, so the canvas reads as lit rather than
+   flat. Both stops sit under 7% - it should register without being seen. */
 html.dark body {
   background-image:
-    radial-gradient(60% 40% at 50% -8%, color-mix(in oklab, var(--color-primary) 8%, transparent), transparent 65%);
+    radial-gradient(55% 32% at 50% -6%, color-mix(in oklab, var(--color-warn-500) 7%, transparent), transparent 70%),
+    radial-gradient(75% 45% at 50% -10%, color-mix(in oklab, var(--color-primary) 5%, transparent), transparent 68%);
   background-attachment: fixed;
   background-repeat: no-repeat;
 }

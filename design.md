@@ -37,26 +37,59 @@ bootstrap). Light = Sand & Ocean; dark = one premium warm-dark (deep espresso
 canvas, layered elevation, glowing teal/sea-green accents, faint warm bloom).
 Do not reintroduce data-palette variants.
 
-OKLCH source of truth (the live tokens in globals.css are hex equivalents to match
-the existing file convention).
+### Light (the names below are the LIVE token names in globals.css)
 
-- `--color-paper`    oklch(96.5% 0.010 85)   warm paper       #f6f1e9
-- `--color-paper-2`  oklch(98.5% 0.006 85)   elevated         #fbf8f2
-- `--color-canvas`   oklch(94.0% 0.012 85)   sand canvas      #ece5d8
-- `--color-ink`      oklch(25.0% 0.015 240)  deep ink-navy    #1e2a36
-- `--color-ink-2`    oklch(44.0% 0.014 240)  body             #49555f
-- `--color-ink-3`    oklch(58.0% 0.012 240)  muted            #6e7882
-- `--color-rule`     oklch(89.0% 0.012 90)   sand hairline    #ded6c6
-- `--color-rule-2`   oklch(82.0% 0.014 90)   divider          #cabfa9
-- `--color-primary`  oklch(46.0% 0.085 218)  ocean teal       #1d6475
-- `--color-accent`   oklch(52.0% 0.080 175)  sea-green (trust) #208073
-- `--color-dune`     oklch(64.0% 0.110 70)   warm amber       #b06b2b
-- `--color-coral`    oklch(58.0% 0.150 25)   hearts/urgency   #c14a3f
-- `--color-focus`    oklch(58.0% 0.120 215)  focus ring       #2a8aa0
+An earlier draft of this file used `--color-paper` / `--color-canvas` /
+`--color-rule`. Those names were never implemented. The shipped names are:
 
-Accent discipline: ocean-teal is the action/brand colour; sea-green marks trust
-(verified, secure, protected); dune-amber is a sparing warmth highlight; coral is
-reserved for favourites/urgency only. Keep chromatic accent under ~5% per viewport.
+- `--color-surface`    warm paper            #f6f1e9
+- `--color-surface-2`  elevated              #fbf8f2
+- `--color-bg`         sand canvas           #eef0ea
+- `--color-ink`        deep ink-navy         #1e2a36
+- `--color-ink-2`      body                  #49555f
+- `--color-ink-3`      muted                 #555f6a  (darkened for WCAG AA)
+- `--color-line`       sand hairline         #ded6c6
+- `--color-line-2`     divider               #cabfa9
+- `--color-primary`    ocean teal            #1d6475
+- `--color-accent`     light ocean blue      #2e9bd0
+- `--color-success-500` sea-green (trust)    #208073
+- `--color-warn-500`   dune amber            #b86b21
+- `--color-coral-500`  hearts/urgency        #c83b3b
+
+Accent discipline: ocean-teal is the action/brand colour; dune-amber is a sparing
+warmth highlight; coral is reserved for favourites/urgency only. Keep chromatic
+accent under ~5% per viewport.
+
+**Known deviation, accepted:** this file originally assigned sea-green #208073 to
+`--color-accent` as the trust colour. The code shipped light ocean blue #2e9bd0
+instead and the accent is now referenced at 800+ call sites as general
+decoration, so it was not worth an en-masse swap. Sea-green survives as
+`--color-success-500`. The cost is that "verified" no longer reads as visually
+distinct from a primary action. If that distinction is wanted back, the fix is a
+dedicated trust token applied to the ~62 badge sites, not a redefinition of
+`--color-accent`.
+
+### Dark (deep espresso, matches this spec as of 2026-07-26)
+
+Dark is the same brand with the lights off, not a second identity. Canvas is a
+tinted warm near-black - never pure #000, per anti-slop rule 7. All values are
+>= 4.5:1 on the surface they sit on; audited at 0 failures across the pricing
+and search pages.
+
+- `--color-bg`         espresso canvas       #17120e
+- `--color-surface`    paper                 #1f1913
+- `--color-surface-2`  elevated card         #2a2219
+- `--color-line`       warm brown hairline   #362c22
+- `--color-ink`        warm off-white        #f5ede2
+- `--color-ink-3`      muted                 #a89b8a
+- `--color-primary`    ocean teal, lifted    #5cb3c6
+- `--color-accent`     light ocean blue      #5cc8f0
+- `--color-success-500` sea-green            #4fbfa5
+- `--color-warn-500`   dune amber            #d99a52
+- `--color-coral-500`  hearts/urgency        #e8796a
+
+The "faint warm bloom" is two stacked radial gradients on `html.dark body`:
+dune-amber at 7% over ocean-teal at 5%, both at the top edge.
 
 ## Typography
 Three families. All display is roman - italic headers are banned.

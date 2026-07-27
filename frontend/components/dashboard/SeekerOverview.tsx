@@ -36,7 +36,7 @@ function statusMeta(status: Booking["status"]): {
 
 const TONE_CLASS: Record<string, string> = {
   warn: "bg-[#f4e4cf] dark:bg-[#2c1e10] text-[var(--color-warn-500)]",
-  info: "bg-[#dde4ec] dark:bg-[#182230] text-[var(--color-info-500)]",
+  info: "bg-[var(--color-primary-soft)] text-[var(--color-info-500)]",
   success: "bg-[var(--color-accent-soft)] text-[var(--color-accent)]",
   neutral: "bg-[var(--color-surface-sunk)] text-[var(--color-ink-2)] border border-[var(--color-line)]",
 };

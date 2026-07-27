@@ -198,7 +198,7 @@ function ThreadItem({
     ? "Pinned"
     : "Open";
   const statusTone = isSupport
-    ? "bg-[#dde4ec] dark:bg-[#182230] text-[var(--color-info-500)]"
+    ? "bg-[var(--color-primary-soft)] text-[var(--color-info-500)]"
     : unread
     ? "bg-[var(--color-primary-soft)] text-[var(--color-primary)]"
     : "bg-[var(--color-surface-sunk)] text-[var(--color-ink-2)] border border-[var(--color-line)]";

@@ -16,7 +16,7 @@ const toneMap: Record<Tone, string> = {
   accent: 'bg-[var(--color-accent-soft)] text-[var(--color-accent)] border border-transparent',
   warning: 'bg-[#f4e4cf] text-[var(--color-warn-500)] border border-transparent dark:bg-[#2c1e10]',
   danger: 'bg-[#f1d8d4] text-[var(--color-danger-500)] border border-transparent dark:bg-[#2b1614]',
-  info: 'bg-[#dde4ec] text-[var(--color-info-500)] border border-transparent dark:bg-[#182230]',
+  info: 'bg-[var(--color-primary-soft)] text-[var(--color-info-500)] border border-transparent',
   solid: 'bg-[var(--color-ink)] text-[var(--color-bg)] border border-transparent',
 };
 

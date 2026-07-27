@@ -51,7 +51,7 @@ function MessageToast({ text, type }: { text: string; type: "success" | "error" 
       "bg-[var(--color-accent-soft)] text-[var(--color-accent)] border-transparent",
     error:
       "bg-[#f1d8d4] dark:bg-[#2b1614] text-[var(--color-danger-500)] border-transparent",
-    info: "bg-[#dde4ec] dark:bg-[#182230] text-[var(--color-info-500)] border-transparent",
+    info: "bg-[var(--color-primary-soft)] text-[var(--color-info-500)] border-transparent",
   };
 
   return (
