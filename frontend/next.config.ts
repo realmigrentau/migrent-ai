@@ -46,6 +46,16 @@ const nextConfig: NextConfig = {
       // Deduped pages - permanent redirects preserve old links and bookmarks.
       { source: "/seeker/search-extended", destination: "/seeker/search", permanent: true },
       { source: "/rental-laws", destination: "/resources/rental-laws", permanent: true },
+      // An App Router prototype at app/[lang]/resources used to serve eight
+      // locale copies of /resources. It was client-only, so every one of them
+      // shipped English HTML with no canonical - eight duplicates competing
+      // with the real page. The prototype is gone; fold the URLs back in so
+      // anything already indexed or linked consolidates instead of 404ing.
+      {
+        source: "/:locale(en|zh|hi|es|ar|fr|ru|pt)/resources",
+        destination: "/resources",
+        permanent: true,
+      },
     ];
   },
 
