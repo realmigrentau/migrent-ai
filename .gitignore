@@ -32,6 +32,10 @@ INTEGRATION_CHECKLIST.md
 QUICKSTART.md
 plan.md
 test-role.js
+design-directions.html
+
+# Vendored third-party agent skills - reproducible from skills-lock.json
+.agents/
 
 # Logs
 install.log
