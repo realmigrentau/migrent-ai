@@ -21,3 +21,26 @@ def get_current_user(authorization: str):
     if res is None or res.user is None:
         raise HTTPException(status_code=401, detail="Invalid or expired token")
     return res.user
+
+
+def is_admin_user(user) -> bool:
+    """True if the user holds an admin role, per the database.
+
+    Reads profiles.is_admin / profiles.role under the service role. Never
+    consults user_metadata: Supabase lets any signed-in user rewrite their own
+    user_metadata via auth.updateUser({ data: ... }), so a role claim from
+    there is attacker-controlled. Use this for any check that grants
+    privilege; user_type in user_metadata is fine for choosing a UI mode,
+    which is not a privilege.
+    """
+    from db import get_supabase_admin
+
+    sb = get_supabase_admin()
+    try:
+        res = sb.table("profiles").select("is_admin, role").eq("id", str(user.id)).execute()
+    except Exception:
+        return False
+    if not res.data:
+        return False
+    row = res.data[0]
+    return bool(row.get("is_admin")) or row.get("role") in ("superadmin", "admin")

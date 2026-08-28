@@ -29,7 +29,7 @@ const plans = [
     unit: "forever",
     title: "Search, apply, and book - free",
     body: "Renters never pay MigRent a service fee. Browse every listing, message hosts, and apply without a credit card.",
-    points: ["Browse all verified listings", "Message hosts and apply free", "Bond held in independent escrow", "Mentor network included"],
+    points: ["Browse all verified listings", "Message hosts and apply free", "Guidance on lodging your bond safely", "Mentor network included"],
     cta: { label: "Start searching", href: "/seeker/search" },
     featured: false,
   },
@@ -39,7 +39,7 @@ const plans = [
     unit: "AUD · one-time, per property",
     title: "Free to list. Pay when it works.",
     body: "List and edit your rooms for free. You pay one fee per property when you find your tenant - nothing before, nothing after.",
-    points: ["Free to list, free to edit", "No commission on weekly rent", "No subscriptions or hidden fees", "Secure payments and bond escrow included"],
+    points: ["Free to list, free to edit", "No commission on weekly rent", "No subscriptions or hidden fees", "Secure card payments through Stripe"],
     cta: { label: "Start listing", href: "/owner/dashboard" },
     featured: true,
   },
@@ -47,7 +47,7 @@ const plans = [
 
 const included = [
   { icon: BadgeCheck, title: "Host verification", body: "Government ID and proof-of-property checks on every host, before listing." },
-  { icon: Lock, title: "Bond escrow", body: "Bonds sit with an independent escrow partner, not in anyone's pocket." },
+  { icon: Lock, title: "Bond guidance", body: "Plain-English help lodging the bond with your state authority, for both sides. MigRent never holds the money." },
   { icon: Wallet, title: "Stripe payments", body: "Card details never touch our servers. Payments are processed by Stripe." },
   { icon: ShieldCheck, title: "Dispute guidance", body: "Clear, plain-English guidance if something goes wrong, for both sides." },
   { icon: MessagesSquare, title: "Human support", body: "A real team that answers - not a chatbot maze." },

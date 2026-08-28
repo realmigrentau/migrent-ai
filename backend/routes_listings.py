@@ -1,15 +1,16 @@
 import asyncio
 import logging
-from fastapi import APIRouter, HTTPException, Header
+from fastapi import APIRouter, HTTPException, Header, Request
 from pydantic import BaseModel
 from typing import Optional
 from models import ListingCreate, ListingUpdate
 from db import get_supabase, get_supabase_admin, SUPABASE_URL, SUPABASE_ANON_KEY
-from auth_utils import get_current_user
+from auth_utils import get_current_user, is_admin_user
 from supabase import create_client
 from routes_geocode import geocode_and_find_station
 from spam_detection import calculate_spam_score, apply_spam_result, notify_founder_spam
 from matching_engine import calculate_match_score, generate_match_reasons
+from limiter import limiter
 
 logger = logging.getLogger(__name__)
 
@@ -46,7 +47,9 @@ def derive_city(postcode: int) -> Optional[str]:
 
 
 @router.post("")
+@limiter.limit("10/hour")
 async def create_listing(
+    request: Request,
     listing: ListingCreate,
     authorization: str = Header(...),
 ):
@@ -208,7 +211,9 @@ async def create_listing(
 
 
 @router.get("/search")
+@limiter.limit("60/minute")
 def search_listings(
+    request: Request,
     suburb: Optional[str] = None,
     postcode: Optional[str] = None,
     state: Optional[str] = None,
@@ -402,10 +407,21 @@ def search_listings(
 
 
 @router.get("/{listing_id}")
-def get_listing_by_id(listing_id: str, include: Optional[str] = None):
+def get_listing_by_id(
+    listing_id: str,
+    include: Optional[str] = None,
+    authorization: Optional[str] = Header(None),
+):
     """Get a single listing by ID (public).
 
     Optional ?include=reviews,similar to bundle extra data.
+
+    Only approved listings are public. This endpoint previously returned any
+    listing to anyone holding the id, so a rejected or still-unmoderated
+    listing stayed live, linkable and bookable even though search hid it -
+    moderation only ever hid things from the search page. The owner and admins
+    can still fetch their own non-approved listings so the edit and moderation
+    screens keep working.
     """
     sb = get_supabase_admin()
     res = sb.table("listings").select("*").eq("id", listing_id).execute()
@@ -413,6 +429,26 @@ def get_listing_by_id(listing_id: str, include: Optional[str] = None):
         raise HTTPException(status_code=404, detail="Listing not found")
 
     listing = res.data[0]
+
+    if listing.get("moderation_status") != "approved":
+        viewer_id = None
+        if authorization:
+            try:
+                viewer_id = str(get_current_user(authorization).id)
+            except HTTPException:
+                viewer_id = None
+
+        is_owner = viewer_id is not None and viewer_id == str(listing.get("owner_id"))
+        is_admin = False
+        if viewer_id is not None and not is_owner:
+            try:
+                is_admin = is_admin_user(get_current_user(authorization))
+            except HTTPException:
+                is_admin = False
+
+        # A soft-deleted listing is gone for everyone, including its owner.
+        if listing.get("moderation_status") == "deleted" or not (is_owner or is_admin):
+            raise HTTPException(status_code=404, detail="Listing not found")
 
     # Enrich with owner profile
     owner_id = listing.get("owner_id")
@@ -687,8 +723,19 @@ def delete_listing(
     else:
         raise HTTPException(status_code=400, detail="Please confirm with your password or Google sign-in")
 
-    # Delete the listing
-    sb_admin.table("listings").delete().eq("id", listing_id).execute()
+    # Soft delete. A hard DELETE used to cascade into bookings and messages,
+    # which meant one owner removing a listing destroyed every booking on it -
+    # including PAID ones with a real Stripe charge behind them - plus the
+    # entire conversation history that would settle a dispute. Neither is
+    # recoverable and neither belongs solely to the owner.
+    #
+    # 'deleted' is excluded from every public read path: search filters on
+    # moderation_status = 'approved' (routes_listings.py search_listings), the
+    # detail endpoint rejects it, and the RLS policy listings_public_read only
+    # exposes approved rows.
+    sb_admin.table("listings").update(
+        {"moderation_status": "deleted"}
+    ).eq("id", listing_id).execute()
 
     return {"message": "Listing deleted successfully"}
 

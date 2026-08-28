@@ -1015,6 +1015,34 @@ export async function markMessageRead(token: string, messageId: string) {
 }
 
 /**
+ * Mark a batch of messages as read.
+ * POST /messages/read
+ *
+ * The frontend used to write read_at straight to Supabase. That required an
+ * UPDATE grant on `messages` for every signed-in user, which also let anyone
+ * rewrite message rows they did not send. The grant is gone; this goes
+ * through the API, which scopes the update to messages the caller received.
+ */
+export async function markMessagesRead(token: string, messageIds: string[]) {
+  if (messageIds.length === 0) return { success: true, updated: 0 };
+  try {
+    const res = await fetch(`${BASE_URL}/messages/read`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ message_ids: messageIds }),
+    });
+    if (!res.ok) throw new Error(`markMessagesRead failed: ${res.status}`);
+    return await res.json();
+  } catch (err) {
+    console.error("markMessagesRead error:", err);
+    return null;
+  }
+}
+
+/**
  * Check if user completed onboarding.
  * GET /profiles/me/onboarding-status
  */

@@ -167,9 +167,16 @@ def send_booking_accepted_to_seeker(
     seeker_email: str,
     seeker_name: str,
     listing_title: str,
-    checkout_url: str,
     booking_id: str,
 ):
+    """Tell the seeker their request was accepted.
+
+    This email used to carry a Stripe link and the line "Service Fees AUD
+    $118.00 / Owner fee: $99 + Seeker fee: $19", which billed the renter for
+    the host's fee. The pricing page promises renters pay nothing, so the
+    renter is no longer charged and no longer receives a payment link. The
+    $99 host fee is invoiced to the host separately.
+    """
     subject = f"Your booking for {listing_title} was approved!"
 
     content = f"""
@@ -180,16 +187,59 @@ def send_booking_accepted_to_seeker(
     <h2 style="font-size:24px;font-weight:bold;color:#1a1a1a;margin:0 0 16px;">Your Booking Was Approved!</h2>
     <p style="font-size:15px;line-height:24px;color:#374151;margin:0 0 12px;">Hi {seeker_name},</p>
     <p style="font-size:15px;line-height:24px;color:#374151;margin:0 0 12px;">
-      Great news! The owner has accepted your booking request for <strong>{listing_title}</strong>.
-      Complete your payment to confirm the booking.
+      Great news. The host has accepted your booking request for <strong>{listing_title}</strong>.
     </p>
 
     {_details_box([
-        ("Service Fees", "AUD $118.00"),
-        ("Breakdown", "Owner fee: $99 + Seeker fee: $19"),
+        ("What you pay MigRent", "AUD $0.00"),
+        ("Next step", "The host is confirming now. We will email you the moment it is locked in."),
     ])}
 
-    {_button("Pay to Confirm Booking", checkout_url, "#059669")}
+    <p style="font-size:14px;line-height:22px;color:#374151;margin:16px 0 0;">
+      Rent and bond are arranged directly between you and your host. MigRent
+      does not collect either, so never send money to anyone claiming to be us.
+    </p>
+    """
+
+    text = (
+        f"Hi {seeker_name},\n\n"
+        f"Great news. The host has accepted your booking request for: {listing_title}\n\n"
+        f"What you pay MigRent: $0.00\n"
+        f"The host is confirming now. We will email you the moment it is locked in.\n\n"
+        f"Rent and bond are arranged directly between you and your host. MigRent\n"
+        f"does not collect either, so never send money to anyone claiming to be us.\n\n"
+        f"- The MigRent Team"
+    )
+
+    _send_email(seeker_email, subject, _email_layout(content, f"Booking approved for {listing_title}"), text)
+
+
+def send_owner_fee_request(
+    owner_email: str,
+    owner_name: str,
+    seeker_name: str,
+    listing_title: str,
+    checkout_url: str,
+    booking_id: str,
+):
+    """Invoice the host their one-off listing fee to confirm a booking."""
+    subject = f"Confirm your booking with {seeker_name}"
+
+    content = f"""
+    <h2 style="font-size:24px;font-weight:bold;color:#1a1a1a;margin:0 0 16px;">One step left</h2>
+    <p style="font-size:15px;line-height:24px;color:#374151;margin:0 0 12px;">Hi {owner_name},</p>
+    <p style="font-size:15px;line-height:24px;color:#374151;margin:0 0 12px;">
+      Your booking with <strong>{seeker_name}</strong> for <strong>{listing_title}</strong>
+      is held and ready. Pay your one-off listing fee to confirm it.
+    </p>
+
+    {_details_box([
+        ("Host listing fee", "AUD $99.00"),
+        ("When", "One time, per property, only when you match with a tenant"),
+        ("Commission on rent", "None"),
+    ])}
+
+    {_button("Pay $99 and confirm", checkout_url, "#059669")}
 
     <p style="font-size:13px;color:#9ca3af;text-align:center;margin:8px 0 0;">
       Secure payment powered by Stripe.
@@ -197,14 +247,14 @@ def send_booking_accepted_to_seeker(
     """
 
     text = (
-        f"Hi {seeker_name},\n\n"
-        f"Great news! The owner has accepted your booking request for: {listing_title}\n\n"
-        f"Complete your payment to confirm: {checkout_url}\n\n"
-        f"Service fees: Owner $99 + Seeker $19 = $118\n\n"
+        f"Hi {owner_name},\n\n"
+        f"Your booking with {seeker_name} for {listing_title} is held and ready.\n"
+        f"Pay your one-off $99 host listing fee to confirm it: {checkout_url}\n\n"
+        f"No commission on rent. One fee, per property, only when you match.\n\n"
         f"- The MigRent Team"
     )
 
-    _send_email(seeker_email, subject, _email_layout(content, f"Booking approved for {listing_title}"), text)
+    _send_email(owner_email, subject, _email_layout(content, f"Confirm your booking with {seeker_name}"), text)
 
 
 def send_booking_declined_to_seeker(

@@ -26,26 +26,20 @@ router = APIRouter(prefix="/admin", tags=["admin"])
 
 
 def _require_admin(authorization: str):
-    """Validate token and check admin role. Returns (user, profile)."""
+    """Validate token and check admin role. Returns (user, profile).
+
+    Admin status is read from the profiles table under the service role, and
+    from nowhere else. In particular it is NOT read from user_metadata:
+    Supabase lets any signed-in user rewrite their own user_metadata via
+    auth.updateUser({ data: ... }), so trusting a role claim from there let
+    any account promote itself to superadmin. app_metadata is service-role
+    only and would be safe, but nothing sets it, so there is no reason to
+    keep the branch alive.
+    """
     user = get_current_user(authorization)
     user_id = str(user.id)
     logger.info(f"[Admin] Checking admin access for user {user_id}")
 
-    # Check user_metadata first (works without DB query)
-    meta = user.user_metadata or {}
-    app_meta = user.app_metadata or {}
-    meta_role = meta.get("role") or app_meta.get("role")
-    if meta_role in ("superadmin", "admin"):
-        logger.info(f"[Admin] User {user_id} granted via metadata role={meta_role}")
-        sb = get_supabase_admin()
-        try:
-            profile_res = sb.table("profiles").select("id, name, email, role").eq("id", user_id).execute()
-            profile = profile_res.data[0] if profile_res.data else {"id": user_id, "name": "Admin", "email": user.email}
-        except Exception:
-            profile = {"id": user_id, "name": "Admin", "email": user.email}
-        return user, profile
-
-    # Fallback: check profiles table for is_admin flag or role
     sb = get_supabase_admin()
     try:
         profile_res = sb.table("profiles").select("id, is_admin, role, name, email").eq("id", user_id).execute()

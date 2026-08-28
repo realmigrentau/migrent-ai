@@ -86,12 +86,18 @@ function computeResponseRate(months: number): number {
   return 90;
 }
 
-/** Fetch profile directly from Supabase (fast, no Railway middleman) */
+/**
+ * Fetch another user's profile for their public profile page.
+ *
+ * Reads `public_profiles`, not `profiles`. This used to be select("*") on the
+ * table itself, which returned phone, residential_address, emergency_contact,
+ * recovery_password_hash and visa_type for any id the caller asked about. The
+ * view exposes only the columns this page actually renders.
+ */
 async function fetchProfileDirect(userId: string): Promise<any | null> {
   try {
-    // Use select("*") to get all available columns - Supabase only returns columns that exist
     const { data, error } = await supabase
-      .from("profiles")
+      .from("public_profiles")
       .select("*")
       .eq("id", userId)
       .maybeSingle();

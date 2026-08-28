@@ -25,13 +25,13 @@ import { reveal, ScrollStatement, ScrollMarquee } from "../components/marketing/
 const steps = [
   { n: "01", icon: Search, title: "Search honestly", body: "Filter by budget, suburb, and move-in date - then by what actually matters to a new arrival.", extra: ["No history needed", "Pet-friendly", "Bills included", "Near transport"] },
   { n: "02", icon: ShieldCheck, title: "Meet verified hosts", body: "Every host passes government ID and proof-of-property checks before their room goes live.", extra: ["Government ID", "Proof of property", "Ongoing checks"] },
-  { n: "03", icon: Lock, title: "Apply and book safely", body: "Message hosts, apply in one place, and pay through Stripe. Your bond goes into independent escrow.", extra: ["Stripe secure", "Bond in escrow", "Clear agreement"] },
+  { n: "03", icon: Lock, title: "Apply and book safely", body: "Message hosts and apply in one place, free. When you agree terms, we show you how to lodge your bond with your state authority.", extra: ["$0 renter fees", "Bond lodged correctly", "Clear agreement"] },
   { n: "04", icon: KeyRound, title: "Move in supported", body: "Real support and dispute guidance, plus mentors who made the same move before you.", extra: ["Dispute guidance", "Mentor support", "Real humans"] },
 ];
 
 const benefits = [
   { icon: FileCheck2, title: "Your visa is enough", body: "Filter for hosts who welcome first-time renters with no Australian rental ledger or credit file." },
-  { icon: Lock, title: "Bond protection", body: "Your bond is held by an independent escrow partner, never the landlord's bank account." },
+  { icon: Lock, title: "Bond guidance", body: "Your bond belongs with your state's bond authority, never in a landlord's bank account. We show you how to check." },
   { icon: Wallet, title: "$0 renter fees", body: "Browsing, messaging, and applying are free. No platform service fee for renters." },
   { icon: BadgeCheck, title: "Verified, always", body: "You will never message an unverified host. Every listing belongs to a checked owner." },
   { icon: HeartHandshake, title: "Mentors included", body: "Get help reading a lease, opening a bank account, or picking a suburb from someone who has done it." },
@@ -54,7 +54,7 @@ export default function ForSeekers() {
     <>
       <Head>
         <title>For Seekers - Find a room you can trust | MigRent</title>
-        <meta name="description" content="Verified rooms for migrants, students, and new arrivals across Australia. No rental history or local credit file needed. Bond held in escrow, $0 renter fees." />
+        <meta name="description" content="Verified rooms for migrants, students, and new arrivals across Australia. No rental history or local credit file needed. $0 renter fees." />
       </Head>
 
       <PageSubnav
@@ -89,7 +89,7 @@ export default function ForSeekers() {
               <div className="mt-7 flex flex-wrap gap-x-5 gap-y-2.5">
                 {[
                   { icon: BadgeCheck, label: "ID-verified hosts" },
-                  { icon: Lock, label: "Bond in escrow" },
+                  { icon: Lock, label: "Bond lodged properly" },
                   { icon: Wallet, label: "$0 renter fees" },
                 ].map((c) => (
                   <span key={c.label} className="inline-flex items-center gap-2 text-[13.5px] font-medium text-[var(--color-ink-2)]">

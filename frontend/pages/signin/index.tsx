@@ -99,7 +99,7 @@ export default function SignIn() {
         <div className="flex flex-wrap gap-x-4 gap-y-1 text-[12px] opacity-60">
           <span>ID-verified hosts</span>
           <span>·</span>
-          <span>Bond held in escrow</span>
+          <span>Bond lodged properly</span>
           <span>·</span>
           <span>$0 renter fees</span>
         </div>
@@ -148,12 +148,13 @@ export default function SignIn() {
                 onKeyDown={(e) => e.key === "Enter" && handleLogin()}
               />
             </label>
-            <div className="flex items-center justify-between">
-              <label className="flex items-center gap-2 text-[13px] text-[var(--color-ink-2)] cursor-pointer">
-                <input type="checkbox" defaultChecked style={{ accentColor: "var(--color-primary)" }} />
-                Remember this device
-              </label>
-              <Link href="/magic-link-login" className="text-[13px] font-semibold text-[var(--color-primary)] hover:underline underline-offset-[3px]">
+            {/* A "Remember this device" checkbox used to sit here. It was
+                defaultChecked with no state and no handler, so ticking or
+                unticking it did nothing. Supabase already persists the session
+                across visits, which is the behaviour it implied, so the honest
+                move is to drop the control rather than fake it. */}
+            <div className="flex items-center justify-end">
+              <Link href="/forgot-password" className="text-[13px] font-semibold text-[var(--color-primary)] hover:underline underline-offset-[3px]">
                 Forgot password?
               </Link>
             </div>

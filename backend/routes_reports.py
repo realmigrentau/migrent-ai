@@ -4,7 +4,7 @@ import resend
 from pydantic import BaseModel, Field
 from typing import Optional
 from fastapi import APIRouter, HTTPException, Request, Header
-from db import get_supabase
+from db import get_supabase_admin
 from limiter import limiter
 
 logger = logging.getLogger(__name__)
@@ -31,7 +31,7 @@ def _get_user_id(authorization: str | None) -> str:
     if not authorization or not authorization.startswith("Bearer "):
         raise HTTPException(status_code=401, detail="Missing or invalid authorization header")
     token = authorization.split(" ", 1)[1]
-    sb = get_supabase()
+    sb = get_supabase_admin()
     try:
         user = sb.auth.get_user(token)
         return user.user.id
@@ -47,7 +47,7 @@ def create_report(
     authorization: Optional[str] = Header(None),
 ):
     user_id = _get_user_id(authorization)
-    sb = get_supabase()
+    sb = get_supabase_admin()
 
     # Normalize fields (support both old and new format)
     resolved_id = body.item_id or body.listing_id or ""
@@ -144,7 +144,7 @@ def list_reports(
 ):
     """Admin-only: list all reports."""
     user_id = _get_user_id(authorization)
-    sb = get_supabase()
+    sb = get_supabase_admin()
 
     profile = sb.table("profiles").select("role").eq("id", user_id).single().execute()
     if not profile.data or profile.data.get("role") != "admin":
@@ -167,7 +167,7 @@ async def update_report(
 ):
     """Admin-only: update report status (reviewed / dismissed)."""
     user_id = _get_user_id(authorization)
-    sb = get_supabase()
+    sb = get_supabase_admin()
 
     profile = sb.table("profiles").select("role").eq("id", user_id).single().execute()
     if not profile.data or profile.data.get("role") != "admin":

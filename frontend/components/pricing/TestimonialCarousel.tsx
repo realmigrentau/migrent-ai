@@ -1,25 +1,33 @@
 import { motion } from "framer-motion";
 import { Shield, Sparkles, Clock, DollarSign } from "lucide-react";
 
+// Three claims here were not true and have been corrected:
+//   "Every user goes through identity verification" - hosts must complete ID
+//     verification before they can list. Seekers are not required to.
+//   "AI-powered matching" - matching_engine.py is deliberately rules-based and
+//     documents itself as "no AI black-box, no hallucinated scores".
+//   "Most hosts respond within 24 hours" - nothing measures this. The
+//     profiles.response_time column defaults to the literal string 'within 24h'
+//     and is never computed. Reinstate once it is real.
 const highlights = [
   {
     icon: Shield,
-    label: "Verified hosts and seekers",
-    desc: "Every user goes through identity verification",
+    label: "ID-verified hosts",
+    desc: "Government ID and proof of property, checked before a room goes live",
     color: "text-[var(--color-accent)]",
     bg: "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/20",
   },
   {
     icon: Sparkles,
-    label: "AI-powered matching",
-    desc: "Find rooms that fit your visa, budget, and location",
+    label: "Matching you can check",
+    desc: "Ranked on your visa, budget and location, and it shows you why",
     color: "text-[var(--color-primary)]",
     bg: "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/20",
   },
   {
     icon: Clock,
-    label: "Fast response times",
-    desc: "Most hosts respond within 24 hours",
+    label: "Message hosts directly",
+    desc: "No agents in the middle, no application queue",
     color: "text-[var(--color-warn-500)]",
     bg: "bg-[var(--color-warn-50)]",
   },

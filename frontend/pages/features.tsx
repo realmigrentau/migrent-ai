@@ -84,7 +84,7 @@ function MockBooking() {
       <div className="eyebrow mb-4">Instant book</div>
       <div className="rounded-[var(--radius-card)] border border-[var(--color-line)] bg-[var(--color-surface)] p-4 mb-4">
         <div className="flex justify-between text-[13px] text-[var(--color-ink-2)]"><span>Rent · 4 weeks</span><span className="font-mono tabular-nums text-[var(--color-ink)]">$1,240</span></div>
-        <div className="flex justify-between text-[13px] text-[var(--color-ink-2)] mt-2"><span>Bond (held in escrow)</span><span className="font-mono tabular-nums text-[var(--color-ink)]">$620</span></div>
+        <div className="flex justify-between text-[13px] text-[var(--color-ink-2)] mt-2"><span>Bond (lodged with your state authority)</span><span className="font-mono tabular-nums text-[var(--color-ink)]">$620</span></div>
         <div className="flex justify-between text-[13px] mt-2"><span className="text-[var(--color-ink-2)]">MigRent renter fee</span><span className="font-mono tabular-nums font-bold text-[var(--color-accent)]">$0</span></div>
         <hr className="rule-soft my-3" />
         <div className="flex justify-between text-[14px] font-semibold text-[var(--color-ink)]"><span>Move-in total</span><span className="font-mono tabular-nums">$1,860</span></div>
@@ -153,7 +153,7 @@ const deepFeatures = [
     icon: Zap,
     eyebrow: "Instant booking",
     title: "From found it to booked it in minutes",
-    body: "Instant-book rooms let you secure a place the moment you find it - with payments through Stripe and your bond in independent escrow.",
+    body: "Instant-book rooms let you secure a place the moment you find it, with the paperwork and bond lodgement laid out step by step.",
     points: ["One-tap booking on eligible rooms", "Clear cost breakdown up front", "$0 renter fees, always"],
     Mock: MockBooking,
     flip: false,

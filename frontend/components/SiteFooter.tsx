@@ -71,7 +71,7 @@ const columns: { heading: string; links: { label: string; href: string }[] }[] =
 
 const trustChips = [
   { icon: BadgeCheck, label: "ID-verified hosts" },
-  { icon: Lock, label: "Bond held in escrow" },
+  { icon: Lock, label: "Bond lodged properly" },
   { icon: Wallet, label: "$0 renter fees" },
   { icon: HeartHandshake, label: "Mentor network" },
 ];

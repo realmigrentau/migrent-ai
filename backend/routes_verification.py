@@ -1,7 +1,7 @@
 import os
 import stripe
 from fastapi import APIRouter, HTTPException, Header
-from db import get_supabase
+from db import get_supabase_admin
 from auth_utils import get_current_user
 
 router = APIRouter(prefix="/payments", tags=["verification"])
@@ -23,7 +23,7 @@ def create_verification_session(authorization: str = Header(...)):
     Auth required - uses the authenticated user's ID (not client-supplied).
     """
     user = get_current_user(authorization)
-    sb = get_supabase()
+    sb = get_supabase_admin()
 
     # Check if user is already verified - no need to pay again
     try:

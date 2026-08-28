@@ -201,7 +201,7 @@ export default function RequestToBookForm({
             <span className="text-[var(--color-ink)] tabular-nums">${totalRent.toLocaleString()}</span>
           </div>
           <div className="flex justify-between py-1.5 text-[13px]">
-            <span className="text-[var(--color-ink-2)]">Bond (refundable, escrow)</span>
+            <span className="text-[var(--color-ink-2)]">Bond (typically 4 weeks, refundable)</span>
             <span className="text-[var(--color-ink)] tabular-nums">${listing.weekly_price.toLocaleString()}</span>
           </div>
           <div className="flex justify-between py-1.5 text-[13px]">
@@ -213,16 +213,26 @@ export default function RequestToBookForm({
             <span>Move-in total</span>
             <span className="tabular-nums">${(totalRent + listing.weekly_price).toLocaleString()}</span>
           </div>
+          <p className="text-[11.5px] text-[var(--color-ink-3)] leading-relaxed mt-2">
+            Rent and bond are paid directly to your host, not to MigRent.
+          </p>
         </div>
       )}
 
-      {/* Bond Protect banner */}
+      {/* Bond guidance.
+          This banner used to read "Bond is held by escrow, not your landlord."
+          MigRent operates no escrow, and in NSW, VIC and QLD a residential bond
+          must be lodged with the state bond authority rather than held by a
+          third party, so the claim was both untrue and not something we could
+          lawfully build as described. */}
       <div className="flex items-start gap-3 rounded-[6px] border-l-[3px] border-l-[var(--color-accent)] bg-[var(--color-accent-soft)] px-3.5 py-2.5">
         <Shield className="w-4 h-4 text-[var(--color-accent)] mt-0.5 shrink-0" />
         <div>
-          <div className="text-[13px] font-semibold text-[var(--color-ink)]">Bond protection</div>
+          <div className="text-[13px] font-semibold text-[var(--color-ink)]">Protect your bond</div>
           <div className="text-[12px] text-[var(--color-ink-2)] mt-0.5 leading-relaxed">
-            Bond is held by escrow, not your landlord. Released only when both parties agree.
+            Your bond should be lodged with your state&rsquo;s bond authority, not held by
+            your host. Ask for the lodgement receipt, and never pay a bond before
+            you have seen the room.
           </div>
         </div>
       </div>

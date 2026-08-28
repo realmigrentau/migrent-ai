@@ -34,6 +34,12 @@ def create_deal(
     # Only the owner (or at minimum, the owner_id must match the caller)
     if str(user.id) != str(body.owner_id):
         raise HTTPException(status_code=403, detail="Only the owner can create a deal")
+    # user_type lives in user_metadata, which the user can rewrite themselves.
+    # It is a UI mode ("am I browsing as a seeker or a host"), not a privilege,
+    # so this filters honest mistakes rather than attackers. The checks that
+    # actually matter are the owner_id match above and, for listing creation,
+    # check_owner_verified in routes_listings.py. Never add a privilege check
+    # that reads user_metadata; use auth_utils.is_admin_user instead.
     if user_meta.get("user_type") != "owner":
         raise HTTPException(status_code=403, detail="Only owners can create deals")
 

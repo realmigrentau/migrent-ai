@@ -30,7 +30,7 @@ const steps = [
 const benefits = [
   { icon: UsersRound, title: "Tenants you can trust", body: "Seeker profiles show verification status and references up front, so you choose with confidence." },
   { icon: Wallet, title: "Simple, fair pricing", body: "Free to list. A one-time AUD $99 fee per property when you find your tenant - no commissions, no subscriptions." },
-  { icon: Lock, title: "Protected payments", body: "Rent and bond flow through Stripe, with the bond held in independent escrow for both sides." },
+  { icon: Lock, title: "Clean paperwork", body: "Your MigRent fee is paid by card through Stripe. Rent and bond stay between you and your tenant, lodged the way your state requires." },
   { icon: ShieldCheck, title: "A safer marketplace", body: "Verification on both sides keeps scammers out - and keeps your enquiries genuine." },
   { icon: MessagesSquare, title: "Everything in one place", body: "Listings, enquiries, bookings, and payments managed from one clean dashboard." },
   { icon: FileCheck2, title: "Help when you need it", body: "Real support and clear dispute guidance, written in plain English." },
@@ -41,7 +41,7 @@ export default function ForOwners() {
     <>
       <Head>
         <title>For Owners - Fill your room with the right tenant | MigRent</title>
-        <meta name="description" content="List your room on MigRent and reach verified, motivated renters. Free to list, one-time AUD $99 fee per property match. Secure payments and bond escrow built in." />
+        <meta name="description" content="List your room on MigRent and reach verified, motivated renters. Free to list, one-time AUD $99 fee per property match. No commission on rent." />
       </Head>
 
       <PageSubnav
@@ -66,7 +66,7 @@ export default function ForOwners() {
                 <span className="text-[var(--color-primary)]">Find great tenants.</span>
               </h1>
               <p className="mt-6 text-[17px] sm:text-[18px] text-[var(--color-ink-2)] max-w-[48ch] leading-[1.55]">
-                Reach verified, motivated renters across Australia. Free to list, with secure payments and bond escrow built in.
+                Reach verified, motivated renters across Australia. Free to list, with no commission on the rent you collect.
               </p>
               <div className="flex flex-wrap gap-3 mt-8">
                 <Link href="/owner/dashboard" className="btn-primary h-12 px-7 text-[15px]">Start listing <ArrowRight className="w-4 h-4" /></Link>
@@ -166,7 +166,7 @@ export default function ForOwners() {
       </section>
 
       {/* 2b · VALUE MARQUEE (scroll-drift) */}
-      <ScrollMarquee words={["Free to list", "Verified seekers", "No rent commission", "Stripe payments", "Bond escrow"]} />
+      <ScrollMarquee words={["Free to list", "Verified seekers", "No rent commission", "Stripe payments", "No lock-in"]} />
 
       {/* 3 · BENEFITS */}
       <section id="why" className="scroll-mt-[76px]">
@@ -216,7 +216,7 @@ export default function ForOwners() {
               </div>
               <hr className="rule-soft my-6" />
               <ul className="space-y-3.5">
-                {["Free to list, free to edit", "Pay only when you match with a tenant", "No commission on weekly rent", "Secure payments and bond escrow included"].map((t) => (
+                {["Free to list, free to edit", "Pay only when you match with a tenant", "No commission on weekly rent", "Secure card payments through Stripe"].map((t) => (
                   <li key={t} className="flex gap-3 text-[15px] text-[var(--color-ink)] leading-[1.5] font-medium">
                     <Check className="w-4 h-4 text-[var(--color-accent)] mt-0.5 shrink-0" strokeWidth={2.4} /> {t}
                   </li>

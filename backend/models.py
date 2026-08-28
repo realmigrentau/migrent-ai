@@ -187,9 +187,14 @@ class ProfileUpdate(BaseModel):
     preferred_currency: Optional[str] = Field(None, max_length=5)
     timezone: Optional[str] = Field(None, max_length=50)
     wishlist: Optional[list[str]] = None
-    identity_verified: Optional[bool] = None
-    identity_verification_url: Optional[str] = None
-    # Dashboard role (seeker or owner)
+    # identity_verified and identity_verification_url are deliberately NOT
+    # accepted here. They were writable through PATCH /profiles/me, which let
+    # any user award themselves the "ID verified" badge that the listing page
+    # and owner card display as a trust signal. They are set only by the
+    # verification flow (routes_owner_verification.py) and the Stripe webhook,
+    # both of which run under the service role.
+    # Dashboard role. Restricted to the two UI modes: 'superadmin' and 'admin'
+    # are not accepted, so this endpoint cannot be used to escalate privilege.
     role: Optional[Literal["seeker", "owner"]] = None
 
 

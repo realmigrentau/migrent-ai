@@ -40,7 +40,6 @@ export default function MessageBubble({
   const [selectedReaction, setSelectedReaction] = useState<string | null>(null);
   const longPressTimer = useRef<NodeJS.Timeout | null>(null);
 
-  const hasHtml = !!message.message_html;
   const isImage = message.attachment_type?.startsWith("image/");
   const isAttachmentOnly = message.attachment_url && message.message_text.startsWith("📎");
 
@@ -186,14 +185,17 @@ export default function MessageBubble({
                 maxWidth: "100%",
               }}
             >
-              {hasHtml ? (
-                <div
-                  className="break-words [&_strong]:font-bold [&_em]:italic [&_s]:line-through [&_mark]:rounded-sm"
-                  dangerouslySetInnerHTML={{ __html: message.message_html! }}
-                />
-              ) : (
-                <span className="break-words whitespace-pre-wrap">{message.message_text}</span>
-              )}
+              {/* Message bodies render as plain text, never as HTML.
+                  message_html used to be piped through dangerouslySetInnerHTML.
+                  The only sanitiser was a regex tag-stripper on the server, and
+                  it could be reached around two ways: it required a closing ">"
+                  so "<img src=x onerror=..." passed through untouched, and the
+                  browser could write the row straight to Supabase and skip the
+                  server entirely. Either path executed script in the reader's
+                  session, and Supabase keeps the access token in localStorage,
+                  so it was an account takeover on anyone you could message.
+                  The column is no longer written; see hooks/useMessages.ts. */}
+              <span className="break-words whitespace-pre-wrap">{message.message_text}</span>
 
               {/* Inline file attachment chip (non-image) */}
               {message.attachment_url && !isImage && (

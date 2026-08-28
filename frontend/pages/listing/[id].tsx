@@ -72,12 +72,12 @@ export default function ListingDetailPage() {
     }
     setBookingLoading(true);
     try {
-      const result = await createBooking(session.access_token, data);
-      if (result.checkout_url) {
-        window.location.href = result.checkout_url;
-      } else {
-        setBookingSuccess(true);
-      }
+      // No redirect to Stripe. Renters pay MigRent nothing, so the API no
+      // longer returns a checkout URL to the seeker - it used to hand them a
+      // $118 session carrying the host's $99 fee. The host is invoiced their
+      // listing fee separately and confirms from their own dashboard.
+      await createBooking(session.access_token, data);
+      setBookingSuccess(true);
     } finally {
       setBookingLoading(false);
     }

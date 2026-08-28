@@ -1,5 +1,19 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { supabase } from "../lib/supabase";
+import { sendMessage as sendMessageApi, markMessagesRead } from "../lib/api";
+
+/**
+ * Reads and realtime still go straight to Supabase, which is fine: the RLS
+ * SELECT policy on `messages` already scopes rows to the sender or receiver.
+ * Writes do not. Every signed-in user used to hold INSERT and UPDATE on
+ * `messages`, which meant message_html could be written without passing
+ * through the server-side sanitiser. Those grants are gone as of migration
+ * 039, so sends and read receipts go through the API instead.
+ */
+async function getAccessToken(): Promise<string | null> {
+  const { data } = await supabase.auth.getSession();
+  return data.session?.access_token ?? null;
+}
 
 // ── Types ───────────────────────────────────────────────────
 export interface Message {
@@ -105,7 +119,7 @@ export function useThreads(userId?: string) {
       const otherIds = [...new Set(Object.values(threadMap).map((t) => t.other_user_id))];
       if (otherIds.length > 0) {
         const { data: profiles } = await supabase
-          .from("profiles")
+          .from("public_profiles")
           .select("id, name, preferred_name, custom_pfp")
           .in("id", otherIds);
 
@@ -212,7 +226,7 @@ export function useChat(currentUserId?: string, otherUserId?: string) {
     if (!otherUserId) return;
     (async () => {
       const { data } = await supabase
-        .from("profiles")
+        .from("public_profiles")
         .select("id, name, preferred_name, custom_pfp")
         .eq("id", otherUserId)
         .maybeSingle();
@@ -268,10 +282,8 @@ export function useChat(currentUserId?: string, otherUserId?: string) {
           .filter((m: any) => m.receiver_id === currentUserId && !m.read_at)
           .map((m: any) => m.id);
         if (unreadIds.length > 0) {
-          await supabase
-            .from("messages")
-            .update({ read_at: new Date().toISOString() })
-            .in("id", unreadIds);
+          const token = await getAccessToken();
+          if (token) await markMessagesRead(token, unreadIds);
         }
       }
     } catch (err) {
@@ -308,10 +320,9 @@ export function useChat(currentUserId?: string, otherUserId?: string) {
           });
           // Mark as read if it's from the other user
           if (newMsg.sender_id === otherUserId) {
-            supabase.from("messages")
-              .update({ read_at: new Date().toISOString() })
-              .eq("id", newMsg.id)
-              .then();
+            void getAccessToken().then((token) => {
+              if (token) markMessagesRead(token, [newMsg.id]);
+            });
           }
         }
       })
@@ -357,26 +368,41 @@ export function useChat(currentUserId?: string, otherUserId?: string) {
   // Send message
   const sendMessage = async (
     text: string,
+    // Retained for call-site compatibility. Neither is sent:
+    // - `html` was a stored-XSS vector, see the note below.
+    // - `replyToId` targeted a `reply_to_id` column that no migration ever
+    //   created, so including it made PostgREST reject the whole insert and
+    //   the message vanished. No caller passes it today. Threaded replies need
+    //   the column added before this can do anything.
     html?: string,
     attachments?: AttachmentFile[],
     replyToId?: string
   ) => {
+    void html;
+    void replyToId;
     if (!currentUserId || !otherUserId) return false;
     setSending(true);
 
     try {
-      // Send text message
+      const token = await getAccessToken();
+      if (!token) {
+        console.error("Send error: no active session");
+        return false;
+      }
+
+      // `html` is intentionally not forwarded. Rich-text message bodies were
+      // rendered by MessageBubble through dangerouslySetInnerHTML, which made
+      // any crafted markup a stored XSS against the recipient. The column is
+      // no longer written or rendered; message_text carries the content.
+      let ok = true;
+
       if (text.trim()) {
-        const msgData: Record<string, any> = {
+        const sent = await sendMessageApi(token, {
           sender_id: currentUserId,
           receiver_id: otherUserId,
           message_text: text.trim(),
-        };
-        if (html && html !== text.trim()) msgData.message_html = html;
-        if (replyToId) msgData.reply_to_id = replyToId;
-
-        const { error } = await supabase.from("messages").insert(msgData);
-        if (error) console.error("Text send error:", error);
+        });
+        if (!sent) ok = false;
       }
 
       // Upload & send attachments
@@ -385,7 +411,7 @@ export function useChat(currentUserId?: string, otherUserId?: string) {
         for (const att of attachments) {
           const uploaded = await uploadFile(att.file);
           if (uploaded) {
-            const { error } = await supabase.from("messages").insert({
+            const sent = await sendMessageApi(token, {
               sender_id: currentUserId,
               receiver_id: otherUserId,
               message_text: `📎 ${uploaded.name}`,
@@ -393,20 +419,15 @@ export function useChat(currentUserId?: string, otherUserId?: string) {
               attachment_name: uploaded.name,
               attachment_type: uploaded.type,
             });
-            if (error) {
-              // Fallback: send as text with URL
-              await supabase.from("messages").insert({
-                sender_id: currentUserId,
-                receiver_id: otherUserId,
-                message_text: `📎 ${uploaded.name}\n${uploaded.url}`,
-              });
-            }
+            if (!sent) ok = false;
+          } else {
+            ok = false;
           }
         }
         setUploading(false);
       }
 
-      return true;
+      return ok;
     } catch (err) {
       console.error("Send error:", err);
       return false;

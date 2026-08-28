@@ -116,7 +116,7 @@ type PanelItem = { n: string; icon: LucideIcon; title: string; body: string; ext
 const HOW_ITEMS: PanelItem[] = [
   { n: "01", icon: Search, title: "Search", body: "Filter by budget, suburb, and what matters, then find a room that fits how you actually live.", extra: ["No history needed", "Pet-friendly", "Bills included", "Near transport"] },
   { n: "02", icon: ShieldCheck, title: "Verify", body: "Every host is ID-checked with proof of property before a single room goes live, so you always know who you are dealing with.", extra: ["Government ID", "Proof of property", "Ongoing checks"] },
-  { n: "03", icon: Lock, title: "Book", body: "Pay securely through Stripe. Your bond is held in independent escrow, never in the landlord's account.", extra: ["Stripe secure", "Bond in escrow", "Clear agreement"] },
+  { n: "03", icon: Lock, title: "Book", body: "Agree the room, the rent and the move-in date in writing, then lodge your bond with your state's bond authority. We show you exactly how.", extra: ["Written agreement", "Bond lodged correctly", "Receipt you keep"] },
   { n: "04", icon: KeyRound, title: "Settle", body: "Move in with real support behind you - clear dispute guidance and mentors who have made the same move.", extra: ["Dispute guidance", "Mentor support", "Real humans"] },
 ];
 
@@ -403,7 +403,7 @@ export default function Home() {
 
   const heroChips = [
     { icon: BadgeCheck, label: "ID-verified hosts" },
-    { icon: Lock, label: "Bond in escrow" },
+    { icon: Lock, label: "Bond lodged properly" },
     { icon: Wallet, label: "$0 renter fees" },
   ];
 
@@ -417,7 +417,7 @@ export default function Home() {
   // EFFECT 3 · "Everything you get" - the full offering, one line each
   const offerings = [
     { icon: BadgeCheck, title: "Verified hosts", body: "Government ID and proof of property, checked before listing." },
-    { icon: Lock, title: "Bond protection", body: "Held in independent escrow, released only when it should be." },
+    { icon: Lock, title: "Bond guidance", body: "We walk you through lodging your bond with your state authority, so it is never sitting in a landlord's account." },
     { icon: FileCheck2, title: "No rental history", body: "Filter for owners who welcome first-time renters." },
     { icon: Wallet, title: "Secure payments", body: "Processed through Stripe. $0 platform fee for renters." },
     { icon: HeartHandshake, title: "Mentors", body: "Guidance from people who have made the same move." },
@@ -440,15 +440,10 @@ export default function Home() {
     { city: "More soon", note: "Perth & Adelaide next" },
   ];
 
-  const stories = [
-    { name: "Aisha", from: "Karachi → Carlton", initial: "A", tone: "bg-[var(--color-accent-soft)] text-[var(--color-accent)]", quote: "Student visa, no payslip, a phone that didn't work yet. The hosts I messaged actually replied." },
-    { name: "Lucas", from: "São Paulo → Surry Hills", initial: "L", tone: "bg-[var(--color-primary-soft)] text-[var(--color-primary)]", quote: "The bond went into escrow, not my landlord's account. That felt huge." },
-    { name: "Mei", from: "Taipei → Brisbane", initial: "M", tone: "bg-[var(--color-warn-50)] text-[var(--color-warn-500)]", quote: "I filtered for 'no rental history needed' and found real options, run by people who got it." },
-  ];
 
   const faqs = [
     { q: "Do I need an Australian rental history?", a: "No. Many hosts welcome first-time renters with no local ledger or credit file - filter for them." },
-    { q: "How is my bond protected?", a: "It's held by an independent escrow partner, not the landlord, and released per the agreement." },
+    { q: "How is my bond protected?", a: "By being lodged with your state's bond authority rather than held by your host. We show you how to do it and what receipt to ask for. MigRent never holds your money." },
     { q: "What does it cost renters?", a: "Browsing and applying is free, with $0 platform service fees." },
     { q: "How are hosts verified?", a: "Government ID plus proof they control the property, before any room goes live." },
   ];
@@ -457,7 +452,7 @@ export default function Home() {
     <>
       <Head>
         <title>MigRent - A real home in Australia, found the right way.</title>
-        <meta name="description" content="Verified rooms across Australia for migrants, students, and new arrivals. Every host ID-checked, every bond held in escrow. No rental history needed." />
+        <meta name="description" content="Verified rooms across Australia for migrants, students, and new arrivals. Every host ID-checked. No rental history needed, no renter fees." />
         <meta property="og:title" content="MigRent - A real home in Australia" />
         <meta property="og:description" content="Verified rooms across Australia for migrants, students, and new arrivals." />
         <meta property="og:type" content="website" />
@@ -654,7 +649,7 @@ export default function Home() {
             <motion.div {...reveal} transition={{ ...reveal.transition, delay: 0.1 }} className="ocean-card rounded-[var(--radius-xl)] border border-[var(--color-line)] shadow-[var(--shadow-card)] p-8">
               <div className="eyebrow mb-5">The MigRent way</div>
               <ul className="space-y-4">
-                {["No rental history or credit file needed", "Bond held safely in independent escrow", "Every host ID-verified before listing", "A mentor who has made the same move"].map((t) => (
+                {["No rental history or credit file needed", "Clear guidance on lodging your bond safely", "Every host ID-verified before listing", "A mentor who has made the same move"].map((t) => (
                   <li key={t} className="flex gap-3 text-[15px] text-[var(--color-ink)] leading-[1.5] font-medium"><Check className="w-4 h-4 text-[var(--color-accent)] mt-0.5 shrink-0" strokeWidth={2.4} /> {t}</li>
                 ))}
               </ul>
@@ -713,31 +708,6 @@ export default function Home() {
                 ))}
               </div>
             </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* 9 · STORIES */}
-      <section className="bg-[var(--color-surface)] border-y border-[var(--color-line)]">
-        <div className="max-w-[1280px] mx-auto px-6 md:px-10 lg:px-14 py-20 md:py-28">
-          <motion.div {...reveal} className="mb-9">
-            <div className="eyebrow mb-2.5">In their words</div>
-            <h2 className="font-serif text-[34px] md:text-[48px] tracking-[-0.025em] leading-[1.02] text-[var(--color-ink)]">The first week, the way it should feel.</h2>
-            <p className="mt-3 text-[13px] text-[var(--color-ink-3)] max-w-[60ch]">Illustrative stories based on the people MigRent is built for - not real customer reviews.</p>
-          </motion.div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            {stories.map((s, i) => (
-              <motion.div key={i} {...reveal} transition={{ ...reveal.transition, delay: i * 0.08 }} className="card-lift bg-[var(--color-surface-2)] border border-[var(--color-line)] rounded-[var(--radius-xl)] p-7 flex flex-col gap-4">
-                <div className="font-serif text-[21px] leading-[1.35] text-[var(--color-ink)] tracking-[-0.01em] flex-1">&ldquo;{s.quote}&rdquo;</div>
-                <div className="flex items-center gap-3 pt-4 border-t border-[var(--color-line)]">
-                  <span className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm ${s.tone}`}>{s.initial}</span>
-                  <div>
-                    <div className="text-[14px] font-semibold text-[var(--color-ink)]">{s.name}</div>
-                    <div className="font-mono text-[10.5px] text-[var(--color-ink-3)]">{s.from}</div>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
           </div>
         </div>
       </section>

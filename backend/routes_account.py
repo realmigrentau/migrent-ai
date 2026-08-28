@@ -4,7 +4,7 @@ Account management endpoints - Delete account only.
 
 import logging
 from fastapi import APIRouter, HTTPException, Header, Request
-from db import get_supabase, get_supabase_admin
+from db import get_supabase_admin
 from auth_utils import get_current_user
 from limiter import limiter
 
@@ -27,7 +27,7 @@ def delete_account(
     User can sign up again later with same email.
     """
     user = get_current_user(authorization)
-    sb = get_supabase()
+    sb = get_supabase_admin()
     uid = str(user.id)
 
     try:
@@ -77,6 +77,22 @@ def delete_account(
             sb.table("matches").delete().eq("owner_id", uid).execute()
         except Exception:
             logger.warning("Error deleting owner matches")
+
+        # Bookings and reviews reference auth.users directly with no cascade, so
+        # they have to go before the auth record or the final delete_user below
+        # fails on a foreign key and leaves an orphaned account behind.
+        for table, column in (
+            ("bookings", "owner_id"),
+            ("bookings", "seeker_id"),
+            ("reviews", "reviewer_id"),
+            ("reviews", "reviewed_user_id"),
+            ("blocked_users", "blocker_id"),
+            ("blocked_users", "blocked_id"),
+        ):
+            try:
+                sb.table(table).delete().eq(column, uid).execute()
+            except Exception:
+                logger.warning("Error deleting %s by %s", table, column)
 
         # Delete profile
         sb.table("profiles").delete().eq("id", uid).execute()

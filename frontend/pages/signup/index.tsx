@@ -209,7 +209,7 @@ export default function SignUp() {
         <div className="flex flex-wrap gap-x-4 gap-y-1 text-[12px] opacity-60">
           <span>ID-verified hosts</span>
           <span>·</span>
-          <span>Bond held in escrow</span>
+          <span>Bond lodged properly</span>
           <span>·</span>
           <span>$0 renter fees</span>
         </div>

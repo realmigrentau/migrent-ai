@@ -60,10 +60,13 @@ const nextConfig: NextConfig = {
   },
 
   async headers() {
-    // Content-Security-Policy, shipped in REPORT-ONLY mode.
-    // It logs violations to the browser console without blocking anything, so
-    // we can confirm nothing legitimate trips it. Once the console is clean for
-    // a week, rename the header to "Content-Security-Policy" to enforce it.
+    // Content-Security-Policy, ENFORCED as of the 2026-08-29 security batch.
+    //
+    // It shipped report-only for months on the plan that we would enforce it
+    // "once the console is clean for a week". It is now the backstop for the
+    // stored-XSS class of bug that was found in the message renderer, so it
+    // enforces. If a legitimate request turns out to be blocked, add its host
+    // to the right directive below rather than reverting to report-only.
     //
     // Hosts allowed here, and why:
     //   fonts.googleapis / gstatic     Fraunces, Hanken Grotesk, Space Mono
@@ -73,16 +76,33 @@ const nextConfig: NextConfig = {
     //   *.hcaptcha.com                 signup and contact-form captcha
     //   js/api.stripe.com              checkout
     //   *.vercel-scripts / -insights   Web Analytics and Speed Insights
+    //   fcmregistrations /             Firebase Cloud Messaging token
+    //   firebaseinstallations            enrolment, via EnableNotificationsCard
+    //   *.ingest.sentry.io             error reporting, once SENTRY_DSN is set
+    //
     // 'unsafe-inline' is required for Next.js hydration payloads and the
     // inline theme bootstrap in _document.tsx that prevents a flash of the
-    // wrong theme on first paint.
+    // wrong theme on first paint. 'unsafe-eval' is required by MapLibre.
     const csp = [
       "default-src 'self'",
       "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://*.hcaptcha.com https://va.vercel-scripts.com",
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' data: https://fonts.gstatic.com",
       "img-src 'self' data: blob: https://nsnwwfbidishftlrimer.supabase.co https://images.unsplash.com https://api.maptiler.com https://*.hcaptcha.com",
-      "connect-src 'self' https://nsnwwfbidishftlrimer.supabase.co wss://nsnwwfbidishftlrimer.supabase.co https://migrent-ai-backend.onrender.com https://api.maptiler.com https://*.hcaptcha.com https://api.stripe.com https://vitals.vercel-insights.com",
+      [
+        "connect-src 'self'",
+        "https://nsnwwfbidishftlrimer.supabase.co",
+        "wss://nsnwwfbidishftlrimer.supabase.co",
+        "https://migrent-ai-backend.onrender.com",
+        "https://api.maptiler.com",
+        "https://*.hcaptcha.com",
+        "https://api.stripe.com",
+        "https://vitals.vercel-insights.com",
+        "https://fcmregistrations.googleapis.com",
+        "https://firebaseinstallations.googleapis.com",
+        "https://*.ingest.sentry.io",
+        "https://*.ingest.de.sentry.io",
+      ].join(" "),
       "worker-src 'self' blob:",
       "frame-src 'self' https://js.stripe.com https://*.hcaptcha.com",
       "frame-ancestors 'self'",
@@ -93,7 +113,7 @@ const nextConfig: NextConfig = {
     ].join("; ");
 
     const securityHeaders = [
-      { key: "Content-Security-Policy-Report-Only", value: csp },
+      { key: "Content-Security-Policy", value: csp },
       { key: "X-Content-Type-Options", value: "nosniff" },
       { key: "X-Frame-Options", value: "SAMEORIGIN" },
       { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },

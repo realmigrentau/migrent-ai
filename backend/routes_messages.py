@@ -13,7 +13,8 @@ from typing import Optional
 from uuid import UUID
 
 from models import MessageCreate, MessageOut
-from db import get_supabase, get_supabase_admin
+from pydantic import BaseModel, Field
+from db import get_supabase_admin
 from auth_utils import get_current_user
 from limiter import limiter
 from email_bookings import send_new_message_notification
@@ -34,11 +35,20 @@ def _validate_uuid(value: str, field_name: str) -> str:
     return value
 
 
-def _sanitize_html(html: str) -> str:
-    """Strip all HTML tags to prevent XSS."""
-    if not html:
-        return html
-    return re.sub(r"<[^>]+>", "", html)[:5000]
+def _strip_markup(text: str) -> str:
+    """Reduce a string to plain text.
+
+    This replaces _sanitize_html, which was a regex tag-stripper feeding a
+    column the frontend rendered with dangerouslySetInnerHTML. Two problems:
+    the pattern required a closing ">", so an unterminated tag such as
+    "<img src=x onerror=alert(1)" survived intact and the browser closed it on
+    parse; and the row could be written straight to PostgREST, skipping this
+    function altogether. Messages are now stored and rendered as plain text, so
+    this is defence in depth rather than the only line.
+    """
+    if not text:
+        return text
+    return re.sub(r"<[^>]*>?", "", text)[:5000]
 
 
 # ── POST /messages/send ──────────────────────────────────────
@@ -56,7 +66,7 @@ def send_message(
     Supports both listing-based and direct messages.
     """
     user = get_current_user(authorization)
-    sb = get_supabase()
+    sb = get_supabase_admin()
 
     # Validate sender is the authenticated user (str() both sides to fix UUID vs string mismatch)
     if str(user.id) != str(body.sender_id):
@@ -87,8 +97,11 @@ def send_message(
         "receiver_id": str(body.receiver_id),
         "listing_id": str(body.listing_id) if body.listing_id else None,
         "deal_id": str(body.deal_id) if body.deal_id else None,
-        "message_text": body.message_text,
-        "message_html": _sanitize_html(body.message_html) if body.message_html else None,
+        "message_text": _strip_markup(body.message_text),
+        # message_html is never persisted. The client no longer sends it and
+        # the renderer no longer reads it; accepting it would only reopen the
+        # stored-XSS path. body.message_html is ignored on purpose.
+        "message_html": None,
         "attachment_url": body.attachment_url if body.attachment_url else None,
         "attachment_name": body.attachment_name if body.attachment_name else None,
         "attachment_type": body.attachment_type if body.attachment_type else None,
@@ -205,7 +218,7 @@ def get_message_threads(
     Returns list of unique conversations (listing + other user) or direct conversations.
     """
     user = get_current_user(authorization)
-    sb = get_supabase()
+    sb = get_supabase_admin()
     uid = str(user.id)
 
     # Get messages where user is sender or receiver (uid is from JWT, safe)
@@ -279,7 +292,7 @@ def get_direct_messages(
     Get direct messages with another user (no listing context).
     """
     user = get_current_user(authorization)
-    sb = get_supabase()
+    sb = get_supabase_admin()
     uid = str(user.id)
 
     # Validate other_user_id to prevent query injection
@@ -330,7 +343,7 @@ def get_thread_messages(
     Paginates with limit/offset.
     """
     user = get_current_user(authorization)
-    sb = get_supabase()
+    sb = get_supabase_admin()
     uid = str(user.id)
 
     # Validate IDs to prevent query injection
@@ -380,7 +393,7 @@ def mark_message_read(
     Only receiver can mark as read.
     """
     user = get_current_user(authorization)
-    sb = get_supabase()
+    sb = get_supabase_admin()
     uid = str(user.id)
 
     _validate_uuid(message_id, "message_id")
@@ -397,3 +410,42 @@ def mark_message_read(
     ).eq("id", message_id).execute()
 
     return {"success": True, "message": result.data[0] if result.data else {}}
+
+
+# ── POST /messages/read ──────────────────────────────────────
+
+
+class MarkReadRequest(BaseModel):
+    message_ids: list[str] = Field(..., min_length=1, max_length=200)
+
+
+@router.post("/read")
+@limiter.limit("60/minute")
+def mark_messages_read(
+    request: Request,
+    body: MarkReadRequest,
+    authorization: str = Header(...),
+):
+    """Mark a batch of messages as read.
+
+    Replaces the frontend writing read_at straight to Supabase. Only messages
+    the caller actually received are touched: the receiver_id filter is applied
+    server-side, so a caller cannot mark someone else's mail as read.
+    """
+    user = get_current_user(authorization)
+    uid = str(user.id)
+    sb = get_supabase_admin()
+
+    for mid in body.message_ids:
+        _validate_uuid(mid, "message_id")
+
+    result = (
+        sb.table("messages")
+        .update({"read_at": datetime.utcnow().isoformat()})
+        .in_("id", body.message_ids)
+        .eq("receiver_id", uid)
+        .is_("read_at", "null")
+        .execute()
+    )
+
+    return {"success": True, "updated": len(result.data or [])}

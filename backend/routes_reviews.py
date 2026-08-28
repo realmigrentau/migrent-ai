@@ -1,8 +1,8 @@
 from fastapi import APIRouter, HTTPException, Header, Query
 from pydantic import BaseModel, Field
 from typing import Optional
-from db import get_supabase, get_supabase_admin
-from auth_utils import get_current_user
+from db import get_supabase_admin
+from auth_utils import get_current_user, is_admin_user
 
 router = APIRouter(prefix="/reviews", tags=["reviews"])
 
@@ -37,7 +37,7 @@ def create_review(
 ):
     user = get_current_user(authorization)
     user_id = str(user.id)
-    sb = get_supabase()
+    sb = get_supabase_admin()
 
     # Verify the deal exists and is completed
     deal_res = sb.table("deals").select("*").eq("id", body.deal_id).execute()
@@ -109,7 +109,7 @@ def get_listing_reviews(
     page: int = Query(1, ge=1),
     per_page: int = Query(10, ge=1, le=50),
 ):
-    sb = get_supabase()
+    sb = get_supabase_admin()
     offset = (page - 1) * per_page
 
     # Get reviews for this listing
@@ -172,7 +172,7 @@ def get_user_reviews(
     page: int = Query(1, ge=1),
     per_page: int = Query(10, ge=1, le=50),
 ):
-    sb = get_supabase()
+    sb = get_supabase_admin()
     offset = (page - 1) * per_page
 
     query = sb.table("reviews") \
@@ -238,7 +238,7 @@ def get_deal_reviews(
 ):
     user = get_current_user(authorization)
     user_id = str(user.id)
-    sb = get_supabase()
+    sb = get_supabase_admin()
 
     # Verify user is part of deal
     deal_res = sb.table("deals").select("owner_id, seeker_id, listing_id, status").eq("id", deal_id).execute()
@@ -304,7 +304,7 @@ def flag_review(
 ):
     user = get_current_user(authorization)
     user_id = str(user.id)
-    sb = get_supabase()
+    sb = get_supabase_admin()
 
     # Check review exists
     res = sb.table("reviews").select("id, reviewer_id").eq("id", review_id).execute()
@@ -338,11 +338,10 @@ def moderate_review(
     user_id = str(user.id)
     sb_admin = get_supabase_admin()
 
-    # Check if user is admin
-    profile = sb_admin.table("profiles").select("role").eq("id", user_id).execute()
-    # For now allow any authenticated user with superadmin check
-    user_meta = user.user_metadata or {}
-    if not user_meta.get("is_superadmin"):
+    # Admin status comes from the database, never from user_metadata. This
+    # previously read user_meta["is_superadmin"], which any signed-in user can
+    # set on themselves, so anyone could unflag or remove any review.
+    if not is_admin_user(user):
         raise HTTPException(status_code=403, detail="Admin access required")
 
     update_data = {
