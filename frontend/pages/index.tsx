@@ -9,7 +9,6 @@ import {
   Calendar,
   Bed,
   Bath,
-  Heart,
   Search,
   KeyRound,
   Lock,
@@ -47,6 +46,16 @@ type Listing = {
   available_from?: string;
 };
 
+// Suggestions for the hero search field. The eight capitals the backend's
+// derive_city() maps postcodes to, plus the suburbs that actually have guide
+// pages, so a suggestion always leads somewhere with content behind it.
+const HERO_PLACES = [
+  "Sydney", "Melbourne", "Brisbane", "Perth", "Adelaide", "Canberra", "Hobart", "Darwin",
+  "Bondi", "Surry Hills", "Newtown", "Parramatta", "Chatswood", "Hurstville",
+  "Strathfield", "Bankstown", "Liverpool", "Blacktown", "Penrith", "Manly",
+  "Randwick", "Redfern", "Marrickville", "Burwood", "Homebush", "Ashfield",
+];
+
 const reveal = {
   initial: { opacity: 0, y: 24 },
   whileInView: { opacity: 1, y: 0 },
@@ -82,9 +91,6 @@ function HomeListingCard({ listing }: { listing: Listing }) {
             </span>
           </div>
         )}
-        <button onClick={(e) => e.preventDefault()} className="absolute top-2.5 right-2.5 w-[32px] h-[32px] rounded-full bg-[var(--color-surface-2)]/92 backdrop-blur flex items-center justify-center text-[var(--color-ink-2)] hover:text-[var(--color-coral-500)] transition-colors" aria-label="Save listing">
-          <Heart className="w-[15px] h-[15px]" />
-        </button>
       </div>
       <div className="p-4 flex flex-col flex-1 gap-2">
         <div className="eyebrow truncate">{suburb}{postcode}</div>
@@ -374,6 +380,7 @@ function VerifiedCurtain() {
 export default function Home() {
   const [budget, setBudget] = useState(350);
   const [city, setCity] = useState("Sydney");
+  const [moveIn, setMoveIn] = useState("");
   const [listings, setListings] = useState<Listing[]>([]);
   const [listingsLoading, setListingsLoading] = useState(true);
   const reduced = useReducedMotion();
@@ -487,15 +494,41 @@ export default function Home() {
               </p>
 
               <div className="mt-8 bg-[var(--color-surface-2)] rounded-[var(--radius-xl)] border border-[var(--color-line)] shadow-[var(--shadow-card)] p-4 sm:p-5 max-w-[520px]">
-                <div className="grid grid-cols-2 bg-[var(--color-surface)] rounded-[var(--radius-card)] overflow-hidden border border-[var(--color-line)]">
-                  <label className="px-4 py-3 border-r border-[var(--color-line)] block">
-                    <div className="eyebrow">City</div>
-                    <input value={city} onChange={(e) => setCity(e.target.value)} className="bg-transparent border-none outline-none text-[15px] font-semibold text-[var(--color-ink)] w-full mt-1 p-0" aria-label="City" />
+                <div className="grid grid-cols-1 sm:grid-cols-2 bg-[var(--color-surface)] rounded-[var(--radius-card)] overflow-hidden border border-[var(--color-line)]">
+                  <label className="px-4 py-3 border-b sm:border-b-0 sm:border-r border-[var(--color-line)] block">
+                    <span className="eyebrow">City or suburb</span>
+                    {/* Was a bare text input: a typo produced zero results with
+                        no suggestion and no recovery. A native datalist gives
+                        real suggestions without shipping a combobox. */}
+                    <input
+                      value={city}
+                      onChange={(e) => setCity(e.target.value)}
+                      list="hero-places"
+                      autoComplete="off"
+                      placeholder="Sydney"
+                      className="bg-transparent border-none outline-none text-[15px] font-semibold text-[var(--color-ink)] w-full mt-1 p-0 placeholder:text-[var(--color-ink-4)] placeholder:font-normal"
+                      aria-label="City or suburb"
+                    />
+                    <datalist id="hero-places">
+                      {HERO_PLACES.map((p) => (
+                        <option key={p} value={p} />
+                      ))}
+                    </datalist>
                   </label>
-                  <div className="px-4 py-3">
-                    <div className="eyebrow">Move-in</div>
-                    <div className="text-[15px] font-semibold text-[var(--color-ink)] mt-1">Any time</div>
-                  </div>
+                  <label className="px-4 py-3 block">
+                    <span className="eyebrow">Move-in from</span>
+                    {/* This was a static div reading "Any time", styled to look
+                        like the field beside it. It sat in the primary search
+                        widget and did nothing at all. */}
+                    <input
+                      type="date"
+                      value={moveIn}
+                      min={new Date().toISOString().split("T")[0]}
+                      onChange={(e) => setMoveIn(e.target.value)}
+                      className="bg-transparent border-none outline-none text-[15px] font-semibold text-[var(--color-ink)] w-full mt-1 p-0"
+                      aria-label="Earliest move-in date"
+                    />
+                  </label>
                 </div>
                 <div className="mt-4">
                   <div className="flex justify-between items-baseline">
@@ -504,7 +537,7 @@ export default function Home() {
                   </div>
                   <input type="range" min={150} max={1000} step={5} value={budget} onChange={(e) => setBudget(+e.target.value)} aria-label={`Weekly budget: up to $${budget} AUD`} className="premium-range w-full mt-2.5" />
                 </div>
-                <Link href={`/seeker/search?city=${encodeURIComponent(city)}&maxPrice=${budget}`} style={{ color: "var(--color-primary-fg)" }} className="mt-4 w-full bg-[var(--color-primary)] text-[color:var(--color-primary-fg)] text-[15px] font-semibold h-12 rounded-[var(--radius-card)] hover:bg-[var(--color-primary-500)] transition-colors inline-flex items-center justify-center gap-2">
+                <Link href={`/seeker/search?${new URLSearchParams({ city: city.trim(), maxPrice: String(budget), ...(moveIn ? { availableFrom: moveIn } : {}) }).toString()}`} style={{ color: "var(--color-primary-fg)" }} className="mt-4 w-full bg-[var(--color-primary)] text-[color:var(--color-primary-fg)] text-[15px] font-semibold h-12 rounded-[var(--radius-card)] hover:bg-[var(--color-primary-500)] transition-colors inline-flex items-center justify-center gap-2">
                   Search rooms up to ${budget}/wk <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>

@@ -22,6 +22,7 @@ import OwnerCard from "../../components/listings/OwnerCard";
 import KeyDetails from "../../components/listings/KeyDetails";
 import ReviewsSection from "../../components/listings/ReviewsSection";
 import SimilarListings from "../../components/listings/SimilarListings";
+import ModerationStatusBanner from "../../components/listings/ModerationStatusBanner";
 import TrueCostBadge from "../../components/listings/TrueCostBadge";
 import SEOHead from "../../components/SEOHead";
 
@@ -32,6 +33,8 @@ export default function ListingDetailPage() {
 
   const [listing, setListing] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<"not-found" | "network" | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
   const [bookingLoading, setBookingLoading] = useState(false);
   const [bookingSuccess, setBookingSuccess] = useState(false);
 
@@ -41,12 +44,30 @@ export default function ListingDetailPage() {
 
   useEffect(() => {
     if (!id || typeof id !== "string") return;
+    // Wait for the session to settle before fetching. Only approved listings
+    // are public, so an owner opening their own pending listing needs the
+    // token attached or the API correctly returns 404.
+    if (refreshing) return;
+
+    let cancelled = false;
     setLoading(true);
-    getListingDetail(id).then((data) => {
-      setListing(data);
+    setLoadError(null);
+
+    getListingDetail(id, session?.access_token).then((result) => {
+      if (cancelled) return;
+      if (result.ok) {
+        setListing(result.listing);
+      } else {
+        setListing(null);
+        setLoadError(result.reason);
+      }
       setLoading(false);
     });
-  }, [id]);
+
+    return () => {
+      cancelled = true;
+    };
+  }, [id, session?.access_token, refreshing, retryCount]);
 
   // Intersection observer for mobile sticky CTA
   useEffect(() => {
@@ -119,18 +140,36 @@ export default function ListingDetailPage() {
   }
 
   if (!listing) {
+    // A network failure and a genuine 404 used to render identically, so an
+    // outage told people the room they were looking at had been taken down.
+    const isNetwork = loadError === "network";
     return (
-      <div className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center">
-        <div className="text-center">
+      <div className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center px-4">
+        <div className="text-center max-w-[42ch]">
           <h1 className="font-serif text-[28px] tracking-[-0.015em] text-[var(--color-ink)] mb-2">
-            Listing not found
+            {isNetwork ? "We could not load this room" : "This room is no longer listed"}
           </h1>
-          <Link
-            href="/seeker/search"
-            className="text-[var(--color-primary)] hover:opacity-80 text-sm font-medium"
-          >
-            Back to search
-          </Link>
+          <p className="text-[14.5px] text-[var(--color-ink-2)] leading-[1.6] mb-6">
+            {isNetwork
+              ? "Something went wrong on our side, not yours. The listing is probably still there."
+              : "It may have been rented, or the host may have taken it down. Plenty of others are still available."}
+          </p>
+          <div className="flex flex-wrap gap-3 justify-center">
+            {isNetwork && (
+              <button
+                onClick={() => setRetryCount((n) => n + 1)}
+                className="btn-primary h-[42px] px-5 rounded-[10px] text-[14px]"
+              >
+                Try again
+              </button>
+            )}
+            <Link
+              href="/seeker/search"
+              className="btn-secondary h-[42px] px-5 rounded-[10px] text-[14px] inline-flex items-center"
+            >
+              Browse other rooms
+            </Link>
+          </div>
         </div>
       </div>
     );
@@ -189,6 +228,31 @@ export default function ListingDetailPage() {
         </div>
 
         <div className="max-w-7xl mx-auto px-4 py-6">
+          {/* Owners see what is actually happening with their listing. Without
+              this, an owner whose listing is pending or rejected opens this
+              page and sees something that looks live, with no hint that no
+              seeker can find it. The banner renders nothing when approved. */}
+          {isOwner && (
+            <>
+              <ModerationStatusBanner
+                status={listing.moderation_status}
+                moderationNotes={listing.moderation_notes}
+                moderationReason={listing.moderation_reason}
+              />
+              {listing.moderation_status !== "approved" && (
+                <p className="-mt-3 mb-6 text-[13px] text-[var(--color-ink-3)]">
+                  Only you can see this page while it is in review.{" "}
+                  <Link
+                    href={`/owner/listings/edit/${listing.id}`}
+                    className="text-[var(--color-primary)] font-semibold hover:underline underline-offset-[3px]"
+                  >
+                    Edit this listing
+                  </Link>
+                </p>
+              )}
+            </>
+          )}
+
           {/* Hero */}
           <ListingHero
             images={images}
@@ -311,18 +375,50 @@ export default function ListingDetailPage() {
                   >
                     <CheckCircle className="w-12 h-12 mx-auto text-[var(--color-accent)] mb-3" />
                     <h3 className="font-serif text-[22px] tracking-[-0.01em] text-[var(--color-ink)] mb-2">
-                      Request sent!
+                      Request sent
                     </h3>
-                    <p className="text-sm text-[var(--color-ink-3)] mb-4">
-                      The owner has been notified. You will receive an email
-                      when they respond.
+                    {/* Say what happens next, by when, and what it costs.
+                        This used to be two vague lines, which is the point at
+                        which someone new to renting here starts worrying they
+                        have committed to something. */}
+                    <ol className="text-left text-[13.5px] text-[var(--color-ink-2)] leading-[1.6] space-y-2 mb-4">
+                      <li className="flex gap-2.5">
+                        <span className="font-mono text-[11px] text-[var(--color-ink-3)] mt-0.5">1</span>
+                        <span>
+                          The host has been emailed. Most reply within a day or two.
+                        </span>
+                      </li>
+                      <li className="flex gap-2.5">
+                        <span className="font-mono text-[11px] text-[var(--color-ink-3)] mt-0.5">2</span>
+                        <span>
+                          We will email you either way, and it will show up under your bookings.
+                        </span>
+                      </li>
+                      <li className="flex gap-2.5">
+                        <span className="font-mono text-[11px] text-[var(--color-ink-3)] mt-0.5">3</span>
+                        <span>
+                          Nothing is booked and you owe nothing yet. Keep looking at other rooms in the meantime.
+                        </span>
+                      </li>
+                    </ol>
+                    <p className="text-[12.5px] text-[var(--color-ink-3)] border-t border-[var(--color-line)] pt-3 mb-4">
+                      MigRent never asks renters for money. If anyone asks you to
+                      pay a deposit to hold this room, tell us before you pay.
                     </p>
-                    <Link
-                      href="/dashboard/seeker"
-                      className="text-sm font-semibold text-[var(--color-primary)] hover:opacity-80"
-                    >
-                      View your bookings
-                    </Link>
+                    <div className="flex flex-wrap gap-3 justify-center">
+                      <Link
+                        href="/dashboard/seeker"
+                        className="btn-primary h-[40px] px-4 rounded-[10px] text-[13.5px] inline-flex items-center"
+                      >
+                        View your requests
+                      </Link>
+                      <Link
+                        href="/seeker/search"
+                        className="btn-secondary h-[40px] px-4 rounded-[10px] text-[13.5px] inline-flex items-center"
+                      >
+                        Keep looking
+                      </Link>
+                    </div>
                   </motion.div>
                 ) : isOwner ? (
                   <div className="card p-6 rounded-2xl text-center border border-[var(--color-line)]">

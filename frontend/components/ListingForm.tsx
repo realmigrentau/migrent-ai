@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import PhotoUploadZone from "./upload/PhotoUploadZone";
 import { UploadablePhoto } from "../hooks/usePhotoUpload";
@@ -13,6 +13,19 @@ interface ListingFormProps {
 
 export interface ListingFormData {
   // Basics
+  /**
+   * Full street address, e.g. "12 Smith St, Carlton VIC 3053".
+   *
+   * Captured from the geocoder, which always returned it; the form used to
+   * throw it away and store only "Suburb, Postcode" as the listing address.
+   * That meant two rooms in the same suburb were indistinguishable to their
+   * own owner, address search matched nothing, and the schema.org name on the
+   * listing page read "Carlton, 3053".
+   *
+   * It is never shown publicly. The API replaces it with the suburb for
+   * anyone who is not the owner or an admin.
+   */
+  streetAddress: string;
   suburb: string;
   postcode: string;
   propertyType: string;
@@ -76,7 +89,16 @@ export interface ListingFormData {
   stationWalkMin: number | null;
 }
 
-const STEPS = ["Basics", "Details", "Hosting", "Photos", "Rules", "Safety"];
+// Bumping this key invalidates every saved draft, so change it only if the
+// shape of ListingFormData changes incompatibly.
+const DRAFT_KEY = "migrent_listing_draft_v1";
+
+// "Review" is a deliberate stop before publishing. Owners used to hit
+// "Publish Listing" straight off the Safety step, and the only preview lived
+// in a sidebar hidden below the lg breakpoint, so phone users published
+// without ever seeing the result.
+const STEPS = ["Basics", "Details", "Hosting", "Photos", "Rules", "Safety", "Review"];
+const REVIEW_STEP = STEPS.length - 1;
 
 const PROPERTY_TYPES = ["House", "Apartment", "Townhouse", "Studio", "Other"];
 const PLACE_TYPES = ["Entire place", "Private room", "Shared room", "Multiple rooms"];
@@ -107,6 +129,7 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
   );
 
   const [form, setForm] = useState<ListingFormData>({
+    streetAddress: "",
     suburb: "",
     postcode: "",
     propertyType: "Apartment",
@@ -163,6 +186,69 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
     ...initialData,
   });
 
+  // ── Draft autosave ──────────────────────────────────────────
+  //
+  // Six steps of questions with nothing persisted: a refresh, a back button, a
+  // phone call, or a dead battery lost the lot, including the photos already
+  // uploaded. This is the highest-value flow in the product and it had no
+  // safety net.
+  //
+  // Only new listings autosave. When initialData is present the owner is
+  // editing something that already exists, and the server row is the source of
+  // truth. `photos` holds File objects, which cannot be serialised; photoUrls
+  // survives instead, and those uploads are already in storage.
+  const isNewListing = !initialData;
+  const [draftRestored, setDraftRestored] = useState(false);
+  const [draftDismissed, setDraftDismissed] = useState(false);
+
+  useEffect(() => {
+    if (!isNewListing || typeof window === "undefined") return;
+    try {
+      const raw = window.localStorage.getItem(DRAFT_KEY);
+      if (!raw) return;
+      const saved = JSON.parse(raw) as { form?: Partial<ListingFormData>; step?: number };
+      if (!saved.form) return;
+      setForm((prev) => ({ ...prev, ...saved.form, photos: [] }));
+      if (typeof saved.step === "number") setStep(Math.min(saved.step, STEPS.length - 1));
+      setDraftRestored(true);
+    } catch {
+      // A corrupt draft should never block someone from listing a room.
+      window.localStorage.removeItem(DRAFT_KEY);
+    }
+  }, [isNewListing]);
+
+  useEffect(() => {
+    if (!isNewListing || typeof window === "undefined") return;
+    const id = window.setTimeout(() => {
+      try {
+        const { photos, ...serialisable } = form;
+        window.localStorage.setItem(
+          DRAFT_KEY,
+          JSON.stringify({ form: serialisable, step, savedAt: Date.now() })
+        );
+      } catch {
+        // Private browsing or a full quota. Not worth interrupting the form.
+      }
+    }, 400);
+    return () => window.clearTimeout(id);
+  }, [form, step, isNewListing]);
+
+  const clearDraft = useCallback(() => {
+    if (typeof window === "undefined") return;
+    try {
+      window.localStorage.removeItem(DRAFT_KEY);
+    } catch {
+      /* ignore */
+    }
+  }, []);
+
+  const discardDraft = () => {
+    clearDraft();
+    setDraftRestored(false);
+    setDraftDismissed(true);
+    window.location.reload();
+  };
+
   const update = (key: keyof ListingFormData, value: any) => {
     setForm((prev) => ({ ...prev, [key]: value }));
   };
@@ -194,6 +280,8 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
 
   const validateStep = (s: number): string[] => {
+    // The review step only shows what earlier steps captured.
+    if (s === REVIEW_STEP) return [];
     const errors: string[] = [];
     if (s === 0) {
       if (!form.suburb.trim()) errors.push("Suburb is required");
@@ -232,7 +320,7 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
 
   const handleSubmit = () => {
     // Validate all steps before submitting
-    for (let s = 0; s <= step; s++) {
+    for (let s = 0; s < REVIEW_STEP; s++) {
       const errors = validateStep(s);
       if (errors.length > 0) {
         setValidationErrors(errors);
@@ -241,6 +329,7 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
       }
     }
     setValidationErrors([]);
+    clearDraft();
     onSubmit(form);
   };
 
@@ -289,10 +378,134 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
     </label>
   );
 
+  // The listing preview, rendered twice: as the desktop sidebar and as the
+  // Review step. It used to exist only in the sidebar, which is
+  // `hidden lg:block`, so anyone listing from a phone published without
+  // ever seeing what their listing looks like.
+  const previewCard = (
+      <div className="card rounded-2xl overflow-hidden">
+        {/* Preview photo */}
+        <div className="aspect-video bg-[var(--color-surface-muted)] flex items-center justify-center">
+          {photoPreviews.length > 0 ? (
+            <img src={photoPreviews[0]} alt="Preview" className="w-full h-full object-cover" />
+          ) : (
+            <svg className="w-12 h-12 text-[var(--color-ink-4)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+          )}
+        </div>
+        <div className="p-4 space-y-3">
+          <div className="flex items-start justify-between">
+            <div>
+              <h4 className="font-bold text-[var(--color-ink)]">
+                {form.title || `${form.suburb || "Suburb"}, ${form.postcode || "0000"}`}
+              </h4>
+              <p className="text-sm text-[var(--color-ink-3)]">
+                {form.propertyType} &middot; {form.placeType}
+              </p>
+              <p className="text-xs text-[var(--color-ink-3)]">
+                {form.bedrooms} bed{form.bedrooms !== 1 ? "s" : ""} &middot; {form.bathrooms} bath &middot; {form.maxGuests} guest{form.maxGuests !== 1 ? "s" : ""}
+              </p>
+            </div>
+            <div className="px-3 py-1.5 rounded-lg bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 border border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)]">
+              <span className="text-[var(--color-primary)] dark:text-[var(--color-primary)] font-bold text-sm">
+                AUD ${form.weeklyPrice || 0}
+              </span>
+              <span className="text-[var(--color-primary)] dark:text-[var(--color-primary)] text-xs">/wk</span>
+            </div>
+          </div>
+          <div className="flex flex-wrap gap-1.5">
+            {form.furnished && (
+              <span className="px-2 py-0.5 rounded-full text-xs bg-[var(--color-surface-muted)] text-[var(--color-ink-2)]">Furnished</span>
+            )}
+            {form.billsIncluded && (
+              <span className="px-2 py-0.5 rounded-full text-xs bg-[var(--color-surface-muted)] text-[var(--color-ink-2)]">Bills incl.</span>
+            )}
+            {form.bathroomType === "private" && (
+              <span className="px-2 py-0.5 rounded-full text-xs bg-[var(--color-surface-muted)] text-[var(--color-ink-2)]">Private bath</span>
+            )}
+            {form.parking && (
+              <span className="px-2 py-0.5 rounded-full text-xs bg-[var(--color-surface-muted)] text-[var(--color-ink-2)]">Parking</span>
+            )}
+            {form.noSmoking && (
+              <span className="px-2 py-0.5 rounded-full text-xs bg-[var(--color-surface-muted)] text-[var(--color-ink-2)]">No smoking</span>
+            )}
+            {form.internetIncluded && (
+              <span className="px-2 py-0.5 rounded-full text-xs bg-[var(--color-primary-50)] dark:bg-[var(--color-primary)]/10 text-[var(--color-primary)] dark:text-[var(--color-primary)]">WiFi</span>
+            )}
+            {form.petsAllowed && (
+              <span className="px-2 py-0.5 rounded-full text-xs bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/10 text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)]">Pets OK</span>
+            )}
+            {form.airConditioning && (
+              <span className="px-2 py-0.5 rounded-full text-xs bg-sky-50 dark:bg-sky-500/10 text-sky-600 dark:text-sky-400">A/C</span>
+            )}
+            {form.couplesOk && (
+              <span className="px-2 py-0.5 rounded-full text-xs bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary-soft)]0/10 text-[var(--color-primary)] dark:text-[var(--color-primary)]">Couples OK</span>
+            )}
+          </div>
+          {form.highlights.length > 0 && (
+            <div className="flex flex-wrap gap-1.5">
+              {form.highlights.map((h, i) => (
+                <span key={i} className="px-2 py-0.5 rounded-full text-xs bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 text-[var(--color-primary)] dark:text-[var(--color-primary)] border border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)]">
+                  {h}
+                </span>
+              ))}
+            </div>
+          )}
+          {form.description && (
+            <p className="text-sm text-[var(--color-ink-2)] line-clamp-3">{form.description}</p>
+          )}
+          {form.availableFrom && (
+            <p className="text-xs text-[var(--color-ink-3)]">
+              Available: {form.availableFrom}{form.availableTo ? ` to ${form.availableTo}` : " onwards"}
+            </p>
+          )}
+          {form.nearestTransport && (
+            <p className="text-xs text-[var(--color-ink-3)]">Transport: {form.nearestTransport}</p>
+          )}
+          {(form.weeklyDiscount || form.monthlyDiscount) && (
+            <div className="flex gap-2">
+              {form.weeklyDiscount && (
+                <span className="px-2 py-0.5 rounded-full text-xs bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 text-[var(--color-accent)] dark:text-[var(--color-accent)] border border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)]">
+                  {form.weeklyDiscount}% weekly discount
+                </span>
+              )}
+              {form.monthlyDiscount && (
+                <span className="px-2 py-0.5 rounded-full text-xs bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 text-[var(--color-accent)] dark:text-[var(--color-accent)] border border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)]">
+                  {form.monthlyDiscount}% monthly discount
+                </span>
+              )}
+            </div>
+          )}
+          {form.minStay && (
+            <p className="text-xs text-[var(--color-ink-3)]">Min stay: {form.minStay}</p>
+          )}
+        </div>
+      </div>
+  );
+
   return (
     <div className="grid lg:grid-cols-5 gap-8">
       {/* Main form */}
       <div className="lg:col-span-3 space-y-6">
+        {draftRestored && !draftDismissed && (
+          <div
+            role="status"
+            className="flex flex-wrap items-center justify-between gap-3 rounded-[10px] border border-[var(--color-line-2)] bg-[var(--color-surface)] px-4 py-3"
+          >
+            <p className="text-[13.5px] text-[var(--color-ink-2)]">
+              We brought back what you had already filled in.
+            </p>
+            <button
+              type="button"
+              onClick={discardDraft}
+              className="text-[13px] font-semibold text-[var(--color-ink-3)] hover:text-[var(--color-ink)] underline underline-offset-[3px] transition-colors"
+            >
+              Start fresh instead
+            </button>
+          </div>
+        )}
+
         {/* Step indicator */}
         <div className="flex items-center gap-2 flex-wrap">
           {STEPS.map((label, i) => (
@@ -340,8 +553,9 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
 
                 {/* Address autocomplete with geocoding */}
                 <AddressGeocoder
-                  initialValue={form.suburb ? `${form.suburb}, ${form.postcode}` : ""}
+                  initialValue={form.streetAddress || (form.suburb ? `${form.suburb}, ${form.postcode}` : "")}
                   onSelect={(result) => {
+                    update("streetAddress", result.address);
                     update("suburb", result.suburb);
                     update("postcode", result.postcode);
                     update("latitude", result.lat);
@@ -852,6 +1066,53 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
                 </div>
               </>
             )}
+
+            {step === REVIEW_STEP && (
+              <>
+                <div>
+                  <h3 className="text-lg font-semibold text-[var(--color-ink)]">
+                    Check it over
+                  </h3>
+                  <p className="text-sm text-[var(--color-ink-3)] mt-1">
+                    This is exactly what renters will see. Go back to any step to change something.
+                  </p>
+                </div>
+
+                {previewCard}
+
+                <div className="rounded-[10px] border border-[var(--color-line)] divide-y divide-[var(--color-line)]">
+                  {[
+                    { label: "Address (private)", value: form.streetAddress || "Not set", step: 0 },
+                    { label: "Shown publicly as", value: `${form.suburb || "Suburb"} ${form.postcode || ""}`.trim(), step: 0 },
+                    { label: "Rent", value: `$${form.weeklyPrice} per week`, step: 0 },
+                    { label: "Bond", value: form.bond || "Not set", step: 0 },
+                    { label: "Photos", value: photoCount > 0 ? `${photoCount} uploaded` : "None yet", step: 3 },
+                    { label: "Available from", value: form.availableFrom || "Any time", step: 2 },
+                    { label: "Minimum stay", value: form.minStay || "No minimum", step: 4 },
+                  ].map((row) => (
+                    <div key={row.label} className="flex items-center justify-between gap-3 px-4 py-2.5">
+                      <span className="text-[13px] text-[var(--color-ink-3)]">{row.label}</span>
+                      <span className="flex items-center gap-3 min-w-0">
+                        <span className="text-[13.5px] text-[var(--color-ink)] truncate">{row.value}</span>
+                        <button
+                          type="button"
+                          onClick={() => { setValidationErrors([]); setStep(row.step); }}
+                          className="text-[12.5px] font-semibold text-[var(--color-primary)] hover:underline underline-offset-[3px] shrink-0"
+                        >
+                          Change
+                        </button>
+                      </span>
+                    </div>
+                  ))}
+                </div>
+
+                {photoCount === 0 && (
+                  <p className="text-[13px] text-[var(--color-warn-600)]">
+                    Listings with photos get far more enquiries. Worth adding a few before you publish.
+                  </p>
+                )}
+              </>
+            )}
           </motion.div>
         </AnimatePresence>
 
@@ -900,7 +1161,7 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
                   Publishing...
                 </span>
               ) : (
-                "Publish Listing"
+                "Publish listing"
               )}
             </motion.button>
           )}
@@ -913,105 +1174,7 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
           <h3 className="text-sm font-semibold text-[var(--color-ink-3)] mb-3">
             How seekers see your listing
           </h3>
-          <div className="card rounded-2xl overflow-hidden">
-            {/* Preview photo */}
-            <div className="aspect-video bg-[var(--color-surface-muted)] flex items-center justify-center">
-              {photoPreviews.length > 0 ? (
-                <img src={photoPreviews[0]} alt="Preview" className="w-full h-full object-cover" />
-              ) : (
-                <svg className="w-12 h-12 text-[var(--color-ink-4)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-              )}
-            </div>
-            <div className="p-4 space-y-3">
-              <div className="flex items-start justify-between">
-                <div>
-                  <h4 className="font-bold text-[var(--color-ink)]">
-                    {form.title || `${form.suburb || "Suburb"}, ${form.postcode || "0000"}`}
-                  </h4>
-                  <p className="text-sm text-[var(--color-ink-3)]">
-                    {form.propertyType} &middot; {form.placeType}
-                  </p>
-                  <p className="text-xs text-[var(--color-ink-3)]">
-                    {form.bedrooms} bed{form.bedrooms !== 1 ? "s" : ""} &middot; {form.bathrooms} bath &middot; {form.maxGuests} guest{form.maxGuests !== 1 ? "s" : ""}
-                  </p>
-                </div>
-                <div className="px-3 py-1.5 rounded-lg bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 border border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)]">
-                  <span className="text-[var(--color-primary)] dark:text-[var(--color-primary)] font-bold text-sm">
-                    AUD ${form.weeklyPrice || 0}
-                  </span>
-                  <span className="text-[var(--color-primary)] dark:text-[var(--color-primary)] text-xs">/wk</span>
-                </div>
-              </div>
-              <div className="flex flex-wrap gap-1.5">
-                {form.furnished && (
-                  <span className="px-2 py-0.5 rounded-full text-xs bg-[var(--color-surface-muted)] text-[var(--color-ink-2)]">Furnished</span>
-                )}
-                {form.billsIncluded && (
-                  <span className="px-2 py-0.5 rounded-full text-xs bg-[var(--color-surface-muted)] text-[var(--color-ink-2)]">Bills incl.</span>
-                )}
-                {form.bathroomType === "private" && (
-                  <span className="px-2 py-0.5 rounded-full text-xs bg-[var(--color-surface-muted)] text-[var(--color-ink-2)]">Private bath</span>
-                )}
-                {form.parking && (
-                  <span className="px-2 py-0.5 rounded-full text-xs bg-[var(--color-surface-muted)] text-[var(--color-ink-2)]">Parking</span>
-                )}
-                {form.noSmoking && (
-                  <span className="px-2 py-0.5 rounded-full text-xs bg-[var(--color-surface-muted)] text-[var(--color-ink-2)]">No smoking</span>
-                )}
-                {form.internetIncluded && (
-                  <span className="px-2 py-0.5 rounded-full text-xs bg-[var(--color-primary-50)] dark:bg-[var(--color-primary)]/10 text-[var(--color-primary)] dark:text-[var(--color-primary)]">WiFi</span>
-                )}
-                {form.petsAllowed && (
-                  <span className="px-2 py-0.5 rounded-full text-xs bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/10 text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)]">Pets OK</span>
-                )}
-                {form.airConditioning && (
-                  <span className="px-2 py-0.5 rounded-full text-xs bg-sky-50 dark:bg-sky-500/10 text-sky-600 dark:text-sky-400">A/C</span>
-                )}
-                {form.couplesOk && (
-                  <span className="px-2 py-0.5 rounded-full text-xs bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary-soft)]0/10 text-[var(--color-primary)] dark:text-[var(--color-primary)]">Couples OK</span>
-                )}
-              </div>
-              {form.highlights.length > 0 && (
-                <div className="flex flex-wrap gap-1.5">
-                  {form.highlights.map((h, i) => (
-                    <span key={i} className="px-2 py-0.5 rounded-full text-xs bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 text-[var(--color-primary)] dark:text-[var(--color-primary)] border border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)]">
-                      {h}
-                    </span>
-                  ))}
-                </div>
-              )}
-              {form.description && (
-                <p className="text-sm text-[var(--color-ink-2)] line-clamp-3">{form.description}</p>
-              )}
-              {form.availableFrom && (
-                <p className="text-xs text-[var(--color-ink-3)]">
-                  Available: {form.availableFrom}{form.availableTo ? ` to ${form.availableTo}` : " onwards"}
-                </p>
-              )}
-              {form.nearestTransport && (
-                <p className="text-xs text-[var(--color-ink-3)]">Transport: {form.nearestTransport}</p>
-              )}
-              {(form.weeklyDiscount || form.monthlyDiscount) && (
-                <div className="flex gap-2">
-                  {form.weeklyDiscount && (
-                    <span className="px-2 py-0.5 rounded-full text-xs bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 text-[var(--color-accent)] dark:text-[var(--color-accent)] border border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)]">
-                      {form.weeklyDiscount}% weekly discount
-                    </span>
-                  )}
-                  {form.monthlyDiscount && (
-                    <span className="px-2 py-0.5 rounded-full text-xs bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 text-[var(--color-accent)] dark:text-[var(--color-accent)] border border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)]">
-                      {form.monthlyDiscount}% monthly discount
-                    </span>
-                  )}
-                </div>
-              )}
-              {form.minStay && (
-                <p className="text-xs text-[var(--color-ink-3)]">Min stay: {form.minStay}</p>
-              )}
-            </div>
-          </div>
+          {previewCard}
         </div>
       </div>
     </div>

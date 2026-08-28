@@ -146,3 +146,39 @@ These were in the audit as launch blockers and I cannot do them from here:
 - **Stripe live keys.** Still on test keys, so no real payment can complete.
 - **DNS for migrent.com.au.** Until it points at Vercel, every canonical URL
   and share link uses the `.vercel.app` domain.
+
+---
+
+# Batch 2 deploy steps
+
+Batch 2 is on the same branch and depends on batch 1 being deployed first.
+
+## Order
+
+1. **Backend to Render**, wait for Live.
+2. **Frontend to Vercel**, wait for green.
+3. **Run `backend/migrations/040_listing_drafts.sql`** in the Supabase SQL Editor,
+   the same way you ran 039. It only widens a constraint, so it is quick.
+
+Run 039 before 040. If you have not run 039 yet, do that one first.
+
+## What to click through afterwards
+
+1. **Homepage search.** Type a suburb in the hero, pick a move-in date, hit
+   search. The results should actually be filtered now. Try a category chip
+   like "Under $250/wk" too.
+2. **Features menu.** Open the Features dropdown in the top nav and click a few.
+   They should jump to the right section instead of the top of the page.
+3. **List a room.** Start a new listing, fill in two steps, then refresh the
+   page. Your answers should come back with a note saying so.
+4. **Review step.** Go through to the end. There is a new "Review" step before
+   Publish showing exactly what renters will see.
+5. **Photo upload.** Try dragging in something that is not a photo. It should
+   tell you why it was skipped instead of doing nothing.
+6. **Old links.** Visit /owner/dashboard and /rules. Both should redirect.
+
+## One thing worth knowing
+
+Unverified hosts can now build a listing. It saves as a **Draft** that nobody
+else can see, and a "Submit for review" button appears once they verify. Nothing
+unverified ever becomes visible to renters, so the trust promise is unchanged.

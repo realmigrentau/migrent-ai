@@ -56,6 +56,29 @@ const nextConfig: NextConfig = {
         destination: "/resources",
         permanent: true,
       },
+
+      // Four routes existed only to render nothing and then call
+      // router.replace in an effect. That is a soft 404 to a crawler and a
+      // flash of blank page to a person. Real 301s instead.
+      { source: "/seeker/room/:id", destination: "/listing/:id", permanent: true },
+      { source: "/account/messages", destination: "/messages", permanent: true },
+      { source: "/seeker/dashboard", destination: "/dashboard", permanent: true },
+      { source: "/seeker/saved", destination: "/seeker/wishlist", permanent: true },
+
+      // Duplicate pages. Two parallel hierarchies had grown up: /dashboard/*
+      // pages compose the shared DashboardLayout, ProfileForm and
+      // VerificationSummaryCard, while these older standalone versions
+      // reimplemented the same screens by hand. Owners saw a different
+      // dashboard depending on whether they arrived from a marketing CTA or
+      // from /owner/setup. The /dashboard/* versions win.
+      { source: "/owner/dashboard", destination: "/dashboard/owner", permanent: true },
+      { source: "/owner/profile", destination: "/dashboard/owner-profile", permanent: true },
+      { source: "/seeker/profile", destination: "/dashboard/seeker-profile", permanent: true },
+
+      // Two rules pages with overlapping content. The footer, terms of service
+      // and code of conduct all point at the community guidelines, so that one
+      // is authoritative.
+      { source: "/rules", destination: "/rules-community-guidelines", permanent: true },
     ];
   },
 

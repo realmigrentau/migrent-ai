@@ -347,8 +347,62 @@ export default function SeekerSearch() {
     }
   }, [buildParams, offset, isBestMatch, session]);
 
-  // Initial load
-  useEffect(() => { doSearch(true); }, []);
+  // Seed filters from the URL, then run the first search.
+  //
+  // Nothing read router.query before this, so every link into search that
+  // carried filters silently dropped them: the homepage hero ("Search rooms up
+  // to $X/wk"), all six homepage category chips (Under $250/wk, Studio
+  // apartments, Share houses, Near universities, Pet-friendly, Bills
+  // included), and the "rooms in this suburb" link on every suburb guide.
+  // People clicked a filtered link and landed on unfiltered results.
+  const seededRef = useRef(false);
+  useEffect(() => {
+    // router.query is empty on the first render for a static page; wait for it.
+    if (!router.isReady || seededRef.current) return;
+    seededRef.current = true;
+
+    const q = router.query;
+    const str = (v: string | string[] | undefined) =>
+      (Array.isArray(v) ? v[0] : v)?.trim() || "";
+    const bool = (v: string | string[] | undefined) => str(v) === "true";
+
+    // Location. `city` and `suburb` both land in the suburb field because the
+    // backend matches it with ilike against suburb and city alike.
+    const place = str(q.suburb) || str(q.city);
+    if (place) {
+      setSuburbName(place);
+      setSearchType("suburb");
+    }
+    if (str(q.postcode)) {
+      setPostcode(str(q.postcode));
+      setSearchType("postcode");
+    }
+
+    if (str(q.maxPrice)) setMaxPrice(str(q.maxPrice));
+    if (str(q.minPrice)) setMinPrice(str(q.minPrice));
+    if (str(q.propertyType)) setPropertyType(str(q.propertyType));
+    if (str(q.roomType)) setPlaceType(str(q.roomType));
+    if (str(q.availableFrom)) {
+      const d = new Date(str(q.availableFrom));
+      if (!Number.isNaN(d.getTime())) setCheckInDate(d);
+    }
+
+    if (bool(q.billsIncluded)) setBillsIncluded(true);
+    if (bool(q.pets)) setPetsAllowed(true);
+    if (bool(q.furnished)) setFurnished(true);
+    if (bool(q.instantBook)) setInstantBook(true);
+    if (bool(q.parking)) setParkingFilter(true);
+    if (bool(q.verified)) setVerifiedOwner(true);
+    // "Near universities" has no dedicated filter yet, so treat it as the
+    // closest honest equivalent rather than dropping it: near a station.
+    if (bool(q.nearUni)) setNearStation(true);
+
+    doSearch(true);
+    // doSearch is intentionally omitted: this must run exactly once, when the
+    // router hands us the query. The state setters above re-trigger the
+    // debounced search effect anyway.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router.isReady]);
 
   // Nearby stations for map
   useEffect(() => {
@@ -821,7 +875,7 @@ export default function SeekerSearch() {
         <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }}
           className="text-xs text-[var(--color-ink-3)] -mt-2">
           Listings ranked by how well they fit your saved preferences. Scores are based on location, budget, and features - not guesswork.
-          {" "}<Link href="/seeker/profile" className="text-[var(--color-primary)] hover:underline font-medium">Update your preferences</Link>
+          {" "}<Link href="/dashboard/seeker-profile" className="text-[var(--color-primary)] hover:underline font-medium">Update your preferences</Link>
         </motion.p>
       )}
 

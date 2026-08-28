@@ -1015,6 +1015,33 @@ export async function markMessageRead(token: string, messageId: string) {
 }
 
 /**
+ * Submit a draft listing for moderation.
+ * POST /listings/:id/submit
+ *
+ * Owners can build a listing before finishing ID verification; it saves as a
+ * draft that nobody else can see. This is the step that requires verification.
+ */
+export async function submitListingForReview(token: string, listingId: string) {
+  try {
+    const res = await fetch(`${BASE_URL}/listings/${listingId}/submit`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      return { ok: false as const, error: data?.detail || "Could not submit this listing." };
+    }
+    return { ok: true as const, listing: data };
+  } catch (err) {
+    console.error("submitListingForReview error:", err);
+    return { ok: false as const, error: "Could not reach the server. Please try again." };
+  }
+}
+
+/**
  * Mark a batch of messages as read.
  * POST /messages/read
  *
@@ -1629,17 +1656,50 @@ export async function deleteListing(
  * Get listing detail with reviews and similar listings bundled.
  * GET /listings/{id}?include=reviews,similar
  */
-export async function getListingDetail(listingId: string) {
+export type ListingDetailResult =
+  | { ok: true; listing: any }
+  | { ok: false; reason: "not-found" | "network" };
+
+/**
+ * Fetch one listing.
+ *
+ * Pass a token when the viewer is signed in. Only approved listings are
+ * public; the owner and admins can also see their own pending, rejected or
+ * changes-requested listings, and the API decides that from this header.
+ *
+ * Returns a discriminated result rather than `any | null`. The old version
+ * returned null for a genuine 404 and for a network failure alike, so a
+ * backend outage rendered "Listing not found" and told the user their room
+ * was gone.
+ */
+export async function getListingDetail(
+  listingId: string,
+  token?: string
+): Promise<ListingDetailResult> {
+  const headers: Record<string, string> = { "Content-Type": "application/json" };
+  if (token) headers["Authorization"] = `Bearer ${token}`;
+
+  let res: Response;
   try {
-    const res = await fetch(
-      `${BASE_URL}/listings/${listingId}?include=reviews,similar`,
-      { headers: { "Content-Type": "application/json" } }
-    );
-    if (!res.ok) throw new Error(`getListingDetail failed: ${res.status}`);
-    return await res.json();
+    res = await fetch(`${BASE_URL}/listings/${listingId}?include=reviews,similar`, {
+      headers,
+    });
   } catch (err) {
-    console.error("getListingDetail error:", err);
-    return null;
+    console.error("getListingDetail network error:", err);
+    return { ok: false, reason: "network" };
+  }
+
+  if (res.status === 404) return { ok: false, reason: "not-found" };
+  if (!res.ok) {
+    console.error("getListingDetail failed:", res.status);
+    return { ok: false, reason: "network" };
+  }
+
+  try {
+    return { ok: true, listing: await res.json() };
+  } catch (err) {
+    console.error("getListingDetail parse error:", err);
+    return { ok: false, reason: "network" };
   }
 }
 

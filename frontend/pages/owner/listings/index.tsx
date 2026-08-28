@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "../../../hooks/useAuth";
-import { getListings, deleteListing } from "../../../lib/api";
+import { getListings, deleteListing, submitListingForReview } from "../../../lib/api";
 import { supabase } from "../../../lib/supabase";
 import { useToast } from "../../../components/ui/Toast";
 
@@ -36,6 +36,11 @@ const STATUS_STYLES: Record<string, string> = {
   deleted: "bg-[var(--color-surface-muted)] text-[var(--color-ink-3)] border-[var(--color-line)]",
 };
 
+// Statuses the owner can send to moderation from this page. A draft has
+// never been reviewed; the other two were reviewed and bounced back, and
+// resubmitting after an edit is the whole point of those states.
+const SUBMITTABLE_STATUSES = ["draft", "changes_requested", "rejected"];
+
 const STATUS_LABELS: Record<string, string> = {
   approved: "Live",
   pending_approval: "Pending Review",
@@ -57,6 +62,8 @@ export default function OwnerListings() {
   const [listings, setListings] = useState<Listing[]>([]);
   const [fetching, setFetching] = useState(true);
   const justCreated = router.query.created === "1";
+  const justDrafted = router.query.draft === "1";
+  const [submittingId, setSubmittingId] = useState<string | null>(null);
 
   // Delete modal state
   const [deleteTarget, setDeleteTarget] = useState<Listing | null>(null);
@@ -79,7 +86,11 @@ export default function OwnerListings() {
               weeklyPrice: l.weeklyPrice ?? l.weekly_price,
               description: l.description,
               status: l.status || "active",
-              moderation_status: l.moderation_status || "approved",
+              // Fall back to pending, not approved. Defaulting a missing value
+              // to "approved" showed a green "Live" badge on listings that were
+              // still awaiting review, which is the opposite of what an owner
+              // needs to know. Fail toward the cautious answer.
+              moderation_status: l.moderation_status || "pending_approval",
               views: l.views ?? 0,
               applicants: l.applicants ?? 0,
               title: l.title || "",
@@ -100,6 +111,27 @@ export default function OwnerListings() {
       setFetching(false);
     }
   }, [session, loading, refreshing]);
+
+  // Send a draft (or a rejected / changes-requested listing) to moderation.
+  // Verification is enforced server-side; if the owner has not done it yet the
+  // API says so and we surface that rather than failing silently.
+  const handleSubmitForReview = async (listing: Listing) => {
+    if (!session) return;
+    setSubmittingId(listing.id);
+    const result = await submitListingForReview(session.access_token, listing.id);
+    setSubmittingId(null);
+
+    if (result.ok) {
+      setListings((prev) =>
+        prev.map((l) =>
+          l.id === listing.id ? { ...l, moderation_status: "pending_approval" } : l
+        )
+      );
+      toast.success("Sent for review. We usually reply within 24 hours.");
+    } else {
+      toast.error(result.error);
+    }
+  };
 
   const openDeleteModal = (listing: Listing) => {
     setDeleteTarget(listing);
@@ -217,13 +249,35 @@ export default function OwnerListings() {
       </motion.div>
 
       {justCreated && (
-        <motion.p
+        <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="text-sm p-3 rounded-xl bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/10 border border-[var(--color-line-2)] dark:border-[var(--color-warn-500)]/20 text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)]"
+          role="status"
+          className="text-sm p-4 rounded-xl bg-[var(--color-warn-50)] border border-[var(--color-line-2)] text-[var(--color-ink)]"
         >
-          Listing submitted! Our team will review it shortly (usually within 24 hours). You will receive an email once approved.
-        </motion.p>
+          <strong className="font-semibold">Sent for review.</strong> Our team
+          checks every new listing, usually within 24 hours. We will email you
+          the moment it is live, and it will show as{" "}
+          <span className="font-semibold">Live</span> in the list below.
+        </motion.div>
+      )}
+
+      {justDrafted && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          role="status"
+          className="text-sm p-4 rounded-xl bg-[var(--color-primary-50)] border border-[var(--color-primary-100)] text-[var(--color-ink)]"
+        >
+          <strong className="font-semibold">Draft saved.</strong> Nobody else
+          can see it yet. Verify your ID and we will send it straight to review.{" "}
+          <Link
+            href="/account/settings?tab=verification"
+            className="font-semibold text-[var(--color-primary)] hover:underline underline-offset-[3px]"
+          >
+            Verify now
+          </Link>
+        </motion.div>
       )}
 
       {fetching ? (
@@ -289,7 +343,16 @@ export default function OwnerListings() {
                     <td className="py-3 px-5 text-[var(--color-ink-2)]">{l.views ?? 0}</td>
                     <td className="py-3 px-5 text-[var(--color-ink-2)]">{l.applicants ?? 0}</td>
                     <td className="py-3 px-5">
-                      <div className="flex gap-3 justify-end">
+                      <div className="flex gap-3 justify-end items-center">
+                        {SUBMITTABLE_STATUSES.includes(l.moderation_status || "") && (
+                          <button
+                            onClick={() => handleSubmitForReview(l)}
+                            disabled={submittingId === l.id}
+                            className="text-xs text-[var(--color-primary)] font-semibold transition-colors disabled:opacity-50"
+                          >
+                            {submittingId === l.id ? "Sending..." : "Submit for review"}
+                          </button>
+                        )}
                         <Link href={`/owner/listings/edit/${l.id}`} className="text-xs text-[var(--color-primary)] hover:text-[var(--color-primary)] font-semibold transition-colors">
                           Edit
                         </Link>
@@ -337,6 +400,15 @@ export default function OwnerListings() {
                   <span>{l.applicants ?? 0} applicants</span>
                 </div>
                 <div className="flex gap-2 mt-3 pt-3 border-t border-[var(--color-line)]">
+                  {SUBMITTABLE_STATUSES.includes(l.moderation_status || "") && (
+                    <button
+                      onClick={() => handleSubmitForReview(l)}
+                      disabled={submittingId === l.id}
+                      className="py-2 px-4 rounded-lg text-xs flex-1 text-center btn-primary font-semibold disabled:opacity-50"
+                    >
+                      {submittingId === l.id ? "Sending..." : "Submit for review"}
+                    </button>
+                  )}
                   <Link href={`/owner/listings/edit/${l.id}`} className="py-2 px-4 rounded-lg text-xs flex-1 text-center border border-[var(--color-primary-100)] dark:border-[var(--color-primary)]/20 text-[var(--color-primary)] hover:bg-[var(--color-primary-50)] dark:hover:bg-[var(--color-primary)]/10 transition-colors font-semibold">
                     Edit
                   </Link>

@@ -37,12 +37,12 @@ const ROUTES: Array<[string, PageMeta]> = [
   // Seeker
   ["/seeker/search", { title: "Search rooms", description: "Browse verified rooms from trusted owners across Australia.", noIndex: true }],
   ["/seeker/wishlist", { title: "Your wishlist", description: "Compare and revisit the rooms you've saved.", noIndex: true }],
-  ["/seeker/profile", { title: "Your profile", description: "Manage your seeker profile, preferences, and verification.", noIndex: true }],
+  ["/dashboard/seeker-profile", { title: "Your profile", description: "Manage your seeker profile, preferences, and verification.", noIndex: true }],
 
   // Owner
-  ["/owner/dashboard", { title: "Host dashboard", description: "Review enquiries, bookings, and listing performance.", noIndex: true }],
+  ["/dashboard/owner", { title: "Host dashboard", description: "Review enquiries, bookings, and listing performance.", noIndex: true }],
   ["/owner/listings", { title: "Your listings", description: "Create and manage your rooms on MigRent.", noIndex: true }],
-  ["/owner/profile", { title: "Host profile", description: "Manage your host profile, payouts, and verification.", noIndex: true }],
+  ["/dashboard/owner-profile", { title: "Host profile", description: "Manage your host profile, payouts, and verification.", noIndex: true }],
   ["/owner/setup", { title: "List your room", description: "Add photos, set your price, and publish your listing.", noIndex: true }],
 
   // Dashboard
@@ -85,7 +85,7 @@ const ROUTES: Array<[string, PageMeta]> = [
   ["/contact-legal", { title: "Legal contact", description: "Contact the MigRent legal team." }],
   ["/disclaimer", { title: "Disclaimer", description: "Important disclaimers about MigRent." }],
   ["/rules-community-guidelines", { title: "Community guidelines", description: "How we keep MigRent safe and welcoming." }],
-  ["/rules", { title: "Community rules", description: "MigRent community rules." }],
+  ["/rules-community-guidelines", { title: "Community rules", description: "MigRent community rules." }],
 ];
 
 export function getPageMeta(pathname: string): PageMeta {

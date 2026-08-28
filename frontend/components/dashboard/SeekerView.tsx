@@ -131,7 +131,7 @@ export default function SeekerView({ loading, profile }: SeekerViewProps) {
             New Search
           </motion.span>
         </Link>
-        <Link href="/seeker/saved">
+        <Link href="/seeker/wishlist">
           <motion.span
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.97 }}

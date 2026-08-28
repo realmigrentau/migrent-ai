@@ -27,6 +27,8 @@ export default function PhotoUploadZone({
     uploadAll,
     uploading,
     overallProgress,
+    rejections,
+    clearRejections,
   } = usePhotoUpload({
     bucket,
     pathPrefix,
@@ -137,6 +139,38 @@ export default function PhotoUploadZone({
 
   return (
     <div className="space-y-4">
+      {/* Files the picker refused. These were dropped silently before, so an
+          owner adding an iPhone HEIC or an 12MB photo saw nothing happen and
+          assumed uploads were broken. */}
+      {rejections.length > 0 && (
+        <div
+          role="alert"
+          className="rounded-[10px] border border-[var(--color-line-2)] bg-[var(--color-warn-50)] px-4 py-3"
+        >
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0">
+              <p className="text-[13.5px] font-semibold text-[var(--color-ink)]">
+                {rejections.length === 1 ? "One photo was not added" : `${rejections.length} photos were not added`}
+              </p>
+              <ul className="mt-1 space-y-0.5">
+                {rejections.map((r, i) => (
+                  <li key={i} className="text-[13px] text-[var(--color-ink-2)] break-words">
+                    {r}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <button
+              type="button"
+              onClick={clearRejections}
+              className="text-[12.5px] font-semibold text-[var(--color-ink-3)] hover:text-[var(--color-ink)] shrink-0"
+            >
+              Dismiss
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Drop zone */}
       <div
         onDragEnter={handleDragEnter}

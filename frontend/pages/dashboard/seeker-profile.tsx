@@ -61,7 +61,7 @@ export default function SeekerProfilePage() {
     .join("")
     .toUpperCase() || "U";
   const city = p.preferred_suburbs?.split(",")[0]?.trim() || p.city || "Australia";
-  const joinedLabel = fmtMonth(p.created_at) || fmtMonth(session.user.created_at) || "—";
+  const joinedLabel = fmtMonth(p.created_at) || fmtMonth(session.user.created_at) || " - ";
   const speaks = (p.languages || p.preferred_language || "English")
     .split(",")
     .map((s: string) => s.trim())
@@ -343,7 +343,7 @@ export default function SeekerProfilePage() {
                 />
                 <ActivityRow
                   label="Response rate"
-                  value={p.response_rate ? `${p.response_rate}%` : "—"}
+                  value={p.response_rate ? `${p.response_rate}%` : " - "}
                 />
                 <ActivityRow label="Saved listings" value={String(p.saved_count ?? 0)} />
               </div>

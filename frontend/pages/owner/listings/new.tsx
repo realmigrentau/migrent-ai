@@ -34,7 +34,11 @@ export default function NewListing() {
     const imageUrls = data.photoUrls || [];
 
     const result = await createListing(session.access_token, {
-      address: `${data.suburb}, ${data.postcode}`,
+      // The real street address. It is stored privately: the API returns
+      // "Suburb Postcode" in its place to anyone who is not the owner or an
+      // admin. This used to BE "Suburb, Postcode", so no street address was
+      // ever captured at all.
+      address: data.streetAddress || `${data.suburb}, ${data.postcode}`,
       suburb: data.suburb,
       postcode: data.postcode,
       weeklyPrice: data.weeklyPrice,
@@ -85,7 +89,12 @@ export default function NewListing() {
     });
 
     if (result && !result.error) {
-      router.push("/owner/listings?created=1");
+      // The API reports which of the two outcomes happened, so the confirmation
+      // can say either "in review" or "saved as a draft, verify to publish"
+      // rather than dropping the owner on a list with no explanation.
+      router.push(
+        result.is_draft ? "/owner/listings?draft=1" : "/owner/listings?created=1"
+      );
     } else {
       setError(result?.error || "Failed to create listing. Please try again.");
       setSubmitting(false);
@@ -112,39 +121,34 @@ export default function NewListing() {
       </div>
     );
 
-  if (verified === false)
-    return (
-      <div className="max-w-lg mx-auto mt-12">
-        <div className="card p-8 rounded-2xl text-center">
-          <div className="w-16 h-16 bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <svg className="w-8 h-8 text-[var(--color-warn-500)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
-            </svg>
-          </div>
-          <h2 className="text-xl font-bold text-[var(--color-ink)] mb-2">Verification Required</h2>
-          <p className="text-sm text-[var(--color-ink-3)] mb-6">
-            To keep our community safe, all owners must complete identity verification before listing a room.
-            This takes just a few minutes.
+  // Unverified owners used to hit a hard wall here and never saw the form.
+  // They now get a heads-up and can build the listing; it saves as a draft
+  // that only they can see, and verification is required to publish it.
+  const verificationNotice = verified === false && (
+    <div className="rounded-[var(--radius-xl)] border border-[var(--color-line-2)] bg-[var(--color-warn-50)] p-5">
+      <div className="flex items-start gap-3">
+        <svg className="w-5 h-5 text-[var(--color-warn-500)] mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
+        </svg>
+        <div className="min-w-0">
+          <h2 className="text-[15px] font-semibold text-[var(--color-ink)]">
+            Build it now, verify before it goes live
+          </h2>
+          <p className="text-[13.5px] text-[var(--color-ink-2)] leading-[1.6] mt-1">
+            Fill this in and we will save it as a private draft. To publish it you
+            will need to verify your ID, which takes a few minutes and is how we
+            keep every listed host accountable to renters.
           </p>
-          <div className="space-y-3 text-left mb-6">
-            <div className="flex items-center gap-3 text-sm text-[var(--color-ink-2)]">
-              <span className="w-6 h-6 rounded-full bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 flex items-center justify-center text-xs font-bold text-[var(--color-accent)]">1</span>
-              Email verification (already done)
-            </div>
-            <div className="flex items-center gap-3 text-sm text-[var(--color-ink-2)]">
-              <span className="w-6 h-6 rounded-full bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/10 flex items-center justify-center text-xs font-bold text-[var(--color-warn-600)]">2</span>
-              Upload a government ID for review
-            </div>
-          </div>
           <Link
             href="/account/settings?tab=verification"
-            className="btn-primary py-3 px-8 rounded-xl text-sm font-semibold inline-block"
+            className="text-[13.5px] font-semibold text-[var(--color-primary)] hover:underline underline-offset-[3px] inline-block mt-2"
           >
-            Start Verification
+            Verify now instead
           </Link>
         </div>
       </div>
-    );
+    </div>
+  );
 
   return (
     <div className="space-y-6">
@@ -163,6 +167,8 @@ export default function NewListing() {
           Complete the steps below to list your room for free.
         </p>
       </motion.div>
+
+      {verificationNotice}
 
       {error && (
         <motion.p

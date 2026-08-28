@@ -51,7 +51,7 @@ export default function ForOwners() {
           { label: "Why MigRent", href: "#why" },
           { label: "Pricing", href: "#pricing" },
         ]}
-        cta={{ label: "Start listing", href: "/owner/dashboard" }}
+        cta={{ label: "Start listing", href: "/dashboard/owner" }}
       />
 
       {/* 1 · HERO - owner-dashboard mock split (distinct from homepage + seekers) */}
@@ -69,7 +69,7 @@ export default function ForOwners() {
                 Reach verified, motivated renters across Australia. Free to list, with no commission on the rent you collect.
               </p>
               <div className="flex flex-wrap gap-3 mt-8">
-                <Link href="/owner/dashboard" className="btn-primary h-12 px-7 text-[15px]">Start listing <ArrowRight className="w-4 h-4" /></Link>
+                <Link href="/dashboard/owner" className="btn-primary h-12 px-7 text-[15px]">Start listing <ArrowRight className="w-4 h-4" /></Link>
                 <Link href="/pricing" className="btn-secondary h-12 px-7 text-[15px]">View pricing</Link>
               </div>
               <div className="mt-7 flex flex-wrap gap-x-5 gap-y-2.5">
@@ -176,7 +176,7 @@ export default function ForOwners() {
               <div className="eyebrow mb-3">Why owners choose MigRent</div>
               <h2 className="font-serif text-[34px] md:text-[52px] leading-[1.0] tracking-[-0.03em] text-[var(--color-ink)]">Your room, in safe hands.</h2>
               <p className="mt-5 text-[16px] text-[var(--color-ink-2)] leading-[1.6] max-w-[42ch]">A marketplace where verification works both ways - so the people in your home are who they say they are.</p>
-              <Link href="/owner/dashboard" className="btn-primary h-11 px-5 text-sm mt-7">List a room <ArrowRight className="w-3.5 h-3.5" /></Link>
+              <Link href="/dashboard/owner" className="btn-primary h-11 px-5 text-sm mt-7">List a room <ArrowRight className="w-3.5 h-3.5" /></Link>
             </motion.div>
             <div className="grid sm:grid-cols-2 gap-4">
               {benefits.map((o, i) => (
@@ -235,7 +235,7 @@ export default function ForOwners() {
             <h2 className="font-serif text-[40px] md:text-[60px] leading-[0.98] tracking-[-0.03em] text-[var(--color-ink)]">Ready to list your room?</h2>
             <p className="mt-5 text-[17px] text-[var(--color-ink-2)] leading-[1.55] max-w-[560px]">Join hosts across Australia opening their doors to verified renters - and getting paid safely.</p>
             <div className="flex flex-wrap gap-3 mt-8">
-              <Link href="/owner/dashboard" className="btn-primary h-12 px-7 text-[15px]">Start hosting <ArrowRight className="w-4 h-4" /></Link>
+              <Link href="/dashboard/owner" className="btn-primary h-12 px-7 text-[15px]">Start hosting <ArrowRight className="w-4 h-4" /></Link>
               <Link href="/contact" className="btn-secondary h-12 px-7 text-[15px]">Talk to us first</Link>
             </div>
           </motion.div>

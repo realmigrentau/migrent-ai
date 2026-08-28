@@ -78,7 +78,7 @@ export default function SeekerOverview({ profile }: SeekerOverviewProps) {
           <PanelHeader
             title="Your applications"
             action={
-              <Link href="/seeker/dashboard" className="text-[12.5px] font-semibold text-[var(--color-ink)] inline-flex items-center gap-1 hover:underline underline-offset-[3px]">
+              <Link href="/dashboard/seeker" className="text-[12.5px] font-semibold text-[var(--color-ink)] inline-flex items-center gap-1 hover:underline underline-offset-[3px]">
                 View all <ArrowRight className="w-3 h-3" />
               </Link>
             }
@@ -104,7 +104,7 @@ export default function SeekerOverview({ profile }: SeekerOverviewProps) {
                 return (
                   <Link
                     key={b.id}
-                    href="/seeker/dashboard"
+                    href="/dashboard/seeker"
                     className={`grid grid-cols-[52px_1fr_170px_28px] gap-3.5 items-center py-3 ${
                       i > 0 ? "border-t border-[var(--color-line)]" : ""
                     }`}

@@ -46,6 +46,29 @@ def derive_city(postcode: int) -> Optional[str]:
     return None
 
 
+def redact_address(listing: dict, viewer_is_owner_or_admin: bool) -> dict:
+    """Replace the street address with the suburb for everyone else.
+
+    listings.address holds the full street address the owner entered. Renters
+    are shown the suburb and postcode only until a booking is agreed, which is
+    the convention every Australian rental site follows and which stops the
+    exact address of a room, often occupied by a lone new arrival, being
+    scraped off a public page.
+
+    The owner and admins see the real thing under `street_address`.
+    """
+    if viewer_is_owner_or_admin:
+        listing["street_address"] = listing.get("address")
+        return listing
+
+    suburb = listing.get("suburb") or listing.get("city") or ""
+    postcode = listing.get("postcode")
+    listing["address"] = f"{suburb} {postcode}".strip() if suburb or postcode else "Australia"
+    listing.pop("street_address", None)
+    listing.pop("geocoded_address", None)
+    return listing
+
+
 @router.post("")
 @limiter.limit("10/hour")
 async def create_listing(
@@ -60,13 +83,20 @@ async def create_listing(
     if user_type and user_type != "owner":
         raise HTTPException(status_code=403, detail="Only owners can create listings")
 
-    # Gate: Owner must be fully verified (email + phone + govt ID)
+    # Verification gates PUBLISHING, not creating.
+    #
+    # This used to be a hard 403: an owner could not open the listing form at
+    # all until they had finished ID verification. That is the right guarantee
+    # in the wrong place. It asked for a government ID before the owner had
+    # invested anything or seen what listing involves, which is the single
+    # biggest brake on getting rooms onto the platform.
+    #
+    # An unverified owner can now build and save a listing. It is created as a
+    # draft, which no search, no public page and no booking can reach, and they
+    # submit it for review once verified via POST /listings/{id}/submit. The
+    # trust guarantee is identical: nothing unverified is ever visible.
     from routes_owner_verification import check_owner_verified
-    if not check_owner_verified(str(user.id)):
-        raise HTTPException(
-            status_code=403,
-            detail="You must complete identity verification before listing a room. Go to Settings > Verification to get verified.",
-        )
+    is_verified = check_owner_verified(str(user.id))
 
     city = listing.city or derive_city(listing.postcode)
 
@@ -80,7 +110,7 @@ async def create_listing(
         "description": listing.description,
         "images": listing.images,
         "owner_id": str(user.id),
-        "moderation_status": "pending_approval",
+        "moderation_status": "pending_approval" if is_verified else "draft",
     }
 
     # Add geocoding fields if provided by frontend
@@ -207,7 +237,55 @@ async def create_listing(
         except Exception as e:
             logger.warning(f"Spam detection failed for listing {created.get('id')}: {e}")
 
+    # Tell the client which of the two outcomes happened so it can show either
+    # "in review" or "saved as a draft, verify to publish".
+    created["is_draft"] = not is_verified
     return created
+
+
+@router.post("/{listing_id}/submit")
+@limiter.limit("20/hour")
+def submit_listing_for_review(
+    request: Request,
+    listing_id: str,
+    authorization: str = Header(...),
+):
+    """Move an owner's draft listing into the moderation queue.
+
+    This is where verification is enforced. Drafts are invisible to everyone
+    but their owner, so the platform-wide guarantee that only ID-verified hosts
+    appear in search is unchanged.
+    """
+    user = get_current_user(authorization)
+    user_id = str(user.id)
+    sb = get_supabase_admin()
+
+    res = sb.table("listings").select("id, owner_id, moderation_status").eq("id", listing_id).execute()
+    if not res.data:
+        raise HTTPException(status_code=404, detail="Listing not found")
+
+    row = res.data[0]
+    if str(row["owner_id"]) != user_id:
+        raise HTTPException(status_code=403, detail="You can only submit your own listings")
+
+    if row["moderation_status"] not in ("draft", "changes_requested", "rejected"):
+        raise HTTPException(
+            status_code=400,
+            detail="This listing is not waiting to be submitted.",
+        )
+
+    from routes_owner_verification import check_owner_verified
+    if not check_owner_verified(user_id):
+        raise HTTPException(
+            status_code=403,
+            detail="Complete identity verification to publish. Go to Settings > Verification.",
+        )
+
+    sb.table("listings").update(
+        {"moderation_status": "pending_approval"}
+    ).eq("id", listing_id).execute()
+
+    return {"id": listing_id, "moderation_status": "pending_approval"}
 
 
 @router.get("/search")
@@ -379,6 +457,10 @@ def search_listings(
         if not best_match_sort:
             results = results[:limit]
 
+    # Search is public, so never leak the street address here.
+    for row in results:
+        redact_address(row, False)
+
     # Best match scoring and sorting
     if best_match_sort:
         seeker_profile = {}
@@ -430,22 +512,24 @@ def get_listing_by_id(
 
     listing = res.data[0]
 
+    viewer_id = None
+    viewer = None
+    if authorization:
+        try:
+            viewer = get_current_user(authorization)
+            viewer_id = str(viewer.id)
+        except HTTPException:
+            viewer, viewer_id = None, None
+
+    is_owner = viewer_id is not None and viewer_id == str(listing.get("owner_id"))
+    is_admin = False
+    if viewer is not None and not is_owner:
+        try:
+            is_admin = is_admin_user(viewer)
+        except HTTPException:
+            is_admin = False
+
     if listing.get("moderation_status") != "approved":
-        viewer_id = None
-        if authorization:
-            try:
-                viewer_id = str(get_current_user(authorization).id)
-            except HTTPException:
-                viewer_id = None
-
-        is_owner = viewer_id is not None and viewer_id == str(listing.get("owner_id"))
-        is_admin = False
-        if viewer_id is not None and not is_owner:
-            try:
-                is_admin = is_admin_user(get_current_user(authorization))
-            except HTTPException:
-                is_admin = False
-
         # A soft-deleted listing is gone for everyone, including its owner.
         if listing.get("moderation_status") == "deleted" or not (is_owner or is_admin):
             raise HTTPException(status_code=404, detail="Listing not found")
@@ -556,7 +640,10 @@ def get_listing_by_id(
         except Exception:
             listing["similar_listings"] = []
 
-    return listing
+    for similar in listing.get("similar_listings") or []:
+        redact_address(similar, False)
+
+    return redact_address(listing, is_owner or is_admin)
 
 
 @router.get("")
@@ -585,11 +672,13 @@ def list_listings(
         query = query.gte("weekly_price", min_price)
     if max_price is not None:
         query = query.lte("weekly_price", max_price)
+    is_owner_view = False
     if owner and authorization:
         user = get_current_user(authorization)
         query = query.eq("owner_id", str(user.id))
         # Exclude permanently deleted listings even for owner
         query = query.neq("moderation_status", "deleted")
+        is_owner_view = True
     else:
         # Public listing - only show approved
         query = query.eq("moderation_status", "approved")
@@ -597,7 +686,12 @@ def list_listings(
     query = query.range(offset, offset + limit - 1)
 
     res = query.execute()
-    return res.data
+    rows = res.data or []
+    # Owners see their own street addresses; the public feed does not. The
+    # query above already scopes owner view to the caller's own listings.
+    for row in rows:
+        redact_address(row, is_owner_view)
+    return rows
 
 
 @router.patch("/{listing_id}")

@@ -9,7 +9,7 @@ const quickLinks = [
   { label: "Revenue Report", href: "/admin/revenue", desc: "Charts, payments, export" },
   { label: "Review Listings", href: "/admin/listings", desc: "Approve, reject, manage" },
   { label: "Analytics", href: "/admin/analytics", desc: "Page views, funnels, geo" },
-  { label: "Owner Dashboard", href: "/owner/dashboard", desc: "View as owner" },
+  { label: "Owner Dashboard", href: "/dashboard/owner", desc: "View as owner" },
   { label: "Seeker Dashboard", href: "/dashboard", desc: "View as seeker" },
 ];
 

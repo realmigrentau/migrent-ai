@@ -53,6 +53,9 @@ export default function EditListing() {
   // Map Supabase listing data -> ListingFormData for the form
   const initialData: Partial<ListingFormData> | undefined = listing
     ? {
+        // street_address is returned only to the owner and admins; address is
+        // the redacted "Suburb Postcode" the public sees.
+        streetAddress: listing.street_address || "",
         suburb: listing.suburb || "",
         postcode: listing.postcode?.toString() || "",
         propertyType: listing.property_type || "Apartment",
@@ -114,7 +117,9 @@ export default function EditListing() {
     const imageUrls = data.photoUrls || [];
 
     const result = await updateListing(session.access_token, id, {
-      address: `${data.suburb}, ${data.postcode}`,
+      // Keep the street address if the owner supplied one; the API redacts
+      // it for everyone but them.
+      address: data.streetAddress || `${data.suburb}, ${data.postcode}`,
       suburb: data.suburb,
       postcode: data.postcode,
       weeklyPrice: data.weeklyPrice,

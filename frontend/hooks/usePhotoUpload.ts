@@ -23,6 +23,9 @@ interface UsePhotoUploadOptions {
 
 interface UsePhotoUploadReturn {
   photos: UploadablePhoto[];
+  /** Human-readable reasons the last addFiles call skipped a file. */
+  rejections: string[];
+  clearRejections: () => void;
   addFiles: (files: FileList | File[]) => void;
   removePhoto: (id: string) => void;
   reorderPhotos: (fromIndex: number, toIndex: number) => void;
@@ -64,6 +67,7 @@ export function usePhotoUpload({
   compressionMaxWidthOrHeight = 2048,
 }: UsePhotoUploadOptions): UsePhotoUploadReturn {
   const [photos, setPhotos] = useState<UploadablePhoto[]>([]);
+  const [rejections, setRejections] = useState<string[]>([]);
   const [uploading, setUploading] = useState(false);
   const abortRef = useRef(false);
 
@@ -71,10 +75,22 @@ export function usePhotoUpload({
     (files: FileList | File[]) => {
       const fileArray = Array.from(files);
       const validFiles: UploadablePhoto[] = [];
+      // Rejections used to be a bare `continue`: drop a 12MB photo, or an
+      // iPhone HEIC, and absolutely nothing happened on screen. Owners
+      // reasonably concluded the upload was broken. Collect the reasons so the
+      // UI can say what was skipped and why.
+      const rejected: string[] = [];
 
       for (const file of fileArray) {
-        if (!file.type.startsWith("image/")) continue;
-        if (file.size > maxSizeMB * 1024 * 1024) continue;
+        if (!file.type.startsWith("image/")) {
+          rejected.push(`${file.name} is not an image`);
+          continue;
+        }
+        if (file.size > maxSizeMB * 1024 * 1024) {
+          const mb = (file.size / (1024 * 1024)).toFixed(1);
+          rejected.push(`${file.name} is ${mb}MB, over the ${maxSizeMB}MB limit`);
+          continue;
+        }
 
         validFiles.push({
           id: generateId(),
@@ -87,12 +103,26 @@ export function usePhotoUpload({
 
       setPhotos((prev) => {
         const remaining = maxFiles - prev.length;
-        if (remaining <= 0) return prev;
+        if (remaining <= 0) {
+          if (validFiles.length > 0) {
+            rejected.push(`You can add up to ${maxFiles} photos`);
+          }
+          setRejections(rejected);
+          return prev;
+        }
+        if (validFiles.length > remaining) {
+          rejected.push(
+            `Only the first ${remaining} were added; the limit is ${maxFiles} photos`
+          );
+        }
+        setRejections(rejected);
         return [...prev, ...validFiles.slice(0, remaining)];
       });
     },
     [maxFiles, maxSizeMB]
   );
+
+  const clearRejections = useCallback(() => setRejections([]), []);
 
   const removePhoto = useCallback((id: string) => {
     setPhotos((prev) => {
@@ -240,6 +270,8 @@ export function usePhotoUpload({
 
   return {
     photos,
+    rejections,
+    clearRejections,
     addFiles,
     removePhoto,
     reorderPhotos,

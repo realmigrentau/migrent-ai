@@ -208,7 +208,7 @@ export default function About() {
               <Link href="/dashboard" className="inline-block btn-primary text-sm px-8 py-2.5 rounded-[10px]">
                 {t("about.seekerCta")}
               </Link>
-              <Link href="/owner/dashboard" className="inline-block btn-secondary text-sm px-8 py-2.5 rounded-[10px]">
+              <Link href="/dashboard/owner" className="inline-block btn-secondary text-sm px-8 py-2.5 rounded-[10px]">
                 {t("about.ownerCta")}
               </Link>
             </div>

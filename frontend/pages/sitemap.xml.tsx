@@ -41,7 +41,6 @@ const STATIC_PAGES: Entry[] = [
   { path: "/disclaimer", priority: "0.3", changefreq: "yearly" },
   { path: "/anti-discrimination", priority: "0.3", changefreq: "yearly" },
   { path: "/code-of-conduct", priority: "0.3", changefreq: "yearly" },
-  { path: "/rules", priority: "0.3", changefreq: "yearly" },
   { path: "/rules-community-guidelines", priority: "0.3", changefreq: "yearly" },
   { path: "/abn-terms", priority: "0.3", changefreq: "yearly" },
   { path: "/contact-legal", priority: "0.3", changefreq: "yearly" },

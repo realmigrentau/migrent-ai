@@ -21,7 +21,7 @@
     "badge": "Now live across Australia",
     "headline1": "Find your room,",
     "headline2": "feel at home",
-    "subtitle": "MigRent connects migrants, students, and professionals with verified rooms from local Australian owners — faster and safer than random classifieds.",
+    "subtitle": "MigRent connects migrants, students, and professionals with verified rooms from local Australian owners - faster and safer than random classifieds.",
     "seekerCta": "I'm a Seeker",
     "ownerCta": "I'm an Owner",
     "viewPricing": "View pricing",
@@ -125,12 +125,12 @@
     "stat4Detail": "Sydney, Australia",
     "storyTitle": "The",
     "storyAccent": "Story",
-    "storyP1": "MigRent AI started from a simple frustration: finding a room in a new country shouldn't feel like a full-time job. Scrolling through endless Facebook groups, dealing with scammers on classifieds, and getting rejected because you don't have local references — it's a broken system.",
+    "storyP1": "MigRent AI started from a simple frustration: finding a room in a new country shouldn't feel like a full-time job. Scrolling through endless Facebook groups, dealing with scammers on classifieds, and getting rejected because you don't have local references - it's a broken system.",
     "storyP2": "Founded in Sydney in 2025, MigRent was built by someone who experienced these challenges firsthand. The idea was straightforward: what if technology could match the right seekers with the right rooms, build trust through verification, and make the whole process faster and safer?",
     "storyP3": "That's what MigRent does. We use AI to analyse preferences, lifestyle compatibility, and trust signals to create meaningful matches. Owners get serious, pre-qualified enquiries instead of noise. Seekers get curated rooms that actually fit their needs and budget.",
-    "storyP4": "We launched with Sydney and expanded to Adelaide in 2026. Our goal is to become the go-to platform for short- to medium-term accommodation across Australia — and eventually beyond.",
+    "storyP4": "We launched with Sydney and expanded to Adelaide in 2026. Our goal is to become the go-to platform for short- to medium-term accommodation across Australia - and eventually beyond.",
     "missionTitle": "Our Mission",
-    "missionText": "To make finding accommodation in Australia faster, safer, and fairer for everyone — especially those arriving without local rental history. We believe everyone deserves a trusted path to finding a place to call home.",
+    "missionText": "To make finding accommodation in Australia faster, safer, and fairer for everyone - especially those arriving without local rental history. We believe everyone deserves a trusted path to finding a place to call home.",
     "valuesTitle": "What we",
     "valuesAccent": "stand for",
     "value1Title": "Built for Newcomers",
@@ -140,7 +140,7 @@
     "value3Title": "Fair for Everyone",
     "value3Desc": "Simple, one-time fees. No subscriptions, no commissions on rent. Owners keep 100% of ongoing payments.",
     "value4Title": "Community First",
-    "value4Desc": "We're not just a platform — we're building a community where people help each other find home in a new place.",
+    "value4Desc": "We're not just a platform - we're building a community where people help each other find home in a new place.",
     "howTitle": "How MigRent Works",
     "howDesc": "MigRent is a matching platform. We connect room owners with accommodation seekers and use AI to make that connection smarter.",
     "howSeekerTitle": "For Seekers",
@@ -188,7 +188,7 @@
     "cat1q5": "Where does MigRent operate?",
     "cat1a5": "MigRent currently operates in Sydney and Adelaide, Australia, with plans to expand to other cities.",
     "cat1q6": "Is MigRent free to use?",
-    "cat1a6": "Creating an account and browsing is free. Platform fees apply when a successful match is made — see our Pricing page for details.",
+    "cat1a6": "Creating an account and browsing is free. Platform fees apply when a successful match is made - see our Pricing page for details.",
     "cat2Title": "For Seekers",
     "cat2q1": "How do I find a room?",
     "cat2a1": "Once logged in, go to the Seeker Dashboard. Browse listings, use filters (location, price, room type), and view AI match scores to find rooms that suit you.",
@@ -208,7 +208,7 @@
     "cat2a8": "Always inspect the property (in person or via video call), verify the owner's identity, agree on all terms in writing, and understand bond, bills, and notice periods.",
     "cat3Title": "For Owners",
     "cat3q1": "How do I list a room?",
-    "cat3a1": "Go to the Owner Dashboard, click 'Create Listing', and fill in the details — location, price, photos, description, and house rules. Your listing will be visible to seekers immediately.",
+    "cat3a1": "Go to the Owner Dashboard, click 'Create Listing', and fill in the details - location, price, photos, description, and house rules. Your listing will be visible to seekers immediately.",
     "cat3q2": "How much does it cost to list?",
     "cat3a2": "Listing is free. Owners pay a one-time AUD $99 platform fee only when a successful match is confirmed through MigRent.",
     "cat3q3": "When is the owner fee charged?",
@@ -250,7 +250,7 @@
     "cat5q6": "Are verification badges guaranteed?",
     "cat5a6": "No. Verification badges and trust scores are informational tools to help decision-making. They do not guarantee safety or suitability.",
     "cat6Title": "Account & Technical",
-    "cat6q1": "I can't log in — what should I do?",
+    "cat6q1": "I can't log in - what should I do?",
     "cat6a1": "Try resetting your password from the sign-in page. If the issue persists, contact us at migrentau@gmail.com.",
     "cat6q2": "How do I delete my account?",
     "cat6a2": "Go to Account Settings and click 'Delete Account'. Your data will be removed within 30 days per our Privacy Policy.",
@@ -288,7 +288,7 @@
     "seekerSubtitle": "Find your perfect room with AI matching",
     "seekerPrice": "$19",
     "seekerPriceUnit": "AUD / optional",
-    "seekerPriceNote": "Verification fee — always disclosed",
+    "seekerPriceNote": "Verification fee - always disclosed",
     "seekerF1": "Free account creation",
     "seekerF2": "Browse all listings",
     "seekerF3": "AI match scores",
@@ -329,11 +329,11 @@
     "cmpA6": "No",
     "faqTitle": "Pricing FAQ",
     "faqQ1": "When exactly am I charged?",
-    "faqA1": "Owners are charged the $99 fee only when a deal is confirmed through MigRent. Seekers may optionally pay $19 for verification — always disclosed before payment.",
+    "faqA1": "Owners are charged the $99 fee only when a deal is confirmed through MigRent. Seekers may optionally pay $19 for verification - always disclosed before payment.",
     "faqQ2": "Are there any hidden fees?",
     "faqA2": "No. The pricing above is all-inclusive. No subscriptions, no rent commissions, no hidden costs.",
     "faqQ3": "Can I get a refund?",
-    "faqA3": "Fees are generally non-refundable once confirmed. Exceptional cases may be considered — contact migrentau@gmail.com.",
+    "faqA3": "Fees are generally non-refundable once confirmed. Exceptional cases may be considered - contact migrentau@gmail.com.",
     "faqQ4": "Does MigRent take a cut of rent?",
     "faqA4": "Never. All ongoing rent payments go directly to the owner. MigRent only charges a one-time fee on match.",
     "ctaTitle": "Get started today",
@@ -393,14 +393,14 @@
     "badge": "For Room Seekers",
     "headline1": "Find your room.",
     "headline2": "Feel at home.",
-    "subtitle": "MigRent helps migrants, students, and professionals find rooms from local owners — faster and safer than random classifieds.",
+    "subtitle": "MigRent helps migrants, students, and professionals find rooms from local owners - faster and safer than random classifieds.",
     "startSearching": "Start Searching",
     "viewPricing": "View Pricing",
     "howTitle": "How it",
     "howAccent": "works",
     "step1Num": "01",
     "step1Title": "Create your profile",
-    "step1Desc": "Sign up and tell us what you need — budget, location, lifestyle preferences.",
+    "step1Desc": "Sign up and tell us what you need - budget, location, lifestyle preferences.",
     "step2Num": "02",
     "step2Title": "Get verified (optional)",
     "step2Desc": "Build trust with owners by verifying your identity. Verified seekers are matched faster.",
@@ -458,7 +458,7 @@
     "successMessage": "Your message has been submitted. We will get back to you by email.",
     "errorMessage": "Please fill in all required fields.",
     "businessTitle": "Business Details",
-    "aiNote": "In the future, an AI assistant (\"Emily — MigRent Helpbot\") will be available here to answer common questions instantly."
+    "aiNote": "In the future, an AI assistant (\"Emily - MigRent Helpbot\") will be available here to answer common questions instantly."
   },
   "careers": {
     "badge": "We're growing",
@@ -474,7 +474,7 @@
     "val3Title": "Trust & Safety",
     "val3Desc": "Users trust us with their housing search. We take that responsibility seriously.",
     "val4Title": "Inclusive by Default",
-    "val4Desc": "We're building for migrants, students, and newcomers. Diversity isn't an initiative — it's our DNA.",
+    "val4Desc": "We're building for migrants, students, and newcomers. Diversity isn't an initiative - it's our DNA.",
     "teamTitle": "About the Team",
     "teamP1": "MigRent AI was founded in Sydney by an entrepreneur who experienced firsthand the challenges of finding accommodation as a newcomer to Australia. We're building the platform we wished existed.",
     "teamP2": "We're a small, fast-moving team that values impact over titles. We use modern technologies including Next.js, React, Supabase, and AI/ML to deliver a product that genuinely helps people.",
@@ -482,7 +482,7 @@
     "volunteerTitle": "Volunteer / Early Contributor",
     "volunteerMeta": "Remote • Flexible hours",
     "volunteerOpen": "Open",
-    "volunteerDesc": "We're looking for passionate people who want to make a difference. Whether you're a developer, designer, marketer, or community builder — if you believe in our mission, we want to hear from you.",
+    "volunteerDesc": "We're looking for passionate people who want to make a difference. Whether you're a developer, designer, marketer, or community builder - if you believe in our mission, we want to hear from you.",
     "morePositions": "More positions coming soon. Express your interest below.",
     "ctaTitle": "Interested in joining?",
     "ctaSubtitle": "Send us an email with your background and what excites you about MigRent.",
@@ -506,7 +506,7 @@
     "stat4Value": "2025",
     "stat4Detail": "Sydney, Australia",
     "aboutTitle": "About MigRent AI",
-    "aboutP1": "MigRent AI is an Australian proptech startup that uses artificial intelligence to match accommodation seekers — primarily migrants, international students, and working professionals — with room owners across Australia.",
+    "aboutP1": "MigRent AI is an Australian proptech startup that uses artificial intelligence to match accommodation seekers - primarily migrants, international students, and working professionals - with room owners across Australia.",
     "aboutP2": "Founded in Sydney in 2025, MigRent addresses a critical pain point: finding safe, affordable accommodation in a new country without local rental history or references. The platform replaces chaotic social media groups and random classifieds with structured, trust-scored, AI-powered matching.",
     "aboutP3": "MigRent operates on a simple fee model: owners pay a one-time AUD $99 platform fee per successful match, while seekers can optionally verify their identity for AUD $19. There are no subscriptions, no rent commissions, and no ongoing fees.",
     "companyDetails": "Company Details",
@@ -566,61 +566,100 @@
   },
   "features": {
     "heroTitle": "Powerful Features",
-    "heroSubtitle": "Everything you need to find or list a room — powered by AI, built for migrants.",
+    "heroSubtitle": "Everything you need to find or list a room - powered by AI, built for migrants.",
     "heroBadge": "Platform Features",
     "aiMatching": {
-      "title": "AI Matching",
-      "navDesc": "Smart room-to-seeker matching",
-      "desc": "Our intelligent algorithms analyse your preferences, budget, lifestyle, and location to surface the best room matches — so you spend less time searching and more time settling in.",
-      "bullets": ["Personalised match scores", "Learns from your behaviour", "Budget-aware suggestions"]
+      "title": "Smart matching",
+      "navDesc": "Rooms ranked by how well they fit you",
+      "desc": "We score every room against your budget, suburb, move-in date and visa, then show you the reasons behind each match. No black box: if a room ranks highly, you can see exactly why.",
+      "bullets": [
+        "Match scores you can check",
+        "Reasons shown on every result",
+        "Built around migrant needs first"
+      ]
     },
     "verifiedHosts": {
       "title": "Verified Hosts",
       "navDesc": "Identity-checked owners",
-      "desc": "Every owner on MigRent goes through identity verification. Look for the trust badge before you enquire — because safety comes first when you're new to a country.",
-      "bullets": ["ID & document checks", "Trust badges on profiles", "Verified listing photos"]
+      "desc": "Every owner on MigRent goes through identity verification. Look for the trust badge before you enquire - because safety comes first when you're new to a country.",
+      "bullets": [
+        "ID & document checks",
+        "Trust badges on profiles",
+        "Verified listing photos"
+      ]
     },
     "instantBooking": {
       "title": "Instant Booking",
       "navDesc": "One-click confirmed bookings",
-      "desc": "Skip the endless back-and-forth emails. Verified rooms with Instant Booking let you secure your spot with a single click — perfect for arrivals who need certainty fast.",
-      "bullets": ["One-click confirmation", "Instant availability check", "Secure booking guarantee"]
+      "desc": "Skip the endless back-and-forth emails. Verified rooms with Instant Booking let you secure your spot with a single click - perfect for arrivals who need certainty fast.",
+      "bullets": [
+        "One-click confirmation",
+        "Instant availability check",
+        "Secure booking guarantee"
+      ]
     },
     "smartFilters": {
       "title": "Smart Filters",
       "navDesc": "20+ search criteria",
-      "desc": "Narrow down thousands of listings with powerful filters — suburb, price range, room type, furnishing, pet policy, transport links, and 20+ more criteria built for real needs.",
-      "bullets": ["20+ filter options", "Save filter presets", "Suburb & transport search"]
+      "desc": "Narrow down thousands of listings with powerful filters - suburb, price range, room type, furnishing, pet policy, transport links, and 20+ more criteria built for real needs.",
+      "bullets": [
+        "20+ filter options",
+        "Save filter presets",
+        "Suburb & transport search"
+      ]
     },
     "superhost": {
       "title": "Superhost Program",
       "navDesc": "Trusted owner recognition",
       "desc": "Our best owners earn Superhost status through consistent 5-star reviews, fast response times, and zero cancellations. Superhosts get priority visibility and a gold badge.",
-      "bullets": ["Priority search ranking", "Gold trust badge", "Performance-based rewards"]
+      "bullets": [
+        "Priority search ranking",
+        "Gold trust badge",
+        "Performance-based rewards"
+      ]
     },
     "support": {
       "title": "24/7 Support",
       "navDesc": "Round-the-clock assistance",
-      "desc": "Moving to a new country is stressful enough. Our multilingual support team is available around the clock via in-app chat to help with any issues — from booking problems to safety concerns.",
-      "bullets": ["In-app live chat", "Multilingual agents", "Emergency escalation"]
+      "desc": "Moving to a new country is stressful enough. Our multilingual support team is available around the clock via in-app chat to help with any issues - from booking problems to safety concerns.",
+      "bullets": [
+        "In-app live chat",
+        "Multilingual agents",
+        "Emergency escalation"
+      ]
     },
     "suburbs": {
       "title": "Suburb Reports",
       "navDesc": "Data-rich suburb guides for renters",
       "desc": "Explore detailed suburb profiles with rent data, safety scores, transport info, demographics, and liveability insights - everything you need to choose the right area.",
-      "bullets": ["Median rent and vacancy data", "Safety scores and demographics", "Transport and commute times", "Liveability pros and cons"]
+      "bullets": [
+        "Median rent and vacancy data",
+        "Safety scores and demographics",
+        "Transport and commute times",
+        "Liveability pros and cons"
+      ]
     },
     "stationFinder": {
       "title": "Station Finder",
       "navDesc": "Walk time to nearest station",
       "desc": "Every listing shows the nearest train or metro station with walk time and distance - auto-calculated so you know exactly how far your commute is before you move.",
-      "bullets": ["Auto-detected nearest stations", "Walk time and distance for each listing", "Metro, train, and bus coverage", "Commute score for every room"]
+      "bullets": [
+        "Auto-detected nearest stations",
+        "Walk time and distance for each listing",
+        "Metro, train, and bus coverage",
+        "Commute score for every room"
+      ]
     },
     "mentorNetwork": {
       "title": "Mentor Network",
       "navDesc": "Local guides for new arrivals",
       "desc": "Connect with verified locals who know your suburb inside out. Get help settling in with video calls, suburb walks, and local tips - from someone who speaks your language.",
-      "bullets": ["Verified local mentors in your suburb", "Video calls, in-person meetups, or chat", "Multilingual - find mentors who speak your language", "Earn as a mentor - help newcomers settle in"]
+      "bullets": [
+        "Verified local mentors in your suburb",
+        "Video calls, in-person meetups, or chat",
+        "Multilingual - find mentors who speak your language",
+        "Earn as a mentor - help newcomers settle in"
+      ]
     },
     "cta": {
       "title": "Ready to get started?",
@@ -630,12 +669,12 @@
   },
   "guides": {
     "heroTitle": "Guides & How-Tos",
-    "heroSubtitle": "Step-by-step guides to help you get the most out of MigRent — whether you're a seeker or an owner.",
+    "heroSubtitle": "Step-by-step guides to help you get the most out of MigRent - whether you're a seeker or an owner.",
     "heroBadge": "Help Centre",
     "hostFirst": {
       "title": "Host Your First Room",
       "navDesc": "Step-by-step listing guide",
-      "desc": "A complete walkthrough for first-time hosts — from creating your listing to welcoming your first guest."
+      "desc": "A complete walkthrough for first-time hosts - from creating your listing to welcoming your first guest."
     },
     "findFast": {
       "title": "Find Rentals Fast",
@@ -655,7 +694,7 @@
     "superhost": {
       "title": "Become a Superhost",
       "navDesc": "Earn top-owner status",
-      "desc": "What it takes to earn Superhost status — response times, reviews, and hosting best practices."
+      "desc": "What it takes to earn Superhost status - response times, reviews, and hosting best practices."
     },
     "earnings": {
       "title": "Earnings Calculator",
@@ -702,11 +741,11 @@
     },
     "careers": {
       "title": "Join MigRent AI Team",
-      "desc": "Help migrants find home — engineering, design, and product roles based in Sydney."
+      "desc": "Help migrants find home - engineering, design, and product roles based in Sydney."
     },
     "rentalLaws": {
       "title": "Australian Rental Laws for Migrants",
-      "desc": "Know your rights — tenancy laws, bond rules, and dispute processes by state for migrant renters."
+      "desc": "Know your rights - tenancy laws, bond rules, and dispute processes by state for migrant renters."
     },
     "ownerROI": {
       "title": "Owner ROI Calculator",

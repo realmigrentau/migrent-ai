@@ -22,7 +22,7 @@ const columns: { heading: string; links: { label: string; href: string }[] }[] =
     links: [
       { label: "List a room", href: "/for-owners" },
       { label: "Pricing", href: "/pricing" },
-      { label: "Owner dashboard", href: "/owner/dashboard" },
+      { label: "Owner dashboard", href: "/dashboard/owner" },
       { label: "Safety & verification", href: "/safety-verification" },
       { label: "Become a mentor", href: "/become-mentor" },
     ],

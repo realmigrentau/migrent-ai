@@ -40,7 +40,7 @@ const plans = [
     title: "Free to list. Pay when it works.",
     body: "List and edit your rooms for free. You pay one fee per property when you find your tenant - nothing before, nothing after.",
     points: ["Free to list, free to edit", "No commission on weekly rent", "No subscriptions or hidden fees", "Secure card payments through Stripe"],
-    cta: { label: "Start listing", href: "/owner/dashboard" },
+    cta: { label: "Start listing", href: "/dashboard/owner" },
     featured: true,
   },
 ];

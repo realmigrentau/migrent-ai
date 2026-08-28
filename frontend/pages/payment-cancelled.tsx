@@ -35,7 +35,7 @@ export default function PaymentCancelled() {
           <Link href="/dashboard" className="btn-primary py-2.5 px-6 rounded-[10px] text-sm inline-block">
             Seeker Dashboard
           </Link>
-          <Link href="/owner/dashboard" className="btn-secondary py-2.5 px-6 rounded-[10px] text-sm inline-block">
+          <Link href="/dashboard/owner" className="btn-secondary py-2.5 px-6 rounded-[10px] text-sm inline-block">
             Owner Dashboard
           </Link>
         </div>
