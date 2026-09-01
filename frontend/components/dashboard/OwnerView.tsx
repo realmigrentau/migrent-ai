@@ -159,8 +159,8 @@ export default function OwnerView({ listings, loading, profile }: OwnerViewProps
 
                   {/* Status */}
                   <div className="col-span-2 flex items-center">
-                    <span className="inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full bg-[var(--color-accent-soft)] text-[var(--color-accent)] dark:bg-[var(--color-accent-soft)]0/20 dark:text-[var(--color-accent)]">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-accent-soft)]0" />
+                    <span className="inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full bg-[var(--color-accent-soft)] text-[var(--color-accent)] dark:bg-[var(--color-accent)]/20 dark:text-[var(--color-accent)]">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-accent)]" />
                       Active
                     </span>
                   </div>
@@ -193,7 +193,7 @@ export default function OwnerView({ listings, loading, profile }: OwnerViewProps
                 <span className="text-sm font-semibold text-[var(--color-primary)] dark:text-[var(--color-primary)]">{profile.roomsOwned}</span>
                 <span className="text-xs text-[var(--color-primary)]/70 dark:text-[var(--color-primary)]/70">rooms</span>
               </div>
-              <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary-soft)]0/10 border border-[var(--color-primary-soft)] dark:border-[var(--color-primary)]/20">
+              <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 border border-[var(--color-primary-soft)] dark:border-[var(--color-primary)]/20">
                 <Building2 className="w-4 h-4 text-[var(--color-primary)]" />
                 <span className="text-sm font-semibold text-[var(--color-primary)] dark:text-[var(--color-primary)]">{profile.propertiesOwned}</span>
                 <span className="text-xs text-[var(--color-primary)]/70 dark:text-primary-soft">properties</span>
@@ -217,7 +217,7 @@ export default function OwnerView({ listings, loading, profile }: OwnerViewProps
                 {profile.badges.map((badge) => (
                   <span
                     key={badge}
-                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/10 text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)] border border-[var(--color-line-2)] dark:border-[var(--color-warn-500)]/20"
+                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-500)]/10 text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)] border border-[var(--color-line-2)] dark:border-[var(--color-warn-500)]/20"
                   >
                     <Trophy className="w-3 h-3" />
                     {badge}

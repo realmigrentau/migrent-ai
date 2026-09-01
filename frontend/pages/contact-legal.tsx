@@ -162,7 +162,7 @@ export default function ContactLegal() {
           </div>
 
           {/* CTA */}
-          <div className="card p-6 rounded-2xl bg-[var(--color-primary-soft)] from-[var(--color-primary-50)] to-[var(--color-primary-100)] dark:from-[var(--color-primary-50)]0/10 dark:to-[var(--color-surface)] border-[var(--color-primary-100)] dark:border-[var(--color-line)] text-center">
+          <div className="card p-6 rounded-2xl bg-[var(--color-primary-soft)] from-[var(--color-primary-50)] to-[var(--color-primary-100)] dark:from-[var(--color-primary)]/10 dark:to-[var(--color-surface)] border-[var(--color-primary-100)] dark:border-[var(--color-line)] text-center">
             <h3 className="text-lg font-bold text-[var(--color-ink)] mb-2">Need to reach our legal team?</h3>
             <p className="text-sm text-[var(--color-ink-2)] mb-4">Email us with the appropriate subject line for faster routing.</p>
             <a href="mailto:migrentau@gmail.com?subject=Legal%20Inquiry">

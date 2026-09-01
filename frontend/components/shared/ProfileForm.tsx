@@ -299,7 +299,7 @@ export default function ProfileForm({
               lifestyle.map((item) => (
                 <span
                   key={item}
-                  className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium bg-[var(--color-primary)] from-[var(--color-warn-50)] to-[var(--color-warn-50)] dark:from-[var(--color-warn-50)]0/10 dark:to-[var(--color-warn-500)]/10 text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)] border border-[var(--color-line-2)] dark:border-[var(--color-warn-500)]/20"
+                  className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium bg-[var(--color-primary)] from-[var(--color-warn-50)] to-[var(--color-warn-50)] dark:from-[var(--color-warn-500)]/10 dark:to-[var(--color-warn-500)]/10 text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)] border border-[var(--color-line-2)] dark:border-[var(--color-warn-500)]/20"
                 >
                   {item}
                   <button onClick={() => toggleLifestyle(item)} className="hover:text-[var(--color-warn-600)]">
@@ -388,7 +388,7 @@ export default function ProfileForm({
             animate={{ opacity: 1, y: 0 }}
             className="mb-2 text-center"
           >
-            <span className="text-xs text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)] bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/10 px-3 py-1 rounded-full border border-[var(--color-line-2)] dark:border-[var(--color-warn-500)]/20">
+            <span className="text-xs text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)] bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-500)]/10 px-3 py-1 rounded-full border border-[var(--color-line-2)] dark:border-[var(--color-warn-500)]/20">
               You have unsaved changes
             </span>
           </motion.div>
@@ -485,7 +485,7 @@ export default function ProfileForm({
                         onClick={() => toggleLifestyle(opt)}
                         className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${
                           selected
-                            ? "bg-[var(--color-warn-50)]0 text-white border-amber-500 shadow-md"
+                            ? "bg-[var(--color-warn-500)] text-white border-amber-500 shadow-md"
                             : "bg-[var(--color-surface-2)] text-[var(--color-ink-2)] border-[var(--color-line)] hover:border-amber-300 dark:hover:border-amber-500/30"
                         }`}
                       >

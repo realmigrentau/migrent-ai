@@ -86,7 +86,7 @@ function HomeListingCard({ listing }: { listing: Listing }) {
         <div className="photo-placeholder h-[190px] w-full" style={{ borderRadius: 0 }}>{suburb} · {listing.property_type || listing.room_type || "Room"}</div>
         {listing.verified && (
           <div className="absolute bottom-2.5 left-2.5">
-            <span className="inline-flex items-center gap-1 h-[20px] px-2 rounded-full bg-[var(--color-surface-2)]/95 backdrop-blur text-[var(--color-accent)] text-[10.5px] font-semibold shadow-[var(--shadow-soft)]">
+            <span className="inline-flex items-center gap-1 h-[20px] px-2 rounded-full bg-[var(--color-surface-2)]/95 backdrop-blur text-[var(--color-trust)] text-[10.5px] font-semibold shadow-[var(--shadow-soft)]">
               <Check className="w-2.5 h-2.5" strokeWidth={2.6} /> Verified host
             </span>
           </div>

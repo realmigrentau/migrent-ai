@@ -14,7 +14,7 @@ export default function Disclaimer() {
         {/* Hero */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-xl bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/10 border border-[var(--color-line-2)] dark:border-[var(--color-line)] flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-500)]/10 border border-[var(--color-line-2)] dark:border-[var(--color-line)] flex items-center justify-center">
               <svg className="w-5 h-5 text-[var(--color-warn-500)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
               </svg>
@@ -139,7 +139,7 @@ export default function Disclaimer() {
           </div>
 
           {/* CTA */}
-          <div className="card p-6 rounded-2xl bg-[var(--color-primary-soft)] from-[var(--color-warn-50)] to-[var(--color-warn-50)] dark:from-[var(--color-warn-50)]0/10 dark:to-[var(--color-surface)] border-[var(--color-line-2)] dark:border-[var(--color-line)] text-center">
+          <div className="card p-6 rounded-2xl bg-[var(--color-primary-soft)] from-[var(--color-warn-50)] to-[var(--color-warn-50)] dark:from-[var(--color-warn-500)]/10 dark:to-[var(--color-surface)] border-[var(--color-line-2)] dark:border-[var(--color-line)] text-center">
             <h3 className="text-lg font-bold text-[var(--color-ink)] mb-2">Have questions?</h3>
             <p className="text-sm text-[var(--color-ink-2)] mb-4">Our team can help clarify our platform policies.</p>
             <Link href="/contact">

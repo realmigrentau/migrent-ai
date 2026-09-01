@@ -69,9 +69,9 @@ export function StatusBadge({
 }) {
   const styles: Record<string, string> = {
     verified:
-      "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/15 text-[var(--color-accent)] dark:text-[var(--color-accent)] border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)]",
+      "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent)]/15 text-[var(--color-accent)] dark:text-[var(--color-accent)] border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)]",
     pending:
-      "bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/15 text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)] border-[var(--color-line-2)] dark:border-amber-500/30",
+      "bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-500)]/15 text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)] border-[var(--color-line-2)] dark:border-amber-500/30",
     action:
       "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/15 text-[var(--color-primary)] dark:text-[var(--color-primary)] border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)]",
     info: "bg-[var(--color-primary-100)] dark:bg-[var(--color-primary)]/15 text-[var(--color-primary-700)] dark:text-[var(--color-primary)] border-[var(--color-primary-100)] dark:border-blue-500/30",

@@ -135,7 +135,7 @@ export default function AccountSecurityTab({
               <code className="text-xs text-[var(--color-ink-3)] font-mono break-all bg-[var(--color-surface-muted)] rounded-lg px-2.5 py-1.5 flex-1">
                 {user?.id}
               </code>
-              <button
+              <button aria-label="Copy to clipboard"
                 onClick={copyAccountId}
                 className="p-2 rounded-lg hover:bg-[var(--color-surface-muted)] transition-colors shrink-0"
                 title="Copy ID"
@@ -361,7 +361,7 @@ export default function AccountSecurityTab({
         </div>
 
         <div className="ml-14">
-          <div className="p-4 rounded-xl border border-[var(--color-danger-500)]/30 dark:border-[var(--color-danger-500)]/20 bg-[var(--color-danger-50)]/50 dark:bg-[var(--color-danger-50)]0/5">
+          <div className="p-4 rounded-xl border border-[var(--color-danger-500)]/30 dark:border-[var(--color-danger-500)]/20 bg-[var(--color-danger-50)]/50 dark:bg-[var(--color-danger-500)]/5">
             <div className="flex items-start justify-between gap-3">
               <div>
                 <h4 className="font-bold text-[var(--color-ink)] text-sm">Delete Account</h4>
@@ -372,7 +372,7 @@ export default function AccountSecurityTab({
               {!showDeleteConfirm && (
                 <button
                   onClick={() => setShowDeleteConfirm(true)}
-                  className="px-4 py-2 rounded-lg text-xs font-semibold text-[var(--color-danger-500)] dark:text-[var(--color-danger-500)] border border-[var(--color-danger-500)]/30 dark:border-[var(--color-danger-500)]/20 hover:bg-[var(--color-danger-50)] dark:hover:bg-[var(--color-danger-50)]0/10 transition-colors shrink-0"
+                  className="px-4 py-2 rounded-lg text-xs font-semibold text-[var(--color-danger-500)] dark:text-[var(--color-danger-500)] border border-[var(--color-danger-500)]/30 dark:border-[var(--color-danger-500)]/20 hover:bg-[var(--color-danger-50)] dark:hover:bg-[var(--color-danger-500)]/10 transition-colors shrink-0"
                 >
                   <Trash2 className="w-3.5 h-3.5 inline mr-1" />
                   Delete
@@ -412,7 +412,7 @@ export default function AccountSecurityTab({
                       <button
                         onClick={handleDeleteAccount}
                         disabled={saving || deleteEmailConfirm !== user?.email}
-                        className="px-4 py-2 rounded-lg text-sm font-semibold bg-[var(--color-danger-50)]0 text-white hover:bg-[var(--color-danger-500)] transition-colors disabled:opacity-50 flex-1"
+                        className="px-4 py-2 rounded-lg text-sm font-semibold bg-[var(--color-danger-500)] text-white hover:bg-[var(--color-danger-500)] transition-colors disabled:opacity-50 flex-1"
                       >
                         {saving ? "Deleting..." : "Delete forever"}
                       </button>

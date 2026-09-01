@@ -180,7 +180,7 @@ export default function AuthCallback() {
                 animate={{ opacity: 1, y: 0 }}
                 className="space-y-4"
               >
-                <div className="w-10 h-10 rounded-full bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-50)]0/20 flex items-center justify-center mx-auto">
+                <div className="w-10 h-10 rounded-full bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-500)]/20 flex items-center justify-center mx-auto">
                   <svg className="w-5 h-5 text-[var(--color-danger-500)] dark:text-[var(--color-danger-500)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                   </svg>

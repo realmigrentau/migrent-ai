@@ -86,7 +86,7 @@ export default function Careers() {
                   <h3 className="font-bold text-[var(--color-ink)] text-sm">{t("careers.volunteerTitle")}</h3>
                   <p className="text-xs text-[var(--color-ink-3)] mt-0.5">{t("careers.volunteerMeta")}</p>
                 </div>
-                <span className="px-2.5 py-0.5 rounded-full bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 text-xs font-semibold text-[var(--color-accent)] dark:text-[var(--color-accent)] shrink-0">
+                <span className="px-2.5 py-0.5 rounded-full bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent)]/10 text-xs font-semibold text-[var(--color-accent)] dark:text-[var(--color-accent)] shrink-0">
                   {t("careers.volunteerOpen")}
                 </span>
               </div>

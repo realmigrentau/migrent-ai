@@ -125,7 +125,7 @@ export default function ForSeekers() {
                   <div className="p-4">
                     <div className="flex items-center justify-between">
                       <div className="eyebrow">Marrickville, NSW</div>
-                      <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-[var(--color-accent)]"><Check className="w-3 h-3" strokeWidth={2.8} /> Verified</span>
+                      <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-[var(--color-trust)]"><Check className="w-3 h-3" strokeWidth={2.8} /> Verified</span>
                     </div>
                     <div className="font-serif text-[19px] text-[var(--color-ink)] mt-1 leading-tight">Sunny ensuite, bills included</div>
                     <div className="flex items-center justify-between mt-2">

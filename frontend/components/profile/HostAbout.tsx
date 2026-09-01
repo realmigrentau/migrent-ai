@@ -71,7 +71,7 @@ export default function HostAbout({ profile }: HostAboutProps) {
       {profile.most_useless_skill && (
         <motion.div
           whileHover={{ scale: 1.01 }}
-          className="flex items-start gap-3 p-4 rounded-2xl bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary-soft)]0/10 border border-purple-100 dark:border-[var(--color-primary)]/20"
+          className="flex items-start gap-3 p-4 rounded-2xl bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 border border-purple-100 dark:border-[var(--color-primary)]/20"
         >
           <span className="text-2xl">🎯</span>
           <div>

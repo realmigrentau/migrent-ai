@@ -34,14 +34,14 @@ export default function AnalyticsTab({ profile }: AnalyticsTabProps) {
             label: "Revenue trends",
             desc: "Track your monthly earnings",
             gradient: "from-[var(--color-accent)] to-[var(--color-primary)]",
-            bg: "bg-[var(--color-accent-soft)]/80 dark:bg-[var(--color-accent-soft)]0/10 border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)]",
+            bg: "bg-[var(--color-accent-soft)]/80 dark:bg-[var(--color-accent)]/10 border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)]",
           },
           {
             icon: Search,
             label: "Search insights",
             desc: "See how seekers find you",
             gradient: "from-[var(--color-primary)] to-[var(--color-primary)]",
-            bg: "bg-[var(--color-primary-soft)]/80 dark:bg-[var(--color-primary-soft)]0/10 border-pink-100 dark:border-[var(--color-primary)]/20",
+            bg: "bg-[var(--color-primary-soft)]/80 dark:bg-[var(--color-primary)]/10 border-pink-100 dark:border-[var(--color-primary)]/20",
           },
           {
             icon: Users,

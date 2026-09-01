@@ -2,7 +2,9 @@ import { useState, useEffect, useRef, useCallback, useContext, createContext, Re
 import { motion } from "framer-motion";
 
 const MAX_ATTEMPTS = 3;
-const INACTIVITY_TIMEOUT = 20_000; // 20 seconds
+// Long enough to actually read a listing and write a moderation note.
+// This was 20 seconds, which locked a moderator out mid-sentence.
+const INACTIVITY_TIMEOUT = 15 * 60_000; // 15 minutes
 
 type LockReason = "attempts" | "inactivity";
 
@@ -154,16 +156,7 @@ export default function AdminGate({ children }: { children: ReactNode }) {
 
     return (
       <>
-        <style jsx global>{`
-          @keyframes flash-bg {
-            0%, 100% { background-color: #dc2626; }
-            50% { background-color: #2563eb; }
-          }
-          .lockout-flash {
-            animation: flash-bg 0.5s ease-in-out infinite;
-          }
-        `}</style>
-        <div className="lockout-flash fixed inset-0 z-[9999] flex items-center justify-center">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-[var(--color-danger-600)]">
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}

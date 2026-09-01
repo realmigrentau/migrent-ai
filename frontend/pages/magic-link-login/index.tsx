@@ -124,8 +124,8 @@ export default function MagicLinkLogin() {
               animate={{ opacity: 1, y: 0 }}
               className="space-y-4"
             >
-              <div className="bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 border border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)] rounded-xl p-4 text-center">
-                <div className="w-10 h-10 rounded-full bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/20 flex items-center justify-center mx-auto mb-3">
+              <div className="bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent)]/10 border border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)] rounded-xl p-4 text-center">
+                <div className="w-10 h-10 rounded-full bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent)]/20 flex items-center justify-center mx-auto mb-3">
                   <svg className="w-5 h-5 text-[var(--color-accent)] dark:text-[var(--color-accent)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                   </svg>
@@ -207,7 +207,7 @@ export default function MagicLinkLogin() {
                 <motion.p
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="text-sm text-center p-3 rounded-xl bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-50)]0/10 border border-[var(--color-danger-500)]/30 dark:border-[var(--color-danger-500)]/20 text-[var(--color-danger-500)] dark:text-[var(--color-danger-500)]"
+                  className="text-sm text-center p-3 rounded-xl bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-500)]/10 border border-[var(--color-danger-500)]/30 dark:border-[var(--color-danger-500)]/20 text-[var(--color-danger-500)] dark:text-[var(--color-danger-500)]"
                 >
                   {msg}
                 </motion.p>

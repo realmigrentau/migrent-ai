@@ -45,7 +45,7 @@ export default function SupportDisputes() {
               {/* Step 1 */}
               <div className="card-subtle p-4 rounded-xl border-l-2 border-l-emerald-500">
                 <div className="flex items-center gap-2 mb-2">
-                  <span className="w-7 h-7 rounded-full bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/20 flex items-center justify-center text-xs font-bold text-[var(--color-accent)] dark:text-[var(--color-accent)]">1</span>
+                  <span className="w-7 h-7 rounded-full bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent)]/20 flex items-center justify-center text-xs font-bold text-[var(--color-accent)] dark:text-[var(--color-accent)]">1</span>
                   <h3 className="font-semibold text-[var(--color-ink)]">Direct Resolution (0-14 days)</h3>
                 </div>
                 <p>Attempt to resolve the issue directly with the other user. Use MigRent&apos;s messaging system to communicate clearly and document your conversations. Many disputes can be resolved through good-faith discussion.</p>
@@ -70,7 +70,7 @@ export default function SupportDisputes() {
               {/* Step 3 */}
               <div className="card-subtle p-4 rounded-xl border-l-2 border-l-violet-500">
                 <div className="flex items-center gap-2 mb-2">
-                  <span className="w-7 h-7 rounded-full bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary-soft)]0/20 flex items-center justify-center text-xs font-bold text-[var(--color-primary)] dark:text-[var(--color-primary)]">3</span>
+                  <span className="w-7 h-7 rounded-full bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/20 flex items-center justify-center text-xs font-bold text-[var(--color-primary)] dark:text-[var(--color-primary)]">3</span>
                   <h3 className="font-semibold text-[var(--color-ink)]">Binding Arbitration (30+ days)</h3>
                 </div>
                 <p>If mediation does not resolve the dispute within 30 days, either party may submit the dispute to binding arbitration administered by the Australian Centre for International Commercial Arbitration (ACICA) in accordance with ACICA Arbitration Rules.</p>
@@ -136,7 +136,7 @@ export default function SupportDisputes() {
           </div>
 
           {/* CTA */}
-          <div className="card p-6 rounded-2xl bg-[var(--color-primary-soft)] from-[var(--color-primary-50)] to-[var(--color-primary-100)] dark:from-[var(--color-primary-50)]0/10 dark:to-[var(--color-surface)] border-[var(--color-primary-100)] dark:border-[var(--color-line)] text-center">
+          <div className="card p-6 rounded-2xl bg-[var(--color-primary-soft)] from-[var(--color-primary-50)] to-[var(--color-primary-100)] dark:from-[var(--color-primary)]/10 dark:to-[var(--color-surface)] border-[var(--color-primary-100)] dark:border-[var(--color-line)] text-center">
             <h3 className="text-lg font-bold text-[var(--color-ink)] mb-2">Need to report an issue?</h3>
             <p className="text-sm text-[var(--color-ink-2)] mb-4">Contact our team and we&apos;ll help where we can.</p>
             <Link href="/contact">

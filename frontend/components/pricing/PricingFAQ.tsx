@@ -68,7 +68,7 @@ function FAQAccordionItem({ item, isOpen, onToggle }: { item: FAQItem; isOpen: b
       viewport={{ once: true }}
       className="card rounded-xl overflow-hidden"
     >
-      <button
+      <button aria-label="Toggle answer"
         onClick={onToggle}
         className="w-full flex items-center justify-between p-5 text-left hover:bg-[var(--color-surface)] transition-colors"
       >

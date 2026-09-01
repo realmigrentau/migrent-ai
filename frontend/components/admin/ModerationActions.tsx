@@ -87,7 +87,7 @@ export default function ModerationActions({
         <button
           onClick={handleApprove}
           disabled={loading}
-          className="px-2.5 py-1 text-xs font-semibold rounded-lg text-[var(--color-accent)] dark:text-[var(--color-accent)] hover:bg-[var(--color-accent-soft)] dark:hover:bg-[var(--color-accent-soft)]0/10 transition-colors disabled:opacity-50"
+          className="px-2.5 py-1 text-xs font-semibold rounded-lg text-[var(--color-accent)] dark:text-[var(--color-accent)] hover:bg-[var(--color-accent-soft)] dark:hover:bg-[var(--color-accent)]/10 transition-colors disabled:opacity-50"
         >
           Approve
         </button>

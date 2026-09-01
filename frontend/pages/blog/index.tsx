@@ -15,10 +15,10 @@ const fadeUp: Variants = {
 
 const categoryColors: Record<BlogCategory, string> = {
   Guide: "bg-[var(--color-primary-50)] dark:bg-[var(--color-primary)]/10 text-[var(--color-primary)] dark:text-[var(--color-primary)]",
-  Market: "bg-[var(--color-accent-50)] dark:bg-[var(--color-accent-50)]0/10 text-[var(--color-accent)] dark:text-[var(--color-accent)]",
-  Safety: "bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-50)]0/10 text-[var(--color-danger-500)] dark:text-[var(--color-danger-500)]",
-  News: "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary-soft)]0/10 text-[var(--color-primary)] dark:text-[var(--color-primary)]",
-  Tips: "bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/10 text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)]",
+  Market: "bg-[var(--color-accent-50)] dark:bg-[var(--color-accent)]/10 text-[var(--color-accent)] dark:text-[var(--color-accent)]",
+  Safety: "bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-500)]/10 text-[var(--color-danger-500)] dark:text-[var(--color-danger-500)]",
+  News: "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 text-[var(--color-primary)] dark:text-[var(--color-primary)]",
+  Tips: "bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-500)]/10 text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)]",
 };
 
 const categories: (BlogCategory | "All")[] = ["All", "Guide", "Market", "Safety", "News", "Tips"];
@@ -39,7 +39,7 @@ export default function BlogIndex() {
         {/* Hero */}
         <section className="relative text-center py-20 overflow-hidden">
           <div className="absolute top-0 left-1/4 w-96 h-96 bg-[var(--color-primary)]/15 dark:bg-[var(--color-primary)]/8 hidden " />
-          <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-[var(--color-primary-soft)]0/12 dark:bg-[var(--color-primary-soft)]0/6 hidden " style={{ animationDelay: "1s" }} />
+          <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-[var(--color-primary)]/12 dark:bg-[var(--color-primary)]/6 hidden " style={{ animationDelay: "1s" }} />
 
           <motion.div
             initial={{ opacity: 0, y: 40 }}

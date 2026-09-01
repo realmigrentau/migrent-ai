@@ -17,7 +17,7 @@ export default function ServerError() {
           transition={{ duration: 0.5 }}
           className="text-center max-w-md"
         >
-          <div className="w-20 h-20 rounded-2xl bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/10 border border-[var(--color-line-2)] dark:border-[var(--color-warn-500)]/20 flex items-center justify-center mx-auto mb-6">
+          <div className="w-20 h-20 rounded-2xl bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-500)]/10 border border-[var(--color-line-2)] dark:border-[var(--color-warn-500)]/20 flex items-center justify-center mx-auto mb-6">
             <span className="text-4xl font-black text-[var(--color-warn-500)]">500</span>
           </div>
 

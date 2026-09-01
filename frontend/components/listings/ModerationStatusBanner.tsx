@@ -23,7 +23,7 @@ const STATUS_CONFIG: Record<string, {
   icon: ReactElement;
 }> = {
   pending_approval: {
-    bg: "bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/10",
+    bg: "bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-500)]/10",
     border: "border-[var(--color-line-2)] dark:border-[var(--color-warn-500)]/20",
     iconColor: "text-[var(--color-warn-500)]",
     textColor: "text-amber-800 dark:text-[var(--color-warn-500)]",
@@ -36,7 +36,7 @@ const STATUS_CONFIG: Record<string, {
     ),
   },
   approved: {
-    bg: "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10",
+    bg: "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent)]/10",
     border: "border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)]",
     iconColor: "text-[var(--color-accent)]",
     textColor: "text-emerald-800 dark:text-[var(--color-accent)]",
@@ -88,7 +88,7 @@ const STATUS_CONFIG: Record<string, {
     ),
   },
   rejected: {
-    bg: "bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-50)]0/10",
+    bg: "bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-500)]/10",
     border: "border-[var(--color-danger-500)]/30 dark:border-[var(--color-danger-500)]/20",
     iconColor: "text-[var(--color-danger-500)]",
     textColor: "text-[var(--color-danger-600)] dark:text-[var(--color-danger-500)]",
@@ -101,7 +101,7 @@ const STATUS_CONFIG: Record<string, {
     ),
   },
   delete_requested: {
-    bg: "bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-50)]0/10",
+    bg: "bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-500)]/10",
     border: "border-[var(--color-danger-500)]/30 dark:border-[var(--color-danger-500)]/20",
     iconColor: "text-[var(--color-danger-500)]",
     textColor: "text-[var(--color-danger-600)] dark:text-[var(--color-danger-500)]",
@@ -114,7 +114,7 @@ const STATUS_CONFIG: Record<string, {
     ),
   },
   deleted: {
-    bg: "bg-[var(--color-surface)] dark:bg-[var(--color-surface)]0/10",
+    bg: "bg-[var(--color-surface)] dark:bg-[var(--color-ink-3)]/10",
     border: "border-[var(--color-line)] dark:border-slate-500/20",
     iconColor: "text-[var(--color-ink-3)]",
     textColor: "text-[var(--color-ink-2)] dark:text-[var(--color-ink-3)]",

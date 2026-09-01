@@ -217,7 +217,7 @@ const resources = [
     icon: "M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z",
     color: "from-[var(--color-accent)] to-[var(--color-accent)]",
     iconColor: "text-[var(--color-accent)]",
-    bgColor: "bg-[var(--color-accent-50)] dark:bg-[var(--color-accent-50)]0/10",
+    bgColor: "bg-[var(--color-accent-50)] dark:bg-[var(--color-accent)]/10",
     headline: "Owner ROI Calculator",
     subline: "Estimate returns on your spare room listing",
     MockUI: MockCalculator,
@@ -271,7 +271,7 @@ const resources = [
     icon: "M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z",
     color: "from-[var(--color-warn-500)] to-[var(--color-warn-500)]",
     iconColor: "text-[var(--color-warn-500)]",
-    bgColor: "bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/10",
+    bgColor: "bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-500)]/10",
     headline: "Join MigRent AI Team",
     subline: "Help migrants find home - based in Sydney",
     MockUI: MockCareers,
@@ -289,7 +289,7 @@ const resources = [
     icon: "M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3",
     color: "from-[var(--color-primary)] to-[var(--color-primary)]",
     iconColor: "text-[var(--color-primary)]",
-    bgColor: "bg-[var(--color-primary-50)] dark:bg-[var(--color-primary-50)]0/10",
+    bgColor: "bg-[var(--color-primary-50)] dark:bg-[var(--color-primary)]/10",
     headline: "Australian Rental Laws for Migrants",
     subline: "Know your rights as a renter in Australia",
     MockUI: MockRentalLaws,
@@ -315,8 +315,8 @@ export default function Resources() {
       <div className="space-y-24">
         {/* ── Hero ───────────────────────────────────────────────── */}
         <section className="relative text-center py-20 overflow-hidden">
-          <div className="absolute top-0 left-1/4 w-96 h-96 bg-[var(--color-primary-soft)]0/15 dark:bg-[var(--color-primary-soft)]0/8 hidden " />
-          <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-[var(--color-primary-50)]0/12 dark:bg-[var(--color-primary-50)]0/6 hidden " style={{ animationDelay: "1s" }} />
+          <div className="absolute top-0 left-1/4 w-96 h-96 bg-[var(--color-primary)]/15 dark:bg-[var(--color-primary)]/8 hidden " />
+          <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-[var(--color-primary)]/12 dark:bg-[var(--color-primary)]/6 hidden " style={{ animationDelay: "1s" }} />
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[var(--color-primary)]/5 dark:bg-[var(--color-primary)]/5 hidden " />
 
           <motion.div
@@ -325,8 +325,8 @@ export default function Resources() {
             transition={{ duration: 0.8 }}
             className="relative z-10 max-w-3xl mx-auto"
           >
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary-soft)]0/10 border border-[var(--color-primary-100)] dark:border-[var(--color-primary)]/20 text-xs font-medium text-[var(--color-primary)] dark:text-[var(--color-primary)] mb-6">
-              <span className="w-2 h-2 rounded-full bg-[var(--color-primary-soft)]0 animate-pulse" />
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 border border-[var(--color-primary-100)] dark:border-[var(--color-primary)]/20 text-xs font-medium text-[var(--color-primary)] dark:text-[var(--color-primary)] mb-6">
+              <span className="w-2 h-2 rounded-full bg-[var(--color-primary)] animate-pulse" />
               {t("resources.heroBadge")}
             </div>
 

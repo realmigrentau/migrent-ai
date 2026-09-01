@@ -251,7 +251,7 @@ export default function PhotoUploadZone({
         <motion.p
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-xs text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)] bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/10 border border-[var(--color-line-2)] dark:border-[var(--color-warn-500)]/20 rounded-xl px-3 py-2"
+          className="text-xs text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)] bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-500)]/10 border border-[var(--color-line-2)] dark:border-[var(--color-warn-500)]/20 rounded-xl px-3 py-2"
         >
           Add at least {minFiles} photos to continue. You have {photos.length} so
           far.
@@ -262,7 +262,7 @@ export default function PhotoUploadZone({
         <motion.p
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-xs text-[var(--color-primary)] dark:text-[var(--color-primary)] bg-[var(--color-primary-50)] dark:bg-[var(--color-primary-50)]0/10 border border-[var(--color-primary-100)] dark:border-teal-500/20 rounded-xl px-3 py-2"
+          className="text-xs text-[var(--color-primary)] dark:text-[var(--color-primary)] bg-[var(--color-primary-50)] dark:bg-[var(--color-primary)]/10 border border-[var(--color-primary-100)] dark:border-teal-500/20 rounded-xl px-3 py-2"
         >
           Pro tip: First photo becomes the hero image. Drag to reorder.
         </motion.p>
@@ -367,7 +367,7 @@ export default function PhotoUploadZone({
 
                 {/* Done overlay */}
                 {photo.status === "done" && (
-                  <div className="absolute bottom-1.5 right-1.5 w-5 h-5 rounded-full bg-[var(--color-accent-soft)]0 flex items-center justify-center">
+                  <div className="absolute bottom-1.5 right-1.5 w-5 h-5 rounded-full bg-[var(--color-accent)] flex items-center justify-center">
                     <svg
                       className="w-3 h-3 text-white"
                       fill="none"
@@ -386,8 +386,8 @@ export default function PhotoUploadZone({
 
                 {/* Error overlay */}
                 {photo.status === "error" && (
-                  <div className="absolute inset-0 bg-[var(--color-danger-50)]0/20 flex items-center justify-center">
-                    <div className="w-6 h-6 rounded-full bg-[var(--color-danger-50)]0 flex items-center justify-center">
+                  <div className="absolute inset-0 bg-[var(--color-danger-500)]/20 flex items-center justify-center">
+                    <div className="w-6 h-6 rounded-full bg-[var(--color-danger-500)] flex items-center justify-center">
                       <span className="text-white text-xs font-bold">!</span>
                     </div>
                   </div>
@@ -400,7 +400,7 @@ export default function PhotoUploadZone({
                       e.stopPropagation();
                       removePhoto(photo.id);
                     }}
-                    className="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-black/60 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-xs hover:bg-[var(--color-danger-50)]0"
+                    className="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-black/60 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-xs hover:bg-[var(--color-danger-500)]"
                   >
                     &times;
                   </button>
@@ -420,7 +420,7 @@ export default function PhotoUploadZone({
           whileTap={{ scale: 0.98 }}
           onClick={handleUpload}
           disabled={uploading}
-          className="w-full py-3 rounded-xl text-sm font-semibold text-white bg-[var(--color-primary)] from-[var(--color-primary-50)]0 to-teal-600 hover:from-[var(--color-primary)] hover:to-teal-700 transition-all shadow-lg shadow-teal-500/20 disabled:opacity-50"
+          className="w-full py-3 rounded-xl text-sm font-semibold text-white bg-[var(--color-primary)] from-[var(--color-primary)] to-teal-600 hover:from-[var(--color-primary)] hover:to-teal-700 transition-all shadow-lg shadow-teal-500/20 disabled:opacity-50"
         >
           Upload {photos.length} photos
         </motion.button>
@@ -457,7 +457,7 @@ export default function PhotoUploadZone({
         <motion.div
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex items-center gap-2 text-sm text-[var(--color-accent)] dark:text-[var(--color-accent)] bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 border border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)] rounded-xl px-4 py-3"
+          className="flex items-center gap-2 text-sm text-[var(--color-accent)] dark:text-[var(--color-accent)] bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent)]/10 border border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)] rounded-xl px-4 py-3"
         >
           <svg
             className="w-5 h-5 flex-shrink-0"

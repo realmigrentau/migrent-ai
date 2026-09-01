@@ -166,7 +166,7 @@ export default function TrueCostBadge({
                                 ? "bg-[var(--color-primary)]"
                                 : d.type === "cbd"
                                 ? "bg-[var(--color-primary)]"
-                                : "bg-[var(--color-warn-50)]0"
+                                : "bg-[var(--color-warn-500)]"
                             }`}
                           >
                             {d.type === "university" ? "U" : d.type === "cbd" ? "C" : "H"}

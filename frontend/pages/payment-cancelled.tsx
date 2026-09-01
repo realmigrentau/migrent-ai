@@ -10,7 +10,7 @@ export default function PaymentCancelled() {
         transition={{ duration: 0.4 }}
         className="card p-10 rounded-2xl space-y-6"
       >
-        <div className="w-16 h-16 mx-auto rounded-full bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/20 flex items-center justify-center">
+        <div className="w-16 h-16 mx-auto rounded-full bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-500)]/20 flex items-center justify-center">
           <svg
             className="w-8 h-8 text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)]"
             fill="none"

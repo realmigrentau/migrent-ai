@@ -23,16 +23,16 @@ interface Listing {
 }
 
 const STATUS_STYLES: Record<string, string> = {
-  active: "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 text-[var(--color-accent)] dark:text-[var(--color-accent)] border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)]",
-  approved: "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 text-[var(--color-accent)] dark:text-[var(--color-accent)] border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)]",
-  pending_approval: "bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/10 text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)] border-[var(--color-line-2)] dark:border-[var(--color-warn-500)]/20",
+  active: "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent)]/10 text-[var(--color-accent)] dark:text-[var(--color-accent)] border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)]",
+  approved: "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent)]/10 text-[var(--color-accent)] dark:text-[var(--color-accent)] border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)]",
+  pending_approval: "bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-500)]/10 text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)] border-[var(--color-line-2)] dark:border-[var(--color-warn-500)]/20",
   changes_requested: "bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)] text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)] border-[var(--color-line-2)] dark:border-[var(--color-warn-500)]/20",
-  rejected: "bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-50)]0/10 text-[var(--color-danger-500)] dark:text-[var(--color-danger-500)] border-[var(--color-danger-500)]/30 dark:border-[var(--color-danger-500)]/20",
-  paused: "bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/10 text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)] border-[var(--color-line-2)] dark:border-[var(--color-warn-500)]/20",
+  rejected: "bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-500)]/10 text-[var(--color-danger-500)] dark:text-[var(--color-danger-500)] border-[var(--color-danger-500)]/30 dark:border-[var(--color-danger-500)]/20",
+  paused: "bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-500)]/10 text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)] border-[var(--color-line-2)] dark:border-[var(--color-warn-500)]/20",
   draft: "bg-[var(--color-surface-muted)] text-[var(--color-ink-3)] border-[var(--color-line)]",
   flagged: "bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)] text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)] border-[var(--color-line-2)] dark:border-[var(--color-warn-500)]/20",
   hidden: "bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)] text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)] border-[var(--color-line-2)] dark:border-[var(--color-warn-500)]/20",
-  delete_requested: "bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-50)]0/10 text-[var(--color-danger-500)] dark:text-[var(--color-danger-500)] border-[var(--color-danger-500)]/30 dark:border-[var(--color-danger-500)]/20",
+  delete_requested: "bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-500)]/10 text-[var(--color-danger-500)] dark:text-[var(--color-danger-500)] border-[var(--color-danger-500)]/30 dark:border-[var(--color-danger-500)]/20",
   deleted: "bg-[var(--color-surface-muted)] text-[var(--color-ink-3)] border-[var(--color-line)]",
 };
 
@@ -417,7 +417,7 @@ export default function OwnerListings() {
                   </Link>
                   <button
                     onClick={() => openDeleteModal(l)}
-                    className="py-2 px-4 rounded-lg text-xs border border-[var(--color-danger-500)]/30 dark:border-[var(--color-danger-500)]/20 text-[var(--color-danger-500)] hover:bg-[var(--color-danger-50)] dark:hover:bg-[var(--color-danger-50)]0/10 transition-colors"
+                    className="py-2 px-4 rounded-lg text-xs border border-[var(--color-danger-500)]/30 dark:border-[var(--color-danger-500)]/20 text-[var(--color-danger-500)] hover:bg-[var(--color-danger-50)] dark:hover:bg-[var(--color-danger-500)]/10 transition-colors"
                   >
                     Delete
                   </button>
@@ -447,7 +447,7 @@ export default function OwnerListings() {
               {deleteStep === "confirm" ? (
                 <>
                   <div className="text-center">
-                    <div className="w-12 h-12 rounded-full bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-50)]0/10 flex items-center justify-center mx-auto mb-3">
+                    <div className="w-12 h-12 rounded-full bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-500)]/10 flex items-center justify-center mx-auto mb-3">
                       <svg className="w-6 h-6 text-[var(--color-danger-500)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                       </svg>
@@ -467,7 +467,7 @@ export default function OwnerListings() {
                     </button>
                     <button
                       onClick={() => setDeleteStep("verify")}
-                      className="flex-1 py-2.5 px-4 rounded-xl text-sm font-semibold bg-[var(--color-danger-50)]0 hover:bg-[var(--color-danger-500)] text-white transition-colors"
+                      className="flex-1 py-2.5 px-4 rounded-xl text-sm font-semibold bg-[var(--color-danger-500)] hover:bg-[var(--color-danger-500)] text-white transition-colors"
                     >
                       Yes, delete it
                     </button>
@@ -476,7 +476,7 @@ export default function OwnerListings() {
               ) : (
                 <>
                   <div className="text-center">
-                    <div className="w-12 h-12 rounded-full bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/10 flex items-center justify-center mx-auto mb-3">
+                    <div className="w-12 h-12 rounded-full bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-500)]/10 flex items-center justify-center mx-auto mb-3">
                       <svg className="w-6 h-6 text-[var(--color-warn-500)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                       </svg>
@@ -506,7 +506,7 @@ export default function OwnerListings() {
                   <button
                     onClick={handlePasswordDelete}
                     disabled={deleting || !deletePassword.trim()}
-                    className="w-full py-2.5 px-4 rounded-xl text-sm font-semibold bg-[var(--color-danger-50)]0 hover:bg-[var(--color-danger-500)] disabled:opacity-50 disabled:cursor-not-allowed text-white transition-colors flex items-center justify-center gap-2"
+                    className="w-full py-2.5 px-4 rounded-xl text-sm font-semibold bg-[var(--color-danger-500)] hover:bg-[var(--color-danger-500)] disabled:opacity-50 disabled:cursor-not-allowed text-white transition-colors flex items-center justify-center gap-2"
                   >
                     {deleting ? (
                       <>

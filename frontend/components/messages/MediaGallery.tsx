@@ -72,7 +72,7 @@ export default function MediaGallery({ images, initialIndex = 0, isOpen, onClose
         {/* Header */}
         <div className="flex items-center justify-between px-4 py-3 bg-black/50">
           <div className="flex items-center gap-3">
-            <button
+            <button aria-label="Close gallery"
               onClick={onClose}
               className="p-2 rounded-xl hover:bg-white/10 text-white/80 hover:text-white transition-colors"
             >
@@ -119,7 +119,7 @@ export default function MediaGallery({ images, initialIndex = 0, isOpen, onClose
         >
           {/* Previous button */}
           {images.length > 1 && (
-            <button
+            <button aria-label="Previous image"
               onClick={prev}
               className="absolute left-4 z-10 p-3 rounded-full bg-black/50 hover:bg-black/70 text-white/80 hover:text-white transition-all shadow-xl"
             >
@@ -146,7 +146,7 @@ export default function MediaGallery({ images, initialIndex = 0, isOpen, onClose
 
           {/* Next button */}
           {images.length > 1 && (
-            <button
+            <button aria-label="Next image"
               onClick={next}
               className="absolute right-4 z-10 p-3 rounded-full bg-black/50 hover:bg-black/70 text-white/80 hover:text-white transition-all shadow-xl"
             >

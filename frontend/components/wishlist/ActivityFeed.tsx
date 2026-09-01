@@ -13,7 +13,7 @@ const ACTIVITY_ICONS: Record<string, { icon: React.ReactNode; color: string; bg:
   price_drop: {
     icon: <TrendingDown className="w-4 h-4" />,
     color: "text-[var(--color-accent)]",
-    bg: "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10",
+    bg: "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent)]/10",
   },
   owner_reply: {
     icon: <MessageCircle className="w-4 h-4" />,
@@ -23,12 +23,12 @@ const ACTIVITY_ICONS: Record<string, { icon: React.ReactNode; color: string; bg:
   new_review: {
     icon: <Star className="w-4 h-4" />,
     color: "text-[var(--color-warn-500)]",
-    bg: "bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/10",
+    bg: "bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-500)]/10",
   },
   new_match: {
     icon: <Bell className="w-4 h-4" />,
     color: "text-[var(--color-primary)]",
-    bg: "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary-soft)]0/10",
+    bg: "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10",
   },
 };
 
@@ -91,7 +91,7 @@ export default function ActivityFeed({
                   </motion.span>
                 )}
               </div>
-              <button
+              <button aria-label="Dismiss activity"
                 onClick={onClose}
                 className="p-1.5 rounded-lg hover:bg-[var(--color-surface-muted)] transition-colors lg:hidden"
               >

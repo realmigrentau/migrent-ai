@@ -63,8 +63,8 @@ export default function EnableNotificationsCard({ token }: Props) {
 
   if (state === "success") {
     return (
-      <div className="p-4 rounded-xl bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 border border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)] flex items-center gap-3">
-        <div className="w-10 h-10 rounded-full bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/20 flex items-center justify-center shrink-0">
+      <div className="p-4 rounded-xl bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent)]/10 border border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)] flex items-center gap-3">
+        <div className="w-10 h-10 rounded-full bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent)]/20 flex items-center justify-center shrink-0">
           <Check className="w-5 h-5 text-[var(--color-accent)] dark:text-[var(--color-accent)]" />
         </div>
         <p className="text-sm font-medium text-emerald-800 dark:text-[var(--color-accent)]">
@@ -108,7 +108,7 @@ export default function EnableNotificationsCard({ token }: Props) {
             </p>
           )}
         </div>
-        <button onClick={handleDismiss} className="text-[var(--color-primary)] hover:text-[var(--color-primary)] shrink-0">
+        <button aria-label="Dismiss" onClick={handleDismiss} className="text-[var(--color-primary)] hover:text-[var(--color-primary)] shrink-0">
           <X className="w-4 h-4" />
         </button>
       </div>

@@ -30,9 +30,9 @@ export default function Press() {
       <div className="space-y-16">
         {/* Hero */}
         <section className="relative text-center py-16 overflow-hidden">
-          <div className="absolute top-10 right-10 w-72 h-72 bg-[var(--color-primary-soft)]0/10 dark:bg-[var(--color-primary-soft)]0/5 hidden " />
+          <div className="absolute top-10 right-10 w-72 h-72 bg-[var(--color-primary)]/10 dark:bg-[var(--color-primary)]/5 hidden " />
           <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="relative z-10 max-w-3xl mx-auto">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary-soft)]0/10 border border-violet-100 dark:border-[var(--color-primary)]/20 text-xs font-medium text-[var(--color-primary)] dark:text-[var(--color-primary)] mb-6">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 border border-violet-100 dark:border-[var(--color-primary)]/20 text-xs font-medium text-[var(--color-primary)] dark:text-[var(--color-primary)] mb-6">
               {t("press.badge")}
             </div>
             <h1 className="text-4xl sm:text-5xl font-semibold tracking-tight leading-tight">

@@ -28,7 +28,7 @@ const STATUS_CONFIG: Record<
     label: "Awaiting owner response",
     icon: Clock,
     color: "text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)]",
-    bg: "bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/10",
+    bg: "bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-500)]/10",
   },
   OWNER_ACCEPTED: {
     label: "Accepted - Complete payment",
@@ -40,7 +40,7 @@ const STATUS_CONFIG: Record<
     label: "Declined by owner",
     icon: XCircle,
     color: "text-[var(--color-danger-500)] dark:text-[var(--color-danger-500)]",
-    bg: "bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-50)]0/10",
+    bg: "bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-500)]/10",
   },
   SEEKER_CANCELLED: {
     label: "Cancelled",
@@ -52,7 +52,7 @@ const STATUS_CONFIG: Record<
     label: "Confirmed",
     icon: CheckCircle,
     color: "text-[var(--color-accent)] dark:text-[var(--color-accent)]",
-    bg: "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10",
+    bg: "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent)]/10",
   },
   COMPLETED: {
     label: "Stay completed",

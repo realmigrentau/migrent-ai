@@ -69,7 +69,7 @@ export default function NotificationDropdown({ onClose }: NotificationDropdownPr
               Mark all read
             </button>
           )}
-          <button
+          <button aria-label="Close notifications"
             onClick={onClose}
             className="p-1 rounded-lg text-[var(--color-ink-3)] hover:text-[var(--color-ink-2)] hover:bg-[var(--color-surface-muted)] dark:hover:text-[var(--color-ink-4)] dark:hover:bg-[var(--color-ink)] transition-colors"
           >

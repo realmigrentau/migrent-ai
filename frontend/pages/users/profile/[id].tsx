@@ -173,8 +173,14 @@ export default function PublicProfilePage() {
           >
             <h3 className="text-lg font-bold text-[var(--color-ink)] mb-4">Host details</h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              <StatCard value={`${profile.response_rate}%`} label="Response rate" icon="📩" />
-              <StatCard value={profile.response_time} label="Response time" icon="⚡" />
+              {/* Only shown once measurable. These were invented from account
+                  age before, so a brand new host looked like a proven one. */}
+              {profile.response_rate !== null && (
+                <StatCard value={`${profile.response_rate}%`} label="Response rate" icon="📩" />
+              )}
+              {profile.response_time !== null && (
+                <StatCard value={profile.response_time} label="Response time" icon="⚡" />
+              )}
               <StatCard value={`${profile.months_on_platform || "<1"}`} label="Months on MigRent" icon="📅" />
               <StatCard
                 value={`${profile.rooms_owned + profile.properties_owned}`}
@@ -210,7 +216,7 @@ export default function PublicProfilePage() {
                   <motion.span
                     key={badge}
                     whileHover={{ scale: 1.05, y: -1 }}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/10 text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)] border border-[var(--color-line-2)] dark:border-[var(--color-warn-500)]/20 cursor-default"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-500)]/10 text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)] border border-[var(--color-line-2)] dark:border-[var(--color-warn-500)]/20 cursor-default"
                   >
                     <svg className="w-3.5 h-3.5 text-[var(--color-warn-500)]" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
                     {badge}
@@ -261,20 +267,20 @@ export default function PublicProfilePage() {
               <div className="flex items-center gap-4 flex-wrap">
                 <button
                   onClick={() => setReportOpen(true)}
-                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm text-[var(--color-ink-3)] hover:bg-[var(--color-danger-50)] dark:hover:bg-[var(--color-danger-50)]0/10 hover:text-[var(--color-danger-500)] dark:hover:text-[var(--color-danger-500)] transition-all"
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm text-[var(--color-ink-3)] hover:bg-[var(--color-danger-50)] dark:hover:bg-[var(--color-danger-500)]/10 hover:text-[var(--color-danger-500)] dark:hover:text-[var(--color-danger-500)] transition-all"
                 >
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9" />
                   </svg>
                   Report this profile
                 </button>
-                <button
+                <button aria-label="Toggle theme"
                   onClick={handleToggleBlock}
                   disabled={blockLoading}
                   className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm transition-all disabled:opacity-50 ${
                     blocked
-                      ? "text-[var(--color-accent)] dark:text-[var(--color-accent)] hover:bg-[var(--color-accent-soft)] dark:hover:bg-[var(--color-accent-soft)]0/10"
-                      : "text-[var(--color-ink-3)] hover:bg-[var(--color-danger-50)] dark:hover:bg-[var(--color-danger-50)]0/10 hover:text-[var(--color-danger-500)] dark:hover:text-[var(--color-danger-500)]"
+                      ? "text-[var(--color-accent)] dark:text-[var(--color-accent)] hover:bg-[var(--color-accent-soft)] dark:hover:bg-[var(--color-accent)]/10"
+                      : "text-[var(--color-ink-3)] hover:bg-[var(--color-danger-50)] dark:hover:bg-[var(--color-danger-500)]/10 hover:text-[var(--color-danger-500)] dark:hover:text-[var(--color-danger-500)]"
                   }`}
                 >
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

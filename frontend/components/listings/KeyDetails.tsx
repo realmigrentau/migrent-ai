@@ -213,7 +213,7 @@ export default function KeyDetails({ listing }: KeyDetailsProps) {
             {listing.highlights.map((h, i) => (
               <span
                 key={i}
-                className="text-xs font-medium px-3 py-1.5 rounded-full bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 text-[var(--color-accent)] dark:text-[var(--color-accent)]"
+                className="text-xs font-medium px-3 py-1.5 rounded-full bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent)]/10 text-[var(--color-accent)] dark:text-[var(--color-accent)]"
               >
                 {h}
               </span>

@@ -89,7 +89,7 @@ export default function HeroGamification({
             <Share2 className="w-3.5 h-3.5" />
             Share
           </button>
-          <button
+          <button aria-label="Clear saved listings"
             onClick={onClearAll}
             className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium bg-[var(--color-surface-2)] border border-[var(--color-line)] text-[var(--color-ink-3)] hover:text-[var(--color-danger-500)] hover:border-[var(--color-danger-500)]/30 dark:hover:border-red-500/30 transition-all"
           >
@@ -170,7 +170,7 @@ export default function HeroGamification({
           </div>
 
           <div className="card p-3 rounded-2xl text-center group hover:border-[var(--color-accent-soft)] dark:hover:border-[var(--color-accent-soft)] transition-colors">
-            <div className="w-8 h-8 mx-auto rounded-xl bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 flex items-center justify-center mb-1.5 group-hover:scale-110 transition-transform">
+            <div className="w-8 h-8 mx-auto rounded-xl bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent)]/10 flex items-center justify-center mb-1.5 group-hover:scale-110 transition-transform">
               <TrendingDown className="w-4 h-4 text-[var(--color-accent)]" />
             </div>
             <motion.p

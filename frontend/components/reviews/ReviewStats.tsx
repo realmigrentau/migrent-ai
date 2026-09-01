@@ -71,7 +71,7 @@ export default function ReviewStats({ stats, compact }: ReviewStatsProps) {
       {/* Migrant friendliness */}
       {stats.avg_migrant_friendliness != null && Number(stats.avg_migrant_friendliness) > 0 && (
         <div className="flex items-center gap-2">
-          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[var(--color-primary-50)] dark:bg-[var(--color-primary-50)]0/10 text-xs font-medium text-[var(--color-primary-700)] dark:text-teal-300">
+          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[var(--color-primary-50)] dark:bg-[var(--color-primary)]/10 text-xs font-medium text-[var(--color-primary-700)] dark:text-teal-300">
             <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
               <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
             </svg>

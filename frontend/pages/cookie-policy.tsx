@@ -54,25 +54,25 @@ export default function CookiePolicy() {
                   <tbody className="divide-y divide-[var(--color-line)] dark:divide-[var(--color-line)]">
                     <tr>
                       <td className="py-2.5 px-3 font-mono text-xs">sb-*-auth-token</td>
-                      <td className="py-2.5 px-3"><span className="px-2 py-0.5 rounded-full bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/20 text-[var(--color-accent)] dark:text-[var(--color-accent)] text-xs font-medium">Essential</span></td>
+                      <td className="py-2.5 px-3"><span className="px-2 py-0.5 rounded-full bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent)]/20 text-[var(--color-accent)] dark:text-[var(--color-accent)] text-xs font-medium">Essential</span></td>
                       <td className="py-2.5 px-3">Supabase authentication session</td>
                       <td className="py-2.5 px-3">Session</td>
                     </tr>
                     <tr>
                       <td className="py-2.5 px-3 font-mono text-xs">theme</td>
-                      <td className="py-2.5 px-3"><span className="px-2 py-0.5 rounded-full bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/20 text-[var(--color-accent)] dark:text-[var(--color-accent)] text-xs font-medium">Essential</span></td>
+                      <td className="py-2.5 px-3"><span className="px-2 py-0.5 rounded-full bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent)]/20 text-[var(--color-accent)] dark:text-[var(--color-accent)] text-xs font-medium">Essential</span></td>
                       <td className="py-2.5 px-3">Dark mode / light mode preference</td>
                       <td className="py-2.5 px-3">1 year</td>
                     </tr>
                     <tr>
                       <td className="py-2.5 px-3 font-mono text-xs">i18nextLng</td>
-                      <td className="py-2.5 px-3"><span className="px-2 py-0.5 rounded-full bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/20 text-[var(--color-accent)] dark:text-[var(--color-accent)] text-xs font-medium">Essential</span></td>
+                      <td className="py-2.5 px-3"><span className="px-2 py-0.5 rounded-full bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent)]/20 text-[var(--color-accent)] dark:text-[var(--color-accent)] text-xs font-medium">Essential</span></td>
                       <td className="py-2.5 px-3">Language preference</td>
                       <td className="py-2.5 px-3">1 year</td>
                     </tr>
                     <tr>
                       <td className="py-2.5 px-3 font-mono text-xs">migrent_session_cache</td>
-                      <td className="py-2.5 px-3"><span className="px-2 py-0.5 rounded-full bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/20 text-[var(--color-accent)] dark:text-[var(--color-accent)] text-xs font-medium">Essential</span></td>
+                      <td className="py-2.5 px-3"><span className="px-2 py-0.5 rounded-full bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent)]/20 text-[var(--color-accent)] dark:text-[var(--color-accent)] text-xs font-medium">Essential</span></td>
                       <td className="py-2.5 px-3">Cached session for faster page loads</td>
                       <td className="py-2.5 px-3">Session</td>
                     </tr>
@@ -136,7 +136,7 @@ export default function CookiePolicy() {
           </div>
 
           {/* CTA */}
-          <div className="card p-6 rounded-2xl bg-[var(--color-primary-soft)] from-[var(--color-warn-50)] to-[var(--color-warn-50)] dark:from-[var(--color-warn-50)]0/10 dark:to-[var(--color-surface)] border-[var(--color-line-2)] text-center">
+          <div className="card p-6 rounded-2xl bg-[var(--color-primary-soft)] from-[var(--color-warn-50)] to-[var(--color-warn-50)] dark:from-[var(--color-warn-500)]/10 dark:to-[var(--color-surface)] border-[var(--color-line-2)] text-center">
             <h3 className="text-lg font-bold text-[var(--color-ink)] mb-2">Questions about cookies?</h3>
             <p className="text-sm text-[var(--color-ink-2)] mb-4">We&apos;re happy to explain our data practices.</p>
             <Link href="/contact">

@@ -130,7 +130,7 @@ export default function MessageBubble({
                     <Reply className="w-3 h-3" />
                   </button>
                 )}
-                <button
+                <button aria-label="Copy message"
                   onClick={handleCopy}
                   className="w-6 h-6 flex items-center justify-center rounded-full text-[var(--color-ink-3)] hover:text-[var(--color-ink)] hover:bg-[var(--color-surface-sunk)] transition-colors"
                 >

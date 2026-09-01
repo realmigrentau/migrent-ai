@@ -192,7 +192,7 @@ export default function ReviewForm({
       </div>
 
       {error && (
-        <div className="p-3 rounded-xl bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-50)]0/10 border border-[var(--color-danger-500)]/30 dark:border-[var(--color-danger-500)]/20">
+        <div className="p-3 rounded-xl bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-500)]/10 border border-[var(--color-danger-500)]/30 dark:border-[var(--color-danger-500)]/20">
           <p className="text-sm text-[var(--color-danger-500)] dark:text-[var(--color-danger-500)]">{error}</p>
         </div>
       )}

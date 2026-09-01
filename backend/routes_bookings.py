@@ -346,18 +346,44 @@ def get_my_bookings(
 
     bookings = res.data or []
 
-    # Enrich with listing and profile data
-    for booking in bookings:
-        # Get listing info
-        listing_res = sb.table("listings").select("title, address, city, weekly_price, images").eq("id", booking["listing_id"]).execute()
-        if listing_res.data:
-            booking["listing"] = listing_res.data[0]
+    # Enrich with listing and counterparty data.
+    #
+    # This used to issue two queries per booking inside the loop, so twenty
+    # bookings meant forty-one round trips to Supabase and a page that got
+    # slower the more successful a host became. Two batched lookups instead,
+    # regardless of how many bookings there are.
+    if bookings:
+        listing_ids = list({b["listing_id"] for b in bookings if b.get("listing_id")})
+        other_key = "seeker_id" if role == "owner" else "owner_id"
+        other_ids = list({b[other_key] for b in bookings if b.get(other_key)})
 
-        # Get other party's profile
-        other_id = booking["seeker_id"] if role == "owner" else booking["owner_id"]
-        profile_res = sb.table("profiles").select("name, custom_pfp, verified").eq("id", other_id).execute()
-        if profile_res.data:
-            booking["other_party"] = profile_res.data[0]
+        listings_by_id = {}
+        if listing_ids:
+            lr = (
+                sb.table("listings")
+                .select("id, title, address, city, weekly_price, images")
+                .in_("id", listing_ids)
+                .execute()
+            )
+            listings_by_id = {row["id"]: row for row in (lr.data or [])}
+
+        profiles_by_id = {}
+        if other_ids:
+            pr = (
+                sb.table("profiles")
+                .select("id, name, custom_pfp, verified")
+                .in_("id", other_ids)
+                .execute()
+            )
+            profiles_by_id = {row["id"]: row for row in (pr.data or [])}
+
+        for booking in bookings:
+            listing = listings_by_id.get(booking.get("listing_id"))
+            if listing:
+                booking["listing"] = listing
+            other = profiles_by_id.get(booking.get(other_key))
+            if other:
+                booking["other_party"] = other
 
     return {"bookings": bookings}
 

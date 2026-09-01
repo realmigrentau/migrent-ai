@@ -17,8 +17,10 @@ export interface UserProfile {
   reviews_count: number;
   average_rating: number;
   months_hosting: number;
-  response_rate: number;
-  response_time: string;
+  /** Null when the host has had too few conversations to measure. */
+  response_rate: number | null;
+  /** Null when unmeasurable. */
+  response_time: string | null;
   languages: string[];
   work: string | null;
   location: string | null;
@@ -74,16 +76,14 @@ function computeMonthsOnPlatform(createdAt: string | null): number {
   return Math.max(0, (now.getFullYear() - created.getFullYear()) * 12 + (now.getMonth() - created.getMonth()));
 }
 
-function computeResponseTime(months: number): string {
-  if (months >= 12) return "within an hour";
-  if (months >= 6) return "within a few hours";
-  return "within a day";
-}
-
-function computeResponseRate(months: number): number {
-  if (months >= 6) return 100;
-  if (months >= 3) return 95;
-  return 90;
+/** Turn a median reply time in hours into something a person would say. */
+function formatReplyTime(hours: number | null | undefined): string | null {
+  if (typeof hours !== "number" || Number.isNaN(hours)) return null;
+  if (hours < 1) return "within an hour";
+  if (hours < 6) return "within a few hours";
+  if (hours < 24) return "within a day";
+  if (hours < 72) return "within a few days";
+  return "occasionally";
 }
 
 /**
@@ -136,8 +136,13 @@ export function useUserProfile(userId: string | undefined) {
         } else {
           const createdAt = data.created_at || null;
           const monthsOnPlatform = computeMonthsOnPlatform(createdAt);
-          const responseRate = data.response_rate && data.response_rate !== 100 ? data.response_rate : computeResponseRate(monthsOnPlatform);
-          const responseTime = data.response_time && data.response_time !== "within 24h" ? data.response_time : computeResponseTime(monthsOnPlatform);
+          // Measured from real message history by the public_profiles view,
+          // or null when there is not enough of it. These used to be derived
+          // from how old the account was, so a six-month-old profile that had
+          // never replied to anyone was shown as "100%, within an hour".
+          const responseRate: number | null =
+            typeof data.response_rate === "number" ? data.response_rate : null;
+          const responseTime: string | null = formatReplyTime(data.median_reply_hours);
           const memberSince = createdAt ? new Date(createdAt).toLocaleDateString("en-US", { month: "long", year: "numeric" }) : null;
 
           const p: UserProfile = {

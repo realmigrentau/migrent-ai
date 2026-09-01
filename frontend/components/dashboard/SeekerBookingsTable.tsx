@@ -28,7 +28,7 @@ const STATUS_CONFIG: Record<
   PENDING_OWNER: {
     label: "Awaiting Response",
     color: "text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)]",
-    bg: "bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/10",
+    bg: "bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-500)]/10",
   },
   OWNER_ACCEPTED: {
     label: "Pay Now",
@@ -38,7 +38,7 @@ const STATUS_CONFIG: Record<
   PAID: {
     label: "Confirmed",
     color: "text-[var(--color-accent)] dark:text-[var(--color-accent)]",
-    bg: "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10",
+    bg: "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent)]/10",
   },
   COMPLETED: {
     label: "Completed",
@@ -48,7 +48,7 @@ const STATUS_CONFIG: Record<
   OWNER_DECLINED: {
     label: "Declined",
     color: "text-[var(--color-danger-500)] dark:text-[var(--color-danger-500)]",
-    bg: "bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-50)]0/10",
+    bg: "bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-500)]/10",
   },
   SEEKER_CANCELLED: {
     label: "Cancelled",

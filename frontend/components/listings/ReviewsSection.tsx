@@ -174,7 +174,7 @@ export default function ReviewsSection({
           )}
 
           {expanded && hasMore && (
-            <button
+            <button aria-label="Show more reviews"
               onClick={loadMore}
               disabled={loading}
               className="mt-3 flex items-center gap-1 text-sm font-semibold text-[var(--color-primary)] hover:text-[var(--color-primary)] transition-colors disabled:opacity-50"

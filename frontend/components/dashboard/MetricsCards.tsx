@@ -44,7 +44,7 @@ const ownerMetrics: MetricConfig[] = [
     icon: <DollarSign className="w-5 h-5" />,
     format: (v) => `$${v.toLocaleString()}`,
     color: "text-[var(--color-accent)] dark:text-[var(--color-accent)]",
-    iconBg: "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/20",
+    iconBg: "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent)]/20",
   },
   {
     key: "responseRate",
@@ -52,7 +52,7 @@ const ownerMetrics: MetricConfig[] = [
     icon: <Zap className="w-5 h-5" />,
     format: (v) => `${v}%`,
     color: "text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)]",
-    iconBg: "bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/20",
+    iconBg: "bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-500)]/20",
   },
   {
     key: "occupancyRate",
@@ -60,7 +60,7 @@ const ownerMetrics: MetricConfig[] = [
     icon: <TrendingUp className="w-5 h-5" />,
     format: (v) => `${v}%`,
     color: "text-[var(--color-primary)] dark:text-[var(--color-primary)]",
-    iconBg: "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary-soft)]0/20",
+    iconBg: "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/20",
   },
   {
     key: "newInquiries",
@@ -76,7 +76,7 @@ const ownerMetrics: MetricConfig[] = [
     icon: <Users className="w-5 h-5" />,
     format: (v) => `${v}%`,
     color: "text-[var(--color-primary)] dark:text-[var(--color-primary)]",
-    iconBg: "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary-soft)]0/20",
+    iconBg: "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/20",
   },
 ];
 
@@ -95,7 +95,7 @@ const seekerMetrics: MetricConfig[] = [
     icon: <Zap className="w-5 h-5" />,
     format: (v) => `${v}%`,
     color: "text-[var(--color-accent)] dark:text-[var(--color-accent)]",
-    iconBg: "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/20",
+    iconBg: "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent)]/20",
   },
   {
     key: "activeListings",
@@ -103,7 +103,7 @@ const seekerMetrics: MetricConfig[] = [
     icon: <Building2 className="w-5 h-5" />,
     format: (v) => String(v),
     color: "text-[var(--color-primary)] dark:text-[var(--color-primary)]",
-    iconBg: "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary-soft)]0/20",
+    iconBg: "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/20",
   },
 ];
 

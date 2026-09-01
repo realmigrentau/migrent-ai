@@ -334,7 +334,15 @@ def search_listings(
         offset = 0
 
     sb = get_supabase_admin()
-    query = sb.table("listings").select("*")
+    # Explicit column list rather than select("*").
+    #
+    # Best-match sorting over-fetches up to 200 rows to score them in Python,
+    # and listings carry ~60 columns including long free-text safety fields
+    # nothing on a result card ever shows. This is the single hottest endpoint
+    # on the site, so the payload is worth being deliberate about.
+    query = sb.table("listings").select(
+        "id, owner_id, title, address, suburb, city, postcode, weekly_price, daily_price, description, images, property_type, place_type, room_type, bedrooms, beds, bathrooms, bathroom_type, max_guests, furnished, bills_included, parking, air_conditioning, pets_allowed, couples_ok, gender_preference, instant_book, instant_book_enabled, available_from, available_to, min_stay, min_stay_weeks, max_stay_weeks, verified, latitude, longitude, nearest_transport, station_distance_min, moderation_status, created_at"
+    )
 
     # Only show approved listings in public search
     query = query.eq("moderation_status", "approved")

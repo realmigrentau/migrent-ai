@@ -201,7 +201,7 @@ export default function MessageInput({
                 <p className="text-[11px] font-semibold text-[var(--color-primary)]">Replying to</p>
                 <p className="text-[12px] text-[var(--color-ink-3)] truncate">{replyTo.text}</p>
               </div>
-              <button
+              <button aria-label="Remove attachment"
                 onClick={onCancelReply}
                 className="p-1 rounded-lg hover:bg-[var(--color-surface-muted)] text-[var(--color-ink-3)]"
               >
@@ -241,7 +241,7 @@ export default function MessageInput({
                     )}
                     <button
                       onClick={() => removeAttachment(att.id)}
-                      className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-[var(--color-danger-50)]0 text-white flex items-center justify-center opacity-0 group-hover/att:opacity-100 transition-opacity shadow-lg"
+                      className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-[var(--color-danger-500)] text-white flex items-center justify-center opacity-0 group-hover/att:opacity-100 transition-opacity shadow-lg"
                     >
                       <X className="w-3 h-3" />
                     </button>
@@ -334,7 +334,7 @@ export default function MessageInput({
                   }}
                   className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-[var(--color-ink-2)] hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-surface-muted)]/50 transition-colors"
                 >
-                  <div className="w-8 h-8 rounded-lg bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/20 flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-lg bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent)]/20 flex items-center justify-center">
                     <ImageIcon className="w-4 h-4 text-[var(--color-accent)] dark:text-[var(--color-accent)]" />
                   </div>
                   Upload Photos
@@ -398,7 +398,7 @@ export default function MessageInput({
             onClick={() => { setShowMemes(!showMemes); setShowEmoji(false); setShowPlus(false); }}
             className={`p-2 rounded-xl transition-all shrink-0 ${
               showMemes
-                ? "text-[var(--color-primary)] bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary-soft)]0/10"
+                ? "text-[var(--color-primary)] bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10"
                 : "text-[var(--color-ink-3)] hover:text-[var(--color-ink-2)] dark:hover:text-white hover:bg-[var(--color-surface-muted)]"
             }`}
             title="Quick reactions"

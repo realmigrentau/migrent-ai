@@ -12,7 +12,7 @@ export default function EmergencyCallout({
   note,
 }: EmergencyCalloutProps) {
   return (
-    <div className="card p-5 rounded-2xl border-l-4 border-l-red-500 bg-[var(--color-danger-50)]/50 dark:bg-[var(--color-danger-50)]0/5 space-y-3">
+    <div className="card p-5 rounded-2xl border-l-4 border-l-red-500 bg-[var(--color-danger-50)]/50 dark:bg-[var(--color-danger-500)]/5 space-y-3">
       <div className="flex items-center gap-2">
         <AlertCircle className="w-5 h-5 text-[var(--color-danger-500)]" />
         <h3 className="text-sm font-bold text-[var(--color-ink)]">{title}</h3>

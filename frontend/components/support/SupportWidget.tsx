@@ -209,7 +209,7 @@ export default function SupportWidget() {
                       placeholder="Ask a question..."
                       className="flex-1 px-4 py-2.5 rounded-xl border border-[var(--color-line)] bg-[var(--color-surface)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-ink)]/30"
                     />
-                    <button
+                    <button aria-label="Send message"
                       onClick={handleSend}
                       disabled={!chatInput.trim()}
                       className="px-4 py-2.5 bg-[var(--color-primary)] hover:bg-[var(--color-primary)] disabled:bg-[var(--color-primary-soft)] text-white rounded-xl text-sm font-medium transition-colors shrink-0"

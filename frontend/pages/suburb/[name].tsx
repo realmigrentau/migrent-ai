@@ -8,7 +8,14 @@ import StatsCards from "../../components/suburb/StatsCards";
 import LiveListings from "../../components/suburb/LiveListings";
 import Liveability from "../../components/suburb/Liveability";
 import TransportCalculator from "../../components/suburb/TransportCalculator";
-import DemographicsCharts from "../../components/suburb/DemographicsCharts";
+import dynamic from "next/dynamic";
+
+// recharts is large and these charts are far below the fold on a page whose
+// job is to rank in search. Load it only when the browser gets there.
+const DemographicsCharts = dynamic(
+  () => import("../../components/suburb/DemographicsCharts"),
+  { ssr: false, loading: () => <div className="h-64 rounded-xl bg-[var(--color-surface-muted)] animate-pulse" /> }
+);
 import SuburbFAQ from "../../components/suburb/SuburbFAQ";
 import { SITE_URL } from "../../lib/site";
 import { API_BASE_URL as BASE_URL } from "../../lib/apiBase";

@@ -1,21 +1,35 @@
-import { useRouter } from "next/router";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import Head from "next/head";
 import Breadcrumb from "../../components/content/Breadcrumb";
 import TableOfContents from "../../components/content/TableOfContents";
 import { getGuideById, getAllGuides } from "../../data/guidesContent";
+import type { GetStaticPaths, GetStaticProps } from "next";
 
-const difficultyColors: Record<string, string> = {
-  Beginner: "bg-[var(--color-accent-50)] dark:bg-[var(--color-accent-50)]0/10 text-[var(--color-accent)] dark:text-[var(--color-accent)]",
-  Intermediate: "bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/10 text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)]",
-  Advanced: "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary-soft)]0/10 text-[var(--color-primary)] dark:text-[var(--color-primary)]",
+/**
+ * Statically render each guide. Same problem as the blog: the id came from
+ * router.query, which is empty at prerender, so all 16 guide URLs shipped
+ * "Guide not found" as their HTML while sitting in the sitemap.
+ */
+export const getStaticPaths: GetStaticPaths = async () => ({
+  paths: getAllGuides().map((g) => ({ params: { id: g.id } })),
+  fallback: false,
+});
+
+export const getStaticProps: GetStaticProps = async ({ params }) => {
+  const id = typeof params?.id === "string" ? params.id : "";
+  if (!getGuideById(id)) return { notFound: true };
+  return { props: { id } };
 };
 
-export default function GuidePage() {
-  const router = useRouter();
-  const { id } = router.query;
-  const guide = typeof id === "string" ? getGuideById(id) : undefined;
+const difficultyColors: Record<string, string> = {
+  Beginner: "bg-[var(--color-accent-50)] dark:bg-[var(--color-accent)]/10 text-[var(--color-accent)] dark:text-[var(--color-accent)]",
+  Intermediate: "bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-500)]/10 text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)]",
+  Advanced: "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 text-[var(--color-primary)] dark:text-[var(--color-primary)]",
+};
+
+export default function GuidePage({ id }: { id: string }) {
+  const guide = getGuideById(id);
   const allGuides = getAllGuides();
 
   if (!guide) {

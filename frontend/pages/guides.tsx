@@ -60,7 +60,7 @@ const guides = [
     descKey: "guides.verifyProfile.desc",
     icon: "M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2",
     color: "text-[var(--color-accent)]",
-    bgColor: "bg-[var(--color-accent-50)] dark:bg-[var(--color-accent-50)]0/10",
+    bgColor: "bg-[var(--color-accent-50)] dark:bg-[var(--color-accent)]/10",
     gradient: "from-[var(--color-accent)] to-[var(--color-accent)]",
     steps: ["Upload your ID", "Take a selfie for matching", "Confirm your address", "Earn your trust badge"],
     readTime: "3 min read",
@@ -72,7 +72,7 @@ const guides = [
     descKey: "guides.listProperty.desc",
     icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01",
     color: "text-[var(--color-primary)]",
-    bgColor: "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary-soft)]0/10",
+    bgColor: "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10",
     gradient: "from-[var(--color-primary)] to-[var(--color-primary)]",
     steps: ["Enter room details", "Upload quality photos", "Set pricing & availability", "Publish and go live"],
     readTime: "6 min read",
@@ -84,7 +84,7 @@ const guides = [
     descKey: "guides.superhost.desc",
     icon: "M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z",
     color: "text-[var(--color-warn-500)]",
-    bgColor: "bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/10",
+    bgColor: "bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-500)]/10",
     gradient: "from-[var(--color-warn-500)] to-[var(--color-coral-500)]",
     steps: ["Maintain 4.8+ rating", "Respond within 1 hour", "Zero cancellations", "Complete 10+ bookings"],
     readTime: "4 min read",
@@ -96,7 +96,7 @@ const guides = [
     descKey: "guides.earnings.desc",
     icon: "M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z",
     color: "text-[var(--color-accent)]",
-    bgColor: "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10",
+    bgColor: "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent)]/10",
     gradient: "from-[var(--color-accent)] to-[var(--color-primary)]",
     steps: ["Select your suburb", "Choose room type", "See weekly estimates", "Compare with market rates"],
     readTime: "3 min read",
@@ -120,7 +120,7 @@ const guides = [
     descKey: "guides.disputes.desc",
     icon: "M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3",
     color: "text-[var(--color-danger-500)]",
-    bgColor: "bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-50)]0/10",
+    bgColor: "bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-500)]/10",
     gradient: "from-[var(--color-danger-500)] to-[var(--color-primary)]",
     steps: ["File your dispute", "Provide evidence", "Mediation process", "Resolution & outcome"],
     readTime: "5 min read",
@@ -129,9 +129,9 @@ const guides = [
 ];
 
 const difficultyColors: Record<string, string> = {
-  Beginner: "bg-[var(--color-accent-50)] dark:bg-[var(--color-accent-50)]0/10 text-[var(--color-accent)] dark:text-[var(--color-accent)]",
-  Intermediate: "bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/10 text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)]",
-  Advanced: "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary-soft)]0/10 text-[var(--color-primary)] dark:text-[var(--color-primary)]",
+  Beginner: "bg-[var(--color-accent-50)] dark:bg-[var(--color-accent)]/10 text-[var(--color-accent)] dark:text-[var(--color-accent)]",
+  Intermediate: "bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-500)]/10 text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)]",
+  Advanced: "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 text-[var(--color-primary)] dark:text-[var(--color-primary)]",
 };
 
 export default function Guides() {
@@ -148,7 +148,7 @@ export default function Guides() {
         {/* ── Hero ───────────────────────────────────────────────── */}
         <section className="relative text-center py-20 overflow-hidden">
           <div className="absolute top-0 left-1/4 w-96 h-96 bg-[var(--color-primary)]/12 dark:bg-[var(--color-primary)]/6 hidden " />
-          <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-[var(--color-accent-50)]0/12 dark:bg-[var(--color-accent-50)]0/6 hidden " style={{ animationDelay: "1s" }} />
+          <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-[var(--color-accent)]/12 dark:bg-[var(--color-accent)]/6 hidden " style={{ animationDelay: "1s" }} />
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[var(--color-primary)]/5 hidden " />
 
           <motion.div

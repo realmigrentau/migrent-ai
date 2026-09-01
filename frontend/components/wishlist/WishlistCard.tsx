@@ -143,7 +143,7 @@ export default function WishlistCard({
             <div className="absolute bottom-3 left-3 flex items-center gap-2">
               <div className={`px-3 py-1.5 rounded-xl backdrop-blur-md shadow-lg ${
                 hasPriceDrop
-                  ? "bg-[var(--color-accent-soft)]0/90 text-white"
+                  ? "bg-[var(--color-accent)]/90 text-white"
                   : "bg-white/90 dark:bg-[var(--color-surface)]/90 text-[var(--color-ink)]"
               }`}>
                 <span className="font-bold text-sm">${listing.weeklyPrice}</span>
@@ -228,7 +228,7 @@ export default function WishlistCard({
             {hasPriceDrop && (
               <div className="flex items-center gap-2">
                 <span className="text-sm text-[var(--color-ink-3)] line-through">${listing.originalPrice}/wk</span>
-                <span className="text-xs font-bold text-[var(--color-accent)] bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 px-2 py-0.5 rounded-full">
+                <span className="text-xs font-bold text-[var(--color-accent)] bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent)]/10 px-2 py-0.5 rounded-full">
                   Save ${priceSavings}/wk
                 </span>
               </div>
@@ -284,7 +284,7 @@ export default function WishlistCard({
                     {listing.ownerVerified && (
                       <BadgeCheck className="w-3 h-3 text-[var(--color-primary)]" />
                     )}
-                    <span className="wl-reply-badge px-1.5 py-0.5 rounded-full text-[10px] font-bold text-[var(--color-accent)] dark:text-[var(--color-accent)] bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10">
+                    <span className="wl-reply-badge px-1.5 py-0.5 rounded-full text-[10px] font-bold text-[var(--color-accent)] dark:text-[var(--color-accent)] bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent)]/10">
                       Replied
                     </span>
                   </div>

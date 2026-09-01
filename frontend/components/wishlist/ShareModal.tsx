@@ -82,7 +82,7 @@ export default function ShareModal({ show, onClose, listings }: ShareModalProps)
                   </p>
                 </div>
               </div>
-              <button
+              <button aria-label="Close"
                 onClick={onClose}
                 className="p-2 rounded-xl hover:bg-[var(--color-surface-muted)] transition-colors"
               >
@@ -128,11 +128,11 @@ export default function ShareModal({ show, onClose, listings }: ShareModalProps)
                       {shareUrl}
                     </span>
                   </div>
-                  <button
+                  <button aria-label="Copy share link"
                     onClick={handleCopy}
                     className={`px-3 py-2.5 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5 shrink-0 ${
                       copied
-                        ? "bg-[var(--color-accent-soft)]0 text-white"
+                        ? "bg-[var(--color-accent)] text-white"
                         : "bg-[var(--color-ink)] dark:bg-white text-white dark:text-[var(--color-ink)] hover:bg-[var(--color-ink)] dark:hover:bg-[var(--color-surface-muted)]"
                     }`}
                   >

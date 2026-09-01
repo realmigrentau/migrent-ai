@@ -108,8 +108,8 @@ export default function SupportTab({
       <div className="grid grid-cols-3 gap-3">
         {[
           { label: "Open", count: openTickets, icon: AlertCircle, color: "rose", gradient: "from-[var(--color-primary)] to-[var(--color-primary)]", bg: "bg-[var(--color-primary-soft)]/80 dark:bg-[var(--color-primary)]/10 border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)]" },
-          { label: "Pending", count: pendingTickets, icon: Clock, color: "amber", gradient: "from-[var(--color-warn-500)] to-[var(--color-warn-500)]", bg: "bg-[var(--color-warn-50)]/80 dark:bg-[var(--color-warn-50)]0/10 border-[var(--color-line-2)] dark:border-[var(--color-warn-500)]/20" },
-          { label: "Resolved", count: resolvedTickets, icon: CheckCircle2, color: "emerald", gradient: "from-[var(--color-accent)] to-[var(--color-primary)]", bg: "bg-[var(--color-accent-soft)]/80 dark:bg-[var(--color-accent-soft)]0/10 border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)]" },
+          { label: "Pending", count: pendingTickets, icon: Clock, color: "amber", gradient: "from-[var(--color-warn-500)] to-[var(--color-warn-500)]", bg: "bg-[var(--color-warn-50)]/80 dark:bg-[var(--color-warn-500)]/10 border-[var(--color-line-2)] dark:border-[var(--color-warn-500)]/20" },
+          { label: "Resolved", count: resolvedTickets, icon: CheckCircle2, color: "emerald", gradient: "from-[var(--color-accent)] to-[var(--color-primary)]", bg: "bg-[var(--color-accent-soft)]/80 dark:bg-[var(--color-accent)]/10 border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)]" },
         ].map((stat, i) => {
           const Icon = stat.icon;
           return (

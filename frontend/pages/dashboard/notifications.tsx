@@ -20,16 +20,16 @@ import {
 
 const TYPE_ICONS: Record<string, { icon: typeof Bell; color: string; bg: string }> = {
   booking_request_created: { icon: Calendar, color: "text-[var(--color-primary)]", bg: "bg-[var(--color-primary-50)] dark:bg-[var(--color-primary)]/10" },
-  booking_approved: { icon: Calendar, color: "text-[var(--color-accent)]", bg: "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10" },
-  booking_declined: { icon: Calendar, color: "text-[var(--color-danger-500)]", bg: "bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-50)]0/10" },
-  booking_confirmed: { icon: Calendar, color: "text-[var(--color-accent)]", bg: "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10" },
-  payment_received: { icon: DollarSign, color: "text-[var(--color-accent)]", bg: "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10" },
-  verification_status_changed: { icon: Shield, color: "text-[var(--color-warn-500)]", bg: "bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/10" },
-  message_received: { icon: MessageCircle, color: "text-[var(--color-primary)]", bg: "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary-soft)]0/10" },
+  booking_approved: { icon: Calendar, color: "text-[var(--color-accent)]", bg: "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent)]/10" },
+  booking_declined: { icon: Calendar, color: "text-[var(--color-danger-500)]", bg: "bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-500)]/10" },
+  booking_confirmed: { icon: Calendar, color: "text-[var(--color-accent)]", bg: "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent)]/10" },
+  payment_received: { icon: DollarSign, color: "text-[var(--color-accent)]", bg: "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent)]/10" },
+  verification_status_changed: { icon: Shield, color: "text-[var(--color-warn-500)]", bg: "bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-500)]/10" },
+  message_received: { icon: MessageCircle, color: "text-[var(--color-primary)]", bg: "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10" },
   match_created: { icon: Zap, color: "text-yellow-500", bg: "bg-yellow-50 dark:bg-yellow-500/10" },
-  host_response_sent: { icon: Calendar, color: "text-[var(--color-primary)]", bg: "bg-[var(--color-primary-50)] dark:bg-[var(--color-primary-50)]0/10" },
+  host_response_sent: { icon: Calendar, color: "text-[var(--color-primary)]", bg: "bg-[var(--color-primary-50)] dark:bg-[var(--color-primary)]/10" },
   listing_published: { icon: Home, color: "text-[var(--color-primary)]", bg: "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10" },
-  listing_rejected: { icon: Home, color: "text-[var(--color-danger-500)]", bg: "bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-50)]0/10" },
+  listing_rejected: { icon: Home, color: "text-[var(--color-danger-500)]", bg: "bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-500)]/10" },
   listing_changes_requested: { icon: Home, color: "text-[var(--color-warn-500)]", bg: "bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]" },
 };
 
@@ -213,7 +213,7 @@ export default function NotificationsPage() {
                         <button
                           onClick={() => removeNotification(n.id)}
                           title="Delete"
-                          className="p-1.5 rounded-lg text-[var(--color-ink-3)] hover:text-[var(--color-danger-500)] hover:bg-[var(--color-danger-50)] dark:hover:bg-[var(--color-danger-50)]0/10 transition-colors"
+                          className="p-1.5 rounded-lg text-[var(--color-ink-3)] hover:text-[var(--color-danger-500)] hover:bg-[var(--color-danger-50)] dark:hover:bg-[var(--color-danger-500)]/10 transition-colors"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>

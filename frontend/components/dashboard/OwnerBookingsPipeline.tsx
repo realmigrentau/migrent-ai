@@ -22,7 +22,7 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }
   PENDING_OWNER: {
     label: "Pending",
     color: "text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)]",
-    bg: "bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/10",
+    bg: "bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-500)]/10",
   },
   OWNER_ACCEPTED: {
     label: "Approved",
@@ -32,7 +32,7 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }
   PAID: {
     label: "Paid",
     color: "text-[var(--color-accent)] dark:text-[var(--color-accent)]",
-    bg: "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10",
+    bg: "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent)]/10",
   },
   COMPLETED: {
     label: "Completed",
@@ -42,7 +42,7 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }
   OWNER_DECLINED: {
     label: "Declined",
     color: "text-[var(--color-danger-500)] dark:text-[var(--color-danger-500)]",
-    bg: "bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-50)]0/10",
+    bg: "bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-500)]/10",
   },
   SEEKER_CANCELLED: {
     label: "Cancelled",
@@ -237,7 +237,7 @@ export default function OwnerBookingsPipeline({
                             handleAccept(booking.id);
                           }}
                           disabled={actionLoading === booking.id}
-                          className="px-3 py-1.5 rounded-lg text-xs font-medium bg-[var(--color-accent-soft)]0 text-white hover:bg-[var(--color-accent)] disabled:opacity-50 flex items-center gap-1"
+                          className="px-3 py-1.5 rounded-lg text-xs font-medium bg-[var(--color-accent)] text-white hover:bg-[var(--color-accent)] disabled:opacity-50 flex items-center gap-1"
                         >
                           <Check className="w-3 h-3" /> Accept
                         </button>
@@ -247,7 +247,7 @@ export default function OwnerBookingsPipeline({
                             handleDecline(booking.id);
                           }}
                           disabled={actionLoading === booking.id}
-                          className="px-3 py-1.5 rounded-lg text-xs font-medium border border-[var(--color-danger-500)]/30 dark:border-red-500/30 text-[var(--color-danger-500)] dark:text-[var(--color-danger-500)] hover:bg-[var(--color-danger-50)] dark:hover:bg-[var(--color-danger-50)]0/10 disabled:opacity-50 flex items-center gap-1"
+                          className="px-3 py-1.5 rounded-lg text-xs font-medium border border-[var(--color-danger-500)]/30 dark:border-red-500/30 text-[var(--color-danger-500)] dark:text-[var(--color-danger-500)] hover:bg-[var(--color-danger-50)] dark:hover:bg-[var(--color-danger-500)]/10 disabled:opacity-50 flex items-center gap-1"
                         >
                           <X className="w-3 h-3" /> Decline
                         </button>
@@ -383,7 +383,7 @@ export default function OwnerBookingsPipeline({
                           whileTap={{ scale: 0.98 }}
                           onClick={() => handleDecline(booking.id)}
                           disabled={actionLoading === booking.id}
-                          className="flex-1 py-2.5 px-4 rounded-xl text-sm font-semibold border border-[var(--color-danger-500)]/30 dark:border-red-500/30 text-[var(--color-danger-500)] dark:text-[var(--color-danger-500)] hover:bg-[var(--color-danger-50)] dark:hover:bg-[var(--color-danger-50)]0/10 flex items-center justify-center gap-2 disabled:opacity-50"
+                          className="flex-1 py-2.5 px-4 rounded-xl text-sm font-semibold border border-[var(--color-danger-500)]/30 dark:border-red-500/30 text-[var(--color-danger-500)] dark:text-[var(--color-danger-500)] hover:bg-[var(--color-danger-50)] dark:hover:bg-[var(--color-danger-500)]/10 flex items-center justify-center gap-2 disabled:opacity-50"
                         >
                           <X className="w-4 h-4" />
                           Decline

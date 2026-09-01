@@ -25,21 +25,21 @@ const benefits = [
     desc: "Get notified instantly when new rooms matching your criteria are listed in your area.",
     icon: "M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9",
     color: "text-[var(--color-warn-500)]",
-    bgColor: "bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/10",
+    bgColor: "bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-500)]/10",
   },
   {
     title: "Community Events",
     desc: "Join virtual meetups, Q&A sessions with housing experts, and local community gatherings.",
     icon: "M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z",
     color: "text-[var(--color-accent)]",
-    bgColor: "bg-[var(--color-accent-50)] dark:bg-[var(--color-accent-50)]0/10",
+    bgColor: "bg-[var(--color-accent-50)] dark:bg-[var(--color-accent)]/10",
   },
   {
     title: "Direct Support",
     desc: "Get help from MigRent staff and experienced community members any time of day.",
     icon: "M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z",
     color: "text-[var(--color-primary)]",
-    bgColor: "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary-soft)]0/10",
+    bgColor: "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10",
   },
 ];
 

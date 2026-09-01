@@ -42,7 +42,7 @@ export default function ReviewDealPage() {
     return (
       <div className="min-h-screen flex items-center justify-center px-4">
         <div className="card p-8 rounded-2xl max-w-md w-full text-center">
-          <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-50)]0/10 flex items-center justify-center">
+          <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-500)]/10 flex items-center justify-center">
             <svg className="w-7 h-7 text-[var(--color-danger-500)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
             </svg>
@@ -95,7 +95,7 @@ export default function ReviewDealPage() {
               animate={{ scale: 1, opacity: 1 }}
               className="card p-8 rounded-2xl text-center"
             >
-              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 flex items-center justify-center">
+              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent)]/10 flex items-center justify-center">
                 <svg className="w-8 h-8 text-[var(--color-accent)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                 </svg>
@@ -147,7 +147,7 @@ export default function ReviewDealPage() {
         <div className="min-h-screen py-12 px-4">
           <div className="max-w-lg mx-auto">
             <div className="card p-8 rounded-2xl text-center">
-              <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/10 flex items-center justify-center">
+              <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-500)]/10 flex items-center justify-center">
                 <svg className="w-7 h-7 text-[var(--color-warn-500)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>

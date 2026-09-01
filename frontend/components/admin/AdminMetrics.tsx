@@ -19,7 +19,7 @@ export default function AdminMetrics({ stats, loading }: AdminMetricsProps) {
       label: "Approved Today",
       value: stats?.approved_today ?? 0,
       color: "text-[var(--color-accent)]",
-      bg: "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10",
+      bg: "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent)]/10",
       border: "border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)]",
     },
     {

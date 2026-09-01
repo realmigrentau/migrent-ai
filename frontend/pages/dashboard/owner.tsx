@@ -76,9 +76,9 @@ export default function OwnerDashboard() {
 
         {/* Pending Approval Banner */}
         {pendingCount > 0 && (
-          <div className="p-4 rounded-xl bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/10 border border-[var(--color-line-2)] dark:border-[var(--color-warn-500)]/20">
+          <div className="p-4 rounded-xl bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-500)]/10 border border-[var(--color-line-2)] dark:border-[var(--color-warn-500)]/20">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/20 flex items-center justify-center shrink-0">
+              <div className="w-10 h-10 rounded-full bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-500)]/20 flex items-center justify-center shrink-0">
                 <svg className="w-5 h-5 text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
@@ -113,7 +113,7 @@ export default function OwnerDashboard() {
               Bookings Pipeline
             </h2>
             {metrics && metrics.pending_requests > 0 && (
-              <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/10 text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)] border border-[var(--color-line-2)]/70 dark:border-[var(--color-warn-500)]/20">
+              <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-500)]/10 text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)] border border-[var(--color-line-2)]/70 dark:border-[var(--color-warn-500)]/20">
                 {metrics.pending_requests} awaiting response
               </span>
             )}

@@ -92,7 +92,7 @@ export default function WishlistGrid({ listings, loading, onUnsave }: Props) {
                 </span>
               )}
               {listing.bills_included && (
-                <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-[var(--color-accent-soft)]0/90 text-white">
+                <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-[var(--color-accent)]/90 text-white">
                   Bills incl.
                 </span>
               )}

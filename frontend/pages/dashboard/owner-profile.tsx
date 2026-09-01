@@ -66,9 +66,9 @@ export default function OwnerProfilePage() {
               exit={{ opacity: 0, y: -10 }}
               className={`p-3 rounded-xl text-sm border ${
                 message.type === "success"
-                  ? "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)] text-[var(--color-accent)] dark:text-[var(--color-accent)]"
+                  ? "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent)]/10 border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)] text-[var(--color-accent)] dark:text-[var(--color-accent)]"
                   : message.type === "error"
-                  ? "bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-50)]0/10 border-[var(--color-danger-500)]/30 dark:border-[var(--color-danger-500)]/20 text-[var(--color-danger-500)] dark:text-[var(--color-danger-500)]"
+                  ? "bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-500)]/10 border-[var(--color-danger-500)]/30 dark:border-[var(--color-danger-500)]/20 text-[var(--color-danger-500)] dark:text-[var(--color-danger-500)]"
                   : "bg-[var(--color-primary-50)] dark:bg-[var(--color-primary)]/10 border-[var(--color-primary-100)] dark:border-[var(--color-primary)]/20 text-[var(--color-primary)] dark:text-[var(--color-primary)]"
               }`}
             >

@@ -25,14 +25,59 @@ import SimilarListings from "../../components/listings/SimilarListings";
 import ModerationStatusBanner from "../../components/listings/ModerationStatusBanner";
 import TrueCostBadge from "../../components/listings/TrueCostBadge";
 import SEOHead from "../../components/SEOHead";
+import { API_BASE_URL } from "../../lib/apiBase";
 
-export default function ListingDetailPage() {
+import type { GetServerSideProps } from "next";
+
+/**
+ * Server-render the listing.
+ *
+ * This page was client-only: it fetched in useEffect and returned the loading
+ * skeleton before SEOHead was ever reached, so the HTML Google and WhatsApp
+ * received had no title, no description, no canonical, no Open Graph image and
+ * no JSON-LD. For a rental marketplace these are the pages that carry the
+ * organic traffic, and a shared link unfurled as a blank grey box.
+ *
+ * Only approved listings render here. An owner viewing their own unapproved
+ * listing still gets it, but client-side after auth resolves, which is correct:
+ * that view must never be cacheable or crawlable.
+ */
+export const getServerSideProps: GetServerSideProps = async ({ params, res }) => {
+  const id = typeof params?.id === "string" ? params.id : null;
+  if (!id) return { notFound: true };
+
+  try {
+    const r = await fetch(`${API_BASE_URL}/listings/${id}?include=reviews,similar`, {
+      headers: { "Content-Type": "application/json" },
+    });
+    if (r.status === 404) return { notFound: true };
+    if (!r.ok) {
+      // Do not cache a failure, and do not 404 a listing that probably exists.
+      return { props: { initialListing: null } };
+    }
+    const initialListing = await r.json();
+    res.setHeader(
+      "Cache-Control",
+      "public, s-maxage=300, stale-while-revalidate=3600"
+    );
+    return { props: { initialListing } };
+  } catch {
+    return { props: { initialListing: null } };
+  }
+};
+
+export default function ListingDetailPage({
+  initialListing,
+}: {
+  initialListing?: any;
+}) {
   const router = useRouter();
   const { id } = router.query;
   const { session, user, refreshing } = useAuth();
 
-  const [listing, setListing] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const [listing, setListing] = useState<any>(initialListing ?? null);
+  // Already rendered on the server, so no skeleton on first paint.
+  const [loading, setLoading] = useState(!initialListing);
   const [loadError, setLoadError] = useState<"not-found" | "network" | null>(null);
   const [retryCount, setRetryCount] = useState(0);
   const [bookingLoading, setBookingLoading] = useState(false);
@@ -49,15 +94,27 @@ export default function ListingDetailPage() {
     // token attached or the API correctly returns 404.
     if (refreshing) return;
 
+    // The server already rendered this page for signed-out visitors. Refetch
+    // only when there is something the server could not know: a session (the
+    // owner may be allowed to see a listing the public cannot), a failed
+    // server fetch, or an explicit retry.
+    const needsClientFetch =
+      !initialListing || Boolean(session?.access_token) || retryCount > 0;
+    if (!needsClientFetch) {
+      setLoading(false);
+      return;
+    }
+
     let cancelled = false;
-    setLoading(true);
+    // Never drop back to the skeleton once something is on screen.
+    if (!listing) setLoading(true);
     setLoadError(null);
 
     getListingDetail(id, session?.access_token).then((result) => {
       if (cancelled) return;
       if (result.ok) {
         setListing(result.listing);
-      } else {
+      } else if (!initialListing) {
         setListing(null);
         setLoadError(result.reason);
       }
@@ -67,7 +124,10 @@ export default function ListingDetailPage() {
     return () => {
       cancelled = true;
     };
-  }, [id, session?.access_token, refreshing, retryCount]);
+    // `listing` is deliberately not a dependency: including it would refetch
+    // every time the fetch resolves.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, session?.access_token, refreshing, retryCount, initialListing]);
 
   // Intersection observer for mobile sticky CTA
   useEffect(() => {
@@ -185,7 +245,18 @@ export default function ListingDetailPage() {
     <>
       <SEOHead
         title={`${listing.title || listing.address} - MigRent`}
-        description={listing.description?.slice(0, 160)}
+        description={
+          listing.description?.slice(0, 160) ||
+          `A room in ${listing.suburb || listing.city || "Australia"} for $${listing.weekly_price} a week.`
+        }
+        ogImage={listing.images?.[0]}
+        listing={{
+          address: listing.title || listing.address,
+          city: listing.suburb || listing.city,
+          weeklyPrice: listing.weekly_price,
+          description: listing.description,
+          images: listing.images,
+        }}
       />
 
       <div className="min-h-screen bg-[var(--color-bg)]">

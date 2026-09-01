@@ -91,8 +91,8 @@ export default function Contact() {
         {/* HERO */}
         <motion.section initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
           <div className="flex flex-col items-start gap-4">
-            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 border border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)] text-[var(--color-accent)] dark:text-[var(--color-accent)] text-xs font-medium">
-              <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-accent-soft)]0 animate-pulse" />
+            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent)]/10 border border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)] text-[var(--color-accent)] dark:text-[var(--color-accent)] text-xs font-medium">
+              <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-accent)] animate-pulse" />
               Support online - replies within 24h on weekdays
             </span>
             <h1 className="text-4xl md:text-5xl font-semibold tracking-tight text-[var(--color-ink)]">
@@ -118,7 +118,7 @@ export default function Contact() {
           </a>
 
           <a href="#help-shortcut" className="card p-6 rounded-2xl text-left hover:border-[var(--color-line-2)] transition-colors block">
-            <div className="w-10 h-10 rounded-xl bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/10 border border-[var(--color-line-2)] flex items-center justify-center mb-4">
+            <div className="w-10 h-10 rounded-xl bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-500)]/10 border border-[var(--color-line-2)] flex items-center justify-center mb-4">
               <svg className="w-5 h-5 text-[var(--color-warn-500)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
@@ -128,7 +128,7 @@ export default function Contact() {
           </a>
 
           <a href="#escalation" className="card p-6 rounded-2xl text-left hover:border-[var(--color-danger-500)]/30 dark:hover:border-red-500/30 transition-colors block">
-            <div className="w-10 h-10 rounded-xl bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-50)]0/10 border border-[var(--color-danger-500)]/20 dark:border-[var(--color-danger-500)]/20 flex items-center justify-center mb-4">
+            <div className="w-10 h-10 rounded-xl bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-500)]/10 border border-[var(--color-danger-500)]/20 dark:border-[var(--color-danger-500)]/20 flex items-center justify-center mb-4">
               <svg className="w-5 h-5 text-[var(--color-danger-500)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.008v.008H12v-.008z" />
               </svg>
@@ -200,9 +200,9 @@ export default function Contact() {
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="card p-8 rounded-2xl border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)] bg-[var(--color-accent-soft)]/40 dark:bg-[var(--color-accent-soft)]0/5 text-center"
+                className="card p-8 rounded-2xl border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)] bg-[var(--color-accent-soft)]/40 dark:bg-[var(--color-accent)]/5 text-center"
               >
-                <div className="w-12 h-12 rounded-full bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/20 mx-auto mb-4 flex items-center justify-center">
+                <div className="w-12 h-12 rounded-full bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent)]/20 mx-auto mb-4 flex items-center justify-center">
                   <svg className="w-6 h-6 text-[var(--color-accent)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                   </svg>
@@ -324,7 +324,7 @@ export default function Contact() {
                 </div>
 
                 {error && (
-                  <div className="p-3 rounded-xl bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/10 border border-[var(--color-line-2)] text-sm text-[var(--color-warn-600)]">
+                  <div className="p-3 rounded-xl bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-500)]/10 border border-[var(--color-line-2)] text-sm text-[var(--color-warn-600)]">
                     {error}
                   </div>
                 )}
@@ -350,7 +350,7 @@ export default function Contact() {
         <section id="escalation" className="grid md:grid-cols-2 gap-4">
           <div className="card p-6 rounded-2xl border-l-2 border-l-red-500">
             <div className="flex items-start gap-3 mb-3">
-              <div className="w-10 h-10 rounded-xl bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-50)]0/10 border border-[var(--color-danger-500)]/20 dark:border-[var(--color-danger-500)]/20 flex items-center justify-center shrink-0">
+              <div className="w-10 h-10 rounded-xl bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-500)]/10 border border-[var(--color-danger-500)]/20 dark:border-[var(--color-danger-500)]/20 flex items-center justify-center shrink-0">
                 <svg className="w-5 h-5 text-[var(--color-danger-500)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z" />
                 </svg>
@@ -413,7 +413,7 @@ export default function Contact() {
               rel="noopener noreferrer"
               className="card p-5 rounded-2xl block hover:border-[var(--color-primary-soft)] dark:hover:border-[var(--color-primary)]/30 transition-colors"
             >
-              <div className="w-10 h-10 rounded-xl bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary-soft)]0/10 border border-violet-100 dark:border-[var(--color-primary)]/20 flex items-center justify-center mb-3">
+              <div className="w-10 h-10 rounded-xl bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 border border-violet-100 dark:border-[var(--color-primary)]/20 flex items-center justify-center mb-3">
                 <svg className="w-5 h-5 text-[var(--color-primary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 01-3-3V4.5a3 3 0 116 0v8.25a3 3 0 01-3 3z" />
                 </svg>

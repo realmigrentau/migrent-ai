@@ -171,7 +171,7 @@ export default function VerificationTab({
                     className={`
                       inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium border
                       ${step.done
-                        ? "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 text-[var(--color-accent)] dark:text-[var(--color-accent)] border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)]"
+                        ? "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent)]/10 text-[var(--color-accent)] dark:text-[var(--color-accent)] border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)]"
                         : "bg-[var(--color-surface)] text-[var(--color-ink-3)] border-[var(--color-line)]"
                       }
                     `}
@@ -259,7 +259,7 @@ export default function VerificationTab({
                       <Clock className="w-2.5 h-2.5" /> Under Review
                     </span>
                   ) : idStatus === "rejected" ? (
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-50)]0/10 text-[var(--color-danger-500)] dark:text-[var(--color-danger-500)] border border-[var(--color-danger-500)]/30 dark:border-red-500/30">
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-500)]/10 text-[var(--color-danger-500)] dark:text-[var(--color-danger-500)] border border-[var(--color-danger-500)]/30 dark:border-red-500/30">
                       <AlertCircle className="w-2.5 h-2.5" /> Rejected
                     </span>
                   ) : (
@@ -278,7 +278,7 @@ export default function VerificationTab({
                 ) : (
                   <div className="mt-3 space-y-4">
                     {idStatus === "rejected" && ownerStatus?.id_rejection_reason && (
-                      <div className="bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-50)]0/10 border border-[var(--color-danger-500)]/30 dark:border-red-500/30 rounded-xl p-3">
+                      <div className="bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-500)]/10 border border-[var(--color-danger-500)]/30 dark:border-red-500/30 rounded-xl p-3">
                         <p className="text-xs font-medium text-[var(--color-danger-600)] dark:text-[var(--color-danger-500)] mb-1">Reason for rejection:</p>
                         <p className="text-xs text-[var(--color-danger-500)] dark:text-[var(--color-danger-500)]">{ownerStatus.id_rejection_reason}</p>
                       </div>
@@ -323,7 +323,7 @@ export default function VerificationTab({
                         dragOver
                           ? "border-[var(--color-line-2)] bg-[var(--color-primary-soft)]/50 dark:bg-[var(--color-primary)]/5"
                           : selectedFile
-                          ? "border-[var(--color-accent-soft)] bg-[var(--color-accent-soft)]/50 dark:bg-[var(--color-accent-soft)]0/5"
+                          ? "border-[var(--color-accent-soft)] bg-[var(--color-accent-soft)]/50 dark:bg-[var(--color-accent)]/5"
                           : "border-[var(--color-line)] hover:border-[var(--color-line-2)] dark:hover:border-[var(--color-line-2)]"
                       }`}
                     >
@@ -414,14 +414,14 @@ export default function VerificationTab({
               <p className="text-lg font-bold text-[var(--color-primary-700)] dark:text-[var(--color-primary)]">3x</p>
               <p className="text-[10px] text-[var(--color-primary)]/70 dark:text-[var(--color-primary)]/60">More bookings</p>
             </div>
-            <div className="backdrop-blur-xl bg-[var(--color-accent-soft)]/80 dark:bg-[var(--color-accent-soft)]0/10 rounded-xl p-3 text-center border border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)]">
+            <div className="backdrop-blur-xl bg-[var(--color-accent-soft)]/80 dark:bg-[var(--color-accent)]/10 rounded-xl p-3 text-center border border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)]">
               <Star className="w-5 h-5 text-[var(--color-accent)] mx-auto mb-1" />
               <p className="text-lg font-bold text-[var(--color-accent)] dark:text-[var(--color-accent)]">
                 {profile?.average_rating?.toFixed(1) || "-"}
               </p>
               <p className="text-[10px] text-[var(--color-accent)]/70 dark:text-[var(--color-accent)]/60">Rating</p>
             </div>
-            <div className="backdrop-blur-xl bg-[var(--color-primary-soft)]/80 dark:bg-[var(--color-primary-soft)]0/10 rounded-xl p-3 text-center border border-purple-100 dark:border-[var(--color-primary)]/20">
+            <div className="backdrop-blur-xl bg-[var(--color-primary-soft)]/80 dark:bg-[var(--color-primary)]/10 rounded-xl p-3 text-center border border-purple-100 dark:border-[var(--color-primary)]/20">
               <Award className="w-5 h-5 text-[var(--color-primary)] mx-auto mb-1" />
               <p className="text-lg font-bold text-primary-700 dark:text-[var(--color-primary)]">
                 {profile?.badges?.length || 0}

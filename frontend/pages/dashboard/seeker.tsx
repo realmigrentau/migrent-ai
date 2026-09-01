@@ -193,7 +193,7 @@ export default function SeekerDashboard() {
                 desc: "Profile, verification, preferences",
                 icon: <Settings className="w-5 h-5" />,
                 color: "text-[var(--color-accent)]",
-                bg: "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10",
+                bg: "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent)]/10",
               },
             ].map((action) => (
               <motion.div

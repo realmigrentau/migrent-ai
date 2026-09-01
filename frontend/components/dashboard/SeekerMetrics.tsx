@@ -26,7 +26,7 @@ const cards = [
     icon: <Clock className="w-5 h-5" />,
     format: (v: number) => String(v),
     color: "text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)]",
-    iconBg: "bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/20",
+    iconBg: "bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-500)]/20",
   },
   {
     key: "confirmed_bookings" as const,
@@ -34,7 +34,7 @@ const cards = [
     icon: <CheckCircle className="w-5 h-5" />,
     format: (v: number) => String(v),
     color: "text-[var(--color-accent)] dark:text-[var(--color-accent)]",
-    iconBg: "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/20",
+    iconBg: "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent)]/20",
   },
   {
     key: "recommended" as const,

@@ -231,7 +231,7 @@ export default function NotificationsTab({
           className={`
             flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium transition-all
             ${testSent
-              ? "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 text-[var(--color-accent)] dark:text-[var(--color-accent)] border border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)]"
+              ? "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent)]/10 text-[var(--color-accent)] dark:text-[var(--color-accent)] border border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)]"
               : "btn-secondary hover:border-[var(--color-primary-soft)] dark:hover:border-[var(--color-primary)]/30"
             }
           `}

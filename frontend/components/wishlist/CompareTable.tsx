@@ -65,7 +65,7 @@ export default function CompareTable({
                 </p>
               </div>
             </div>
-            <button
+            <button aria-label="Remove from comparison"
               onClick={onClose}
               className="p-2 rounded-xl hover:bg-[var(--color-surface-muted)] transition-colors"
             >
@@ -125,7 +125,7 @@ export default function CompareTable({
                       <span className="text-xs text-[var(--color-ink-3)] line-through">${l.originalPrice}</span>
                     )}
                     {l.weeklyPrice === lowestPrice && (
-                      <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 text-[var(--color-accent)] dark:text-[var(--color-accent)]">
+                      <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent)]/10 text-[var(--color-accent)] dark:text-[var(--color-accent)]">
                         Best
                       </span>
                     )}
@@ -157,7 +157,7 @@ export default function CompareTable({
                           ~${estimated}/wk
                         </span>
                         {estimated === lowestTrue && (
-                          <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 text-[var(--color-accent)] dark:text-[var(--color-accent)]">
+                          <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent)]/10 text-[var(--color-accent)] dark:text-[var(--color-accent)]">
                             Best
                           </span>
                         )}
@@ -185,7 +185,7 @@ export default function CompareTable({
                     </span>
                     <span className="text-xs text-[var(--color-ink-3)]">({l.reviewCount})</span>
                     {l.rating === highestRating && (
-                      <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/10 text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)]">
+                      <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-500)]/10 text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)]">
                         Top
                       </span>
                     )}

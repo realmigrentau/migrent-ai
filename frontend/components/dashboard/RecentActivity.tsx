@@ -30,8 +30,8 @@ const iconMap: Record<string, React.ReactNode> = {
 };
 
 const statusColors: Record<string, string> = {
-  success: "bg-[var(--color-accent-soft)] text-[var(--color-accent)] dark:bg-[var(--color-accent-soft)]0/20 dark:text-[var(--color-accent)]",
-  warning: "bg-[var(--color-warn-50)] text-[var(--color-warn-600)] dark:bg-[var(--color-warn-50)]0/20 dark:text-[var(--color-warn-500)]",
+  success: "bg-[var(--color-accent-soft)] text-[var(--color-accent)] dark:bg-[var(--color-accent)]/20 dark:text-[var(--color-accent)]",
+  warning: "bg-[var(--color-warn-50)] text-[var(--color-warn-600)] dark:bg-[var(--color-warn-500)]/20 dark:text-[var(--color-warn-500)]",
   info: "bg-[var(--color-primary-soft)] text-[var(--color-primary)] dark:bg-[var(--color-primary)]/20 dark:text-[var(--color-primary)]",
   pending: "bg-[var(--color-surface-muted)] text-[var(--color-ink-3)] dark:bg-[var(--color-surface-muted)] dark:text-[var(--color-ink-3)]",
 };

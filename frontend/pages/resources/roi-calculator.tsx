@@ -76,8 +76,8 @@ export default function ROICalculator() {
           transition={{ duration: 0.5 }}
           className="text-center mb-12"
         >
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[var(--color-accent-50)] dark:bg-[var(--color-accent-50)]0/10 border border-[var(--color-accent-100)] dark:border-[var(--color-accent)]/20 text-xs font-medium text-[var(--color-accent)] dark:text-[var(--color-accent)] mb-4">
-            <span className="w-2 h-2 rounded-full bg-[var(--color-accent-50)]0 animate-pulse" />
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[var(--color-accent-50)] dark:bg-[var(--color-accent)]/10 border border-[var(--color-accent-100)] dark:border-[var(--color-accent)]/20 text-xs font-medium text-[var(--color-accent)] dark:text-[var(--color-accent)] mb-4">
+            <span className="w-2 h-2 rounded-full bg-[var(--color-accent)] animate-pulse" />
             ROI Calculator
           </div>
           <h1 className="text-3xl md:text-4xl font-black tracking-tight text-[var(--color-ink)]">
@@ -123,7 +123,7 @@ export default function ROICalculator() {
                       onClick={() => { setRoomType(rt); setCustomRent(null); }}
                       className={`text-xs font-medium px-3 py-2 rounded-lg border transition-all ${
                         roomType === rt
-                          ? "border-[var(--color-accent)] bg-[var(--color-accent-50)] dark:bg-[var(--color-accent-50)]0/10 text-[var(--color-accent)] dark:text-[var(--color-accent)]"
+                          ? "border-[var(--color-accent)] bg-[var(--color-accent-50)] dark:bg-[var(--color-accent)]/10 text-[var(--color-accent)] dark:text-[var(--color-accent)]"
                           : "border-[var(--color-line)] text-[var(--color-ink-3)] hover:border-[var(--color-line-2)] dark:hover:border-[var(--color-line-2)]"
                       }`}
                     >

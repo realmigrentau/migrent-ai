@@ -85,6 +85,16 @@
   --color-info-500: #1d6475;
   --color-success-50: #d2e7e0;
   --color-success-500: #208073;
+
+  /* ── Trust (verification badges only) ──
+     Sea-green, per design.md. --color-accent is the general decoration
+     colour, so a "Verified host" badge painted in it read as no more
+     trustworthy than any link on the page. This token exists so that
+     verification is visually distinct from ordinary emphasis. Use it only
+     for identity/verification signals. */
+  --color-trust: #208073;
+  --color-trust-soft: #d2e7e0;
+  --color-trust-fg: #f3faf9;
   --color-success-600: #1a6a5f;
 
   /* ── Radius scale ── */
@@ -168,6 +178,9 @@ html.dark {
   /* sea-green trust, dune amber and coral - all three were missing from
      dark, which is why the palette flattened to blue-on-black */
   --color-success-500: #4fbfa5;  /* 8.4:1 */
+  --color-trust: #4fbfa5;        /* 8.4:1 on the espresso canvas */
+  --color-trust-soft: #1d3b34;
+  --color-trust-fg: #0d201c;
   --color-success-600: #3aa88f;
   --color-success-50: #12332c;
   --color-warn-500: #d99a52;     /* dune amber - 7.8:1 */

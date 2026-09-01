@@ -1,22 +1,40 @@
-import { useRouter } from "next/router";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import Head from "next/head";
 import Breadcrumb from "../../components/content/Breadcrumb";
 import { getPostBySlug, getAllPosts, type BlogCategory } from "../../data/blogPosts";
+import type { GetStaticPaths, GetStaticProps } from "next";
+
+/**
+ * Statically render each post.
+ *
+ * This page read the slug from router.query, which is empty during prerender,
+ * so every blog URL shipped HTML saying "Post not found" while still being
+ * listed in the sitemap. The content is local static data, so there is no
+ * reason for it not to be in the HTML.
+ */
+export const getStaticPaths: GetStaticPaths = async () => ({
+  paths: getAllPosts().map((p) => ({ params: { slug: p.slug } })),
+  fallback: false,
+});
+
+export const getStaticProps: GetStaticProps = async ({ params }) => {
+  const slug = typeof params?.slug === "string" ? params.slug : "";
+  const post = getPostBySlug(slug);
+  if (!post) return { notFound: true };
+  return { props: { slug } };
+};
 
 const categoryColors: Record<BlogCategory, string> = {
   Guide: "bg-[var(--color-primary-50)] dark:bg-[var(--color-primary)]/10 text-[var(--color-primary)] dark:text-[var(--color-primary)]",
-  Market: "bg-[var(--color-accent-50)] dark:bg-[var(--color-accent-50)]0/10 text-[var(--color-accent)] dark:text-[var(--color-accent)]",
-  Safety: "bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-50)]0/10 text-[var(--color-danger-500)] dark:text-[var(--color-danger-500)]",
-  News: "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary-soft)]0/10 text-[var(--color-primary)] dark:text-[var(--color-primary)]",
-  Tips: "bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/10 text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)]",
+  Market: "bg-[var(--color-accent-50)] dark:bg-[var(--color-accent)]/10 text-[var(--color-accent)] dark:text-[var(--color-accent)]",
+  Safety: "bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-500)]/10 text-[var(--color-danger-500)] dark:text-[var(--color-danger-500)]",
+  News: "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 text-[var(--color-primary)] dark:text-[var(--color-primary)]",
+  Tips: "bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-500)]/10 text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)]",
 };
 
-export default function BlogPost() {
-  const router = useRouter();
-  const { slug } = router.query;
-  const post = typeof slug === "string" ? getPostBySlug(slug) : undefined;
+export default function BlogPost({ slug }: { slug: string }) {
+  const post = getPostBySlug(slug);
   const allPosts = getAllPosts();
 
   if (!post) {

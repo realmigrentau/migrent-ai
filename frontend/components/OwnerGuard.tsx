@@ -32,7 +32,7 @@ function DefaultTeaser({
         {/* Blurred decorative background */}
         <div className="absolute inset-0 backdrop-blur-sm" />
         <div className="absolute -top-10 -right-10 w-32 h-32 bg-[var(--color-primary)]/5 rounded-full blur-2xl" />
-        <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-[var(--color-primary-soft)]0/5 rounded-full blur-2xl" />
+        <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-[var(--color-primary)]/5 rounded-full blur-2xl" />
 
         <div className="relative z-10">
           <div className="w-12 h-12 rounded-xl bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/20 flex items-center justify-center mx-auto mb-4">

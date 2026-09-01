@@ -97,7 +97,7 @@ export default function VerificationModal({
                   </div>
 
                   {/* Close button */}
-                  <button
+                  <button aria-label="Close"
                     onClick={onClose}
                     className="w-8 h-8 rounded-full flex items-center justify-center text-[var(--color-ink-3)] hover:text-[var(--color-ink-2)] dark:hover:text-[var(--color-ink-4)] hover:bg-[var(--color-surface-muted)] transition-colors"
                   >

@@ -64,7 +64,7 @@ function MockVerify() {
           <div className="text-[14px] font-semibold text-[var(--color-ink)] leading-tight">Sarah M. · Host</div>
           <div className="text-[12px] text-[var(--color-ink-3)] leading-tight mt-0.5">Verified owner since 2025</div>
         </div>
-        <span className="ml-auto inline-flex items-center gap-1 text-[11px] font-semibold text-[var(--color-accent)] bg-[var(--color-accent-soft)] rounded-full px-2.5 py-1"><Check className="w-3 h-3" strokeWidth={2.8} /> Verified</span>
+        <span className="ml-auto inline-flex items-center gap-1 text-[11px] font-semibold text-[var(--color-trust)] bg-[var(--color-trust-soft)] rounded-full px-2.5 py-1"><Check className="w-3 h-3" strokeWidth={2.8} /> Verified</span>
       </div>
       <div className="space-y-2.5">
         {checks.map((c) => (

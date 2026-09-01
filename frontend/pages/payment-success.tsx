@@ -2,7 +2,6 @@ import { useEffect, useState, useCallback } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import confetti from "canvas-confetti";
 import { useAuth } from "../hooks/useAuth";
 import { refreshBadges } from "../lib/api";
 
@@ -13,97 +12,29 @@ export default function PaymentSuccess() {
   const [badgesRefreshed, setBadgesRefreshed] = useState(false);
 
   const fireConfetti = useCallback(() => {
-    const colors = ["#f43f5e", "#3b82f6", "#10b981", "#f59e0b", "#8b5cf6", "#ec4899", "#14b8a6"];
+    // One burst, not seven.
+    //
+    // This fired six staged bursts plus a four-second requestAnimationFrame
+    // rain, on a page whose only job is to confirm a payment went through. It
+    // was a lot of main-thread work and a lot of motion, in seven off-palette
+    // colours, with no reduced-motion check at all. Excessive animation is a
+    // vestibular trigger, and design.md asks for "silent success over
+    // celebratory toasts".
+    if (typeof window === "undefined") return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    // Big center burst
-    confetti({
-      particleCount: 150,
-      spread: 120,
-      startVelocity: 45,
-      origin: { x: 0.5, y: 0.4 },
-      colors,
-      ticks: 300,
+    // Loaded on demand so canvas-confetti stays out of the shared bundle.
+    import("canvas-confetti").then(({ default: confetti }) => {
+      confetti({
+        particleCount: 90,
+        spread: 110,
+        startVelocity: 40,
+        origin: { x: 0.5, y: 0.45 },
+        // Sand & Ocean: ocean teal, light ocean blue, sea green, dune amber.
+        colors: ["#1d6475", "#2e9bd0", "#208073", "#b86b21"],
+        ticks: 200,
+      });
     });
-
-    // Left cannon
-    setTimeout(() => {
-      confetti({
-        particleCount: 80,
-        angle: 60,
-        spread: 70,
-        startVelocity: 50,
-        origin: { x: 0, y: 0.65 },
-        colors,
-        ticks: 250,
-      });
-    }, 200);
-
-    // Right cannon
-    setTimeout(() => {
-      confetti({
-        particleCount: 80,
-        angle: 120,
-        spread: 70,
-        startVelocity: 50,
-        origin: { x: 1, y: 0.65 },
-        colors,
-        ticks: 250,
-      });
-    }, 400);
-
-    // Star shapes from top
-    setTimeout(() => {
-      confetti({
-        particleCount: 40,
-        spread: 360,
-        startVelocity: 30,
-        origin: { x: 0.5, y: 0 },
-        gravity: 0.8,
-        shapes: ["star"],
-        colors: ["#f59e0b", "#fbbf24", "#fcd34d"],
-        scalar: 1.5,
-        ticks: 200,
-      });
-    }, 600);
-
-    // Continuous rain effect
-    const duration = 4000;
-    const end = Date.now() + duration;
-
-    const frame = () => {
-      confetti({
-        particleCount: 2,
-        angle: 60,
-        spread: 55,
-        origin: { x: 0, y: 0.7 },
-        colors,
-      });
-      confetti({
-        particleCount: 2,
-        angle: 120,
-        spread: 55,
-        origin: { x: 1, y: 0.7 },
-        colors,
-      });
-
-      if (Date.now() < end) {
-        requestAnimationFrame(frame);
-      }
-    };
-
-    setTimeout(frame, 800);
-
-    // Final burst at 3s
-    setTimeout(() => {
-      confetti({
-        particleCount: 100,
-        spread: 160,
-        startVelocity: 35,
-        origin: { x: 0.5, y: 0.6 },
-        colors,
-        ticks: 200,
-      });
-    }, 3000);
   }, []);
 
   // Fire confetti on mount
@@ -133,7 +64,7 @@ export default function PaymentSuccess() {
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           transition={{ delay: 0.3, type: "spring", stiffness: 200, damping: 10 }}
-          className="w-20 h-20 mx-auto rounded-full bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/20 flex items-center justify-center"
+          className="w-20 h-20 mx-auto rounded-full bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent)]/20 flex items-center justify-center"
         >
           <motion.svg
             initial={{ pathLength: 0 }}

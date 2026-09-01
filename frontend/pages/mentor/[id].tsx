@@ -173,7 +173,7 @@ export default function MentorProfilePage() {
               <div className="flex items-center gap-2 flex-wrap">
                 <h1 className="text-xl font-bold text-[var(--color-ink)]">{name}</h1>
                 {mentor.profiles?.verified && (
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/20 text-[var(--color-accent)] dark:text-[var(--color-accent)]">
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent)]/20 text-[var(--color-accent)] dark:text-[var(--color-accent)]">
                     <Shield className="w-3 h-3" />
                     Verified
                   </span>
@@ -245,7 +245,7 @@ export default function MentorProfilePage() {
               {mentor.specialties.map((spec) => (
                 <span
                   key={spec}
-                  className="px-3 py-1.5 rounded-full text-xs font-medium bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 text-[var(--color-accent)] dark:text-[var(--color-accent)] border border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)]"
+                  className="px-3 py-1.5 rounded-full text-xs font-medium bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent)]/10 text-[var(--color-accent)] dark:text-[var(--color-accent)] border border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)]"
                 >
                   {spec}
                 </span>

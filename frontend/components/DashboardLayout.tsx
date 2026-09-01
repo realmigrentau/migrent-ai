@@ -325,7 +325,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
             {/* Sign out */}
             <div className="mt-2 pt-2 border-t border-[var(--color-line)]">
-              <button
+              <button aria-label="Sign out"
                 onClick={signOut}
                 className={`flex items-center gap-3 rounded-[8px] text-[13.5px] font-medium text-[var(--color-ink-3)] hover:bg-[#f1d8d4] dark:hover:bg-[#2b1614] hover:text-[var(--color-danger-500)] transition-colors w-full ${
                   sidebarCollapsed

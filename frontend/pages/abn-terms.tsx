@@ -14,7 +14,7 @@ export default function AbnTerms() {
         {/* Hero */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-xl bg-[var(--color-surface-muted)] dark:bg-[var(--color-surface)]0/10 border border-[var(--color-line)] dark:border-[var(--color-line)] flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-[var(--color-surface-muted)] dark:bg-[var(--color-ink-3)]/10 border border-[var(--color-line)] dark:border-[var(--color-line)] flex items-center justify-center">
               <svg className="w-5 h-5 text-[var(--color-ink-3)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3H21m-3.75 3H21" />
               </svg>
@@ -175,7 +175,7 @@ export default function AbnTerms() {
           </div>
 
           {/* CTA */}
-          <div className="card p-6 rounded-2xl bg-[var(--color-primary-soft)] from-[var(--color-surface)] to-[var(--color-surface-muted)] dark:from-[var(--color-surface)]0/10 dark:to-[var(--color-surface)] border-[var(--color-line)] dark:border-[var(--color-line)] text-center">
+          <div className="card p-6 rounded-2xl bg-[var(--color-primary-soft)] from-[var(--color-surface)] to-[var(--color-surface-muted)] dark:from-[var(--color-ink-3)]/10 dark:to-[var(--color-surface)] border-[var(--color-line)] dark:border-[var(--color-line)] text-center">
             <h3 className="text-lg font-bold text-[var(--color-ink)] mb-2">Business enquiries?</h3>
             <p className="text-sm text-[var(--color-ink-2)] mb-4">Get in touch with our team.</p>
             <Link href="/contact">

@@ -15,7 +15,7 @@ const highlights = [
     label: "ID-verified hosts",
     desc: "Government ID and proof of property, checked before a room goes live",
     color: "text-[var(--color-accent)]",
-    bg: "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/20",
+    bg: "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent)]/20",
   },
   {
     icon: Sparkles,
@@ -36,7 +36,7 @@ const highlights = [
     label: "Transparent pricing",
     desc: "No hidden fees - one-time listing fee only",
     color: "text-[var(--color-primary)]",
-    bg: "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary-soft)]0/20",
+    bg: "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/20",
   },
 ];
 

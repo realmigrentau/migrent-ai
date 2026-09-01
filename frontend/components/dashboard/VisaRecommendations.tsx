@@ -37,13 +37,13 @@ function VisaMatchBadge({ score }: { score: number }) {
   let color = "bg-[var(--color-surface-sunk)] text-[var(--color-ink-2)]";
   let label = "Match";
   if (score >= 85) {
-    color = "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 text-[var(--color-accent)] dark:text-[var(--color-accent)] border border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)]";
+    color = "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent)]/10 text-[var(--color-accent)] dark:text-[var(--color-accent)] border border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)]";
     label = "Excellent match";
   } else if (score >= 70) {
     color = "bg-[var(--color-primary-50)] dark:bg-[var(--color-primary)]/10 text-[var(--color-primary)] dark:text-[var(--color-primary)] border border-[var(--color-primary-100)] dark:border-[var(--color-primary)]/20";
     label = "Good match";
   } else if (score >= 55) {
-    color = "bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/10 text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)] border border-[var(--color-line-2)] dark:border-[var(--color-warn-500)]/20";
+    color = "bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-500)]/10 text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)] border border-[var(--color-line-2)] dark:border-[var(--color-warn-500)]/20";
     label = "Fair match";
   }
 
@@ -144,7 +144,7 @@ export default function VisaRecommendations() {
                   {/* Feature badges */}
                   <div className="absolute bottom-2 left-2 flex gap-1.5">
                     {listing.near_uni && (
-                      <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-[var(--color-primary-soft)]0/90 text-white">
+                      <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-[var(--color-primary)]/90 text-white">
                         Near uni
                       </span>
                     )}

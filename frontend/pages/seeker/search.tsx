@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback, Fragment } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "../../hooks/useAuth";
 import { useTheme } from "../../hooks/useTheme";
@@ -98,7 +99,7 @@ function FilterChip({ label, onRemove }: { label: string; onRemove: () => void }
   return (
     <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-[var(--color-primary-soft)] text-[var(--color-primary)] border border-[var(--color-primary-soft)]">
       {label}
-      <button onClick={onRemove} className="ml-0.5 hover:text-[var(--color-ink)] transition-colors">
+      <button aria-label="Remove filter" onClick={onRemove} className="ml-0.5 hover:text-[var(--color-ink)] transition-colors">
         <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
         </svg>
@@ -677,11 +678,11 @@ export default function SeekerSearch() {
               <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
                 className="absolute z-50 mt-2 p-4 bg-[var(--color-surface-2)] border border-[var(--color-line)] rounded-2xl shadow-xl w-full max-w-sm">
                 <div className="flex items-center justify-between mb-4">
-                  <button onClick={goToPrevMonth} className="p-1.5 hover:bg-[var(--color-surface-muted)] rounded-lg">
+                  <button aria-label="Previous month" onClick={goToPrevMonth} className="p-1.5 hover:bg-[var(--color-surface-muted)] rounded-lg">
                     <svg className="w-4 h-4 text-[var(--color-ink-2)]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
                   </button>
                   <h3 className="font-bold text-sm text-[var(--color-ink)]">{MONTH_NAMES[calendarMonth]} {calendarYear}</h3>
-                  <button onClick={goToNextMonth} className="p-1.5 hover:bg-[var(--color-surface-muted)] rounded-lg">
+                  <button aria-label="Next month" onClick={goToNextMonth} className="p-1.5 hover:bg-[var(--color-surface-muted)] rounded-lg">
                     <svg className="w-4 h-4 text-[var(--color-ink-2)]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
                   </button>
                 </div>
@@ -1010,8 +1011,13 @@ export default function SeekerSearch() {
                         {/* Photo */}
                         <div className="relative w-full aspect-[16/10] bg-[var(--color-surface-muted)] overflow-hidden">
                           {listing.photos?.length > 0 ? (
-                            <img src={listing.photos[0]} alt={listing.address}
-                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
+                            <Image
+                              src={listing.photos[0]}
+                              alt={`Room in ${listing.suburb || listing.address}`}
+                              fill
+                              sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
+                              className="object-cover group-hover:scale-105 transition-transform duration-300"
+                            />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center">
                               <svg className="w-10 h-10 text-[var(--color-ink-4)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
@@ -1052,10 +1058,10 @@ export default function SeekerSearch() {
                             <span className="px-2 py-0.5 rounded-full text-[11px] bg-[var(--color-surface-muted)] text-[var(--color-ink-2)] capitalize">{listing.roomType}</span>
                             {listing.furnished && <span className="px-2 py-0.5 rounded-full text-[11px] bg-[var(--color-primary-50)] text-[var(--color-primary)]">Furnished</span>}
                             {listing.billsIncluded && <span className="px-2 py-0.5 rounded-full text-[11px] bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 text-[var(--color-primary)] dark:text-[var(--color-primary)]">Bills incl.</span>}
-                            {listing.verified && <span className="px-2 py-0.5 rounded-full text-[11px] bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent)]/10 text-[var(--color-accent)] dark:text-[var(--color-accent)]">&#10003; Verified</span>}
+                            {listing.verified && <span className="px-2 py-0.5 rounded-full text-[11px] bg-[var(--color-trust-soft)] dark:bg-[var(--color-trust)]/15 text-[var(--color-trust)] dark:text-[var(--color-trust)]">&#10003; Verified</span>}
                             {listing.genderPreference === "female" && <span className="px-2 py-0.5 rounded-full text-[11px] bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 text-[var(--color-primary)] dark:text-[var(--color-primary)]">Female only</span>}
                             {listing.petsAllowed && <span className="px-2 py-0.5 rounded-full text-[11px] bg-[var(--color-warn-50)] text-[var(--color-warn-600)]">Pets OK</span>}
-                            {listing.parking && <span className="px-2 py-0.5 rounded-full text-[11px] bg-[var(--color-primary-50)] dark:bg-[var(--color-primary-50)]0/10 text-[var(--color-primary)] dark:text-cyan-400">Parking</span>}
+                            {listing.parking && <span className="px-2 py-0.5 rounded-full text-[11px] bg-[var(--color-primary-50)] dark:bg-[var(--color-primary)]/10 text-[var(--color-primary)] dark:text-cyan-400">Parking</span>}
                           </div>
 
                           {/* Match score + reasons (only shown in Best match sort) */}

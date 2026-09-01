@@ -168,7 +168,7 @@ export default function BecomeMentorPage() {
           <title>Mentor Dashboard - MigRent</title>
         </Head>
         <div className="max-w-2xl mx-auto px-4 py-12 text-center space-y-6">
-          <div className="w-16 h-16 rounded-2xl bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/20 flex items-center justify-center mx-auto">
+          <div className="w-16 h-16 rounded-2xl bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent)]/20 flex items-center justify-center mx-auto">
             <CheckCircle2 className="w-8 h-8 text-[var(--color-accent)] dark:text-[var(--color-accent)]" />
           </div>
           <h1 className="text-2xl font-bold text-[var(--color-ink)]">

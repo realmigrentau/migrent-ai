@@ -434,13 +434,13 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
               <span className="px-2 py-0.5 rounded-full text-xs bg-[var(--color-primary-50)] dark:bg-[var(--color-primary)]/10 text-[var(--color-primary)] dark:text-[var(--color-primary)]">WiFi</span>
             )}
             {form.petsAllowed && (
-              <span className="px-2 py-0.5 rounded-full text-xs bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/10 text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)]">Pets OK</span>
+              <span className="px-2 py-0.5 rounded-full text-xs bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-500)]/10 text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)]">Pets OK</span>
             )}
             {form.airConditioning && (
               <span className="px-2 py-0.5 rounded-full text-xs bg-sky-50 dark:bg-sky-500/10 text-sky-600 dark:text-sky-400">A/C</span>
             )}
             {form.couplesOk && (
-              <span className="px-2 py-0.5 rounded-full text-xs bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary-soft)]0/10 text-[var(--color-primary)] dark:text-[var(--color-primary)]">Couples OK</span>
+              <span className="px-2 py-0.5 rounded-full text-xs bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 text-[var(--color-primary)] dark:text-[var(--color-primary)]">Couples OK</span>
             )}
           </div>
           {form.highlights.length > 0 && (
@@ -466,12 +466,12 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
           {(form.weeklyDiscount || form.monthlyDiscount) && (
             <div className="flex gap-2">
               {form.weeklyDiscount && (
-                <span className="px-2 py-0.5 rounded-full text-xs bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 text-[var(--color-accent)] dark:text-[var(--color-accent)] border border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)]">
+                <span className="px-2 py-0.5 rounded-full text-xs bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent)]/10 text-[var(--color-accent)] dark:text-[var(--color-accent)] border border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)]">
                   {form.weeklyDiscount}% weekly discount
                 </span>
               )}
               {form.monthlyDiscount && (
-                <span className="px-2 py-0.5 rounded-full text-xs bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 text-[var(--color-accent)] dark:text-[var(--color-accent)] border border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)]">
+                <span className="px-2 py-0.5 rounded-full text-xs bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent)]/10 text-[var(--color-accent)] dark:text-[var(--color-accent)] border border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)]">
                   {form.monthlyDiscount}% monthly discount
                 </span>
               )}
@@ -516,7 +516,7 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
                   i === step
                     ? "bg-[var(--color-primary)] text-white"
                     : i < step
-                    ? "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 text-[var(--color-accent)] dark:text-[var(--color-accent)] cursor-pointer"
+                    ? "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent)]/10 text-[var(--color-accent)] dark:text-[var(--color-accent)] cursor-pointer"
                     : "bg-[var(--color-surface-muted)] text-[var(--color-ink-3)]"
                 }`}
               >
@@ -530,7 +530,7 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
                 <span className="hidden sm:inline">{label}</span>
               </button>
               {i < STEPS.length - 1 && (
-                <div className={`w-6 h-0.5 rounded-full ${i < step ? "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/30" : "bg-[var(--color-line)]"}`} />
+                <div className={`w-6 h-0.5 rounded-full ${i < step ? "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent)]/30" : "bg-[var(--color-line)]"}`} />
               )}
             </div>
           ))}
@@ -662,7 +662,7 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
 
                 {/* Who else might be there */}
                 {showWhoElse && (
-                  <div className="space-y-3 p-4 rounded-xl border border-[var(--color-line-2)] dark:border-[var(--color-warn-500)]/20 bg-[var(--color-warn-50)]/50 dark:bg-[var(--color-warn-50)]0/5">
+                  <div className="space-y-3 p-4 rounded-xl border border-[var(--color-line-2)] dark:border-[var(--color-warn-500)]/20 bg-[var(--color-warn-50)]/50 dark:bg-[var(--color-warn-500)]/5">
                     <label className="block text-sm font-semibold text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)]">Who else might be there?</label>
                     <input
                       type="text"
@@ -1121,7 +1121,7 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="p-3 rounded-xl bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-50)]0/10 border border-[var(--color-danger-500)]/30 dark:border-[var(--color-danger-500)]/20"
+            className="p-3 rounded-xl bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-500)]/10 border border-[var(--color-danger-500)]/30 dark:border-[var(--color-danger-500)]/20"
           >
             {validationErrors.map((err, i) => (
               <p key={i} className="text-sm text-[var(--color-danger-500)] dark:text-[var(--color-danger-500)]">{err}</p>

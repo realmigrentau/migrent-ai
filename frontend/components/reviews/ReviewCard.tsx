@@ -79,7 +79,7 @@ export default function ReviewCard({ review, showListingContext }: ReviewCardPro
       {/* Sub-ratings */}
       <div className="mt-3 flex flex-wrap gap-2">
         {isSeeker && review.migrant_friendliness && (
-          <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-[var(--color-primary-50)] dark:bg-[var(--color-primary-50)]0/10 text-xs text-[var(--color-primary-700)] dark:text-teal-300">
+          <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-[var(--color-primary-50)] dark:bg-[var(--color-primary)]/10 text-xs text-[var(--color-primary-700)] dark:text-teal-300">
             <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor">
               <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
             </svg>
@@ -95,17 +95,17 @@ export default function ReviewCard({ review, showListingContext }: ReviewCardPro
           </span>
         )}
         {!isSeeker && review.reliability_rating && (
-          <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10 text-xs text-[var(--color-accent)] dark:text-[var(--color-accent)]">
+          <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent)]/10 text-xs text-[var(--color-accent)] dark:text-[var(--color-accent)]">
             Reliable {review.reliability_rating}/5
           </span>
         )}
         {!isSeeker && review.cleanliness_rating && (
-          <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary-soft)]0/10 text-xs text-violet-700 dark:text-[var(--color-primary)]">
+          <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 text-xs text-violet-700 dark:text-[var(--color-primary)]">
             Clean {review.cleanliness_rating}/5
           </span>
         )}
         {!isSeeker && review.payment_rating && (
-          <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/10 text-xs text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)]">
+          <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-500)]/10 text-xs text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)]">
             Payment {review.payment_rating}/5
           </span>
         )}
@@ -169,7 +169,7 @@ export default function ReviewCard({ review, showListingContext }: ReviewCardPro
             <button
               onClick={handleFlag}
               disabled={flagging || flagReason.length < 5}
-              className="text-xs px-3 py-1.5 rounded-lg bg-[var(--color-danger-50)]0 text-white hover:bg-[var(--color-danger-500)] disabled:opacity-50 transition-colors"
+              className="text-xs px-3 py-1.5 rounded-lg bg-[var(--color-danger-500)] text-white hover:bg-[var(--color-danger-500)] disabled:opacity-50 transition-colors"
             >
               {flagging ? "Reporting..." : "Report"}
             </button>

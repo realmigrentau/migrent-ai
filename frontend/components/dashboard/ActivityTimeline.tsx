@@ -44,15 +44,15 @@ const iconMap: Record<string, React.ReactNode> = {
 const colorMap: Record<string, { dot: string; icon: string }> = {
   pending: {
     dot: "bg-amber-400",
-    icon: "text-[var(--color-warn-500)] bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)]0/10",
+    icon: "text-[var(--color-warn-500)] bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-500)]/10",
   },
   success: {
     dot: "bg-emerald-400",
-    icon: "text-[var(--color-accent)] bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent-soft)]0/10",
+    icon: "text-[var(--color-accent)] bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent)]/10",
   },
   declined: {
     dot: "bg-red-400",
-    icon: "text-[var(--color-danger-500)] bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-50)]0/10",
+    icon: "text-[var(--color-danger-500)] bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-500)]/10",
   },
   info: {
     dot: "bg-blue-400",

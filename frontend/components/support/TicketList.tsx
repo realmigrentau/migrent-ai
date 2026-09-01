@@ -20,8 +20,8 @@ const statusLabels: Record<string, string> = {
 const priorityDots: Record<string, string> = {
   low: "bg-slate-400",
   normal: "bg-blue-400",
-  high: "bg-[var(--color-warn-50)]0",
-  urgent: "bg-[var(--color-danger-50)]0",
+  high: "bg-[var(--color-warn-500)]",
+  urgent: "bg-[var(--color-danger-500)]",
 };
 
 interface Props {

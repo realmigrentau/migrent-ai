@@ -15,7 +15,7 @@ const severityConfig: Record<
   warning: {
     borderColor: "border-l-amber-500",
     iconColor: "text-[var(--color-warn-500)]",
-    bgColor: "bg-[var(--color-warn-50)]/50 dark:bg-[var(--color-warn-50)]0/5",
+    bgColor: "bg-[var(--color-warn-50)]/50 dark:bg-[var(--color-warn-500)]/5",
     Icon: AlertTriangle,
   },
   info: {
@@ -27,7 +27,7 @@ const severityConfig: Record<
   safety: {
     borderColor: "border-l-emerald-500",
     iconColor: "text-[var(--color-accent)]",
-    bgColor: "bg-[var(--color-accent-50)]/50 dark:bg-[var(--color-accent-50)]0/5",
+    bgColor: "bg-[var(--color-accent-50)]/50 dark:bg-[var(--color-accent)]/5",
     Icon: Shield,
   },
 };

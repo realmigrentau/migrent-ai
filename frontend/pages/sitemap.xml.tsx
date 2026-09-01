@@ -3,12 +3,12 @@ import { SITE_URL } from "../lib/site";
 import { API_BASE_URL } from "../lib/apiBase";
 import { getAllPosts } from "../data/blogPosts";
 import guidesContent from "../data/guidesContent";
+import { HELP_ARTICLES } from "../lib/helpData";
 
 type Entry = { path: string; priority: string; changefreq: string };
 
 // Public, indexable pages only. Auth/dashboard/owner/seeker/admin pages are
-// noindex and intentionally excluded. Suburb and help-article pages are added
-// once they are server-rendered (they are client-fetched today).
+// noindex and intentionally excluded.
 const STATIC_PAGES: Entry[] = [
   { path: "/", priority: "1.0", changefreq: "daily" },
   { path: "/for-seekers", priority: "0.9", changefreq: "weekly" },
@@ -55,7 +55,10 @@ function urlTag(loc: string, changefreq: string, priority: string, lastmod: stri
   </url>`;
 }
 
-function generateSitemap(suburbSlugs: string[] = []): string {
+function generateSitemap(
+  suburbSlugs: string[] = [],
+  listingIds: string[] = []
+): string {
   const lastmod = new Date().toISOString().split("T")[0];
   const tags: string[] = [];
 
@@ -69,8 +72,20 @@ function generateSitemap(suburbSlugs: string[] = []): string {
   for (const guide of guidesContent) {
     tags.push(urlTag(`${SITE_URL}/guides/${guide.id}`, "monthly", "0.6", lastmod));
   }
+  // Help articles. Excluded before because the page was client-rendered and
+  // shipped an empty document; it is statically generated now.
+  for (const article of HELP_ARTICLES) {
+    tags.push(urlTag(`${SITE_URL}/help/${article.slug}`, "monthly", "0.5", lastmod));
+  }
   for (const slug of suburbSlugs) {
     tags.push(urlTag(`${SITE_URL}/suburb/${slug}`, "weekly", "0.7", lastmod));
+  }
+  // Listing pages. These are the highest-intent organic pages a rental
+  // marketplace has and none of them were ever submitted, because the page
+  // was client-only and there was nothing for a crawler to index. It is
+  // server-rendered now, so they belong here.
+  for (const id of listingIds) {
+    tags.push(urlTag(`${SITE_URL}/listing/${id}`, "daily", "0.8", lastmod));
   }
 
   return `<?xml version="1.0" encoding="UTF-8"?>
@@ -96,12 +111,29 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
     // Backend unreachable - sitemap still ships with all static + content URLs.
   }
 
+  // Approved listings only. The search endpoint already filters to
+  // moderation_status = 'approved', so drafts and rejected listings cannot
+  // leak into the sitemap.
+  let listingIds: string[] = [];
+  try {
+    const r = await fetch(`${API_BASE_URL}/listings/search?limit=100`);
+    if (r.ok) {
+      const data = await r.json();
+      const rows = Array.isArray(data) ? data : data.listings || [];
+      listingIds = rows
+        .map((l: { id?: string }) => l.id)
+        .filter((v: string | undefined): v is string => Boolean(v));
+    }
+  } catch {
+    // Backend unreachable - ship the rest of the sitemap rather than nothing.
+  }
+
   res.setHeader("Content-Type", "application/xml; charset=utf-8");
   res.setHeader(
     "Cache-Control",
     "public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400"
   );
-  res.write(generateSitemap(suburbSlugs));
+  res.write(generateSitemap(suburbSlugs, listingIds));
   res.end();
   return { props: {} };
 };

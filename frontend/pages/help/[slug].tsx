@@ -9,6 +9,8 @@ import {
   getCategoryBySlug,
   type StaticHelpArticle,
 } from "../../lib/helpData";
+import { HELP_ARTICLES } from "../../lib/helpData";
+import type { GetStaticPaths, GetStaticProps } from "next";
 import {
   ChevronRight,
   Clock,
@@ -115,14 +117,27 @@ function RelatedArticleRow({ article }: { article: StaticHelpArticle }) {
   );
 }
 
-export default function HelpArticlePage() {
-  const router = useRouter();
-  const { slug } = router.query;
-  const [voted, setVoted] = useState<boolean | null>(null);
+/**
+ * Statically render each help article.
+ *
+ * The slug came from router.query, which is empty at prerender, so the page
+ * returned null and every help URL shipped an empty document. A help centre is
+ * one of the highest-intent search surfaces a product has, and none of it was
+ * indexable.
+ */
+export const getStaticPaths: GetStaticPaths = async () => ({
+  paths: HELP_ARTICLES.map((a) => ({ params: { slug: a.slug } })),
+  fallback: false,
+});
 
-  if (!slug || typeof slug !== "string") {
-    return null;
-  }
+export const getStaticProps: GetStaticProps = async ({ params }) => {
+  const slug = typeof params?.slug === "string" ? params.slug : "";
+  if (!HELP_ARTICLES.some((a) => a.slug === slug)) return { notFound: true };
+  return { props: { slug } };
+};
+
+export default function HelpArticlePage({ slug }: { slug: string }) {
+  const [voted, setVoted] = useState<boolean | null>(null);
 
   const article = getArticleBySlug(slug);
 
