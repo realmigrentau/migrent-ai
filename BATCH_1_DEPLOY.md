@@ -182,3 +182,45 @@ Run 039 before 040. If you have not run 039 yet, do that one first.
 Unverified hosts can now build a listing. It saves as a **Draft** that nobody
 else can see, and a "Submit for review" button appears once they verify. Nothing
 unverified ever becomes visible to renters, so the trust promise is unchanged.
+
+---
+
+# Batches 3 and 4 deploy steps
+
+Same branch again. Depends on batches 1 and 2 already being deployed.
+
+## Order
+
+1. **Backend to Render**, wait for Live.
+2. **Frontend to Vercel**, wait for green.
+3. **Run `backend/migrations/041_real_response_stats.sql`** in the Supabase SQL
+   Editor, the same way you ran 039 and 040.
+
+Run them in order: 039, then 040, then 041.
+
+## What to click through afterwards
+
+1. **Dark mode.** Switch to dark mode and look at the legal pages, the contact
+   page and the 500 page. Around 250 tinted panels were invisible before this
+   and should now have a background.
+2. **Delete a listing.** The red delete button had no background colour at all,
+   so it was white text on white. It should be solid red now.
+3. **Share a listing.** Paste a listing link into WhatsApp or Slack. It should
+   show a title, description and photo instead of a blank grey box.
+4. **A help article or guide.** Right click, View Page Source. You should see
+   the real article text in the HTML, not an empty shell.
+5. **Someone else's profile.** The "Response rate" and "Response time" tiles
+   should now be missing unless that person has had at least three separate
+   conversations. That is correct: they used to be made up.
+6. **Admin lockout.** Leave the admin page idle. It no longer locks you out
+   after 20 seconds, and if it does lock, the screen no longer flashes.
+
+## Two things I did not do
+
+- **Fonts still load from Google.** Self-hosting them would be faster, but
+  Fraunces uses a custom "SOFT" axis that `design.md` specifies, and I could not
+  confirm the self-hosted version keeps it without seeing the page. Not worth
+  risking the look of every heading.
+- **Property cards are still written three times** (homepage, search, wishlist).
+  Merging them is a real refactor with no user-visible benefit, so it stayed on
+  the list rather than being rushed.
