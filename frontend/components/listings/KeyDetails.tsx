@@ -170,7 +170,7 @@ export default function KeyDetails({ listing }: KeyDetailsProps) {
         </div>
         <div className="mt-2 text-sm text-[var(--color-ink-2)]">
           {listing.bills_included ? (
-            <span className="text-[var(--color-accent)] dark:text-[var(--color-accent)] font-medium">
+            <span className="text-[var(--color-primary)] font-medium">
               Bills included
             </span>
           ) : (
@@ -225,7 +225,7 @@ export default function KeyDetails({ listing }: KeyDetailsProps) {
             {listing.highlights.map((h, i) => (
               <span
                 key={i}
-                className="text-xs font-medium px-3 py-1.5 rounded-full bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent)]/10 text-[var(--color-accent)] dark:text-[var(--color-accent)]"
+                className="text-xs font-medium px-3 py-1.5 rounded-full bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent)]/10 text-[var(--color-primary)] dark:text-[var(--color-accent)]"
               >
                 {h}
               </span>

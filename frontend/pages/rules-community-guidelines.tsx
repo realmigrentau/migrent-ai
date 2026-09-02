@@ -1,14 +1,11 @@
 import Link from "next/link";
+import SEOHead from "../components/SEOHead";
 import { motion } from "framer-motion";
-import Head from "next/head";
 
 export default function RulesCommunityGuidelines() {
   return (
     <>
-      <Head>
-        <title>Community Guidelines | MigRent</title>
-        <meta name="description" content="MigRent community rules - listing standards, guest expectations, dispute resolution, and platform conduct." />
-      </Head>
+      <SEOHead title="Community Guidelines" description="MigRent community rules - listing standards, guest expectations, dispute resolution, and platform conduct." />
 
       <div className="max-w-3xl mx-auto space-y-10">
         {/* Hero */}

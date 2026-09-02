@@ -32,13 +32,16 @@ export default defineConfig({
       command: `node tests/e2e/mock-api.mjs`,
       url: `http://127.0.0.1:${MOCK}/health`,
       reuseExistingServer: !process.env.CI,
+      timeout: 30_000,
       env: { MOCK_API_PORT: String(MOCK) },
     },
     {
+      // A cold `next start` on this repo takes well over a minute to answer
+      // its first request; give it time rather than failing the whole run.
       command: `npx next start -p ${PORT}`,
       url: `http://127.0.0.1:${PORT}/`,
       reuseExistingServer: !process.env.CI,
-      timeout: 120_000,
+      timeout: 300_000,
     },
   ],
 });

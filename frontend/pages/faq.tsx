@@ -1,7 +1,7 @@
 import Link from "next/link";
+import SEOHead from "../components/SEOHead";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import Head from "next/head";
 import { useTranslation } from "react-i18next";
 
 let faqSeq = 0;
@@ -138,10 +138,7 @@ export default function FAQ() {
 
   return (
     <>
-      <Head>
-        <title>FAQ | MigRent</title>
-        <meta name="description" content="Frequently asked questions about MigRent - payments, listings, verification, accounts, and more." />
-      </Head>
+      <SEOHead title="FAQ" description="Frequently asked questions about MigRent - payments, listings, verification, accounts, and more." />
 
       <div className="max-w-3xl mx-auto space-y-10">
         {/* Hero */}

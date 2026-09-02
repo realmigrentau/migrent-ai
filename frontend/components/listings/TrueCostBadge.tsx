@@ -87,7 +87,7 @@ export default function TrueCostBadge({
           <div className="text-left">
             {!open ? (
               <>
-                <p className="text-[11px] font-medium text-[var(--color-accent)] dark:text-[var(--color-accent)]">
+                <p className="text-[11px] font-medium text-[var(--color-primary)] dark:text-[var(--color-accent)]">
                   What will this really cost you?
                 </p>
                 <p className="text-xs text-[var(--color-ink-3)] mt-0.5">
@@ -95,7 +95,7 @@ export default function TrueCostBadge({
                 </p>
               </>
             ) : (
-              <p className="text-sm font-bold text-[var(--color-accent)] dark:text-[var(--color-accent)]">
+              <p className="text-sm font-bold text-[var(--color-primary)] dark:text-[var(--color-accent)]">
                 True Cost Calculator
               </p>
             )}
@@ -239,7 +239,7 @@ export default function TrueCostBadge({
                   <span className="text-sm font-bold text-[var(--color-ink)]">
                     True Cost
                   </span>
-                  <span className="text-sm font-black text-[var(--color-accent)] dark:text-[var(--color-accent)]">
+                  <span className="text-sm font-black text-[var(--color-primary)] dark:text-[var(--color-accent)]">
                     ${result.trueCost}/wk
                   </span>
                 </div>

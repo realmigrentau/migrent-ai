@@ -1,14 +1,11 @@
 import Link from "next/link";
+import SEOHead from "../components/SEOHead";
 import { motion } from "framer-motion";
-import Head from "next/head";
 
 export default function CookiePolicy() {
   return (
     <>
-      <Head>
-        <title>Cookie Policy | MigRent</title>
-        <meta name="description" content="MigRent Cookie Policy - what cookies we use, why, and how to manage them." />
-      </Head>
+      <SEOHead title="Cookie Policy" description="MigRent Cookie Policy - what cookies we use, why, and how to manage them." />
 
       <div className="max-w-3xl mx-auto space-y-10">
         {/* Hero */}

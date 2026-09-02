@@ -1,6 +1,6 @@
 import Link from "next/link";
+import SEOHead from "../components/SEOHead";
 import { motion } from "framer-motion";
-import Head from "next/head";
 import { useTranslation } from "react-i18next";
 
 export default function Careers() {
@@ -15,10 +15,7 @@ export default function Careers() {
 
   return (
     <>
-      <Head>
-        <title>Careers | MigRent</title>
-        <meta name="description" content="Join MigRent - help build the future of accommodation for migrants and students in Australia." />
-      </Head>
+      <SEOHead title="Careers" description="Join MigRent - help build the future of accommodation for migrants and students in Australia." />
 
       <div className="space-y-16">
         {/* Hero */}

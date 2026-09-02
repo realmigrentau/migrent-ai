@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import SEOHead from "../components/SEOHead";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import { motion } from "framer-motion";
@@ -170,7 +171,7 @@ export default function BecomeMentorPage() {
     return (
       <>
         <Head>
-          <title>Mentor Dashboard - MigRent</title>
+          <title key="title">Mentor Dashboard - MigRent</title>
         </Head>
         <div className="max-w-2xl mx-auto px-4 py-12 text-center space-y-6">
           <div className="w-16 h-16 rounded-2xl bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent)]/20 flex items-center justify-center mx-auto">
@@ -213,7 +214,7 @@ export default function BecomeMentorPage() {
     return (
       <>
         <Head>
-          <title>Welcome, Mentor! - MigRent</title>
+          <title key="title">Welcome, Mentor! - MigRent</title>
         </Head>
         <div className="max-w-2xl mx-auto px-4 py-12 text-center space-y-6">
           <motion.div
@@ -255,10 +256,7 @@ export default function BecomeMentorPage() {
 
   return (
     <>
-      <Head>
-        <title>Become a Mentor - MigRent</title>
-        <meta name="description" content="Help new arrivals settle into your suburb. Earn $20-30 per session as a MigRent local mentor." />
-      </Head>
+      <SEOHead title="Become a Mentor - MigRent" description="Help new arrivals settle into your suburb. Earn $20-30 per session as a MigRent local mentor." />
 
       <div className="max-w-2xl mx-auto px-4 py-8 space-y-8">
         {/* Header */}

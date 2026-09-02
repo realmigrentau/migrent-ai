@@ -1,14 +1,11 @@
 import Link from "next/link";
+import SEOHead from "../components/SEOHead";
 import { motion } from "framer-motion";
-import Head from "next/head";
 
 export default function Disclaimer() {
   return (
     <>
-      <Head>
-        <title>Platform Disclaimer | MigRent</title>
-        <meta name="description" content="MigRent Platform Disclaimer - understand the limitations of our service and your responsibilities as a user." />
-      </Head>
+      <SEOHead title="Platform Disclaimer" description="MigRent Platform Disclaimer - understand the limitations of our service and your responsibilities as a user." />
 
       <div className="max-w-3xl mx-auto space-y-10">
         {/* Hero */}

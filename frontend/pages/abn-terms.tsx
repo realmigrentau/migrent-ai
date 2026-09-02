@@ -1,14 +1,11 @@
 import Link from "next/link";
+import SEOHead from "../components/SEOHead";
 import { motion } from "framer-motion";
-import Head from "next/head";
 
 export default function AbnTerms() {
   return (
     <>
-      <Head>
-        <title>ABN &amp; Business Details | MigRent</title>
-        <meta name="description" content="MigRent business details, ABN, fee structure, and payment terms." />
-      </Head>
+      <SEOHead title="ABN &amp; Business Details" description="MigRent business details, ABN, fee structure, and payment terms." />
 
       <div className="max-w-3xl mx-auto space-y-10">
         {/* Hero */}

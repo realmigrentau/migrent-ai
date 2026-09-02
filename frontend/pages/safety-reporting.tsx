@@ -1,14 +1,11 @@
 import Link from "next/link";
+import SEOHead from "../components/SEOHead";
 import { motion } from "framer-motion";
-import Head from "next/head";
 
 export default function SafetyReporting() {
   return (
     <>
-      <Head>
-        <title>Safety &amp; Reporting | MigRent</title>
-        <meta name="description" content="Report unsafe listings, scams, or incidents on MigRent. Learn about our safety measures and how to stay safe." />
-      </Head>
+      <SEOHead title="Safety &amp; Reporting" description="Report unsafe listings, scams, or incidents on MigRent. Learn about our safety measures and how to stay safe." />
 
       <div className="max-w-3xl mx-auto space-y-10">
         {/* Hero */}

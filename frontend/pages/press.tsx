@@ -1,6 +1,6 @@
 import Link from "next/link";
+import SEOHead from "../components/SEOHead";
 import { motion } from "framer-motion";
-import Head from "next/head";
 import { useTranslation } from "react-i18next";
 
 export default function Press() {
@@ -22,10 +22,7 @@ export default function Press() {
 
   return (
     <>
-      <Head>
-        <title>Press & Media | MigRent</title>
-        <meta name="description" content="MigRent press kit - company facts, milestones, media assets, and press contact information." />
-      </Head>
+      <SEOHead title="Press & Media" description="MigRent press kit - company facts, milestones, media assets, and press contact information." />
 
       <div className="space-y-16">
         {/* Hero */}

@@ -303,8 +303,17 @@ export default function SeekerSearch({ initialFilters, initialPage, serverToday 
   );
 
   // Server fetch failed (or ran without an API URL): fetch on the client.
+  // Also rewrite the address bar to the canonical form of what was parsed,
+  // so a shared link with an impossible date range or hostile input does
+  // not stay in the URL (and does not get re-shared).
   useEffect(() => {
     if (!initialPage) void runSearch(initialFilters, "replace");
+    const canonical = serializeSearchFilters(initialFilters).toString();
+    const current = typeof window !== "undefined" ? window.location.search.replace(/^\?/, "") : canonical;
+    if (current !== canonical) {
+      lastWrittenUrl.current = canonical;
+      void router.replace({ pathname: "/seeker/search", query: Object.fromEntries(new URLSearchParams(canonical)) }, undefined, { shallow: true, scroll: false });
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -523,7 +532,7 @@ export default function SeekerSearch({ initialFilters, initialPage, serverToday 
             ))}
           </div>
           {filters.searchType === "nearMe" && filters.lat !== null && (
-            <p className="text-xs text-[var(--color-accent)]">Using your location</p>
+            <p className="text-xs text-[var(--color-primary)]">Using your location</p>
           )}
           {filters.searchType === "nearMe" && locationError && <p className="text-xs text-[var(--color-danger-500)]" role="alert">{locationError}</p>}
           {filters.searchType === "suburb" && (
@@ -937,7 +946,7 @@ export default function SeekerSearch({ initialFilters, initialPage, serverToday 
                               )}
                               {listing.description && <p className="text-xs text-[var(--color-ink-2)] line-clamp-2">{listing.description}</p>}
                               {listing.nearest_transport && listing.station_distance_min != null && (
-                                <p className="text-xs font-medium text-[var(--color-accent)]">{listing.station_distance_min} min to {listing.nearest_transport.split(" - ")[0]}</p>
+                                <p className="text-xs font-medium text-[var(--color-primary)]">{listing.station_distance_min} min to {listing.nearest_transport.split(" - ")[0]}</p>
                               )}
                               <div className="mt-auto pt-1">
                                 <Link href={`/listing/${listing.id}`} className="btn-primary min-h-[40px] px-4 rounded-lg text-xs w-full text-center inline-flex items-center justify-center">

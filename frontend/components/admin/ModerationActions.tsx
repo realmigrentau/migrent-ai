@@ -7,8 +7,20 @@ interface ModerationActionsProps {
   onApprove: (id: string, notes?: string) => Promise<void>;
   onReject: (id: string, reason: string, notes?: string) => Promise<void>;
   onRequestChanges: (id: string, notes: string) => Promise<void>;
+  /** Reversible quarantine: offline everywhere, owner told what to fix. */
+  onPause?: (id: string, reason: string, requiredActions: string[]) => Promise<void>;
   onPreview: (id: string) => void;
 }
+
+const PAUSE_ACTIONS = [
+  "Upload genuine photos of the property",
+  "Set current availability dates",
+  "State the weekly price per room and how many rooms are free",
+  "Provide proof you own or may list the property",
+  "Confirm the address so the map lands in the right suburb",
+  "Say exactly where any cameras are (never in bedrooms or bathrooms)",
+  "Complete government ID verification",
+];
 
 const REJECTION_REASONS = [
   "No photos or poor quality photos",
@@ -27,9 +39,11 @@ export default function ModerationActions({
   onApprove,
   onReject,
   onRequestChanges,
+  onPause,
   onPreview,
 }: ModerationActionsProps) {
-  const [modal, setModal] = useState<"reject" | "changes" | null>(null);
+  const [modal, setModal] = useState<"reject" | "changes" | "pause" | null>(null);
+  const [pauseActions, setPauseActions] = useState<string[]>([]);
   const [reason, setReason] = useState("");
   const [customReason, setCustomReason] = useState("");
   const [notes, setNotes] = useState("");
@@ -54,6 +68,19 @@ export default function ModerationActions({
       setReason("");
       setCustomReason("");
       setNotes("");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handlePause = async () => {
+    if (!onPause || !notes.trim()) return;
+    setLoading(true);
+    try {
+      await onPause(listingId, notes.trim(), pauseActions);
+      setModal(null);
+      setNotes("");
+      setPauseActions([]);
     } finally {
       setLoading(false);
     }
@@ -98,12 +125,81 @@ export default function ModerationActions({
           Reject
         </button>
         <button
+          type="button"
           onClick={() => setModal("changes")}
           className="px-2.5 py-1 text-xs font-semibold rounded-lg text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-500/10 transition-colors"
         >
           Changes
         </button>
+        {onPause && (
+          <button
+            type="button"
+            onClick={() => setModal("pause")}
+            className="px-2.5 py-1 text-xs font-semibold rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+          >
+            Pause
+          </button>
+        )}
       </div>
+
+      {/* Pause (quarantine) Modal */}
+      <AnimatePresence>
+        {modal === "pause" && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+            onClick={() => setModal(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="pause-modal-title"
+              className="w-full max-w-lg rounded-2xl bg-white dark:bg-slate-900 p-6 shadow-xl"
+            >
+              <h3 id="pause-modal-title" className="text-lg font-semibold text-slate-900 dark:text-white">Pause listing</h3>
+              <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+                Takes &ldquo;{listingTitle}&rdquo; offline everywhere until the owner fixes what you list here. Nothing is deleted; you can unpause later.
+              </p>
+              <label htmlFor="pause-reason" className="mt-4 block text-sm font-medium text-slate-700 dark:text-slate-300">Reason shown to the owner</label>
+              <textarea
+                id="pause-reason"
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                rows={3}
+                className="mt-1 w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 p-2 text-sm"
+              />
+              <fieldset className="mt-4">
+                <legend className="text-sm font-medium text-slate-700 dark:text-slate-300">What must change before it comes back</legend>
+                <div className="mt-2 space-y-1.5">
+                  {PAUSE_ACTIONS.map((a) => (
+                    <label key={a} className="flex items-start gap-2 text-sm text-slate-700 dark:text-slate-300">
+                      <input
+                        type="checkbox"
+                        checked={pauseActions.includes(a)}
+                        onChange={(e) => setPauseActions((prev) => (e.target.checked ? [...prev, a] : prev.filter((x) => x !== a)))}
+                        className="mt-0.5"
+                      />
+                      {a}
+                    </label>
+                  ))}
+                </div>
+              </fieldset>
+              <div className="mt-5 flex justify-end gap-2">
+                <button type="button" onClick={() => setModal(null)} className="px-3 py-2 text-sm rounded-lg text-slate-600 dark:text-slate-300">Cancel</button>
+                <button type="button" onClick={handlePause} disabled={loading || !notes.trim()} className="px-4 py-2 text-sm font-semibold rounded-lg bg-slate-900 text-white dark:bg-white dark:text-slate-900 disabled:opacity-50">
+                  {loading ? "Pausing..." : "Pause listing"}
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Reject Modal */}
       <AnimatePresence>

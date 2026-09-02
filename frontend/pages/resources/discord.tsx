@@ -1,6 +1,6 @@
 import Link from "next/link";
+import SEOHead from "../../components/SEOHead";
 import { motion, type Variants } from "framer-motion";
-import Head from "next/head";
 import Breadcrumb from "../../components/content/Breadcrumb";
 
 const fadeUp: Variants = {
@@ -66,10 +66,7 @@ const rules = [
 export default function Discord() {
   return (
     <>
-      <Head>
-        <title>Join MigRent Discord Community | MigRent</title>
-        <meta name="description" content="The MigRent community Discord is launching soon - housing tips, scam alerts, and support for migrants across Australia." />
-      </Head>
+      <SEOHead title="Join MigRent Discord Community" description="The MigRent community Discord is launching soon - housing tips, scam alerts, and support for migrants across Australia." />
 
       <div className="max-w-5xl mx-auto">
         <Breadcrumb

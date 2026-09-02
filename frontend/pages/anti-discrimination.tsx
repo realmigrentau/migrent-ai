@@ -1,14 +1,11 @@
 import Link from "next/link";
+import SEOHead from "../components/SEOHead";
 import { motion } from "framer-motion";
-import Head from "next/head";
 
 export default function AntiDiscrimination() {
   return (
     <>
-      <Head>
-        <title>Fair Housing Policy | MigRent</title>
-        <meta name="description" content="MigRent Fair Housing Policy - our commitment to anti-discrimination and equal access to accommodation." />
-      </Head>
+      <SEOHead title="Fair Housing Policy" description="MigRent Fair Housing Policy - our commitment to anti-discrimination and equal access to accommodation." />
 
       <div className="max-w-3xl mx-auto space-y-10">
         {/* Hero */}

@@ -7,7 +7,7 @@ export default function MentorSessionSuccessPage() {
   return (
     <>
       <Head>
-        <title>Session Booked! - MigRent</title>
+        <title key="title">Session Booked! - MigRent</title>
       </Head>
 
       <div className="max-w-lg mx-auto px-4 py-16 text-center space-y-6">

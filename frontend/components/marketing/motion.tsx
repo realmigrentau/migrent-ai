@@ -14,7 +14,9 @@ export const reveal = {
 };
 
 function Word({ children, progress, range }: { children: string; progress: MotionValue<number>; range: [number, number] }) {
-  const opacity = useTransform(progress, range, [0.22, 1]);
+  // 0.55 keeps the muted word above 3:1 against the canvas (WCAG 1.4.3 for
+  // large text) before it brightens; 0.22 read as decoration but failed.
+  const opacity = useTransform(progress, range, [0.55, 1]);
   return (
     <motion.span style={{ opacity }} className="transition-none">
       {children}{" "}

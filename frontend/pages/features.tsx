@@ -1,5 +1,5 @@
 import Link from "next/link";
-import Head from "next/head";
+import SEOHead from "../components/SEOHead";
 import { motion } from "framer-motion";
 import {
   Sparkles,
@@ -180,10 +180,7 @@ const moreFeatures = [
 export default function Features() {
   return (
     <>
-      <Head>
-        <title>Features - Built for arriving | MigRent</title>
-        <meta name="description" content="Smart matching, verified hosts, instant booking, migrant-first filters, suburb reports, and a mentor network. Everything MigRent does, in one place." />
-      </Head>
+      <SEOHead title="Features - Built for arriving" description="Smart matching, verified hosts, instant booking, migrant-first filters, suburb reports, and a mentor network. Everything MigRent does, in one place." />
 
       <PageSubnav
         title="Features"

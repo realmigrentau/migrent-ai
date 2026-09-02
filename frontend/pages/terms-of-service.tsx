@@ -1,14 +1,11 @@
 import Link from "next/link";
+import SEOHead from "../components/SEOHead";
 import { motion } from "framer-motion";
-import Head from "next/head";
 
 export default function TermsOfService() {
   return (
     <>
-      <Head>
-        <title>Terms of Service | MigRent</title>
-        <meta name="description" content="MigRent Terms of Service - platform fees, cancellations, liability, and user responsibilities." />
-      </Head>
+      <SEOHead title="Terms of Service" description="MigRent Terms of Service - platform fees, cancellations, liability, and user responsibilities." />
 
       <div className="max-w-3xl mx-auto space-y-10">
         {/* Hero */}

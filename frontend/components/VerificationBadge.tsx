@@ -31,7 +31,7 @@ export default function VerificationBadge({ verification, variant = "pill", clas
   const Icon = status === "verified" ? ShieldCheck : status === "pending" ? Clock : ShieldOff;
   const tone =
     status === "verified"
-      ? "bg-[var(--color-trust-soft)] text-[var(--color-trust)]"
+      ? "bg-[var(--color-trust-soft)] text-[color:var(--color-trust-ink)]"
       : status === "pending"
         ? "bg-[var(--color-warn-50)] text-[var(--color-warn-600)]"
         : "bg-[var(--color-surface-muted)] text-[var(--color-ink-2)]";
@@ -79,7 +79,7 @@ export default function VerificationBadge({ verification, variant = "pill", clas
         {items.map((item) => (
           <li key={item.key} className="flex items-start justify-between gap-3">
             <span className={item.done ? "text-[var(--color-ink)]" : "text-[var(--color-ink-3)]"}>{item.label}</span>
-            <span className={`font-mono text-[11px] ${item.done ? "text-[var(--color-trust)]" : "text-[var(--color-ink-3)]"}`}>{item.detail}</span>
+            <span className={`font-mono text-[11px] ${item.done ? "text-[color:var(--color-trust-ink)]" : "text-[var(--color-ink-3)]"}`}>{item.detail}</span>
           </li>
         ))}
       </ul>

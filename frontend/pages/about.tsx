@@ -1,6 +1,6 @@
 import Link from "next/link";
+import SEOHead from "../components/SEOHead";
 import { motion, type Variants } from "framer-motion";
-import Head from "next/head";
 import { useTranslation } from "react-i18next";
 import PageSubnav from "../components/ui/PageSubnav";
 
@@ -32,10 +32,7 @@ export default function About() {
 
   return (
     <>
-      <Head>
-        <title>About | MigRent</title>
-        <meta name="description" content="MigRent - founded in Sydney by an entrepreneur building an AI-powered rental marketplace for migrants and students across Australia." />
-      </Head>
+      <SEOHead title="About" description="MigRent - founded in Sydney by an entrepreneur building an AI-powered rental marketplace for migrants and students across Australia." />
 
       <PageSubnav
         title="About"

@@ -7,7 +7,7 @@ export default function NotFound() {
   return (
     <>
       <Head>
-        <title>Page Not Found | MigRent</title>
+        <title key="title">Page Not Found | MigRent</title>
       </Head>
 
       <div className="min-h-[60vh] flex items-center justify-center px-4">

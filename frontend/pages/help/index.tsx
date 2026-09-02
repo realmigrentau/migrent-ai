@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
-import Head from "next/head";
 import Link from "next/link";
+import SEOHead from "../../components/SEOHead";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   HELP_CATEGORIES,
@@ -166,10 +166,7 @@ export default function HelpCenter() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      <Head>
-        <title>Help Center - MigRent</title>
-        <meta name="description" content="Find answers to common questions about MigRent - search, browse categories, or contact support." />
-      </Head>
+      <SEOHead title="Help Center - MigRent" description="Find answers to common questions about MigRent - search, browse categories, or contact support." />
 
       <div className="max-w-4xl mx-auto space-y-10 pb-16">
 

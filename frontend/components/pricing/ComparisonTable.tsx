@@ -71,7 +71,7 @@ export default function ComparisonTable() {
         transition={{ delay: 0.1 }}
         className="card rounded-2xl overflow-hidden"
       >
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto" tabIndex={0} role="region" aria-label="Feature comparison table, scrolls sideways on small screens">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-[var(--color-line)]">

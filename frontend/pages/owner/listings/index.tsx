@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "../../../hooks/useAuth";
-import { getListings, deleteListing, submitListingForReview } from "../../../lib/api";
+import { getListings, deleteListing, submitListingForReview, renewListing, pauseListing, resumeListing } from "../../../lib/api";
 import { supabase } from "../../../lib/supabase";
 import { useToast } from "../../../components/ui/Toast";
 
@@ -29,6 +29,7 @@ const STATUS_STYLES: Record<string, string> = {
   changes_requested: "bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)] text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)] border-[var(--color-line-2)] dark:border-[var(--color-warn-500)]/20",
   rejected: "bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-500)]/10 text-[var(--color-danger-500)] dark:text-[var(--color-danger-500)] border-[var(--color-danger-500)]/30 dark:border-[var(--color-danger-500)]/20",
   paused: "bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-500)]/10 text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)] border-[var(--color-line-2)] dark:border-[var(--color-warn-500)]/20",
+  expired: "bg-[var(--color-surface-muted)] text-[var(--color-ink-2)] border-[var(--color-line-2)]",
   draft: "bg-[var(--color-surface-muted)] text-[var(--color-ink-3)] border-[var(--color-line)]",
   flagged: "bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)] text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)] border-[var(--color-line-2)] dark:border-[var(--color-warn-500)]/20",
   hidden: "bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-50)] text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)] border-[var(--color-line-2)] dark:border-[var(--color-warn-500)]/20",
@@ -40,6 +41,7 @@ const STATUS_STYLES: Record<string, string> = {
 // never been reviewed; the other two were reviewed and bounced back, and
 // resubmitting after an edit is the whole point of those states.
 const SUBMITTABLE_STATUSES = ["draft", "changes_requested", "rejected"];
+const RENEWABLE_STATUSES = ["approved", "expired", "paused"];
 
 const STATUS_LABELS: Record<string, string> = {
   approved: "Live",
@@ -48,6 +50,7 @@ const STATUS_LABELS: Record<string, string> = {
   rejected: "Rejected",
   active: "Active",
   paused: "Paused",
+  expired: "Expired",
   draft: "Draft",
   flagged: "Under Review",
   hidden: "Under Review",
@@ -115,6 +118,50 @@ export default function OwnerListings() {
   // Send a draft (or a rejected / changes-requested listing) to moderation.
   // Verification is enforced server-side; if the owner has not done it yet the
   // API says so and we surface that rather than failing silently.
+  // Availability renewal and pause/resume. Expired listings stop appearing
+  // in search on the day their dates end; renewing sends them back through
+  // review, extending a live listing keeps it live.
+  const [renewId, setRenewId] = useState<string | null>(null);
+  const [renewDate, setRenewDate] = useState("");
+  const [renewBusy, setRenewBusy] = useState(false);
+  const [renewError, setRenewError] = useState("");
+
+  const openRenew = (listing: Listing) => {
+    const d = new Date();
+    d.setDate(d.getDate() + 90);
+    setRenewDate(d.toISOString().slice(0, 10));
+    setRenewError("");
+    setRenewId(listing.id);
+  };
+
+  const handleRenew = async (listing: Listing) => {
+    if (!session?.access_token || !renewDate) return;
+    setRenewBusy(true);
+    setRenewError("");
+    try {
+      const result = await renewListing(session.access_token, listing.id, renewDate);
+      setListings((prev) => prev.map((l) => (l.id === listing.id ? { ...l, moderation_status: result.moderation_status } : l)));
+      setRenewId(null);
+    } catch (err) {
+      setRenewError(err instanceof Error ? err.message : "Could not update the dates.");
+    } finally {
+      setRenewBusy(false);
+    }
+  };
+
+  const handlePauseToggle = async (listing: Listing) => {
+    if (!session?.access_token) return;
+    try {
+      const result =
+        listing.moderation_status === "paused"
+          ? await resumeListing(session.access_token, listing.id)
+          : await pauseListing(session.access_token, listing.id);
+      setListings((prev) => prev.map((l) => (l.id === listing.id ? { ...l, moderation_status: result.moderation_status } : l)));
+    } catch (err) {
+      setRenewError(err instanceof Error ? err.message : "Could not change the listing status.");
+    }
+  };
+
   const handleSubmitForReview = async (listing: Listing) => {
     if (!session) return;
     setSubmittingId(listing.id);
@@ -229,6 +276,9 @@ export default function OwnerListings() {
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
         <div className="flex items-center justify-between">
           <div>
+            {renewError && (
+              <p role="alert" className="mb-3 text-sm text-[var(--color-danger-500)]">{renewError}</p>
+            )}
             <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-[var(--color-ink)]">
               My Listings
             </h1>
@@ -346,11 +396,30 @@ export default function OwnerListings() {
                       <div className="flex gap-3 justify-end items-center">
                         {SUBMITTABLE_STATUSES.includes(l.moderation_status || "") && (
                           <button
+                            type="button"
                             onClick={() => handleSubmitForReview(l)}
                             disabled={submittingId === l.id}
                             className="text-xs text-[var(--color-primary)] font-semibold transition-colors disabled:opacity-50"
                           >
                             {submittingId === l.id ? "Sending..." : "Submit for review"}
+                          </button>
+                        )}
+                        {RENEWABLE_STATUSES.includes(l.moderation_status || "") && renewId !== l.id && (
+                          <button type="button" onClick={() => openRenew(l)} className="text-xs text-[var(--color-primary)] font-semibold transition-colors">
+                            {l.moderation_status === "expired" ? "Renew" : "Extend dates"}
+                          </button>
+                        )}
+                        {renewId === l.id && (
+                          <span className="inline-flex items-center gap-2">
+                            <label className="sr-only" htmlFor={`renew-${l.id}`}>Available until</label>
+                            <input id={`renew-${l.id}`} type="date" value={renewDate} min={new Date().toISOString().slice(0, 10)} onChange={(e) => setRenewDate(e.target.value)} className="input-field text-xs h-9 w-[150px]" />
+                            <button type="button" onClick={() => handleRenew(l)} disabled={renewBusy} className="text-xs text-[var(--color-primary)] font-semibold disabled:opacity-50">{renewBusy ? "Saving" : "Save"}</button>
+                            <button type="button" onClick={() => setRenewId(null)} className="text-xs text-[var(--color-ink-3)]">Cancel</button>
+                          </span>
+                        )}
+                        {(l.moderation_status === "approved" || l.moderation_status === "paused") && (
+                          <button type="button" onClick={() => handlePauseToggle(l)} className="text-xs text-[var(--color-ink-2)] font-semibold transition-colors">
+                            {l.moderation_status === "paused" ? "Resume" : "Pause"}
                           </button>
                         )}
                         <Link href={`/owner/listings/edit/${l.id}`} className="text-xs text-[var(--color-primary)] hover:text-[var(--color-primary)] font-semibold transition-colors">

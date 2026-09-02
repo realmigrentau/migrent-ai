@@ -95,6 +95,8 @@
   --color-trust: #208073;
   --color-trust-soft: #d2e7e0;
   --color-trust-fg: #f3faf9;
+  /* Text on --color-trust-soft: 7.2:1 */
+  --color-trust-ink: #124f45;
   --color-success-600: #1a6a5f;
 
   /* ── Radius scale ── */
@@ -179,6 +181,8 @@ html.dark {
      dark, which is why the palette flattened to blue-on-black */
   --color-success-500: #4fbfa5;  /* 8.4:1 */
   --color-trust: #4fbfa5;        /* 8.4:1 on the espresso canvas */
+  --color-trust-soft: #16332d;
+  --color-trust-ink: #a9e6d6;    /* on --color-trust-soft: 9.1:1 */
   --color-trust-soft: #1d3b34;
   --color-trust-fg: #0d201c;
   --color-success-600: #3aa88f;

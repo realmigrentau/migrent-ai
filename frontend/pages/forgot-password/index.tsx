@@ -49,8 +49,8 @@ export default function ForgotPassword() {
   return (
     <>
       <Head>
-        <title>Reset your password | MigRent</title>
-        <meta name="robots" content="noindex,nofollow" />
+        <title key="title">Reset your password | MigRent</title>
+        <meta key="robots" name="robots" content="noindex,nofollow" />
       </Head>
 
       <div className="min-h-[70vh] flex items-center justify-center px-4 py-12">

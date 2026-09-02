@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Link from "next/link";
+import SEOHead from "../../components/SEOHead";
 import { motion, type Variants } from "framer-motion";
-import Head from "next/head";
 import { getAllPosts, type BlogCategory } from "../../data/blogPosts";
 
 const fadeUp: Variants = {
@@ -30,10 +30,7 @@ export default function BlogIndex() {
 
   return (
     <>
-      <Head>
-        <title>Blog | MigRent</title>
-        <meta name="description" content="Tips, news, and community stories for migrants finding housing in Australia." />
-      </Head>
+      <SEOHead title="Blog" description="Tips, news, and community stories for migrants finding housing in Australia." />
 
       <div className="space-y-16">
         {/* Hero */}

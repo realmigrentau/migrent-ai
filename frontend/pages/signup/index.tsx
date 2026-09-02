@@ -227,7 +227,7 @@ export default function SignUp() {
               >
                 {msg}
                 {checkEmail && (
-                  <span className="block mt-1 text-[12px] opacity-80">Did not get it? Check spam, or <Link href="/magic-link-login" className="underline">request a new link</Link>.</span>
+                  <span className="block mt-1 text-[12px]">Did not get it? Check spam, or <Link href="/magic-link-login" className="underline">request a new link</Link>.</span>
                 )}
               </motion.p>
             )}
@@ -242,18 +242,18 @@ export default function SignUp() {
           <span className="font-serif text-[24px] leading-none tracking-[-0.012em]">MigRent</span>
         </Link>
         <div>
-          <div className="font-mono text-[11px] uppercase tracking-[0.08em] opacity-60">
+          <div className="font-mono text-[11px] uppercase tracking-[0.08em] opacity-90">
             Verified hosts across Australia
           </div>
           <h2 className="font-serif text-[56px] leading-[1.02] tracking-[-0.025em] mt-3 text-balance">
             The lease begins<br />
-            <span className="opacity-75">at hello.</span>
+            <span className="opacity-90">at hello.</span>
           </h2>
-          <p className="text-[14.5px] opacity-80 mt-4 max-w-[420px] leading-[1.55]">
+          <p className="text-[14.5px] opacity-90 mt-4 max-w-[420px] leading-[1.55]">
             MigRent helps people new to Australia find a place to live - without a rental history, a guarantor, or a stack of paperwork.
           </p>
         </div>
-        <div className="flex flex-wrap gap-x-4 gap-y-1 text-[12px] opacity-60">
+        <div className="flex flex-wrap gap-x-4 gap-y-1 text-[12px] opacity-90">
           <span>ID-verified hosts</span>
           <span>·</span>
           <span>Bond lodged properly</span>

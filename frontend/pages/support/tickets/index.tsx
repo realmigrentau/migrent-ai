@@ -59,7 +59,7 @@ export default function MyTickets() {
   return (
     <>
       <Head>
-        <title>My Tickets - MigRent Support</title>
+        <title key="title">My Tickets - MigRent Support</title>
       </Head>
 
       <div className="max-w-3xl mx-auto">

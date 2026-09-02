@@ -1,8 +1,8 @@
 import Link from "next/link";
+import SEOHead from "../components/SEOHead";
 import { useState, FormEvent, useMemo } from "react";
 import { submitSupportRequest } from "../lib/api";
 import { motion } from "framer-motion";
-import Head from "next/head";
 import { businessDetails, siteIdentity, supportPromise } from "../lib/siteIdentity";
 
 type Role = "seeker" | "owner" | "other";
@@ -80,13 +80,7 @@ export default function Contact() {
 
   return (
     <>
-      <Head>
-        <title>Contact MigRent | Real humans, real answers</title>
-        <meta
-          name="description"
-          content="Get in touch with MigRent. Email support, contact form, safety reporting, legal escalation, and partnerships - all in one place."
-        />
-      </Head>
+      <SEOHead title="Contact MigRent | Real humans, real answers" description="Get in touch with MigRent. Email support, contact form, safety reporting, legal escalation, and partnerships - all in one place." />
 
       <div className="max-w-5xl mx-auto space-y-14">
         {/* HERO */}
@@ -438,7 +432,7 @@ export default function Contact() {
               <p className="text-xs text-[var(--color-ink-3)] leading-relaxed">Universities, mentors, integrations</p>
             </a>
 
-            <div className="card p-5 rounded-2xl opacity-80">
+            <div className="card p-5 rounded-2xl">
               <div className="w-10 h-10 rounded-xl bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 border border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)] flex items-center justify-center mb-3">
                 <svg className="w-5 h-5 text-[var(--color-primary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12.76c0 1.6 1.123 2.994 2.707 3.227 1.068.157 2.148.279 3.238.364.466.037.893.281 1.153.671L12 21l2.652-3.978c.26-.39.687-.634 1.153-.67 1.09-.086 2.17-.208 3.238-.365 1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z" />
@@ -446,7 +440,7 @@ export default function Contact() {
               </div>
               <div className="flex items-center gap-2 mb-1">
                 <h3 className="font-semibold text-[var(--color-ink)] text-sm">Discord community</h3>
-                <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-[var(--color-surface-muted)] text-[var(--color-ink-3)] font-medium uppercase tracking-wide">Launching soon</span>
+                <span className="text-[11px] px-1.5 py-0.5 rounded-full bg-[var(--color-surface-muted)] text-[var(--color-ink-2)] font-medium uppercase tracking-wide">Launching soon</span>
               </div>
               <p className="text-xs text-[var(--color-ink-3)] leading-relaxed">Peer help and community chat. We&apos;re finalising moderation before opening it up.</p>
             </div>

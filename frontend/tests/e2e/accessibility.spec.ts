@@ -55,7 +55,7 @@ test("theme toggle exposes its state", async ({ page }) => {
 
 test("FAQ accordion is keyboard operable and announces state", async ({ page }) => {
   await page.goto("/faq");
-  const first = page.getByRole("button", { expanded: false }).first();
+  const first = page.locator("main h3 > button[aria-expanded]").first();
   await first.focus();
   await page.keyboard.press("Enter");
   await expect(first).toHaveAttribute("aria-expanded", "true");

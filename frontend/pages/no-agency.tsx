@@ -1,14 +1,11 @@
 import Link from "next/link";
+import SEOHead from "../components/SEOHead";
 import { motion } from "framer-motion";
-import Head from "next/head";
 
 export default function NoAgency() {
   return (
     <>
-      <Head>
-        <title>We Are Not Your Agent | MigRent</title>
-        <meta name="description" content="MigRent is an online introduction service, not a real estate agent. Understand our facilitator model and your responsibilities." />
-      </Head>
+      <SEOHead title="We Are Not Your Agent" description="MigRent is an online introduction service, not a real estate agent. Understand our facilitator model and your responsibilities." />
 
       <div className="max-w-3xl mx-auto space-y-10">
         {/* Hero */}

@@ -1,14 +1,11 @@
 import Link from "next/link";
+import SEOHead from "../components/SEOHead";
 import { motion } from "framer-motion";
-import Head from "next/head";
 
 export default function CodeOfConduct() {
   return (
     <>
-      <Head>
-        <title>NSW STRA Code of Conduct | MigRent</title>
-        <meta name="description" content="Summary of the NSW Short-Term Rental Accommodation Code of Conduct and how it applies to MigRent users." />
-      </Head>
+      <SEOHead title="NSW STRA Code of Conduct" description="Summary of the NSW Short-Term Rental Accommodation Code of Conduct and how it applies to MigRent users." />
 
       <div className="max-w-3xl mx-auto space-y-10">
         {/* Hero */}

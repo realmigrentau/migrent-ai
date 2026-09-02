@@ -59,8 +59,14 @@ export default function App({ Component, pageProps, router }: AppProps) {
             allowed by style-src 'unsafe-inline'; it carries no user data. */}
         <style dangerouslySetInnerHTML={{ __html: fontRootCss }} />
         <div className={fontClassName}>{inner}</div>
-        <Analytics />
-        <SpeedInsights />
+        {/* Vercel-hosted scripts only exist on Vercel; skip them elsewhere
+            so local and CI runs do not log 404s. */}
+        {process.env.NEXT_PUBLIC_VERCEL_ENV ? (
+          <>
+            <Analytics />
+            <SpeedInsights />
+          </>
+        ) : null}
       </ConfirmProvider>
     </ToastProvider>
   );

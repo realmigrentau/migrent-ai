@@ -2,6 +2,7 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { SITE_URL } from "../lib/site";
 import { siteIdentity } from "../lib/siteIdentity";
+import { getPageMeta } from "../lib/pageMeta";
 
 interface SEOHeadProps {
   title?: string;
@@ -46,7 +47,7 @@ export default function SEOHead({
   canonical,
   ogImage = DEFAULT_OG,
   ogType = "website",
-  noIndex = false,
+  noIndex,
   publishedAt,
   modifiedAt,
   authorName,
@@ -55,8 +56,11 @@ export default function SEOHead({
 }: SEOHeadProps) {
   const router = useRouter();
   const path = (router?.asPath || "/").split("?")[0].split("#")[0];
+  // A page that calls SEOHead for its title must not accidentally re-index a
+  // route the registry marks private; the registry is the default.
+  const effectiveNoIndex = noIndex ?? Boolean(getPageMeta(router?.pathname || path).noIndex);
   const resolvedCanonical =
-    canonical ?? (noIndex || path.includes("[") ? undefined : path === "/" ? `${SITE_URL}/` : `${SITE_URL}${path}`);
+    canonical ?? (effectiveNoIndex || path.includes("[") ? undefined : path === "/" ? `${SITE_URL}/` : `${SITE_URL}${path}`);
 
   const fullTitle = title ? `${title} | ${SITE_NAME}` : `${SITE_NAME} - Rooms for new arrivals in Australia`;
   const absoluteImage = ogImage.startsWith("http") ? ogImage : `${SITE_URL}${ogImage.startsWith("/") ? "" : "/"}${ogImage}`;
@@ -117,7 +121,7 @@ export default function SEOHead({
     <Head>
       <title key="title">{fullTitle}</title>
       <meta key="description" name="description" content={description} />
-      {noIndex ? <meta key="robots" name="robots" content="noindex,nofollow" /> : <meta key="robots" name="robots" content="index,follow" />}
+      {effectiveNoIndex ? <meta key="robots" name="robots" content="noindex,nofollow" /> : <meta key="robots" name="robots" content="index,follow" />}
       {resolvedCanonical && <link key="canonical" rel="canonical" href={resolvedCanonical} />}
 
       <meta key="og:type" property="og:type" content={ogType} />

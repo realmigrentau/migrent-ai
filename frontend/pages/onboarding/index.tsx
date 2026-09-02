@@ -142,6 +142,9 @@ export default function OnboardingPage() {
 
   const debouncedLookupStation = useDebouncedCallback(lookupStation, 800);
 
+  const [over18, setOver18] = useState(false);
+  const [over18Error, setOver18Error] = useState("");
+
   const handleSuburbCityChange = (value: string) => {
     setSuburbCity(value);
     setFieldErrors((prev) => ({ ...prev, suburbCity: undefined }));
@@ -230,6 +233,12 @@ export default function OnboardingPage() {
     }
 
     // Step 3: Complete onboarding
+    if (!over18) {
+      setSubmitting(false);
+      setOver18Error("Confirm you are 18 or older to continue.");
+      return;
+    }
+
     const result = await completeOnboarding(session!.access_token, {
       legal_name: legalName.trim(),
       preferred_name: preferredName.trim(),
@@ -237,6 +246,8 @@ export default function OnboardingPage() {
       suburb_city: suburbCity.trim(),
       nearest_station: nearestStation || null,
       phone: phone.trim(),
+      // MigRent is an adults-only service; the API refuses without this.
+      over_18: true,
     });
 
     if (result) {
@@ -534,6 +545,23 @@ export default function OnboardingPage() {
 
             {/* Submit */}
             <div className="p-6 pt-6">
+              <div className="mb-4">
+                <label className="flex items-start gap-3 cursor-pointer">
+                  <input
+                    id="onboarding-over-18"
+                    name="over_18"
+                    type="checkbox"
+                    required
+                    checked={over18}
+                    onChange={(e) => { setOver18(e.target.checked); setOver18Error(""); }}
+                    aria-invalid={over18Error ? true : undefined}
+                    aria-describedby={over18Error ? "onboarding-over-18-error" : undefined}
+                    className="mt-0.5 w-5 h-5 rounded border-[var(--color-line-2)] shrink-0"
+                  />
+                  <span className="text-[13px] text-[var(--color-ink-2)] leading-relaxed">I confirm I am 18 years of age or older.</span>
+                </label>
+                {over18Error && <p id="onboarding-over-18-error" role="alert" className="mt-1 text-[12.5px] text-[var(--color-danger-500)]">{over18Error}</p>}
+              </div>
               <button
                 type="submit"
                 disabled={!canSubmit}

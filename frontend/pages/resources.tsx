@@ -1,6 +1,6 @@
 import Link from "next/link";
+import SEOHead from "../components/SEOHead";
 import { motion, type Variants } from "framer-motion";
-import Head from "next/head";
 import { useTranslation } from "react-i18next";
 
 const fadeUp: Variants = {
@@ -307,10 +307,7 @@ export default function Resources() {
 
   return (
     <>
-      <Head>
-        <title>Resources for MigRent Hosts & Seekers | MigRent</title>
-        <meta name="description" content="MigRent resources - blog, ROI calculator, API docs, Discord community, careers, and Australian rental laws for migrants." />
-      </Head>
+      <SEOHead title="Resources for MigRent Hosts & Seekers" description="MigRent resources - blog, ROI calculator, API docs, Discord community, careers, and Australian rental laws for migrants." />
 
       <div className="space-y-24">
         {/* ── Hero ───────────────────────────────────────────────── */}

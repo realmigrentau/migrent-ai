@@ -1,6 +1,6 @@
 import Link from "next/link";
+import SEOHead from "../components/SEOHead";
 import { motion, type Variants } from "framer-motion";
-import Head from "next/head";
 import { useTranslation } from "react-i18next";
 
 const fadeUp: Variants = {
@@ -139,10 +139,7 @@ export default function Guides() {
 
   return (
     <>
-      <Head>
-        <title>{t("guides.heroTitle")} | MigRent</title>
-        <meta name="description" content="Step-by-step guides for MigRent - learn how to host, find rentals, verify your profile, become a superhost, and more." />
-      </Head>
+      <SEOHead title="{t(&quot;guides.heroTitle&quot;)}" description="Step-by-step guides for MigRent - learn how to host, find rentals, verify your profile, become a superhost, and more." />
 
       <div className="space-y-20">
         {/* ── Hero ───────────────────────────────────────────────── */}

@@ -1,14 +1,11 @@
 import Link from "next/link";
+import SEOHead from "../components/SEOHead";
 import { motion } from "framer-motion";
-import Head from "next/head";
 
 export default function ContactLegal() {
   return (
     <>
-      <Head>
-        <title>Legal Contact &amp; Arbitration | MigRent</title>
-        <meta name="description" content="Contact MigRent for legal inquiries, arbitration details, and governing law information." />
-      </Head>
+      <SEOHead title="Legal Contact &amp; Arbitration" description="Contact MigRent for legal inquiries, arbitration details, and governing law information." />
 
       <div className="max-w-3xl mx-auto space-y-10">
         {/* Hero */}

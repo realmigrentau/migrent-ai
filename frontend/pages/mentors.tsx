@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
-import Head from "next/head";
 import Link from "next/link";
+import SEOHead from "../components/SEOHead";
 import { motion } from "framer-motion";
 import { Search, MapPin, Globe, Users, ChevronRight, Sparkles, Heart } from "lucide-react";
 import MentorCard from "../components/mentors/MentorCard";
@@ -63,10 +63,7 @@ export default function MentorsPage() {
 
   return (
     <>
-      <Head>
-        <title>Find a Local Mentor - MigRent</title>
-        <meta name="description" content="Connect with verified local mentors who help new arrivals settle into their suburb. Video calls, suburb walks, and local tips." />
-      </Head>
+      <SEOHead title="Find a Local Mentor - MigRent" description="Connect with verified local mentors who help new arrivals settle into their suburb. Video calls, suburb walks, and local tips." />
 
       <div className="max-w-4xl mx-auto px-4 py-8 space-y-8">
         {/* Hero */}

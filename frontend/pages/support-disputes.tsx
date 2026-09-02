@@ -1,14 +1,11 @@
 import Link from "next/link";
+import SEOHead from "../components/SEOHead";
 import { motion } from "framer-motion";
-import Head from "next/head";
 
 export default function SupportDisputes() {
   return (
     <>
-      <Head>
-        <title>Dispute Resolution | MigRent</title>
-        <meta name="description" content="MigRent dispute resolution process - how we handle complaints and disputes between users." />
-      </Head>
+      <SEOHead title="Dispute Resolution" description="MigRent dispute resolution process - how we handle complaints and disputes between users." />
 
       <div className="max-w-3xl mx-auto space-y-10">
         {/* Hero */}

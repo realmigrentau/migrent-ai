@@ -129,3 +129,33 @@ export async function requestListingChanges(
     body: JSON.stringify({ notes }),
   });
 }
+
+/**
+ * Quarantine a listing (reversible). Takes it offline everywhere, records
+ * the reason and the actions the owner must complete, and emails them.
+ */
+export async function pauseListingAdmin(
+  token: string,
+  listingId: string,
+  reason: string,
+  requiredActions: string[] = [],
+  notifyOwner = true
+): Promise<{ message: string; previous_status: string }> {
+  return adminFetch(`/admin/listings/${listingId}/pause`, token, {
+    method: "POST",
+    body: JSON.stringify({ reason, required_actions: requiredActions, notify_owner: notifyOwner }),
+  });
+}
+
+/** Reverse a pause. mode "review" sends it to the queue; "restore" puts it live. */
+export async function unpauseListingAdmin(
+  token: string,
+  listingId: string,
+  mode: "review" | "restore" = "review",
+  notes?: string
+): Promise<{ message: string; moderation_status: string }> {
+  return adminFetch(`/admin/listings/${listingId}/unpause`, token, {
+    method: "POST",
+    body: JSON.stringify({ mode, notes }),
+  });
+}

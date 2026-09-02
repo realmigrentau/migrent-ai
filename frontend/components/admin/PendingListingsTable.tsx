@@ -8,6 +8,7 @@ interface PendingListingsTableProps {
   onApprove: (id: string, notes?: string) => Promise<void>;
   onReject: (id: string, reason: string, notes?: string) => Promise<void>;
   onRequestChanges: (id: string, notes: string) => Promise<void>;
+  onPause?: (id: string, reason: string, requiredActions: string[]) => Promise<void>;
   onPreview: (id: string) => void;
 }
 
@@ -29,6 +30,7 @@ export default function PendingListingsTable({
   onApprove,
   onReject,
   onRequestChanges,
+  onPause,
   onPreview,
 }: PendingListingsTableProps) {
   if (loading) {
@@ -155,6 +157,7 @@ export default function PendingListingsTable({
                 onApprove={onApprove}
                 onReject={onReject}
                 onRequestChanges={onRequestChanges}
+                onPause={onPause}
                 onPreview={onPreview}
               />
             </div>

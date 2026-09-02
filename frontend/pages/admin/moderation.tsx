@@ -10,6 +10,7 @@ import {
   fetchAdminActivity,
   approveListing,
   rejectListing,
+  pauseListingAdmin,
   requestListingChanges,
   type PendingListing,
   type AdminStats,
@@ -125,6 +126,14 @@ export default function ModerationPage() {
     fetchAdminActivity(token, 10).then((res) => setActivities(res.activities));
   };
 
+  const handlePause = async (id: string, reason: string, requiredActions: string[]) => {
+    await pauseListingAdmin(token, id, reason, requiredActions);
+    setListings((prev) => prev.filter((l) => l.id !== id));
+    setStats((prev) => (prev ? { ...prev, pending: Math.max(0, prev.pending - 1) } : prev));
+    showSuccess("Listing paused - owner emailed the list of fixes");
+    fetchAdminActivity(token, 10).then((res) => setActivities(res.activities));
+  };
+
   const handleRequestChanges = async (id: string, changeNotes: string) => {
     await requestListingChanges(token, id, changeNotes);
     setListings((prev) => prev.filter((l) => l.id !== id));
@@ -194,6 +203,7 @@ export default function ModerationPage() {
             onApprove={handleApprove}
             onReject={handleReject}
             onRequestChanges={handleRequestChanges}
+            onPause={handlePause}
             onPreview={handlePreview}
           />
         </section>

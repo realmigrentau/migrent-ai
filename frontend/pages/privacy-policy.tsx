@@ -1,14 +1,11 @@
 import Link from "next/link";
+import SEOHead from "../components/SEOHead";
 import { motion } from "framer-motion";
-import Head from "next/head";
 
 export default function PrivacyPolicy() {
   return (
     <>
-      <Head>
-        <title>Privacy Policy | MigRent</title>
-        <meta name="description" content="MigRent Privacy Policy - how we collect, use, and protect your data. Australian Privacy Principles and GDPR compliant." />
-      </Head>
+      <SEOHead title="Privacy Policy" description="MigRent Privacy Policy - how we collect, use, and protect your data. Australian Privacy Principles and GDPR compliant." />
 
       <div className="max-w-3xl mx-auto space-y-10">
         {/* Hero */}

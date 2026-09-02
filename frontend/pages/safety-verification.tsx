@@ -1,14 +1,11 @@
 import Link from "next/link";
+import SEOHead from "../components/SEOHead";
 import { motion } from "framer-motion";
-import Head from "next/head";
 
 export default function SafetyVerification() {
   return (
     <>
-      <Head>
-        <title>Safety & Verification | MigRent</title>
-        <meta name="description" content="How MigRent keeps you safe - ID verification (VEVO), trust scores, Superhost criteria, and safety guidelines." />
-      </Head>
+      <SEOHead title="Safety & Verification" description="How MigRent keeps you safe - ID verification (VEVO), trust scores, Superhost criteria, and safety guidelines." />
 
       <div className="max-w-3xl mx-auto space-y-10">
         {/* Hero */}

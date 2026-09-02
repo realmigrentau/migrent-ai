@@ -1,5 +1,5 @@
 import Link from "next/link";
-import Head from "next/head";
+import SEOHead from "../components/SEOHead";
 import { motion } from "framer-motion";
 import {
   ArrowRight,
@@ -57,13 +57,7 @@ const included = [
 export default function Pricing() {
   return (
     <>
-      <Head>
-        <title>Pricing - Simple and honest | MigRent</title>
-        <meta
-          name="description"
-          content="MigRent pricing - seekers browse, apply, and book free. Owners list free and pay a one-time AUD $99 fee per property match. No subscriptions, no rent commissions, no hidden fees."
-        />
-      </Head>
+      <SEOHead title="Pricing - Simple and honest" description="MigRent pricing - seekers browse, apply, and book free. Owners list free and pay a one-time AUD $99 fee per property match. No subscriptions, no rent commissions, no hidden fees." />
 
       <PageSubnav
         title="Pricing"

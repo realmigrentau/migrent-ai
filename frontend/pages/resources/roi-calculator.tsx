@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import Link from "next/link";
+import SEOHead from "../../components/SEOHead";
 import { motion } from "framer-motion";
-import Head from "next/head";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
 import Breadcrumb from "../../components/content/Breadcrumb";
 import { getAllSuburbs } from "../../data/suburbs";
@@ -51,10 +51,7 @@ export default function ROICalculator() {
 
   return (
     <>
-      <Head>
-        <title>Owner ROI Calculator | MigRent</title>
-        <meta name="description" content="Calculate your return on investment from listing spare rooms on MigRent." />
-      </Head>
+      <SEOHead title="Owner ROI Calculator" description="Calculate your return on investment from listing spare rooms on MigRent." />
 
       <div className="max-w-6xl mx-auto">
         <Breadcrumb

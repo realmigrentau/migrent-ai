@@ -1,6 +1,6 @@
 import { useState } from "react";
+import SEOHead from "../../components/SEOHead";
 import { motion, AnimatePresence } from "framer-motion";
-import Head from "next/head";
 import Breadcrumb from "../../components/content/Breadcrumb";
 import { getAllStates } from "../../data/rentalLaws";
 
@@ -11,10 +11,7 @@ export default function RentalLaws() {
 
   return (
     <>
-      <Head>
-        <title>Australian Rental Laws for Migrants | MigRent</title>
-        <meta name="description" content="Know your rights as a migrant renter in Australia. State-by-state tenancy laws, bond rules, and dispute processes." />
-      </Head>
+      <SEOHead title="Australian Rental Laws for Migrants" description="Know your rights as a migrant renter in Australia. State-by-state tenancy laws, bond rules, and dispute processes." />
 
       <div className="max-w-5xl mx-auto">
         <Breadcrumb

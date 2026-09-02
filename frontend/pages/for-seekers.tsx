@@ -1,5 +1,5 @@
 import Link from "next/link";
-import Head from "next/head";
+import SEOHead from "../components/SEOHead";
 import { motion } from "framer-motion";
 import {
   Search,
@@ -52,10 +52,7 @@ const filters = [
 export default function ForSeekers() {
   return (
     <>
-      <Head>
-        <title>For Seekers - Find a room you can trust | MigRent</title>
-        <meta name="description" content="Verified rooms for migrants, students, and new arrivals across Australia. No rental history or local credit file needed. $0 renter fees." />
-      </Head>
+      <SEOHead title="For Seekers - Find a room you can trust" description="Verified rooms for migrants, students, and new arrivals across Australia. No rental history or local credit file needed. $0 renter fees." />
 
       <PageSubnav
         title="For Seekers"

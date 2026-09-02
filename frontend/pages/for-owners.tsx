@@ -1,5 +1,5 @@
 import Link from "next/link";
-import Head from "next/head";
+import SEOHead from "../components/SEOHead";
 import { motion } from "framer-motion";
 import {
   Home,
@@ -39,10 +39,7 @@ const benefits = [
 export default function ForOwners() {
   return (
     <>
-      <Head>
-        <title>For Owners - Fill your room with the right tenant | MigRent</title>
-        <meta name="description" content="List your room on MigRent and reach verified, motivated renters. Free to list, one-time AUD $99 fee per property match. No commission on rent." />
-      </Head>
+      <SEOHead title="For Owners - Fill your room with the right tenant" description="List your room on MigRent and reach verified, motivated renters. Free to list, one-time AUD $99 fee per property match. No commission on rent." />
 
       <PageSubnav
         title="For Owners"
