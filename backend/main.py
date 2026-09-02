@@ -4,7 +4,9 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-logging.basicConfig(level=logging.INFO)
+from logging_config import configure_logging
+
+configure_logging(os.environ.get("LOG_LEVEL", "INFO"))
 logger = logging.getLogger(__name__)
 
 from fastapi import FastAPI
@@ -37,6 +39,7 @@ from routes_mentors import router as mentors_router
 from routes_owner_verification import router as owner_verification_router
 from routes_notification_center import router as notification_center_router
 from routes_spam_moderation import router as spam_moderation_router
+from routes_internal import router as internal_router
 
 # ── Startup validation ──────────────────────────────────────
 ENV = os.environ.get("ENV", "development")
@@ -110,7 +113,8 @@ app.add_middleware(
     allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allow_headers=["Authorization", "Content-Type"],
+    allow_headers=["Authorization", "Content-Type", "X-Cron-Secret"],
+    expose_headers=["X-Total-Count", "X-Has-More"],
 )
 
 app.include_router(auth_router)
@@ -141,6 +145,7 @@ app.include_router(mentors_router)
 app.include_router(owner_verification_router)
 app.include_router(notification_center_router)
 app.include_router(spam_moderation_router)
+app.include_router(internal_router)
 app.include_router(webhook_router)
 
 # Note: each router defines its own prefix (/auth, /listings, /matches, /deals)

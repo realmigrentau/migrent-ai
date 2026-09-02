@@ -2,7 +2,7 @@ import os
 import math
 import logging
 import stripe
-from datetime import datetime, date
+from datetime import datetime, date, timezone
 from fastapi import APIRouter, HTTPException, Header, Request
 from models import BookingCreate, BookingRespond, BookingStatus, BookingType
 from db import get_supabase, get_supabase_admin
@@ -17,6 +17,9 @@ from email_bookings import (
 from notifications import send_push_to_user
 from notification_service import notify
 from limiter import limiter
+from payments import FEE_MODEL, HOST_LISTING_FEE_CENTS
+from listing_lifecycle import STATUS_APPROVED
+from public_dto import listing_public_state
 
 logger = logging.getLogger(__name__)
 
@@ -25,7 +28,7 @@ router = APIRouter(prefix="/bookings", tags=["bookings"])
 STRIPE_SECRET_KEY = os.environ.get("STRIPE_SECRET_KEY", "")
 stripe.api_key = STRIPE_SECRET_KEY
 
-OWNER_FEE_AUD = 9900  # AUD 99.00 in cents
+OWNER_FEE_AUD = HOST_LISTING_FEE_CENTS  # AUD 99.00 in cents
 # No seeker fee. Renters pay MigRent nothing, per the pricing page.
 # The $19 that used to live here was billed to the seeker alongside the
 # host's $99 in a single checkout session. See create_owner_fee_checkout.
@@ -42,6 +45,41 @@ def calculate_total_price(weekly_price: float, check_in: str, check_out: str) ->
     days = (d_out - d_in).days
     weeks = max(1, math.ceil(days / 7))
     return round(weekly_price * weeks, 2)
+
+
+def listing_fee_due(listing: dict) -> bool:
+    """Under the published per-property model the host pays once per
+    property; later bookings on the same listing confirm without a charge."""
+    if FEE_MODEL == "per_booking":
+        return True
+    return not listing.get("listing_fee_paid_at")
+
+
+def confirm_booking_without_charge(sb, booking_id: str) -> None:
+    """Mark a booking PAID when no fee is owed (fee already settled for the
+    property). Emits the same confirmation emails as the webhook path."""
+    now = datetime.now(timezone.utc).isoformat()
+    sb.table("bookings").update({"status": BookingStatus.paid.value, "paid_at": now, "fee_waived": True}).eq("id", booking_id).execute()
+    try:
+        booking = sb.table("bookings").select("*").eq("id", booking_id).execute().data[0]
+        listing_res = sb.table("listings").select("title, address").eq("id", booking["listing_id"]).execute()
+        listing_title = (listing_res.data[0].get("title") or listing_res.data[0].get("address", "Listing")) if listing_res.data else "Listing"
+        owner_profile = sb.table("profiles").select("name").eq("id", booking["owner_id"]).execute()
+        seeker_profile = sb.table("profiles").select("name").eq("id", booking["seeker_id"]).execute()
+        owner_user = sb.auth.admin.get_user_by_id(booking["owner_id"])
+        seeker_user = sb.auth.admin.get_user_by_id(booking["seeker_id"])
+        send_booking_confirmed_to_both(
+            owner_email=owner_user.user.email if owner_user and owner_user.user else "",
+            owner_name=owner_profile.data[0]["name"] if owner_profile.data else "Owner",
+            seeker_email=seeker_user.user.email if seeker_user and seeker_user.user else "",
+            seeker_name=seeker_profile.data[0]["name"] if seeker_profile.data else "Seeker",
+            listing_title=listing_title,
+            check_in=booking["check_in_date"],
+            check_out=booking["check_out_date"],
+            booking_id=booking_id,
+        )
+    except Exception:
+        logger.exception("Confirmation email failed for fee-waived booking %s", booking_id)
 
 
 def create_owner_fee_checkout(booking_id: str) -> stripe.checkout.Session:
@@ -111,7 +149,7 @@ def create_booking(
     # Only approved listings are bookable. Without this, a listing that
     # moderation had rejected, or had not looked at yet, could still be booked
     # and charged by anyone who had its id - search hid it, nothing blocked it.
-    if listing.get("moderation_status") != "approved":
+    if listing_public_state(listing) != "published":
         raise HTTPException(status_code=404, detail="Listing not found")
 
     # Cannot book your own listing
@@ -233,6 +271,13 @@ def create_booking(
         "booking": booking,
         "checkout_url": None,
     }
+
+    if is_instant and not listing_fee_due(listing):
+        # The host already paid the listing fee for this property, so the
+        # booking confirms immediately with no charge to anyone.
+        confirm_booking_without_charge(sb, booking_id)
+        result["booking"]["status"] = BookingStatus.paid.value
+        return result
 
     if is_instant:
         # Instant book: the room is held for the seeker straight away and the
@@ -417,6 +462,13 @@ def respond_to_booking(
         raise HTTPException(status_code=400, detail="This booking is not awaiting a response")
 
     if body.action == "accept":
+        listing_row = sb.table("listings").select("id, listing_fee_paid_at, title, address").eq("id", booking["listing_id"]).execute()
+        listing_info = listing_row.data[0] if listing_row.data else {}
+        if not listing_fee_due(listing_info):
+            sb.table("bookings").update({"status": BookingStatus.owner_accepted.value}).eq("id", booking_id).execute()
+            confirm_booking_without_charge(sb, booking_id)
+            return {"booking_id": booking_id, "status": BookingStatus.paid.value, "checkout_url": None, "fee_waived": True}
+
         # The host pays the $99 to confirm, so the checkout URL goes back to
         # the host - who is the caller here - and never to the seeker.
         try:
@@ -584,6 +636,41 @@ def cancel_booking(
     }).eq("id", booking_id).execute()
 
     return {"booking_id": booking_id, "status": BookingStatus.seeker_cancelled.value}
+
+
+# -- GET /bookings/checkout-status - What the webhook has confirmed --
+
+
+@router.get("/checkout-status")
+@limiter.limit("60/minute")
+def checkout_status(
+    request: Request,
+    session_id: str,
+    authorization: str = Header(...),
+):
+    """The booking-success page calls this instead of trusting the redirect.
+
+    Only the host who owns the booking (the payer) may look it up, and the
+    answer is whatever the Stripe webhook has written: nothing here marks a
+    booking paid.
+    """
+    user = get_current_user(authorization)
+    user_id = str(user.id)
+    if not session_id or not session_id.startswith("cs_") or len(session_id) > 128:
+        raise HTTPException(status_code=400, detail="Invalid session id")
+    sb = get_supabase_admin()
+    res = sb.table("bookings").select("id, owner_id, seeker_id, status, paid_at, listing_id").eq("stripe_session_id", session_id).execute()
+    if not res.data:
+        raise HTTPException(status_code=404, detail="No booking for that checkout session")
+    booking = res.data[0]
+    if user_id not in (str(booking["owner_id"]), str(booking["seeker_id"])):
+        raise HTTPException(status_code=403, detail="Not your booking")
+    return {
+        "booking_id": booking["id"],
+        "status": booking["status"],
+        "paid": booking["status"] == BookingStatus.paid.value,
+        "paid_at": booking.get("paid_at"),
+    }
 
 
 # -- GET /bookings/{id} - Get single booking --

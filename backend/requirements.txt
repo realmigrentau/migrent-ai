@@ -11,3 +11,4 @@ python-multipart==0.0.12
 PyJWT==2.9.0
 cryptography==43.0.1
 sentry-sdk[fastapi]==2.19.2
+Pillow==11.1.0

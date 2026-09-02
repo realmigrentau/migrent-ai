@@ -44,3 +44,21 @@ def is_admin_user(user) -> bool:
         return False
     row = res.data[0]
     return bool(row.get("is_admin")) or row.get("role") in ("superadmin", "admin")
+
+
+def get_optional_user(authorization):
+    """Like get_current_user, but None for missing or invalid tokens."""
+    if not authorization:
+        return None
+    try:
+        return get_current_user(authorization)
+    except HTTPException:
+        return None
+
+
+def require_admin(authorization: str):
+    """Validate the token and require an admin role from the database."""
+    user = get_current_user(authorization)
+    if not is_admin_user(user):
+        raise HTTPException(status_code=403, detail="Admin access required")
+    return user

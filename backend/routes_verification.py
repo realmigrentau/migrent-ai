@@ -3,13 +3,14 @@ import stripe
 from fastapi import APIRouter, HTTPException, Header
 from db import get_supabase_admin
 from auth_utils import get_current_user
+from payments import SEEKER_VERIFICATION_ENABLED, SEEKER_VERIFICATION_FEE_CENTS
 
 router = APIRouter(prefix="/payments", tags=["verification"])
 
 STRIPE_SECRET_KEY = os.environ.get("STRIPE_SECRET_KEY", "")
 stripe.api_key = STRIPE_SECRET_KEY
 
-VERIFICATION_FEE_AUD = 1900  # AUD 19.00 in cents
+VERIFICATION_FEE_AUD = SEEKER_VERIFICATION_FEE_CENTS  # AUD 19.00 in cents
 
 FRONTEND_URL = os.environ.get("FRONTEND_URL", "https://migrent.vercel.app")
 VERIFICATION_SUCCESS_URL = f"{FRONTEND_URL}/verification-success?session_id={{CHECKOUT_SESSION_ID}}"
@@ -23,6 +24,17 @@ def create_verification_session(authorization: str = Header(...)):
     Auth required - uses the authenticated user's ID (not client-supplied).
     """
     user = get_current_user(authorization)
+
+    # The paid seeker badge set profiles.verified = true without checking a
+    # single document, and the UI rendered that flag as a trust shield. It
+    # stays off until it verifies something real. Flip
+    # SEEKER_VERIFICATION_ENABLED=true to re-enable the checkout.
+    if not SEEKER_VERIFICATION_ENABLED:
+        raise HTTPException(
+            status_code=410,
+            detail="Paid seeker verification is not available. Identity verification for seekers is free and coming soon.",
+        )
+
     sb = get_supabase_admin()
 
     # Check if user is already verified - no need to pay again

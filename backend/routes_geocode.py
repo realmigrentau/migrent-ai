@@ -131,3 +131,110 @@ async def geocode_address(request: Request, body: GeocodeRequest):
         raise HTTPException(status_code=400, detail="Address too short")
 
     return await geocode_and_find_station(body.address.strip())
+
+
+# ---------------------------------------------------------------------------
+# Listing location validation
+# ---------------------------------------------------------------------------
+
+from dataclasses import dataclass
+
+# A pin further than this from the suburb/postcode centroid is treated as a
+# mismatch. Australian suburbs are rarely more than ~10 km across; 25 km
+# leaves room for rural postcodes while catching a pin in the wrong city or
+# in the sea (the Kellyville listing was pinned 30 km away, offshore).
+MAX_CENTROID_DISTANCE_KM = 25.0
+
+
+@dataclass
+class LocationCheck:
+    ok: bool
+    reason: str | None = None
+    lat: float | None = None
+    lng: float | None = None
+    formatted_address: str | None = None
+    source: str | None = None  # "client", "address", "centroid", "skipped"
+
+
+async def geocode_centroid(query: str) -> tuple[float, float, str] | None:
+    """Geocode a free-text place (suburb + postcode) to a centroid."""
+    if not MAPTILER_API_KEY:
+        return None
+    try:
+        async with httpx.AsyncClient(timeout=15) as client:
+            resp = await client.get(
+                f"https://api.maptiler.com/geocoding/{query}.json",
+                params={"key": MAPTILER_API_KEY, "country": "au", "limit": "1"},
+            )
+            data = resp.json()
+    except Exception as e:
+        logger.warning("Centroid geocode failed for %r: %s", query, e)
+        return None
+    features = data.get("features", [])
+    if not features:
+        return None
+    lng, lat = features[0]["geometry"]["coordinates"][:2]
+    if not (-90 <= lat <= 90 and -180 <= lng <= 180):
+        return None
+    return float(lat), float(lng), features[0].get("place_name", query)
+
+
+async def validate_listing_location(
+    *,
+    address: str | None,
+    suburb: str | None,
+    postcode: int | str | None,
+    latitude: float | None,
+    longitude: float | None,
+) -> LocationCheck:
+    """Make sure a listing's coordinates, suburb and postcode agree.
+
+    Rules:
+    * Coordinates must be inside Australia's bounding box.
+    * If the client supplied a pin and we can geocode "suburb postcode", the
+      pin must be within MAX_CENTROID_DISTANCE_KM of that centroid.
+    * If no pin was supplied, geocode the address; if that result is not
+      near the suburb centroid (a typo'd street, or an address in another
+      city), fall back to the centroid itself so the map is never wrong by
+      a whole city.
+    * With no geocoding key configured, accept the client pin if it is in
+      Australia and otherwise leave coordinates empty. Nothing public ever
+      shows an exact pin, so an absent pin is safe; a wrong one is not.
+    """
+    place_query = " ".join(str(p) for p in (suburb, postcode, "Australia") if p)
+    centroid = await geocode_centroid(place_query) if (suburb or postcode) else None
+
+    def in_australia(lat: float, lng: float) -> bool:
+        return -44.5 <= lat <= -9.0 and 112.0 <= lng <= 154.5
+
+    if latitude is not None and longitude is not None:
+        lat, lng = float(latitude), float(longitude)
+        if not in_australia(lat, lng):
+            return LocationCheck(ok=False, reason="The map pin is outside Australia. Check the address and try again.")
+        if centroid is not None:
+            dist = haversine(lat, lng, centroid[0], centroid[1])
+            if dist > MAX_CENTROID_DISTANCE_KM:
+                return LocationCheck(
+                    ok=False,
+                    reason=(
+                        f"The map pin is {dist:.0f} km from {suburb or ''} {postcode or ''}. "
+                        "Check the suburb and postcode match the address."
+                    ),
+                )
+        return LocationCheck(ok=True, lat=lat, lng=lng, source="client")
+
+    # No pin supplied: geocode the address server-side.
+    if address:
+        try:
+            geo = await geocode_and_find_station(address)
+        except Exception as e:
+            logger.warning("Address geocode failed: %s", e)
+            geo = GeocodeResponse()
+        if geo.lat is not None and geo.lng is not None and in_australia(geo.lat, geo.lng):
+            if centroid is None or haversine(geo.lat, geo.lng, centroid[0], centroid[1]) <= MAX_CENTROID_DISTANCE_KM:
+                return LocationCheck(ok=True, lat=geo.lat, lng=geo.lng, formatted_address=geo.formatted_address, source="address")
+
+    if centroid is not None:
+        return LocationCheck(ok=True, lat=centroid[0], lng=centroid[1], formatted_address=centroid[2], source="centroid")
+
+    return LocationCheck(ok=True, source="skipped")

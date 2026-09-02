@@ -655,3 +655,78 @@ def send_new_message_notification(
     )
 
     _send_email(recipient_email, subject, _email_layout(content, f"New message from {sender_name}"), text)
+
+
+def send_listing_expiring_to_owner(
+    owner_email: str,
+    owner_name: str,
+    listing_title: str,
+    available_to: str,
+    listing_id: str,
+):
+    """Seven days before a listing's availability ends, ask the owner to
+    extend it or let it lapse. Without this, rooms silently vanished from
+    search and owners assumed the site had stopped working."""
+    subject = f"Your listing '{listing_title}' comes off MigRent on {available_to}"
+    renew_url = f"{FRONTEND_URL}/owner/listings/edit/{listing_id}"
+
+    content = f"""
+    <h2 style="font-size:24px;font-weight:bold;color:#1a1a1a;margin:0 0 16px;">Still available?</h2>
+    <p style="font-size:15px;line-height:24px;color:#374151;margin:0 0 12px;">Hi {owner_name},</p>
+    <p style="font-size:15px;line-height:24px;color:#374151;margin:0 0 12px;">
+      You set <strong>{listing_title}</strong> as available until <strong>{available_to}</strong>.
+      After that date it will stop appearing in search and its page will say the room is no longer available.
+    </p>
+    <p style="font-size:15px;line-height:24px;color:#374151;margin:0 0 12px;">
+      If the room is still free, extend the dates and it stays live. If it has been taken, you do not need to do anything.
+    </p>
+    {_button("Update availability", renew_url)}
+    """
+
+    text = (
+        f"Hi {owner_name},\n\n"
+        f"Your listing '{listing_title}' is set as available until {available_to}. "
+        f"After that it will come off search.\n\n"
+        f"Extend the dates here if it is still free: {renew_url}\n\n"
+        f"- The MigRent Team"
+    )
+
+    _send_email(owner_email, subject, _email_layout(content, f"{listing_title} expires {available_to}"), text)
+
+
+def send_listing_paused_to_owner(
+    owner_email: str,
+    owner_name: str,
+    listing_title: str,
+    reason: str,
+    required_actions: list[str],
+    listing_id: str,
+):
+    """An admin has taken a listing offline and needs specific things fixed."""
+    subject = f"Action needed: '{listing_title}' is paused on MigRent"
+    edit_url = f"{FRONTEND_URL}/owner/listings/edit/{listing_id}"
+    items = "".join(f"<li style='margin:0 0 6px;'>{a}</li>" for a in required_actions)
+
+    content = f"""
+    <h2 style="font-size:24px;font-weight:bold;color:#1a1a1a;margin:0 0 16px;">Your listing is paused</h2>
+    <p style="font-size:15px;line-height:24px;color:#374151;margin:0 0 12px;">Hi {owner_name},</p>
+    <p style="font-size:15px;line-height:24px;color:#374151;margin:0 0 12px;">
+      We have taken <strong>{listing_title}</strong> offline while the following is sorted out. Nobody can see or book it in the meantime.
+    </p>
+    <div style="background:#fef3c7;border-radius:8px;padding:16px 20px;margin:16px 0;border-left:3px solid #f59e0b;">
+      <p style="font-size:14px;font-weight:600;color:#92400e;margin:0 0 8px;">Why:</p>
+      <p style="font-size:14px;color:#92400e;margin:0;line-height:22px;">{reason}</p>
+    </div>
+    <p style="font-size:15px;line-height:24px;color:#374151;margin:16px 0 8px;">To bring it back:</p>
+    <ul style="font-size:14px;line-height:22px;color:#374151;margin:0 0 16px;padding-left:20px;">{items}</ul>
+    {_button("Update the listing", edit_url)}
+    <p style="font-size:13px;color:#9ca3af;text-align:center;margin:8px 0 0;">
+      Once you resubmit, a person on our team reviews it, usually within two business days.
+    </p>
+    """
+    text = (
+        f"Hi {owner_name},\n\nWe have paused your listing '{listing_title}'.\n\nWhy: {reason}\n\n"
+        + "To bring it back:\n" + "\n".join(f"- {a}" for a in required_actions)
+        + f"\n\nUpdate it here: {edit_url}\n\n- The MigRent Team"
+    )
+    _send_email(owner_email, subject, _email_layout(content, f"{listing_title} is paused"), text)

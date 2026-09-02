@@ -6,11 +6,11 @@ Supports direct messages (from profiles) and listing-based messages.
 import os
 import re
 import logging
-from fastapi import APIRouter, HTTPException, Header, Request
+from fastapi import APIRouter, File, Header, HTTPException, Request, UploadFile
 from fastapi.responses import JSONResponse
 from datetime import datetime
 from typing import Optional
-from uuid import UUID
+from uuid import UUID, uuid4
 
 from models import MessageCreate, MessageOut
 from pydantic import BaseModel, Field
@@ -80,16 +80,51 @@ def send_message(
     if body.deal_id:
         _validate_uuid(str(body.deal_id), "deal_id")
 
+    if str(body.receiver_id) == str(body.sender_id):
+        raise HTTPException(status_code=400, detail="You cannot message yourself")
+
     # Verify receiver exists
     receiver = sb.table("profiles").select("id").eq("id", str(body.receiver_id)).execute()
     if not receiver.data:
         raise HTTPException(status_code=404, detail="Receiver not found")
 
-    # If listing_id is provided, verify listing exists
+    # Either party may have blocked the other.
+    try:
+        blocks = (
+            sb.table("blocked_users")
+            .select("id")
+            .or_(
+                f"and(blocker_id.eq.{body.sender_id},blocked_id.eq.{body.receiver_id}),"
+                f"and(blocker_id.eq.{body.receiver_id},blocked_id.eq.{body.sender_id})"
+            )
+            .execute()
+        )
+        if blocks.data:
+            raise HTTPException(status_code=403, detail="You cannot message this user")
+    except HTTPException:
+        raise
+    except Exception:
+        logger.warning("blocked_users check failed; continuing")
+
+    # If listing_id is provided, the thread context must be real: the
+    # listing must exist and one side of the conversation must own it.
     if body.listing_id:
-        listing = sb.table("listings").select("id, owner_id").eq("id", str(body.listing_id)).execute()
+        listing = sb.table("listings").select("id, owner_id, moderation_status").eq("id", str(body.listing_id)).execute()
         if not listing.data:
             raise HTTPException(status_code=404, detail="Listing not found")
+        owner = str(listing.data[0].get("owner_id"))
+        if owner not in (str(body.sender_id), str(body.receiver_id)):
+            raise HTTPException(status_code=403, detail="That listing does not belong to this conversation")
+        if listing.data[0].get("moderation_status") == "deleted":
+            raise HTTPException(status_code=404, detail="Listing not found")
+
+    # Attachments must have been uploaded by this sender through
+    # /messages/attachments; the path is namespaced by sender id.
+    attachment_path = None
+    if body.attachment_path:
+        if not body.attachment_path.startswith(f"{body.sender_id}/") or ".." in body.attachment_path:
+            raise HTTPException(status_code=400, detail="Invalid attachment")
+        attachment_path = body.attachment_path
 
     # Create message (sanitize HTML to prevent XSS)
     msg_data = {
@@ -102,9 +137,12 @@ def send_message(
         # the renderer no longer reads it; accepting it would only reopen the
         # stored-XSS path. body.message_html is ignored on purpose.
         "message_html": None,
-        "attachment_url": body.attachment_url if body.attachment_url else None,
-        "attachment_name": body.attachment_name if body.attachment_name else None,
-        "attachment_type": body.attachment_type if body.attachment_type else None,
+        # Public attachment URLs are never stored; readers get a short-lived
+        # signed URL generated from attachment_path.
+        "attachment_url": None,
+        "attachment_path": attachment_path,
+        "attachment_name": body.attachment_name if (attachment_path and body.attachment_name) else None,
+        "attachment_type": body.attachment_type if (attachment_path and body.attachment_type) else None,
         "created_at": datetime.utcnow().isoformat(),
         "updated_at": datetime.utcnow().isoformat(),
     }
@@ -204,6 +242,65 @@ def send_message(
         "success": True,
         "message": result.data[0]
     }
+
+
+ATTACHMENT_BUCKET = "message-attachments"
+ATTACHMENT_URL_TTL = 600  # seconds
+
+
+def _sign_attachments(sb, messages: list[dict]) -> list[dict]:
+    """Replace attachment_path with a short-lived signed URL for the
+    participants reading the thread. The path itself is not returned."""
+    for m in messages:
+        path = m.pop("attachment_path", None)
+        if path:
+            try:
+                signed = sb.storage.from_(ATTACHMENT_BUCKET).create_signed_url(path, ATTACHMENT_URL_TTL)
+                m["attachment_url"] = signed.get("signedURL") or signed.get("signedUrl") if isinstance(signed, dict) else signed
+            except Exception:
+                logger.warning("Could not sign attachment for message %s", m.get("id"))
+                m["attachment_url"] = None
+        elif m.get("attachment_url") and "/object/public/" in str(m.get("attachment_url")):
+            # Legacy public attachment: still reachable, but do not advertise.
+            pass
+    return messages
+
+
+@router.post("/attachments")
+@limiter.limit("20/minute")
+async def upload_attachment(
+    request: Request,
+    file: UploadFile = File(...),
+    authorization: str = Header(...),
+):
+    """Upload a message attachment to the private bucket.
+
+    Validates by magic bytes (JPEG, PNG, WebP, GIF, PDF), caps size at 10MB,
+    re-encodes images to strip EXIF, and namespaces the path by the sender so
+    a later send cannot reference someone else's file.
+    """
+    from uploads import ImageValidationError, prepare_public_image, sniff_pdf, validate_private_document
+
+    user = get_current_user(authorization)
+    uid = str(user.id)
+    data = await file.read()
+    try:
+        content_type, ext = validate_private_document(data)
+        if not sniff_pdf(data):
+            prepared = prepare_public_image(data, max_bytes=10 * 1024 * 1024, max_side=2048, min_side=16)
+            data, content_type, ext = prepared.data, prepared.content_type, prepared.extension
+    except ImageValidationError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+    safe_name = re.sub(r"[^A-Za-z0-9._-]", "_", (file.filename or "attachment"))[:80]
+    path = f"{uid}/{int(datetime.utcnow().timestamp())}_{uuid4().hex[:8]}.{ext}"
+    sb = get_supabase_admin()
+    try:
+        sb.storage.from_(ATTACHMENT_BUCKET).upload(path=path, file=data, file_options={"content-type": content_type})
+    except Exception:
+        logger.exception("Attachment upload failed")
+        raise HTTPException(status_code=500, detail="Upload failed. Please try again.")
+    return {"attachment_path": path, "attachment_name": safe_name, "attachment_type": content_type}
 
 
 # ── GET /messages/threads ────────────────────────────────────
@@ -324,7 +421,7 @@ def get_direct_messages(
                     {"read_at": datetime.utcnow().isoformat()}
                 ).eq("id", msg_id).execute()
 
-    return {"messages": messages.data or []}
+    return {"messages": _sign_attachments(sb, messages.data or [])}
 
 
 # ── GET /messages/thread/:listing_id/:other_user_id ─────────
@@ -377,7 +474,7 @@ def get_thread_messages(
                     {"read_at": datetime.utcnow().isoformat()}
                 ).eq("id", msg_id).execute()
 
-    return {"messages": messages.data or []}
+    return {"messages": _sign_attachments(sb, messages.data or [])}
 
 
 # ── PATCH /messages/:message_id/read ─────────────────────────

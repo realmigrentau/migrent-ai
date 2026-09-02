@@ -162,7 +162,9 @@ class ProfileUpdate(BaseModel):
     interests: Optional[list[str]] = Field(None, max_length=5)
     custom_pfp: Optional[str] = None
     occupation: Optional[str] = Field(None, max_length=100)
-    age: Optional[int] = Field(None, ge=16, le=120)
+    # MigRent is an adults-only service; see docs/policies/age-and-safeguarding.md
+    age: Optional[int] = Field(None, ge=18, le=120)
+    over_18: Optional[bool] = None
     visa_type: Optional[str] = None
     budget_min: Optional[float] = None
     budget_max: Optional[float] = None
@@ -294,7 +296,10 @@ class MessageCreate(BaseModel):
     deal_id: Optional[str] = None
     message_text: str = Field(..., min_length=1, max_length=5000)
     message_html: Optional[str] = Field(None, max_length=5000)
+    # Legacy public-URL attachment field. Ignored on write: attachments now
+    # go through POST /messages/attachments, which returns attachment_path.
     attachment_url: Optional[str] = Field(None, max_length=500)
+    attachment_path: Optional[str] = Field(None, max_length=300)
     attachment_name: Optional[str] = Field(None, max_length=200)
     attachment_type: Optional[str] = Field(None, max_length=50)
 

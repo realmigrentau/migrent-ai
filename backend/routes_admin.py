@@ -17,6 +17,15 @@ from email_bookings import (
     send_listing_approved_to_owner,
     send_listing_rejected_to_owner,
     send_listing_changes_requested_to_owner,
+    send_listing_paused_to_owner,
+)
+from listing_lifecycle import (
+    STATUS_APPROVED,
+    STATUS_PAUSED,
+    STATUS_PENDING,
+    AvailabilityError,
+    record_event,
+    validate_availability_window,
 )
 from notification_service import notify
 
@@ -223,12 +232,31 @@ def approve_listing(
         raise HTTPException(status_code=404, detail="Listing not found")
 
     listing = listing_res.data[0]
-    if listing["moderation_status"] not in ("pending_approval", "changes_requested"):
+    if listing["moderation_status"] not in ("pending_approval", "changes_requested", "paused"):
         raise HTTPException(status_code=400, detail=f"Listing is already {listing['moderation_status']}")
+
+    # Publishing preconditions. These are the same checks the database
+    # trigger enforces; failing early here gives the moderator a readable
+    # reason instead of a constraint error.
+    from routes_owner_verification import check_owner_verified
+
+    if not check_owner_verified(str(listing["owner_id"])):
+        raise HTTPException(status_code=409, detail="The owner has not completed identity verification. Approve their ID first.")
+    full = sb.table("listings").select("images, available_from, available_to, latitude, longitude, suburb, postcode").eq("id", listing_id).execute()
+    detail = full.data[0] if full.data else {}
+    if not (detail.get("images") or []):
+        raise HTTPException(status_code=409, detail="The listing has no photos. Request genuine property photos before approving.")
+    try:
+        validate_availability_window(detail.get("available_from"), detail.get("available_to"), allow_past_start=True)
+    except AvailabilityError as e:
+        raise HTTPException(status_code=409, detail=f"Availability problem: {e}")
 
     # Update listing status
     sb.table("listings").update({
         "moderation_status": "approved",
+        "paused_at": None,
+        "paused_by_admin": False,
+        "expired_at": None,
         "moderation_notes": body.notes,
         "moderator_id": admin_id,
         "moderated_at": datetime.now(timezone.utc).isoformat(),
@@ -242,6 +270,8 @@ def approve_listing(
         "target_id": listing_id,
         "notes": body.notes,
     }).execute()
+    record_event(sb, listing_id=listing_id, actor_id=admin_id, actor_type="admin", event_type="approved",
+                 old_status=listing["moderation_status"], new_status="approved", notes=body.notes)
 
     # Email the owner
     owner_id = listing.get("owner_id")
@@ -314,6 +344,8 @@ def reject_listing(
         "reason": body.reason,
         "notes": body.notes,
     }).execute()
+    record_event(sb, listing_id=listing_id, actor_id=admin_id, actor_type="admin", event_type="rejected",
+                 old_status=listing["moderation_status"], new_status="rejected", notes=body.reason)
 
     # Email the owner
     owner_id = listing.get("owner_id")
@@ -385,6 +417,8 @@ def request_changes(
         "target_id": listing_id,
         "notes": body.notes,
     }).execute()
+    record_event(sb, listing_id=listing_id, actor_id=admin_id, actor_type="admin", event_type="changes_requested",
+                 old_status=listing["moderation_status"], new_status="changes_requested", notes=body.notes)
 
     # Email the owner
     owner_id = listing.get("owner_id")
@@ -417,6 +451,149 @@ def request_changes(
                 pass
 
     return {"message": "Changes requested", "listing_id": listing_id}
+
+
+class PauseAction(BaseModel):
+    reason: str
+    required_actions: list[str] = []
+    notify_owner: bool = True
+
+
+@router.post("/listings/{listing_id}/pause")
+def pause_listing_admin(
+    listing_id: str,
+    body: PauseAction,
+    authorization: str = Header(...),
+):
+    """Quarantine a listing: take it offline everywhere, keep every record,
+    tell the owner exactly what has to change. Reversible with /unpause.
+
+    This is the tool for a listing that should not be public right now but
+    should not be destroyed either: wrong photos, expired dates, an
+    unverified owner, an unclear price. Nothing is deleted."""
+    user, _ = _require_admin(authorization)
+    admin_id = str(user.id)
+    if not body.reason or len(body.reason.strip()) < 5:
+        raise HTTPException(status_code=400, detail="A reason is required")
+
+    sb = get_supabase_admin()
+    res = sb.table("listings").select("id, title, owner_id, moderation_status").eq("id", listing_id).execute()
+    if not res.data:
+        raise HTTPException(status_code=404, detail="Listing not found")
+    listing = res.data[0]
+    old_status = listing["moderation_status"]
+    if old_status in ("deleted",):
+        raise HTTPException(status_code=400, detail="Listing is archived")
+    if old_status == "paused":
+        return {"message": "Already paused", "listing_id": listing_id}
+
+    sb.table("listings").update({
+        "moderation_status": "paused",
+        "paused_at": datetime.now(timezone.utc).isoformat(),
+        "paused_by_admin": True,
+        "moderation_reason": body.reason,
+        "moderation_notes": "\n".join(body.required_actions) if body.required_actions else None,
+        "moderator_id": admin_id,
+        "moderated_at": datetime.now(timezone.utc).isoformat(),
+    }).eq("id", listing_id).execute()
+
+    sb.table("admin_audit_log").insert({
+        "admin_id": admin_id,
+        "action": "pause",
+        "target_type": "listing",
+        "target_id": listing_id,
+        "reason": body.reason,
+        "notes": "\n".join(body.required_actions) if body.required_actions else None,
+        "metadata": {"previous_status": old_status},
+    }).execute()
+    record_event(sb, listing_id=listing_id, actor_id=admin_id, actor_type="admin", event_type="paused",
+                 old_status=old_status, new_status="paused", notes=body.reason,
+                 metadata={"required_actions": body.required_actions})
+
+    if body.notify_owner and listing.get("owner_id"):
+        try:
+            owner_user = sb.auth.admin.get_user_by_id(listing["owner_id"])
+            owner_email = owner_user.user.email if owner_user and owner_user.user else None
+            prof = sb.table("profiles").select("name, preferred_name").eq("id", listing["owner_id"]).execute()
+            owner_name = (prof.data[0].get("preferred_name") or prof.data[0].get("name")) if prof.data else "there"
+            if owner_email:
+                send_listing_paused_to_owner(
+                    owner_email=owner_email,
+                    owner_name=owner_name or "there",
+                    listing_title=listing.get("title") or "Your listing",
+                    reason=body.reason,
+                    required_actions=body.required_actions,
+                    listing_id=listing_id,
+                )
+        except Exception:
+            logger.exception("Failed to email owner about paused listing %s", listing_id)
+        try:
+            notify(
+                user_id=listing["owner_id"],
+                event="listing_changes_requested",
+                title="Your listing is paused",
+                body=f"'{listing.get('title') or 'Your listing'}' is offline until the requested changes are made.",
+                cta_url=f"/owner/listings/edit/{listing_id}",
+                entity_type="listing",
+                entity_id=listing_id,
+            )
+        except Exception:
+            pass
+
+    return {"message": "Listing paused", "listing_id": listing_id, "previous_status": old_status}
+
+
+class UnpauseAction(BaseModel):
+    notes: Optional[str] = None
+    # "review" sends it back to the moderation queue (default, safe);
+    # "restore" puts it straight back to its pre-pause status.
+    mode: str = "review"
+
+
+@router.post("/listings/{listing_id}/unpause")
+def unpause_listing_admin(
+    listing_id: str,
+    body: UnpauseAction = UnpauseAction(),
+    authorization: str = Header(...),
+):
+    """Reverse /pause."""
+    user, _ = _require_admin(authorization)
+    admin_id = str(user.id)
+    sb = get_supabase_admin()
+    res = sb.table("listings").select("id, owner_id, moderation_status").eq("id", listing_id).execute()
+    if not res.data:
+        raise HTTPException(status_code=404, detail="Listing not found")
+    listing = res.data[0]
+    if listing["moderation_status"] != "paused":
+        raise HTTPException(status_code=400, detail="Listing is not paused")
+
+    new_status = STATUS_PENDING
+    if body.mode == "restore":
+        # Restoring straight to live must satisfy the same publish rules.
+        from routes_owner_verification import check_owner_verified
+
+        if not check_owner_verified(str(listing["owner_id"])):
+            raise HTTPException(status_code=409, detail="Owner is not verified; use mode=review instead.")
+        new_status = STATUS_APPROVED
+
+    sb.table("listings").update({
+        "moderation_status": new_status,
+        "paused_at": None,
+        "paused_by_admin": False,
+        "moderator_id": admin_id,
+        "moderated_at": datetime.now(timezone.utc).isoformat(),
+    }).eq("id", listing_id).execute()
+    sb.table("admin_audit_log").insert({
+        "admin_id": admin_id,
+        "action": "unpause",
+        "target_type": "listing",
+        "target_id": listing_id,
+        "notes": body.notes,
+        "metadata": {"mode": body.mode},
+    }).execute()
+    record_event(sb, listing_id=listing_id, actor_id=admin_id, actor_type="admin", event_type="unpaused",
+                 old_status="paused", new_status=new_status, notes=body.notes)
+    return {"message": "Listing unpaused", "listing_id": listing_id, "moderation_status": new_status}
 
 
 @router.get("/stats")
