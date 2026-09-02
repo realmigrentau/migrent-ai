@@ -52,8 +52,8 @@ export default function ROICalculator() {
   return (
     <>
       <Head>
-        <title>Owner ROI Calculator | MigRent AI</title>
-        <meta name="description" content="Calculate your return on investment from listing spare rooms on MigRent AI." />
+        <title>Owner ROI Calculator | MigRent</title>
+        <meta name="description" content="Calculate your return on investment from listing spare rooms on MigRent." />
       </Head>
 
       <div className="max-w-6xl mx-auto">
@@ -84,7 +84,7 @@ export default function ROICalculator() {
             Estimate Your <span className="text-[color:var(--color-primary)]">Rental Income</span>
           </h1>
           <p className="mt-3 text-[var(--color-ink-3)] max-w-xl mx-auto">
-            Calculate potential returns from listing your spare room on MigRent AI.
+            Calculate potential returns from listing your spare room on MigRent.
           </p>
         </motion.div>
 
@@ -295,7 +295,7 @@ export default function ROICalculator() {
           className="text-center mt-16 py-12"
         >
           <h2 className="text-2xl font-black text-[var(--color-ink)]">Ready to start earning?</h2>
-          <p className="text-[var(--color-ink-3)] mt-2">List your spare room on MigRent AI in minutes.</p>
+          <p className="text-[var(--color-ink-3)] mt-2">List your spare room on MigRent in minutes.</p>
           <Link href="/signup">
             <motion.span whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }} className="inline-block mt-6 btn-primary text-base px-8 py-3.5 rounded-xl">
               List Your Room

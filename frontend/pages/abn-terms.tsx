@@ -6,8 +6,8 @@ export default function AbnTerms() {
   return (
     <>
       <Head>
-        <title>ABN &amp; Business Details | MigRent AI</title>
-        <meta name="description" content="MigRent AI business details, ABN, fee structure, and payment terms." />
+        <title>ABN &amp; Business Details | MigRent</title>
+        <meta name="description" content="MigRent business details, ABN, fee structure, and payment terms." />
       </Head>
 
       <div className="max-w-3xl mx-auto space-y-10">
@@ -38,7 +38,7 @@ export default function AbnTerms() {
                   <tbody className="divide-y divide-[var(--color-line)] dark:divide-[var(--color-line)]">
                     <tr>
                       <td className="py-3 px-3 font-semibold text-[var(--color-ink)] w-1/3">Business Name</td>
-                      <td className="py-3 px-3">MigRent AI</td>
+                      <td className="py-3 px-3">MigRent</td>
                     </tr>
                     <tr>
                       <td className="py-3 px-3 font-semibold text-[var(--color-ink)]">ABN</td>
@@ -46,7 +46,7 @@ export default function AbnTerms() {
                     </tr>
                     <tr>
                       <td className="py-3 px-3 font-semibold text-[var(--color-ink)]">Entity Type</td>
-                      <td className="py-3 px-3">Sole Trader</td>
+                      <td className="py-3 px-3">Being confirmed</td>
                     </tr>
                     <tr>
                       <td className="py-3 px-3 font-semibold text-[var(--color-ink)]">GST Registered</td>
@@ -54,11 +54,11 @@ export default function AbnTerms() {
                     </tr>
                     <tr>
                       <td className="py-3 px-3 font-semibold text-[var(--color-ink)]">Location</td>
-                      <td className="py-3 px-3">Sydney, New South Wales, Australia</td>
+                      <td className="py-3 px-3">Australia</td>
                     </tr>
                     <tr>
                       <td className="py-3 px-3 font-semibold text-[var(--color-ink)]">Website</td>
-                      <td className="py-3 px-3">migrent-ai.vercel.app</td>
+                      <td className="py-3 px-3">migrent.vercel.app</td>
                     </tr>
                     <tr>
                       <td className="py-3 px-3 font-semibold text-[var(--color-ink)]">Contact Email</td>
@@ -74,7 +74,7 @@ export default function AbnTerms() {
           <section className="card p-6 rounded-2xl space-y-3">
             <h2 className="text-lg font-bold text-[var(--color-ink)]">Nature of Business</h2>
             <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
-              <p>MigRent AI operates as an <strong>online introduction service</strong> for accommodation. We are:</p>
+              <p>MigRent operates as an <strong>online introduction service</strong> for accommodation. We are:</p>
               <ul className="list-disc list-inside space-y-1.5">
                 <li>A technology platform that connects room owners with accommodation seekers</li>
                 <li>An AI-powered matching service for short- to medium-term rooms</li>
@@ -155,7 +155,7 @@ export default function AbnTerms() {
           <section className="card p-6 rounded-2xl space-y-3">
             <h2 className="text-lg font-bold text-[var(--color-ink)]">GST Information</h2>
             <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
-              <p>MigRent AI is currently not registered for GST as annual turnover is below the $75,000 threshold. If and when MigRent becomes GST registered, fees will be updated to include GST and tax invoices will be provided.</p>
+              <p>MigRent is currently not registered for GST as annual turnover is below the $75,000 threshold. If and when MigRent becomes GST registered, fees will be updated to include GST and tax invoices will be provided.</p>
             </div>
           </section>
 

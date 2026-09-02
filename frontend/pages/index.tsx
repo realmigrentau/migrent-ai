@@ -1,5 +1,5 @@
 import Link from "next/link";
-import Head from "next/head";
+import SEOHead from "../components/SEOHead";
 import { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useTransform, useReducedMotion, type MotionValue } from "framer-motion";
 import {
@@ -457,14 +457,10 @@ export default function Home() {
 
   return (
     <>
-      <Head>
-        <title>MigRent - A real home in Australia, found the right way.</title>
-        <meta name="description" content="Verified rooms across Australia for migrants, students, and new arrivals. Every host ID-checked. No rental history needed, no renter fees." />
-        <meta property="og:title" content="MigRent - A real home in Australia" />
-        <meta property="og:description" content="Verified rooms across Australia for migrants, students, and new arrivals." />
-        <meta property="og:type" content="website" />
-        <meta name="twitter:card" content="summary_large_image" />
-      </Head>
+      <SEOHead
+        title="A real home in Australia, found the right way"
+        description="Rooms across Australia for migrants, students and new arrivals. Hosts are ID-checked before a room goes live. Renters pay MigRent nothing."
+      />
 
       <PageSubnav
         title="MigRent"
@@ -493,54 +489,60 @@ export default function Home() {
                 Verified rooms for migrants, students, and new arrivals. No rental history needed.
               </p>
 
-              <div className="mt-8 bg-[var(--color-surface-2)] rounded-[var(--radius-xl)] border border-[var(--color-line)] shadow-[var(--shadow-card)] p-4 sm:p-5 max-w-[520px]">
+              {/* A real GET form: works before hydration, Enter submits, and
+                  the URL it produces is the same one the search page parses. */}
+              <form
+                action="/seeker/search"
+                method="get"
+                role="search"
+                aria-label="Find a room"
+                className="mt-8 bg-[var(--color-surface-2)] rounded-[var(--radius-xl)] border border-[var(--color-line)] shadow-[var(--shadow-card)] p-4 sm:p-5 max-w-[520px]"
+              >
                 <div className="grid grid-cols-1 sm:grid-cols-2 bg-[var(--color-surface)] rounded-[var(--radius-card)] overflow-hidden border border-[var(--color-line)]">
-                  <label className="px-4 py-3 border-b sm:border-b-0 sm:border-r border-[var(--color-line)] block">
-                    <span className="eyebrow">City or suburb</span>
-                    {/* Was a bare text input: a typo produced zero results with
-                        no suggestion and no recovery. A native datalist gives
-                        real suggestions without shipping a combobox. */}
+                  <div className="px-4 py-3 border-b sm:border-b-0 sm:border-r border-[var(--color-line)]">
+                    <label htmlFor="hero-city" className="eyebrow block">City or suburb</label>
                     <input
+                      id="hero-city"
+                      name="city"
+                      type="search"
                       value={city}
                       onChange={(e) => setCity(e.target.value)}
                       list="hero-places"
                       autoComplete="off"
                       placeholder="Sydney"
+                      maxLength={80}
                       className="bg-transparent border-none outline-none text-[15px] font-semibold text-[var(--color-ink)] w-full mt-1 p-0 placeholder:text-[var(--color-ink-4)] placeholder:font-normal"
-                      aria-label="City or suburb"
                     />
                     <datalist id="hero-places">
                       {HERO_PLACES.map((p) => (
                         <option key={p} value={p} />
                       ))}
                     </datalist>
-                  </label>
-                  <label className="px-4 py-3 block">
-                    <span className="eyebrow">Move-in from</span>
-                    {/* This was a static div reading "Any time", styled to look
-                        like the field beside it. It sat in the primary search
-                        widget and did nothing at all. */}
+                  </div>
+                  <div className="px-4 py-3">
+                    <label htmlFor="hero-move-in" className="eyebrow block">Move-in from</label>
                     <input
+                      id="hero-move-in"
+                      name="checkIn"
                       type="date"
                       value={moveIn}
                       min={new Date().toISOString().split("T")[0]}
                       onChange={(e) => setMoveIn(e.target.value)}
                       className="bg-transparent border-none outline-none text-[15px] font-semibold text-[var(--color-ink)] w-full mt-1 p-0"
-                      aria-label="Earliest move-in date"
                     />
-                  </label>
+                  </div>
                 </div>
                 <div className="mt-4">
                   <div className="flex justify-between items-baseline">
-                    <div className="eyebrow">Weekly budget</div>
-                    <div className="font-mono text-[13px] text-[var(--color-ink)] tabular-nums">up to ${budget}/wk</div>
+                    <label htmlFor="hero-budget" className="eyebrow">Weekly budget</label>
+                    <output htmlFor="hero-budget" className="font-mono text-[13px] text-[var(--color-ink)] tabular-nums">up to ${budget}/wk</output>
                   </div>
-                  <input type="range" min={150} max={1000} step={5} value={budget} onChange={(e) => setBudget(+e.target.value)} aria-label={`Weekly budget: up to $${budget} AUD`} className="premium-range w-full mt-2.5" />
+                  <input id="hero-budget" name="maxPrice" type="range" min={150} max={1000} step={5} value={budget} onChange={(e) => setBudget(+e.target.value)} aria-valuetext={`up to $${budget} per week`} className="premium-range w-full mt-2.5" />
                 </div>
-                <Link href={`/seeker/search?${new URLSearchParams({ city: city.trim(), maxPrice: String(budget), ...(moveIn ? { availableFrom: moveIn } : {}) }).toString()}`} style={{ color: "var(--color-primary-fg)" }} className="mt-4 w-full bg-[var(--color-primary)] text-[color:var(--color-primary-fg)] text-[15px] font-semibold h-12 rounded-[var(--radius-card)] hover:bg-[var(--color-primary-500)] transition-colors inline-flex items-center justify-center gap-2">
-                  Search rooms up to ${budget}/wk <ArrowRight className="w-4 h-4" />
-                </Link>
-              </div>
+                <button type="submit" style={{ color: "var(--color-primary-fg)" }} className="mt-4 w-full bg-[var(--color-primary)] text-[color:var(--color-primary-fg)] text-[15px] font-semibold h-12 rounded-[var(--radius-card)] hover:bg-[var(--color-primary-500)] transition-colors inline-flex items-center justify-center gap-2">
+                  Search rooms up to ${budget}/wk <ArrowRight className="w-4 h-4" aria-hidden="true" />
+                </button>
+              </form>
 
               <div className="mt-6 flex flex-wrap gap-x-5 gap-y-2.5">
                 {heroChips.map((c) => (

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
-import Head from "next/head";
+import SEOHead from "../../components/SEOHead";
 import Breadcrumb from "../../components/content/Breadcrumb";
 import { getPostBySlug, getAllPosts, type BlogCategory } from "../../data/blogPosts";
 import type { GetStaticPaths, GetStaticProps } from "next";
@@ -54,10 +54,12 @@ export default function BlogPost({ slug }: { slug: string }) {
 
   return (
     <>
-      <Head>
-        <title>{post.title} | MigRent AI Blog</title>
-        <meta name="description" content={post.excerpt} />
-      </Head>
+      <SEOHead
+        title={post.title}
+        description={post.excerpt}
+        ogType="article"
+        breadcrumbs={[{ name: "Home", path: "/" }, { name: "Blog", path: "/blog" }, { name: post.title, path: `/blog/${post.slug}` }]}
+      />
 
       <div className="max-w-4xl mx-auto">
         <Breadcrumb

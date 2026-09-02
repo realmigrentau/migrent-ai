@@ -6,8 +6,8 @@ export default function Disclaimer() {
   return (
     <>
       <Head>
-        <title>Platform Disclaimer | MigRent AI</title>
-        <meta name="description" content="MigRent AI Platform Disclaimer - understand the limitations of our service and your responsibilities as a user." />
+        <title>Platform Disclaimer | MigRent</title>
+        <meta name="description" content="MigRent Platform Disclaimer - understand the limitations of our service and your responsibilities as a user." />
       </Head>
 
       <div className="max-w-3xl mx-auto space-y-10">
@@ -33,7 +33,7 @@ export default function Disclaimer() {
           <section className="card p-6 rounded-2xl space-y-3 border-l-4 border-l-amber-500">
             <h2 className="text-lg font-bold text-[var(--color-ink)]">Important Notice</h2>
             <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
-              <p>MigRent AI is an <strong>online introduction service only</strong>. We connect room owners with accommodation seekers. We do NOT:</p>
+              <p>MigRent is an <strong>online introduction service only</strong>. We connect room owners with accommodation seekers. We do NOT:</p>
               <ul className="list-disc list-inside space-y-1.5">
                 <li>Guarantee the condition, safety, legality, or suitability of any property</li>
                 <li>Verify the accuracy of any listing, photo, or description</li>

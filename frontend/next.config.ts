@@ -1,5 +1,23 @@
 import type { NextConfig } from "next";
 import { withSentryConfig } from "@sentry/nextjs";
+import { createHash } from "node:crypto";
+import { THEME_BOOTSTRAP_SCRIPT } from "./lib/themeBootstrap";
+
+// The only inline script the site ships. Its hash goes into script-src so
+// 'unsafe-inline' can go. Any edit to lib/themeBootstrap.ts changes the hash
+// automatically; nothing has to be kept in sync by hand.
+const THEME_BOOTSTRAP_HASH = `sha256-${createHash("sha256").update(THEME_BOOTSTRAP_SCRIPT, "utf8").digest("base64")}`;
+
+// The API origin, so preview deployments pointing at a different backend
+// are not blocked by connect-src.
+const API_ORIGIN = (() => {
+  try {
+    const u = new URL(process.env.NEXT_PUBLIC_API_BASE_URL || "");
+    return u.origin.startsWith("http") ? u.origin : "";
+  } catch {
+    return "";
+  }
+})();
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
@@ -83,40 +101,42 @@ const nextConfig: NextConfig = {
   },
 
   async headers() {
-    // Content-Security-Policy, ENFORCED as of the 2026-08-29 security batch.
+    // Content-Security-Policy, enforced.
     //
-    // It shipped report-only for months on the plan that we would enforce it
-    // "once the console is clean for a week". It is now the backstop for the
-    // stored-XSS class of bug that was found in the message renderer, so it
-    // enforces. If a legitimate request turns out to be blocked, add its host
-    // to the right directive below rather than reverting to report-only.
+    // script-src: no 'unsafe-inline' and no 'unsafe-eval'. Next.js Pages
+    // Router emits external chunks plus a JSON data blob (type=
+    // application/json, which CSP does not execute). The one inline script
+    // we own, the theme bootstrap in _document.tsx, is allowed by its
+    // SHA-256 hash (THEME_BOOTSTRAP_HASH, computed from the exact string).
+    // MapLibre GL 5 does not need 'unsafe-eval'. If a browser console ever
+    // shows a script-src violation, add the host or hash here rather than
+    // reintroducing 'unsafe-inline'.
+    //
+    // style-src keeps 'unsafe-inline': framer-motion and MapLibre write
+    // inline style attributes, which nonces cannot cover.
     //
     // Hosts allowed here, and why:
-    //   fonts.googleapis / gstatic     Fraunces, Hanken Grotesk, Space Mono
     //   *.supabase.co                  auth, database, listing + avatar images
     //   *.onrender.com                 the MigRent API
     //   api.maptiler.com               search-page map tiles
-    //   *.hcaptcha.com                 signup and contact-form captcha
+    //   *.hcaptcha.com                 signup and sign-in captcha
     //   js/api.stripe.com              checkout
     //   *.vercel-scripts / -insights   Web Analytics and Speed Insights
     //   fcmregistrations /             Firebase Cloud Messaging token
     //   firebaseinstallations            enrolment, via EnableNotificationsCard
     //   *.ingest.sentry.io             error reporting, once SENTRY_DSN is set
-    //
-    // 'unsafe-inline' is required for Next.js hydration payloads and the
-    // inline theme bootstrap in _document.tsx that prevents a flash of the
-    // wrong theme on first paint. 'unsafe-eval' is required by MapLibre.
     const csp = [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://*.hcaptcha.com https://va.vercel-scripts.com",
-      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-      "font-src 'self' data: https://fonts.gstatic.com",
+      `script-src 'self' '${THEME_BOOTSTRAP_HASH}' https://js.stripe.com https://*.hcaptcha.com https://va.vercel-scripts.com`,
+      "style-src 'self' 'unsafe-inline'",
+      "font-src 'self' data:",
       "img-src 'self' data: blob: https://nsnwwfbidishftlrimer.supabase.co https://images.unsplash.com https://api.maptiler.com https://*.hcaptcha.com",
       [
         "connect-src 'self'",
         "https://nsnwwfbidishftlrimer.supabase.co",
         "wss://nsnwwfbidishftlrimer.supabase.co",
         "https://migrent-ai-backend.onrender.com",
+        API_ORIGIN,
         "https://api.maptiler.com",
         "https://*.hcaptcha.com",
         "https://api.stripe.com",
@@ -125,13 +145,17 @@ const nextConfig: NextConfig = {
         "https://firebaseinstallations.googleapis.com",
         "https://*.ingest.sentry.io",
         "https://*.ingest.de.sentry.io",
-      ].join(" "),
+      ]
+        .filter(Boolean)
+        .join(" "),
       "worker-src 'self' blob:",
+      "child-src 'self' blob:",
       "frame-src 'self' https://js.stripe.com https://*.hcaptcha.com",
       "frame-ancestors 'self'",
       "base-uri 'self'",
       "form-action 'self'",
       "object-src 'none'",
+      "manifest-src 'self'",
       "upgrade-insecure-requests",
     ].join("; ");
 
@@ -142,12 +166,15 @@ const nextConfig: NextConfig = {
       { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
       {
         key: "Permissions-Policy",
-        value: "camera=(), microphone=(), geolocation=(self), interest-cohort=()",
+        value: "camera=(), microphone=(), geolocation=(self), payment=(self \"https://js.stripe.com\"), interest-cohort=()",
       },
       {
         key: "Strict-Transport-Security",
         value: "max-age=63072000; includeSubDomains; preload",
       },
+      // Isolates this window from cross-origin openers while still letting
+      // Stripe and OAuth popups talk back.
+      { key: "Cross-Origin-Opener-Policy", value: "same-origin-allow-popups" },
     ];
     return [
       { source: "/:path*", headers: securityHeaders },

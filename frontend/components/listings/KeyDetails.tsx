@@ -1,4 +1,5 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { isWebGLAvailable } from "../../lib/webgl";
 import {
   Wifi,
   Car,
@@ -46,8 +47,7 @@ interface KeyDetailsProps {
     bathrooms?: number;
     bathroom_type?: string;
     max_guests?: number;
-    latitude?: number;
-    longitude?: number;
+    location?: { approx_lat: number; approx_lng: number; radius_m: number; precision: "approximate" } | null;
     no_smoking?: boolean;
     quiet_hours?: string;
     tenant_prefs?: string;
@@ -101,42 +101,54 @@ export default function KeyDetails({ listing }: KeyDetailsProps) {
   const mapContainer = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
 
-  // Mini-map
+  const approxLat = listing.location?.approx_lat;
+  const approxLng = listing.location?.approx_lng;
+  const [mapFailed, setMapFailed] = useState(false);
+
+  // Mini-map: an approximate area, never a pin. The public payload does not
+  // contain the exact coordinates, so there is nothing more precise to show.
   useEffect(() => {
-    if (
-      !mapContainer.current ||
-      !listing.latitude ||
-      !listing.longitude ||
-      mapRef.current
-    )
-      return;
-
+    if (!mapContainer.current || approxLat == null || approxLng == null || mapRef.current) return;
     const mapTilerKey = process.env.NEXT_PUBLIC_MAPTILER_KEY;
-    if (!mapTilerKey) return;
-
-    import("maplibre-gl").then((maplibregl) => {
-      if (!mapContainer.current) return;
-      const map = new maplibregl.default.Map({
-        container: mapContainer.current,
-        style: `https://api.maptiler.com/maps/streets-v2/style.json?key=${mapTilerKey}`,
-        center: [listing.longitude!, listing.latitude!],
-        zoom: 14,
-        interactive: false,
-        attributionControl: false,
-      });
-
-      new maplibregl.default.Marker({ color: "#f43f5e" })
-        .setLngLat([listing.longitude!, listing.latitude!])
-        .addTo(map);
-
-      mapRef.current = map;
-    });
+    if (!mapTilerKey || !isWebGLAvailable()) {
+      setMapFailed(true);
+      return;
+    }
+    let cancelled = false;
+    import("maplibre-gl")
+      .then((maplibregl) => {
+        if (cancelled || !mapContainer.current) return;
+        try {
+          const map = new maplibregl.default.Map({
+            container: mapContainer.current,
+            style: `https://api.maptiler.com/maps/streets-v2/style.json?key=${mapTilerKey}`,
+            center: [approxLng, approxLat],
+            zoom: 13.5,
+            interactive: false,
+            attributionControl: { compact: true },
+          });
+          const el = document.createElement("div");
+          el.setAttribute("aria-hidden", "true");
+          el.style.cssText = "width:88px;height:88px;border-radius:50%;background:rgba(29,100,117,0.2);border:2px solid rgba(29,100,117,0.75)";
+          new maplibregl.default.Marker({ element: el }).setLngLat([approxLng, approxLat]).addTo(map);
+          map.on("error", () => setMapFailed(true));
+          mapRef.current = map;
+        } catch {
+          setMapFailed(true);
+        }
+      })
+      .catch(() => setMapFailed(true));
 
     return () => {
-      mapRef.current?.remove();
+      cancelled = true;
+      try {
+        mapRef.current?.remove();
+      } catch {
+        /* already removed */
+      }
       mapRef.current = null;
     };
-  }, [listing.latitude, listing.longitude]);
+  }, [approxLat, approxLng]);
 
   const weeklyTotal = listing.weekly_price;
 
@@ -341,8 +353,7 @@ export default function KeyDetails({ listing }: KeyDetailsProps) {
       )}
 
       {/* Transport + map */}
-      {(listing.nearest_transport ||
-        (listing.latitude && listing.longitude)) && (
+      {(listing.nearest_transport || (approxLat != null && approxLng != null)) && (
         <GlassCard padding="md">
           <h3 className="text-sm font-semibold text-[var(--color-ink-3)] uppercase tracking-wide mb-3">
             <Train className="w-4 h-4 inline -mt-0.5 mr-1" />
@@ -358,11 +369,22 @@ export default function KeyDetails({ listing }: KeyDetailsProps) {
               Vibe: {listing.neighbourhood_vibe}
             </p>
           )}
-          {listing.latitude && listing.longitude && (
-            <div
-              ref={mapContainer}
-              className="w-full h-48 rounded-xl overflow-hidden bg-[var(--color-surface-muted)]"
-            />
+          {approxLat != null && approxLng != null && (
+            <>
+              {!mapFailed ? (
+                <div
+                  ref={mapContainer}
+                  role="img"
+                  aria-label="Map showing the approximate area of this room"
+                  className="w-full h-48 rounded-xl overflow-hidden bg-[var(--color-surface-muted)]"
+                />
+              ) : (
+                <p className="text-sm text-[var(--color-ink-3)]">Map unavailable on this device.</p>
+              )}
+              <p className="mt-2 text-xs text-[var(--color-ink-3)]">
+                Approximate area only. The exact address is shared once the host accepts your booking.
+              </p>
+            </>
           )}
         </GlassCard>
       )}
@@ -389,11 +411,14 @@ export default function KeyDetails({ listing }: KeyDetailsProps) {
                   Gender preference: {listing.gender_preference}
                 </li>
               )}
-            {listing.security_cameras && (
+            {listing.security_cameras !== undefined && (
               <li>
-                Security cameras on property
-                {listing.security_cameras_location &&
-                  `: ${listing.security_cameras_location}`}
+                <span className="font-medium text-[var(--color-ink)]">Cameras: </span>
+                {listing.security_cameras
+                  ? listing.security_cameras_location
+                    ? `Yes. Where: ${listing.security_cameras_location}. Never in bedrooms or bathrooms.`
+                    : "Yes, location not specified by the host. Ask before you book."
+                  : "The host says there are no cameras on the property."}
               </li>
             )}
             {listing.other_safety_details && (

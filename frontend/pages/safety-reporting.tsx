@@ -6,8 +6,8 @@ export default function SafetyReporting() {
   return (
     <>
       <Head>
-        <title>Safety &amp; Reporting | MigRent AI</title>
-        <meta name="description" content="Report unsafe listings, scams, or incidents on MigRent AI. Learn about our safety measures and how to stay safe." />
+        <title>Safety &amp; Reporting | MigRent</title>
+        <meta name="description" content="Report unsafe listings, scams, or incidents on MigRent. Learn about our safety measures and how to stay safe." />
       </Head>
 
       <div className="max-w-3xl mx-auto space-y-10">

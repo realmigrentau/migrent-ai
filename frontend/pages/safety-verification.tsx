@@ -6,8 +6,8 @@ export default function SafetyVerification() {
   return (
     <>
       <Head>
-        <title>Safety & Verification | MigRent AI</title>
-        <meta name="description" content="How MigRent AI keeps you safe - ID verification (VEVO), trust scores, Superhost criteria, and safety guidelines." />
+        <title>Safety & Verification | MigRent</title>
+        <meta name="description" content="How MigRent keeps you safe - ID verification (VEVO), trust scores, Superhost criteria, and safety guidelines." />
       </Head>
 
       <div className="max-w-3xl mx-auto space-y-10">
@@ -33,7 +33,7 @@ export default function SafetyVerification() {
           <section className="card p-6 rounded-2xl space-y-3">
             <h2 className="text-lg font-bold text-[var(--color-ink)]">Our Approach to Safety</h2>
             <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
-              <p>MigRent AI employs multiple layers of trust and verification to create a safer room-finding experience. While no platform can guarantee safety, we work hard to provide the tools and information you need to make informed decisions.</p>
+              <p>MigRent employs multiple layers of trust and verification to create a safer room-finding experience. While no platform can guarantee safety, we work hard to provide the tools and information you need to make informed decisions.</p>
             </div>
           </section>
 

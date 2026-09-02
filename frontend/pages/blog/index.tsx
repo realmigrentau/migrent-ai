@@ -31,7 +31,7 @@ export default function BlogIndex() {
   return (
     <>
       <Head>
-        <title>Blog | MigRent AI</title>
+        <title>Blog | MigRent</title>
         <meta name="description" content="Tips, news, and community stories for migrants finding housing in Australia." />
       </Head>
 

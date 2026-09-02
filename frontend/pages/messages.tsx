@@ -11,6 +11,7 @@ import MessageInput from "../components/messages/MessageInput";
 import MediaGallery from "../components/messages/MediaGallery";
 import QuickReplies from "../components/messages/QuickReplies";
 import Link from "next/link";
+import { API_BASE_URL } from "../lib/apiBase";
 import {
   MessageCircle,
   Sparkles,
@@ -76,28 +77,53 @@ export default function MessagesPage() {
     }
   }, [messages.length, messagesLoading, scrollToBottom]);
 
-  // ── Handle URL query param for direct navigation ──
+  // ── Direct navigation ──
+  // `?to=<public id>` comes from listing pages and profile pages. It names a
+  // recipient, nothing more: the server decides who may read or write a
+  // thread from the session token, never from this parameter. The legacy
+  // `?userId=<uuid>` form is still accepted for old notification links.
+  const { to: queryTo, listing: queryListing } = router.query;
+  const [resolvedTo, setResolvedTo] = useState<{ id: string; name: string; pfp?: string } | null>(null);
+
   useEffect(() => {
-    if (queryUserId && typeof queryUserId === "string" && threads.length > 0) {
-      const found = threads.find((t) => t.other_user_id === queryUserId);
-      if (found) {
-        setActiveThread(found);
-        setShowChat(true);
-      } else {
-        // Create a temporary thread for the user
-        setActiveThread({
-          other_user_id: queryUserId,
-          other_user_name: "User",
-          last_message: "",
-          last_message_at: new Date().toISOString(),
-          unread_count: 0,
-          is_direct: true,
-          folder: "active",
-        });
-        setShowChat(true);
-      }
+    if (typeof queryTo !== "string" || !session?.access_token) return;
+    let cancelled = false;
+    fetch(`${API_BASE_URL}/profiles/resolve/${encodeURIComponent(queryTo)}`, {
+      headers: { Authorization: `Bearer ${session.access_token}` },
+    })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (!cancelled && data?.id) setResolvedTo({ id: data.id, name: data.name || "Host", pfp: data.custom_pfp || undefined });
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [queryTo, session?.access_token]);
+
+  useEffect(() => {
+    const targetId = resolvedTo?.id || (typeof queryUserId === "string" ? queryUserId : null);
+    if (!targetId || !user?.id || targetId === user.id) return;
+    if (threadsLoading) return;
+    const found = threads.find((t) => t.other_user_id === targetId);
+    if (found) {
+      setActiveThread(found);
+      setShowChat(true);
+    } else {
+      setActiveThread({
+        other_user_id: targetId,
+        other_user_name: resolvedTo?.name || "User",
+        other_user_pfp: resolvedTo?.pfp,
+        listing_id: typeof queryListing === "string" ? queryListing : undefined,
+        last_message: "",
+        last_message_at: new Date().toISOString(),
+        unread_count: 0,
+        is_direct: true,
+        folder: "active",
+      });
+      setShowChat(true);
     }
-  }, [queryUserId, threads]);
+  }, [queryUserId, resolvedTo, queryListing, threads, threadsLoading, user?.id]);
 
   // ── Thread selection handler ──
   const handleSelectThread = (thread: Thread) => {

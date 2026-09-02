@@ -1,89 +1,77 @@
 import Link from "next/link";
-import { motion } from "framer-motion";
 
-interface ConsentCheckboxesProps {
-  consents: {
-    facilitator: boolean;
-    terms: boolean;
-    rentalLaws: boolean;
-    indemnity: boolean;
-  };
-  onChange: (consents: ConsentCheckboxesProps["consents"]) => void;
-  error?: string;
+/**
+ * Sign-up consent.
+ *
+ * One required checkbox: agreement to the Terms and Privacy Policy. The
+ * previous four checkboxes (facilitator status, rental-law compliance and a
+ * broad indemnity) were UI friction standing in for legal drafting. Those
+ * statements now appear as plain acknowledgements beneath the checkbox and
+ * live in the Terms themselves, where counsel can review their wording.
+ * See docs/legal/identity-and-claims.md, item "sign-up consent".
+ *
+ * The prop shape is unchanged so existing callers keep working: ticking the
+ * box sets every key, unticking clears every key.
+ */
+
+interface Consents {
+  facilitator: boolean;
+  terms: boolean;
+  rentalLaws: boolean;
+  indemnity: boolean;
 }
 
-export default function ConsentCheckboxes({ consents, onChange, error }: ConsentCheckboxesProps) {
-  const allChecked = consents.facilitator && consents.terms && consents.rentalLaws && consents.indemnity;
+interface ConsentCheckboxesProps {
+  consents: Consents;
+  onChange: (consents: Consents) => void;
+  error?: string;
+  id?: string;
+}
 
-  const toggle = (key: keyof typeof consents) => {
-    onChange({ ...consents, [key]: !consents[key] });
-  };
+export default function ConsentCheckboxes({ consents, onChange, error, id = "consent-terms" }: ConsentCheckboxesProps) {
+  const checked = consents.terms && consents.facilitator && consents.rentalLaws && consents.indemnity;
+  const errorId = `${id}-error`;
+  const descId = `${id}-description`;
+
+  const set = (value: boolean) => onChange({ facilitator: value, terms: value, rentalLaws: value, indemnity: value });
 
   return (
     <div className="space-y-3">
-      <p className="text-xs font-semibold text-[var(--color-ink-3)] uppercase tracking-wider">
-        Legal Acknowledgements
+      <div className="flex items-start gap-3">
+        <input
+          id={id}
+          name="consent"
+          type="checkbox"
+          required
+          checked={checked}
+          onChange={(e) => set(e.target.checked)}
+          aria-invalid={error && !checked ? true : undefined}
+          aria-describedby={`${descId}${error && !checked ? ` ${errorId}` : ""}`}
+          className="mt-0.5 w-5 h-5 rounded border-[var(--color-line-2)] text-[var(--color-primary)] focus:ring-[var(--color-ink)]/30 dark:bg-[var(--color-surface-muted)] shrink-0"
+        />
+        <label htmlFor={id} className="text-[13px] text-[var(--color-ink-2)] leading-relaxed cursor-pointer">
+          I agree to the{" "}
+          <Link href="/terms-of-service" target="_blank" rel="noopener" className="text-[var(--color-primary)] underline underline-offset-2">
+            Terms of Service
+          </Link>{" "}
+          and{" "}
+          <Link href="/privacy-policy" target="_blank" rel="noopener" className="text-[var(--color-primary)] underline underline-offset-2">
+            Privacy Policy
+          </Link>
+          , and I am 18 or older.
+        </label>
+      </div>
+
+      <p id={descId} className="text-[12px] text-[var(--color-ink-3)] leading-relaxed">
+        By creating an account you acknowledge that MigRent introduces renters and hosts and is not a real estate agent; that it does not
+        collect rent or bonds or manage tenancy agreements; and that you will follow the rental laws of your state or territory. The full
+        wording is in the Terms.
       </p>
 
-      <label className="flex items-start gap-3 cursor-pointer group">
-        <input
-          type="checkbox"
-          checked={consents.facilitator}
-          onChange={() => toggle("facilitator")}
-          className="mt-0.5 w-4 h-4 rounded border-[var(--color-line-2)] dark:border-[var(--color-line-2)] text-[var(--color-primary)] focus:ring-[var(--color-ink)]/30 dark:bg-[var(--color-surface-muted)] shrink-0"
-        />
-        <span className="text-xs text-[var(--color-ink-2)] leading-relaxed group-hover:text-[var(--color-ink)] dark:group-hover:text-white transition-colors">
-          I understand MigRent is a <strong>facilitator only</strong>, not a real estate agent, and does not collect rent, bonds, or manage tenancy agreements.
-        </span>
-      </label>
-
-      <label className="flex items-start gap-3 cursor-pointer group">
-        <input
-          type="checkbox"
-          checked={consents.terms}
-          onChange={() => toggle("terms")}
-          className="mt-0.5 w-4 h-4 rounded border-[var(--color-line-2)] dark:border-[var(--color-line-2)] text-[var(--color-primary)] focus:ring-[var(--color-ink)]/30 dark:bg-[var(--color-surface-muted)] shrink-0"
-        />
-        <span className="text-xs text-[var(--color-ink-2)] leading-relaxed group-hover:text-[var(--color-ink)] dark:group-hover:text-white transition-colors">
-          I agree to the{" "}
-          <Link href="/terms-of-service" target="_blank" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2">Terms of Service</Link>,{" "}
-          <Link href="/privacy-policy" target="_blank" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2">Privacy Policy</Link>, and{" "}
-          <Link href="/disclaimer" target="_blank" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2">Platform Disclaimer</Link>.
-        </span>
-      </label>
-
-      <label className="flex items-start gap-3 cursor-pointer group">
-        <input
-          type="checkbox"
-          checked={consents.rentalLaws}
-          onChange={() => toggle("rentalLaws")}
-          className="mt-0.5 w-4 h-4 rounded border-[var(--color-line-2)] dark:border-[var(--color-line-2)] text-[var(--color-primary)] focus:ring-[var(--color-ink)]/30 dark:bg-[var(--color-surface-muted)] shrink-0"
-        />
-        <span className="text-xs text-[var(--color-ink-2)] leading-relaxed group-hover:text-[var(--color-ink)] dark:group-hover:text-white transition-colors">
-          I will comply with all applicable <Link href="/rental-laws" target="_blank" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2">local rental laws</Link> and regulations in my state or territory.
-        </span>
-      </label>
-
-      <label className="flex items-start gap-3 cursor-pointer group">
-        <input
-          type="checkbox"
-          checked={consents.indemnity}
-          onChange={() => toggle("indemnity")}
-          className="mt-0.5 w-4 h-4 rounded border-[var(--color-line-2)] dark:border-[var(--color-line-2)] text-[var(--color-primary)] focus:ring-[var(--color-ink)]/30 dark:bg-[var(--color-surface-muted)] shrink-0"
-        />
-        <span className="text-xs text-[var(--color-ink-2)] leading-relaxed group-hover:text-[var(--color-ink)] dark:group-hover:text-white transition-colors">
-          I <Link href="/terms-of-service#10" target="_blank" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2">indemnify MigRent</Link> against any claims arising from deals or arrangements I make through the platform.
-        </span>
-      </label>
-
-      {error && !allChecked && (
-        <motion.p
-          initial={{ opacity: 0, y: -5 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-xs text-[var(--color-danger-500)] dark:text-[var(--color-danger-500)]"
-        >
+      {error && !checked && (
+        <p id={errorId} role="alert" className="text-[12.5px] text-[var(--color-danger-500)]">
           {error}
-        </motion.p>
+        </p>
       )}
     </div>
   );

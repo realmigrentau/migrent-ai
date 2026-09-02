@@ -6,8 +6,8 @@ export default function NoAgency() {
   return (
     <>
       <Head>
-        <title>We Are Not Your Agent | MigRent AI</title>
-        <meta name="description" content="MigRent AI is an online introduction service, not a real estate agent. Understand our facilitator model and your responsibilities." />
+        <title>We Are Not Your Agent | MigRent</title>
+        <meta name="description" content="MigRent is an online introduction service, not a real estate agent. Understand our facilitator model and your responsibilities." />
       </Head>
 
       <div className="max-w-3xl mx-auto space-y-10">
@@ -33,7 +33,7 @@ export default function NoAgency() {
           <section className="card p-6 rounded-2xl space-y-3 border-l-4 border-l-violet-500">
             <h2 className="text-lg font-bold text-[var(--color-ink)]">MigRent is a Facilitator, Not an Agent</h2>
             <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
-              <p>MigRent AI operates as an <strong>online introduction service</strong> (similar to platforms like Flatmates.com.au). We are not a real estate agent, property manager, landlord, or letting agent. We do not hold a real estate licence and are not required to under Australian law.</p>
+              <p>MigRent operates as an <strong>online introduction service</strong> (similar to platforms like Flatmates.com.au). We are not a real estate agent, property manager, landlord, or letting agent. We do not hold a real estate licence and are not required to under Australian law.</p>
             </div>
           </section>
 

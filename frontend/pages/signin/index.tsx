@@ -7,6 +7,7 @@ import { useAuth } from "../../hooks/useAuth";
 import SignInButton from "../../components/SignInButton";
 import SEOHead from "../../components/SEOHead";
 import { Logo } from "../../components/ui/Logo";
+import { safeRedirectPath } from "../../lib/safeRedirect";
 
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
@@ -23,7 +24,7 @@ export default function SignIn() {
 
   // Get redirect URL from query params (e.g., /signin?redirect=/dashboard)
   // Default to /dashboard for returning users
-  const redirectUrl = typeof router.query.redirect === "string" ? router.query.redirect : "/dashboard";
+  const redirectUrl = safeRedirectPath(router.query.redirect);
 
   useEffect(() => {
     if (session) {
@@ -31,13 +32,21 @@ export default function SignIn() {
     }
   }, [session, redirectUrl, router]);
 
+  const [fieldErrors, setFieldErrors] = useState<{ email?: string; password?: string }>({});
+
   if (session) {
     return null;
   }
 
-  const handleLogin = async () => {
+  const handleLogin = async (e?: React.FormEvent) => {
+    e?.preventDefault();
     setMsg("");
-    if (!email || !password) {
+    const errors: { email?: string; password?: string } = {};
+    if (!email.trim()) errors.email = "Enter your email address.";
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) errors.email = "That email address looks incomplete.";
+    if (!password) errors.password = "Enter your password.";
+    setFieldErrors(errors);
+    if (Object.keys(errors).length > 0) {
       setMsg(t("auth.enterEmailPassword"));
       return;
     }
@@ -52,18 +61,25 @@ export default function SignIn() {
       }
 
       const { error } = await supabase.auth.signInWithPassword({
-        email,
+        email: email.trim(),
         password,
         options: captchaToken ? { captchaToken } : undefined,
       });
 
       if (error) {
-        setMsg(error.message);
+        // Supabase's messages are terse; say what to do next.
+        const m = error.message.toLowerCase();
+        if (m.includes("invalid login") || m.includes("invalid credentials")) setMsg("That email and password do not match. Check both, or reset your password.");
+        else if (m.includes("email not confirmed")) setMsg("Confirm your email first. We sent you a link when you signed up.");
+        else if (m.includes("rate limit") || m.includes("too many")) setMsg("Too many attempts. Wait a few minutes and try again.");
+        else setMsg(error.message);
       } else {
         router.push(redirectUrl);
       }
-    } catch {
-      setMsg(t("auth.verificationFailed"));
+    } catch (err) {
+      const offline = typeof navigator !== "undefined" && navigator.onLine === false;
+      setMsg(offline ? "You appear to be offline. Reconnect and try again." : t("auth.verificationFailed"));
+      void err;
     } finally {
       resetInstance?.();
       setLoading(false);
@@ -126,33 +142,42 @@ export default function SignIn() {
             </Link>
           </p>
 
-          <div className="flex flex-col gap-3.5 mt-8">
-            <label className="block">
-              <div className="text-[12.5px] font-semibold text-[var(--color-ink-2)] mb-1.5">Email</div>
+          <form onSubmit={handleLogin} noValidate className="flex flex-col gap-3.5 mt-8" aria-describedby={msg ? "signin-status" : undefined}>
+            <div>
+              <label htmlFor="signin-email" className="block text-[12.5px] font-semibold text-[var(--color-ink-2)] mb-1.5">Email</label>
               <input
+                id="signin-email"
+                name="email"
                 type="email"
+                autoComplete="email"
+                inputMode="email"
+                required
                 placeholder="you@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                aria-invalid={fieldErrors.email ? true : undefined}
+                aria-describedby={fieldErrors.email ? "signin-email-error" : undefined}
                 className="input-field"
               />
-            </label>
-            <label className="block">
-              <div className="text-[12.5px] font-semibold text-[var(--color-ink-2)] mb-1.5">Password</div>
+              {fieldErrors.email && <p id="signin-email-error" className="mt-1 text-[12.5px] text-[var(--color-danger-500)]">{fieldErrors.email}</p>}
+            </div>
+            <div>
+              <label htmlFor="signin-password" className="block text-[12.5px] font-semibold text-[var(--color-ink-2)] mb-1.5">Password</label>
               <input
+                id="signin-password"
+                name="password"
                 type="password"
-                placeholder=""
+                autoComplete="current-password"
+                required
+                minLength={6}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                aria-invalid={fieldErrors.password ? true : undefined}
+                aria-describedby={fieldErrors.password ? "signin-password-error" : undefined}
                 className="input-field"
-                onKeyDown={(e) => e.key === "Enter" && handleLogin()}
               />
-            </label>
-            {/* A "Remember this device" checkbox used to sit here. It was
-                defaultChecked with no state and no handler, so ticking or
-                unticking it did nothing. Supabase already persists the session
-                across visits, which is the behaviour it implied, so the honest
-                move is to drop the control rather than fake it. */}
+              {fieldErrors.password && <p id="signin-password-error" className="mt-1 text-[12.5px] text-[var(--color-danger-500)]">{fieldErrors.password}</p>}
+            </div>
             <div className="flex items-center justify-end">
               <Link href="/forgot-password" className="text-[13px] font-semibold text-[var(--color-primary)] hover:underline underline-offset-[3px]">
                 Forgot password?
@@ -160,23 +185,24 @@ export default function SignIn() {
             </div>
 
             <button
-              onClick={handleLogin}
+              type="submit"
               disabled={loading}
+              aria-busy={loading}
               className="btn-primary h-[46px] w-full text-[15px] rounded-[10px] mt-2 disabled:opacity-50"
             >
               {loading ? (
                 <span className="flex items-center justify-center gap-2">
-                  <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" aria-hidden="true" />
                   {t("auth.signingIn")}
                 </span>
               ) : (
                 <>
                   Sign in
-                  <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M4 10h12M11 5l5 5-5 5" /></svg>
+                  <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M4 10h12M11 5l5 5-5 5" /></svg>
                 </>
               )}
             </button>
-          </div>
+          </form>
 
           <div className="flex items-center gap-3 my-6 text-[var(--color-ink-3)]">
             <div className="flex-1 h-px bg-[var(--color-line)]" />
@@ -186,6 +212,7 @@ export default function SignIn() {
 
           <SignInButton redirectTo={typeof window !== "undefined" ? window.location.origin : undefined} />
 
+          <div id="signin-status" role="alert" aria-live="assertive" aria-atomic="true">
           {msg && (
             <motion.p
               initial={{ opacity: 0, y: -8 }}
@@ -199,6 +226,7 @@ export default function SignIn() {
               {msg}
             </motion.p>
           )}
+          </div>
 
           <p className="mt-8 text-[11.5px] text-[var(--color-ink-3)] leading-[1.5]">
             By continuing you agree to our{" "}

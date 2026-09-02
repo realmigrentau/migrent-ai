@@ -155,7 +155,7 @@ export default function OwnerDashboard() {
         {/* Platform fee info */}
         <section className="card-subtle p-6 rounded-2xl space-y-3 text-sm text-[var(--color-ink-3)]">
           <div className="inline-flex items-center px-3 py-1 rounded-full text-xs bg-[var(--color-surface-muted)] text-[var(--color-ink)] dark:text-[var(--color-ink-4)] border border-[var(--color-line)]">
-            MigRent AI ABN: 22 669 566 941
+            MigRent ABN: 22 669 566 941
           </div>
           <p>
             <strong className="text-[var(--color-ink-2)]">

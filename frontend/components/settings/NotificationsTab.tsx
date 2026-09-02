@@ -16,7 +16,6 @@ import {
   AlertCircle,
 } from "lucide-react";
 import type { NotificationPrefs } from "../../hooks/useSettingsData";
-import { useNotifications } from "../../hooks/useNotifications";
 
 interface NotificationsTabProps {
   notifPrefs: NotificationPrefs;
@@ -29,19 +28,9 @@ export default function NotificationsTab({
   updateNotifPrefs,
   showMessage,
 }: NotificationsTabProps) {
-  const [testSent, setTestSent] = useState(false);
-  const { sendTestEmail, sending } = useNotifications();
-
-  const handleTestEmail = async () => {
-    try {
-      await sendTestEmail();
-      setTestSent(true);
-      showMessage("Test email sent! Check your inbox.", "success");
-      setTimeout(() => setTestSent(false), 3000);
-    } catch (err: any) {
-      showMessage(err.message || "Failed to send test email", "error");
-    }
-  };
+  // The "Send test email" button used to call an open /api/emails/send
+  // endpoint that would mail any address it was given. Transactional email
+  // is sent by the backend only; there is no browser-triggered send.
 
   const emailPrefs: Array<{
     key: keyof NotificationPrefs;
@@ -219,41 +208,7 @@ export default function NotificationsTab({
       </GlassCard>
 
       {/* Test Email */}
-      <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3 }}
-        className="flex justify-center"
-      >
-        <button
-          onClick={handleTestEmail}
-          disabled={testSent || sending}
-          className={`
-            flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium transition-all
-            ${testSent
-              ? "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent)]/10 text-[var(--color-accent)] dark:text-[var(--color-accent)] border border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)]"
-              : "btn-secondary hover:border-[var(--color-primary-soft)] dark:hover:border-[var(--color-primary)]/30"
-            }
-          `}
-        >
-          {sending ? (
-            <>
-              <Loader2 className="w-4 h-4 animate-spin" />
-              Sending...
-            </>
-          ) : testSent ? (
-            <>
-              <CheckCircle2 className="w-4 h-4" />
-              Test Email Sent!
-            </>
-          ) : (
-            <>
-              <Send className="w-4 h-4" />
-              Send Test Email
-            </>
-          )}
-        </button>
-      </motion.div>
+
     </div>
   );
 }

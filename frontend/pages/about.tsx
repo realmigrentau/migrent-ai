@@ -33,8 +33,8 @@ export default function About() {
   return (
     <>
       <Head>
-        <title>About | MigRent AI</title>
-        <meta name="description" content="MigRent AI - founded in Sydney by an entrepreneur building an AI-powered rental marketplace for migrants and students across Australia." />
+        <title>About | MigRent</title>
+        <meta name="description" content="MigRent - founded in Sydney by an entrepreneur building an AI-powered rental marketplace for migrants and students across Australia." />
       </Head>
 
       <PageSubnav
@@ -163,7 +163,7 @@ export default function About() {
               <div className="grid sm:grid-cols-2 gap-4">
                 <div>
                   <span className="text-xs font-medium uppercase tracking-wider text-[var(--color-ink-3)]">{t("about.businessName")}</span>
-                  <p className="font-semibold text-[var(--color-ink)]">MigRent AI</p>
+                  <p className="font-semibold text-[var(--color-ink)]">MigRent</p>
                 </div>
                 <div>
                   <span className="text-xs font-medium uppercase tracking-wider text-[var(--color-ink-3)]">{t("about.abn")}</span>

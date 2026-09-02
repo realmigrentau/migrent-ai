@@ -894,6 +894,7 @@ export async function sendMessage(
     message_text: string;
     message_html?: string;
     attachment_url?: string;
+    attachment_path?: string;
     attachment_name?: string;
     attachment_type?: string;
   }
@@ -2242,6 +2243,240 @@ export async function deleteNotification(token: string, notificationId: string) 
     return await res.json();
   } catch (err) {
     console.error("deleteNotification error:", err);
+    return null;
+  }
+}
+
+
+// ── Public data contract types (mirror backend/public_dto.py) ────────────
+
+export type VerificationStatus = "verified" | "pending" | "unverified";
+
+export interface VerificationSummary {
+  status: VerificationStatus;
+  checks: {
+    email_confirmed: boolean;
+    phone_confirmed: boolean;
+    government_id: "approved" | "pending" | "rejected" | "not_submitted";
+  };
+  verified_at: string | null;
+  explainer_url: string;
+  disclaimer: string;
+}
+
+export interface PublicOwner {
+  public_id: string | null;
+  name: string | null;
+  avatar_url: string | null;
+  bio: string | null;
+  member_since: string | null;
+  listings_count: number | null;
+  achievement_badges: string[];
+  verification: VerificationSummary;
+}
+
+export interface PublicLocation {
+  approx_lat: number;
+  approx_lng: number;
+  radius_m: number;
+  precision: "approximate";
+}
+
+export type ListingPublicState = "published" | "expired" | "unavailable";
+
+export interface PublicListing {
+  id: string;
+  title?: string | null;
+  suburb?: string | null;
+  city?: string | null;
+  postcode?: number | null;
+  weekly_price: number;
+  daily_price?: number | null;
+  description?: string | null;
+  images?: string[];
+  property_type?: string | null;
+  place_type?: string | null;
+  room_type?: string | null;
+  bedrooms?: number | null;
+  beds?: number | null;
+  bathrooms?: number | null;
+  bathroom_type?: string | null;
+  max_guests?: number | null;
+  furnished?: boolean | null;
+  bills_included?: boolean | null;
+  parking?: boolean | null;
+  air_conditioning?: boolean | null;
+  pets_allowed?: boolean | null;
+  pet_details?: string | null;
+  couples_ok?: boolean | null;
+  gender_preference?: string | null;
+  instant_book?: boolean | null;
+  instant_book_enabled?: boolean | null;
+  internet_included?: boolean | null;
+  internet_speed?: string | null;
+  laundry?: string | null;
+  dishwasher?: boolean | null;
+  available_from?: string | null;
+  available_to?: string | null;
+  min_stay?: string | null;
+  min_stay_weeks?: number | null;
+  max_stay_weeks?: number | null;
+  nearest_transport?: string | null;
+  station_distance_min?: number | null;
+  neighbourhood_vibe?: string | null;
+  highlights?: string[] | null;
+  no_smoking?: boolean | null;
+  quiet_hours?: string | null;
+  tenant_prefs?: string | null;
+  security_cameras?: boolean | null;
+  security_cameras_location?: string | null;
+  other_safety_details?: string | null;
+  who_else_lives_here?: string | null;
+  total_other_people?: string | null;
+  bond?: string | null;
+  created_at?: string;
+  display_address: string;
+  location: PublicLocation | null;
+  public_state: ListingPublicState;
+  owner: PublicOwner | null;
+  host_verification: VerificationSummary;
+  match_score?: number;
+  match_reasons?: string[];
+  // Owner / moderator view only
+  viewer?: { is_owner: boolean; can_moderate: boolean };
+  street_address?: string | null;
+  exact_location?: { lat: number; lng: number } | null;
+  moderation_status?: string;
+  moderation_notes?: string | null;
+  moderation_reason?: string | null;
+  review_stats?: { review_count: number; avg_rating: number; avg_migrant_friendliness: number | null; positive_count: number };
+  recent_reviews?: unknown[];
+  similar_listings?: PublicListing[];
+}
+
+export interface SearchPage {
+  ok: boolean;
+  listings: PublicListing[];
+  total: number | null;
+  hasMore: boolean;
+  /** "network" when the request could not be made, "server" for a 5xx, "bad-request" for a 4xx. */
+  error: "network" | "server" | "bad-request" | null;
+  errorMessage?: string;
+}
+
+/**
+ * Search with pagination metadata and a real error state.
+ *
+ * `searchListings` above swallows failures and returns [], which made an
+ * outage look like "no rooms match your search". This variant tells the
+ * caller what actually happened so the page can offer a retry.
+ */
+export async function searchListingsPage(
+  params: Record<string, string>,
+  token?: string,
+  init?: { signal?: AbortSignal; baseUrl?: string }
+): Promise<SearchPage> {
+  const base = init?.baseUrl ?? BASE_URL;
+  const headers: Record<string, string> = { Accept: "application/json" };
+  if (token) headers["Authorization"] = `Bearer ${token}`;
+  let res: Response;
+  try {
+    res = await fetch(`${base}/listings/search?${new URLSearchParams(params).toString()}`, {
+      method: "GET",
+      headers,
+      signal: init?.signal,
+    });
+  } catch (err) {
+    if ((err as { name?: string })?.name === "AbortError") throw err;
+    return { ok: false, listings: [], total: null, hasMore: false, error: "network" };
+  }
+  if (!res.ok) {
+    let message = "";
+    try {
+      const body = await res.json();
+      message = typeof body?.detail === "string" ? body.detail : "";
+    } catch {
+      /* no body */
+    }
+    return {
+      ok: false,
+      listings: [],
+      total: null,
+      hasMore: false,
+      error: res.status >= 500 ? "server" : "bad-request",
+      errorMessage: message,
+    };
+  }
+  let data: unknown;
+  try {
+    data = await res.json();
+  } catch {
+    return { ok: false, listings: [], total: null, hasMore: false, error: "server" };
+  }
+  const listings = Array.isArray(data) ? (data as PublicListing[]) : ((data as { listings?: PublicListing[] })?.listings ?? []);
+  const totalHeader = res.headers.get("X-Total-Count");
+  const total = totalHeader && totalHeader !== "" && !Number.isNaN(Number(totalHeader)) ? Number(totalHeader) : null;
+  const hasMoreHeader = res.headers.get("X-Has-More");
+  const hasMore = hasMoreHeader ? hasMoreHeader === "true" : listings.length >= Number(params.limit || 20);
+  return { ok: true, listings, total, hasMore, error: null };
+}
+
+/**
+ * What the Stripe webhook has confirmed for a checkout session.
+ * GET /bookings/checkout-status?session_id=
+ */
+export async function getCheckoutStatus(token: string, sessionId: string) {
+  try {
+    const res = await fetch(`${BASE_URL}/bookings/checkout-status?session_id=${encodeURIComponent(sessionId)}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!res.ok) return { ok: false as const, status: res.status };
+    const body = await res.json();
+    return { ok: true as const, paid: Boolean(body.paid), bookingId: body.booking_id as string, bookingStatus: body.status as string };
+  } catch {
+    return { ok: false as const, status: 0 };
+  }
+}
+
+/** Upload a message attachment through the API (validated, private bucket). */
+export async function uploadMessageAttachment(token: string, file: File) {
+  const form = new FormData();
+  form.append("file", file, file.name);
+  const res = await fetch(`${BASE_URL}/messages/attachments`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}` },
+    body: form,
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || `Upload failed (${res.status})`);
+  }
+  return (await res.json()) as { attachment_path: string; attachment_name: string; attachment_type: string };
+}
+
+async function ownerListingAction(token: string, listingId: string, action: "renew" | "pause" | "resume", body?: Record<string, unknown>) {
+  const res = await fetch(`${BASE_URL}/listings/${encodeURIComponent(listingId)}/${action}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.detail || `Could not ${action} listing (${res.status})`);
+  return data as { id: string; moderation_status: string; available_to?: string };
+}
+
+export const renewListing = (token: string, listingId: string, availableTo: string, availableFrom?: string) =>
+  ownerListingAction(token, listingId, "renew", { available_to: availableTo, ...(availableFrom ? { available_from: availableFrom } : {}) });
+export const pauseListing = (token: string, listingId: string) => ownerListingAction(token, listingId, "pause");
+export const resumeListing = (token: string, listingId: string) => ownerListingAction(token, listingId, "resume");
+
+/** Public profile by opaque id (or, for old links, the auth id). */
+export async function getPublicProfileCard(idOrPublicId: string) {
+  try {
+    const res = await fetch(`${BASE_URL}/profiles/${encodeURIComponent(idOrPublicId)}`);
+    if (!res.ok) return null;
+    return await res.json();
+  } catch {
     return null;
   }
 }

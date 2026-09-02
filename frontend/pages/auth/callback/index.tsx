@@ -22,12 +22,16 @@ function isNewUser(session: Session): boolean {
 /**
  * Send welcome + legal reminder emails for new signups (best-effort).
  */
-async function sendWelcomeEmails(email: string, userName: string, userRole: string) {
+async function sendWelcomeEmails(_email: string, userName: string, userRole: string) {
+  // The recipient is the signed-in user; the API reads it from the session
+  // cookie rather than trusting an address in the body.
+  void _email;
   try {
     await fetch("/api/emails/welcome-suite", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, userName, userRole }),
+      credentials: "same-origin",
+      body: JSON.stringify({ userName, userRole }),
     });
   } catch {
     // Best-effort - don't block the auth flow

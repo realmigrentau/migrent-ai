@@ -27,7 +27,7 @@ export default function PublicProfilePage() {
   const { id } = router.query;
   const { user } = useAuth();
   const { profile, badges, loading, error } = useUserProfile(id as string | undefined);
-  const { listings, loading: listingsLoading, hasMore, loadMore } = useProfileListings(id as string | undefined);
+  const { listings, loading: listingsLoading, hasMore, loadMore } = useProfileListings(profile?.public_id ?? undefined);
   const { reviews, loading: reviewsLoading, reviewsCount, averageRating } = useProfileReviews(id as string | undefined);
 
   const [activeTab, setActiveTab] = useState("about");

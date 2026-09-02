@@ -6,8 +6,8 @@ export default function CookiePolicy() {
   return (
     <>
       <Head>
-        <title>Cookie Policy | MigRent AI</title>
-        <meta name="description" content="MigRent AI Cookie Policy - what cookies we use, why, and how to manage them." />
+        <title>Cookie Policy | MigRent</title>
+        <meta name="description" content="MigRent Cookie Policy - what cookies we use, why, and how to manage them." />
       </Head>
 
       <div className="max-w-3xl mx-auto space-y-10">

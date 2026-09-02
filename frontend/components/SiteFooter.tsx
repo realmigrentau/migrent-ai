@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Logo } from "./ui/Logo";
 import { BadgeCheck, Lock, Wallet, HeartHandshake } from "lucide-react";
+import { copyrightLine } from "../lib/siteIdentity";
 
 /* Site footer (design.md · Sand & Ocean).
  * A full directory of everything MigRent offers, in six columns, with a
@@ -14,7 +15,7 @@ const columns: { heading: string; links: { label: string; href: string }[] }[] =
       { label: "How it works", href: "/for-seekers" },
       { label: "FAQ", href: "/faq" },
       { label: "Guides", href: "/guides" },
-      { label: "Tenant rights", href: "/rental-laws" },
+      { label: "Tenant rights", href: "/resources/rental-laws" },
     ],
   },
   {
@@ -134,15 +135,12 @@ export default function SiteFooter() {
         {/* Bottom bar */}
         <div className="flex flex-col md:flex-row justify-between items-center gap-3 pt-6 mt-12 border-t border-[var(--color-line)]">
           <div className="font-mono text-[11.5px] text-[var(--color-ink-3)] uppercase tracking-[0.04em]">
-            © {new Date().getFullYear()} MigRent Pty Ltd · ABN 22 669 566 941 · Made in Naarm / Melbourne
+            {copyrightLine()}
           </div>
           <div className="flex items-center gap-4 text-[11.5px] text-[var(--color-ink-3)]">
             <span>Australia (English)</span>
             <span>AUD $</span>
-            <span className="inline-flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-accent)]" />
-              All systems operational
-            </span>
+            <Link href="/contact" className="hover:text-[var(--color-primary)] transition-colors">Report a problem</Link>
           </div>
         </div>
       </div>

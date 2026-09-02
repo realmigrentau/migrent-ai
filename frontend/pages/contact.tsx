@@ -3,6 +3,7 @@ import { useState, FormEvent, useMemo } from "react";
 import { submitSupportRequest } from "../lib/api";
 import { motion } from "framer-motion";
 import Head from "next/head";
+import { businessDetails, siteIdentity, supportPromise } from "../lib/siteIdentity";
 
 type Role = "seeker" | "owner" | "other";
 
@@ -18,9 +19,9 @@ type EnquiryCategory =
   | "GENERAL";
 
 const CATEGORIES: { value: EnquiryCategory; label: string; helper: string }[] = [
-  { value: "ACCOUNT", label: "Account help (login, password)", helper: "We reply within 24h on weekdays." },
-  { value: "VERIFY", label: "Verification help", helper: "We reply within 24h on weekdays." },
-  { value: "LISTING", label: "Listing help (create, edit, photos)", helper: "We reply within 24h on weekdays." },
+  { value: "ACCOUNT", label: "Account help (login, password)", helper: "We aim to reply within one business day." },
+  { value: "VERIFY", label: "Verification help", helper: "We aim to reply within one business day." },
+  { value: "LISTING", label: "Listing help (create, edit, photos)", helper: "We aim to reply within one business day." },
   { value: "BOOKING", label: "Booking or payment", helper: "Priority lane. Same business day where possible." },
   { value: "SAFETY", label: "Safety or report a user", helper: "Please also use the in-app Report button if it's urgent." },
   { value: "LEGAL", label: "Legal, privacy or DMCA", helper: "See our Legal Contact page for faster routing." },
@@ -71,7 +72,7 @@ export default function Contact() {
     });
     setSubmitting(false);
     if (!result) {
-      setError("We couldn't send your message right now. Please email migrentau@gmail.com directly.");
+      setError(`We could not send your message right now. Please email ${siteIdentity.emails.support} directly.`);
       return;
     }
     setSubmitted(true);
@@ -92,8 +93,8 @@ export default function Contact() {
         <motion.section initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
           <div className="flex flex-col items-start gap-4">
             <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent)]/10 border border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)] text-[var(--color-accent)] dark:text-[var(--color-accent)] text-xs font-medium">
-              <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-accent)] animate-pulse" />
-              Support online - replies within 24h on weekdays
+              <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-accent)]" aria-hidden="true" />
+              {supportPromise()}
             </span>
             <h1 className="text-4xl md:text-5xl font-semibold tracking-tight text-[var(--color-ink)]">
               Contact MigRent
@@ -114,7 +115,7 @@ export default function Contact() {
               </svg>
             </div>
             <h3 className="font-semibold text-[var(--color-ink)] text-base mb-1.5">I need help</h3>
-            <p className="text-sm text-[var(--color-ink-3)] leading-relaxed">Account, listing, booking, payment - send a message and we'll reply within 24h.</p>
+            <p className="text-sm text-[var(--color-ink-3)] leading-relaxed">Account, listing, booking, payment - send a message and we aim to reply within one business day.</p>
           </a>
 
           <a href="#help-shortcut" className="card p-6 rounded-2xl text-left hover:border-[var(--color-line-2)] transition-colors block">
@@ -457,21 +458,19 @@ export default function Contact() {
           <div className="card p-6 rounded-2xl space-y-2">
             <h3 className="font-semibold text-[var(--color-ink)] text-base">Business details</h3>
             <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-1 pt-1">
-              <p className="font-semibold text-[var(--color-ink)]">MigRent AI</p>
-              <p>ABN: 22 669 566 941</p>
-              <p>Structure: Sole Trader</p>
-              <p>Location: Sydney, New South Wales, Australia</p>
-              <p>
-                Email:{" "}
-                <a
-                  href="https://mail.google.com/mail/?view=cm&fs=1&to=migrentau@gmail.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2"
-                >
-                  migrentau@gmail.com
-                </a>
-              </p>
+              {businessDetails().map((row) => (
+                <p key={row.label}>
+                  <span className="text-[var(--color-ink-3)]">{row.label}: </span>
+                  {row.label === "Email" ? (
+                    <a href={`mailto:${row.value}`} className="text-[var(--color-primary)] underline underline-offset-2">{row.value}</a>
+                  ) : (
+                    row.value
+                  )}
+                </p>
+              ))}
+              {!siteIdentity.legalEntity.confirmed && (
+                <p className="text-[12px] text-[var(--color-ink-3)] pt-1">Entity details are being confirmed and will be published here.</p>
+              )}
             </div>
           </div>
           <div className="card p-6 rounded-2xl">

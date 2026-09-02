@@ -42,7 +42,7 @@ const blogPosts: BlogPost[] = [
       {
         type: "paragraph",
         content:
-          "One of the biggest mistakes first-time migrants make is waiting until they land in Australia to begin looking for accommodation. Ideally, you should start researching suburbs, average rents, and transport links at least four to six weeks before your arrival date. Platforms like MigRent AI let you browse verified listings, connect with migrant-friendly hosts, and even arrange virtual inspections from overseas so you can hit the ground running.",
+          "One of the biggest mistakes first-time migrants make is waiting until they land in Australia to begin looking for accommodation. Ideally, you should start researching suburbs, average rents, and transport links at least four to six weeks before your arrival date. Platforms like MigRent let you browse verified listings, connect with migrant-friendly hosts, and even arrange virtual inspections from overseas so you can hit the ground running.",
       },
       {
         type: "heading",
@@ -88,7 +88,7 @@ const blogPosts: BlogPost[] = [
       {
         type: "paragraph",
         content:
-          "General listing sites can be overwhelming and they do not always cater to the unique needs of newcomers. Migrant-focused platforms like MigRent AI verify hosts, offer multilingual support, and connect you with a community of people who understand exactly what you are going through. Local migrant resource centres, Facebook groups for your nationality, and university housing offices are also excellent sources of leads and advice.",
+          "General listing sites can be overwhelming and they do not always cater to the unique needs of newcomers. Migrant-focused platforms like MigRent verify hosts, offer multilingual support, and connect you with a community of people who understand exactly what you are going through. Local migrant resource centres, Facebook groups for your nationality, and university housing offices are also excellent sources of leads and advice.",
       },
       {
         type: "paragraph",
@@ -203,7 +203,7 @@ const blogPosts: BlogPost[] = [
     date: "Jan 2026",
     readTime: "9 min read",
     author: "MigRent Team",
-    authorRole: "MigRent AI Editorial",
+    authorRole: "MigRent Editorial",
     content: [
       {
         type: "paragraph",
@@ -271,7 +271,7 @@ const blogPosts: BlogPost[] = [
       {
         type: "list",
         content:
-          "Always inspect the property in person or via a live video call before paying anything\nVerify the landlord or agent's identity by checking the NSW Fair Trading licence register\nNever send money via wire transfer, cryptocurrency, or gift cards\nUse platforms like MigRent AI that verify hosts and listings before they go live\nInsist on a written lease agreement before handing over any money\nLodge your bond through the official Rental Bond Board, never into a personal bank account\nTrust your instincts: if something feels off, it probably is",
+          "Always inspect the property in person or via a live video call before paying anything\nVerify the landlord or agent's identity by checking the NSW Fair Trading licence register\nNever send money via wire transfer, cryptocurrency, or gift cards\nUse platforms like MigRent that verify hosts and listings before they go live\nInsist on a written lease agreement before handing over any money\nLodge your bond through the official Rental Bond Board, never into a personal bank account\nTrust your instincts: if something feels off, it probably is",
       },
       {
         type: "heading",
@@ -298,19 +298,19 @@ const blogPosts: BlogPost[] = [
   },
   {
     slug: "superhost-program-launch",
-    title: "MigRent AI Launches New Superhost Program",
+    title: "MigRent Launches New Superhost Program",
     excerpt:
-      "We are excited to announce the MigRent AI Superhost Program, a new initiative that recognises and rewards hosts who go above and beyond to provide outstanding experiences for migrant tenants.",
+      "We are excited to announce the MigRent Superhost Program, a new initiative that recognises and rewards hosts who go above and beyond to provide outstanding experiences for migrant tenants.",
     category: "News",
     date: "Dec 2025",
     readTime: "5 min read",
     author: "MigRent Team",
-    authorRole: "MigRent AI Editorial",
+    authorRole: "MigRent Editorial",
     content: [
       {
         type: "paragraph",
         content:
-          "At MigRent AI, we believe that great housing is about more than four walls and a roof. For someone arriving in a new country, a welcoming host can make the difference between feeling lost and feeling at home. That is why we are launching the MigRent AI Superhost Program, a new badge and benefits system designed to recognise hosts who consistently deliver exceptional experiences for migrant tenants.",
+          "At MigRent, we believe that great housing is about more than four walls and a roof. For someone arriving in a new country, a welcoming host can make the difference between feeling lost and feeling at home. That is why we are launching the MigRent Superhost Program, a new badge and benefits system designed to recognise hosts who consistently deliver exceptional experiences for migrant tenants.",
       },
       {
         type: "heading",
@@ -319,7 +319,7 @@ const blogPosts: BlogPost[] = [
       {
         type: "paragraph",
         content:
-          "A Superhost is a property host on MigRent AI who has demonstrated a sustained commitment to quality, responsiveness, and cultural sensitivity. The designation is not something you can buy; it is earned through consistently positive tenant reviews, fast response times, well-maintained properties, and a genuine willingness to help newcomers settle in.",
+          "A Superhost is a property host on MigRent who has demonstrated a sustained commitment to quality, responsiveness, and cultural sensitivity. The designation is not something you can buy; it is earned through consistently positive tenant reviews, fast response times, well-maintained properties, and a genuine willingness to help newcomers settle in.",
       },
       {
         type: "heading",
@@ -337,7 +337,7 @@ const blogPosts: BlogPost[] = [
       {
         type: "list",
         content:
-          "An overall rating of 4.8 or above across all reviews in the assessment period\nA response rate of 90 percent or higher, with an average response time under 12 hours\nZero confirmed policy violations or unresolved disputes\nAt least three completed tenancies on the MigRent AI platform\nA verified property listing with accurate photos and descriptions",
+          "An overall rating of 4.8 or above across all reviews in the assessment period\nA response rate of 90 percent or higher, with an average response time under 12 hours\nZero confirmed policy violations or unresolved disputes\nAt least three completed tenancies on the MigRent platform\nA verified property listing with accurate photos and descriptions",
       },
       {
         type: "heading",
@@ -346,7 +346,7 @@ const blogPosts: BlogPost[] = [
       {
         type: "list",
         content:
-          "A prominent Superhost badge displayed on all listings and profile pages\nPriority placement in search results, increasing visibility to prospective tenants\nAccess to an exclusive Superhost support line with faster response times\nInvitations to quarterly Superhost networking events and webinars\nEarly access to new MigRent AI features and tools",
+          "A prominent Superhost badge displayed on all listings and profile pages\nPriority placement in search results, increasing visibility to prospective tenants\nAccess to an exclusive Superhost support line with faster response times\nInvitations to quarterly Superhost networking events and webinars\nEarly access to new MigRent features and tools",
       },
       {
         type: "heading",
@@ -360,7 +360,7 @@ const blogPosts: BlogPost[] = [
       {
         type: "callout",
         content:
-          "Starting in January 2026, you can filter listings by Superhost status directly from the MigRent AI search page. Look for the gold shield icon next to the host's name.",
+          "Starting in January 2026, you can filter listings by Superhost status directly from the MigRent search page. Look for the gold shield icon next to the host's name.",
       },
       {
         type: "heading",
@@ -374,7 +374,7 @@ const blogPosts: BlogPost[] = [
       {
         type: "paragraph",
         content:
-          "If you are a host on MigRent AI, check your dashboard to see your current metrics and how close you are to earning Superhost status. If you are a tenant, keep an eye out for the Superhost badge when browsing listings. We are excited to see this program grow and to celebrate the hosts who make Australia feel like home.",
+          "If you are a host on MigRent, check your dashboard to see your current metrics and how close you are to earning Superhost status. If you are a tenant, keep an eye out for the Superhost badge when browsing listings. We are excited to see this program grow and to celebrate the hosts who make Australia feel like home.",
       },
     ],
     tags: [
@@ -469,7 +469,7 @@ const blogPosts: BlogPost[] = [
       {
         type: "paragraph",
         content:
-          "Renting in Australia on a student budget is challenging but entirely manageable with the right preparation. Start early, be realistic about what you can afford, explore all your options, and do not hesitate to ask for help when you need it. Your university, your community, and platforms like MigRent AI are all here to support you.",
+          "Renting in Australia on a student budget is challenging but entirely manageable with the right preparation. Start early, be realistic about what you can afford, explore all your options, and do not hesitate to ask for help when you need it. Your university, your community, and platforms like MigRent are all here to support you.",
       },
     ],
     tags: [

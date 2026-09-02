@@ -6,22 +6,25 @@ import {
   ChevronRight,
   X,
   Zap,
-  ShieldCheck,
   Expand,
 } from "lucide-react";
+import VerificationBadge from "../VerificationBadge";
+import type { VerificationSummary } from "../../lib/api";
 
 interface ListingHeroProps {
   images: string[];
   title: string;
   instantBook?: boolean;
-  verified?: boolean;
+  /** Server-computed host verification. The hero shows the pill only for
+   * a fully verified host; anything else is left to the owner card. */
+  verification?: VerificationSummary | null;
 }
 
 export default function ListingHero({
   images,
   title,
   instantBook,
-  verified,
+  verification,
 }: ListingHeroProps) {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
@@ -80,14 +83,19 @@ export default function ListingHero({
       {/* Main photo */}
       <div className="relative">
         <div
-          className="relative aspect-[16/9] md:aspect-[2/1] rounded-2xl overflow-hidden cursor-pointer group"
-          onClick={() => setLightboxOpen(true)}
+          className="relative aspect-[16/9] md:aspect-[2/1] rounded-2xl overflow-hidden group"
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
         >
+          <button
+            type="button"
+            onClick={() => setLightboxOpen(true)}
+            className="absolute inset-0 z-[1] w-full h-full cursor-zoom-in"
+            aria-label={`Open photo ${selectedIndex + 1} of ${images.length} in full screen`}
+          />
           <Image
             src={currentImage!}
-            alt={title}
+            alt={`${title}, photo ${selectedIndex + 1} of ${images.length}`}
             fill
             priority
             sizes="(max-width: 1024px) 100vw, 66vw"
@@ -103,16 +111,13 @@ export default function ListingHero({
                 Instant Book
               </span>
             )}
-            {verified && (
-              <span className="flex items-center gap-1 text-xs font-semibold text-emerald-800 bg-[var(--color-accent-soft)]/90 backdrop-blur-sm px-3 py-1.5 rounded-full">
-                <ShieldCheck className="w-3 h-3" />
-                Verified Owner
-              </span>
+            {verification?.status === "verified" && (
+              <VerificationBadge verification={verification} className="!px-3 !py-1.5 !text-xs backdrop-blur-sm" />
             )}
           </div>
 
           {/* Expand hint */}
-          <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity pointer-events-none" aria-hidden="true">
             <span className="flex items-center gap-1 text-xs font-medium text-white bg-black/50 backdrop-blur-sm px-3 py-1.5 rounded-full">
               <Expand className="w-3 h-3" />
               View all photos
@@ -121,8 +126,8 @@ export default function ListingHero({
 
           {/* Counter */}
           {images.length > 1 && (
-            <div className="absolute bottom-4 right-4 text-xs font-medium text-white bg-black/50 backdrop-blur-sm px-3 py-1.5 rounded-full">
-              {selectedIndex + 1} / {images.length}
+            <div className="absolute bottom-4 right-4 text-xs font-medium text-white bg-black/50 backdrop-blur-sm px-3 py-1.5 rounded-full" aria-live="polite">
+              <span className="sr-only">Photo </span>{selectedIndex + 1} / {images.length}
             </div>
           )}
 
@@ -130,22 +135,26 @@ export default function ListingHero({
           {images.length > 1 && (
             <>
               <button
+                type="button"
+                aria-label="Previous photo"
                 onClick={(e) => {
                   e.stopPropagation();
                   goTo(-1);
                 }}
-                className="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/80 dark:bg-[var(--color-surface)]/80 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-md hover:bg-white"
+                className="absolute z-[2] left-3 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/85 dark:bg-[var(--color-surface)]/85 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 focus-visible:opacity-100 transition-opacity shadow-md hover:bg-white"
               >
-                <ChevronLeft className="w-4 h-4 text-[var(--color-ink-2)]" />
+                <ChevronLeft className="w-5 h-5 text-[var(--color-ink-2)]" aria-hidden="true" />
               </button>
               <button
+                type="button"
+                aria-label="Next photo"
                 onClick={(e) => {
                   e.stopPropagation();
                   goTo(1);
                 }}
-                className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/80 dark:bg-[var(--color-surface)]/80 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-md hover:bg-white"
+                className="absolute z-[2] right-3 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/85 dark:bg-[var(--color-surface)]/85 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 focus-visible:opacity-100 transition-opacity shadow-md hover:bg-white"
               >
-                <ChevronRight className="w-4 h-4 text-[var(--color-ink-2)]" />
+                <ChevronRight className="w-5 h-5 text-[var(--color-ink-2)]" aria-hidden="true" />
               </button>
             </>
           )}
@@ -157,6 +166,9 @@ export default function ListingHero({
             {images.map((img, i) => (
               <button
                 key={i}
+                type="button"
+                aria-label={`Show photo ${i + 1} of ${images.length}`}
+                aria-pressed={selectedIndex === i}
                 onClick={() => setSelectedIndex(i)}
                 className={`flex-shrink-0 w-20 h-14 rounded-lg overflow-hidden border-2 transition-all duration-200 ${
                   selectedIndex === i
@@ -164,9 +176,12 @@ export default function ListingHero({
                     : "border-transparent opacity-60 hover:opacity-100"
                 }`}
               >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={img}
-                  alt={`Listing photo ${i + 1}`}
+                  alt=""
+                  width={80}
+                  height={56}
                   className="w-full h-full object-cover"
                   loading="lazy"
                 />
@@ -185,12 +200,18 @@ export default function ListingHero({
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center"
             onClick={() => setLightboxOpen(false)}
+            role="dialog"
+            aria-modal="true"
+            aria-label={`Photos of ${title}`}
           >
             <button
+              type="button"
+              autoFocus
+              aria-label="Close photo viewer"
               onClick={() => setLightboxOpen(false)}
-              className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-white/20 transition-colors"
+              className="absolute top-4 right-4 z-10 w-11 h-11 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-white/20 transition-colors"
             >
-              <X className="w-5 h-5 text-white" />
+              <X className="w-5 h-5 text-white" aria-hidden="true" />
             </button>
 
             <div
@@ -205,23 +226,27 @@ export default function ListingHero({
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.2 }}
                 src={images[selectedIndex]}
-                alt={title}
+                alt={`${title}, photo ${selectedIndex + 1} of ${images.length}`}
                 className="w-full max-h-[85vh] object-contain rounded-lg"
               />
 
               {images.length > 1 && (
                 <>
                   <button
+                    type="button"
+                    aria-label="Previous photo"
                     onClick={() => goTo(-1)}
-                    className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-white/20 transition-colors"
+                    className="absolute left-2 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-white/20 transition-colors"
                   >
-                    <ChevronLeft className="w-5 h-5 text-white" />
+                    <ChevronLeft className="w-5 h-5 text-white" aria-hidden="true" />
                   </button>
                   <button
+                    type="button"
+                    aria-label="Next photo"
                     onClick={() => goTo(1)}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-white/20 transition-colors"
+                    className="absolute right-2 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-white/20 transition-colors"
                   >
-                    <ChevronRight className="w-5 h-5 text-white" />
+                    <ChevronRight className="w-5 h-5 text-white" aria-hidden="true" />
                   </button>
                 </>
               )}
@@ -232,8 +257,11 @@ export default function ListingHero({
                   {images.map((_, i) => (
                     <button
                       key={i}
+                      type="button"
+                      aria-label={`Go to photo ${i + 1}`}
+                      aria-current={selectedIndex === i ? "true" : undefined}
                       onClick={() => setSelectedIndex(i)}
-                      className={`w-2 h-2 rounded-full transition-all ${
+                      className={`min-w-[12px] h-3 rounded-full transition-all ${
                         selectedIndex === i
                           ? "bg-white w-6"
                           : "bg-white/40 hover:bg-white/60"

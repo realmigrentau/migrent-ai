@@ -19,28 +19,37 @@ interface VerificationItem {
 export default function VerificationCarousel({ profile, badges, onVerifyClick }: VerificationCarouselProps) {
   const [selectedItem, setSelectedItem] = useState<VerificationItem | null>(null);
 
+  // Every line here reflects a check the platform actually performed,
+  // read from owner_verification through the public_profiles view. Email is
+  // no longer assumed, phone is no longer inferred from the ID check, and
+  // "Verified Host" (which used to mean "has a listing") is gone.
   const items: VerificationItem[] = [
     {
       icon: "📧",
-      label: "Email Verified",
-      verified: true, // Users always have verified email (signed up with it)
-      detail: "Email address confirmed during registration",
+      label: "Email confirmed",
+      verified: profile.email_verified,
+      detail: profile.email_verified ? "Email address confirmed" : "Email not yet confirmed",
       color: "emerald",
     },
     {
       icon: "🪪",
       label: "Government ID",
-      verified: badges.isVerified,
-      detail: badges.isVerified
-        ? `Identity verified${badges.verifiedLabel ? ` (${badges.verifiedLabel})` : ""}`
-        : "Government ID not yet verified",
+      verified: profile.government_id_status === "approved",
+      detail:
+        profile.government_id_status === "approved"
+          ? `Government ID checked by MigRent${badges.verifiedLabel ? ` (${badges.verifiedLabel})` : ""}`
+          : profile.government_id_status === "pending"
+            ? "Submitted, awaiting review"
+            : profile.government_id_status === "rejected"
+              ? "Last submission was not accepted"
+              : "Government ID not submitted",
       color: "rose",
     },
     {
       icon: "📱",
-      label: "Phone Verified",
-      verified: badges.isVerified,
-      detail: badges.isVerified ? "Phone number confirmed" : "Phone not yet verified",
+      label: "Phone confirmed",
+      verified: profile.phone_verified,
+      detail: profile.phone_verified ? "Phone number confirmed by SMS code" : "Phone not yet confirmed",
       color: "blue",
     },
   ];
@@ -52,16 +61,6 @@ export default function VerificationCarousel({ profile, badges, onVerifyClick }:
       verified: true,
       detail: `Superhost status - ${profile.average_rating.toFixed(1)} rating with ${profile.reviews_count}+ reviews`,
       color: "amber",
-    });
-  }
-
-  if (profile.rooms_owned > 0 || profile.properties_owned > 0) {
-    items.push({
-      icon: "🏡",
-      label: "Verified Host",
-      verified: true,
-      detail: `Active host with ${profile.rooms_owned} room${profile.rooms_owned !== 1 ? "s" : ""} listed`,
-      color: "indigo",
     });
   }
 

@@ -30,6 +30,10 @@ export interface ProfileReview {
 
 const LISTINGS_PER_PAGE = 12;
 
+/**
+ * A host's live listings, read from the `public_listings` view (anon has no
+ * grant on `listings` itself). Keyed by the owner's opaque public id.
+ */
 export function useProfileListings(userId: string | undefined) {
   const [listings, setListings] = useState<ProfileListing[]>([]);
   const [loading, setLoading] = useState(true);
@@ -44,10 +48,9 @@ export function useProfileListings(userId: string | undefined) {
       const to = from + LISTINGS_PER_PAGE - 1;
 
       const { data, error } = await supabase
-        .from("listings")
-        .select("id, title, address, postcode, weekly_price, description, property_type, place_type, bedrooms, bathrooms, photos, is_active, created_at")
-        .eq("owner_id", userId)
-        .eq("is_active", true)
+        .from("public_listings")
+        .select("id, title, display_address, postcode, weekly_price, description, property_type, place_type, bedrooms, bathrooms, images, created_at")
+        .eq("owner_public_id", userId)
         .order("created_at", { ascending: false })
         .range(from, to);
 
@@ -58,8 +61,8 @@ export function useProfileListings(userId: string | undefined) {
 
       const items = (data || []).map((d: any) => ({
         id: d.id,
-        title: d.title || d.address,
-        address: d.address || "",
+        title: d.title || d.display_address,
+        address: d.display_address || "",
         postcode: d.postcode?.toString() || "",
         weekly_price: d.weekly_price || 0,
         description: d.description || "",
@@ -67,8 +70,8 @@ export function useProfileListings(userId: string | undefined) {
         place_type: d.place_type || "Private room",
         bedrooms: d.bedrooms || 1,
         bathrooms: d.bathrooms || 1,
-        photos: Array.isArray(d.photos) ? d.photos.filter((p: string) => p && p.startsWith("http")) : [],
-        is_active: d.is_active ?? true,
+        photos: Array.isArray(d.images) ? d.images.filter((p: string) => p && p.startsWith("http")) : [],
+        is_active: true,
         created_at: d.created_at || "",
       }));
 

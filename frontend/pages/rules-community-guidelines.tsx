@@ -6,8 +6,8 @@ export default function RulesCommunityGuidelines() {
   return (
     <>
       <Head>
-        <title>Community Guidelines | MigRent AI</title>
-        <meta name="description" content="MigRent AI community rules - listing standards, guest expectations, dispute resolution, and platform conduct." />
+        <title>Community Guidelines | MigRent</title>
+        <meta name="description" content="MigRent community rules - listing standards, guest expectations, dispute resolution, and platform conduct." />
       </Head>
 
       <div className="max-w-3xl mx-auto space-y-10">
@@ -33,7 +33,7 @@ export default function RulesCommunityGuidelines() {
           <section className="card p-6 rounded-2xl space-y-3">
             <h2 className="text-lg font-bold text-[var(--color-ink)]">Our Community Standards</h2>
             <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
-              <p>MigRent AI is built on trust, respect, and transparency. These guidelines apply to all users - both owners and seekers. Violations may result in content removal, account suspension, or termination.</p>
+              <p>MigRent is built on trust, respect, and transparency. These guidelines apply to all users - both owners and seekers. Violations may result in content removal, account suspension, or termination.</p>
             </div>
           </section>
 
@@ -129,7 +129,7 @@ export default function RulesCommunityGuidelines() {
                 <li>Fire safety and habitability standards</li>
                 <li>Insurance and liability requirements</li>
               </ul>
-              <p>MigRent AI does not provide legal advice and is not responsible for users&apos; regulatory compliance.</p>
+              <p>MigRent does not provide legal advice and is not responsible for users&apos; regulatory compliance.</p>
             </div>
           </section>
 

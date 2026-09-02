@@ -4,6 +4,12 @@ import { API_BASE_URL } from "../lib/apiBase";
 import { getAllPosts } from "../data/blogPosts";
 import guidesContent from "../data/guidesContent";
 import { HELP_ARTICLES } from "../lib/helpData";
+import contentLastmod from "../data/contentLastmod.json";
+
+// Dates come from git history via scripts/content-lastmod.mjs, committed as
+// data/contentLastmod.json. A page with no recorded date is omitted from
+// <lastmod> rather than stamped with today.
+const LASTMOD: Record<string, string> = contentLastmod as Record<string, string>;
 
 type Entry = { path: string; priority: string; changefreq: string };
 
@@ -21,9 +27,7 @@ const STATIC_PAGES: Entry[] = [
   { path: "/faq", priority: "0.7", changefreq: "monthly" },
   { path: "/guides", priority: "0.7", changefreq: "weekly" },
   { path: "/resources", priority: "0.6", changefreq: "monthly" },
-  { path: "/resources/roi-calculator", priority: "0.5", changefreq: "monthly" },
   { path: "/resources/rental-laws", priority: "0.5", changefreq: "monthly" },
-  { path: "/resources/discord", priority: "0.4", changefreq: "monthly" },
   { path: "/suburbs", priority: "0.8", changefreq: "weekly" },
   { path: "/blog", priority: "0.7", changefreq: "weekly" },
   { path: "/help", priority: "0.6", changefreq: "monthly" },
@@ -32,8 +36,6 @@ const STATIC_PAGES: Entry[] = [
   { path: "/safety-reporting", priority: "0.4", changefreq: "yearly" },
   { path: "/support-disputes", priority: "0.4", changefreq: "yearly" },
   { path: "/no-agency", priority: "0.3", changefreq: "yearly" },
-  { path: "/careers", priority: "0.4", changefreq: "monthly" },
-  { path: "/press", priority: "0.3", changefreq: "yearly" },
   // Legal
   { path: "/terms-of-service", priority: "0.3", changefreq: "yearly" },
   { path: "/privacy-policy", priority: "0.3", changefreq: "yearly" },
@@ -46,10 +48,9 @@ const STATIC_PAGES: Entry[] = [
   { path: "/contact-legal", priority: "0.3", changefreq: "yearly" },
 ];
 
-function urlTag(loc: string, changefreq: string, priority: string, lastmod: string): string {
+function urlTag(loc: string, changefreq: string, priority: string, lastmod?: string | null): string {
   return `  <url>
-    <loc>${loc}</loc>
-    <lastmod>${lastmod}</lastmod>
+    <loc>${loc}</loc>${lastmod ? `\n    <lastmod>${lastmod}</lastmod>` : ""}
     <changefreq>${changefreq}</changefreq>
     <priority>${priority}</priority>
   </url>`;
@@ -57,35 +58,31 @@ function urlTag(loc: string, changefreq: string, priority: string, lastmod: stri
 
 function generateSitemap(
   suburbSlugs: string[] = [],
-  listingIds: string[] = []
+  listings: { id: string; updated_at?: string; created_at?: string }[] = []
 ): string {
-  const lastmod = new Date().toISOString().split("T")[0];
   const tags: string[] = [];
 
   for (const page of STATIC_PAGES) {
     const loc = page.path === "/" ? `${SITE_URL}/` : `${SITE_URL}${page.path}`;
-    tags.push(urlTag(loc, page.changefreq, page.priority, lastmod));
+    tags.push(urlTag(loc, page.changefreq, page.priority, LASTMOD[page.path]));
   }
   for (const post of getAllPosts()) {
-    tags.push(urlTag(`${SITE_URL}/blog/${post.slug}`, "monthly", "0.6", lastmod));
+    tags.push(urlTag(`${SITE_URL}/blog/${post.slug}`, "monthly", "0.6", LASTMOD["data:blogPosts"]));
   }
   for (const guide of guidesContent) {
-    tags.push(urlTag(`${SITE_URL}/guides/${guide.id}`, "monthly", "0.6", lastmod));
+    tags.push(urlTag(`${SITE_URL}/guides/${guide.id}`, "monthly", "0.6", LASTMOD["data:guidesContent"]));
   }
-  // Help articles. Excluded before because the page was client-rendered and
-  // shipped an empty document; it is statically generated now.
   for (const article of HELP_ARTICLES) {
-    tags.push(urlTag(`${SITE_URL}/help/${article.slug}`, "monthly", "0.5", lastmod));
+    tags.push(urlTag(`${SITE_URL}/help/${article.slug}`, "monthly", "0.5", LASTMOD["data:helpData"]));
   }
   for (const slug of suburbSlugs) {
-    tags.push(urlTag(`${SITE_URL}/suburb/${slug}`, "weekly", "0.7", lastmod));
+    tags.push(urlTag(`${SITE_URL}/suburb/${slug}`, "weekly", "0.7", null));
   }
-  // Listing pages. These are the highest-intent organic pages a rental
-  // marketplace has and none of them were ever submitted, because the page
-  // was client-only and there was nothing for a crawler to index. It is
-  // server-rendered now, so they belong here.
-  for (const id of listingIds) {
-    tags.push(urlTag(`${SITE_URL}/listing/${id}`, "daily", "0.8", lastmod));
+  // Listing pages: only published, still-available listings come back from
+  // the search endpoint, so expired and unmoderated rooms never appear here.
+  for (const l of listings) {
+    const stamp = (l.updated_at || l.created_at || "").slice(0, 10) || null;
+    tags.push(urlTag(`${SITE_URL}/listing/${l.id}`, "daily", "0.8", stamp));
   }
 
   return `<?xml version="1.0" encoding="UTF-8"?>
@@ -114,15 +111,15 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
   // Approved listings only. The search endpoint already filters to
   // moderation_status = 'approved', so drafts and rejected listings cannot
   // leak into the sitemap.
-  let listingIds: string[] = [];
+  let listings: { id: string; updated_at?: string; created_at?: string }[] = [];
   try {
     const r = await fetch(`${API_BASE_URL}/listings/search?limit=100`);
     if (r.ok) {
       const data = await r.json();
       const rows = Array.isArray(data) ? data : data.listings || [];
-      listingIds = rows
-        .map((l: { id?: string }) => l.id)
-        .filter((v: string | undefined): v is string => Boolean(v));
+      listings = rows
+        .filter((l: { id?: string; public_state?: string }) => Boolean(l.id) && (l.public_state ?? "published") === "published")
+        .map((l: { id: string; updated_at?: string; created_at?: string }) => ({ id: l.id, updated_at: l.updated_at, created_at: l.created_at }));
     }
   } catch {
     // Backend unreachable - ship the rest of the sitemap rather than nothing.
@@ -133,7 +130,7 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
     "Cache-Control",
     "public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400"
   );
-  res.write(generateSitemap(suburbSlugs, listingIds));
+  res.write(generateSitemap(suburbSlugs, listings));
   res.end();
   return { props: {} };
 };

@@ -43,7 +43,8 @@ export default function HeroHeader({
           >
             <div className={`w-28 h-28 md:w-32 md:h-32 rounded-full flex items-center justify-center overflow-hidden ring-4 ring-white/40 shadow-2xl transition-all group-hover:ring-white/70 ${isVerified ? "verify-pulse" : ""}`}>
               {profile.custom_pfp ? (
-                <img src={profile.custom_pfp} alt={`${profile.name || "Profile"} photo`} className="w-full h-full object-cover" />
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={profile.custom_pfp} alt={`${profile.name || "Profile"} photo`} width={128} height={128} className="w-full h-full object-cover" />
               ) : (
                 <div className="w-full h-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
                   <span className="text-5xl md:text-6xl font-black text-white select-none">{displayName.charAt(0).toUpperCase()}</span>
@@ -78,10 +79,10 @@ export default function HeroHeader({
               )}
               {isVerified && (
                 <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-white/20 text-white backdrop-blur-sm">
-                  <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                   </svg>
-                  Verified
+                  ID verified
                 </span>
               )}
             </div>
@@ -149,7 +150,7 @@ export default function HeroHeader({
                 </>
               ) : (
                 <Link
-                  href={profile.role === "owner" ? "/dashboard/owner-profile" : "/dashboard/seeker-profile"}
+                  href="/dashboard"
                   className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold bg-[var(--color-surface-2)] text-[var(--color-ink)] shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all"
                 >
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>

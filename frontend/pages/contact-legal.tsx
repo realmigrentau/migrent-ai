@@ -6,8 +6,8 @@ export default function ContactLegal() {
   return (
     <>
       <Head>
-        <title>Legal Contact &amp; Arbitration | MigRent AI</title>
-        <meta name="description" content="Contact MigRent AI for legal inquiries, arbitration details, and governing law information." />
+        <title>Legal Contact &amp; Arbitration | MigRent</title>
+        <meta name="description" content="Contact MigRent for legal inquiries, arbitration details, and governing law information." />
       </Head>
 
       <div className="max-w-3xl mx-auto space-y-10">
@@ -35,11 +35,11 @@ export default function ContactLegal() {
             <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
               <p>For legal inquiries, formal notices, or arbitration-related correspondence, contact:</p>
               <div className="card-subtle p-4 rounded-xl space-y-2">
-                <p className="font-semibold text-[var(--color-ink)] text-base">MigRent AI - Legal</p>
+                <p className="font-semibold text-[var(--color-ink)] text-base">MigRent - Legal</p>
                 <p><strong>ABN:</strong> 22 669 566 941</p>
                 <p><strong>Email:</strong> <a href="mailto:migrentau@gmail.com" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">migrentau@gmail.com</a></p>
                 <p><strong>Subject line for legal matters:</strong> &quot;Legal Notice&quot; or &quot;Arbitration&quot;</p>
-                <p><strong>Location:</strong> Sydney, New South Wales, Australia</p>
+                <p><strong>Location:</strong> Australia (registered address to be published once confirmed)</p>
               </div>
               <p>We aim to acknowledge legal correspondence within 5 business days.</p>
             </div>
@@ -100,7 +100,7 @@ export default function ContactLegal() {
           <section className="card p-6 rounded-2xl space-y-3">
             <h2 className="text-lg font-bold text-[var(--color-ink)]">Governing Law</h2>
             <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
-              <p>All legal matters relating to MigRent AI are governed by:</p>
+              <p>All legal matters relating to MigRent are governed by:</p>
               <div className="card-subtle p-4 rounded-xl space-y-2">
                 <p><strong className="text-[var(--color-ink)]">Governing law:</strong> Laws of New South Wales, Australia</p>
                 <p><strong className="text-[var(--color-ink)]">Jurisdiction:</strong> Courts of New South Wales (subject to arbitration clause)</p>

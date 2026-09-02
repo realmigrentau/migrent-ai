@@ -9,6 +9,14 @@ export function useLanguage() {
     SUPPORTED_LANGUAGES.find((l) => l.code === i18n.language) ||
     SUPPORTED_LANGUAGES[0];
 
+  // If a previous visit stored a locale that is no longer enabled, switch
+  // back explicitly so i18next stops trying to load it.
+  useEffect(() => {
+    if (i18n.language && !SUPPORTED_LANGUAGES.some((l) => l.code === i18n.language)) {
+      void i18n.changeLanguage(SUPPORTED_LANGUAGES[0].code);
+    }
+  }, [i18n]);
+
   const changeLanguage = useCallback(
     (code: LanguageCode) => {
       i18n.changeLanguage(code);

@@ -140,8 +140,8 @@ export default function Guides() {
   return (
     <>
       <Head>
-        <title>{t("guides.heroTitle")} | MigRent AI</title>
-        <meta name="description" content="Step-by-step guides for MigRent AI - learn how to host, find rentals, verify your profile, become a superhost, and more." />
+        <title>{t("guides.heroTitle")} | MigRent</title>
+        <meta name="description" content="Step-by-step guides for MigRent - learn how to host, find rentals, verify your profile, become a superhost, and more." />
       </Head>
 
       <div className="space-y-20">
@@ -343,7 +343,7 @@ export default function Guides() {
                   Can&apos;t find what you need?
                 </h3>
                 <p className="text-sm text-[var(--color-ink-3)] mt-1">
-                  Our support team can help you with any question - available 24/7 in multiple languages.
+                  Our support team answers by email on weekdays. We aim to reply within one business day.
                 </p>
               </div>
               <Link href="/contact">

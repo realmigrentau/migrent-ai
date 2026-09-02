@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { useHCaptcha } from "@hcaptcha/react-hcaptcha/hooks";
@@ -28,25 +28,33 @@ export default function SignUp() {
   const { executeInstance, resetInstance } = useHCaptcha() ?? {};
 
   const allConsented = consents.facilitator && consents.terms && consents.rentalLaws && consents.indemnity;
+  const [fieldErrors, setFieldErrors] = useState<{ email?: string; password?: string }>({});
+  const [checkEmail, setCheckEmail] = useState<string | null>(null);
+  const [msgTone, setMsgTone] = useState<"error" | "info">("error");
 
-  if (session) {
-    router.push("/onboarding");
-    return null;
-  }
+  useEffect(() => {
+    if (session) void router.push("/onboarding");
+  }, [session, router]);
 
-  const handleSignUp = async () => {
+  if (session) return null;
+
+  const handleSignUp = async (e?: React.FormEvent) => {
+    e?.preventDefault();
     setMsg("");
+    setMsgTone("error");
     setConsentError("");
-    if (!email || !password) {
-      setMsg(t("auth.enterEmailPassword"));
-      return;
-    }
-    if (password.length < 6) {
-      setMsg(t("auth.passwordMinLength"));
+    const errors: { email?: string; password?: string } = {};
+    if (!email.trim()) errors.email = "Enter your email address.";
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) errors.email = "That email address looks incomplete.";
+    if (!password) errors.password = "Choose a password.";
+    else if (password.length < 8) errors.password = "Use at least 8 characters.";
+    setFieldErrors(errors);
+    if (Object.keys(errors).length > 0) {
+      setMsg(Object.values(errors)[0] as string);
       return;
     }
     if (!allConsented) {
-      setConsentError("You must accept all legal acknowledgements to create an account.");
+      setConsentError("Tick the box to agree to the Terms and Privacy Policy.");
       return;
     }
     setLoading(true);
@@ -59,25 +67,39 @@ export default function SignUp() {
         captchaToken = token ?? undefined;
       }
 
-      const { error } = await supabase.auth.signUp({
-        email,
+      const { data, error } = await supabase.auth.signUp({
+        email: email.trim(),
         password,
         options: {
           data: {
             type: "seeker",
             legal_accepted_at: new Date().toISOString(),
+            over_18_confirmed_at: new Date().toISOString(),
           },
           ...(captchaToken ? { captchaToken } : {}),
         },
       });
 
       if (error) {
-        setMsg(error.message);
+        const m = error.message.toLowerCase();
+        if (m.includes("already registered") || m.includes("already exists")) setMsg("An account with this email already exists. Sign in instead, or reset your password.");
+        else if (m.includes("rate limit") || m.includes("too many")) setMsg("Too many attempts. Wait a few minutes and try again.");
+        else setMsg(error.message);
+      } else if (data.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
+        // Supabase returns an "obfuscated" user for a duplicate email when
+        // confirmations are on. Say so instead of pretending it worked.
+        setMsg("An account with this email already exists. Sign in instead, or reset your password.");
+      } else if (!data.session) {
+        setMsgTone("info");
+        setCheckEmail(email.trim());
+        setMsg(`Check your email. We sent a confirmation link to ${email.trim()}.`);
       } else {
-        router.push("/onboarding");
+        void router.push("/onboarding");
       }
-    } catch {
-      setMsg(t("auth.verificationFailed"));
+    } catch (err) {
+      const offline = typeof navigator !== "undefined" && navigator.onLine === false;
+      setMsg(offline ? "You appear to be offline. Reconnect and try again." : t("auth.verificationFailed"));
+      void err;
     } finally {
       resetInstance?.();
       setLoading(false);
@@ -107,28 +129,47 @@ export default function SignUp() {
             </Link>
           </p>
 
-          <div className="flex flex-col gap-3 mt-6">
-            <label className="block">
-              <div className="text-[12.5px] font-semibold text-[var(--color-ink-2)] mb-1.5">Email</div>
+          <form onSubmit={handleSignUp} noValidate className="flex flex-col gap-3 mt-6" aria-describedby={msg ? "signup-status" : undefined}>
+            <div>
+              <label htmlFor="signup-email" className="block text-[12.5px] font-semibold text-[var(--color-ink-2)] mb-1.5">Email</label>
               <input
+                id="signup-email"
+                name="email"
                 type="email"
+                autoComplete="email"
+                inputMode="email"
+                required
                 placeholder="you@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                aria-invalid={fieldErrors.email ? true : undefined}
+                aria-describedby={fieldErrors.email ? "signup-email-error" : undefined}
                 className="input-field"
               />
-            </label>
-            <label className="block">
-              <div className="text-[12.5px] font-semibold text-[var(--color-ink-2)] mb-1.5">Password</div>
+              {fieldErrors.email && <p id="signup-email-error" className="mt-1 text-[12.5px] text-[var(--color-danger-500)]">{fieldErrors.email}</p>}
+            </div>
+            <div>
+              <label htmlFor="signup-password" className="block text-[12.5px] font-semibold text-[var(--color-ink-2)] mb-1.5">Password</label>
               <input
+                id="signup-password"
+                name="new-password"
                 type="password"
-                placeholder="At least 10 characters"
+                autoComplete="new-password"
+                required
+                minLength={8}
+                placeholder="At least 8 characters"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                aria-invalid={fieldErrors.password ? true : undefined}
+                aria-describedby={fieldErrors.password ? "signup-password-error" : "signup-password-hint"}
                 className="input-field"
-                onKeyDown={(e) => e.key === "Enter" && handleSignUp()}
               />
-            </label>
+              {fieldErrors.password ? (
+                <p id="signup-password-error" className="mt-1 text-[12.5px] text-[var(--color-danger-500)]">{fieldErrors.password}</p>
+              ) : (
+                <p id="signup-password-hint" className="mt-1 text-[12px] text-[var(--color-ink-3)]">At least 8 characters. A password manager works here.</p>
+              )}
+            </div>
 
             <ConsentCheckboxes
               consents={consents}
@@ -137,23 +178,24 @@ export default function SignUp() {
             />
 
             <button
-              onClick={handleSignUp}
+              type="submit"
               disabled={loading}
+              aria-busy={loading}
               className="btn-primary h-[46px] w-full text-[15px] rounded-[10px] mt-1 disabled:opacity-50"
             >
               {loading ? (
                 <span className="flex items-center justify-center gap-2">
-                  <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" aria-hidden="true" />
                   {t("auth.creatingAccount")}
                 </span>
               ) : (
                 <>
                   Create account
-                  <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M4 10h12M11 5l5 5-5 5" /></svg>
+                  <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M4 10h12M11 5l5 5-5 5" /></svg>
                 </>
               )}
             </button>
-          </div>
+          </form>
 
           <div className="flex items-center gap-3 my-5 text-[var(--color-ink-3)]">
             <div className="flex-1 h-px bg-[var(--color-line)]" />
@@ -162,8 +204,8 @@ export default function SignUp() {
           </div>
 
           {!allConsented && (
-            <p className="text-[11.5px] text-center text-[var(--color-warn-500)] mb-3">
-              Please accept all legal acknowledgements above before using social sign-up.
+            <p className="text-[11.5px] text-center text-[var(--color-ink-3)] mb-3">
+              Tick the box above to continue with Google.
             </p>
           )}
 
@@ -172,19 +214,24 @@ export default function SignUp() {
             disabled={!allConsented}
           />
 
-          {msg && (
-            <motion.p
-              initial={{ opacity: 0, y: -8 }}
-              animate={{ opacity: 1, y: 0 }}
-              className={`mt-4 text-sm text-center p-3 rounded-[10px] ${
-                msg.includes("Check your email")
-                  ? "bg-[var(--color-accent-soft)] text-[var(--color-accent)]"
-                  : "bg-[#f1d8d4] dark:bg-[#2b1614] text-[var(--color-danger-500)]"
-              }`}
-            >
-              {msg}
-            </motion.p>
-          )}
+          <div id="signup-status" role={msgTone === "error" ? "alert" : "status"} aria-live={msgTone === "error" ? "assertive" : "polite"} aria-atomic="true">
+            {msg && (
+              <motion.p
+                initial={{ opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0 }}
+                className={`mt-4 text-sm text-center p-3 rounded-[10px] ${
+                  msgTone === "info"
+                    ? "bg-[var(--color-accent-soft)] text-[var(--color-accent)]"
+                    : "bg-[#f1d8d4] dark:bg-[#2b1614] text-[var(--color-danger-500)]"
+                }`}
+              >
+                {msg}
+                {checkEmail && (
+                  <span className="block mt-1 text-[12px] opacity-80">Did not get it? Check spam, or <Link href="/magic-link-login" className="underline">request a new link</Link>.</span>
+                )}
+              </motion.p>
+            )}
+          </div>
         </motion.div>
       </div>
 

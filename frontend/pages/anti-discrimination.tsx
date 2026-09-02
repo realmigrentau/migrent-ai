@@ -6,8 +6,8 @@ export default function AntiDiscrimination() {
   return (
     <>
       <Head>
-        <title>Fair Housing Policy | MigRent AI</title>
-        <meta name="description" content="MigRent AI Fair Housing Policy - our commitment to anti-discrimination and equal access to accommodation." />
+        <title>Fair Housing Policy | MigRent</title>
+        <meta name="description" content="MigRent Fair Housing Policy - our commitment to anti-discrimination and equal access to accommodation." />
       </Head>
 
       <div className="max-w-3xl mx-auto space-y-10">
@@ -33,7 +33,7 @@ export default function AntiDiscrimination() {
           <section className="card p-6 rounded-2xl space-y-3 border-l-4 border-l-pink-500">
             <h2 className="text-lg font-bold text-[var(--color-ink)]">Our Commitment</h2>
             <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
-              <p>MigRent AI is committed to providing a platform free from discrimination. As a service that connects migrants with accommodation, we take anti-discrimination obligations seriously. All users must comply with Australian anti-discrimination laws.</p>
+              <p>MigRent is committed to providing a platform free from discrimination. As a service that connects migrants with accommodation, we take anti-discrimination obligations seriously. All users must comply with Australian anti-discrimination laws.</p>
             </div>
           </section>
 

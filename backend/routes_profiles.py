@@ -387,3 +387,26 @@ def refresh_badges(authorization: str = Header(...)):
     except Exception:
         logger.exception("Failed to refresh badges")
         raise HTTPException(status_code=500, detail="Failed to refresh badges")
+
+
+@router.get("/resolve/{public_id}")
+@limiter.limit("60/minute")
+def resolve_public_id(request: Request, public_id: str, authorization: str = Header(...)):
+    """Map an opaque public id to the recipient details a signed-in user
+    needs to start a conversation. Requires a session; returns only the
+    name, avatar and the id the messages API addresses. Authorisation never
+    depends on this id being secret."""
+    get_current_user(authorization)
+    if not PUBLIC_ID_RE.match(public_id):
+        raise HTTPException(status_code=404, detail="Profile not found")
+    sb = get_supabase_admin()
+    res = sb.table("profiles").select("id, public_id, name, preferred_name, custom_pfp").eq("public_id", public_id).execute()
+    if not res.data:
+        raise HTTPException(status_code=404, detail="Profile not found")
+    row = res.data[0]
+    return {
+        "id": row["id"],
+        "public_id": row.get("public_id"),
+        "name": row.get("preferred_name") or row.get("name"),
+        "custom_pfp": row.get("custom_pfp"),
+    }

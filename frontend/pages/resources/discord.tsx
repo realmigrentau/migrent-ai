@@ -67,7 +67,7 @@ export default function Discord() {
   return (
     <>
       <Head>
-        <title>Join MigRent Discord Community | MigRent AI</title>
+        <title>Join MigRent Discord Community | MigRent</title>
         <meta name="description" content="The MigRent community Discord is launching soon - housing tips, scam alerts, and support for migrants across Australia." />
       </Head>
 

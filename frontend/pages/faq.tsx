@@ -4,26 +4,32 @@ import { motion, AnimatePresence } from "framer-motion";
 import Head from "next/head";
 import { useTranslation } from "react-i18next";
 
+let faqSeq = 0;
 function FAQItem({ q, a }: { q: string; a: string }) {
   const [open, setOpen] = useState(false);
+  const [id] = useState(() => `faq-panel-${++faqSeq}`);
   return (
     <div className="card rounded-xl overflow-hidden">
-      <button
-        onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between p-4 text-left hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-surface-muted)] transition-colors"
-      >
-        <h3 className="font-semibold text-[var(--color-ink)] text-sm pr-4">{q}</h3>
-        <motion.span
-          animate={{ rotate: open ? 180 : 0 }}
-          transition={{ duration: 0.2 }}
-          className="text-[var(--color-ink-3)] shrink-0"
+      <h3 className="font-semibold text-[var(--color-ink)] text-sm">
+        <button
+          type="button"
+          onClick={() => setOpen(!open)}
+          aria-expanded={open}
+          aria-controls={id}
+          className="w-full min-h-[44px] flex items-center justify-between p-4 text-left hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-surface-muted)] transition-colors"
         >
-          &#x25BE;
-        </motion.span>
-      </button>
-      <AnimatePresence>
+          <span className="pr-4">{q}</span>
+          <motion.span animate={{ rotate: open ? 180 : 0 }} transition={{ duration: 0.2 }} className="text-[var(--color-ink-3)] shrink-0" aria-hidden="true">
+            &#x25BE;
+          </motion.span>
+        </button>
+      </h3>
+      <AnimatePresence initial={false}>
         {open && (
           <motion.div
+            id={id}
+            role="region"
+            aria-label={q}
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
@@ -133,8 +139,8 @@ export default function FAQ() {
   return (
     <>
       <Head>
-        <title>FAQ | MigRent AI</title>
-        <meta name="description" content="Frequently asked questions about MigRent AI - payments, listings, verification, accounts, and more." />
+        <title>FAQ | MigRent</title>
+        <meta name="description" content="Frequently asked questions about MigRent - payments, listings, verification, accounts, and more." />
       </Head>
 
       <div className="max-w-3xl mx-auto space-y-10">

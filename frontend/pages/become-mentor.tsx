@@ -93,9 +93,14 @@ export default function BecomeMentorPage() {
     );
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e?: React.FormEvent) => {
+    e?.preventDefault();
     if (!session?.access_token) {
       router.push("/signin?redirect=/become-mentor");
+      return;
+    }
+    if (!suburb.trim()) {
+      setStep(1);
       return;
     }
 
@@ -320,11 +325,15 @@ export default function BecomeMentorPage() {
             </h2>
 
             <div>
-              <label className="block text-sm font-medium text-[var(--color-ink-2)] mb-1">
-                Suburb *
+              <label htmlFor="mentor-suburb" className="block text-sm font-medium text-[var(--color-ink-2)] mb-1">
+                Suburb <span aria-hidden="true">*</span><span className="sr-only">(required)</span>
               </label>
               <input
+                id="mentor-suburb"
+                name="suburb"
                 type="text"
+                required
+                autoComplete="address-level2"
                 value={suburb}
                 onChange={(e) => setSuburb(e.target.value)}
                 placeholder="e.g. Kellyville"
@@ -333,11 +342,16 @@ export default function BecomeMentorPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-[var(--color-ink-2)] mb-1">
+              <label htmlFor="mentor-postcode" className="block text-sm font-medium text-[var(--color-ink-2)] mb-1">
                 Postcode
               </label>
               <input
+                id="mentor-postcode"
+                name="postcode"
                 type="text"
+                inputMode="numeric"
+                pattern="[0-9]{4}"
+                autoComplete="postal-code"
                 value={postcode}
                 onChange={(e) => setPostcode(e.target.value)}
                 placeholder="e.g. 2155"
@@ -452,10 +466,12 @@ export default function BecomeMentorPage() {
             </h2>
 
             <div>
-              <label className="block text-sm font-medium text-[var(--color-ink-2)] mb-1">
+              <label htmlFor="mentor-bio" className="block text-sm font-medium text-[var(--color-ink-2)] mb-1">
                 Bio - tell new arrivals about yourself
               </label>
               <textarea
+                id="mentor-bio"
+                name="bio"
                 value={bio}
                 onChange={(e) => setBio(e.target.value)}
                 placeholder="e.g. I've lived in Kellyville for 10 years. I know every cafe, park, and shortcut. Originally from India, I speak Hindi and English fluently."
@@ -466,11 +482,14 @@ export default function BecomeMentorPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-[var(--color-ink-2)] mb-1">
+              <label htmlFor="mentor-rate" className="block text-sm font-medium text-[var(--color-ink-2)] mb-1">
                 Session rate (AUD) - you keep 70%
               </label>
               <div className="flex items-center gap-4">
                 <input
+                  id="mentor-rate"
+                  name="hourly_rate"
+                  aria-valuetext={`$${hourlyRate} per session`}
                   type="range"
                   min={15}
                   max={100}
@@ -497,10 +516,12 @@ export default function BecomeMentorPage() {
                 Back
               </motion.button>
               <motion.button
+                type="submit"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={handleSubmit}
                 disabled={loading}
+                aria-busy={loading}
                 className="flex-1 bg-[var(--color-primary)] text-white font-semibold py-3 rounded-xl text-sm transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 {loading ? (

@@ -23,8 +23,8 @@ export default function Press() {
   return (
     <>
       <Head>
-        <title>Press & Media | MigRent AI</title>
-        <meta name="description" content="MigRent AI press kit - company facts, milestones, media assets, and press contact information." />
+        <title>Press & Media | MigRent</title>
+        <meta name="description" content="MigRent press kit - company facts, milestones, media assets, and press contact information." />
       </Head>
 
       <div className="space-y-16">
@@ -74,9 +74,9 @@ export default function Press() {
               </p>
               <div className="card-subtle p-4 rounded-xl space-y-1 mt-2">
                 <p className="font-semibold text-[var(--color-ink)]">{t("press.companyDetails")}</p>
-                <p>Business Name: MigRent AI</p>
+                <p>Trading name: MigRent</p>
                 <p>ABN: 22 669 566 941</p>
-                <p>Structure: Sole Trader</p>
+
                 <p>Headquarters: Sydney, Australia</p>
                 <p>Markets: Sydney, Adelaide</p>
               </div>

@@ -6,8 +6,8 @@ export default function TermsOfService() {
   return (
     <>
       <Head>
-        <title>Terms of Service | MigRent AI</title>
-        <meta name="description" content="MigRent AI Terms of Service - platform fees, cancellations, liability, and user responsibilities." />
+        <title>Terms of Service | MigRent</title>
+        <meta name="description" content="MigRent Terms of Service - platform fees, cancellations, liability, and user responsibilities." />
       </Head>
 
       <div className="max-w-3xl mx-auto space-y-10">
@@ -33,7 +33,7 @@ export default function TermsOfService() {
           <section className="card p-6 rounded-2xl space-y-3">
             <h2 className="text-lg font-bold text-[var(--color-ink)]">1. Acceptance of Terms</h2>
             <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
-              <p>By accessing or using MigRent AI (&quot;the Platform&quot;), you agree to be bound by these Terms of Service. If you do not agree to these terms, you must not use the Platform. MigRent AI is operated under ABN 22 669 566 941, based in Sydney, Australia.</p>
+              <p>By accessing or using MigRent (&quot;the Platform&quot;), you agree to be bound by these Terms of Service. If you do not agree to these terms, you must not use the Platform. MigRent is operated under ABN 22 669 566 941 in Australia.</p>
             </div>
           </section>
 
@@ -41,7 +41,7 @@ export default function TermsOfService() {
           <section className="card p-6 rounded-2xl space-y-3">
             <h2 className="text-lg font-bold text-[var(--color-ink)]">2. Platform Role - Online Introduction Service</h2>
             <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
-              <p>MigRent AI is an <strong>online introduction service only</strong>. We connect room owners with accommodation seekers for short- to medium-term rooms. We are not:</p>
+              <p>MigRent is an <strong>online introduction service only</strong>. We connect room owners with accommodation seekers for short- to medium-term rooms. We are not:</p>
               <ul className="list-disc list-inside space-y-1.5">
                 <li>A real estate agent, property manager, or letting agent</li>
                 <li>A landlord or tenant</li>
@@ -154,7 +154,7 @@ export default function TermsOfService() {
           <section className="card p-6 rounded-2xl space-y-3">
             <h2 className="text-lg font-bold text-[var(--color-ink)]">6. Refund Policy</h2>
             <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
-              <p>Platform fees are generally non-refundable once a deal is confirmed and payment is processed. In exceptional circumstances, refunds may be considered at the sole discretion of MigRent AI.</p>
+              <p>Platform fees are generally non-refundable once a deal is confirmed and payment is processed. In exceptional circumstances, refunds may be considered at the sole discretion of MigRent.</p>
               <p>Stripe receipts are automatically sent to the email address associated with your account. For refund inquiries, contact <a href="mailto:migrentau@gmail.com" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">migrentau@gmail.com</a>.</p>
             </div>
           </section>
@@ -212,7 +212,7 @@ export default function TermsOfService() {
           <section className="card p-6 rounded-2xl space-y-3">
             <h2 className="text-lg font-bold text-[var(--color-ink)]">10. Indemnity</h2>
             <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
-              <p>You agree to indemnify, defend, and hold harmless MigRent AI, its officers, directors, employees, and agents from and against any and all claims, liabilities, damages, losses, costs, and expenses (including reasonable legal fees) arising out of or in connection with:</p>
+              <p>You agree to indemnify, defend, and hold harmless MigRent, its officers, directors, employees, and agents from and against any and all claims, liabilities, damages, losses, costs, and expenses (including reasonable legal fees) arising out of or in connection with:</p>
               <ul className="list-disc list-inside space-y-1.5">
                 <li>Your use of or conduct on the Platform</li>
                 <li>Any arrangement or deal you enter into with another user</li>
@@ -298,7 +298,7 @@ export default function TermsOfService() {
             <h2 className="text-lg font-bold text-[var(--color-ink)]">17. Contact</h2>
             <div className="text-sm text-[var(--color-ink-2)] leading-relaxed">
               <div className="card-subtle p-4 rounded-xl space-y-1">
-                <p className="font-semibold text-[var(--color-ink)]">MigRent AI</p>
+                <p className="font-semibold text-[var(--color-ink)]">MigRent</p>
                 <p>ABN: 22 669 566 941</p>
                 <p>Email: <a href="mailto:migrentau@gmail.com" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">migrentau@gmail.com</a></p>
                 <p>Location: Sydney, Australia</p>
@@ -308,7 +308,7 @@ export default function TermsOfService() {
 
           {/* Legal Disclaimer */}
           <div className="card-subtle p-4 rounded-xl text-xs text-[var(--color-ink-3)] leading-relaxed">
-            <p>This document is for informational purposes and constitutes the binding terms between you and MigRent AI. MigRent recommends that users seek independent legal advice regarding their own obligations under applicable tenancy and rental laws. Last reviewed by MigRent: March 2026.</p>
+            <p>This document is for informational purposes and constitutes the binding terms between you and MigRent. MigRent recommends that users seek independent legal advice regarding their own obligations under applicable tenancy and rental laws. Last reviewed by MigRent: March 2026.</p>
           </div>
 
           {/* CTA */}

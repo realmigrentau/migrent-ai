@@ -253,9 +253,11 @@ export default function MegaNavbar() {
           {mounted && (
             <li>
               <button
+                type="button"
                 onClick={toggle}
-                className="w-9 h-9 rounded-[10px] bg-transparent border border-[var(--color-line)] outline-none appearance-none text-[var(--color-ink-2)] hover:text-[var(--color-ink)] hover:border-[var(--color-line-2)] hover:bg-[var(--color-surface-sunk)] transition-colors inline-flex items-center justify-center"
-                aria-label="Toggle theme"
+                className="w-11 h-11 rounded-[10px] bg-transparent border border-[var(--color-line)] outline-none appearance-none text-[var(--color-ink-2)] hover:text-[var(--color-ink)] hover:border-[var(--color-line-2)] hover:bg-[var(--color-surface-sunk)] transition-colors inline-flex items-center justify-center"
+                aria-label="Dark mode"
+                aria-pressed={theme === "dark"}
               >
                 {theme === "dark" ? (
                   <svg className="w-[16px] h-[16px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -391,9 +393,11 @@ export default function MegaNavbar() {
           <LanguageSwitcher />
           {mounted && (
             <button
+              type="button"
               onClick={toggle}
-              className="p-2 rounded-[6px] text-[var(--color-ink-3)]"
-              aria-label="Toggle theme"
+              className="w-11 h-11 inline-flex items-center justify-center rounded-[6px] text-[var(--color-ink-3)]"
+              aria-label="Dark mode"
+              aria-pressed={theme === "dark"}
             >
               {theme === "dark" ? (
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

@@ -11,6 +11,8 @@ interface Listing {
   min_stay_weeks?: number;
   max_stay_weeks?: number;
   max_guests?: number;
+  available_from?: string;
+  available_to?: string;
 }
 
 interface RequestToBookFormProps {
@@ -58,6 +60,10 @@ export default function RequestToBookForm({
     : null;
 
   const today = new Date().toISOString().split("T")[0];
+  // The host's availability window bounds the date pickers; the API enforces
+  // the same rule, this just stops people picking dates that cannot work.
+  const earliest = listing.available_from && listing.available_from > today ? listing.available_from : today;
+  const latest = listing.available_to || undefined;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -70,6 +76,14 @@ export default function RequestToBookForm({
 
     if (new Date(checkOut) <= new Date(checkIn)) {
       setError("Check-out must be after check-in");
+      return;
+    }
+    if (checkIn < earliest) {
+      setError(`This room is available from ${earliest}`);
+      return;
+    }
+    if (latest && checkOut > latest) {
+      setError(`This room is only available until ${latest}`);
       return;
     }
 
@@ -112,31 +126,41 @@ export default function RequestToBookForm({
       </div>
 
       {/* Dates */}
-      <div className="grid grid-cols-2 gap-3">
-        <label className="block">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <label className="block" htmlFor="booking-check-in">
           <div className="eyebrow mb-1.5">Move-in</div>
           <div className="relative">
-            <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-ink-3)] pointer-events-none" />
+            <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-ink-3)] pointer-events-none" aria-hidden="true" />
             <input
+              id="booking-check-in"
+              name="check_in"
               type="date"
               value={checkIn}
               onChange={(e) => setCheckIn(e.target.value)}
-              min={today}
+              min={earliest}
+              max={latest}
               required
+              aria-invalid={error ? true : undefined}
+              aria-describedby={error ? "booking-error" : undefined}
               className="input-field pl-10"
             />
           </div>
         </label>
-        <label className="block">
+        <label className="block" htmlFor="booking-check-out">
           <div className="eyebrow mb-1.5">Move-out</div>
           <div className="relative">
-            <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-ink-3)] pointer-events-none" />
+            <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-ink-3)] pointer-events-none" aria-hidden="true" />
             <input
+              id="booking-check-out"
+              name="check_out"
               type="date"
               value={checkOut}
               onChange={(e) => setCheckOut(e.target.value)}
-              min={checkIn || today}
+              min={checkIn || earliest}
+              max={latest}
               required
+              aria-invalid={error ? true : undefined}
+              aria-describedby={error ? "booking-error" : undefined}
               className="input-field pl-10"
             />
           </div>
@@ -220,8 +244,8 @@ export default function RequestToBookForm({
       )}
 
       {/* Bond guidance.
-          This banner used to read "Bond is held by escrow, not your landlord."
-          MigRent operates no escrow, and in NSW, VIC and QLD a residential bond
+          This banner used to claim MigRent held the bond itself.
+          MigRent never holds bond money, and in NSW, VIC and QLD a residential bond
           must be lodged with the state bond authority rather than held by a
           third party, so the claim was both untrue and not something we could
           lawfully build as described. */}

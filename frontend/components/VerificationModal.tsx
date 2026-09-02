@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -131,12 +132,12 @@ export default function VerificationModal({
                       real person behind this account and helps keep our
                       community safe.
                     </p>
-                    <a
+                    <Link
                       href="/help/verification"
                       className="text-sm font-semibold text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] transition-colors"
                     >
                       Learn more about verification
-                    </a>
+                    </Link>
                   </>
                 ) : (
                   <>
@@ -145,7 +146,7 @@ export default function VerificationModal({
                       Verified users have confirmed their identity through
                       government ID or phone verification.
                     </p>
-                    <a
+                    <Link
                       href="/dashboard/seeker-profile"
                       className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-white bg-[var(--color-primary)] from-[var(--color-primary)] to-[var(--color-primary)] hover:shadow-lg hover:shadow-[var(--color-primary)]/20 transition-all"
                     >
@@ -163,7 +164,7 @@ export default function VerificationModal({
                           d="M9 5l7 7-7 7"
                         />
                       </svg>
-                    </a>
+                    </Link>
                   </>
                 )}
               </div>

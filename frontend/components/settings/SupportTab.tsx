@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import GlassCard, { StatusBadge } from "../ui/GlassCard";
@@ -310,7 +311,7 @@ export default function SupportTab({
         </div>
 
         <div className="ml-14 grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <a
+          <Link
             href="/help"
             className="flex items-center gap-3 p-3 rounded-xl border border-[var(--color-line)] hover:bg-[var(--color-surface)]/50 transition-colors group"
           >
@@ -322,8 +323,8 @@ export default function SupportTab({
               <p className="text-[11px] text-[var(--color-ink-3)]">Browse articles</p>
             </div>
             <ChevronRight className="w-4 h-4 text-[var(--color-ink-4)] ml-auto" />
-          </a>
-          <a
+          </Link>
+          <Link
             href="/contact"
             className="flex items-center gap-3 p-3 rounded-xl border border-[var(--color-line)] hover:bg-[var(--color-surface)]/50 transition-colors group"
           >
@@ -335,7 +336,7 @@ export default function SupportTab({
               <p className="text-[11px] text-[var(--color-ink-3)]">Get in touch</p>
             </div>
             <ChevronRight className="w-4 h-4 text-[var(--color-ink-4)] ml-auto" />
-          </a>
+          </Link>
         </div>
       </GlassCard>
     </div>

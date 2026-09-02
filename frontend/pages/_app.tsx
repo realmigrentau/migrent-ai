@@ -10,6 +10,7 @@ import { ToastProvider } from "../components/ui/Toast";
 import { ConfirmProvider } from "../components/ui/ConfirmDialog";
 import { HCAPTCHA_SITE_KEY } from "../lib/recaptcha";
 import { getPageMeta } from "../lib/pageMeta";
+import { fontClassName, fontRootCss } from "../lib/fonts";
 import "../lib/i18n";
 import "../styles/globals.css";
 
@@ -54,14 +55,20 @@ export default function App({ Component, pageProps, router }: AppProps) {
     <ToastProvider>
       <ConfirmProvider>
         <SEOHead title={meta.title} description={meta.description} noIndex={meta.noIndex} />
-        {inner}
+        {/* Self-hosted font variables (lib/fonts.ts). The style tag is
+            allowed by style-src 'unsafe-inline'; it carries no user data. */}
+        <style dangerouslySetInnerHTML={{ __html: fontRootCss }} />
+        <div className={fontClassName}>{inner}</div>
         <Analytics />
         <SpeedInsights />
       </ConfirmProvider>
     </ToastProvider>
   );
 
-  if (!HCAPTCHA_SITE_KEY) {
+  // The captcha provider is only mounted on the pages that call it, so the
+  // hCaptcha script is not downloaded on the homepage, search or listings.
+  const needsCaptcha = ["/signin", "/signup", "/magic-link-login", "/magic-link-signup"].some((p) => router.pathname.startsWith(p));
+  if (!HCAPTCHA_SITE_KEY || !needsCaptcha) {
     return wrapped;
   }
 

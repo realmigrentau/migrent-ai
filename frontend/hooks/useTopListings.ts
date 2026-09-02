@@ -26,9 +26,12 @@ export function useTopListings() {
 
     async function fetchListings() {
       try {
+        // public_listings is the allow-listed, approved-and-available view;
+        // anon has no grant on the listings table itself.
         const { data, error } = await supabase
-          .from("listings")
-          .select("*")
+          .from("public_listings")
+          .select("id, title, suburb, city, weekly_price, beds, images, nearest_transport, created_at")
+          .order("created_at", { ascending: false })
           .limit(16);
 
         if (cancelled) return;
@@ -52,8 +55,10 @@ export function useTopListings() {
             : Array.isArray(row.photos) && (row.photos as string[]).length > 0
               ? row.photos as string[]
               : ["/images/placeholder-room.jpg"],
-          nearestStation: (row.nearest_station as string) || null,
-          ownerVerified: true,
+          nearestStation: (row.nearest_transport as string) || null,
+          // Verification is shown by the listing page from the API contract,
+          // never asserted by a marquee tile.
+          ownerVerified: false,
           superhost: (row.superhost as boolean) || false,
         }));
 

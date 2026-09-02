@@ -16,8 +16,8 @@ export default function Careers() {
   return (
     <>
       <Head>
-        <title>Careers | MigRent AI</title>
-        <meta name="description" content="Join MigRent AI - help build the future of accommodation for migrants and students in Australia." />
+        <title>Careers | MigRent</title>
+        <meta name="description" content="Join MigRent - help build the future of accommodation for migrants and students in Australia." />
       </Head>
 
       <div className="space-y-16">

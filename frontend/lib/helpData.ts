@@ -182,7 +182,7 @@ MigRent is Australia's rental marketplace built specifically for migrants, inter
 
 ## For seekers
 
-As a seeker, you can browse thousands of verified room listings across Australia. Use our smart search to filter by suburb, price, move-in date, and room type. When you find a listing you like, you can either request a booking (the owner reviews and approves) or use Instant Book (confirm immediately without waiting).
+As a seeker, you can browse room listings across Australia from hosts whose ID has been checked. Use our smart search to filter by suburb, price, move-in date, and room type. When you find a listing you like, you can either request a booking (the owner reviews and approves) or use Instant Book (confirm immediately without waiting).
 
 Once your booking is confirmed, payment is processed securely via Stripe. You'll receive a digital booking confirmation you can show at move-in.
 

@@ -80,11 +80,12 @@ export default function MagicLinkSignup() {
     };
   }, [sent, router]);
 
-  const handleSendLink = async () => {
+  const handleSendLink = async (e?: React.FormEvent) => {
+    e?.preventDefault();
     setMsg("");
     setConsentError("");
-    if (!email) {
-      setMsg("Please enter your email address.");
+    if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+      setMsg("Enter a valid email address.");
       return;
     }
     if (!allConsented) {
@@ -169,6 +170,7 @@ export default function MagicLinkSignup() {
               </div>
 
               <button
+                type="button"
                 onClick={() => { setSent(false); setMsg(""); pollingIdRef.current = ""; }}
                 className="w-full btn-secondary py-2.5 rounded-[10px] text-sm"
               >
@@ -176,15 +178,21 @@ export default function MagicLinkSignup() {
               </button>
             </motion.div>
           ) : (
-            <div className="space-y-4">
+            <form onSubmit={handleSendLink} noValidate className="space-y-4" aria-describedby={msg ? "magic-signup-status" : undefined}>
               <div>
+                <label htmlFor="magic-signup-email" className="block text-[12.5px] font-semibold text-[var(--color-ink-2)] mb-1.5">Email address</label>
                 <input
+                  id="magic-signup-email"
+                  name="email"
                   type="email"
-                  placeholder="Email address"
+                  autoComplete="email"
+                  inputMode="email"
+                  required
+                  placeholder="you@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  aria-invalid={msg ? true : undefined}
                   className="input-field"
-                  onKeyDown={(e) => e.key === "Enter" && handleSendLink()}
                 />
               </div>
 
@@ -195,8 +203,9 @@ export default function MagicLinkSignup() {
               />
 
               <button
-                onClick={handleSendLink}
+                type="submit"
                 disabled={loading}
+                aria-busy={loading}
                 className="w-full h-10 rounded-[10px] text-sm font-semibold text-white bg-[var(--color-primary)] hover:bg-[var(--color-primary-500)] disabled:opacity-50 transition-colors"
               >
                 {loading ? (
@@ -232,16 +241,18 @@ export default function MagicLinkSignup() {
                 Sign up with password instead
               </Link>
 
-              {msg && (
-                <motion.p
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="text-sm text-center p-3 rounded-xl bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-500)]/10 border border-[var(--color-danger-500)]/30 dark:border-[var(--color-danger-500)]/20 text-[var(--color-danger-500)] dark:text-[var(--color-danger-500)]"
-                >
-                  {msg}
-                </motion.p>
-              )}
-            </div>
+              <div id="magic-signup-status" role="alert" aria-live="assertive" aria-atomic="true">
+                {msg && (
+                  <motion.p
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="text-sm text-center p-3 rounded-xl bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-500)]/10 border border-[var(--color-danger-500)]/30 dark:border-[var(--color-danger-500)]/20 text-[var(--color-danger-500)] dark:text-[var(--color-danger-500)]"
+                  >
+                    {msg}
+                  </motion.p>
+                )}
+              </div>
+            </form>
           )}
         </div>
       </motion.div>

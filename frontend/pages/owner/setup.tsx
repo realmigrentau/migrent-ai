@@ -33,7 +33,9 @@ export default function OwnerSetupPage() {
     }
   }, [user]);
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e?: React.FormEvent) => {
+    e?.preventDefault();
+    if (!form.name.trim()) return;
     setSaving(true);
     try {
       await supabase.auth.updateUser({
@@ -155,11 +157,16 @@ export default function OwnerSetupPage() {
               This info will be shown to seekers on your listings.
             </p>
 
-            <div className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-[var(--color-ink-2)] mb-1.5">Display name</label>
+                <label htmlFor="owner-name" className="block text-sm font-medium text-[var(--color-ink-2)] mb-1.5">Display name</label>
                 <input
+                  id="owner-name"
+                  name="name"
                   type="text"
+                  required
+                  autoComplete="name"
+                  maxLength={100}
                   value={form.name}
                   onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))}
                   placeholder="Your name"
@@ -167,9 +174,12 @@ export default function OwnerSetupPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-[var(--color-ink-2)] mb-1.5">Contact phone (optional)</label>
+                <label htmlFor="owner-phone" className="block text-sm font-medium text-[var(--color-ink-2)] mb-1.5">Contact phone (optional)</label>
                 <input
+                  id="owner-phone"
+                  name="phone"
                   type="tel"
+                  autoComplete="tel"
                   value={form.phone}
                   onChange={(e) => setForm((prev) => ({ ...prev, phone: e.target.value }))}
                   placeholder="e.g. 0412 345 678"
@@ -177,8 +187,11 @@ export default function OwnerSetupPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-[var(--color-ink-2)] mb-1.5">Short bio</label>
+                <label htmlFor="owner-bio" className="block text-sm font-medium text-[var(--color-ink-2)] mb-1.5">Short bio</label>
                 <textarea
+                  id="owner-bio"
+                  name="bio"
+                  maxLength={1000}
                   value={form.bio}
                   onChange={(e) => setForm((prev) => ({ ...prev, bio: e.target.value }))}
                   placeholder="e.g. Local property owner in Surry Hills. I keep my places well-maintained..."
@@ -186,13 +199,13 @@ export default function OwnerSetupPage() {
                   className="input-field text-sm"
                 />
               </div>
-            </div>
 
             <motion.button
+              type="submit"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              onClick={handleSubmit}
               disabled={saving || !form.name.trim()}
+              aria-busy={saving}
               className="btn-primary py-3 px-8 rounded-xl text-sm font-bold w-full mt-6 disabled:opacity-50"
             >
               {saving ? (
@@ -204,6 +217,7 @@ export default function OwnerSetupPage() {
                 "Create Owner Account"
               )}
             </motion.button>
+            </form>
           </motion.div>
         )}
       </AnimatePresence>

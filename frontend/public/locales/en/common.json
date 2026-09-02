@@ -68,7 +68,7 @@
     "storiesEnd": "every day",
     "featured": "Featured",
     "featuredTitle": "Beautiful rooms, verified owners, zero stress",
-    "featuredDesc": "Every listing on MigRent is from a verified owner, so you can focus on finding the perfect space.",
+    "featuredDesc": "Every live listing belongs to a host whose government ID MigRent has checked.",
     "successStory": "Success story",
     "story1": "Student finds a room in Kellyville in 3 days",
     "story2": "New family moves to Sydney with a verified host",
@@ -125,7 +125,7 @@
     "stat4Detail": "Sydney, Australia",
     "storyTitle": "The",
     "storyAccent": "Story",
-    "storyP1": "MigRent AI started from a simple frustration: finding a room in a new country shouldn't feel like a full-time job. Scrolling through endless Facebook groups, dealing with scammers on classifieds, and getting rejected because you don't have local references - it's a broken system.",
+    "storyP1": "MigRent started from a simple frustration: finding a room in a new country shouldn't feel like a full-time job. Scrolling through endless Facebook groups, dealing with scammers on classifieds, and getting rejected because you don't have local references - it's a broken system.",
     "storyP2": "Founded in Sydney in 2025, MigRent was built by someone who experienced these challenges firsthand. The idea was straightforward: what if technology could match the right seekers with the right rooms, build trust through verification, and make the whole process faster and safer?",
     "storyP3": "That's what MigRent does. We use AI to analyse preferences, lifestyle compatibility, and trust signals to create meaningful matches. Owners get serious, pre-qualified enquiries instead of noise. Seekers get curated rooms that actually fit their needs and budget.",
     "storyP4": "We launched with Sydney and expanded to Adelaide in 2026. Our goal is to become the go-to platform for short- to medium-term accommodation across Australia - and eventually beyond.",
@@ -153,14 +153,14 @@
     "businessName": "Business Name",
     "abn": "ABN",
     "structure": "Structure",
-    "structureValue": "Sole Trader",
+    "structureValue": "Being confirmed",
     "location": "Location",
-    "locationValue": "Sydney, Australia (Virtual business)",
+    "locationValue": "Australia",
     "markets": "Markets",
-    "marketsValue": "Sydney & Adelaide",
+    "marketsValue": "Australia",
     "emailLabel": "Email",
     "disclaimerLabel": "Platform disclaimer:",
-    "disclaimerText": "MigRent AI is a matching platform only. We are not a real estate agent, property manager, or party to any tenancy agreement. All arrangements and ongoing rent payments are between owners and seekers directly.",
+    "disclaimerText": "MigRent is a matching platform only. We are not a real estate agent, property manager, or party to any tenancy agreement. All arrangements and ongoing rent payments are between owners and seekers directly.",
     "ctaTitle": "Join the MigRent community",
     "ctaSubtitle": "Whether you're looking for a room or have one to share.",
     "seekerCta": "I'm a Seeker",
@@ -177,10 +177,10 @@
     "stillSubtitle": "Our team is here to help with anything not covered above.",
     "stillCta": "Contact Us",
     "cat1Title": "Getting Started",
-    "cat1q1": "What is MigRent AI?",
-    "cat1a1": "MigRent AI is an online matching platform that connects room owners with accommodation seekers for short- to medium-term rooms across Australia. We use AI to help match seekers with suitable rooms.",
+    "cat1q1": "What is MigRent?",
+    "cat1a1": "MigRent is an online matching platform that connects room owners with accommodation seekers for short- to medium-term rooms across Australia. We use AI to help match seekers with suitable rooms.",
     "cat1q2": "Is MigRent a real estate agent?",
-    "cat1a2": "No. MigRent AI is a matching platform only. We are not a real estate agent, landlord, tenant, or a party to any tenancy or licence agreement.",
+    "cat1a2": "No. MigRent is a matching platform only. We are not a real estate agent, landlord, tenant, or a party to any tenancy or licence agreement.",
     "cat1q3": "How do I create an account?",
     "cat1a3": "Click 'Sign Up' on the homepage, enter your email, and verify it. You can then complete your profile as either a seeker, owner, or both.",
     "cat1q4": "Can I be both a seeker and an owner?",
@@ -464,7 +464,7 @@
     "badge": "We're growing",
     "headline1": "Build the future of",
     "headlineAccent": "housing",
-    "subtitle": "MigRent AI is on a mission to make finding accommodation easier and safer for migrants, students, and professionals across Australia. Join us.",
+    "subtitle": "MigRent is on a mission to make finding accommodation easier and safer for migrants, students, and professionals across Australia. Join us.",
     "valuesTitle": "Our",
     "valuesAccent": "values",
     "val1Title": "Impact First",
@@ -476,7 +476,7 @@
     "val4Title": "Inclusive by Default",
     "val4Desc": "We're building for migrants, students, and newcomers. Diversity isn't an initiative - it's our DNA.",
     "teamTitle": "About the Team",
-    "teamP1": "MigRent AI was founded in Sydney by an entrepreneur who experienced firsthand the challenges of finding accommodation as a newcomer to Australia. We're building the platform we wished existed.",
+    "teamP1": "MigRent was founded in Sydney by an entrepreneur who experienced firsthand the challenges of finding accommodation as a newcomer to Australia. We're building the platform we wished existed.",
     "teamP2": "We're a small, fast-moving team that values impact over titles. We use modern technologies including Next.js, React, Supabase, and AI/ML to deliver a product that genuinely helps people.",
     "openingsTitle": "Open positions",
     "volunteerTitle": "Volunteer / Early Contributor",
@@ -490,9 +490,9 @@
   },
   "press": {
     "badge": "Press & Media",
-    "headline1": "MigRent AI",
+    "headline1": "MigRent",
     "headline2": "in the media",
-    "subtitle": "Everything you need to write about MigRent AI. Company facts, media kit, and press contact.",
+    "subtitle": "Everything you need to write about MigRent. Company facts, media kit, and press contact.",
     "stat1Label": "Cities",
     "stat1Value": "2",
     "stat1Detail": "Sydney & Adelaide",
@@ -505,14 +505,14 @@
     "stat4Label": "Founded",
     "stat4Value": "2025",
     "stat4Detail": "Sydney, Australia",
-    "aboutTitle": "About MigRent AI",
-    "aboutP1": "MigRent AI is an Australian proptech startup that uses artificial intelligence to match accommodation seekers - primarily migrants, international students, and working professionals - with room owners across Australia.",
+    "aboutTitle": "About MigRent",
+    "aboutP1": "MigRent is an Australian proptech startup that uses artificial intelligence to match accommodation seekers - primarily migrants, international students, and working professionals - with room owners across Australia.",
     "aboutP2": "Founded in Sydney in 2025, MigRent addresses a critical pain point: finding safe, affordable accommodation in a new country without local rental history or references. The platform replaces chaotic social media groups and random classifieds with structured, trust-scored, AI-powered matching.",
     "aboutP3": "MigRent operates on a simple fee model: owners pay a one-time AUD $99 platform fee per successful match, while seekers can optionally verify their identity for AUD $19. There are no subscriptions, no rent commissions, and no ongoing fees.",
     "companyDetails": "Company Details",
     "milestonesTitle": "Milestones",
     "m1Date": "2025",
-    "m1Title": "MigRent AI Founded",
+    "m1Title": "MigRent Founded",
     "m1Desc": "Platform conceived and development begins in Sydney.",
     "m2Date": "2025",
     "m2Title": "Beta Launch",
@@ -525,7 +525,7 @@
     "m4Desc": "ID and visa verification launched for enhanced trust.",
     "mediaKitTitle": "Media Kit",
     "mediaKitIntro": "For logos, brand assets, and high-resolution images, please contact our press team. We'll provide:",
-    "mk1": "MigRent AI logo (SVG, PNG) in various formats",
+    "mk1": "MigRent logo (SVG, PNG) in various formats",
     "mk2": "Brand colour palette and usage guidelines",
     "mk3": "Product screenshots and mockups",
     "mk4": "Founder photos and bios",
@@ -601,7 +601,7 @@
     "smartFilters": {
       "title": "Smart Filters",
       "navDesc": "20+ search criteria",
-      "desc": "Narrow down thousands of listings with powerful filters - suburb, price range, room type, furnishing, pet policy, transport links, and 20+ more criteria built for real needs.",
+      "desc": "Narrow down listings with powerful filters - suburb, price range, room type, furnishing, pet policy, transport links, and 20+ more criteria built for real needs.",
       "bullets": [
         "20+ filter options",
         "Save filter presets",
@@ -619,7 +619,7 @@
       ]
     },
     "support": {
-      "title": "24/7 Support",
+      "title": "Human support",
       "navDesc": "Round-the-clock assistance",
       "desc": "Moving to a new country is stressful enough. Our multilingual support team is available around the clock via in-app chat to help with any issues - from booking problems to safety concerns.",
       "bullets": [
@@ -663,7 +663,7 @@
     },
     "cta": {
       "title": "Ready to get started?",
-      "subtitle": "Join thousands of migrants and owners already using MigRent AI.",
+      "subtitle": "Built for migrants and the hosts who welcome them.",
       "button": "Create Free Account"
     }
   },
@@ -715,7 +715,7 @@
     "readGuide": "Read guide",
     "cta": {
       "title": "Need more help?",
-      "subtitle": "Our support team is available 24/7 to assist you.",
+      "subtitle": "Real people answer by email on weekdays. We aim to reply within one business day.",
       "button": "Contact Support"
     }
   },
@@ -737,10 +737,10 @@
     },
     "discord": {
       "title": "Join MigRent Discord",
-      "desc": "Join thousands of migrants and owners in our community chat with city-specific channels."
+      "desc": "A community chat with city-specific channels is planned. It is not open yet."
     },
     "careers": {
-      "title": "Join MigRent AI Team",
+      "title": "Join MigRent Team",
       "desc": "Help migrants find home - engineering, design, and product roles based in Sydney."
     },
     "rentalLaws": {
@@ -775,7 +775,7 @@
     "faq": "FAQ",
     "contact": "Contact",
     "pricing": "Pricing",
-    "copyright": "© {{year}} MigRent AI. All rights reserved.",
+    "copyright": "© {{year}} MigRent. All rights reserved.",
     "tagline": "Built for migrants. Trusted by owners.",
     "disclaimer": "MigRent is a matching platform only. We are not a real estate agent or a party to any tenancy or licence agreements."
   }

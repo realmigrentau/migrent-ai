@@ -57,6 +57,28 @@ const ROUTES: Array<[string, PageMeta]> = [
   ["/booking-success", { title: "Booking confirmed", description: "Your booking has been confirmed.", noIndex: true }],
   ["/booking-cancelled", { title: "Booking cancelled", description: "Your booking was cancelled.", noIndex: true }],
   ["/mentor-session-success", { title: "Session booked", description: "Your mentor session is confirmed.", noIndex: true }],
+  ["/verification-success", { title: "Verification", description: "Verification result.", noIndex: true }],
+  ["/verification-cancelled", { title: "Verification cancelled", description: "Verification was not completed.", noIndex: true }],
+
+  // Private and utility surfaces
+  ["/messages", { title: "Messages", description: "Your conversations.", noIndex: true }],
+  ["/account", { title: "Account", description: "Your account settings.", noIndex: true }],
+  ["/onboarding", { title: "Set up your profile", description: "Finish setting up your MigRent profile.", noIndex: true }],
+  ["/support/tickets", { title: "Support tickets", description: "Your support requests.", noIndex: true }],
+  ["/reviews", { title: "Leave a review", description: "Review your stay.", noIndex: true }],
+  ["/forgot-password", { title: "Reset your password", description: "Request a password reset link.", noIndex: true }],
+  ["/reset-password", { title: "Choose a new password", description: "Set a new password.", noIndex: true }],
+  ["/owner", { title: "Your listings", description: "Manage your rooms on MigRent.", noIndex: true }],
+  ["/users/profile", { title: "Host profile", description: "A MigRent host profile." }],
+  ["/listing", { title: "Room", description: "A room on MigRent." }],
+
+  // Thin or placeholder pages: kept reachable, not submitted for indexing
+  // until they carry real content. See docs/product/thin-pages.md.
+  ["/resources/api-docs", { title: "Developer API", description: "MigRent does not offer a public API yet.", noIndex: true }],
+  ["/resources/discord", { title: "Community", description: "The MigRent community chat is not open yet.", noIndex: true }],
+  ["/resources/roi-calculator", { title: "Earnings calculator", description: "Estimate what a room could earn.", noIndex: true }],
+  ["/press", { title: "Press", description: "Media enquiries for MigRent.", noIndex: true }],
+  ["/careers", { title: "Careers", description: "There are no open roles at MigRent right now.", noIndex: true }],
 
   // Public marketing
   ["/for-seekers", { title: "For seekers", description: "How MigRent helps migrants and students find verified rooms in Australia." }],

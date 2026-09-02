@@ -6,8 +6,8 @@ export default function PrivacyPolicy() {
   return (
     <>
       <Head>
-        <title>Privacy Policy | MigRent AI</title>
-        <meta name="description" content="MigRent AI Privacy Policy - how we collect, use, and protect your data. Australian Privacy Principles and GDPR compliant." />
+        <title>Privacy Policy | MigRent</title>
+        <meta name="description" content="MigRent Privacy Policy - how we collect, use, and protect your data. Australian Privacy Principles and GDPR compliant." />
       </Head>
 
       <div className="max-w-3xl mx-auto space-y-10">
@@ -33,9 +33,9 @@ export default function PrivacyPolicy() {
           <section className="card p-6 rounded-2xl space-y-3">
             <h2 className="text-lg font-bold text-[var(--color-ink)]">1. Introduction</h2>
             <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
-              <p>MigRent AI (&quot;we&quot;, &quot;us&quot;, &quot;our&quot;) is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our platform at migrent-ai.vercel.app.</p>
-              <p>MigRent AI operates under ABN 22 669 566 941 and is based in Sydney, Australia. We comply with the Australian Privacy Act 1988 (Cth), the Australian Privacy Principles (APPs), and applicable GDPR provisions for users located in the European Economic Area (EEA).</p>
-              <p>MigRent AI is an online introduction service only. We facilitate connections between room owners and accommodation seekers. We do not collect rent, bonds, or manage tenancy agreements.</p>
+              <p>MigRent (&quot;we&quot;, &quot;us&quot;, &quot;our&quot;) is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our platform at migrent.vercel.app.</p>
+              <p>MigRent operates under ABN 22 669 566 941 in Australia. We comply with the Australian Privacy Act 1988 (Cth), the Australian Privacy Principles (APPs), and applicable GDPR provisions for users located in the European Economic Area (EEA).</p>
+              <p>MigRent is an online introduction service only. We facilitate connections between room owners and accommodation seekers. We do not collect rent, bonds, or manage tenancy agreements.</p>
             </div>
           </section>
 
@@ -282,7 +282,7 @@ export default function PrivacyPolicy() {
             <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
               <p>If you have questions about this Privacy Policy or wish to exercise your rights, contact us:</p>
               <div className="card-subtle p-4 rounded-xl space-y-1">
-                <p className="font-semibold text-[var(--color-ink)]">MigRent AI - Privacy Inquiries</p>
+                <p className="font-semibold text-[var(--color-ink)]">MigRent - Privacy Inquiries</p>
                 <p>ABN: 22 669 566 941</p>
                 <p>Email: <a href="mailto:migrentau@gmail.com" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">migrentau@gmail.com</a></p>
                 <p>Location: Sydney, Australia</p>

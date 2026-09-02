@@ -6,8 +6,8 @@ export default function SupportDisputes() {
   return (
     <>
       <Head>
-        <title>Dispute Resolution | MigRent AI</title>
-        <meta name="description" content="MigRent AI dispute resolution process - how we handle complaints and disputes between users." />
+        <title>Dispute Resolution | MigRent</title>
+        <meta name="description" content="MigRent dispute resolution process - how we handle complaints and disputes between users." />
       </Head>
 
       <div className="max-w-3xl mx-auto space-y-10">

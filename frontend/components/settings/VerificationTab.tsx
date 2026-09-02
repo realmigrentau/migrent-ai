@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import GlassCard, { StatusBadge, ProgressRing } from "../ui/GlassCard";
@@ -392,13 +393,13 @@ export default function VerificationTab({
               <p className="text-sm text-[var(--color-accent)] dark:text-[var(--color-accent)] mb-4">
                 Both verification steps are complete. You can now list rooms on MigRent.
               </p>
-              <a
+              <Link
                 href="/owner/listings/new"
                 className="inline-flex items-center gap-2 bg-[var(--color-accent)] hover:bg-[var(--color-accent-700)] text-white px-6 py-3 rounded-xl text-sm font-semibold transition-colors"
               >
                 List Your Room
                 <ChevronRight className="w-4 h-4" />
-              </a>
+              </Link>
             </motion.div>
           )}
 

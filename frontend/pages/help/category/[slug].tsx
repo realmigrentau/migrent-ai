@@ -256,7 +256,7 @@ export default function HelpCategoryPage() {
                 Submit a request
               </Link>
               <a
-                href="mailto:support@migrent.com.au"
+                href="mailto:migrentau@gmail.com"
                 className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-[var(--color-surface-2)] hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-surface-muted)] border border-[var(--color-line)] text-[var(--color-ink-2)] rounded-xl text-sm font-semibold transition-colors"
               >
                 <Mail className="w-4 h-4" />

@@ -380,7 +380,7 @@ export default function HelpCenter() {
                       Submit a request
                     </Link>
                     <a
-                      href="mailto:support@migrent.com.au"
+                      href="mailto:migrentau@gmail.com"
                       className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-[var(--color-surface-2)] hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-surface-muted)] text-[var(--color-ink-2)] border border-[var(--color-line)] rounded-xl text-sm font-semibold transition-colors shadow-sm"
                     >
                       <Mail className="w-4 h-4" />

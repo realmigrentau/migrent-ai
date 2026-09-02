@@ -1,105 +1,91 @@
 import Link from "next/link";
-import { ShieldCheck, MessageCircle, Home, BadgeCheck } from "lucide-react";
+import { MessageCircle, Home } from "lucide-react";
 import GlassCard from "../ui/GlassCard";
-
-interface OwnerProfile {
-  name: string;
-  custom_pfp?: string | null;
-  verified?: boolean;
-  identity_verified?: boolean;
-  bio?: string;
-  badges?: string[];
-  listings_count?: number;
-}
+import VerificationBadge from "../VerificationBadge";
+import type { PublicOwner } from "../../lib/api";
 
 interface OwnerCardProps {
-  profile: OwnerProfile;
-  ownerId: string;
+  owner: PublicOwner;
   listingId: string;
 }
 
-export default function OwnerCard({
-  profile,
-  ownerId,
-  listingId,
-}: OwnerCardProps) {
+/**
+ * The host card on a listing page.
+ *
+ * Trust state comes from `owner.verification`, computed on the server from
+ * owner_verification. The free-text badges array is never rendered as a
+ * trust signal: only the achievement badges the API allow-lists appear.
+ */
+export default function OwnerCard({ owner, listingId }: OwnerCardProps) {
+  const name = owner.name || "Host";
+  const initial = name.charAt(0).toUpperCase();
+  const messageHref = owner.public_id
+    ? `/messages?listing=${encodeURIComponent(listingId)}&to=${encodeURIComponent(owner.public_id)}`
+    : "/messages";
+
   return (
     <GlassCard gradient="rose" padding="md">
-      <h2 className="text-lg font-bold text-[var(--color-ink)] mb-4">
-        Your host
-      </h2>
+      <h2 className="text-lg font-bold text-[var(--color-ink)] mb-4">Your host</h2>
 
       <div className="flex items-start gap-4">
-        {/* Avatar */}
-        {profile.custom_pfp ? (
+        {owner.avatar_url ? (
+          // eslint-disable-next-line @next/next/no-img-element
           <img
-            src={profile.custom_pfp}
-            alt={profile.name}
-            className="w-14 h-14 rounded-full object-cover ring-2 ring-[var(--color-primary-soft)] dark:ring-[var(--color-primary)]/20"
+            src={owner.avatar_url}
+            alt=""
+            width={56}
+            height={56}
+            className="w-14 h-14 rounded-full object-cover ring-2 ring-[var(--color-primary-soft)]"
           />
         ) : (
-          <div className="w-14 h-14 rounded-full bg-[var(--color-primary-soft)] from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center text-white font-bold text-xl ring-2 ring-[var(--color-primary-soft)] dark:ring-[var(--color-primary)]/20">
-            {profile.name.charAt(0)}
+          <div aria-hidden="true" className="w-14 h-14 rounded-full bg-[var(--color-primary-soft)] flex items-center justify-center text-[var(--color-primary)] font-bold text-xl ring-2 ring-[var(--color-primary-soft)]">
+            {initial}
           </div>
         )}
 
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2">
-            <p className="font-bold text-[var(--color-ink)] text-base">
-              {profile.name}
-            </p>
-            {profile.verified && (
-              <ShieldCheck className="w-4 h-4 text-[var(--color-primary)]" />
+          <p className="font-bold text-[var(--color-ink)] text-base">
+            {owner.public_id ? (
+              <Link href={`/users/profile/${encodeURIComponent(owner.public_id)}`} className="hover:underline underline-offset-2">
+                {name}
+              </Link>
+            ) : (
+              name
             )}
-          </div>
+          </p>
 
-          {/* Stats row */}
-          <div className="flex items-center gap-3 mt-1 text-xs text-[var(--color-ink-3)]">
-            {profile.listings_count != null && profile.listings_count > 0 && (
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1 text-xs text-[var(--color-ink-3)]">
+            {typeof owner.listings_count === "number" && owner.listings_count > 0 && (
               <span className="flex items-center gap-1">
-                <Home className="w-3 h-3" />
-                {profile.listings_count} listing
-                {profile.listings_count !== 1 ? "s" : ""}
+                <Home className="w-3 h-3" aria-hidden="true" />
+                {owner.listings_count} live listing{owner.listings_count !== 1 ? "s" : ""}
               </span>
             )}
-            {profile.identity_verified && (
-              <span className="flex items-center gap-1 text-[var(--color-accent)] dark:text-[var(--color-accent)]">
-                <BadgeCheck className="w-3 h-3" />
-                ID verified
-              </span>
-            )}
+            {owner.member_since && <span>Member since {new Date(owner.member_since).toLocaleDateString("en-AU", { month: "short", year: "numeric" })}</span>}
           </div>
 
-          {/* Bio */}
-          {profile.bio && (
-            <p className="text-sm text-[var(--color-ink-2)] mt-2 line-clamp-3">
-              {profile.bio}
-            </p>
-          )}
+          {owner.bio && <p className="text-sm text-[var(--color-ink-2)] mt-2 line-clamp-3">{owner.bio}</p>}
 
-          {/* Badges */}
-          {profile.badges && profile.badges.length > 0 && (
-            <div className="flex flex-wrap gap-1.5 mt-3">
-              {profile.badges.slice(0, 4).map((badge, i) => (
-                <span
-                  key={i}
-                  className="text-xs font-medium px-2 py-0.5 rounded-full bg-[var(--color-surface-muted)] text-[var(--color-ink-2)]"
-                >
+          {owner.achievement_badges.length > 0 && (
+            <ul className="flex flex-wrap gap-1.5 mt-3 list-none p-0 m-0" aria-label="Host achievements">
+              {owner.achievement_badges.slice(0, 4).map((badge) => (
+                <li key={badge} className="text-xs font-medium px-2 py-0.5 rounded-full bg-[var(--color-surface-muted)] text-[var(--color-ink-2)]">
                   {badge}
-                </span>
+                </li>
               ))}
-            </div>
+            </ul>
           )}
         </div>
       </div>
 
-      {/* Message button */}
+      <VerificationBadge verification={owner.verification} variant="panel" className="mt-4" />
+
       <Link
-        href={`/dashboard/messages?listing=${listingId}&to=${ownerId}`}
-        className="mt-4 w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl border border-[var(--color-line)] text-sm font-semibold text-[var(--color-ink-2)] hover:bg-[var(--color-surface)] transition-colors"
+        href={messageHref}
+        className="mt-4 w-full flex items-center justify-center gap-2 min-h-[44px] px-4 rounded-xl border border-[var(--color-line)] text-sm font-semibold text-[var(--color-ink-2)] hover:bg-[var(--color-surface)] transition-colors"
       >
-        <MessageCircle className="w-4 h-4" />
-        Message host
+        <MessageCircle className="w-4 h-4" aria-hidden="true" />
+        Message {name}
       </Link>
     </GlassCard>
   );

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useAuth } from "../../hooks/useAuth";
@@ -240,12 +241,12 @@ export default function SupportWidget() {
                     </p>
                     <p className="text-xs text-[var(--color-ink-3)] mt-2">We'll get back to you within 24 hours.</p>
                     {session && (
-                      <a
+                      <Link
                         href="/support/tickets"
                         className="inline-block mt-4 text-sm text-[var(--color-primary)] hover:text-[var(--color-primary)] font-medium"
                       >
                         View your tickets
-                      </a>
+                      </Link>
                     )}
                   </div>
                 ) : (

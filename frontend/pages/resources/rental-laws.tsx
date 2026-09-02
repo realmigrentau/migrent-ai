@@ -12,7 +12,7 @@ export default function RentalLaws() {
   return (
     <>
       <Head>
-        <title>Australian Rental Laws for Migrants | MigRent AI</title>
+        <title>Australian Rental Laws for Migrants | MigRent</title>
         <meta name="description" content="Know your rights as a migrant renter in Australia. State-by-state tenancy laws, bond rules, and dispute processes." />
       </Head>
 

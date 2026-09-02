@@ -67,10 +67,11 @@ export default function MagicLinkLogin() {
     };
   }, [sent, router]);
 
-  const handleSendLink = async () => {
+  const handleSendLink = async (e?: React.FormEvent) => {
+    e?.preventDefault();
     setMsg("");
-    if (!email) {
-      setMsg("Please enter your email address.");
+    if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+      setMsg("Enter a valid email address.");
       return;
     }
     setLoading(true);
@@ -139,13 +140,14 @@ export default function MagicLinkLogin() {
                 <p className="text-xs text-[var(--color-accent)] dark:text-[var(--color-accent)] mt-2">
                   Click the link in the email to sign in. No password needed.
                 </p>
-                <div className="flex items-center justify-center gap-2 mt-3 text-xs text-[var(--color-ink-3)]">
-                  <span className="w-3 h-3 border-2 border-[var(--color-line-2)] border-t-blue-500 rounded-full animate-spin" />
-                  Waiting for verification...
+                <div className="flex items-center justify-center gap-2 mt-3 text-xs text-[var(--color-ink-3)]" role="status" aria-live="polite">
+                  <span className="w-3 h-3 border-2 border-[var(--color-line-2)] border-t-blue-500 rounded-full animate-spin" aria-hidden="true" />
+                  Waiting for you to open the link. This page will sign you in automatically. Links expire after one hour.
                 </div>
               </div>
 
               <button
+                type="button"
                 onClick={() => { setSent(false); setMsg(""); pollingIdRef.current = ""; }}
                 className="w-full btn-secondary py-2.5 rounded-[10px] text-sm"
               >
@@ -153,21 +155,28 @@ export default function MagicLinkLogin() {
               </button>
             </motion.div>
           ) : (
-            <div className="space-y-4">
+            <form onSubmit={handleSendLink} noValidate className="space-y-4" aria-describedby={msg ? "magic-login-status" : undefined}>
               <div>
+                <label htmlFor="magic-login-email" className="block text-[12.5px] font-semibold text-[var(--color-ink-2)] mb-1.5">Email address</label>
                 <input
+                  id="magic-login-email"
+                  name="email"
                   type="email"
-                  placeholder="Email address"
+                  autoComplete="email"
+                  inputMode="email"
+                  required
+                  placeholder="you@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  aria-invalid={msg ? true : undefined}
                   className="input-field"
-                  onKeyDown={(e) => e.key === "Enter" && handleSendLink()}
                 />
               </div>
 
               <button
-                onClick={handleSendLink}
+                type="submit"
                 disabled={loading}
+                aria-busy={loading}
                 className="w-full h-10 rounded-[10px] text-sm font-semibold text-white bg-[var(--color-primary)] hover:bg-[var(--color-primary-500)] disabled:opacity-50 transition-colors"
               >
                 {loading ? (
@@ -203,16 +212,18 @@ export default function MagicLinkLogin() {
                 Sign in with password instead
               </Link>
 
-              {msg && (
-                <motion.p
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="text-sm text-center p-3 rounded-xl bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-500)]/10 border border-[var(--color-danger-500)]/30 dark:border-[var(--color-danger-500)]/20 text-[var(--color-danger-500)] dark:text-[var(--color-danger-500)]"
-                >
-                  {msg}
-                </motion.p>
-              )}
-            </div>
+              <div id="magic-login-status" role="alert" aria-live="assertive" aria-atomic="true">
+                {msg && (
+                  <motion.p
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="text-sm text-center p-3 rounded-xl bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-500)]/10 border border-[var(--color-danger-500)]/30 dark:border-[var(--color-danger-500)]/20 text-[var(--color-danger-500)] dark:text-[var(--color-danger-500)]"
+                  >
+                    {msg}
+                  </motion.p>
+                )}
+              </div>
+            </form>
           )}
         </div>
       </motion.div>

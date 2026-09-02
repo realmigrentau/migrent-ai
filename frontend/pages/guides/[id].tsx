@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
-import Head from "next/head";
+import SEOHead from "../../components/SEOHead";
 import Breadcrumb from "../../components/content/Breadcrumb";
 import TableOfContents from "../../components/content/TableOfContents";
 import { getGuideById, getAllGuides } from "../../data/guidesContent";
@@ -49,10 +49,12 @@ export default function GuidePage({ id }: { id: string }) {
 
   return (
     <>
-      <Head>
-        <title>{guide.title} | MigRent AI Guides</title>
-        <meta name="description" content={guide.description} />
-      </Head>
+      <SEOHead
+        title={guide.title}
+        description={guide.description}
+        ogType="article"
+        breadcrumbs={[{ name: "Home", path: "/" }, { name: "Guides", path: "/guides" }, { name: guide.title, path: `/guides/${guide.id}` }]}
+      />
 
       <div className="max-w-6xl mx-auto">
         <Breadcrumb

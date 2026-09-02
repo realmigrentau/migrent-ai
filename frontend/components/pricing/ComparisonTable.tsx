@@ -29,13 +29,22 @@ function CellValue({ value, highlight }: { value: boolean | string; highlight?: 
   if (value) {
     return highlight ? (
       <div className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/20">
-        <Check className="w-3.5 h-3.5 text-[var(--color-primary)] dark:text-[var(--color-primary)]" strokeWidth={3} />
+        <Check className="w-3.5 h-3.5 text-[var(--color-primary)] dark:text-[var(--color-primary)]" strokeWidth={3} aria-hidden="true" />
+        <span className="sr-only">Yes</span>
       </div>
     ) : (
-      <Check className="w-4 h-4 text-[var(--color-ink-4)] mx-auto" strokeWidth={2} />
+      <>
+        <Check className="w-4 h-4 text-[var(--color-ink-4)] mx-auto" strokeWidth={2} aria-hidden="true" />
+        <span className="sr-only">Yes</span>
+      </>
     );
   }
-  return <X className="w-4 h-4 text-[var(--color-ink-4)] mx-auto" strokeWidth={2} />;
+  return (
+    <>
+      <X className="w-4 h-4 text-[var(--color-ink-4)] mx-auto" strokeWidth={2} aria-hidden="true" />
+      <span className="sr-only">No</span>
+    </>
+  );
 }
 
 export default function ComparisonTable() {

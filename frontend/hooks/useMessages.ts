@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { supabase } from "../lib/supabase";
-import { sendMessage as sendMessageApi, markMessagesRead } from "../lib/api";
+import { sendMessage as sendMessageApi, markMessagesRead, uploadMessageAttachment } from "../lib/api";
 
 /**
  * Reads and realtime still go straight to Supabase, which is fine: the RLS
@@ -141,7 +141,7 @@ export function useThreads(userId?: string) {
       )];
       if (listingIds.length > 0) {
         const { data: listings } = await supabase
-          .from("listings")
+          .from("public_listings")
           .select("id, title, images")
           .in("id", listingIds);
 
@@ -339,28 +339,18 @@ export function useChat(currentUserId?: string, otherUserId?: string) {
     return () => { supabase.removeChannel(channel); };
   }, [currentUserId, otherUserId]);
 
-  // Upload file to Supabase Storage
-  const uploadFile = async (file: File): Promise<{ url: string; name: string; type: string } | null> => {
+  // Upload through the API: magic-byte validation, EXIF stripping and a
+  // private bucket. Readers get 10-minute signed URLs from the thread
+  // endpoints; nothing is ever written to a public bucket.
+  const uploadFile = async (
+    file: File,
+    token: string
+  ): Promise<{ path: string; name: string; type: string } | null> => {
     try {
-      const ext = file.name.split(".").pop();
-      const path = `messages/${currentUserId}/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
-      const { error } = await supabase.storage.from("attachments").upload(path, file, {
-        cacheControl: "3600",
-        upsert: false,
-      });
-      if (error) {
-        const pubPath = `attachments/${path}`;
-        const { error: pubErr } = await supabase.storage.from("public").upload(pubPath, file, {
-          cacheControl: "3600",
-          upsert: false,
-        });
-        if (pubErr) return null;
-        const { data: urlData } = supabase.storage.from("public").getPublicUrl(pubPath);
-        return { url: urlData.publicUrl, name: file.name, type: file.type };
-      }
-      const { data: urlData } = supabase.storage.from("attachments").getPublicUrl(path);
-      return { url: urlData.publicUrl, name: file.name, type: file.type };
-    } catch {
+      const res = await uploadMessageAttachment(token, file);
+      return { path: res.attachment_path, name: res.attachment_name, type: res.attachment_type };
+    } catch (err) {
+      console.error("Attachment upload failed:", err);
       return null;
     }
   };
@@ -409,13 +399,13 @@ export function useChat(currentUserId?: string, otherUserId?: string) {
       if (attachments && attachments.length > 0) {
         setUploading(true);
         for (const att of attachments) {
-          const uploaded = await uploadFile(att.file);
+          const uploaded = await uploadFile(att.file, token);
           if (uploaded) {
             const sent = await sendMessageApi(token, {
               sender_id: currentUserId,
               receiver_id: otherUserId,
               message_text: `📎 ${uploaded.name}`,
-              attachment_url: uploaded.url,
+              attachment_path: uploaded.path,
               attachment_name: uploaded.name,
               attachment_type: uploaded.type,
             });

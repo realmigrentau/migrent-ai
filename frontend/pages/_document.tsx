@@ -1,4 +1,5 @@
 import { Html, Head, Main, NextScript } from "next/document";
+import { THEME_BOOTSTRAP_SCRIPT } from "../lib/themeBootstrap";
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
 const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "";
@@ -7,13 +8,7 @@ export default function Document() {
   return (
     <Html lang="en" dir="ltr" suppressHydrationWarning>
       <Head>
-        {/* Fonts: Fraunces (display, roman) · Hanken Grotesk (body) · Space Mono (meta) */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Hanken+Grotesk:wght@400..800&family=Space+Mono:wght@400;700&display=swap"
-          rel="stylesheet"
-        />
+        {/* Fonts are self-hosted through next/font (lib/fonts.ts). */}
 
         {/* Preconnect to backend services so the first API call is faster */}
         {SUPABASE_URL && <link rel="preconnect" href={SUPABASE_URL} crossOrigin="anonymous" />}
@@ -36,11 +31,7 @@ export default function Document() {
       </Head>
       <body className="antialiased">
         {/* Inline theme + palette bootstrap: prevent flash of wrong theme on first paint */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}}catch(e){}})();`,
-          }}
-        />
+        <script dangerouslySetInnerHTML={{ __html: THEME_BOOTSTRAP_SCRIPT }} />
         <Main />
         <NextScript />
       </body>

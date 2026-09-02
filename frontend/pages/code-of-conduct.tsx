@@ -6,7 +6,7 @@ export default function CodeOfConduct() {
   return (
     <>
       <Head>
-        <title>NSW STRA Code of Conduct | MigRent AI</title>
+        <title>NSW STRA Code of Conduct | MigRent</title>
         <meta name="description" content="Summary of the NSW Short-Term Rental Accommodation Code of Conduct and how it applies to MigRent users." />
       </Head>
 

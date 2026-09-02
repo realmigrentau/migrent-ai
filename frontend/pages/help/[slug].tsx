@@ -321,7 +321,7 @@ export default function HelpArticlePage({ slug }: { slug: string }) {
                     Submit a request
                   </Link>
                   <a
-                    href="mailto:support@migrent.com.au"
+                    href="mailto:migrentau@gmail.com"
                     className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-surface-2)] hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-surface-muted)] border border-[var(--color-line)] text-[var(--color-ink-2)] rounded-lg text-xs font-semibold transition-colors"
                   >
                     <Mail className="w-3.5 h-3.5" />

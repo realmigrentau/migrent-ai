@@ -53,7 +53,8 @@ def get_owner_metrics(authorization: str = Header(...)):
     responded = [b for b in bookings if b["status"] in (
         "OWNER_ACCEPTED", "OWNER_DECLINED", "PAID", "COMPLETED"
     )]
-    response_rate = round((len(responded) / len(needs_response) * 100)) if needs_response else 100
+    # None, not 100: a host with no requests has no response rate to report.
+    response_rate = round((len(responded) / len(needs_response) * 100)) if needs_response else None
 
     return {
         "active_listings": active_listings,
