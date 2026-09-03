@@ -86,7 +86,7 @@ export default function Contact() {
         {/* HERO */}
         <motion.section initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
           <div className="flex flex-col items-start gap-4">
-            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent)]/10 border border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)] text-[var(--color-accent)] dark:text-[var(--color-accent)] text-xs font-medium">
+            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent)]/10 border border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)] text-[var(--color-primary)] dark:text-[var(--color-accent)] text-xs font-medium">
               <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-accent)]" aria-hidden="true" />
               {supportPromise()}
             </span>

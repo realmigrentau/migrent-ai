@@ -248,10 +248,17 @@ body {
 
 a { color: inherit; text-decoration: none; }
 
-h1, h2, h3, h4 {
-  letter-spacing: -0.012em;
-  font-weight: 600;
-  color: var(--color-ink);
+/* Headings default to ink, but a colour utility on the element must win.
+   This rule used to sit outside any layer, so `text-[color:var(--color-x)]`
+   in @layer utilities lost to it and every heading on a coloured panel
+   rendered dark-on-dark (the sign-in and sign-up brand panels were 2.1:1).
+   Inside @layer base the specificity order is the one Tailwind intends. */
+@layer base {
+  h1, h2, h3, h4 {
+    letter-spacing: -0.012em;
+    font-weight: 600;
+    color: var(--color-ink);
+  }
 }
 
 ::selection { background: var(--color-primary); color: var(--color-primary-fg); }

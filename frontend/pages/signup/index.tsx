@@ -221,7 +221,7 @@ export default function SignUp() {
                 animate={{ opacity: 1, y: 0 }}
                 className={`mt-4 text-sm text-center p-3 rounded-[10px] ${
                   msgTone === "info"
-                    ? "bg-[var(--color-accent-soft)] text-[var(--color-accent)]"
+                    ? "bg-[var(--color-accent-soft)] text-[var(--color-primary)]"
                     : "bg-[#f1d8d4] dark:bg-[#2b1614] text-[var(--color-danger-500)]"
                 }`}
               >
@@ -245,7 +245,7 @@ export default function SignUp() {
           <div className="font-mono text-[11px] uppercase tracking-[0.08em] opacity-90">
             Verified hosts across Australia
           </div>
-          <h2 className="font-serif text-[56px] leading-[1.02] tracking-[-0.025em] mt-3 text-balance">
+          <h2 className="font-serif text-[56px] leading-[1.02] tracking-[-0.025em] mt-3 text-balance text-[color:var(--color-primary-fg)]">
             The lease begins<br />
             <span className="opacity-90">at hello.</span>
           </h2>

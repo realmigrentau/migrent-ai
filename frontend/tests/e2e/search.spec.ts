@@ -54,7 +54,7 @@ test.describe("search survives without WebGL", () => {
 });
 
 test.describe("move-in date", () => {
-  test("homepage move-in date reaches the search URL and filters results", async ({ page }) => {
+  test("homepage move-in date reaches the search URL and filters results", async ({ page, isMobile }) => {
     await page.goto("/");
     const nextMonth = new Date();
     nextMonth.setDate(nextMonth.getDate() + 45);
@@ -67,7 +67,9 @@ test.describe("move-in date", () => {
     await expect(page).toHaveURL(/suburb=Kellyville/);
     await expect(page.getByTestId("listing-card").filter({ hasText: "Available next month" })).toHaveCount(1);
     // Move the date earlier: the not-yet-available room disappears.
-    await page.locator('input[name="checkIn"]').first().fill(new Date().toISOString().slice(0, 10));
+    if (isMobile) await page.getByRole("button", { name: /^Filters/ }).click();
+    await page.locator('input[name="checkIn"]:visible').first().fill(new Date().toISOString().slice(0, 10));
+    if (isMobile) await page.getByRole("dialog", { name: "Filters" }).getByRole("button", { name: "Search rooms" }).click();
     await expect(page.getByTestId("listing-card").filter({ hasText: "Available next month" })).toHaveCount(0);
     await expect(page).toHaveURL(/checkIn=/);
   });
