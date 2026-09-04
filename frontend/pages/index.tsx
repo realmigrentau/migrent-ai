@@ -27,6 +27,8 @@ import {
 } from "lucide-react";
 import { searchListings } from "../lib/api";
 import PageSubnav from "../components/ui/PageSubnav";
+import MigrentHero from "../components/home/MigrentHero";
+import LifestyleIntro from "../components/home/LifestyleIntro";
 
 type Listing = {
   id: string;
@@ -387,11 +389,6 @@ export default function Home() {
   const [listingsLoading, setListingsLoading] = useState(true);
   const reduced = useReducedMotion();
 
-  // EFFECT 1 · hero video parallax
-  const heroRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress: heroP } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
-  const videoY = useTransform(heroP, [0, 1], [0, reduced ? 0 : -64]);
-
   // EFFECT 5 · cities parallax
   const citiesRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress: citiesP } = useScroll({ target: citiesRef, offset: ["start end", "end start"] });
@@ -473,21 +470,30 @@ export default function Home() {
           { label: "FAQ", href: "#faq" },
         ]}
         cta={{ label: "Start searching", href: "/seeker/search" }}
-        threshold={700}
+        threshold={1240}
       />
 
-      {/* 1 · HERO (parallax video) */}
-      <section ref={heroRef} className="mood-field border-b border-[var(--color-line)]">
-        <div className="max-w-[1280px] mx-auto px-6 md:px-10 lg:px-14 py-12 md:py-16 lg:py-20">
-          <div className="grid lg:grid-cols-[1.05fr_0.95fr] gap-10 lg:gap-14 items-center">
-            <div>
+      {/* 1 · CINEMATIC HERO */}
+      <MigrentHero />
+
+      {/* 1b · EDITORIAL LINE - white on white, so the hero's fog runs into it */}
+      <LifestyleIntro />
+
+      {/* 1c · SEARCH
+              The work the old hero did. Same GET form, same URL contract, same
+              copy - one centred column under the cinematic opening instead of
+              a second hero competing with it. */}
+      <section className="mood-field border-y border-[var(--color-line)]">
+        <div className="max-w-[1280px] mx-auto px-6 md:px-10 lg:px-14 py-16 md:py-24">
+          <div className="max-w-[560px] mx-auto">
+            <div className="text-center">
               <div className="eyebrow mb-5">Verified rentals · Australia</div>
-              <h1 className="font-serif text-[44px] sm:text-[58px] xl:text-[68px] font-medium leading-[0.98] tracking-[-0.025em] text-[var(--color-ink)] [overflow-wrap:anywhere]">
+              <h2 className="font-serif text-[38px] sm:text-[50px] xl:text-[58px] font-medium leading-[1.0] tracking-[-0.025em] text-[var(--color-ink)] [overflow-wrap:anywhere]">
                 A real home in Australia,
                 <br />
                 <span className="text-[var(--color-primary)]">found the right way.</span>
-              </h1>
-              <p className="mt-6 text-[17px] sm:text-[18px] text-[var(--color-ink-2)] max-w-[44ch] leading-[1.55]">
+              </h2>
+              <p className="mt-6 text-[17px] sm:text-[18px] text-[var(--color-ink-2)] max-w-[44ch] mx-auto leading-[1.55]">
                 Verified rooms for migrants, students, and new arrivals. No rental history needed.
               </p>
 
@@ -498,7 +504,7 @@ export default function Home() {
                 method="get"
                 role="search"
                 aria-label="Find a room"
-                className="mt-8 bg-[var(--color-surface-2)] rounded-[var(--radius-xl)] border border-[var(--color-line)] shadow-[var(--shadow-card)] p-4 sm:p-5 max-w-[520px]"
+                className="mt-8 bg-[var(--color-surface-2)] rounded-[var(--radius-xl)] border border-[var(--color-line)] shadow-[var(--shadow-card)] p-4 sm:p-5 max-w-[520px] mx-auto text-left"
               >
                 <div className="grid grid-cols-1 sm:grid-cols-2 bg-[var(--color-surface)] rounded-[var(--radius-card)] overflow-hidden border border-[var(--color-line)]">
                   <div className="px-4 py-3 border-b sm:border-b-0 sm:border-r border-[var(--color-line)]">
@@ -546,7 +552,7 @@ export default function Home() {
                 </button>
               </form>
 
-              <div className="mt-6 flex flex-wrap gap-x-5 gap-y-2.5">
+              <div className="mt-6 flex flex-wrap justify-center gap-x-5 gap-y-2.5">
                 {heroChips.map((c) => (
                   <span key={c.label} className="inline-flex items-center gap-2 text-[13.5px] font-medium text-[var(--color-ink-2)]">
                     <c.icon className="w-4 h-4 text-[var(--color-accent)]" /> {c.label}
@@ -555,35 +561,6 @@ export default function Home() {
               </div>
             </div>
 
-            <motion.div style={{ y: videoY }} className="relative">
-              <div className="relative overflow-hidden rounded-[24px] border border-[var(--color-line)] shadow-[var(--shadow-pop)] aspect-[4/5] sm:aspect-[3/4] lg:aspect-[4/5] bg-[var(--color-ink)]">
-                {/* Hand-built Sand & Ocean mood-field (replaces the old AI-generated
-                    hero video): layered token-coloured washes + faint grain. */}
-                <div
-                  aria-hidden="true"
-                  className="absolute inset-0"
-                  style={{
-                    background: `
-                      radial-gradient(120% 90% at 78% 8%, color-mix(in oklab, var(--color-primary-400) 82%, transparent), transparent 62%),
-                      radial-gradient(105% 80% at 8% 94%, color-mix(in oklab, var(--color-accent) 62%, transparent), transparent 60%),
-                      radial-gradient(95% 60% at 58% 84%, color-mix(in oklab, var(--color-warn-500) 42%, transparent), transparent 62%),
-                      linear-gradient(168deg, color-mix(in oklab, var(--color-primary) 52%, var(--color-ink)) 0%, var(--color-ink) 80%)`,
-                  }}
-                />
-                <svg aria-hidden="true" className="absolute inset-0 w-full h-full opacity-[0.08] mix-blend-overlay" xmlns="http://www.w3.org/2000/svg">
-                  <filter id="hero-grain"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch" /></filter>
-                  <rect width="100%" height="100%" filter="url(#hero-grain)" />
-                </svg>
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0a0d0f]/45 via-transparent to-transparent" aria-hidden="true" />
-                <div className="absolute bottom-4 left-4 right-4 flex items-center gap-2.5 bg-[var(--color-surface-2)]/92 backdrop-blur-md rounded-[var(--radius-card)] px-3.5 py-2.5 shadow-[var(--shadow-card)]">
-                  <span className="w-8 h-8 rounded-full bg-[var(--color-accent-soft)] text-[var(--color-accent)] flex items-center justify-center shrink-0"><BadgeCheck className="w-4 h-4" /></span>
-                  <div className="min-w-0">
-                    <div className="text-[13px] font-semibold text-[var(--color-ink)] leading-tight">Every host, verified</div>
-                    <div className="text-[11.5px] text-[var(--color-ink-3)] leading-tight">Government ID + proof of property</div>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
           </div>
         </div>
       </section>

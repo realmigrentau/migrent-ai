@@ -41,10 +41,14 @@ export default function Layout({ children }: { children: ReactNode }) {
       <BackendStatusBanner />
 
       {/* Sticky navbar */}
-      <MegaNavbar />
+      {/* The homepage opens on a full-bleed hero with its own floating
+          navigation, so the site header waits until you have scrolled past
+          it - the account, language and theme controls are one screen away
+          rather than gone. */}
+      <MegaNavbar revealAfterVh={isHomePage ? 0.86 : 0} />
 
-      {/* Spacer for sticky navbar */}
-      <div className="h-[60px]" />
+      {/* Spacer for sticky navbar - the hero sits under it on the homepage */}
+      {!isHomePage && <div className="h-[60px]" />}
 
       {/* Page content */}
       <main id="main-content" tabIndex={-1} className={`flex-1 outline-none ${isFullWidth ? "w-full" : "max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8"}`}>

@@ -9,7 +9,13 @@ import { navItems, type NavLinkDropdown } from "../../lib/navData";
 import { Logo } from "./Logo";
 import LanguageSwitcher from "./LanguageSwitcher";
 
-export default function MegaNavbar() {
+/**
+ * `revealAfterVh` keeps the header out of the way of a full-bleed hero: it
+ * stays translated off the top until the page has scrolled past that fraction
+ * of the viewport height, then slides in. A fraction rather than a pixel
+ * count so the threshold follows a window resize on its own.
+ */
+export default function MegaNavbar({ revealAfterVh = 0 }: { revealAfterVh?: number } = {}) {
   const router = useRouter();
   const { t } = useTranslation();
   const { theme, toggle, mounted } = useTheme();
@@ -60,11 +66,18 @@ export default function MegaNavbar() {
     return () => document.removeEventListener("keydown", handleKey);
   }, []);
 
+  // Starts hidden on the server too, so it never flashes over the hero.
+  const [revealed, setRevealed] = useState(revealAfterVh <= 0);
+
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
+    const onScroll = () => {
+      setScrolled(window.scrollY > 20);
+      setRevealed(revealAfterVh <= 0 || window.scrollY > window.innerHeight * revealAfterVh);
+    };
+    onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  }, [revealAfterVh]);
 
   // Close menus on route change
   useEffect(() => {
@@ -103,9 +116,13 @@ export default function MegaNavbar() {
   return (
     <motion.header
       initial={{ y: -60 }}
-      animate={{ y: 0 }}
-      transition={{ duration: 0.4, ease: "easeOut" }}
+      animate={{ y: revealed ? 0 : -72 }}
+      transition={{ duration: 0.4, ease: [0.2, 0.7, 0.3, 1] }}
+      aria-hidden={revealed ? undefined : true}
+      inert={revealed ? undefined : true}
       className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-200 ${
+        revealed ? "" : "pointer-events-none"
+      } ${
         scrolled
           ? "bg-[var(--color-surface)]/97 backdrop-blur-xl border-b border-[var(--color-line)]"
           : "bg-[var(--color-surface)]/90 backdrop-blur-md border-b border-[var(--color-line)]/60"
