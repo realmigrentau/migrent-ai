@@ -70,7 +70,7 @@ export default function HowItWorks() {
               <div className="flex items-start gap-5 sm:gap-8">
                 <span
                   aria-hidden="true"
-                  className="mg-numeral text-[var(--color-primary-200)] text-[clamp(2.6rem,5vw,4.2rem)] w-[1.7ch] shrink-0 select-none"
+                  className="mg-numeral text-[var(--color-terracotta)] text-[clamp(2.6rem,5vw,4.2rem)] w-[1.7ch] shrink-0 select-none"
                 >
                   {s.n}
                 </span>

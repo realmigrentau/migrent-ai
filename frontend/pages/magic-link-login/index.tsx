@@ -106,7 +106,7 @@ export default function MagicLinkLogin() {
       >
         <div className="bg-[var(--color-surface-2)] border border-[var(--color-line)]/70 dark:border-slate-800 p-8 rounded-2xl">
           <div className="text-center mb-8">
-            <div className="w-12 h-12 rounded-xl bg-[var(--color-primary)] flex items-center justify-center text-white font-semibold text-lg mx-auto mb-4">
+            <div className="w-12 h-12 rounded-xl bg-[var(--color-primary)] flex items-center justify-center text-[color:var(--color-primary-fg)] font-semibold text-lg mx-auto mb-4">
               M
             </div>
             <h1 className="text-2xl font-semibold tracking-tight text-[var(--color-ink)]">
@@ -177,7 +177,7 @@ export default function MagicLinkLogin() {
                 type="submit"
                 disabled={loading}
                 aria-busy={loading}
-                className="w-full h-10 rounded-[10px] text-sm font-semibold text-white bg-[var(--color-primary)] hover:bg-[var(--color-primary-500)] disabled:opacity-50 transition-colors"
+                className="w-full h-10 rounded-[10px] text-sm font-semibold text-[color:var(--color-primary-fg)] bg-[var(--color-primary)] hover:bg-[var(--color-primary-500)] disabled:opacity-50 transition-colors"
               >
                 {loading ? (
                   <span className="flex items-center justify-center gap-2">

@@ -102,7 +102,7 @@ export default function SupportWidget() {
       {/* Floating button */}
       <button
         onClick={() => setOpen(!open)}
-        className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-[var(--color-primary)] hover:bg-[var(--color-primary)] text-white shadow-lg hover:shadow-xl transition-all flex items-center justify-center"
+        className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-[var(--color-primary)] hover:bg-[var(--color-primary)] text-[color:var(--color-primary-fg)] shadow-lg hover:shadow-xl transition-all flex items-center justify-center"
         aria-label="MigRent Support"
       >
         {open ? (
@@ -127,7 +127,7 @@ export default function SupportWidget() {
             className="fixed bottom-24 right-6 z-50 w-[28rem] h-[38rem] bg-[var(--color-surface-2)] border border-[var(--color-line)] rounded-2xl shadow-2xl flex flex-col overflow-hidden"
           >
             {/* Header */}
-            <div className="bg-[var(--color-primary)] from-[var(--color-primary)] to-[var(--color-primary)] text-white px-5 py-4">
+            <div className="bg-[var(--color-primary)] from-[var(--color-primary)] to-[var(--color-primary)] text-[color:var(--color-primary-fg)] px-5 py-4">
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center">
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -177,7 +177,7 @@ export default function SupportWidget() {
                     <div key={i} className={`flex ${msg.from === "user" ? "justify-end" : "justify-start"}`}>
                       <div className={`max-w-[85%] px-4 py-2.5 rounded-2xl text-sm whitespace-pre-line leading-relaxed ${
                         msg.from === "user"
-                          ? "bg-[var(--color-primary)] text-white rounded-br-md"
+                          ? "bg-[var(--color-primary)] text-[color:var(--color-primary-fg)] rounded-br-md"
                           : "bg-[var(--color-surface-muted)] text-[var(--color-ink-2)] rounded-bl-md"
                       }`}>
                         {msg.text}
@@ -213,7 +213,7 @@ export default function SupportWidget() {
                     <button aria-label="Send message"
                       onClick={handleSend}
                       disabled={!chatInput.trim()}
-                      className="px-4 py-2.5 bg-[var(--color-primary)] hover:bg-[var(--color-primary)] disabled:bg-[var(--color-primary-soft)] text-white rounded-xl text-sm font-medium transition-colors shrink-0"
+                      className="px-4 py-2.5 bg-[var(--color-primary)] hover:bg-[var(--color-primary)] disabled:bg-[var(--color-primary-soft)] text-[color:var(--color-primary-fg)] rounded-xl text-sm font-medium transition-colors shrink-0"
                     >
                       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
@@ -312,7 +312,7 @@ export default function SupportWidget() {
                     <button
                       type="submit"
                       disabled={submitting}
-                      className="w-full py-3 bg-[var(--color-primary)] hover:bg-[var(--color-primary)] disabled:bg-[var(--color-primary-soft)] text-white rounded-xl text-sm font-semibold transition-colors"
+                      className="w-full py-3 bg-[var(--color-primary)] hover:bg-[var(--color-primary)] disabled:bg-[var(--color-primary-soft)] text-[color:var(--color-primary-fg)] rounded-xl text-sm font-semibold transition-colors"
                     >
                       {submitting ? "Submitting..." : "Submit Request"}
                     </button>

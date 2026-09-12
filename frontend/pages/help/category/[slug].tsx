@@ -128,7 +128,7 @@ export default function HelpCategoryPage() {
           </p>
           <Link
             href="/help"
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-[var(--color-primary)] hover:bg-[var(--color-primary-500)] text-white rounded-xl text-sm font-semibold transition-colors"
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-[var(--color-primary)] hover:bg-[var(--color-primary-500)] text-[color:var(--color-primary-fg)] rounded-xl text-sm font-semibold transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to Help Center
@@ -248,7 +248,7 @@ export default function HelpCategoryPage() {
             <div className="flex flex-col sm:flex-row gap-2 shrink-0">
               <Link
                 href="/support/tickets"
-                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-[var(--color-primary)] hover:bg-[var(--color-primary-500)] text-white rounded-xl text-sm font-semibold transition-colors"
+                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-[var(--color-primary)] hover:bg-[var(--color-primary-500)] text-[color:var(--color-primary-fg)] rounded-xl text-sm font-semibold transition-colors"
               >
                 <MessageCircle className="w-4 h-4" />
                 Submit a request

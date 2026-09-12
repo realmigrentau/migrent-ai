@@ -88,7 +88,7 @@ export default function WishlistCard({
               onClick={() => onToggleCompare(listing.id)}
               className={`absolute top-3 left-3 z-20 w-7 h-7 rounded-full flex items-center justify-center transition-all ${
                 isCompareSelected
-                  ? "bg-[var(--color-primary)] text-white shadow-lg shadow-[var(--color-primary)]/20"
+                  ? "bg-[var(--color-primary)] text-[color:var(--color-primary-fg)] shadow-lg shadow-[var(--color-primary)]/20"
                   : "bg-white/90 dark:bg-[var(--color-surface-muted)]/90 text-[var(--color-ink-3)] border border-[var(--color-line)] dark:border-[var(--color-line-2)]"
               }`}
             >
@@ -163,7 +163,7 @@ export default function WishlistCard({
 
             {/* Superhost badge */}
             {listing.superhost && (
-              <div className="absolute top-3 left-3 px-2.5 py-1 rounded-lg bg-[var(--color-primary)] from-[var(--color-warn-500)] to-[var(--color-warn-500)] text-white text-xs font-bold shadow-lg flex items-center gap-1">
+              <div className="absolute top-3 left-3 px-2.5 py-1 rounded-lg bg-[var(--color-primary)] from-[var(--color-warn-500)] to-[var(--color-warn-500)] text-[color:var(--color-primary-fg)] text-xs font-bold shadow-lg flex items-center gap-1">
                 <Sparkles className="w-3 h-3" />
                 Superhost
               </div>
@@ -173,7 +173,7 @@ export default function WishlistCard({
             <div className="absolute bottom-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
               <Link
                 href={`/listing/${listing.id}`}
-                className="px-3 py-1.5 rounded-xl bg-[var(--color-primary)] hover:bg-[var(--color-primary)] text-white text-xs font-semibold shadow-lg flex items-center gap-1 transition-colors"
+                className="px-3 py-1.5 rounded-xl bg-[var(--color-primary)] hover:bg-[var(--color-primary)] text-[color:var(--color-primary-fg)] text-xs font-semibold shadow-lg flex items-center gap-1 transition-colors"
                 onClick={(e) => e.stopPropagation()}
               >
                 Quick Book <ArrowRight className="w-3 h-3" />
@@ -299,7 +299,7 @@ export default function WishlistCard({
             <div className="flex items-center gap-2 pt-2 border-t border-[var(--color-line)]/50 dark:border-[var(--color-line)]/50">
               <Link
                 href={`/listing/${listing.id}`}
-                className="flex-1 text-center py-2 px-3 rounded-xl bg-[var(--color-primary)] from-[var(--color-primary)] to-[var(--color-primary)] hover:from-[var(--color-primary)] hover:to-[var(--color-primary)] text-white text-xs font-semibold shadow-md hover:shadow-lg transition-all"
+                className="flex-1 text-center py-2 px-3 rounded-xl bg-[var(--color-primary)] from-[var(--color-primary)] to-[var(--color-primary)] hover:from-[var(--color-primary)] hover:to-[var(--color-primary)] text-[color:var(--color-primary-fg)] text-xs font-semibold shadow-md hover:shadow-lg transition-all"
                 onClick={(e) => e.stopPropagation()}
               >
                 View Details

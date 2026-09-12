@@ -1,5 +1,15 @@
 [
   {
+    "date": "2026-09-12",
+    "scope": "app",
+    "macrostructure": "Marquee Hero (unchanged) + Long Document / Workbench families",
+    "theme": "custom",
+    "theme_axes": "light / grotesk-sans display / chromatic-other (deep forest 150 + terracotta 25)",
+    "vibe": "Mediterranean riviera, warm editorial, calm and premium",
+    "enrichment": "hero kept as-is; mood-fields retuned; no new enrichment",
+    "brief": "MigRent - site-wide visual polish + UI/UX consistency pass. Riviera system (design.md v2): promoted the hero's language from [data-home] to global tokens, retired Fraunces and the azure/sand palettes, unified buttons/forms/cards, deep-forest footer, nav IA rebuilt (no more 'Broker'), and fixed the hydration + unlayered-CSS bugs that were breaking reveals and link colours."
+  },
+  {
     "date": "2026-06-09",
     "scope": "app",
     "macrostructure": "Marquee Hero",
@@ -7,6 +17,6 @@
     "theme_axes": "light / roman-serif / cool (ocean-teal ~218)",
     "vibe": "warm coastal Australian, bold, joyful, not minimal",
     "enrichment": "video hero (kept) + sideways-scroll showcase + mood-field",
-    "brief": "MigRent · whole-site redesign · Sand & Ocean system (design.md). Batch 1: foundation tokens/fonts/motion, homepage, global footer."
+    "brief": "MigRent \u00b7 whole-site redesign \u00b7 Sand & Ocean system (design.md). Batch 1: foundation tokens/fonts/motion, homepage, global footer."
   }
 ]

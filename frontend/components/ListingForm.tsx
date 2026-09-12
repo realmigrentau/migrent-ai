@@ -514,7 +514,7 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
                 onClick={() => i < step && setStep(i)}
                 className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
                   i === step
-                    ? "bg-[var(--color-primary)] text-white"
+                    ? "bg-[var(--color-primary)] text-[color:var(--color-primary-fg)]"
                     : i < step
                     ? "bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent)]/10 text-[var(--color-accent)] dark:text-[var(--color-accent)] cursor-pointer"
                     : "bg-[var(--color-surface-muted)] text-[var(--color-ink-3)]"

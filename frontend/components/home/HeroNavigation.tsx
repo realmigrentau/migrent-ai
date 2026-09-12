@@ -14,15 +14,25 @@ import { Menu, X } from "lucide-react";
 
 export type HeroNavItem = { label: string; href: string; current?: boolean };
 
+/**
+ * These labels used to be the reference animation's own words - Stay /
+ * Broker / Own-Rent / List / Ask Broker / Reserve Now - carried over
+ * verbatim. Two of them described a product MigRent does not have:
+ * "Broker" and "Ask Broker" both pointed at the mentor pages, promising a
+ * licensed real-estate broker where the product offers people who have
+ * made the same move. "Reserve Now" promised a booking from a page where
+ * nothing has been chosen yet. Each label now names where it actually goes,
+ * and the set matches the header's own information architecture.
+ */
 export const HERO_NAV_ITEMS: HeroNavItem[] = [
-  { label: "Stay", href: "/seeker/search", current: true },
-  { label: "Broker", href: "/mentors" },
-  { label: "Own/Rent", href: "/for-owners" },
-  { label: "List", href: "/owner/listings/new" },
-  { label: "Ask Broker", href: "/become-mentor" },
+  { label: "Find a stay", href: "/seeker/search", current: true },
+  { label: "Mentors", href: "/mentors" },
+  { label: "For owners", href: "/for-owners" },
+  { label: "List a room", href: "/owner/listings/new" },
+  { label: "Suburb guides", href: "/suburbs" },
 ];
 
-export const HERO_NAV_CTA = { label: "Reserve Now", href: "/seeker/search" };
+export const HERO_NAV_CTA = { label: "Start searching", href: "/seeker/search" };
 
 export default function HeroNavigation({ navRef }: { navRef?: React.Ref<HTMLElement> }) {
   const [open, setOpen] = useState(false);

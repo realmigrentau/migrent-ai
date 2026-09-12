@@ -144,17 +144,17 @@ export default function VisaRecommendations() {
                   {/* Feature badges */}
                   <div className="absolute bottom-2 left-2 flex gap-1.5">
                     {listing.near_uni && (
-                      <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-[var(--color-primary)]/90 text-white">
+                      <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-[var(--color-primary)]/90 text-[color:var(--color-primary-fg)]">
                         Near uni
                       </span>
                     )}
                     {listing.near_cbd && (
-                      <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-[var(--color-primary)]/90 text-white">
+                      <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-[var(--color-primary)]/90 text-[color:var(--color-primary-fg)]">
                         Near CBD
                       </span>
                     )}
                     {listing.furnished && !listing.near_uni && !listing.near_cbd && (
-                      <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-[var(--color-primary)]/90 text-white">
+                      <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-[var(--color-primary)]/90 text-[color:var(--color-primary-fg)]">
                         Furnished
                       </span>
                     )}

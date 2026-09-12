@@ -84,7 +84,7 @@ export default function Discord() {
           className="text-center mb-16"
         >
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 border border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)] text-xs font-medium text-[var(--color-primary)] dark:text-[var(--color-primary)] mb-4">
-            <span className="w-2 h-2 rounded-full bg-[var(--color-accent)] animate-pulse" />
+            <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-terracotta-500)]" aria-hidden="true" />
             Launching soon
           </div>
           <h1 className="text-3xl md:text-5xl font-black tracking-tight text-[var(--color-ink)]">

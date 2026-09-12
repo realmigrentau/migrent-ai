@@ -48,7 +48,7 @@ function DefaultTeaser({
             <motion.span
               whileHover={{ scale: 1.04 }}
               whileTap={{ scale: 0.98 }}
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary)] transition-colors"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold bg-[var(--color-primary)] text-[color:var(--color-primary-fg)] hover:bg-[var(--color-primary)] transition-colors"
             >
               Sign Up as Owner
               <ArrowRight className="w-4 h-4" />

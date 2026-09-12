@@ -303,7 +303,7 @@ export default function MessageInput({
             className={`p-2 rounded-xl transition-all shrink-0 ${
               showPlus
                 ? "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/20 text-[var(--color-primary)] dark:text-[var(--color-primary)]"
-                : "text-[var(--color-ink-3)] hover:text-[var(--color-ink-2)] dark:hover:text-white hover:bg-[var(--color-surface-muted)]"
+                : "text-[var(--color-ink-3)] hover:text-[var(--color-ink-2)] dark:hover:text-[color:var(--color-primary-fg)] hover:bg-[var(--color-surface-muted)]"
             }`}
           >
             <Plus className="w-5 h-5" />
@@ -372,7 +372,7 @@ export default function MessageInput({
           className={`p-2 rounded-xl transition-all shrink-0 ${
             showFormatBar
               ? "text-[var(--color-primary)] bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10"
-              : "text-[var(--color-ink-3)] hover:text-[var(--color-ink-2)] dark:hover:text-white hover:bg-[var(--color-surface-muted)]"
+              : "text-[var(--color-ink-3)] hover:text-[var(--color-ink-2)] dark:hover:text-[color:var(--color-primary-fg)] hover:bg-[var(--color-surface-muted)]"
           }`}
           title="Formatting"
         >
@@ -399,7 +399,7 @@ export default function MessageInput({
             className={`p-2 rounded-xl transition-all shrink-0 ${
               showMemes
                 ? "text-[var(--color-primary)] bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10"
-                : "text-[var(--color-ink-3)] hover:text-[var(--color-ink-2)] dark:hover:text-white hover:bg-[var(--color-surface-muted)]"
+                : "text-[var(--color-ink-3)] hover:text-[var(--color-ink-2)] dark:hover:text-[color:var(--color-primary-fg)] hover:bg-[var(--color-surface-muted)]"
             }`}
             title="Quick reactions"
           >
@@ -493,7 +493,7 @@ export default function MessageInput({
           disabled={!canSend}
           className={`p-2.5 rounded-xl transition-all shrink-0 shadow-lg ${
             canSend
-              ? "bg-[var(--color-primary)] from-[var(--color-primary)] to-[var(--color-primary)] text-white hover:shadow-[var(--color-primary)]/20 hover:shadow-xl"
+              ? "bg-[var(--color-primary)] from-[var(--color-primary)] to-[var(--color-primary)] text-[color:var(--color-primary-fg)] hover:shadow-[var(--color-primary)]/20 hover:shadow-xl"
               : "bg-[var(--color-line)] text-[var(--color-ink-3)] shadow-none"
           }`}
         >

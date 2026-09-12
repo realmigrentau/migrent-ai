@@ -91,7 +91,7 @@ export default function EnableNotificationsCard({ token }: Props) {
             <button
               onClick={handleEnable}
               disabled={state === "loading"}
-              className="px-4 py-2 text-xs font-semibold rounded-lg bg-[var(--color-primary)] hover:bg-[var(--color-primary)] text-white transition-colors disabled:opacity-50"
+              className="px-4 py-2 text-xs font-semibold rounded-lg bg-[var(--color-primary)] hover:bg-[var(--color-primary)] text-[color:var(--color-primary-fg)] transition-colors disabled:opacity-50"
             >
               {state === "loading" ? "Enabling..." : state === "error" ? "Try again" : "Enable notifications"}
             </button>

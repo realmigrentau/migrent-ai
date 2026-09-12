@@ -100,7 +100,7 @@ export default function NotificationsPage() {
               onClick={() => setFilter(opt.value)}
               className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                 filter === opt.value
-                  ? "bg-[var(--color-primary)] text-white shadow-sm"
+                  ? "bg-[var(--color-primary)] text-[color:var(--color-primary-fg)] shadow-sm"
                   : "bg-[var(--color-surface-muted)] text-[var(--color-ink-2)] hover:bg-[var(--color-surface-muted)]"
               }`}
             >

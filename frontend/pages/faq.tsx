@@ -1,13 +1,18 @@
 import Link from "next/link";
 import SEOHead from "../components/SEOHead";
-import { useState } from "react";
+import { useId, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
 
-let faqSeq = 0;
 function FAQItem({ q, a }: { q: string; a: string }) {
   const [open, setOpen] = useState(false);
-  const [id] = useState(() => `faq-panel-${++faqSeq}`);
+  /* useId, not a module-level counter. The counter kept incrementing
+     across the server render and then started again on the client, so
+     aria-controls was "faq-panel-281" in the SSR HTML and "faq-panel-1"
+     after hydration. React reports that as a mismatch it will not patch,
+     which left every accordion button pointing aria-controls at an id
+     that no longer existed - the panel had taken the client value. */
+  const id = `faq-panel-${useId()}`;
   return (
     <div className="card rounded-xl overflow-hidden">
       <h3 className="font-semibold text-[var(--color-ink)] text-sm">
@@ -153,7 +158,7 @@ export default function FAQ() {
               <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-[var(--color-ink)]">
                 {t("faq.title")} {t("faq.titleAccent")}
               </h1>
-              <p className="text-sm text-[var(--color-ink-3)] mt-1">{faqCategories.reduce((sum, cat) => sum + cat.items.length, 0)}+ {t("faq.countSuffix")}</p>
+              <p className="text-sm text-[var(--color-ink-3)] mt-1">{faqCategories.reduce((sum, cat) => sum + cat.items.length, 0)}{t("faq.countSuffix")}</p>
             </div>
           </div>
 

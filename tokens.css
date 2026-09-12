@@ -1,48 +1,98 @@
-/* ══════════════════════════════════════════════════════════════
-   MigRent · "Sand & Ocean" design tokens (Hallmark, design.md v1)
-   Portable mirror of the live @theme tokens in frontend/styles/globals.css.
-   Warm coastal Australian: sand surfaces, deep ink, ocean-teal primary,
-   sea-green trust accent, dune-amber warmth.
-   ══════════════════════════════════════════════════════════════ */
+/* Hallmark · MigRent "Riviera" design tokens (design.md v2, 2026-09-12)
+ * Portable mirror of the live system in frontend/styles/globals.css.
+ * Built from the homepage hero photograph: deep-forest primary (the palms),
+ * soft-linen grounds (the stucco), a rationed terracotta (the roofline),
+ * muted sage for everything interactive. The azure stays in the photograph.
+ */
 :root {
-  /* Surfaces */
-  --color-paper:        oklch(96.5% 0.010 85);   /* #f6f1e9 warm paper */
-  --color-paper-2:      oklch(98.5% 0.006 85);   /* #fbf8f2 elevated */
-  --color-canvas:       oklch(94.0% 0.012 85);   /* #ece5d8 sand canvas */
-  --color-surface-sunk: oklch(91.0% 0.013 85);   /* #e6ddcd */
+  /* ── colour · grounds ── */
+  --color-bg: #f5f2ea;
+  --color-surface: #fbf9f4;
+  --color-surface-2: #ffffff;
+  --color-surface-cool: #f8f8f5;
+  --color-surface-muted: #ede8dc;
+  --color-surface-sunk: #e9e4d6;
 
-  /* Ink */
-  --color-ink:    oklch(25.0% 0.015 240);        /* #1e2a36 deep ink-navy */
-  --color-ink-2:  oklch(44.0% 0.014 240);        /* #49555f body */
-  --color-ink-3:  oklch(58.0% 0.012 240);        /* #6e7882 muted */
-  --color-ink-4:  oklch(70.0% 0.010 240);        /* #9aa1a8 placeholder */
+  /* ── colour · ink ── */
+  --color-ink: #171a17;
+  --color-ink-2: #3f4740;
+  --color-ink-3: #5d655b;
+  --color-ink-4: #656c62;
 
-  /* Rules */
-  --color-rule:   oklch(89.0% 0.012 90);         /* #ded6c6 sand hairline */
-  --color-rule-2: oklch(82.0% 0.014 90);         /* #cabfa9 divider */
+  /* ── colour · line ── */
+  --color-line: #e2ded1;
+  --color-line-2: #cfc9b8;
 
-  /* Brand + accents */
-  --color-primary:     oklch(46.0% 0.085 218);   /* #1d6475 ocean teal */
-  --color-primary-fg:  oklch(97.5% 0.010 200);   /* #f3faf9 */
-  --color-accent:      oklch(52.0% 0.080 175);   /* #208073 sea-green (trust) */
-  --color-dune:        oklch(64.0% 0.110 70);    /* #b06b2b warm amber */
-  --color-coral:       oklch(58.0% 0.150 25);    /* #c14a3f hearts/urgency */
-  --color-focus:       oklch(58.0% 0.120 215);   /* #2a8aa0 focus ring */
+  /* ── colour · brand ── */
+  --color-primary: #132720;
+  --color-primary-500: #2a4438;
+  --color-primary-fg: #f5f2ea;
+  --color-accent: #3f6b57;
+  --color-accent-500: #4a7c64;
+  --color-terracotta: #a0563a;
+  --color-terracotta-500: #b96848;
+  --color-deep: #132720;
 
-  /* Type */
-  --font-display: 'Fraunces', 'Cormorant Garamond', Georgia, serif;
-  --font-body:    'Hanken Grotesk', ui-sans-serif, system-ui, sans-serif;
-  --font-mono:    'Space Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  /* ── colour · status ── */
+  --color-trust: #2f6b4f;
+  --color-warn-500: #9a6318;
+  --color-danger-500: #a33a2c;
+  --color-info-500: #1f6a8c;
 
-  /* Spacing (4-pt) */
-  --space-3xs: 0.25rem; --space-2xs: 0.5rem; --space-xs: 0.75rem;
-  --space-sm: 1rem; --space-md: 1.5rem; --space-lg: 2rem;
-  --space-xl: 3rem; --space-2xl: 4.5rem; --space-3xl: 7rem;
+  /* ── type ── one display/UI family, one mono ── */
+  --font-display: 'Hanken Grotesk', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Hanken Grotesk', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'Space Mono', ui-monospace, Menlo, monospace;
 
-  /* Radius */
-  --radius-control: 10px; --radius-card: 14px; --radius-xl: 20px; --radius-pill: 999px;
+  /* ── radius ── */
+  --radius-sm: 10px;
+  --radius-control: 12px;
+  --radius-lg: 16px;
+  --radius-card: 20px;
+  --radius-xl: 26px;
+  --radius-pill: 999px;
 
-  /* Motion */
-  --ease-mr: cubic-bezier(0.2, 0.7, 0.3, 1);
-  --dur-fast: 120ms; --dur-base: 180ms; --dur-slow: 280ms; --dur-reveal: 700ms;
+  /* ── shadow · sparing, tinted with the forest ── */
+  --shadow-soft: 0 1px 2px rgb(20 30 25 / 0.04);
+  --shadow-card: 0 1px 2px rgb(20 30 25 / 0.04), 0 10px 35px -12px rgb(20 30 25 / 0.10);
+  --shadow-pop: 0 2px 8px rgb(20 30 25 / 0.05), 0 18px 44px -16px rgb(20 30 25 / 0.16);
+
+  /* ── motion ── */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --duration-micro: 180ms;
+  --duration-fast: 200ms;
+  --duration-base: 260ms;
+  --duration-slow: 320ms;
+  --duration-panel: 380ms;
+  --duration-reveal: 640ms;
+
+  /* ── layout ── */
+  --space-section: clamp(72px, 8vw, 128px);
+  --space-section-sm: clamp(48px, 5vw, 88px);
+  --space-gutter: clamp(20px, 4vw, 56px);
+  --space-max: 1280px;
+  --space-max-narrow: 940px;
+  --measure: 68ch;
+}
+
+html.dark {
+  --color-bg: #10150f;
+  --color-surface: #171c15;
+  --color-surface-2: #1f251c;
+  --color-line: #2b3328;
+  --color-line-2: #3b4537;
+  --color-ink: #efede4;
+  --color-ink-2: #c4c6bb;
+  --color-ink-3: #9aa093;
+  --color-primary: #8fbba1;
+  --color-primary-fg: #10150f;
+  --color-accent: #8fbba1;
+  --color-terracotta: #d9906e;
+  --color-terracotta-500: #d9906e;
+  --color-deep: #0b100c;
+  --color-trust: #6fbf95;
+  --color-warn-500: #d9a05b;
+  --color-danger-500: #e08175;
+  --color-info-500: #7fc0de;
 }

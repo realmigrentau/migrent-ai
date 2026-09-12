@@ -4,20 +4,17 @@
  * The three families were loaded from fonts.googleapis.com as a render-
  * blocking stylesheet. next/font downloads them at build time, serves them
  * from /_next/static with immutable caching, subsets them, and removes the
- * third-party request and its CSP entries. Fraunces keeps the SOFT, opsz and
- * WONK axes that design.md specifies.
+ * third-party request and its CSP entries.
+ *
+ * Fraunces was retired in the Riviera pass. The homepage hero - the design
+ * benchmark for the whole site - has no serif anywhere in it, so a serif on
+ * every other page was the visible seam between the hero and the rest. The
+ * display voice is now the hero's own: Hanken Grotesk at 300 with a single
+ * bold word. One display family, one UI family, one mono for meta. Dropping
+ * the family also removes a variable font with three registered axes from
+ * every page's critical path.
  */
-import { Archivo, Fraunces, Hanken_Grotesk, Space_Mono } from "next/font/google";
-
-export const fraunces = Fraunces({
-  subsets: ["latin"],
-  weight: "variable",
-  style: ["normal", "italic"],
-  axes: ["SOFT", "opsz", "WONK"],
-  display: "swap",
-  variable: "--font-fraunces",
-  fallback: ["Cormorant Garamond", "Georgia", "serif"],
-});
+import { Archivo, Hanken_Grotesk, Space_Mono } from "next/font/google";
 
 export const hanken = Hanken_Grotesk({
   subsets: ["latin"],
@@ -54,7 +51,7 @@ export const spaceMono = Space_Mono({
   fallback: ["JetBrains Mono", "ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
 });
 
-export const fontClassName = `${fraunces.variable} ${hanken.variable} ${spaceMono.variable} ${archivo.variable}`;
+export const fontClassName = `${hanken.variable} ${spaceMono.variable} ${archivo.variable}`;
 
 /** Inline :root override so portals and body-level styles resolve too. */
-export const fontRootCss = `:root{--font-sans:${hanken.style.fontFamily};--font-serif:${fraunces.style.fontFamily};--font-display:${fraunces.style.fontFamily};--font-mono:${spaceMono.style.fontFamily};--font-condensed:${archivo.style.fontFamily};}`;
+export const fontRootCss = `:root{--font-sans:${hanken.style.fontFamily};--font-serif:${hanken.style.fontFamily};--font-display:${hanken.style.fontFamily};--font-mono:${spaceMono.style.fontFamily};--font-condensed:${archivo.style.fontFamily};}`;

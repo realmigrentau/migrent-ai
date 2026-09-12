@@ -127,7 +127,7 @@ export default function DashboardSeekerBookings({
               onClick={() => setActiveTab(tab.key)}
               className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
                 activeTab === tab.key
-                  ? "bg-[var(--color-primary)] text-white"
+                  ? "bg-[var(--color-primary)] text-[color:var(--color-primary-fg)]"
                   : "bg-[var(--color-surface-sunk)] text-[var(--color-ink-2)] hover:bg-[var(--color-surface-muted)]"
               }`}
             >
@@ -246,7 +246,7 @@ export default function DashboardSeekerBookings({
                             "_blank"
                           );
                         }}
-                        className="px-3 py-1.5 rounded-lg text-xs font-medium bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary)] flex items-center gap-1"
+                        className="px-3 py-1.5 rounded-lg text-xs font-medium bg-[var(--color-primary)] text-[color:var(--color-primary-fg)] hover:bg-[var(--color-primary)] flex items-center gap-1"
                       >
                         <CreditCard className="w-3 h-3" /> Pay
                       </button>

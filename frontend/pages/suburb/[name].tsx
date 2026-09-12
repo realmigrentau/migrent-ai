@@ -219,7 +219,7 @@ export default function SuburbPage({ suburb, listingsCount, related }: Props) {
           )}
 
           {/* Bottom CTA */}
-          <section className="rounded-2xl bg-[var(--color-primary)] from-[var(--color-primary)] to-[var(--color-accent)] p-8 sm:p-12 text-center text-white">
+          <section className="rounded-2xl bg-[var(--color-primary)] from-[var(--color-primary)] to-[var(--color-accent)] p-8 sm:p-12 text-center text-[color:var(--color-primary-fg)]">
             <h2 className="text-2xl sm:text-3xl font-bold mb-3">
               Ready to find your room in {suburb.name}?
             </h2>

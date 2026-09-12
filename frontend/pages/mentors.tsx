@@ -27,12 +27,14 @@ interface Mentor {
 export default function MentorsPage() {
   const [mentors, setMentors] = useState<Mentor[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadFailed, setLoadFailed] = useState(false);
   const [suburb, setSuburb] = useState("");
   const [language, setLanguage] = useState("");
   const [searchSuburb, setSearchSuburb] = useState("");
 
   const fetchMentors = useCallback(async () => {
     setLoading(true);
+    setLoadFailed(false);
     try {
       const params = new URLSearchParams();
       if (searchSuburb) params.set("suburb", searchSuburb);
@@ -41,9 +43,15 @@ export default function MentorsPage() {
       if (res.ok) {
         const data = await res.json();
         setMentors(data.mentors || []);
+      } else {
+        setLoadFailed(true);
       }
     } catch (err) {
+      /* A failed request is not the same as "no mentors here yet".
+         Falling through to the empty state told people the suburb had no
+         mentors when in fact we never managed to ask. */
       console.error("Failed to fetch mentors:", err);
+      setLoadFailed(true);
     } finally {
       setLoading(false);
     }
@@ -83,14 +91,10 @@ export default function MentorsPage() {
             Get help with settling in, local tips, and navigating your new neighbourhood.
           </p>
           <Link href="/become-mentor">
-            <motion.span
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
-              className="inline-flex items-center gap-2 bg-[var(--color-primary)] hover:bg-[var(--color-primary-500)] text-white font-semibold px-5 py-2.5 rounded-xl text-sm transition-colors cursor-pointer mt-2"
-            >
-              <Heart className="w-4 h-4" />
-              Become a Mentor
-            </motion.span>
+            <span className="btn-primary btn-compact mt-2">
+              <Heart className="w-4 h-4" aria-hidden="true" />
+              Become a mentor
+            </span>
           </Link>
         </motion.div>
 
@@ -125,7 +129,7 @@ export default function MentorsPage() {
               type="submit"
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
-              className="bg-[var(--color-primary)] hover:bg-[var(--color-primary-500)] text-white font-semibold px-6 py-2.5 rounded-xl text-sm transition-colors flex items-center gap-2 justify-center"
+              className="bg-[var(--color-primary)] hover:bg-[var(--color-primary-500)] text-[color:var(--color-primary-fg)] font-semibold px-6 py-2.5 rounded-xl text-sm transition-colors flex items-center gap-2 justify-center"
             >
               <Search className="w-4 h-4" />
               Search
@@ -143,7 +147,7 @@ export default function MentorsPage() {
               onClick={() => { setSuburb(s); setSearchSuburb(s); }}
               className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
                 searchSuburb === s
-                  ? "bg-[var(--color-primary)] text-white"
+                  ? "bg-[var(--color-primary)] text-[color:var(--color-primary-fg)]"
                   : "bg-[var(--color-surface-muted)] text-[var(--color-ink-2)] hover:bg-[var(--color-surface-muted)]"
               }`}
             >
@@ -168,6 +172,22 @@ export default function MentorsPage() {
             {[...Array(3)].map((_, i) => (
               <div key={i} className="shimmer rounded-2xl h-32" />
             ))}
+          </div>
+        ) : loadFailed ? (
+          <div className="card p-8 text-center">
+            <div className="w-14 h-14 rounded-[var(--radius-lg)] bg-[var(--color-surface-muted)] flex items-center justify-center mx-auto mb-4">
+              <Users className="w-7 h-7 text-[var(--color-ink-3)]" aria-hidden="true" />
+            </div>
+            <h3 className="font-serif text-[22px] text-[var(--color-ink)] mb-2">
+              We could not load mentors right now
+            </h3>
+            <p className="text-sm text-[var(--color-ink-3)] mb-5 max-w-[46ch] mx-auto">
+              Something went wrong on our side, not yours. Your search is kept -
+              try again in a moment.
+            </p>
+            <button type="button" onClick={fetchMentors} className="btn-primary btn-compact">
+              Try again
+            </button>
           </div>
         ) : mentors.length > 0 ? (
           <div className="space-y-3">
@@ -211,13 +231,10 @@ export default function MentorsPage() {
                 : "No mentors available yet. Be the first to help newcomers!"}
             </p>
             <Link href="/become-mentor">
-              <motion.span
-                whileHover={{ scale: 1.03 }}
-                className="inline-flex items-center gap-2 bg-[var(--color-primary)] hover:bg-[var(--color-primary-500)] text-white font-semibold px-5 py-2.5 rounded-xl text-sm transition-colors cursor-pointer"
-              >
-                Become a Mentor
-                <ChevronRight className="w-4 h-4" />
-              </motion.span>
+              <span className="btn-primary btn-compact">
+                Become a mentor
+                <ChevronRight className="w-4 h-4 btn-arrow" aria-hidden="true" />
+              </span>
             </Link>
           </motion.div>
         )}

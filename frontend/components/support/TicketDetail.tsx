@@ -128,7 +128,7 @@ export default function TicketDetailView({ ticket, token, isAgent, onUpdate }: P
 
           <button
             onClick={handleAgentUpdate}
-            className="px-4 py-1.5 bg-[var(--color-primary)] hover:bg-[var(--color-primary-500)] text-white rounded-lg text-sm font-medium transition-colors"
+            className="px-4 py-1.5 bg-[var(--color-primary)] hover:bg-[var(--color-primary-500)] text-[color:var(--color-primary-fg)] rounded-lg text-sm font-medium transition-colors"
           >
             Update Ticket
           </button>
@@ -183,7 +183,7 @@ export default function TicketDetailView({ ticket, token, isAgent, onUpdate }: P
           <button
             type="submit"
             disabled={sending || !reply.trim()}
-            className="px-5 py-2 bg-[var(--color-primary)] hover:bg-[var(--color-primary)] disabled:bg-[var(--color-primary-soft)] text-white rounded-lg text-sm font-medium transition-colors"
+            className="px-5 py-2 bg-[var(--color-primary)] hover:bg-[var(--color-primary)] disabled:bg-[var(--color-primary-soft)] text-[color:var(--color-primary-fg)] rounded-lg text-sm font-medium transition-colors"
           >
             {sending ? "Sending..." : "Send Reply"}
           </button>

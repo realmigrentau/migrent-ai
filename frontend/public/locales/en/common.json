@@ -15,7 +15,49 @@
     "messages": "Messages",
     "wishlist": "Wishlist",
     "settings": "Settings",
-    "iAmA": "I am a..."
+    "iAmA": "I am a...",
+    "findStay": "Find a stay",
+    "forOwners": "For owners",
+    "mentors": "Mentors",
+    "item": {
+      "search": {
+        "title": "Search rooms",
+        "desc": "Filter by suburb, budget, transport and household"
+      },
+      "howItWorks": {
+        "title": "How it works",
+        "desc": "What renting through MigRent actually involves"
+      },
+      "suburbs": {
+        "title": "Suburb guides",
+        "desc": "Rent, transport and communities, suburb by suburb"
+      },
+      "safety": {
+        "title": "Safety and verification",
+        "desc": "How hosts are checked before a room goes live"
+      },
+      "whyList": {
+        "title": "Why list with MigRent",
+        "desc": "Free to list, verified seekers, no rent commission"
+      },
+      "listRoom": {
+        "title": "List a room",
+        "desc": "Put a room in front of verified seekers"
+      },
+      "pricing": {
+        "title": "Pricing",
+        "desc": "Free for seekers, one $99 fee per owner match"
+      },
+      "features": {
+        "title": "Features",
+        "desc": "Matching, verification, filters and suburb reports"
+      },
+      "becomeMentor": {
+        "title": "Become a mentor",
+        "desc": "Help new arrivals settle in a city you know"
+      }
+    },
+    "signIn": "Sign in"
   },
   "home": {
     "badge": "Now live across Australia",

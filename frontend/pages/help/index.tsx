@@ -171,20 +171,16 @@ export default function HelpCenter() {
       <div className="max-w-4xl mx-auto space-y-10 pb-16">
 
         {/* Hero */}
-        <div className="relative overflow-hidden rounded-2xl bg-[var(--color-primary-soft)] from-[var(--color-primary)] via-[var(--color-primary)] to-[var(--color-primary)] p-8 md:p-12 text-white shadow-xl">
-          <div className="absolute inset-0 opacity-10">
-            <div className="absolute top-0 right-0 w-64 h-64 rounded-full bg-white transform translate-x-20 -translate-y-20" />
-            <div className="absolute bottom-0 left-0 w-48 h-48 rounded-full bg-white transform -translate-x-16 translate-y-16" />
-          </div>
+        <div className="mg-ground-deep relative overflow-hidden rounded-[var(--radius-xl)] p-8 md:p-12 shadow-[var(--shadow-card)]">
           <div className="relative z-10">
-            <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-xs font-medium mb-4">
-              <Zap className="w-3 h-3" />
-              Support Center
+            <div className="inline-flex items-center gap-2 rounded-[var(--radius-pill)] border border-[var(--color-line-2)] px-3 py-1 text-xs font-medium mb-4">
+              <Zap className="w-3 h-3" aria-hidden="true" />
+              Support centre
             </div>
-            <h1 className="text-3xl md:text-4xl font-black mb-2 tracking-tight">
+            <h1 className="font-serif text-[34px] md:text-[44px] mb-2">
               How can we help?
             </h1>
-            <p className="text-[color:var(--color-primary-fg)] text-sm md:text-base mb-6 max-w-lg">
+            <p className="text-[var(--color-ink-2)] text-sm md:text-base mb-6 max-w-lg">
               Search our help articles, browse by category, or contact our support team.
             </p>
 
@@ -212,7 +208,7 @@ export default function HelpCenter() {
             {/* Popular searches */}
             {!showSearch && (
               <div className="mt-4 flex flex-wrap gap-2">
-                <span className="text-[var(--color-primary)] text-xs self-center">Popular:</span>
+                <span className="text-[var(--color-ink-2)] text-xs self-center">Popular:</span>
                 {POPULAR_SEARCHES.slice(0, 6).map((s) => (
                   <button
                     key={s}
@@ -358,7 +354,7 @@ export default function HelpCenter() {
 
             {/* Escalation / Contact support */}
             <section className="rounded-2xl border border-[var(--color-line)] overflow-hidden">
-              <div className="bg-[var(--color-primary)] from-[var(--color-surface)] to-[var(--color-primary-50)] dark:from-[var(--color-surface)] dark:to-primary-900/10 p-6 md:p-8">
+              <div className="bg-[var(--color-surface-2)] border border-[var(--color-line)] rounded-[var(--radius-xl)] p-6 md:p-8">
                 <div className="flex flex-col md:flex-row items-start md:items-center gap-6 md:gap-10">
                   <div className="flex-1">
                     <h2 className="text-lg font-bold text-[var(--color-ink)] mb-1">
@@ -371,7 +367,7 @@ export default function HelpCenter() {
                   <div className="flex flex-col sm:flex-row gap-3 shrink-0">
                     <Link
                       href="/support/tickets"
-                      className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-[var(--color-primary)] hover:bg-[var(--color-primary-500)] text-white rounded-xl text-sm font-semibold transition-colors shadow-sm"
+                      className="btn-primary btn-compact"
                     >
                       <MessageCircle className="w-4 h-4" />
                       Submit a request

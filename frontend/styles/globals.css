@@ -5,39 +5,68 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 /* ══════════════════════════════════════════════════════════════
-   MIGRENT DESIGN TOKENS  ·  "Sand & Ocean" (Hallmark, design.md v1)
-   Warm coastal Australian: sand-paper surfaces, deep ink, an
-   ocean-teal primary, a sea-green trust accent, dune-amber warmth.
-   Display: Fraunces (roman) · Body: Hanken Grotesk · Meta: Space Mono.
+   MIGRENT DESIGN TOKENS  ·  "Riviera" (Hallmark, design.md v2)
+   The homepage hero is the benchmark. These are the villa's colours
+   rather than its sky: deep-forest primary, soft-linen grounds, a
+   rationed terracotta roofline, muted sage for everything interactive.
+   ONE display family - the hero's own Hanken Grotesk light. Space Mono
+   survives for eyebrows and meta only.
    ══════════════════════════════════════════════════════════════ */
 
 @theme {
-  /* ── Primary: ocean teal (action + brand) ── */
-  --color-primary-50: #e6f1f2;
-  --color-primary-100: #cbe3e6;
-  --color-primary-200: #a3ccd1;
-  --color-primary-400: #3f8c9c;
-  --color-primary-500: #237d8f;
-  --color-primary-600: #1d6475;
-  --color-primary-700: #184e5b;
-  --color-primary-900: #133a44;
-  --color-primary: var(--color-primary-600);
-  --color-primary-soft: #cbe3e6;
-  --color-primary-fg: #f3faf9;
+  /* ── Primary: deep forest (action + brand + dark bands) ──
+     The villa's palms and shuttered doorways, not its sky. White on
+     --color-primary is 15.7:1; it is the page's one confident dark. */
+  --color-primary-50: #eef2ef;
+  --color-primary-100: #dce4df;
+  --color-primary-200: #b8c6bd;
+  --color-primary-400: #4e6b5c;
+  --color-primary-500: #2a4438;
+  --color-primary-600: #1b3329;
+  --color-primary-700: #132720;
+  --color-primary-900: #0c1913;
+  --color-primary: #132720;
+  --color-primary-soft: #dce4df;
+  --color-primary-fg: #f5f2ea;
 
-  /* ── Accent: light ocean blue (trust, verified, success) ── */
-  --color-accent-50: #e9f4fb;
-  --color-accent-100: #d2e9f7;
-  --color-accent-500: #2e9bd0;
-  --color-accent-600: #2380b3;
-  --color-accent-700: #1c6691;
-  --color-accent: var(--color-accent-500);
-  --color-accent-soft: #d2e9f7;
-  --color-accent-fg: #f3fafd;
+  /* Theme-stable deep ground.
+     --color-primary flips meaning between themes (deep forest on light,
+     lifted sage on dark) because it has to stay legible as an action
+     colour. A *band* must not flip - the footer and the deep panels are
+     dark in both themes - so they use this instead. */
+  --color-deep: #132720;
+  --color-deep-2: #0c1913;
+
+  /* ── Accent: muted sage / eucalyptus ──
+     The general-purpose interactive tint. It is deliberately NOT
+     terracotta: --color-accent is referenced at ~670 call sites, and a
+     rust that loud, repeated that often, is the "huge areas of peach"
+     problem in a different hue. Sage carries the volume; terracotta
+     stays rare and therefore stays expensive. 5.4:1 on linen. */
+  --color-accent-50: #eef3f0;
+  --color-accent-100: #dbe7e0;
+  --color-accent-500: #4a7c64;
+  --color-accent-600: #3f6b57;
+  --color-accent-700: #335847;
+  --color-accent: #3f6b57;
+  --color-accent-soft: #dbe7e0;
+  --color-accent-fg: #f5f2ea;
+
+  /* ── Terracotta: the Mediterranean roofline ──
+     Rationed on purpose - eyebrows, small badges, selected states, hairline
+     rules, the occasional CTA detail. Never a full-width section ground.
+     -500 is the fill; -600/-700 are the text-safe steps. */
+  --color-terracotta-50: #fbf0eb;
+  --color-terracotta-100: #f4ded3;
+  --color-terracotta-500: #b96848;
+  --color-terracotta-600: #a0563a;
+  --color-terracotta-700: #8a4830;
+  --color-terracotta: #a0563a;
+  --color-terracotta-soft: #f4ded3;
+  --color-terracotta-fg: #fbf9f4;
 
   /* ── Legacy "brand" alias - kept so existing utilities like
-        text-brand / bg-brand keep working without touching call sites.
-        Brand now means the navy primary. ── */
+        text-brand / bg-brand keep working without touching call sites. ── */
   --color-brand-50: var(--color-primary-50);
   --color-brand-100: var(--color-primary-100);
   --color-brand-200: var(--color-primary-200);
@@ -47,173 +76,238 @@
   --color-brand-700: var(--color-primary-700);
   --color-brand-800: var(--color-primary-700);
   --color-brand-900: var(--color-primary-900);
-  --color-brand: var(--color-primary-600);
+  --color-brand: var(--color-primary);
 
-  /* ── Coral (kept for hearts/favourites/urgency only) ── */
-  --color-coral-50: #fff1f2;
-  --color-coral-100: #ffe4e6;
-  --color-coral-500: #c83b3b;
-  --color-coral-600: #a8312a;
-  --color-coral-700: #8b2622;
+  /* ── Coral (hearts/favourites/urgency only) ── */
+  --color-coral-50: #fbeeec;
+  --color-coral-100: #f6dad6;
+  --color-coral-500: #b8453a;
+  --color-coral-600: #9d382e;
+  --color-coral-700: #822d25;
 
-  /* ── Warm amber accent (warnings, badges) ── */
-  --color-warn-50: #fef7eb;
-  --color-warn-500: #b86b21;
-  --color-warn-600: #9a5818;
+  /* ── Warm amber (warnings) - kept distinct from terracotta so a
+        warning never reads as decoration ── */
+  --color-warn-50: #faf1e2;
+  --color-warn-500: #9a6318;
+  --color-warn-600: #824f11;
 
-  /* ── Ink + surfaces (light - Sand & Ocean default) ── */
-  --color-ink: #1e2a36;          /* primary text - deep ink-navy */
-  --color-ink-2: #49555f;        /* body */
-  --color-ink-muted: #555f6a;    /* muted - darkened to meet WCAG AA (4.5:1) on light surfaces */
-  --color-ink-3: #555f6a;
-  --color-ink-4: #9aa1a8;        /* placeholder */
+  /* ── Ink + surfaces (light) ──
+     Grounds alternate linen -> white -> cool off-white -> deep forest.
+     No large warm-peach field anywhere in the scale. */
+  --color-ink: #171a17;          /* near-black charcoal · 15.7:1 on linen */
+  --color-ink-2: #3f4740;        /* body · 8.6:1 */
+  --color-ink-muted: #5d655b;    /* muted warm olive-grey · 5.4:1 */
+  --color-ink-3: #5d655b;
+  --color-ink-4: #656c62;        /* placeholder · 4.8:1 */
 
-  --color-bg: #eef0ea;           /* light coastal sand canvas */
-  --color-surface: #f6f1e9;      /* warm paper */
-  --color-surface-2: #fbf8f2;    /* elevated near-white */
-  --color-surface-muted: #e6ddcd;
-  --color-surface-warm: #f1eadd;
-  --color-surface-sunk: #e6ddcd;
+  --color-bg: #f5f2ea;           /* soft linen - the page ground */
+  --color-surface: #fbf9f4;      /* warm paper, one step lifted */
+  --color-surface-2: #ffffff;    /* elevated card */
+  --color-surface-cool: #f8f8f5; /* the cooler off-white alternate band */
+  --color-surface-muted: #ede8dc;
+  --color-surface-warm: #f7f1e6;
+  --color-surface-sunk: #e9e4d6;
 
-  --color-line: #ded6c6;         /* warm sand hairline */
-  --color-line-2: #cabfa9;       /* stronger divider */
-  --color-hairline: #ded6c6;     /* legacy alias */
+  --color-line: #e2ded1;         /* soft border ≈ rgb(20 35 28 / 0.10) */
+  --color-line-2: #cfc9b8;       /* stronger divider */
+  --color-hairline: #e2ded1;     /* legacy alias */
 
-  /* ── Status (verified/info/danger) ── */
-  --color-danger-50: #f7e6e3;
-  --color-danger-500: #b23a2f;
-  --color-danger-600: #8f2a22;
-  --color-info-50: #e6f1f2;
-  --color-info-500: #1d6475;
-  --color-success-50: #d2e7e0;
-  --color-success-500: #208073;
+  /* ── Status ── */
+  --color-danger-50: #f8e9e6;
+  --color-danger-500: #a33a2c;
+  --color-danger-600: #8a3025;
+  /* Info keeps a narrow line back to the hero's sky - callouts only. */
+  --color-info-50: #e7f1f6;
+  --color-info-500: #1f6a8c;
 
   /* ── Trust (verification badges only) ──
-     Sea-green, per design.md. --color-accent is the general decoration
-     colour, so a "Verified host" badge painted in it read as no more
-     trustworthy than any link on the page. This token exists so that
-     verification is visually distinct from ordinary emphasis. Use it only
-     for identity/verification signals. */
-  --color-trust: #208073;
-  --color-trust-soft: #d2e7e0;
-  --color-trust-fg: #f3faf9;
-  /* Text on --color-trust-soft: 7.2:1 */
-  --color-trust-ink: #124f45;
-  --color-success-600: #1a6a5f;
+     A deeper green than --color-accent so "verified" is not the same
+     colour as ordinary emphasis. */
+  --color-success-50: #e4efe7;
+  --color-success-500: #2f6b4f;
+  --color-success-600: #275a42;
+  --color-trust: #2f6b4f;
+  --color-trust-soft: #e4efe7;
+  --color-trust-fg: #f5f2ea;
+  --color-trust-ink: #1d4431;
 
-  /* ── Radius scale ── */
-  --radius-sm: 6px;
-  --radius-control: 10px;
-  --radius-md: 10px;
-  --radius-lg: 14px;
-  --radius-card: 14px;
-  --radius-xl: 20px;
-  --radius-modal: 20px;
+  /* ── Radius scale ──
+     Small controls 10 · inputs/buttons 12 · cards 20 · editorial 26.
+     One scale, no pill-vs-square mixing outside the tag/chip family. */
+  --radius-sm: 10px;
+  --radius-control: 12px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-card: 20px;
+  --radius-xl: 26px;
+  --radius-modal: 26px;
   --radius-pill: 999px;
 
-  /* ── Shadows (single layer, low opacity) ── */
-  --shadow-soft: 0 1px 0 rgb(20 24 28 / 0.04), 0 1px 2px rgb(20 24 28 / 0.04);
-  --shadow-card: 0 2px 4px rgb(20 24 28 / 0.05), 0 4px 12px rgb(20 24 28 / 0.04);
-  --shadow-pop: 0 8px 24px rgb(20 24 28 / 0.08), 0 2px 6px rgb(20 24 28 / 0.04);
-  --shadow-modal: 0 12px 40px rgb(20 24 28 / 0.12);
+  /* ── Shadows - sparing, tinted with the forest rather than grey ── */
+  --shadow-soft: 0 1px 2px rgb(20 30 25 / 0.04);
+  --shadow-card: 0 1px 2px rgb(20 30 25 / 0.04), 0 10px 35px -12px rgb(20 30 25 / 0.10);
+  --shadow-pop: 0 2px 8px rgb(20 30 25 / 0.05), 0 18px 44px -16px rgb(20 30 25 / 0.16);
+  --shadow-modal: 0 28px 64px -20px rgb(20 30 25 / 0.24);
 
-  /* ── Motion ── */
-  --ease-mr: cubic-bezier(0.2, 0.7, 0.3, 1);
-  --duration-fast: 120ms;
-  --duration-base: 180ms;
-  --duration-slow: 280ms;
+  /* ── Motion - one system, sophisticated easing, no bounce ── */
+  --ease-mr: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --duration-micro: 180ms;   /* hover tints, icon nudges */
+  --duration-fast: 200ms;    /* buttons, inputs */
+  --duration-base: 260ms;    /* cards */
+  --duration-slow: 320ms;    /* dropdowns */
+  --duration-panel: 380ms;   /* modals, drawers */
+  --duration-reveal: 640ms;  /* editorial section reveals */
 
-  /* ── Typography ── Fraunces (display, roman) · Hanken Grotesk (body) · Space Mono (meta) */
+  /* ── Layout rhythm - one spacing scale for every route ── */
+  --space-section: clamp(72px, 8vw, 128px);
+  --space-section-sm: clamp(48px, 5vw, 88px);
+  --space-gutter: clamp(20px, 4vw, 56px);
+  --space-max: 1280px;
+  --space-max-narrow: 940px;
+  --measure: 68ch;
+
+  /* ── Typography ──
+     ONE display family and ONE UI family. The display voice is the
+     homepage hero's own: Hanken Grotesk at 300 with a single bold word,
+     tight tracking. Fraunces was retired - the hero has no serif in it,
+     so a serif everywhere else was the seam the brief describes.
+     Space Mono survives for eyebrows/meta only. */
   --font-sans: 'Hanken Grotesk', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  --font-serif: 'Fraunces', 'Cormorant Garamond', Georgia, serif;
-  --font-display: 'Fraunces', 'Cormorant Garamond', Georgia, serif;
+  --font-serif: 'Hanken Grotesk', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-display: 'Hanken Grotesk', ui-sans-serif, system-ui, -apple-system, sans-serif;
   --font-mono: 'Space Mono', 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
 }
 
 /* ══════════════════════════════════════════════════════════════
-   DARK THEME  ·  Sand & Ocean (single theme)
-   Per design.md: "one premium warm-dark (deep espresso canvas,
-   layered elevation, glowing teal/sea-green accents, faint warm
-   bloom)". The canvas is a tinted warm near-black, never pure #000
-   - anti-slop rule 7. Light mode is warm coastal; dark mode has to
-   be the same brand with the lights off, not a cool tech product.
+   TOKENS THAT HAND-WRITTEN CSS NEEDS
+   Tailwind v4 tree-shakes any @theme variable no generated utility
+   references, so a token used only from a stylesheet (never as a
+   `bg-*` / `text-*` class) is silently dropped from the output. When
+   that happened to --color-deep, `background: ..., var(--color-deep)`
+   became an invalid declaration, the whole background was thrown away,
+   and the footer rendered light-on-light. Declaring them in a plain
+   :root puts them beyond the tree-shaker's reach.
+   Keep this list in sync with anything referenced only from CSS.
+   ══════════════════════════════════════════════════════════════ */
+:root {
+  --color-deep: #132720;
+  --color-deep-2: #0c1913;
+  --color-coral-700: #822d25;
+  --radius-modal: 26px;
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --duration-slow: 320ms;
+  --duration-panel: 380ms;
+}
+
+html.dark {
+  --color-deep: #0b100c;
+  --color-deep-2: #070b08;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   DARK THEME  ·  Riviera (single theme)
+   A deep-forest night: the canvas is a tinted near-black with a green
+   cast, never pure #000 (anti-slop rule 7). Same brand with the lights
+   out - the forest primary lifts to sage so it stays visible, and the
+   terracotta warms rather than glows.
    Every value below is >= 4.5:1 on the surface it sits on.
    ══════════════════════════════════════════════════════════════ */
 html.dark {
-  /* warm off-white ink, carrying the same sand warmth as light mode */
-  --color-ink: #f5ede2;          /* 16.2:1 on canvas */
-  --color-ink-2: #c9bdae;        /* 10.2:1 */
-  --color-ink-muted: #a89b8a;    /* 6.9:1 on canvas, 5.8:1 on cards */
-  --color-ink-3: #a89b8a;
-  --color-ink-4: #948875;        /* placeholder - 4.5:1 on inputs */
+  /* warm off-white ink, carrying the same linen warmth as light mode */
+  --color-ink: #efede4;          /* 15.8:1 on canvas */
+  --color-ink-2: #c4c6bb;        /* 10.7:1 */
+  --color-ink-muted: #9aa093;    /* 6.9:1 canvas · 5.8:1 on cards */
+  --color-ink-3: #9aa093;
+  --color-ink-4: #868c80;        /* placeholder · 4.5:1 on inputs */
 
-  /* deep espresso canvas with layered elevation tiers */
-  --color-bg: #17120e;           /* canvas - warm espresso */
-  --color-surface: #1f1913;      /* paper */
-  --color-surface-2: #2a2219;    /* elevated card */
-  --color-surface-muted: #120e0a;
-  --color-surface-warm: #241c14;
-  --color-surface-sunk: #100c08;
+  /* deep forest night: a tinted near-black with a green cast, never #000 */
+  --color-bg: #10150f;
+  --color-surface: #171c15;
+  --color-surface-2: #1f251c;    /* elevated card */
+  --color-surface-cool: #161a15;
+  --color-surface-muted: #232a20;
+  --color-surface-warm: #1d2119;
+  --color-surface-sunk: #0b0f0a;
 
-  --color-line: #362c22;         /* warm brown hairline */
-  --color-line-2: #4a3d30;
-  --color-hairline: #362c22;
+  --color-line: #2b3328;
+  --color-line-2: #3b4537;
+  --color-hairline: #2b3328;
 
-  /* ocean teal, lifted for the dark ground - still teal, not cyan */
-  --color-primary-50: #10262d;
-  --color-primary-100: #16333c;
-  --color-primary-200: #1f4c59;
-  --color-primary-400: #3f97ac;
-  --color-primary-500: #6ec0d2;
-  --color-primary-600: #5cb3c6;
-  --color-primary-700: #4792a4;
-  --color-primary: #5cb3c6;      /* 7.8:1 on canvas */
-  --color-primary-fg: #0b1c22;   /* 7.3:1 on the teal fill */
-  --color-primary-soft: #16333c;
+  /* forest is invisible on a forest ground, so the primary lifts to the
+     sage the palms read as at dusk. Same family, lights out. */
+  --color-primary-50: #17211b;
+  --color-primary-100: #1e2b23;
+  --color-primary-200: #2c4034;
+  --color-primary-400: #5d8a70;
+  --color-primary-500: #7dae93;
+  --color-primary-600: #8fbba1;
+  --color-primary-700: #a4c9b3;
+  --color-primary-900: #cde0d5;
+  --color-primary: #8fbba1;      /* 7.3:1 on cards */
+  --color-primary-fg: #10150f;   /* 8.6:1 on the sage fill */
+  --color-primary-soft: #1e2b23;
 
-  /* light ocean blue accent - unchanged hue, re-toned for warm ground */
-  --color-accent-50: #10262d;
-  --color-accent-100: #163540;
-  --color-accent-500: #5cc8f0;
-  --color-accent: #5cc8f0;       /* 9.8:1 on canvas */
-  --color-accent-soft: #163540;
-  --color-accent-fg: #06181f;
+  /* Still a dark band in dark mode - one step below the canvas so it
+     reads as an ending rather than as another card. */
+  --color-deep: #0b100c;
+  --color-deep-2: #070b08;
 
-  /* sea-green trust, dune amber and coral - all three were missing from
-     dark, which is why the palette flattened to blue-on-black */
-  --color-success-500: #4fbfa5;  /* 8.4:1 */
-  --color-trust: #4fbfa5;        /* 8.4:1 on the espresso canvas */
-  --color-trust-soft: #16332d;
-  --color-trust-ink: #a9e6d6;    /* on --color-trust-soft: 9.1:1 */
-  --color-trust-soft: #1d3b34;
-  --color-trust-fg: #0d201c;
-  --color-success-600: #3aa88f;
-  --color-success-50: #12332c;
-  --color-warn-500: #d99a52;     /* dune amber - 7.8:1 */
-  --color-warn-600: #c2833d;
-  --color-warn-50: #2a1d0c;
-  --color-coral-500: #e8796a;    /* favourites / urgency - 6.6:1 */
-  --color-coral-600: #d2604f;
-  --color-coral-100: #3a1f1a;
-  --color-coral-50: #2c1512;
-  --color-danger-500: #e8796a;
-  --color-danger-50: #2c1512;
-  --color-info-500: #5cb3c6;
+  --color-accent-50: #17211b;
+  --color-accent-100: #1e2b23;
+  --color-accent-500: #8fbba1;
+  --color-accent-600: #7dae93;
+  --color-accent-700: #6b9c81;
+  --color-accent: #8fbba1;
+  --color-accent-soft: #1e2b23;
+  --color-accent-fg: #10150f;
 
-  /* depth via warm-black shadows, not grey borders */
-  --shadow-soft: 0 1px 0 rgb(10 6 3 / 0.6), 0 1px 3px rgb(10 6 3 / 0.6);
-  --shadow-card: 0 2px 8px rgb(10 6 3 / 0.6), 0 16px 36px -12px rgb(10 6 3 / 0.8);
-  --shadow-pop: 0 16px 40px rgb(10 6 3 / 0.7), 0 2px 10px rgb(10 6 3 / 0.6);
-  --shadow-modal: 0 28px 70px rgb(10 6 3 / 0.85);
+  /* the roofline, lifted */
+  --color-terracotta-50: #241610;
+  --color-terracotta-100: #33201a;
+  --color-terracotta-500: #d9906e;
+  --color-terracotta-600: #c67d5c;
+  --color-terracotta-700: #b06a4b;
+  --color-terracotta: #d9906e;   /* 6.1:1 on cards */
+  --color-terracotta-soft: #2e1d14;
+  --color-terracotta-fg: #10150f;
+
+  --color-success-500: #6fbf95;
+  --color-success-600: #5aa87f;
+  --color-success-50: #142a1f;
+  --color-trust: #6fbf95;        /* 7.1:1 on cards */
+  --color-trust-soft: #173023;
+  --color-trust-fg: #0d1a13;
+  --color-trust-ink: #b4e3c9;
+
+  --color-warn-500: #d9a05b;     /* 6.8:1 */
+  --color-warn-600: #c28a45;
+  --color-warn-50: #2a1f0e;
+  --color-coral-500: #e08175;
+  --color-coral-600: #c96c61;
+  --color-coral-100: #331916;
+  --color-coral-50: #281412;
+  --color-danger-500: #e08175;
+  --color-danger-600: #c96c61;
+  --color-danger-50: #281412;
+  --color-info-500: #7fc0de;
+  --color-info-50: #12242c;
+
+  /* depth via forest-black shadows, not grey borders */
+  --shadow-soft: 0 1px 2px rgb(4 8 5 / 0.6);
+  --shadow-card: 0 2px 8px rgb(4 8 5 / 0.55), 0 16px 40px -14px rgb(4 8 5 / 0.8);
+  --shadow-pop: 0 18px 44px -16px rgb(4 8 5 / 0.75), 0 2px 10px rgb(4 8 5 / 0.6);
+  --shadow-modal: 0 30px 70px -22px rgb(4 8 5 / 0.85);
 }
 
-/* The "faint warm bloom" from design.md: a low dune-amber wash at the top
-   edge over a cooler teal underlayer, so the canvas reads as lit rather than
-   flat. Both stops sit under 7% - it should register without being seen. */
+/* A faint bloom at the top edge so the canvas reads as lit rather than
+   flat: terracotta over sage, both under 7% - it should register without
+   being seen. */
 html.dark body {
   background-image:
-    radial-gradient(55% 32% at 50% -6%, color-mix(in oklab, var(--color-warn-500) 7%, transparent), transparent 70%),
-    radial-gradient(75% 45% at 50% -10%, color-mix(in oklab, var(--color-primary) 5%, transparent), transparent 68%);
+    radial-gradient(55% 32% at 50% -6%, color-mix(in oklab, var(--color-terracotta-500) 6%, transparent), transparent 70%),
+    radial-gradient(75% 45% at 50% -10%, color-mix(in oklab, var(--color-accent-500) 5%, transparent), transparent 68%);
   background-attachment: fixed;
   background-repeat: no-repeat;
 }
@@ -248,7 +342,19 @@ body {
   font-feature-settings: 'ss01', 'cv11';
 }
 
-a { color: inherit; text-decoration: none; }
+/* Inside @layer base, not unlayered.
+   Unlayered rules beat every cascade layer regardless of specificity, so
+   while this sat outside a layer it silently defeated Tailwind's own
+   text-colour utilities on ANY <a>. `text-[color:var(--color-primary-fg)]`
+   on a link resolved to inherited ink - which is why the header CTA, the
+   PageSubnav CTA and several panel links rendered near-black on a
+   near-black fill (1.1:1). An identical <span> with the same class was
+   correct, which is what pinned it down.
+   In @layer base the inherit still applies to ordinary links and a utility
+   now wins, which is the behaviour every call site already assumed. */
+@layer base {
+  a { color: inherit; text-decoration: none; }
+}
 
 /* Headings default to ink, but a colour utility on the element must win.
    This rule used to sit outside any layer, so `text-[color:var(--color-x)]`
@@ -281,152 +387,440 @@ a { color: inherit; text-decoration: none; }
 /* ══════════════════════════════════════════════════════════════
    TYPE UTILITIES
    ══════════════════════════════════════════════════════════════ */
+/* .font-serif is the site's display class. The name is historical - it is
+   referenced on ~400 headings across 60 routes - but it no longer loads a
+   serif. It now carries the homepage hero's own display treatment, which is
+   what makes a section three screens down still read as the same page as
+   the photograph: Hanken Grotesk, tight tracking, light at display sizes. */
 .font-serif {
-  font-family: var(--font-serif);
+  font-family: var(--font-display);
   font-optical-sizing: auto;
-  font-variation-settings: 'opsz' 120, 'SOFT' 0, 'WONK' 0;
-  letter-spacing: -0.012em;
-  font-weight: 460;
+  font-variation-settings: normal;
+  font-style: normal;            /* display is always roman */
+  letter-spacing: -0.022em;
+  font-weight: 500;
 }
+
+/* Weight tracks size, the way the hero's headline does: light and wide-set
+   when the type is big, medium when it is a card heading.
+
+   Both Tailwind's named sizes and its arbitrary ones are hooks, because
+   marketing pages size their display type with text-[64px] rather than
+   text-6xl. The substring match is deliberate - `text-[4`, `text-[5`,
+   `text-[6`, `text-[7` cover 40-79px, which is display scale in every
+   place the site uses them, and responsive prefixes land in the same
+   class string so sm:text-[58px] is caught too.
+
+   This block is unlayered, so it also wins over a font-bold or
+   font-semibold left on a display heading. That is intended: nothing at
+   this size should be bold, and the hero has no bold headline in it. */
+.font-serif.text-4xl,
+.font-serif.text-5xl,
+.font-serif.text-6xl,
+.font-serif.text-7xl,
+.font-serif.text-8xl,
+.font-serif[class*="text-[4"],
+.font-serif[class*="text-[5"],
+.font-serif[class*="text-[6"],
+.font-serif[class*="text-[7"],
+.display-1,
+.display-2 {
+  font-weight: 300;
+  letter-spacing: -0.028em;
+  line-height: 1.04;
+}
+
+/* Explicit display steps, for headings sized with clamp() rather than a
+   Tailwind class. */
+.display-1 {
+  font-family: var(--font-display);
+  font-size: clamp(2.6rem, 5vw + 0.6rem, 4.6rem);
+}
+.display-2 {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 3.2vw + 0.6rem, 3.1rem);
+}
+
+/* The hero's one-bold-word emphasis. Emphasis is weight and colour, never
+   italics - anti-slop rule 1. */
+.display-1 strong,
+.display-2 strong,
+.font-serif strong {
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  font-style: normal;
+}
+
 .font-mono { font-family: var(--font-mono); letter-spacing: -0.01em; }
 
+/* Eyebrow: mono, uppercase, wide-set - and the one place terracotta is
+   allowed to appear on every page, because it is four words long. */
 .eyebrow {
   font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 400;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--color-primary);
+  color: var(--color-terracotta);
 }
 
 .tabular { font-variant-numeric: tabular-nums; }
+
+/* ══════════════════════════════════════════════════════════════
+   LAYOUT PRIMITIVES  ·  one container and one spacing scale
+   Sections used to set their own vertical padding ad hoc, which is why
+   the rhythm changed every time you crossed a section boundary.
+   ══════════════════════════════════════════════════════════════ */
+.mg-container {
+  width: 100%;
+  max-width: var(--space-max);
+  margin-inline: auto;
+  padding-inline: var(--space-gutter);
+}
+.mg-container--narrow { max-width: var(--space-max-narrow); }
+
+.mg-section { padding-block: var(--space-section); }
+.mg-section--sm { padding-block: var(--space-section-sm); }
+.mg-section--flush-top { padding-block-start: 0; }
+
+/* Alternating grounds. Major sections walk linen -> white -> cool
+   off-white, with the deep forest band used once or twice per page. */
+.mg-ground-linen { background: var(--color-bg); }
+.mg-ground-paper { background: var(--color-surface-2); }
+.mg-ground-cool  { background: var(--color-surface-cool); }
+/* A deep ground re-points the ink and line tokens rather than asking every
+   child to restate a colour. Anything inside it that uses --color-ink,
+   --color-ink-2, --color-line or --color-accent lands the right way up.
+   Ratios on #132720: ink 14.0 · ink-2 9.3 · ink-3 6.7 · accent 7.3. */
+.mg-ground-deep {
+  --color-ink: #f5f2ea;
+  --color-ink-2: #c3c9c0;
+  --color-ink-3: #a4aba1;
+  --color-ink-muted: #a4aba1;
+  --color-ink-4: #a4aba1;
+  --color-line: rgb(245 242 234 / 0.16);
+  --color-line-2: rgb(245 242 234 / 0.3);
+  --color-surface: rgb(245 242 234 / 0.05);
+  --color-surface-2: rgb(245 242 234 / 0.07);
+  --color-surface-muted: rgb(245 242 234 / 0.09);
+  --color-surface-sunk: rgb(245 242 234 / 0.09);
+  --color-accent: #8fbba1;
+  --color-accent-500: #8fbba1;
+  --color-trust: #6fbf95;
+  --color-terracotta: #d9906e;
+  --color-terracotta-500: #d9906e;
+
+  background: var(--color-deep);
+  color: var(--color-ink);
+}
+.mg-ground-deep h1, .mg-ground-deep h2, .mg-ground-deep h3, .mg-ground-deep h4 {
+  color: var(--color-ink);
+}
+.mg-ground-deep .eyebrow { color: var(--color-terracotta); }
+/* Inside a deep ground the primary button has to invert or it disappears. */
+.mg-ground-deep .btn-primary,
+.mg-ground-deep .btn-primary-gradient {
+  background: var(--color-ink);
+  color: var(--color-deep);
+}
+.mg-ground-deep .btn-primary:hover { background: #fff; }
+.mg-ground-deep .btn-secondary,
+.mg-ground-deep .btn-outline {
+  background: transparent;
+  color: var(--color-ink);
+  border-color: var(--color-line-2);
+}
+.mg-ground-deep .btn-secondary:hover,
+.mg-ground-deep .btn-outline:hover {
+  background: rgb(245 242 234 / 0.10);
+  border-color: rgb(245 242 234 / 0.55);
+}
+.mg-ground-deep :focus-visible { outline-color: var(--color-ink); }
+
+/* Deliberate measure - the brief's "avoid extremely wide paragraphs". */
+.mg-measure { max-width: var(--measure); }
+
+/* A hairline rule with a short terracotta lead-in: the decorative detail
+   terracotta is actually for. */
+.mg-rule {
+  border: 0;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    var(--color-terracotta-500) 0 44px,
+    var(--color-line) 44px 100%
+  );
+}
 
 /* ══════════════════════════════════════════════════════════════
    LEGACY COMPONENT CLASSES - reskinned in place
    These names are referenced across pages. Keep the API, change the look.
    ══════════════════════════════════════════════════════════════ */
 
-/* Card */
+/* ══════════════════════════════════════════════════════════════
+   CARD SYSTEM
+   Cards are defined by ground contrast, a hairline and spacing -
+   not by a drop shadow. The shadow only appears on hover, and then
+   barely. One radius, one border, one hover behaviour everywhere.
+   ══════════════════════════════════════════════════════════════ */
 .card {
-  background: var(--color-surface);
+  background: var(--color-surface-2);
   border: 1px solid var(--color-line);
   border-radius: var(--radius-card);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    border-color var(--duration-base) var(--ease-out),
+    box-shadow var(--duration-base) var(--ease-out),
+    transform var(--duration-base) var(--ease-out);
 }
 .card:hover { border-color: var(--color-line-2); }
-.dark .card { background: var(--color-surface); border-color: var(--color-line); }
+.dark .card { background: var(--color-surface-2); border-color: var(--color-line); }
+
+/* Interactive cards (listings, guides, suburbs) opt into the lift. */
+.card-interactive:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-card);
+  border-color: var(--color-line-2);
+}
+.card-interactive:has(a:focus-visible) {
+  box-shadow: var(--shadow-card);
+  border-color: var(--color-primary);
+}
+.card-interactive img,
+.card-media img {
+  transition: transform var(--duration-reveal) var(--ease-out);
+}
+.card-interactive:hover img,
+.card-media:hover img { transform: scale(1.02); }
+.card-media { overflow: hidden; }
 
 .card-subtle {
-  background: var(--color-surface-muted);
+  background: var(--color-surface);
   border: 1px solid var(--color-line);
-  border-radius: var(--radius-md);
-  transition: all 0.2s ease;
+  border-radius: var(--radius-lg);
+  transition:
+    border-color var(--duration-base) var(--ease-out),
+    box-shadow var(--duration-base) var(--ease-out);
 }
-.dark .card-subtle { background: var(--color-surface-muted); border-color: var(--color-line); }
+.dark .card-subtle { background: var(--color-surface); border-color: var(--color-line); }
 
-/* Primary button */
-.btn-primary {
-  background: var(--color-primary);
-  color: var(--color-primary-fg);
+@media (prefers-reduced-motion: reduce) {
+  .card, .card-interactive, .card-interactive img, .card-media img {
+    transition-duration: 140ms;
+  }
+  .card-interactive:hover { transform: none; }
+  .card-interactive:hover img, .card-media:hover img { transform: none; }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   BUTTON SYSTEM  ·  one shape, five variants, eight states
+   Every variant shares height, padding, radius, font, icon gap and
+   transition. Only the skin changes. 46px is the control height the
+   inputs share, so a button and a field in the same row line up.
+   ══════════════════════════════════════════════════════════════ */
+.btn-primary,
+.btn-primary-gradient,
+.btn-secondary,
+.btn-outline,
+.btn-ghost,
+.btn-danger {
+  font-family: var(--font-sans);
   font-weight: 600;
   font-size: 0.9375rem;
   letter-spacing: -0.005em;
-  padding: 0 18px;
-  height: 40px;
+  line-height: 1;
+  padding: 0 20px;
+  height: 46px;
   border-radius: var(--radius-control);
-  border: none;
+  border: 1px solid transparent;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  transition: background-color var(--duration-fast) var(--ease-mr);
+  white-space: nowrap;
+  text-decoration: none;
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out),
+    transform var(--duration-micro) var(--ease-out);
 }
-.btn-primary:hover { background: var(--color-primary-500); }
-.btn-primary:active { background: var(--color-primary-700); }
-.btn-primary:disabled { opacity: 0.45; cursor: not-allowed; }
 
-/* Legacy alias: opt-in gradient becomes flat primary */
+/* Arrow/icon nudge on hover - 3px, the brief's translateX(2-4px) */
+.btn-primary > .btn-arrow,
+.btn-secondary > .btn-arrow,
+.btn-outline > .btn-arrow,
+.btn-ghost > .btn-arrow {
+  transition: transform var(--duration-fast) var(--ease-out);
+}
+.btn-primary:hover > .btn-arrow,
+.btn-secondary:hover > .btn-arrow,
+.btn-outline:hover > .btn-arrow,
+.btn-ghost:hover > .btn-arrow { transform: translateX(3px); }
+
+/* Primary - deep forest fill, linen text */
+.btn-primary,
 .btn-primary-gradient {
   background: var(--color-primary);
   color: var(--color-primary-fg);
-  font-weight: 600;
-  padding: 0 18px;
-  height: 40px;
-  border-radius: var(--radius-control);
-  border: none;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  transition: background-color var(--duration-fast) var(--ease-mr);
 }
+.btn-primary:hover,
 .btn-primary-gradient:hover { background: var(--color-primary-500); }
+.btn-primary:active,
+.btn-primary-gradient:active { background: var(--color-primary-900); transform: translateY(1px); }
 
+/* Secondary - light neutral, dark text */
 .btn-secondary {
   background: var(--color-surface-2);
   color: var(--color-ink);
-  font-weight: 600;
-  font-size: 0.9375rem;
-  padding: 0 18px;
-  height: 40px;
-  border-radius: var(--radius-control);
-  border: 1px solid var(--color-line-2);
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  transition: background-color var(--duration-fast), border-color var(--duration-fast);
+  border-color: var(--color-line-2);
 }
 .btn-secondary:hover { background: var(--color-surface); border-color: var(--color-ink-4); }
-.dark .btn-secondary { background: var(--color-surface-2); color: var(--color-ink); border-color: var(--color-line-2); }
-.dark .btn-secondary:hover { background: var(--color-surface); }
+.btn-secondary:active { background: var(--color-surface-muted); transform: translateY(1px); }
 
+/* Outline - on any ground */
+.btn-outline {
+  background: transparent;
+  color: var(--color-ink);
+  border-color: var(--color-line-2);
+}
+.btn-outline:hover { background: var(--color-surface-2); border-color: var(--color-ink-4); }
+.btn-outline:active { transform: translateY(1px); }
+
+/* Ghost */
 .btn-ghost {
   background: transparent;
   color: var(--color-ink);
+  padding: 0 14px;
+}
+.btn-ghost:hover { background: var(--color-surface-muted); }
+.btn-ghost:active { transform: translateY(1px); }
+
+/* Destructive */
+.btn-danger {
+  background: var(--color-danger-500);
+  color: #fff;
+}
+.btn-danger:hover { background: var(--color-danger-600); }
+.btn-danger:active { transform: translateY(1px); }
+
+/* Text/link button - the fifth variant, no box at all */
+.btn-text {
+  font-family: var(--font-sans);
   font-weight: 600;
   font-size: 0.9375rem;
-  padding: 0 14px;
-  height: 40px;
-  border-radius: var(--radius-control);
-  border: none;
+  color: var(--color-accent);
+  background: none;
+  border: 0;
+  padding: 0;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  gap: 8px;
-  transition: background-color var(--duration-fast) var(--ease-mr);
+  gap: 6px;
+  text-underline-offset: 4px;
+  text-decoration-thickness: 1px;
+  transition: color var(--duration-fast) var(--ease-out);
 }
-.btn-ghost:hover { background: var(--color-surface-sunk); }
-.dark .btn-ghost { color: var(--color-ink); }
-.dark .btn-ghost:hover { background: var(--color-surface-sunk); }
+.btn-text:hover { color: var(--color-accent-700); text-decoration: underline; }
 
-/* Inputs */
+/* Shared states: disabled, loading, size steps */
+.btn-primary:disabled, .btn-primary-gradient:disabled,
+.btn-secondary:disabled, .btn-outline:disabled,
+.btn-ghost:disabled, .btn-danger:disabled, .btn-text:disabled,
+.btn-primary[aria-disabled="true"], .btn-secondary[aria-disabled="true"] {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+[data-state="loading"].btn-primary,
+[data-state="loading"].btn-secondary,
+[data-state="loading"].btn-outline,
+[data-state="loading"].btn-ghost { cursor: progress; opacity: 0.8; }
+
+.btn-lg { height: 54px; padding-inline: 28px; font-size: 1rem; }
+.btn-compact { height: 38px; padding-inline: 14px; font-size: 0.875rem; }
+.btn-block { width: 100%; }
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-primary, .btn-secondary, .btn-outline, .btn-ghost, .btn-danger,
+  .btn-primary-gradient { transition-duration: 120ms; }
+  .btn-primary:active, .btn-secondary:active, .btn-outline:active,
+  .btn-ghost:active, .btn-danger:active { transform: none; }
+  .btn-primary:hover > .btn-arrow, .btn-secondary:hover > .btn-arrow,
+  .btn-outline:hover > .btn-arrow, .btn-ghost:hover > .btn-arrow { transform: none; }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   FORM SYSTEM  ·  one field, eight states
+   The border is 1px in every state and the height never changes on
+   focus, so a focused field does not shift the layout around it.
+   ══════════════════════════════════════════════════════════════ */
 .input-field {
   background: var(--color-surface-2);
-  border: 1px solid var(--color-line);
+  border: 1px solid var(--color-line-2);
   border-radius: var(--radius-control);
   padding: 0 14px;
-  height: 40px;
+  height: 46px;
   color: var(--color-ink);
+  font-family: var(--font-sans);
   font-size: 0.9375rem;
-  transition: border-color var(--duration-fast) var(--ease-mr), box-shadow var(--duration-fast) var(--ease-mr);
+  transition:
+    border-color var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out),
+    background-color var(--duration-fast) var(--ease-out);
   outline: none;
   width: 100%;
 }
 .input-field::placeholder { color: var(--color-ink-4); }
-.input-field:focus {
-  border-color: var(--color-ink);
-  box-shadow: 0 0 0 3px rgb(20 24 28 / 0.08);
+.input-field:hover:not(:disabled):not(:focus) { border-color: var(--color-ink-4); }
+.input-field:focus,
+.input-field:focus-visible {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 16%, transparent);
+}
+.input-field:disabled {
+  background: var(--color-surface-muted);
+  color: var(--color-ink-4);
+  cursor: not-allowed;
+}
+.input-field[aria-invalid="true"],
+.input-field.is-error {
+  border-color: var(--color-danger-500);
+}
+.input-field[aria-invalid="true"]:focus,
+.input-field.is-error:focus {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-danger-500) 18%, transparent);
+}
+.input-field.is-success { border-color: var(--color-trust); }
+.input-field.is-success:focus {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-trust) 18%, transparent);
+}
+
+/* Label + helper text - labels are always visible, never placeholder-only */
+.field-label {
+  display: block;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  color: var(--color-ink-2);
+  margin-bottom: 6px;
+}
+.field-hint {
+  font-size: 0.8125rem;
+  color: var(--color-ink-3);
+  margin-top: 6px;
+}
+.field-error {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--color-danger-500);
+  margin-top: 6px;
 }
 textarea.input-field {
   height: auto;
-  min-height: 96px;
+  min-height: 112px;
   padding: 12px 14px;
-  line-height: 1.5;
+  line-height: 1.55;
 }
 .dark .input-field { background: var(--color-surface-2); border-color: var(--color-line); color: var(--color-ink); }
 .dark .input-field::placeholder { color: var(--color-ink-4); }
@@ -438,7 +832,7 @@ textarea.input-field {
 /* Select */
 select.input-field {
   appearance: none;
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236f7480' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%235d655b' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
   background-position: right 12px center;
   background-repeat: no-repeat;
   background-size: 16px;
@@ -478,7 +872,7 @@ select.input-field {
 
 /* Hover lift (subtler) */
 .hover-lift { transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease; }
-.hover-lift:hover { transform: translateY(-1px); box-shadow: var(--shadow-card); }
+.hover-lift:hover { transform: translateY(-3px); box-shadow: var(--shadow-card); }
 
 /* Hover glow - subtle */
 .hover-glow:hover { box-shadow: var(--shadow-soft); }
@@ -999,29 +1393,35 @@ select.input-field {
   flex: 0 0 auto;
 }
 
-/* Warm atmospheric background field - drop onto any section that
-   wants the hero's mood where the video doesn't reach. */
-/* Coastal ocean wash - cool teal + sea-green, never warm/brown. */
+/* Atmospheric background field - the light in the hero photograph rather
+   than a colour wash. Both stops are single-digit percentages: at the old
+   12-17% of a near-black primary these read as a grey-green haze over the
+   linen, which is the muddy "generic gradient" the brief rules out. What
+   is left is a warm top-left light and the faintest terracotta bounce. */
 .mood-field {
   position: relative;
   background:
-    radial-gradient(62% 80% at 8% 0%, color-mix(in oklab, var(--color-primary) 12%, transparent), transparent 60%),
-    radial-gradient(50% 66% at 98% 10%, color-mix(in oklab, var(--color-primary-200) 18%, transparent), transparent 60%),
+    radial-gradient(66% 78% at 10% 0%, color-mix(in oklab, var(--color-surface-2) 90%, transparent), transparent 62%),
+    radial-gradient(48% 62% at 96% 8%, color-mix(in oklab, var(--color-terracotta-500) 7%, transparent), transparent 64%),
     var(--color-bg);
 }
 .mood-field-strong {
   background:
-    radial-gradient(64% 82% at 10% 0%, color-mix(in oklab, var(--color-primary) 17%, transparent), transparent 58%),
-    radial-gradient(56% 64% at 96% 12%, color-mix(in oklab, var(--color-accent) 14%, transparent), transparent 58%),
-    var(--color-surface);
+    radial-gradient(70% 82% at 8% 0%, color-mix(in oklab, var(--color-surface-2) 96%, transparent), transparent 60%),
+    radial-gradient(54% 64% at 98% 10%, color-mix(in oklab, var(--color-terracotta-500) 11%, transparent), transparent 62%),
+    var(--color-bg);
 }
-/* Focal ocean-glass gradient for cards / panel visuals - clean, not muddy. */
+
+/* Focal panel for feature cards. The name is historical (it was an ocean
+   gradient); it is now a single quiet step up from the paper surface with
+   a sage edge, so a highlighted card is distinguished by tone rather than
+   by being a different colour from everything around it. */
 .ocean-card {
   background:
-    linear-gradient(150deg,
-      color-mix(in oklab, var(--color-primary) 30%, var(--color-surface)) 0%,
-      var(--color-surface) 50%,
-      color-mix(in oklab, var(--color-accent) 26%, var(--color-surface)) 100%);
+    linear-gradient(152deg,
+      color-mix(in oklab, var(--color-accent) 7%, var(--color-surface-2)) 0%,
+      var(--color-surface-2) 58%,
+      color-mix(in oklab, var(--color-terracotta-500) 5%, var(--color-surface-2)) 100%);
 }
 
 /* Hairline that fades at the ends - editorial divider */
@@ -1029,4 +1429,142 @@ select.input-field {
   height: 1px;
   border: 0;
   background: linear-gradient(90deg, transparent, var(--color-line-2) 18%, var(--color-line-2) 82%, transparent);
+}
+
+
+/* ══════════════════════════════════════════════════════════════
+   SITE FOOTER  ·  the deep-forest close
+   The footer used to sit on the same linen as the section above it, so
+   the page just stopped rather than ended. It is now the one full-width
+   deep ground on most pages - the brief's "natural conclusion of the
+   site" - and it re-points the ink and line tokens rather than restating
+   a colour on each of its ~60 links.
+   Every value below is >= 4.5:1 on #132720 (14.0 / 9.3 / 6.7 / 7.3).
+   ══════════════════════════════════════════════════════════════ */
+.site-footer {
+  --color-ink: #f5f2ea;
+  --color-ink-2: #c3c9c0;
+  --color-ink-3: #a4aba1;
+  --color-ink-muted: #a4aba1;
+  --color-line: rgb(245 242 234 / 0.13);
+  --color-line-2: rgb(245 242 234 / 0.22);
+  --color-accent: #8fbba1;
+  --color-primary: #f5f2ea;
+  --color-primary-fg: var(--color-deep);
+  --color-terracotta: #d9906e;
+  --color-surface-2: rgb(245 242 234 / 0.06);
+
+  background:
+    radial-gradient(70% 60% at 12% 0%, color-mix(in oklab, var(--color-terracotta-500) 9%, transparent), transparent 64%),
+    var(--color-deep);
+  border-top: 1px solid var(--color-line);
+  color: var(--color-ink-2);
+}
+.site-footer h2,
+.site-footer h3,
+.site-footer .site-footer__headline { color: var(--color-ink); }
+.site-footer .eyebrow { color: var(--color-terracotta); }
+
+/* The primary CTA inverts on the dark ground so it stays the loud one,
+   and the secondary becomes an outline rather than a pale box. */
+.site-footer .btn-primary {
+  background: var(--color-ink);
+  color: var(--color-deep);
+}
+.site-footer .btn-primary:hover { background: #fff; }
+.site-footer .btn-secondary {
+  background: transparent;
+  color: var(--color-ink);
+  border-color: var(--color-line-2);
+}
+.site-footer .btn-secondary:hover {
+  background: rgb(245 242 234 / 0.08);
+  border-color: rgb(245 242 234 / 0.45);
+}
+
+/* Link hierarchy: the index is quiet until you reach for it. Hover goes
+   to full ink rather than to the accent, so sixty links do not light up
+   sage on a page that only needed one emphasis colour. */
+.site-footer a:hover { color: var(--color-ink); }
+.site-footer :focus-visible { outline-color: var(--color-ink); }
+
+
+/* ══════════════════════════════════════════════════════════════
+   COMPARISON TABLE  ·  readable on a phone
+   The table is wider than a 375px viewport and always will be, so it
+   scrolls inside its own region. What makes that usable rather than
+   annoying is that the feature column stays put while the rest moves,
+   and a fade on the right edge says there is more to see.
+   ══════════════════════════════════════════════════════════════ */
+.cmp-scroll { position: relative; scrollbar-width: thin; }
+.cmp-scroll th:first-child,
+.cmp-scroll td:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background: var(--color-surface-2);
+}
+.cmp-scroll th:first-child::after,
+.cmp-scroll td:first-child::after {
+  content: "";
+  position: absolute;
+  inset: 0 -1px 0 auto;
+  width: 1px;
+  background: var(--color-line);
+}
+/* The fade only exists while the region can still scroll. */
+@supports (animation-timeline: scroll(self inline)) {
+  .cmp-scroll {
+    --cmp-fade: 1;
+    animation: cmp-fade-out linear both;
+    animation-timeline: scroll(self inline);
+    animation-range: contain;
+  }
+  @keyframes cmp-fade-out { to { --cmp-fade: 0; } }
+}
+.cmp-scroll::before {
+  content: "";
+  position: sticky;
+  float: right;
+  top: 0;
+  right: 0;
+  width: 44px;
+  height: 100%;
+  pointer-events: none;
+  background: linear-gradient(to right, transparent, var(--color-surface-2));
+}
+@media (min-width: 900px) {
+  .cmp-scroll::before { display: none; }
+  .cmp-scroll th:first-child,
+  .cmp-scroll td:first-child { position: static; }
+  .cmp-scroll th:first-child::after,
+  .cmp-scroll td:first-child::after { display: none; }
+}
+
+
+/* ══════════════════════════════════════════════════════════════
+   REDUCED MOTION  ·  the global floor
+   Individual components already collapse their own transitions, but
+   anything perpetual - a pulsing status dot, a shimmer, a marquee -
+   has to stop here or it keeps running for the people who asked it
+   not to. Spatial motion collapses to a short crossfade; nothing is
+   removed from the page, it just stops moving.
+   ══════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 150ms !important;
+    scroll-behavior: auto !important;
+  }
+  /* Horizontal showcases become ordinary vertical stacks rather than
+     a strip the reader has to drag. */
+  .hscroll {
+    flex-wrap: wrap;
+    overflow-x: visible;
+    scroll-snap-type: none;
+  }
+  .hscroll > * { flex: 1 1 280px; }
 }

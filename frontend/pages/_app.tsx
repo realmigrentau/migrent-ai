@@ -35,7 +35,18 @@ export default function App({ Component, pageProps, router }: AppProps) {
     </Layout>
   ) : (
     <Layout>
-      <AnimatePresence mode="wait">
+      {/* initial={false} is load-bearing, not a tidy-up.
+          Framer renders whileInView/animate subtrees in their *resolved*
+          state during SSR (so the page is readable without JS) but applies
+          `initial` on the client. With AnimatePresence animating on first
+          mount, React 19 sees style="opacity:1" from the server against
+          opacity:0 from the client, reports a mismatch it "won't patch up",
+          and the subtree is left sitting at the initial state - which is why
+          the pricing, features and owner pages rendered blank below the
+          navbar until you resized the window. Suppressing the first-mount
+          animation makes server and client agree; route-change transitions
+          still run. */}
+      <AnimatePresence mode="wait" initial={false}>
         <motion.div
           key={router.route}
           initial={{ opacity: 0, y: 6 }}

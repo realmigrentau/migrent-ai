@@ -85,7 +85,7 @@ export default function ActivityFeed({
                   <motion.span
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
-                    className="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-[var(--color-primary)] text-white"
+                    className="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-[var(--color-primary)] text-[color:var(--color-primary-fg)]"
                   >
                     {unreadCount}
                   </motion.span>

@@ -83,7 +83,7 @@ const trustChips = [
 
 export default function SiteFooter() {
   return (
-    <footer className="mood-field border-t border-[var(--color-line)]">
+    <footer className="site-footer">
       <div className="max-w-[1280px] mx-auto px-6 md:px-10 lg:px-14 pt-16 md:pt-20 pb-7">
         {/* Brand band */}
         <div className="grid lg:grid-cols-[1.1fr_1fr] gap-10 lg:gap-16 pb-12 mb-12 border-b border-[var(--color-line)]">

@@ -175,7 +175,7 @@ export default function LiveListings({ suburbName, listingsCount }: LiveListings
         <div className="text-center mt-8">
           <Link
             href={`/listings?suburb=${encodeURIComponent(suburbName)}`}
-            className="inline-flex items-center gap-2 px-6 py-3 bg-[var(--color-primary)] text-white font-semibold rounded-xl hover:bg-[var(--color-primary-700)] transition-colors"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-[var(--color-primary)] text-[color:var(--color-primary-fg)] font-semibold rounded-xl hover:bg-[var(--color-primary-700)] transition-colors"
           >
             <Search className="w-4 h-4" />
             View All Rooms in {suburbName}

@@ -32,7 +32,7 @@ export default function MentorSessionSuccessPage() {
           <Link href="/messages">
             <motion.span
               whileHover={{ scale: 1.03 }}
-              className="inline-flex items-center gap-2 bg-[var(--color-primary)] hover:bg-[var(--color-primary-500)] text-white font-semibold px-6 py-2.5 rounded-xl text-sm transition-colors cursor-pointer"
+              className="inline-flex items-center gap-2 bg-[var(--color-primary)] hover:bg-[var(--color-primary-500)] text-[color:var(--color-primary-fg)] font-semibold px-6 py-2.5 rounded-xl text-sm transition-colors cursor-pointer"
             >
               <MessageCircle className="w-4 h-4" />
               Go to Messages

@@ -14,14 +14,14 @@ const faqs: FAQItem[] = [
       "Owners pay a one-time AUD $99 listing fee per property, charged only when you successfully match with a tenant. There are no monthly subscriptions, no rent commissions, and no hidden fees. If nobody books, you pay nothing.",
   },
   {
-    question: "Is the verification badge worth $19?",
+    question: "Do seekers have to pay anything?",
     answer:
-      "Verified seekers get a green trust badge on their profile that helps you stand out - many hosts prioritise renters who have completed ID verification. It's a one-time payment that stays with your account forever.",
+      "No. Searching, messaging, applying and booking are free for seekers, and always will be. The only thing a seeker can pay for is the optional one-time ID verification badge (AUD $19), which puts a verified marker on your profile. Owners often shortlist verified seekers first, but you can use every part of MigRent without it.",
   },
   {
-    question: "When do owners get paid out?",
+    question: "Does MigRent handle the rent and bond?",
     answer:
-      "Payments are processed securely through Stripe. Once a tenant confirms their booking and the move-in is verified, funds are released to your bank account within 2-5 business days. You're always in control.",
+      "No. Rent, bond and deposits are arranged directly between you and your tenant under your own agreement - MigRent never holds that money and takes no commission from it. The only payment that runs through MigRent is the one-time AUD $99 fee for a successful match, charged through Stripe.",
   },
   {
     question: "What if a tenant cancels?",
@@ -31,12 +31,12 @@ const faqs: FAQItem[] = [
   {
     question: "Are there any hidden fees?",
     answer:
-      "Zero hidden fees. What you see is what you get. Owners pay $99 per successful match, seekers browse and apply for free (with an optional $19 verification badge). No processing fees, no service charges, no surprises.",
+      "No. Owners pay one AUD $99 fee per property, and only after a successful match. Seekers pay nothing to use MigRent. The single optional extra is a seeker's one-time $19 ID verification badge. There is no subscription, no commission on rent, and no fee taken from either side of a payment.",
   },
   {
     question: "Do you offer student or migrant discounts?",
     answer:
-      "Seekers already use MigRent completely free! For owners, we occasionally run promotions for first-time listers. Follow us on social media or check your dashboard for the latest offers.",
+      "Seekers already pay nothing, so there is no discount to apply. For owners, first-time lister promotions appear in your dashboard when they are running.",
   },
   {
     question: "How does AI matching work?",

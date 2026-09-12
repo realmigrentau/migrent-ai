@@ -19,7 +19,7 @@ function StepsPreview({ steps, color }: { steps: string[]; color: string }) {
     <div className="flex flex-col gap-2 mt-4">
       {steps.map((step, i) => (
         <div key={i} className="flex items-center gap-3">
-          <span className={`w-6 h-6 rounded-full bg-[var(--color-primary-soft)] ${color} flex items-center justify-center text-[10px] font-bold text-white shrink-0`}>
+          <span className={`w-6 h-6 rounded-full bg-[var(--color-primary)] ${color} flex items-center justify-center text-[10px] font-bold text-[color:var(--color-primary-fg)] shrink-0`}>
             {i + 1}
           </span>
           <span className="text-xs text-[var(--color-ink-3)]">{step}</span>
@@ -155,12 +155,14 @@ export default function Guides() {
             className="relative z-10 max-w-3xl mx-auto"
           >
             <div className="inline-flex items-center gap-2 mb-6">
-              <span className="w-2 h-2 rounded-full bg-[var(--color-accent)] animate-pulse" />
+              <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-terracotta-500)]" aria-hidden="true" />
               <span className="eyebrow">{t("guides.heroBadge")}</span>
             </div>
 
             <h1 className="font-serif text-[44px] sm:text-[60px] md:text-[80px] leading-[0.98] tracking-[-0.025em] text-[var(--color-ink)]">
-              Guides <span className="italic text-[var(--color-ink-2)]">& How-Tos</span>
+              {/* Emphasis is weight + accent, never italics - the display face
+                  is always roman (design.md anti-slop rule 1). */}
+              Guides <strong className="font-semibold text-[var(--color-accent)]">&amp; how-tos</strong>
             </h1>
 
             <p className="mt-6 text-lg md:text-xl text-[var(--color-ink-2)] max-w-2xl mx-auto leading-relaxed">
@@ -179,7 +181,7 @@ export default function Guides() {
                   key={cat.label}
                   className={`px-4 py-2 rounded-full text-xs font-medium border transition-all cursor-pointer ${
                     cat.active
-                      ? "bg-[var(--color-primary)] text-white border-[var(--color-primary)]"
+                      ? "bg-[var(--color-primary)] text-[color:var(--color-primary-fg)] border-[var(--color-primary)]"
                       : "bg-[var(--color-surface-2)] border-[var(--color-line)] text-[var(--color-ink-2)] hover:border-[var(--color-line-2)] dark:hover:border-[var(--color-line-2)]"
                   }`}
                 >
@@ -205,19 +207,19 @@ export default function Guides() {
               <div className={`absolute top-0 left-0 right-0 h-1 bg-[var(--color-primary)] ${guides[0].gradient}`} />
               <div className="flex flex-col md:flex-row">
                 {/* Visual */}
-                <div className={`w-full md:w-2/5 bg-[var(--color-primary-soft)] ${guides[0].gradient} p-8 flex flex-col justify-center min-h-[240px]`}>
+                <div className={`mg-ground-deep w-full md:w-2/5 ${guides[0].gradient} p-8 flex flex-col justify-center min-h-[240px]`}>
                   <div className="flex items-center gap-2 mb-4">
-                    <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
-                      <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <div className="w-10 h-10 rounded-[var(--radius-md)] border border-[var(--color-line-2)] flex items-center justify-center">
+                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} aria-hidden="true">
                         <path strokeLinecap="round" strokeLinejoin="round" d={guides[0].icon} />
                       </svg>
                     </div>
-                    <span className="text-white/60 text-xs font-medium uppercase tracking-wider">Featured Guide</span>
+                    <span className="eyebrow">Featured guide</span>
                   </div>
-                  <h3 className="text-xl sm:text-2xl font-black text-white">
+                  <h3 className="font-serif text-[26px] sm:text-[30px]">
                     {t(guides[0].titleKey)}
                   </h3>
-                  <p className="text-white/70 text-sm mt-2 leading-relaxed">
+                  <p className="text-[var(--color-ink-2)] text-sm mt-2 leading-relaxed">
                     {t(guides[0].descKey)}
                   </p>
                 </div>

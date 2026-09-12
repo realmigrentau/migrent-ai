@@ -161,7 +161,7 @@ export default function TrueCostBadge({
                           className="w-full text-left px-3 py-1.5 hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-surface-muted)]/50 flex items-center gap-2"
                         >
                           <span
-                            className={`w-5 h-5 rounded text-white text-[9px] font-bold flex items-center justify-center ${
+                            className={`w-5 h-5 rounded text-[color:var(--color-primary-fg)] text-[9px] font-bold flex items-center justify-center ${
                               d.type === "university"
                                 ? "bg-[var(--color-primary)]"
                                 : d.type === "cbd"

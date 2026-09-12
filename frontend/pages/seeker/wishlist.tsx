@@ -196,7 +196,7 @@ export default function WishlistPage() {
                 }}
                 className={`flex items-center gap-1.5 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all ${
                   compareMode
-                    ? "bg-[var(--color-primary)] text-white shadow-lg shadow-[var(--color-primary)]/20"
+                    ? "bg-[var(--color-primary)] text-[color:var(--color-primary-fg)] shadow-lg shadow-[var(--color-primary)]/20"
                     : "bg-[var(--color-surface-2)] text-[var(--color-ink-3)] border border-[var(--color-line)] hover:border-[var(--color-line-2)] dark:hover:border-[var(--color-primary)]/30"
                 }`}
               >
@@ -211,7 +211,7 @@ export default function WishlistPage() {
               >
                 <Bell className="w-4 h-4" />
                 {unreadActivityCount > 0 && (
-                  <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[var(--color-primary)] text-white text-[9px] font-bold flex items-center justify-center">
+                  <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[var(--color-primary)] text-[color:var(--color-primary-fg)] text-[9px] font-bold flex items-center justify-center">
                     {unreadActivityCount}
                   </span>
                 )}
@@ -315,7 +315,7 @@ export default function WishlistPage() {
               >
                 <button
                   onClick={() => setShowCompareTable(true)}
-                  className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-[var(--color-primary)] from-[var(--color-primary)] to-[var(--color-primary)] text-white font-semibold shadow-2xl shadow-[var(--color-primary)]/20 hover:shadow-[var(--color-primary)]/20 transition-all hover:scale-105"
+                  className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-[var(--color-primary)] from-[var(--color-primary)] to-[var(--color-primary)] text-[color:var(--color-primary-fg)] font-semibold shadow-2xl shadow-[var(--color-primary)]/20 hover:shadow-[var(--color-primary)]/20 transition-all hover:scale-105"
                 >
                   <Columns3 className="w-5 h-5" />
                   Compare {compareIds.size} Listings
@@ -375,7 +375,7 @@ export default function WishlistPage() {
       >
         <Link
           href="/seeker/search"
-          className="w-14 h-14 rounded-2xl bg-[var(--color-primary)] from-[var(--color-primary)] to-[var(--color-primary)] text-white shadow-2xl shadow-[var(--color-primary)]/20 flex items-center justify-center hover:scale-110 active:scale-95 transition-transform"
+          className="w-14 h-14 rounded-2xl bg-[var(--color-primary)] from-[var(--color-primary)] to-[var(--color-primary)] text-[color:var(--color-primary-fg)] shadow-2xl shadow-[var(--color-primary)]/20 flex items-center justify-center hover:scale-110 active:scale-95 transition-transform"
         >
           <Plus className="w-6 h-6" />
         </Link>

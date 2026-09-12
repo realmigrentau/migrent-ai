@@ -68,7 +68,7 @@ export default function RentalLaws() {
               onClick={() => setActiveState(s.code)}
               className={`px-4 py-2 rounded-full text-xs font-medium border transition-all ${
                 activeState === s.code
-                  ? "bg-[var(--color-primary)] text-white border-[var(--color-primary)]"
+                  ? "bg-[var(--color-primary)] text-[color:var(--color-primary-fg)] border-[var(--color-primary)]"
                   : "bg-white dark:bg-white/5 border-[var(--color-line)] text-[var(--color-ink-2)] hover:border-[var(--color-line-2)] dark:hover:border-[var(--color-line-2)]"
               }`}
             >

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback, useMemo, type FormEvent } from "react";
+import { useId, useState, useEffect, useRef, useCallback, useMemo, type FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
@@ -115,10 +115,11 @@ function FilterChip({ label, onRemove }: { label: string; onRemove: () => void }
   );
 }
 
-let sectionSeq = 0;
 function FilterSection({ title, children, defaultOpen = true }: { title: string; children: React.ReactNode; defaultOpen?: boolean }) {
   const [open, setOpen] = useState(defaultOpen);
-  const [id] = useState(() => `filter-section-${++sectionSeq}`);
+  /* See the note in pages/faq.tsx: a module-level counter desynchronises
+     between the server and client renders and breaks aria-controls. */
+  const id = `filter-section-${useId()}`;
   return (
     <div className="border-b border-[var(--color-line)] pb-4">
       <button

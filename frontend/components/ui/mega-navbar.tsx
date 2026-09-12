@@ -293,7 +293,7 @@ export default function MegaNavbar({ revealAfterVh = 0 }: { revealAfterVh?: numb
           <li>
             <Link
               href={session ? "/owner/listings/new" : "/for-owners"}
-              className="h-9 px-3.5 inline-flex items-center justify-center rounded-[10px] text-[13.5px] font-semibold bg-transparent border border-[var(--color-line-2)] text-[var(--color-ink)] hover:bg-[var(--color-surface-sunk)] transition-colors"
+              className="btn-primary btn-compact"
             >
               List a room
             </Link>
@@ -305,7 +305,7 @@ export default function MegaNavbar({ revealAfterVh = 0 }: { revealAfterVh?: numb
               <div ref={accountRef} className="relative">
                 <button
                   onClick={() => setAccountOpen(!accountOpen)}
-                  className="px-4 h-9 rounded-full text-sm font-semibold bg-[var(--color-primary)] text-[color:var(--color-primary-fg)] hover:bg-[var(--color-primary-500)] transition-colors inline-flex items-center gap-1.5"
+                  className="btn-outline btn-compact"
                 >
                   {t("nav.myAccount")}
                   <svg className={`w-3.5 h-3.5 transition-transform ${accountOpen ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -394,12 +394,16 @@ export default function MegaNavbar({ revealAfterVh = 0 }: { revealAfterVh?: numb
                 </AnimatePresence>
               </div>
             ) : (
+              /* Secondary, not primary. The header carries one filled
+                 button and it is "List a room" - the action a visitor
+                 cannot reach any other way. Search is reachable from the
+                 hero, the nav and every listing card, and signing up is a
+                 step inside those flows rather than a destination. */
               <Link
-                href="/signup"
-                style={{ color: "var(--color-primary-fg)" }}
-                className="px-4 h-9 inline-flex items-center justify-center rounded-full text-sm font-semibold bg-[var(--color-primary)] text-[color:var(--color-primary-fg)] hover:bg-[var(--color-primary-500)] transition-colors"
+                href="/signin"
+                className="btn-outline btn-compact"
               >
-                {t("nav.signUp")}
+                {t("nav.signIn")}
               </Link>
             )}
           </li>

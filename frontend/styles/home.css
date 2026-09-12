@@ -1,265 +1,77 @@
 /* ══════════════════════════════════════════════════════════════
    MIGRENT homepage system  ·  derived from the cinematic hero
 
-   The hero (styles/hero.css) is the source of truth. Everything here
-   is measured off it or off the photograph itself, so the page below
-   the fold reads as the same picture continuing rather than a second
-   design bolted on.
+   The hero (styles/hero.css) set the direction for the whole site. In the
+   Riviera polish pass that direction was promoted into globals.css, so
+   what remains here is only what is genuinely homepage-shaped: the intro
+   hand-off under the photograph, the section components, the sideways
+   showcase and the band rhythm.
 
-   Sampled from public/hero/*.webp:
+   The palette is no longer redefined here. It used to be - a complete
+   parallel token set scoped to [data-home] - and that was the seam the
+   brief describes: the homepage spoke one language and the other sixty
+   routes spoke another. Colours, radii, shadows, type and focus rings now
+   come from globals.css and are the same everywhere.
 
-       sky, deepest       #0178c3      top-left of the plate
-       sky, body          #22aadf      the dominant azure
-       sun bloom          #91c6e1      top-right, on its way to white
-       roof terracotta    #873f29
-       wall apricot       #dfaa85 / #e79762
-       palm, deep         #1f2f0a
-       haze / umbrellas   #ebe0d8
-       fog                #ffffff      what the hero resolves to
+   What the hero contributed to that global system:
 
-   So: white is the ground (the hero literally hands off at #fff and the
-   join has to be invisible), azure is the action colour, terracotta is
-   the sparing warm counterpoint, and a deep-ocean band carries the two
-   moments that need drama. Type is the hero's own editorial voice -
-   Hanken Grotesk at 300 with a bold word for emphasis, exactly what
-   .mg-intro__headline does - so no serif competes with the wordmark.
+       the villa's roofline      terracotta, rationed
+       the palms                 deep forest primary + sage accent
+       the stucco and the haze   linen and warm-paper grounds
+       the fog it resolves to    white, the elevated card surface
+       the sky                   kept inside the photograph, plus a
+                                 narrow --color-info tint for callouts
 
-   Everything is scoped to [data-home] (set by components/Layout.tsx on
-   the homepage only), which means the header, the footer and every
-   token-driven component re-tint on this page and are untouched on the
-   other sixty.
+   Type is the hero's own editorial voice - Hanken Grotesk at 300 with a
+   bold word, exactly what .mg-intro__headline does - which is now the
+   site-wide display treatment, so no serif competes with the wordmark
+   anywhere.
    ══════════════════════════════════════════════════════════════ */
 
 [data-home] {
-  /* ── grounds ── */
-  --mg-air: #ffffff;          /* the hero's fog, continued */
-  --mg-mist: #f2f6f9;         /* sky haze, desaturated */
-  --mg-mist-2: #e9f0f6;
-  --mg-deep: #0b3a5c;         /* #0178c3 taken down to a night sky */
-  --mg-deep-2: #072a44;
+  /* ── grounds ──
+     These now point at the global Riviera tokens rather than redefining
+     them. Before the polish pass this block was a complete parallel
+     palette, which is exactly why the homepage and the other sixty routes
+     read as two different websites. The homepage keeps its own *rhythm*
+     and its own components; it no longer keeps its own colours. */
+  --mg-air: var(--color-surface-2);   /* white - what the hero's fog resolves to */
+  --mg-mist: var(--color-bg);         /* linen - the page ground */
+  --mg-mist-2: var(--color-surface-muted);
+  --mg-deep: var(--color-primary);    /* deep forest - the drama band */
+  --mg-deep-2: var(--color-primary-900);
 
   /* ── layout rhythm ──
      The intro under the hero breathes at clamp(88px, 15svh, 190px); the
-     sections inherit that scale so the page keeps one cadence. */
-  --mg-section-y: clamp(76px, 9vw, 148px);
-  --mg-section-y-sm: clamp(52px, 5.5vw, 84px);
-  --mg-gutter: clamp(20px, 4vw, 56px);
-  --mg-max: 1240px;
-  --mg-max-narrow: 960px;
+     sections inherit the global section scale so the cadence that starts
+     on the homepage continues on every other page. */
+  --mg-section-y: var(--space-section);
+  --mg-section-y-sm: var(--space-section-sm);
+  --mg-gutter: var(--space-gutter);
+  --mg-max: var(--space-max);
+  --mg-max-narrow: var(--space-max-narrow);
 
-  /* ── motion ──
-     expo.out, the ease the hero's own intro reveal uses. */
-  --mg-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  /* ── motion ── */
+  --mg-ease: var(--ease-out);
   --mg-ease-soft: cubic-bezier(0.2, 0.7, 0.3, 1);
 
-  /* ── token overrides ──
-     These are the site's own variable names, so every existing utility
-     (bg-[var(--color-surface)], border-[var(--color-line)], .btn-primary,
-     .card, the navbar, the footer) re-tints with no call-site changes. */
-  --color-bg: var(--mg-air);
-  --color-surface: var(--mg-mist);
-  --color-surface-2: #ffffff;
-  --color-surface-muted: #eef4f9;
-  --color-surface-warm: #f8f3ee;      /* the villa's cream, held in reserve */
-  --color-surface-sunk: var(--mg-mist-2);
-
-  --color-line: #e2e8ee;
-  --color-line-2: #cfdae4;
-  --color-hairline: #e2e8ee;
-
-  --color-ink: #16201f;               /* the hero intro's own ink · 16.7:1 */
-  --color-ink-2: #46545e;             /* 7.8:1 */
-  --color-ink-3: #5d6c77;             /* 5.4:1 */
-  --color-ink-muted: #5d6c77;
-  --color-ink-4: #66747e;             /* placeholders · 4.7:1 */
-
-  --color-primary-50: #eaf4fb;
-  --color-primary-100: #d6e9f6;
-  --color-primary-200: #a9cfe6;
-  --color-primary-400: #2d97d1;
-  --color-primary-500: #0d7fbf;
-  --color-primary-600: #0b6ea8;
-  --color-primary-700: #0a5f92;
-  --color-primary-900: var(--mg-deep);
-  --color-primary: #0b6ea8;           /* white on it · 5.5:1 */
-  --color-primary-soft: #d6e9f6;
-  --color-primary-fg: #ffffff;
-
-  --color-accent-50: #eaf4fb;
-  --color-accent-100: #d6e9f6;
-  --color-accent-500: #0d7fbf;
-  --color-accent-600: #0b6ea8;
-  --color-accent-700: #0a5f92;
-  --color-accent: #0d7fbf;
-  --color-accent-soft: #d6e9f6;
-  --color-accent-fg: #ffffff;
-
-  --color-brand-50: var(--color-primary-50);
-  --color-brand-100: var(--color-primary-100);
-  --color-brand-200: var(--color-primary-200);
-  --color-brand-400: var(--color-primary-400);
-  --color-brand-500: var(--color-primary-500);
-  --color-brand-600: var(--color-primary-600);
-  --color-brand-700: var(--color-primary-700);
-  --color-brand-800: var(--color-primary-700);
-  --color-brand-900: var(--color-primary-900);
-  --color-brand: var(--color-primary);
-
-  /* the palms: verification reads green, never the same blue as a link */
-  --color-trust: #1f6b4d;             /* 6.4:1 */
-  --color-trust-soft: #dcefe5;
-  --color-trust-ink: #124a33;
-  --color-success-500: #1f6b4d;
-  --color-success-600: #185740;
-  --color-success-50: #dcefe5;
-
-  /* the roof and the sunlit wall: warmth, used sparingly */
-  --color-warn-500: #a8461f;          /* 5.9:1 */
-  --color-warn-600: #8d3915;
-  --color-warn-50: #fbeee7;
-
-  /* ── radii ──
-     The hero's controls are capsules. Buttons and inputs follow it;
-     surfaces get one card radius so nothing on the page disagrees. */
-  --radius-sm: 8px;
-  --radius-control: 999px;
-  --radius-md: 12px;
-  --radius-lg: 18px;
-  --radius-card: 18px;
-  --radius-xl: 24px;
-  --radius-modal: 24px;
-  --radius-pill: 999px;
-
-  /* ── shadows ──
-     Cool and long, the way light falls in the photograph. Never a grey
-     box-shadow: the tint carries the sky. */
-  --shadow-soft: 0 1px 2px rgb(11 58 92 / 0.05);
-  --shadow-card: 0 1px 2px rgb(11 58 92 / 0.04), 0 10px 28px -14px rgb(11 58 92 / 0.18);
-  --shadow-pop: 0 2px 8px rgb(11 58 92 / 0.06), 0 22px 48px -22px rgb(11 58 92 / 0.28);
-  --shadow-modal: 0 30px 72px -24px rgb(11 58 92 / 0.34);
-
-  background: var(--mg-air);
+  background: var(--color-bg);
 }
 
-/* The canvas behind the layout, so an overscroll bounce shows sky-white
-   rather than the sand the rest of the site sits on. */
+/* The canvas behind the layout, so an overscroll bounce shows the page's
+   own linen rather than a colour that only exists here. */
 body:has([data-home]) {
-  background: #ffffff;
+  background: var(--color-bg);
 }
 
-/* ── dark ──
-   Not the site's espresso: this hero is a sky, so its night is a deep
-   ocean. Same brand, lights out. Every value >= 4.5:1 on its ground. */
-html.dark [data-home] {
-  --mg-air: #0a1620;
-  --mg-mist: #0f1d29;
-  --mg-mist-2: #142534;
-  --mg-deep: #061019;
-  --mg-deep-2: #040b12;
+/* The hero's hand-off gradient runs white -> page ground. --color-bg is
+   linen on light and forest-night on dark, so the join works in both
+   without a second declaration. */
 
-  --color-bg: var(--mg-air);
-  --color-surface: var(--mg-mist);
-  --color-surface-2: #122231;
-  --color-surface-muted: #0d1b26;
-  --color-surface-warm: #1a1c1d;
-  --color-surface-sunk: #08121a;
 
-  --color-line: #1e3244;
-  --color-line-2: #2b465c;
-  --color-hairline: #1e3244;
-
-  --color-ink: #eaf2f8;               /* 16.2:1 */
-  --color-ink-2: #b3c6d4;             /* 10.4:1 */
-  --color-ink-3: #8ba3b5;             /* 7.0:1 */
-  --color-ink-muted: #8ba3b5;
-  --color-ink-4: #7b93a5;
-
-  --color-primary-50: #0d2634;
-  --color-primary-100: #123448;
-  --color-primary-200: #1c5273;
-  --color-primary-400: #3f9fce;
-  --color-primary-500: #74c8f0;
-  --color-primary-600: #5cbdec;
-  --color-primary-700: #4aa3cf;
-  --color-primary: #5cbdec;           /* 8.7:1 */
-  --color-primary-soft: #123448;
-  --color-primary-fg: #06141d;        /* on the fill · 8.7:1 */
-
-  --color-accent-50: #0d2634;
-  --color-accent-100: #123448;
-  --color-accent-500: #6fc2e8;
-  --color-accent: #6fc2e8;
-  --color-accent-soft: #123448;
-  --color-accent-fg: #06141d;
-
-  --color-trust: #4fbfa5;             /* 8.1:1 */
-  --color-trust-soft: #0f2e29;
-  --color-trust-ink: #a9e6d6;
-  --color-success-500: #4fbfa5;
-  --color-success-600: #3aa88f;
-  --color-success-50: #0f2e29;
-
-  --color-warn-500: #e08a63;          /* the sunlit wall · 7.0:1 */
-  --color-warn-600: #c8734c;
-  --color-warn-50: #2a170f;
-
-  --shadow-soft: 0 1px 2px rgb(2 8 14 / 0.6);
-  --shadow-card: 0 2px 8px rgb(2 8 14 / 0.6), 0 18px 40px -16px rgb(2 8 14 / 0.85);
-  --shadow-pop: 0 20px 46px -18px rgb(2 8 14 / 0.8), 0 2px 10px rgb(2 8 14 / 0.6);
-  --shadow-modal: 0 32px 76px -26px rgb(2 8 14 / 0.9);
-}
-
-html.dark body:has([data-home]) {
-  background: #0a1620;
-  /* the site's warm amber bloom belongs to the espresso theme, not here */
-  background-image: none;
-}
-
-/* The hero's dusk hand-off (hero.css) washes white through dune-amber on
-   its way to the page. On an ocean-night ground the warm pass reads as
-   rust, so the homepage swaps it for the sky's own blue. */
-html.dark [data-home] .mg-intro::after {
-  background:
-    linear-gradient(
-      to bottom,
-      rgb(45 174 220 / 0) 0%,
-      rgb(45 174 220 / 0.16) 46%,
-      rgb(45 174 220 / 0) 88%
-    ),
-    linear-gradient(
-      to bottom,
-      #fff 0%,
-      #fff 16%,
-      color-mix(in oklab, var(--color-bg) 20%, #fff) 42%,
-      color-mix(in oklab, var(--color-bg) 58%, #fff) 68%,
-      color-mix(in oklab, var(--color-bg) 87%, #fff) 88%,
-      var(--color-bg) 100%
-    );
-}
-
-[data-home] .font-serif {
-  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
-  font-variation-settings: normal;
-  font-optical-sizing: auto;
-  font-weight: 500;
-  letter-spacing: -0.02em;
-}
-
-/* The footer's one big line takes the hero's light display weight here and
-   keeps its Fraunces setting everywhere else. */
-[data-home] .site-footer__headline {
-  font-weight: 300;
-  letter-spacing: -0.026em;
-}
-
-[data-home] .eyebrow {
-  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
-  font-size: clamp(10.5px, 0.86vw, 12.5px);
-  font-weight: 500;
-  letter-spacing: 0.17em;
-  text-transform: uppercase;
-  color: var(--color-ink-3);
-}
+/* The homepage's type overrides are gone: globals.css now carries the
+   hero's display treatment (.font-serif) and the mono eyebrow for every
+   route, so the homepage no longer needs its own copy of them. */
 
 /* The budget slider, retuned for the capsule. */
 [data-home] .premium-range {
@@ -524,29 +336,35 @@ html.dark [data-home] .mg-intro::after {
     border-bottom: 1px solid var(--color-line);
   }
 
+  /* The one deep band on the page. It was a night sky; it is now the
+     forest after dark, which is what the rest of the site's primary is.
+     Ratios on --color-primary-900: ink 18.0 · ink-2 11.8 · ink-3 8.3 ·
+     accent 8.4 · trust 8.2 · terracotta 7.0. */
   .mg-band--deep {
     --color-ink: #ffffff;
-    --color-ink-2: #c3dcec;             /* 8.3:1 */
-    --color-ink-3: #a8ccdf;             /* 6.6:1 */
-    --color-ink-muted: #a8ccdf;
-    --color-ink-4: #a8ccdf;
-    --color-line: rgb(255 255 255 / 0.16);
-    --color-line-2: rgb(255 255 255 / 0.3);
-    --color-surface: rgb(255 255 255 / 0.05);
-    --color-surface-2: rgb(255 255 255 / 0.06);
-    --color-surface-sunk: rgb(255 255 255 / 0.08);
-    --color-primary: #ffffff;
-    --color-primary-500: #eaf4fb;
-    --color-primary-700: #d6e9f6;
-    --color-primary-fg: var(--mg-deep);
-    --color-primary-50: rgb(255 255 255 / 0.1);
-    --color-accent: #6fc2e8;            /* 6.0:1 */
-    --color-trust: #7fd8c0;
+    --color-ink-2: #ccd3cb;
+    --color-ink-3: #aab2a8;
+    --color-ink-muted: #aab2a8;
+    --color-ink-4: #aab2a8;
+    --color-line: rgb(245 242 234 / 0.16);
+    --color-line-2: rgb(245 242 234 / 0.3);
+    --color-surface: rgb(245 242 234 / 0.05);
+    --color-surface-2: rgb(245 242 234 / 0.06);
+    --color-surface-sunk: rgb(245 242 234 / 0.08);
+    --color-primary: #f5f2ea;
+    --color-primary-500: #ffffff;
+    --color-primary-700: #e6e2d6;
+    --color-primary-fg: var(--color-deep-2);
+    --color-primary-50: rgb(245 242 234 / 0.1);
+    --color-accent: #8fbba1;
+    --color-trust: #6fbf95;
+    --color-terracotta: #d9906e;
+    --color-terracotta-500: #d9906e;
     color: #fff;
     background:
-      radial-gradient(78% 62% at 84% -4%, rgb(45 174 220 / 0.24), transparent 64%),
-      radial-gradient(64% 58% at 4% 104%, rgb(13 127 191 / 0.26), transparent 62%),
-      var(--mg-deep-2);
+      radial-gradient(78% 62% at 84% -4%, color-mix(in oklab, var(--color-terracotta-500) 20%, transparent), transparent 64%),
+      radial-gradient(64% 58% at 4% 104%, color-mix(in oklab, var(--color-accent-500) 22%, transparent), transparent 62%),
+      var(--color-deep-2);
   }
 
   /* The sun bloom from the top-right of the plate, for air bands that need
@@ -557,15 +375,16 @@ html.dark [data-home] .mg-intro::after {
     inset: 0;
     z-index: -1;
     pointer-events: none;
+    /* Warm light, not sky: these were the azure palette's own blues. */
     background:
-      radial-gradient(58% 46% at 88% 2%, rgb(145 198 225 / 0.3), transparent 68%),
-      radial-gradient(46% 40% at 6% 8%, rgb(34 170 223 / 0.09), transparent 70%);
+      radial-gradient(58% 46% at 88% 2%, color-mix(in oklab, var(--color-terracotta-500) 18%, transparent), transparent 68%),
+      radial-gradient(46% 40% at 6% 8%, color-mix(in oklab, var(--color-accent-500) 10%, transparent), transparent 70%);
   }
 
   html.dark [data-home] .mg-wash-sun::before {
     background:
-      radial-gradient(58% 46% at 88% 2%, rgb(92 189 236 / 0.12), transparent 68%),
-      radial-gradient(46% 40% at 6% 8%, rgb(13 127 191 / 0.12), transparent 70%);
+      radial-gradient(58% 46% at 88% 2%, color-mix(in oklab, var(--color-terracotta-500) 14%, transparent), transparent 68%),
+      radial-gradient(46% 40% at 6% 8%, color-mix(in oklab, var(--color-accent-500) 12%, transparent), transparent 70%);
   }
 
   /* ══════════════════════════════════════════════════════════════
@@ -1026,17 +845,21 @@ html.dark [data-home] .mg-icon--trust {
     border-radius: var(--radius-xl);
     overflow: hidden;
     border: 1px solid var(--color-line);
+    /* A warm light falling across a deep-forest tile - the villa at dusk.
+       This was a hard-coded sky blue left over from the azure palette. */
     background:
-      radial-gradient(120% 96% at 78% 6%, rgb(145 198 225 / 0.55), transparent 60%),
-      linear-gradient(158deg, var(--color-primary-400), var(--color-primary-900) 82%);
+      radial-gradient(120% 96% at 78% 6%, color-mix(in oklab, var(--color-terracotta-500) 55%, transparent), transparent 62%),
+      linear-gradient(158deg, var(--color-primary-500), var(--color-primary-900) 82%);
   }
 
   .mg-tile__body {
     position: absolute;
     inset: auto 0 0 0;
     padding: 18px;
-    background: linear-gradient(to top, rgb(4 22 36 / 0.72), rgb(4 22 36 / 0.12) 62%, transparent);
-    color: #fff;
+    /* The scrim is what keeps the label legible when a photograph loads
+       behind it, so it stays opaque enough on its own. */
+    background: linear-gradient(to top, rgb(8 18 13 / 0.82), rgb(8 18 13 / 0.22) 62%, transparent);
+    color: var(--color-primary-fg);
   }
 
   a.mg-tile {

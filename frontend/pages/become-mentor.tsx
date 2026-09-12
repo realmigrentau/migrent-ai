@@ -190,7 +190,7 @@ export default function BecomeMentorPage() {
                 whileTap={{ scale: 0.97 }}
                 onClick={startStripeOnboarding}
                 disabled={loading}
-                className="bg-[var(--color-primary)] hover:bg-[var(--color-primary-500)] text-white font-semibold px-6 py-2.5 rounded-xl text-sm transition-colors disabled:opacity-50"
+                className="bg-[var(--color-primary)] hover:bg-[var(--color-primary-500)] text-[color:var(--color-primary-fg)] font-semibold px-6 py-2.5 rounded-xl text-sm transition-colors disabled:opacity-50"
               >
                 <DollarSign className="w-4 h-4 inline mr-1" />
                 {loading ? "Loading..." : "Set Up Payouts"}
@@ -236,7 +236,7 @@ export default function BecomeMentorPage() {
               whileHover={{ scale: 1.03 }}
               onClick={startStripeOnboarding}
               disabled={loading}
-              className="bg-[var(--color-primary)] hover:bg-[var(--color-primary-500)] text-white font-semibold px-6 py-2.5 rounded-xl text-sm transition-colors disabled:opacity-50"
+              className="bg-[var(--color-primary)] hover:bg-[var(--color-primary-500)] text-[color:var(--color-primary-fg)] font-semibold px-6 py-2.5 rounded-xl text-sm transition-colors disabled:opacity-50"
             >
               <DollarSign className="w-4 h-4 inline mr-1" />
               {loading ? "Loading..." : "Set Up Payouts (Stripe)"}
@@ -297,7 +297,7 @@ export default function BecomeMentorPage() {
               <div
                 className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${
                   step >= s
-                    ? "bg-[var(--color-primary)] text-white"
+                    ? "bg-[var(--color-primary)] text-[color:var(--color-primary-fg)]"
                     : "bg-[var(--color-line)] text-[var(--color-ink-3)]"
                 }`}
               >
@@ -365,7 +365,7 @@ export default function BecomeMentorPage() {
                 if (!suburb.trim()) { toast.warning("Please enter your suburb to continue."); return; }
                 setStep(2);
               }}
-              className="w-full bg-[var(--color-primary)] hover:bg-[var(--color-primary-500)] text-white font-semibold py-3 rounded-xl text-sm transition-colors flex items-center justify-center gap-2"
+              className="w-full bg-[var(--color-primary)] hover:bg-[var(--color-primary-500)] text-[color:var(--color-primary-fg)] font-semibold py-3 rounded-xl text-sm transition-colors flex items-center justify-center gap-2"
             >
               Continue
               <ArrowRight className="w-4 h-4" />
@@ -396,7 +396,7 @@ export default function BecomeMentorPage() {
                     onClick={() => toggleLanguage(lang)}
                     className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
                       languages.includes(lang)
-                        ? "bg-[var(--color-primary)] text-white"
+                        ? "bg-[var(--color-primary)] text-[color:var(--color-primary-fg)]"
                         : "bg-[var(--color-surface-muted)] text-[var(--color-ink-2)] hover:bg-[var(--color-surface-muted)]"
                     }`}
                   >
@@ -442,7 +442,7 @@ export default function BecomeMentorPage() {
                   if (languages.length === 0) { toast.warning("Pick at least one language so we can match you."); return; }
                   setStep(3);
                 }}
-                className="flex-1 bg-[var(--color-primary)] hover:bg-[var(--color-primary-500)] text-white font-semibold py-3 rounded-xl text-sm transition-colors flex items-center justify-center gap-2"
+                className="flex-1 bg-[var(--color-primary)] hover:bg-[var(--color-primary-500)] text-[color:var(--color-primary-fg)] font-semibold py-3 rounded-xl text-sm transition-colors flex items-center justify-center gap-2"
               >
                 Continue
                 <ArrowRight className="w-4 h-4" />
@@ -495,7 +495,7 @@ export default function BecomeMentorPage() {
                   onChange={(e) => setHourlyRate(parseInt(e.target.value))}
                   className="flex-1 accent-[var(--color-primary)]"
                 />
-                <div className="bg-[var(--color-primary)] text-white font-bold text-lg px-4 py-1.5 rounded-xl min-w-[80px] text-center">
+                <div className="bg-[var(--color-primary)] text-[color:var(--color-primary-fg)] font-bold text-lg px-4 py-1.5 rounded-xl min-w-[80px] text-center">
                   ${hourlyRate}
                 </div>
               </div>
@@ -520,7 +520,7 @@ export default function BecomeMentorPage() {
                 onClick={handleSubmit}
                 disabled={loading}
                 aria-busy={loading}
-                className="flex-1 bg-[var(--color-primary)] text-white font-semibold py-3 rounded-xl text-sm transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                className="flex-1 bg-[var(--color-primary)] text-[color:var(--color-primary-fg)] font-semibold py-3 rounded-xl text-sm transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 {loading ? (
                   <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />

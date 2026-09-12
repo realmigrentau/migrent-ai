@@ -35,7 +35,7 @@ export default function OwnerView({ listings, loading, profile }: OwnerViewProps
           <motion.span
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.97 }}
-            className="inline-flex items-center gap-2 bg-[var(--color-primary)] hover:bg-[var(--color-primary-500)] text-white font-semibold px-4 py-2.5 rounded-xl text-sm transition-colors cursor-pointer"
+            className="inline-flex items-center gap-2 bg-[var(--color-primary)] hover:bg-[var(--color-primary-500)] text-[color:var(--color-primary-fg)] font-semibold px-4 py-2.5 rounded-xl text-sm transition-colors cursor-pointer"
           >
             <Plus className="w-4 h-4" />
             List Room
@@ -103,7 +103,7 @@ export default function OwnerView({ listings, loading, profile }: OwnerViewProps
               <motion.span
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.97 }}
-                className="inline-flex items-center gap-2 bg-[var(--color-primary)] text-white font-semibold px-5 py-2.5 rounded-xl text-sm cursor-pointer"
+                className="inline-flex items-center gap-2 bg-[var(--color-primary)] text-[color:var(--color-primary-fg)] font-semibold px-5 py-2.5 rounded-xl text-sm cursor-pointer"
               >
                 <Plus className="w-4 h-4" />
                 Post Your First Room

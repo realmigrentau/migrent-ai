@@ -112,7 +112,7 @@ export default function ReportModal({ listingId, itemType, itemId, isOpen, onClo
                 </p>
                 <button
                   onClick={handleClose}
-                  className="px-6 py-2 bg-[var(--color-primary)] text-white rounded-lg hover:bg-[var(--color-primary)] transition"
+                  className="px-6 py-2 bg-[var(--color-primary)] text-[color:var(--color-primary-fg)] rounded-lg hover:bg-[var(--color-primary)] transition"
                 >
                   Close
                 </button>

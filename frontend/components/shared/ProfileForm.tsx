@@ -436,7 +436,7 @@ export default function ProfileForm({
                         onClick={() => toggleInterest(opt)}
                         className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${
                           selected
-                            ? "bg-[var(--color-primary)] text-white border-[var(--color-primary)] shadow-md"
+                            ? "bg-[var(--color-primary)] text-[color:var(--color-primary-fg)] border-[var(--color-primary)] shadow-md"
                             : "bg-[var(--color-surface-2)] text-[var(--color-ink-2)] border-[var(--color-line)] hover:border-[var(--color-line-2)] dark:hover:border-[var(--color-primary)]/30"
                         }`}
                       >

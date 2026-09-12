@@ -148,7 +148,7 @@ export default function VerificationModal({
                     </p>
                     <Link
                       href="/dashboard/seeker-profile"
-                      className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-white bg-[var(--color-primary)] from-[var(--color-primary)] to-[var(--color-primary)] hover:shadow-lg hover:shadow-[var(--color-primary)]/20 transition-all"
+                      className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-[color:var(--color-primary-fg)] bg-[var(--color-primary)] from-[var(--color-primary)] to-[var(--color-primary)] hover:shadow-lg hover:shadow-[var(--color-primary)]/20 transition-all"
                     >
                       Get verified now
                       <svg

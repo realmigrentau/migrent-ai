@@ -108,7 +108,7 @@ export default function MentorCard({
 
             {/* Price + CTA */}
             <div className="shrink-0 text-right flex flex-col items-end gap-2">
-              <div className="bg-[var(--color-primary)] text-white font-bold text-sm px-3 py-1 rounded-xl">
+              <div className="bg-[var(--color-primary)] text-[color:var(--color-primary-fg)] font-bold text-sm px-3 py-1 rounded-xl">
                 {priceDisplay}
               </div>
               <span className="text-[10px] text-[var(--color-ink-3)]">per session</span>

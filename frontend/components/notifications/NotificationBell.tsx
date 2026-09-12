@@ -46,7 +46,7 @@ export default function NotificationBell({ unreadCount, collapsed }: Notificatio
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 exit={{ scale: 0 }}
-                className="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-[var(--color-primary)] text-white text-[10px] font-bold px-1 shadow-sm"
+                className="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-[var(--color-primary)] text-[color:var(--color-primary-fg)] text-[10px] font-bold px-1 shadow-sm"
               >
                 {unreadCount > 99 ? "99+" : unreadCount}
               </motion.span>

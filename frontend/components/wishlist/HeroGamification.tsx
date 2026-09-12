@@ -65,7 +65,7 @@ export default function HeroGamification({
               initial={{ scale: 0, rotate: -20 }}
               animate={{ scale: 1, rotate: 0 }}
               transition={{ type: "spring", stiffness: 400, damping: 15, delay: 0.2 }}
-              className={`flex items-center gap-1 px-2.5 py-1 rounded-full bg-[var(--color-primary)] ${levelColor.bg} text-white text-xs font-bold shadow-lg`}
+              className={`flex items-center gap-1 px-2.5 py-1 rounded-full bg-[var(--color-primary)] ${levelColor.bg} text-[color:var(--color-primary-fg)] text-xs font-bold shadow-lg`}
             >
               {level.level >= 4 ? (
                 <Trophy className="w-3.5 h-3.5" />

@@ -209,7 +209,7 @@ export default function MentorProfilePage() {
 
             {/* Price */}
             <div className="sm:text-right shrink-0">
-              <div className="bg-[var(--color-primary)] text-white font-bold text-xl px-5 py-2 rounded-xl inline-block">
+              <div className="bg-[var(--color-primary)] text-[color:var(--color-primary-fg)] font-bold text-xl px-5 py-2 rounded-xl inline-block">
                 {priceDisplay}
               </div>
               <p className="text-xs text-[var(--color-ink-3)] mt-1">per session</p>
@@ -282,7 +282,7 @@ export default function MentorProfilePage() {
                   onClick={() => setSessionType(type.value)}
                   className={`flex flex-col items-center gap-1.5 p-3 rounded-xl text-xs font-medium transition-colors ${
                     sessionType === type.value
-                      ? "bg-[var(--color-primary)] text-white"
+                      ? "bg-[var(--color-primary)] text-[color:var(--color-primary-fg)]"
                       : "bg-[var(--color-surface-muted)] text-[var(--color-ink-2)] hover:bg-[var(--color-surface-muted)]"
                   }`}
                 >
@@ -337,7 +337,7 @@ export default function MentorProfilePage() {
             whileTap={{ scale: 0.98 }}
             onClick={handleBook}
             disabled={booking}
-            className="w-full bg-[var(--color-primary)] from-[var(--color-primary)] to-[var(--color-primary)] hover:from-primary-700 hover:to-pink-700 text-white font-semibold py-3 rounded-xl text-sm transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+            className="w-full bg-[var(--color-primary)] from-[var(--color-primary)] to-[var(--color-primary)] hover:from-primary-700 hover:to-pink-700 text-[color:var(--color-primary-fg)] font-semibold py-3 rounded-xl text-sm transition-all disabled:opacity-50 flex items-center justify-center gap-2"
           >
             {booking ? (
               <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />

@@ -320,7 +320,7 @@ export default function PhotoUploadZone({
 
                 {/* Hero badge */}
                 {index === 0 && (
-                  <div className="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded-md bg-[var(--color-primary)] text-white text-[10px] font-bold">
+                  <div className="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded-md bg-[var(--color-primary)] text-[color:var(--color-primary-fg)] text-[10px] font-bold">
                     HERO
                   </div>
                 )}
@@ -420,7 +420,7 @@ export default function PhotoUploadZone({
           whileTap={{ scale: 0.98 }}
           onClick={handleUpload}
           disabled={uploading}
-          className="w-full py-3 rounded-xl text-sm font-semibold text-white bg-[var(--color-primary)] from-[var(--color-primary)] to-teal-600 hover:from-[var(--color-primary)] hover:to-teal-700 transition-all shadow-lg shadow-teal-500/20 disabled:opacity-50"
+          className="w-full py-3 rounded-xl text-sm font-semibold text-[color:var(--color-primary-fg)] bg-[var(--color-primary)] from-[var(--color-primary)] to-teal-600 hover:from-[var(--color-primary)] hover:to-teal-700 transition-all shadow-lg shadow-teal-500/20 disabled:opacity-50"
         >
           Upload {photos.length} photos
         </motion.button>
