@@ -163,15 +163,39 @@ export default function BrowseRooms() {
               </div>
             ))}
           </div>
-        ) : listings.length > 0 ? (
+        ) : (
+          /* Two states this section is really in, not just the ideal one: the
+             API runs on a cold-starting host so it sometimes returns nothing,
+             and the catalogue is young enough that one or two rooms is normal.
+             Either way the row completes itself rather than leaving a hole or
+             a lone card with two empty columns beside it. */
           <ul className="list-none m-0 p-0 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mt-10">
             {listings.map((l, i) => (
               <Reveal as="li" key={l.id} delay={(i % 3) * 0.06}>
                 <ListingCard listing={l} />
               </Reveal>
             ))}
+            {listings.length < 3 && (
+              <Reveal
+                as="li"
+                delay={(listings.length % 3) * 0.06}
+                className={listings.length === 0 ? "md:col-span-2 lg:col-span-3" : "md:col-span-1 lg:col-span-2"}
+              >
+                <div className="mg-card mg-wash-sun overflow-hidden h-full p-8 sm:p-10 flex flex-col items-center justify-center text-center">
+                  <h3 className="mg-h3 mg-h3--lg">
+                    {listings.length === 0 ? "Rooms are listed every week" : "More rooms in the full search"}
+                  </h3>
+                  <p className="mg-lead mt-3 max-w-[40ch]">
+                    Open the full search to see everything available right now, across every city we cover.
+                  </p>
+                  <Link href="/seeker/search" className="mg-btn mg-btn--primary mg-btn--sm mg-btn--auto mt-7">
+                    Search all rooms <ArrowRight className="w-4 h-4" aria-hidden="true" />
+                  </Link>
+                </div>
+              </Reveal>
+            )}
           </ul>
-        ) : null}
+        )}
       </div>
     </section>
   );
