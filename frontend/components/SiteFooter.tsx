@@ -3,9 +3,13 @@ import { Logo } from "./ui/Logo";
 import { BadgeCheck, Lock, Wallet, HeartHandshake } from "lucide-react";
 import { copyrightLine } from "../lib/siteIdentity";
 
-/* Site footer (design.md · Sand & Ocean).
- * A full directory of everything MigRent offers, in six columns, with a
- * brand band + trust strip on top. All links point to real routes. */
+/* Site footer.
+ *
+ * A full directory of everything MigRent offers, with a brand band and a
+ * trust strip on top. Every colour, hairline and radius comes from a token,
+ * so on the homepage - where styles/home.css re-points those tokens at the
+ * hero's palette - the footer arrives in the same sky without a second
+ * component. All links point to real routes. */
 
 const columns: { heading: string; links: { label: string; href: string }[] }[] = [
   {
@@ -80,21 +84,21 @@ const trustChips = [
 export default function SiteFooter() {
   return (
     <footer className="mood-field border-t border-[var(--color-line)]">
-      <div className="max-w-[1280px] mx-auto px-6 md:px-10 lg:px-14 pt-16 pb-7">
+      <div className="max-w-[1280px] mx-auto px-6 md:px-10 lg:px-14 pt-16 md:pt-20 pb-7">
         {/* Brand band */}
-        <div className="grid lg:grid-cols-[1.1fr_1fr] gap-8 lg:gap-14 pb-10 mb-10 border-b border-[var(--color-line)]">
+        <div className="grid lg:grid-cols-[1.1fr_1fr] gap-10 lg:gap-16 pb-12 mb-12 border-b border-[var(--color-line)]">
           <div>
             <Link href="/" className="inline-flex items-center gap-2.5 text-[var(--color-ink)]">
               <Logo size={30} />
               <span className="font-serif text-[26px] leading-none tracking-[-0.015em]">MigRent</span>
             </Link>
-            <h2 className="font-serif text-[28px] md:text-[38px] leading-[1.02] tracking-[-0.025em] text-[var(--color-ink)] mt-5 max-w-[16ch]">
+            <h2 className="site-footer__headline font-serif text-[30px] md:text-[40px] leading-[1.06] tracking-[-0.025em] text-[var(--color-ink)] mt-6 max-w-[16ch]">
               A real home in Australia, found the right way.
             </h2>
-            <div className="mt-6 flex flex-wrap gap-x-5 gap-y-2.5">
+            <div className="mt-7 flex flex-wrap gap-x-6 gap-y-3">
               {trustChips.map((c) => (
                 <span key={c.label} className="inline-flex items-center gap-2 text-[13px] font-medium text-[var(--color-ink-2)]">
-                  <c.icon className="w-4 h-4 text-[var(--color-accent)]" /> {c.label}
+                  <c.icon className="w-4 h-4 text-[var(--color-accent)]" strokeWidth={1.9} aria-hidden="true" /> {c.label}
                 </span>
               ))}
             </div>
@@ -103,11 +107,11 @@ export default function SiteFooter() {
             <p className="text-[14px] text-[var(--color-ink-2)] leading-[1.55] max-w-[34ch] lg:ml-auto">
               Verified rooms for migrants, students, and new arrivals - no rental history needed.
             </p>
-            <div className="flex flex-wrap gap-3 mt-5 lg:justify-end">
-              <Link href="/for-seekers" className="btn-primary h-11 px-5 text-sm">
+            <div className="flex flex-wrap gap-3 mt-6 lg:justify-end">
+              <Link href="/for-seekers" className="btn-primary h-11 px-6 text-sm rounded-[var(--radius-control)]">
                 I&apos;m a Seeker <span aria-hidden="true">→</span>
               </Link>
-              <Link href="/for-owners" className="btn-secondary h-11 px-5 text-sm">
+              <Link href="/for-owners" className="btn-secondary h-11 px-6 text-sm rounded-[var(--radius-control)]">
                 I&apos;m an Owner
               </Link>
             </div>
@@ -115,14 +119,17 @@ export default function SiteFooter() {
         </div>
 
         {/* Link directory */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-x-6 gap-y-10">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-x-6 gap-y-11">
           {columns.map((col) => (
             <div key={col.heading}>
-              <h3 className="eyebrow mb-3.5">{col.heading}</h3>
-              <ul className="space-y-2.5">
+              <h3 className="eyebrow mb-4">{col.heading}</h3>
+              <ul className="space-y-3">
                 {col.links.map((l) => (
                   <li key={l.href}>
-                    <Link href={l.href} className="text-[13.5px] text-[var(--color-ink-2)] hover:text-[var(--color-primary)] transition-colors">
+                    <Link
+                      href={l.href}
+                      className="inline-block text-[13.5px] text-[var(--color-ink-2)] hover:text-[var(--color-primary)] transition-colors duration-200"
+                    >
                       {l.label}
                     </Link>
                   </li>
@@ -133,7 +140,7 @@ export default function SiteFooter() {
         </div>
 
         {/* Bottom bar */}
-        <div className="flex flex-col md:flex-row justify-between items-center gap-3 pt-6 mt-12 border-t border-[var(--color-line)]">
+        <div className="flex flex-col md:flex-row justify-between items-center gap-3 pt-7 mt-14 border-t border-[var(--color-line)]">
           <div className="font-mono text-[11.5px] text-[var(--color-ink-3)] uppercase tracking-[0.04em]">
             {copyrightLine()}
           </div>

@@ -8,6 +8,10 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
  * White on white with the hero's fog running into it, so there is no seam to
  * see. The reveal is a one-shot on enter rather than a scrub - eyebrow first,
  * headline 140ms behind it, both on expo.out. Nothing bounces.
+ *
+ * It is also the page's type specimen: a light grotesque with one word in
+ * bold. Every heading below borrows that treatment (see .mg-h2 in
+ * styles/home.css), which is what keeps the page in the hero's voice.
  */
 
 const REDUCED_MOTION = "(prefers-reduced-motion: reduce)";
@@ -37,14 +41,14 @@ export default function LifestyleIntro() {
   }, []);
 
   return (
-    <section className="mg-intro" ref={rootRef} aria-labelledby="riviera-heading">
+    <section className="mg-intro" ref={rootRef} aria-labelledby="intro-heading">
       <p className="mg-intro__eyebrow" data-intro="eyebrow">
-        Riviera living style
+        Verified rooms across Australia
       </p>
-      <h2 className="mg-intro__headline" id="riviera-heading" data-intro="headline">
-        Where the shoreline
+      <h2 className="mg-intro__headline" id="intro-heading" data-intro="headline">
+        Where arriving
         <br />
-        becomes <strong>calm</strong>
+        becomes <strong>home</strong>
       </h2>
     </section>
   );

@@ -25,7 +25,13 @@ export default function Layout({ children }: { children: ReactNode }) {
   const isFullWidth = isAdminRoute || isHomePage || isPricing || isMarketing;
 
   return (
-    <div className="min-h-screen flex flex-col bg-[var(--color-bg)] text-[var(--color-ink)]">
+    /* data-home scopes styles/home.css: the homepage's tokens are taken from
+       the cinematic hero, so the header, the page and the footer all re-tint
+       together and no other route is touched. */
+    <div
+      data-home={isHomePage ? "" : undefined}
+      className="min-h-screen flex flex-col bg-[var(--color-bg)] text-[var(--color-ink)]"
+    >
       {/* Keyboard users land here first. Visible on focus only. */}
       <a
         href="#main-content"

@@ -1,0 +1,1067 @@
+/* ══════════════════════════════════════════════════════════════
+   MIGRENT homepage system  ·  derived from the cinematic hero
+
+   The hero (styles/hero.css) is the source of truth. Everything here
+   is measured off it or off the photograph itself, so the page below
+   the fold reads as the same picture continuing rather than a second
+   design bolted on.
+
+   Sampled from public/hero/*.webp:
+
+       sky, deepest       #0178c3      top-left of the plate
+       sky, body          #22aadf      the dominant azure
+       sun bloom          #91c6e1      top-right, on its way to white
+       roof terracotta    #873f29
+       wall apricot       #dfaa85 / #e79762
+       palm, deep         #1f2f0a
+       haze / umbrellas   #ebe0d8
+       fog                #ffffff      what the hero resolves to
+
+   So: white is the ground (the hero literally hands off at #fff and the
+   join has to be invisible), azure is the action colour, terracotta is
+   the sparing warm counterpoint, and a deep-ocean band carries the two
+   moments that need drama. Type is the hero's own editorial voice -
+   Hanken Grotesk at 300 with a bold word for emphasis, exactly what
+   .mg-intro__headline does - so no serif competes with the wordmark.
+
+   Everything is scoped to [data-home] (set by components/Layout.tsx on
+   the homepage only), which means the header, the footer and every
+   token-driven component re-tint on this page and are untouched on the
+   other sixty.
+   ══════════════════════════════════════════════════════════════ */
+
+[data-home] {
+  /* ── grounds ── */
+  --mg-air: #ffffff;          /* the hero's fog, continued */
+  --mg-mist: #f2f6f9;         /* sky haze, desaturated */
+  --mg-mist-2: #e9f0f6;
+  --mg-deep: #0b3a5c;         /* #0178c3 taken down to a night sky */
+  --mg-deep-2: #072a44;
+
+  /* ── layout rhythm ──
+     The intro under the hero breathes at clamp(88px, 15svh, 190px); the
+     sections inherit that scale so the page keeps one cadence. */
+  --mg-section-y: clamp(76px, 9vw, 148px);
+  --mg-section-y-sm: clamp(52px, 5.5vw, 84px);
+  --mg-gutter: clamp(20px, 4vw, 56px);
+  --mg-max: 1240px;
+  --mg-max-narrow: 960px;
+
+  /* ── motion ──
+     expo.out, the ease the hero's own intro reveal uses. */
+  --mg-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --mg-ease-soft: cubic-bezier(0.2, 0.7, 0.3, 1);
+
+  /* ── token overrides ──
+     These are the site's own variable names, so every existing utility
+     (bg-[var(--color-surface)], border-[var(--color-line)], .btn-primary,
+     .card, the navbar, the footer) re-tints with no call-site changes. */
+  --color-bg: var(--mg-air);
+  --color-surface: var(--mg-mist);
+  --color-surface-2: #ffffff;
+  --color-surface-muted: #eef4f9;
+  --color-surface-warm: #f8f3ee;      /* the villa's cream, held in reserve */
+  --color-surface-sunk: var(--mg-mist-2);
+
+  --color-line: #e2e8ee;
+  --color-line-2: #cfdae4;
+  --color-hairline: #e2e8ee;
+
+  --color-ink: #16201f;               /* the hero intro's own ink · 16.7:1 */
+  --color-ink-2: #46545e;             /* 7.8:1 */
+  --color-ink-3: #5d6c77;             /* 5.4:1 */
+  --color-ink-muted: #5d6c77;
+  --color-ink-4: #66747e;             /* placeholders · 4.7:1 */
+
+  --color-primary-50: #eaf4fb;
+  --color-primary-100: #d6e9f6;
+  --color-primary-200: #a9cfe6;
+  --color-primary-400: #2d97d1;
+  --color-primary-500: #0d7fbf;
+  --color-primary-600: #0b6ea8;
+  --color-primary-700: #0a5f92;
+  --color-primary-900: var(--mg-deep);
+  --color-primary: #0b6ea8;           /* white on it · 5.5:1 */
+  --color-primary-soft: #d6e9f6;
+  --color-primary-fg: #ffffff;
+
+  --color-accent-50: #eaf4fb;
+  --color-accent-100: #d6e9f6;
+  --color-accent-500: #0d7fbf;
+  --color-accent-600: #0b6ea8;
+  --color-accent-700: #0a5f92;
+  --color-accent: #0d7fbf;
+  --color-accent-soft: #d6e9f6;
+  --color-accent-fg: #ffffff;
+
+  --color-brand-50: var(--color-primary-50);
+  --color-brand-100: var(--color-primary-100);
+  --color-brand-200: var(--color-primary-200);
+  --color-brand-400: var(--color-primary-400);
+  --color-brand-500: var(--color-primary-500);
+  --color-brand-600: var(--color-primary-600);
+  --color-brand-700: var(--color-primary-700);
+  --color-brand-800: var(--color-primary-700);
+  --color-brand-900: var(--color-primary-900);
+  --color-brand: var(--color-primary);
+
+  /* the palms: verification reads green, never the same blue as a link */
+  --color-trust: #1f6b4d;             /* 6.4:1 */
+  --color-trust-soft: #dcefe5;
+  --color-trust-ink: #124a33;
+  --color-success-500: #1f6b4d;
+  --color-success-600: #185740;
+  --color-success-50: #dcefe5;
+
+  /* the roof and the sunlit wall: warmth, used sparingly */
+  --color-warn-500: #a8461f;          /* 5.9:1 */
+  --color-warn-600: #8d3915;
+  --color-warn-50: #fbeee7;
+
+  /* ── radii ──
+     The hero's controls are capsules. Buttons and inputs follow it;
+     surfaces get one card radius so nothing on the page disagrees. */
+  --radius-sm: 8px;
+  --radius-control: 999px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-card: 18px;
+  --radius-xl: 24px;
+  --radius-modal: 24px;
+  --radius-pill: 999px;
+
+  /* ── shadows ──
+     Cool and long, the way light falls in the photograph. Never a grey
+     box-shadow: the tint carries the sky. */
+  --shadow-soft: 0 1px 2px rgb(11 58 92 / 0.05);
+  --shadow-card: 0 1px 2px rgb(11 58 92 / 0.04), 0 10px 28px -14px rgb(11 58 92 / 0.18);
+  --shadow-pop: 0 2px 8px rgb(11 58 92 / 0.06), 0 22px 48px -22px rgb(11 58 92 / 0.28);
+  --shadow-modal: 0 30px 72px -24px rgb(11 58 92 / 0.34);
+
+  background: var(--mg-air);
+}
+
+/* The canvas behind the layout, so an overscroll bounce shows sky-white
+   rather than the sand the rest of the site sits on. */
+body:has([data-home]) {
+  background: #ffffff;
+}
+
+/* ── dark ──
+   Not the site's espresso: this hero is a sky, so its night is a deep
+   ocean. Same brand, lights out. Every value >= 4.5:1 on its ground. */
+html.dark [data-home] {
+  --mg-air: #0a1620;
+  --mg-mist: #0f1d29;
+  --mg-mist-2: #142534;
+  --mg-deep: #061019;
+  --mg-deep-2: #040b12;
+
+  --color-bg: var(--mg-air);
+  --color-surface: var(--mg-mist);
+  --color-surface-2: #122231;
+  --color-surface-muted: #0d1b26;
+  --color-surface-warm: #1a1c1d;
+  --color-surface-sunk: #08121a;
+
+  --color-line: #1e3244;
+  --color-line-2: #2b465c;
+  --color-hairline: #1e3244;
+
+  --color-ink: #eaf2f8;               /* 16.2:1 */
+  --color-ink-2: #b3c6d4;             /* 10.4:1 */
+  --color-ink-3: #8ba3b5;             /* 7.0:1 */
+  --color-ink-muted: #8ba3b5;
+  --color-ink-4: #7b93a5;
+
+  --color-primary-50: #0d2634;
+  --color-primary-100: #123448;
+  --color-primary-200: #1c5273;
+  --color-primary-400: #3f9fce;
+  --color-primary-500: #74c8f0;
+  --color-primary-600: #5cbdec;
+  --color-primary-700: #4aa3cf;
+  --color-primary: #5cbdec;           /* 8.7:1 */
+  --color-primary-soft: #123448;
+  --color-primary-fg: #06141d;        /* on the fill · 8.7:1 */
+
+  --color-accent-50: #0d2634;
+  --color-accent-100: #123448;
+  --color-accent-500: #6fc2e8;
+  --color-accent: #6fc2e8;
+  --color-accent-soft: #123448;
+  --color-accent-fg: #06141d;
+
+  --color-trust: #4fbfa5;             /* 8.1:1 */
+  --color-trust-soft: #0f2e29;
+  --color-trust-ink: #a9e6d6;
+  --color-success-500: #4fbfa5;
+  --color-success-600: #3aa88f;
+  --color-success-50: #0f2e29;
+
+  --color-warn-500: #e08a63;          /* the sunlit wall · 7.0:1 */
+  --color-warn-600: #c8734c;
+  --color-warn-50: #2a170f;
+
+  --shadow-soft: 0 1px 2px rgb(2 8 14 / 0.6);
+  --shadow-card: 0 2px 8px rgb(2 8 14 / 0.6), 0 18px 40px -16px rgb(2 8 14 / 0.85);
+  --shadow-pop: 0 20px 46px -18px rgb(2 8 14 / 0.8), 0 2px 10px rgb(2 8 14 / 0.6);
+  --shadow-modal: 0 32px 76px -26px rgb(2 8 14 / 0.9);
+}
+
+html.dark body:has([data-home]) {
+  background: #0a1620;
+  /* the site's warm amber bloom belongs to the espresso theme, not here */
+  background-image: none;
+}
+
+/* The hero's dusk hand-off (hero.css) washes white through dune-amber on
+   its way to the page. On an ocean-night ground the warm pass reads as
+   rust, so the homepage swaps it for the sky's own blue. */
+html.dark [data-home] .mg-intro::after {
+  background:
+    linear-gradient(
+      to bottom,
+      rgb(45 174 220 / 0) 0%,
+      rgb(45 174 220 / 0.16) 46%,
+      rgb(45 174 220 / 0) 88%
+    ),
+    linear-gradient(
+      to bottom,
+      #fff 0%,
+      #fff 16%,
+      color-mix(in oklab, var(--color-bg) 20%, #fff) 42%,
+      color-mix(in oklab, var(--color-bg) 58%, #fff) 68%,
+      color-mix(in oklab, var(--color-bg) 87%, #fff) 88%,
+      var(--color-bg) 100%
+    );
+}
+
+[data-home] .font-serif {
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  font-variation-settings: normal;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+/* The footer's one big line takes the hero's light display weight here and
+   keeps its Fraunces setting everywhere else. */
+[data-home] .site-footer__headline {
+  font-weight: 300;
+  letter-spacing: -0.026em;
+}
+
+[data-home] .eyebrow {
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  font-size: clamp(10.5px, 0.86vw, 12.5px);
+  font-weight: 500;
+  letter-spacing: 0.17em;
+  text-transform: uppercase;
+  color: var(--color-ink-3);
+}
+
+/* The budget slider, retuned for the capsule. */
+[data-home] .premium-range {
+  height: 18px;
+  margin-top: 2px;
+}
+
+[data-home] .premium-range::-webkit-slider-runnable-track {
+  height: 3px;
+  background: var(--color-line-2);
+}
+
+[data-home] .premium-range::-moz-range-track {
+  height: 3px;
+  background: var(--color-line-2);
+}
+
+[data-home] .premium-range::-webkit-slider-thumb {
+  width: 16px;
+  height: 16px;
+  margin-top: -6.5px;
+  background: var(--color-surface-2);
+  border-color: var(--color-primary);
+}
+
+[data-home] .premium-range::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  background: var(--color-surface-2);
+  border-color: var(--color-primary);
+}
+
+/* ── focus ──
+   The site ring is teal; on this page it is the sky, and it has to stay
+   visible on the deep band as well as on white. Unlayered, because the
+   ring it replaces is unlayered too. */
+[data-home] :where(a, button, input, textarea, select, summary, [role="button"]):focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-primary) 22%, transparent);
+  border-radius: var(--radius-sm);
+}
+
+[data-home] .mg-band--deep :where(a, button, input, summary, [role="button"]):focus-visible {
+  outline-color: #fff;
+  box-shadow: 0 0 0 4px rgb(255 255 255 / 0.28);
+}
+
+[data-home] .mg-btn:focus-visible,
+[data-home] .mg-chip:focus-visible,
+[data-home] a.mg-tile:focus-visible {
+  border-radius: 999px;
+}
+
+[data-home] a.mg-tile:focus-visible {
+  border-radius: var(--radius-xl);
+}
+
+/* ── link colours ──
+   globals.css carries `a { color: inherit }` outside any cascade layer, and
+   an unlayered declaration beats every layered one however specific it is.
+   So the controls that can render as a link state their colour here instead
+   of in the components layer; everything else about them still lives there,
+   where a utility can still override it. */
+[data-home] .mg-btn--primary {
+  color: var(--color-primary-fg);
+}
+
+[data-home] .mg-btn--ghost {
+  color: var(--color-ink);
+}
+
+[data-home] .mg-link {
+  color: var(--color-primary);
+}
+
+[data-home] .mg-chip {
+  color: var(--color-ink-2);
+}
+
+[data-home] a.mg-chip:hover {
+  color: var(--color-ink);
+}
+
+/* Phone rhythm. A token override, so it has to stay out of the layer. */
+@media (max-width: 640px) {
+  [data-home] {
+    --mg-section-y: clamp(56px, 14vw, 84px);
+    --mg-section-y-sm: 44px;
+  }
+}
+
+@layer components {
+  /* ══════════════════════════════════════════════════════════════
+     TYPOGRAPHY
+     The hero has no serif in it. Its editorial line is Hanken Grotesk at
+     300 with one bold word, so that is the page's display voice too.
+     Any component that still asks for .font-serif (the shared header,
+     footer and subnav) is re-voiced here rather than forked.
+     ══════════════════════════════════════════════════════════════ */
+
+  .mg-eyebrow {
+    display: block;
+    font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+    font-size: clamp(10.5px, 0.86vw, 12.5px);
+    font-weight: 500;
+    letter-spacing: 0.17em;
+    text-transform: uppercase;
+    color: var(--color-ink-3);
+  }
+
+  /* An eyebrow that also carries a rule, for section heads that sit at the
+     top of a band with nothing above them. */
+  .mg-eyebrow--ruled {
+    display: flex;
+    align-items: center;
+    gap: 0.85em;
+  }
+  .mg-eyebrow--ruled::before {
+    content: "";
+    width: clamp(20px, 3vw, 44px);
+    height: 1px;
+    background: var(--color-line-2);
+    flex: none;
+  }
+
+  .mg-display,
+  .mg-h2,
+  .mg-h3 {
+    font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+    color: var(--color-ink);
+    margin: 0;
+    text-wrap: balance;
+  }
+
+  .mg-display {
+    font-size: clamp(2.3rem, 5.2vw, 4.5rem);
+    font-weight: 300;
+    line-height: 1.04;
+    letter-spacing: -0.028em;
+  }
+
+  .mg-h2 {
+    font-size: clamp(1.85rem, 3.5vw, 3.15rem);
+    font-weight: 300;
+    line-height: 1.08;
+    letter-spacing: -0.023em;
+  }
+
+  .mg-h3 {
+    font-size: clamp(1.1rem, 1.35vw, 1.375rem);
+    font-weight: 600;
+    line-height: 1.22;
+    letter-spacing: -0.014em;
+    text-wrap: pretty;
+  }
+
+  /* Emphasis is weight, never italics - the hero's rule. */
+  .mg-display strong,
+  .mg-h2 strong {
+    font-weight: 700;
+    letter-spacing: -0.03em;
+  }
+
+  /* The belief band's line: display voice, but set at reading width so a
+     long sentence stays a sentence rather than becoming a poster. */
+  .mg-statement {
+    font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+    color: var(--color-ink);
+    font-size: clamp(1.7rem, 4.2vw, 3.25rem);
+    font-weight: 300;
+    line-height: 1.22;
+    letter-spacing: -0.022em;
+    text-wrap: pretty;
+  }
+
+  /* The step titles, which sit between a section heading and a card title. */
+  .mg-h3--lg {
+    font-size: clamp(1.3rem, 2vw, 1.7rem);
+    font-weight: 500;
+    letter-spacing: -0.018em;
+  }
+
+  .mg-eyebrow--accent {
+    color: var(--color-primary);
+  }
+
+  .mg-lead {
+    font-size: clamp(1rem, 1.15vw, 1.175rem);
+    line-height: 1.6;
+    color: var(--color-ink-2);
+    margin: 0;
+    text-wrap: pretty;
+  }
+
+  .mg-body {
+    font-size: 0.96rem;
+    line-height: 1.62;
+    color: var(--color-ink-2);
+    margin: 0;
+    text-wrap: pretty;
+  }
+
+  .mg-meta {
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    color: var(--color-ink-3);
+  }
+
+  /* The architectural numeral from the hero wordmark, used for step and
+     index numbers so the counting on this page is in the brand's own face. */
+  .mg-numeral {
+    font-family: var(--font-condensed), "Archivo Narrow", "Roboto Condensed", ui-sans-serif, sans-serif;
+    font-variation-settings: "wdth" 62;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    line-height: 0.82;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ══════════════════════════════════════════════════════════════
+     BANDS
+     Three grounds only - air, mist, deep. The deep band flips the ink
+     tokens for everything inside it, so cards, chips and buttons within
+     it need no dark-specific markup.
+     ══════════════════════════════════════════════════════════════ */
+
+  .mg-section {
+    position: relative;
+    padding-block: var(--mg-section-y);
+    isolation: isolate;
+  }
+
+  .mg-section--tight {
+    padding-block: var(--mg-section-y-sm);
+  }
+
+  .mg-shell {
+    width: 100%;
+    max-width: var(--mg-max);
+    margin-inline: auto;
+    padding-inline: var(--mg-gutter);
+  }
+
+  .mg-shell--narrow {
+    max-width: var(--mg-max-narrow);
+  }
+
+  .mg-band--air {
+    background: var(--mg-air);
+  }
+
+  .mg-band--mist {
+    background: var(--mg-mist);
+  }
+
+  /* A hairline that only exists where two same-value bands meet. */
+  .mg-band--edge-top {
+    border-top: 1px solid var(--color-line);
+  }
+  .mg-band--edge-bottom {
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .mg-band--deep {
+    --color-ink: #ffffff;
+    --color-ink-2: #c3dcec;             /* 8.3:1 */
+    --color-ink-3: #a8ccdf;             /* 6.6:1 */
+    --color-ink-muted: #a8ccdf;
+    --color-ink-4: #a8ccdf;
+    --color-line: rgb(255 255 255 / 0.16);
+    --color-line-2: rgb(255 255 255 / 0.3);
+    --color-surface: rgb(255 255 255 / 0.05);
+    --color-surface-2: rgb(255 255 255 / 0.06);
+    --color-surface-sunk: rgb(255 255 255 / 0.08);
+    --color-primary: #ffffff;
+    --color-primary-500: #eaf4fb;
+    --color-primary-700: #d6e9f6;
+    --color-primary-fg: var(--mg-deep);
+    --color-primary-50: rgb(255 255 255 / 0.1);
+    --color-accent: #6fc2e8;            /* 6.0:1 */
+    --color-trust: #7fd8c0;
+    color: #fff;
+    background:
+      radial-gradient(78% 62% at 84% -4%, rgb(45 174 220 / 0.24), transparent 64%),
+      radial-gradient(64% 58% at 4% 104%, rgb(13 127 191 / 0.26), transparent 62%),
+      var(--mg-deep-2);
+  }
+
+  /* The sun bloom from the top-right of the plate, for air bands that need
+     a little weather without an image. */
+  .mg-wash-sun::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      radial-gradient(58% 46% at 88% 2%, rgb(145 198 225 / 0.3), transparent 68%),
+      radial-gradient(46% 40% at 6% 8%, rgb(34 170 223 / 0.09), transparent 70%);
+  }
+
+  html.dark [data-home] .mg-wash-sun::before {
+    background:
+      radial-gradient(58% 46% at 88% 2%, rgb(92 189 236 / 0.12), transparent 68%),
+      radial-gradient(46% 40% at 6% 8%, rgb(13 127 191 / 0.12), transparent 70%);
+  }
+
+  /* ══════════════════════════════════════════════════════════════
+     SURFACES + CONTROLS
+     ══════════════════════════════════════════════════════════════ */
+
+  .mg-card {
+    position: relative;
+    background: var(--color-surface-2);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-xl);
+    transition:
+      transform 260ms var(--mg-ease-soft),
+      box-shadow 260ms var(--mg-ease-soft),
+      border-color 200ms var(--mg-ease-soft);
+  }
+
+  a.mg-card:hover,
+  .mg-card--lift:hover {
+    transform: translateY(-3px);
+    border-color: var(--color-line-2);
+    box-shadow: var(--shadow-card);
+  }
+
+  /* Buttons: the hero's capsule, at the page's own scale. */
+  .mg-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55em;
+    height: 48px;
+    padding: 0 26px;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    letter-spacing: -0.004em;
+    line-height: 1;
+    white-space: nowrap;
+    cursor: pointer;
+    text-decoration: none;
+    transition:
+      background-color 200ms var(--mg-ease-soft),
+      border-color 200ms var(--mg-ease-soft),
+      color 200ms var(--mg-ease-soft),
+      box-shadow 240ms var(--mg-ease-soft),
+      transform 240ms var(--mg-ease-soft);
+  }
+
+  .mg-btn--sm {
+    height: 42px;
+    padding: 0 20px;
+    font-size: 0.875rem;
+  }
+
+  .mg-btn svg {
+    flex: none;
+    transition: transform 260ms var(--mg-ease);
+  }
+
+  .mg-btn:hover svg {
+    transform: translateX(3px);
+  }
+
+  .mg-btn--primary {
+    background: var(--color-primary);
+    color: var(--color-primary-fg);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.16),
+      0 10px 24px -14px rgb(11 58 92 / 0.75);
+  }
+
+  .mg-btn--primary:hover {
+    background: var(--color-primary-500);
+    transform: translateY(-1px);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.2),
+      0 16px 32px -14px rgb(11 58 92 / 0.6);
+  }
+
+  .mg-btn--primary:active {
+    transform: translateY(0);
+    background: var(--color-primary-700);
+  }
+
+  .mg-btn--ghost {
+    background: transparent;
+    border-color: var(--color-line-2);
+    color: var(--color-ink);
+  }
+
+  .mg-btn--ghost:hover {
+    background: var(--color-surface-sunk);
+    border-color: var(--color-ink-4);
+    transform: translateY(-1px);
+  }
+
+  .mg-btn--ghost:active {
+    transform: translateY(0);
+  }
+
+  .mg-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  /* A text link that leans forward on hover, used for "see all" affordances. */
+  .mg-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-primary);
+    white-space: nowrap;
+  }
+
+  .mg-link svg {
+    flex: none;
+    transition: transform 240ms var(--mg-ease);
+  }
+
+  .mg-link:hover svg {
+    transform: translateX(4px);
+  }
+
+  /* Chips: the hero navigation pill, at reading size. */
+  .mg-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    height: 34px;
+    padding: 0 14px;
+    border-radius: 999px;
+    border: 1px solid var(--color-line);
+    background: var(--color-surface-2);
+    color: var(--color-ink-2);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .mg-chip svg {
+    flex: none;
+    color: var(--color-accent);
+  }
+
+  a.mg-chip {
+    transition:
+      border-color 200ms var(--mg-ease-soft),
+      background-color 200ms var(--mg-ease-soft),
+      color 200ms var(--mg-ease-soft);
+  }
+
+  a.mg-chip:hover {
+    border-color: var(--color-primary-200);
+    background: var(--color-primary-50);
+    color: var(--color-ink);
+  }
+
+  /* The icon tile that fronts a step or a feature. Square-ish capsule so it
+     agrees with the card radius rather than the button radius. */
+  .mg-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    flex: none;
+    border-radius: 14px;
+    background: var(--color-primary-50);
+    color: var(--color-primary);
+  }
+
+  .mg-icon--lg {
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
+  }
+
+  .mg-icon--trust {
+    background: var(--color-trust-soft);
+    color: var(--color-trust-ink);
+  }
+
+  html.dark [data-home] .mg-search__cell input[type="date"] {
+  color-scheme: dark;
+}
+
+html.dark [data-home] .mg-icon--trust {
+    color: var(--color-trust);
+  }
+
+  /* Hairline stacks - the page's main alternative to another card grid. */
+  .mg-rows > * + * {
+    border-top: 1px solid var(--color-line);
+  }
+
+  .mg-rule {
+    height: 1px;
+    border: 0;
+    background: var(--color-line);
+  }
+
+  .mg-rule--fade {
+    background: linear-gradient(90deg, transparent, var(--color-line-2) 14%, var(--color-line-2) 86%, transparent);
+  }
+
+  /* ══════════════════════════════════════════════════════════════
+     SEARCH CONSOLE
+     The hero's capsule, grown into a control. One pill on desktop with
+     hairline cells inside it; a stack on phones so nothing is cramped.
+     ══════════════════════════════════════════════════════════════ */
+
+  .mg-search {
+    position: relative;
+    display: grid;
+    gap: 10px;
+    background: var(--color-surface-2);
+    border: 1px solid var(--color-line);
+    border-radius: 26px;
+    padding: 10px;
+    box-shadow: var(--shadow-pop);
+  }
+
+  .mg-search__row {
+    display: grid;
+    gap: 2px;
+    border-radius: 20px;
+    overflow: hidden;
+    background: var(--color-line);
+  }
+
+  .mg-search__cell {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    justify-content: center;
+    min-width: 0;
+    padding: 14px 20px;
+    background: var(--color-surface-2);
+    transition: background-color 200ms var(--mg-ease-soft);
+  }
+
+  /* Keeps the active cell marked at every width. It matters most for the
+     date field: Chromium moves focus between the day/month/year segments
+     inside the input, so the input's own focus ring is not always the thing
+     the eye can follow. */
+  .mg-search__cell:focus-within {
+    background: var(--color-primary-50);
+  }
+
+  .mg-search__cell input[type="search"],
+  .mg-search__cell input[type="date"] {
+    width: 100%;
+    min-width: 0;
+    padding: 0;
+    border: 0;
+    outline: none;
+    background: transparent;
+    color: var(--color-ink);
+    font-family: inherit;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    letter-spacing: -0.006em;
+  }
+
+  .mg-search__cell input::placeholder {
+    color: var(--color-ink-4);
+    font-weight: 400;
+  }
+
+  .mg-search__cell input[type="search"]::-webkit-search-cancel-button {
+    cursor: pointer;
+  }
+
+  @media (min-width: 900px) {
+    .mg-search {
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      border-radius: 999px;
+      padding: 8px 8px 8px 10px;
+    }
+
+    .mg-search__row {
+      grid-template-columns: 1.1fr 0.88fr 1.3fr;
+      border-radius: 999px;
+      background: transparent;
+      gap: 0;
+    }
+
+    .mg-search__cell + .mg-search__cell {
+      border-left: 1px solid var(--color-line);
+    }
+
+    .mg-search__submit {
+      grid-column: 2;
+    }
+  }
+
+  .mg-search__label {
+    white-space: nowrap;
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--color-ink-3);
+  }
+
+  .mg-search__budget {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .mg-search__value {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--color-ink);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .mg-search__submit {
+    width: 100%;
+  }
+
+  @media (min-width: 900px) {
+    .mg-search__submit {
+      width: auto;
+      min-width: 0;
+    }
+  }
+
+  /* ══════════════════════════════════════════════════════════════
+     FAQ
+     A real accordion. <details> gives the interaction for free and keeps
+     the answers in the document for search engines.
+     ══════════════════════════════════════════════════════════════ */
+
+  .mg-faq__item {
+    border-top: 1px solid var(--color-line);
+  }
+
+  .mg-faq__item:last-child {
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .mg-faq__q {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+    width: 100%;
+    padding: 22px 0;
+    cursor: pointer;
+    list-style: none;
+    color: var(--color-ink);
+    font-size: clamp(1rem, 1.25vw, 1.175rem);
+    font-weight: 500;
+    letter-spacing: -0.012em;
+    line-height: 1.35;
+    transition: color 180ms var(--mg-ease-soft);
+  }
+
+  .mg-faq__q::-webkit-details-marker {
+    display: none;
+  }
+
+  .mg-faq__q:hover {
+    color: var(--color-primary);
+  }
+
+  .mg-faq__sign {
+    position: relative;
+    flex: none;
+    width: 22px;
+    height: 22px;
+    margin-top: 2px;
+    border-radius: 999px;
+    border: 1px solid var(--color-line-2);
+    transition:
+      border-color 200ms var(--mg-ease-soft),
+      background-color 200ms var(--mg-ease-soft),
+      transform 300ms var(--mg-ease);
+  }
+
+  .mg-faq__sign::before,
+  .mg-faq__sign::after {
+    content: "";
+    position: absolute;
+    inset: 50% 5px auto 5px;
+    height: 1.5px;
+    border-radius: 2px;
+    background: currentColor;
+    transform: translateY(-50%);
+    transition: opacity 200ms var(--mg-ease-soft);
+  }
+
+  .mg-faq__sign::after {
+    transform: translateY(-50%) rotate(90deg);
+  }
+
+  .mg-faq__item[open] .mg-faq__sign {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    color: var(--color-primary-fg);
+    transform: rotate(90deg);
+  }
+
+  .mg-faq__item[open] .mg-faq__sign::after {
+    opacity: 0;
+  }
+
+  .mg-faq__a {
+    padding-bottom: 24px;
+    max-width: 62ch;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .mg-faq__item[open] .mg-faq__a {
+      animation: mg-faq-open 320ms var(--mg-ease) both;
+    }
+  }
+
+  @keyframes mg-faq-open {
+    from {
+      opacity: 0;
+      transform: translateY(-6px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  /* ══════════════════════════════════════════════════════════════
+     DRIFT ROWS
+     Two rows of neighbourhood tiles that pass each other as the page
+     scrolls. Transform only, and the amount is driven from React.
+     ══════════════════════════════════════════════════════════════ */
+
+  .mg-drift {
+    display: flex;
+    gap: 16px;
+    width: max-content;
+    will-change: transform;
+  }
+
+  .mg-tile {
+    position: relative;
+    flex: none;
+    width: clamp(220px, 24vw, 300px);
+    aspect-ratio: 4 / 3;
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    border: 1px solid var(--color-line);
+    background:
+      radial-gradient(120% 96% at 78% 6%, rgb(145 198 225 / 0.55), transparent 60%),
+      linear-gradient(158deg, var(--color-primary-400), var(--color-primary-900) 82%);
+  }
+
+  .mg-tile__body {
+    position: absolute;
+    inset: auto 0 0 0;
+    padding: 18px;
+    background: linear-gradient(to top, rgb(4 22 36 / 0.72), rgb(4 22 36 / 0.12) 62%, transparent);
+    color: #fff;
+  }
+
+  a.mg-tile {
+    transition:
+      transform 300ms var(--mg-ease-soft),
+      box-shadow 300ms var(--mg-ease-soft);
+  }
+
+  a.mg-tile:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-pop);
+  }
+
+  /* ══════════════════════════════════════════════════════════════
+     MOBILE
+     ══════════════════════════════════════════════════════════════ */
+
+  @media (max-width: 640px) {
+    .mg-btn {
+      height: 50px;
+      width: 100%;
+    }
+
+    .mg-btn--auto {
+      width: auto;
+    }
+  }
+}
