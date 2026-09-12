@@ -67,12 +67,23 @@ export default function MegaNavbar({ revealAfterVh = 0 }: { revealAfterVh?: numb
   }, []);
 
   // Starts hidden on the server too, so it never flashes over the hero.
-  const [revealed, setRevealed] = useState(revealAfterVh <= 0);
+  const [scrolledPast, setScrolledPast] = useState(revealAfterVh <= 0);
+
+  /* Keyboard users must be able to reach the header before they have
+     scrolled anywhere. While it was `inert` over the hero, the theme,
+     language and account controls were out of the accessibility tree
+     entirely until you scrolled 86% of a viewport - tabbing from the top
+     of the homepage skipped straight past them, and a screen reader never
+     announced them. Focus now reveals the header the same way scrolling
+     does, which is the standard skip-link behaviour and costs the hero
+     nothing: nothing is focusable up there until someone presses Tab. */
+  const [focusWithin, setFocusWithin] = useState(false);
+  const revealed = scrolledPast || focusWithin;
 
   useEffect(() => {
     const onScroll = () => {
       setScrolled(window.scrollY > 20);
-      setRevealed(revealAfterVh <= 0 || window.scrollY > window.innerHeight * revealAfterVh);
+      setScrolledPast(revealAfterVh <= 0 || window.scrollY > window.innerHeight * revealAfterVh);
     };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -118,8 +129,10 @@ export default function MegaNavbar({ revealAfterVh = 0 }: { revealAfterVh?: numb
       initial={{ y: -60 }}
       animate={{ y: revealed ? 0 : -72 }}
       transition={{ duration: 0.4, ease: [0.2, 0.7, 0.3, 1] }}
-      aria-hidden={revealed ? undefined : true}
-      inert={revealed ? undefined : true}
+      onFocusCapture={() => setFocusWithin(true)}
+      onBlurCapture={(e) => {
+        if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setFocusWithin(false);
+      }}
       className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-200 ${
         revealed ? "" : "pointer-events-none"
       } ${

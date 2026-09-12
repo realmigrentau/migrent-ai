@@ -45,12 +45,34 @@ test("empty sign-in submission announces field errors", async ({ page }) => {
   await expect(page.locator("#signin-status")).toContainText(/./);
 });
 
+/* Asserted on /pricing rather than /.
+   The homepage holds the header off-screen until you scroll past the hero
+   (MegaNavbar revealAfterVh), so at scroll 0 the toggle is deliberately
+   outside the viewport and cannot be clicked. That is the hero's design,
+   not a defect, and pinning this test to / made it assert the opposite -
+   it has been failing since the cinematic hero landed. What the test is
+   actually for is the toggle's aria-pressed contract, which any route
+   with a visible header exercises. */
 test("theme toggle exposes its state", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/pricing");
   const toggle = page.getByRole("button", { name: "Dark mode" }).first();
   const before = await toggle.getAttribute("aria-pressed");
   await toggle.click();
   await expect(toggle).toHaveAttribute("aria-pressed", before === "true" ? "false" : "true");
+});
+
+/* The homepage header is hidden over the hero, but it must not be hidden
+   from assistive technology: it carries the only route to the theme,
+   language and account controls. It used to be inert + aria-hidden up
+   there, so tabbing from the top of the page skipped straight past them.
+   Focus now reveals it, the same way scrolling does. */
+test("homepage header is reachable by keyboard over the hero", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.getByRole("banner")).toBeAttached();
+  const toggle = page.getByRole("button", { name: "Dark mode" }).first();
+  await expect(toggle).toHaveCount(1);
+  await toggle.focus();
+  await expect(toggle).toBeInViewport();
 });
 
 test("FAQ accordion is keyboard operable and announces state", async ({ page }) => {
