@@ -74,7 +74,7 @@ export default function ROICalculator() {
           className="text-center mb-12"
         >
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[var(--color-accent-50)] dark:bg-[var(--color-accent)]/10 border border-[var(--color-accent-100)] dark:border-[var(--color-accent)]/20 text-xs font-medium text-[var(--color-accent)] dark:text-[var(--color-accent)] mb-4">
-            <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-terracotta-500)]" aria-hidden="true" />
+            <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-primary)]" aria-hidden="true" />
             ROI Calculator
           </div>
           <h1 className="text-3xl md:text-4xl font-black tracking-tight text-[var(--color-ink)]">

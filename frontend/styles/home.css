@@ -35,8 +35,8 @@
      palette, which is exactly why the homepage and the other sixty routes
      read as two different websites. The homepage keeps its own *rhythm*
      and its own components; it no longer keeps its own colours. */
-  --mg-air: var(--color-surface-2);   /* white - what the hero's fog resolves to */
-  --mg-mist: var(--color-bg);         /* linen - the page ground */
+  --mg-air: var(--color-bg);            /* white - what the hero's fog resolves to */
+  --mg-mist: var(--color-surface-cool); /* #fafafa - the barely-there alternate */
   --mg-mist-2: var(--color-surface-muted);
   --mg-deep: var(--color-primary);    /* deep forest - the drama band */
   --mg-deep-2: var(--color-primary-900);
@@ -320,12 +320,31 @@ body:has([data-home]) {
     max-width: var(--mg-max-narrow);
   }
 
+  /* The ground is white and the alternate band is #fafafa, which is a
+     difference you feel rather than see. That is the point - but it is far
+     too faint to mark where a section ends, so on this palette the rules
+     do that job and every light band carries one at its top edge. */
+  .mg-band--air,
+  .mg-band--mist {
+    border-top: 1px solid var(--color-line);
+  }
+
   .mg-band--air {
     background: var(--mg-air);
   }
 
   .mg-band--mist {
     background: var(--mg-mist);
+  }
+
+  /* A deep band brings its own edge, and the band under the hero hands off
+     from the photograph, so neither wants a rule drawn on it. */
+  .mg-band--deep,
+  .mg-band--deep + .mg-band--air,
+  .mg-band--deep + .mg-band--mist,
+  .mg-intro + .mg-band--air,
+  .mg-intro + .mg-band--mist {
+    border-top: 0;
   }
 
   /* A hairline that only exists where two same-value bands meet. */
@@ -362,7 +381,7 @@ body:has([data-home]) {
     --color-terracotta-500: #d9906e;
     color: #fff;
     background:
-      radial-gradient(78% 62% at 84% -4%, color-mix(in oklab, var(--color-terracotta-500) 20%, transparent), transparent 64%),
+      radial-gradient(78% 62% at 84% -4%, color-mix(in oklab, var(--color-accent-500) 18%, transparent), transparent 64%),
       radial-gradient(64% 58% at 4% 104%, color-mix(in oklab, var(--color-accent-500) 22%, transparent), transparent 62%),
       var(--color-deep-2);
   }
@@ -376,9 +395,8 @@ body:has([data-home]) {
     z-index: -1;
     pointer-events: none;
     /* Warm light, not sky: these were the azure palette's own blues. */
-    background:
-      radial-gradient(58% 46% at 88% 2%, color-mix(in oklab, var(--color-terracotta-500) 18%, transparent), transparent 68%),
-      radial-gradient(46% 40% at 6% 8%, color-mix(in oklab, var(--color-accent-500) 10%, transparent), transparent 70%);
+    /* The ground is white now, so a warm tint only dirties it. */
+    background: radial-gradient(64% 52% at 86% 0%, var(--color-surface-cool), transparent 68%);
   }
 
   html.dark [data-home] .mg-wash-sun::before {
@@ -848,7 +866,7 @@ html.dark [data-home] .mg-icon--trust {
     /* A warm light falling across a deep-forest tile - the villa at dusk.
        This was a hard-coded sky blue left over from the azure palette. */
     background:
-      radial-gradient(120% 96% at 78% 6%, color-mix(in oklab, var(--color-terracotta-500) 55%, transparent), transparent 62%),
+      radial-gradient(120% 96% at 78% 6%, color-mix(in oklab, var(--color-accent-500) 52%, transparent), transparent 62%),
       linear-gradient(158deg, var(--color-primary-500), var(--color-primary-900) 82%);
   }
 

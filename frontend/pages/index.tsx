@@ -1,5 +1,4 @@
 import SEOHead from "../components/SEOHead";
-import PageSubnav from "../components/ui/PageSubnav";
 import MigrentHero from "../components/home/MigrentHero";
 import LifestyleIntro from "../components/home/LifestyleIntro";
 import SearchConsole from "../components/home/SearchConsole";
@@ -34,18 +33,6 @@ export default function Home() {
       <SEOHead
         title="A real home in Australia, found the right way"
         description="Rooms across Australia for migrants, students and new arrivals. Hosts are ID-checked before a room goes live. Renters pay MigRent nothing."
-      />
-
-      <PageSubnav
-        title="MigRent"
-        links={[
-          { label: "How it works", href: "#how" },
-          { label: "Browse", href: "#browse" },
-          { label: "Mentors", href: "#mentors" },
-          { label: "FAQ", href: "#faq" },
-        ]}
-        cta={{ label: "Start searching", href: "/seeker/search" }}
-        threshold={1240}
       />
 
       {/* 1 · the photograph */}

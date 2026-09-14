@@ -155,7 +155,7 @@ export default function Guides() {
             className="relative z-10 max-w-3xl mx-auto"
           >
             <div className="inline-flex items-center gap-2 mb-6">
-              <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-terracotta-500)]" aria-hidden="true" />
+              <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-primary)]" aria-hidden="true" />
               <span className="eyebrow">{t("guides.heroBadge")}</span>
             </div>
 

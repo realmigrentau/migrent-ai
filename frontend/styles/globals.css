@@ -100,17 +100,23 @@
   --color-ink-3: #5d655b;
   --color-ink-4: #656c62;        /* placeholder · 4.8:1 */
 
-  --color-bg: #f5f2ea;           /* soft linen - the page ground */
-  --color-surface: #fbf9f4;      /* warm paper, one step lifted */
-  --color-surface-2: #ffffff;    /* elevated card */
-  --color-surface-cool: #f8f8f5; /* the cooler off-white alternate band */
-  --color-surface-muted: #ede8dc;
-  --color-surface-warm: #f7f1e6;
-  --color-surface-sunk: #e9e4d6;
+  /* White throughout. There is no tinted page ground: sections are told
+     apart by hairline rules and by the deep-forest bands, not by a wash.
+     The warm linen this replaced read as yellow against the hero's white
+     hand-off, which is what made it look dingy rather than warm. */
+  --color-bg: #ffffff;           /* the page ground */
+  --color-surface: #ffffff;      /* panels sit on the same white */
+  --color-surface-2: #ffffff;    /* cards - defined by their border */
+  --color-surface-cool: #fafafa; /* barely-there alternate band */
+  --color-surface-muted: #f4f4f2;/* subtle fill: chips, hover states */
+  --color-surface-warm: #fafafa;
+  --color-surface-sunk: #f2f2f0;
 
-  --color-line: #e2ded1;         /* soft border ≈ rgb(20 35 28 / 0.10) */
-  --color-line-2: #cfc9b8;       /* stronger divider */
-  --color-hairline: #e2ded1;     /* legacy alias */
+  /* With no tinted ground the rules carry the structure, so they are a
+     touch stronger than a decorative hairline would be. */
+  --color-line: #e6e6e2;         /* soft border */
+  --color-line-2: #d4d4cf;       /* stronger divider */
+  --color-hairline: #e6e6e2;     /* legacy alias */
 
   /* ── Status ── */
   --color-danger-50: #f8e9e6;
@@ -453,15 +459,14 @@ body {
 
 .font-mono { font-family: var(--font-mono); letter-spacing: -0.01em; }
 
-/* Eyebrow: mono, uppercase, wide-set - and the one place terracotta is
-   allowed to appear on every page, because it is four words long. */
+/* Eyebrow: mono, uppercase, wide-set, in the deep-forest primary. */
 .eyebrow {
   font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 400;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--color-terracotta);
+  color: var(--color-primary);
 }
 
 .tabular { font-variant-numeric: tabular-nums; }
@@ -516,7 +521,7 @@ body {
 .mg-ground-deep h1, .mg-ground-deep h2, .mg-ground-deep h3, .mg-ground-deep h4 {
   color: var(--color-ink);
 }
-.mg-ground-deep .eyebrow { color: var(--color-terracotta); }
+.mg-ground-deep .eyebrow { color: var(--color-accent); }
 /* Inside a deep ground the primary button has to invert or it disappears. */
 .mg-ground-deep .btn-primary,
 .mg-ground-deep .btn-primary-gradient {
@@ -547,7 +552,7 @@ body {
   height: 1px;
   background: linear-gradient(
     to right,
-    var(--color-terracotta-500) 0 44px,
+    var(--color-primary) 0 44px,
     var(--color-line) 44px 100%
   );
 }
@@ -1393,35 +1398,25 @@ select.input-field {
   flex: 0 0 auto;
 }
 
-/* Atmospheric background field - the light in the hero photograph rather
-   than a colour wash. Both stops are single-digit percentages: at the old
-   12-17% of a near-black primary these read as a grey-green haze over the
-   linen, which is the muddy "generic gradient" the brief rules out. What
-   is left is a warm top-left light and the faintest terracotta bounce. */
+/* Atmospheric background field. On an all-white ground this is almost
+   nothing by design - a single cool breath at the top-left so a hero
+   section is not a flat slab, and no warm bounce at all. */
 .mood-field {
   position: relative;
   background:
-    radial-gradient(66% 78% at 10% 0%, color-mix(in oklab, var(--color-surface-2) 90%, transparent), transparent 62%),
-    radial-gradient(48% 62% at 96% 8%, color-mix(in oklab, var(--color-terracotta-500) 7%, transparent), transparent 64%),
+    radial-gradient(72% 70% at 12% 0%, var(--color-surface-cool), transparent 64%),
     var(--color-bg);
 }
 .mood-field-strong {
   background:
-    radial-gradient(70% 82% at 8% 0%, color-mix(in oklab, var(--color-surface-2) 96%, transparent), transparent 60%),
-    radial-gradient(54% 64% at 98% 10%, color-mix(in oklab, var(--color-terracotta-500) 11%, transparent), transparent 62%),
+    radial-gradient(78% 76% at 10% 0%, var(--color-surface-muted), transparent 62%),
     var(--color-bg);
 }
 
-/* Focal panel for feature cards. The name is historical (it was an ocean
-   gradient); it is now a single quiet step up from the paper surface with
-   a sage edge, so a highlighted card is distinguished by tone rather than
-   by being a different colour from everything around it. */
+/* Focal panel for feature cards: white, told apart by its border. */
 .ocean-card {
-  background:
-    linear-gradient(152deg,
-      color-mix(in oklab, var(--color-accent) 7%, var(--color-surface-2)) 0%,
-      var(--color-surface-2) 58%,
-      color-mix(in oklab, var(--color-terracotta-500) 5%, var(--color-surface-2)) 100%);
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-line-2);
 }
 
 /* Hairline that fades at the ends - editorial divider */
@@ -1454,16 +1449,14 @@ select.input-field {
   --color-terracotta: #d9906e;
   --color-surface-2: rgb(245 242 234 / 0.06);
 
-  background:
-    radial-gradient(70% 60% at 12% 0%, color-mix(in oklab, var(--color-terracotta-500) 9%, transparent), transparent 64%),
-    var(--color-deep);
+  background: var(--color-deep);
   border-top: 1px solid var(--color-line);
   color: var(--color-ink-2);
 }
 .site-footer h2,
 .site-footer h3,
 .site-footer .site-footer__headline { color: var(--color-ink); }
-.site-footer .eyebrow { color: var(--color-terracotta); }
+.site-footer .eyebrow { color: var(--color-accent); }
 
 /* The primary CTA inverts on the dark ground so it stays the loud one,
    and the secondary becomes an outline rather than a pale box. */
@@ -1568,3 +1561,20 @@ select.input-field {
   }
   .hscroll > * { flex: 1 1 280px; }
 }
+
+
+/* ══════════════════════════════════════════════════════════════
+   CHIPS AND PILLS on a white ground
+   A chip used to be a white box on a tinted page, so its 1px border was
+   enough. With the ground white too, that border is the only thing left
+   and at 1.25:1 it effectively disappears. Chips take the muted fill and
+   the stronger rule instead, so a tag still reads as a tag.
+   ══════════════════════════════════════════════════════════════ */
+.mg-chip,
+.chip {
+  background: var(--color-surface-muted);
+  border: 1px solid var(--color-line-2);
+  border-radius: var(--radius-pill);
+}
+.mg-chip:hover,
+.chip:hover { border-color: var(--color-ink-4); }
