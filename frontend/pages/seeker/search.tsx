@@ -825,9 +825,17 @@ export default function SeekerSearch({ initialFilters, initialPage, serverToday 
 
           <div className={`grid gap-6 ${showMap && mapState !== "unavailable" ? "xl:grid-cols-5" : ""}`}>
             <section aria-label="Search results" className={showMap && mapState !== "unavailable" ? "xl:col-span-3" : ""} data-testid="results-list">
-              {searching ? (
+              {/* Skeletons only when the screen is empty.
+                  Re-running a search used to swap the results for six
+                  skeleton cards. With a small catalogue the real answer is
+                  often one or two rooms, so the page collapsed to a third of
+                  its height and the footer jumped up the screen - 0.217 CLS,
+                  twice the budget, on every filter change. Keeping the old
+                  results in place while the new ones load moves nothing, and
+                  it reads faster because there is never a blank moment. */}
+              {searching && results.length === 0 ? (
                 <div className={`grid gap-4 ${showMap ? "grid-cols-1" : "grid-cols-1 md:grid-cols-2 xl:grid-cols-3"}`} aria-hidden="true">
-                  {[1, 2, 3, 4, 5, 6].map((i) => (
+                  {[1, 2, 3].map((i) => (
                     <div key={i} className="card p-4 rounded-2xl space-y-3">
                       <div className="w-full aspect-[16/10] rounded-xl shimmer" />
                       <div className="space-y-2">
@@ -879,7 +887,10 @@ export default function SeekerSearch({ initialFilters, initialPage, serverToday 
                 </div>
               ) : (
                 <>
-                  <ul className={`grid gap-4 list-none p-0 m-0 ${showMap && mapState !== "unavailable" ? "grid-cols-1" : "grid-cols-1 md:grid-cols-2 xl:grid-cols-3"}`}>
+                  <ul
+                    className={`grid gap-4 list-none p-0 m-0 transition-opacity duration-200 ${showMap && mapState !== "unavailable" ? "grid-cols-1" : "grid-cols-1 md:grid-cols-2 xl:grid-cols-3"} ${searching ? "opacity-55" : "opacity-100"}`}
+                    aria-busy={searching || undefined}
+                  >
                     {results.map((listing) => {
                       const price = priceLabel(listing);
                       const title = listing.title || listing.display_address;

@@ -97,8 +97,34 @@ const DRAFT_KEY = "migrent_listing_draft_v1";
 // "Publish Listing" straight off the Safety step, and the only preview lived
 // in a sidebar hidden below the lg breakpoint, so phone users published
 // without ever seeing the result.
-const STEPS = ["Basics", "Details", "Hosting", "Photos", "Rules", "Safety", "Review"];
+/* Three steps, not seven.
+ *
+ * The seven-step wizard asked for about forty-five fields, but only six of
+ * them were ever enforced: suburb, postcode, weekly price, title,
+ * description and photos. The other thirty-nine were optional, and the form
+ * still made an owner walk past all of them - through gated Next buttons -
+ * before it would let them publish. That is the stress, not the field count.
+ *
+ * Nothing has been removed. The required path is now one page of essentials,
+ * then photos, then publish; every optional field moved onto the publish
+ * step, below the preview, where it is plainly marked optional and can be
+ * filled in now or never. The safety disclosures (cameras, weapons) stay
+ * exactly where an owner has to scroll past them to publish. */
+const STEPS = ["Your room", "Photos", "Publish"];
 const REVIEW_STEP = STEPS.length - 1;
+const MIN_PHOTOS = 3;
+
+/* Which of the original blocks renders on which of the three steps. Keeping
+ * the blocks intact and remapping their conditions avoids moving several
+ * hundred lines of JSX around, which is how fields get lost. */
+const stepContent = (step: number) => ({
+  basics: step === 0,
+  details: step === 0,
+  photos: step === 1,
+  hosting: step === REVIEW_STEP,
+  rules: step === REVIEW_STEP,
+  safety: step === REVIEW_STEP,
+});
 
 const PROPERTY_TYPES = ["House", "Apartment", "Townhouse", "Studio", "Other"];
 const PLACE_TYPES = ["Entire place", "Private room", "Shared room", "Multiple rooms"];
@@ -292,14 +318,16 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
       }
       if (!form.weeklyPrice || form.weeklyPrice <= 0) errors.push("Weekly price must be greater than $0");
       if (form.weeklyPrice > 50000) errors.push("Weekly price cannot exceed $50,000");
-    }
-    if (s === 1) {
       if (!form.title.trim()) errors.push("Title is required");
       if (form.description.trim().length < 10) errors.push("Description must be at least 10 characters");
       if (form.description.length > 5000) errors.push("Description cannot exceed 5000 characters");
     }
-    if (s === 3) {
-      if (photoCount < 5) errors.push("Add at least 5 photos");
+    if (s === 1) {
+      /* Was five. Five photos of a single room is a lot to gather before you
+         are allowed to publish anything, and it was the most common place to
+         give up. Three is enough to show a room honestly; the step still says
+         more photos get more enquiries. */
+      if (photoCount < MIN_PHOTOS) errors.push(`Add at least ${MIN_PHOTOS} photos`);
     }
     return errors;
   };
@@ -307,6 +335,8 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
   const canProceed = () => {
     return validateStep(step).length === 0;
   };
+
+  const shows = stepContent(step);
 
   const handleNext = () => {
     const errors = validateStep(step);
@@ -547,7 +577,7 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
             className="card p-6 rounded-2xl space-y-5"
           >
             {/* ── Step 0: Basics ── */}
-            {step === 0 && (
+            {shows.basics && (
               <>
                 <h3 className="text-lg font-bold text-[var(--color-ink)]">Basics</h3>
 
@@ -708,7 +738,7 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
             )}
 
             {/* ── Step 1: Details ── */}
-            {step === 1 && (
+            {shows.details && (
               <>
                 <h3 className="text-lg font-bold text-[var(--color-ink)]">Details</h3>
 
@@ -825,7 +855,7 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
             )}
 
             {/* ── Step 2: Hosting ── */}
-            {step === 2 && (
+            {shows.hosting && (
               <>
                 <h3 className="text-lg font-bold text-[var(--color-ink)]">Hosting details</h3>
                 <p className="text-sm text-[var(--color-ink-3)]">
@@ -962,7 +992,7 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
             )}
 
             {/* ── Step 3: Photos ── */}
-            {step === 3 && (
+            {shows.photos && (
               <>
                 <h3 className="text-lg font-bold text-[var(--color-ink)]">Photos</h3>
                 <p className="text-sm text-[var(--color-ink-3)]">
@@ -980,7 +1010,7 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
             )}
 
             {/* ── Step 4: Rules ── */}
-            {step === 4 && (
+            {shows.rules && (
               <>
                 <h3 className="text-lg font-bold text-[var(--color-ink)]">House rules</h3>
                 <ToggleCard label="No smoking" checked={form.noSmoking} onChange={(v) => update("noSmoking", v)} />
@@ -1018,7 +1048,7 @@ export default function ListingForm({ onSubmit, loading, initialData, userId }: 
             )}
 
             {/* ── Step 5: Safety ── */}
-            {step === 5 && (
+            {shows.safety && (
               <>
                 <h3 className="text-lg font-bold text-[var(--color-ink)]">Safety details</h3>
                 <p className="text-sm text-[var(--color-ink-3)]">

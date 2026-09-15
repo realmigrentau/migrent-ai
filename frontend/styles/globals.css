@@ -107,7 +107,7 @@
   --color-bg: #ffffff;           /* the page ground */
   --color-surface: #ffffff;      /* panels sit on the same white */
   --color-surface-2: #ffffff;    /* cards - defined by their border */
-  --color-surface-cool: #fafafa; /* barely-there alternate band */
+  --color-surface-cool: #f6f9f7; /* alternate band - a whisper of green */
   --color-surface-muted: #f4f4f2;/* subtle fill: chips, hover states */
   --color-surface-warm: #fafafa;
   --color-surface-sunk: #f2f2f0;

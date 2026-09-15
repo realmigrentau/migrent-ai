@@ -97,10 +97,10 @@ export default function SupportBand() {
               <Reveal as="li" key={a.n} delay={(i % 4) * 0.06}>
                 <hr className="mg-rule mb-5" />
                 <div className="flex items-baseline gap-3">
-                  <span className="mg-numeral text-[var(--color-primary)] text-[22px]" aria-hidden="true">
+                  <span className="mg-numeral text-[var(--color-primary-400)] text-[22px]" aria-hidden="true">
                     {a.n}
                   </span>
-                  <span className="text-[var(--color-primary)]" aria-hidden="true">
+                  <span className="text-[var(--color-primary-400)]" aria-hidden="true">
                     <a.icon className="w-[18px] h-[18px]" strokeWidth={1.8} />
                   </span>
                 </div>

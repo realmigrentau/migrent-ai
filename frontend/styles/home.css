@@ -568,6 +568,9 @@ body:has([data-home]) {
 
   /* The icon tile that fronts a step or a feature. Square-ish capsule so it
      agrees with the card radius rather than the button radius. */
+  /* The icon chips carry the green. On a white page they are the steadiest
+     place to put it: small, repeated down the page, and always next to a
+     heading, so the colour reads as a system rather than as decoration. */
   .mg-icon {
     display: inline-flex;
     align-items: center;
@@ -576,8 +579,9 @@ body:has([data-home]) {
     height: 44px;
     flex: none;
     border-radius: 14px;
-    background: var(--color-primary-50);
+    background: var(--color-primary-100);
     color: var(--color-primary);
+    border: 1px solid var(--color-primary-200);
   }
 
   .mg-icon--lg {
