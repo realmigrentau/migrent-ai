@@ -76,7 +76,7 @@ export default function Neighbourhoods() {
   const rowB = SUBURBS.slice(6);
 
   return (
-    <section ref={ref} className="mg-section mg-band--mist overflow-hidden" aria-labelledby="places-heading">
+    <section ref={ref} className="mg-section mg-band--sand overflow-hidden" aria-labelledby="places-heading">
       <div className="mg-shell">
         <Reveal>
           <SectionHead

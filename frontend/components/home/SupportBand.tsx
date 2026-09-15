@@ -46,7 +46,7 @@ const AUDIENCES = [
 
 export default function SupportBand() {
   return (
-    <section id="mentors" className="mg-section mg-band--air scroll-mt-[76px]" aria-labelledby="mentors-heading">
+    <section id="mentors" className="mg-section mg-band--green scroll-mt-[76px]" aria-labelledby="mentors-heading">
       <div className="mg-shell">
         <div className="grid lg:grid-cols-2 gap-10 lg:gap-20 items-center">
           <Reveal>

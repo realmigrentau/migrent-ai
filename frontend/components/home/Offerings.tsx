@@ -47,7 +47,7 @@ const OFFERINGS = [
 
 export default function Offerings() {
   return (
-    <section className="mg-section mg-band--mist" aria-labelledby="offerings-heading">
+    <section className="mg-section mg-band--green" aria-labelledby="offerings-heading">
       <div className="mg-shell grid lg:grid-cols-[0.8fr_1.2fr] gap-10 lg:gap-20">
         <Reveal className="lg:sticky lg:top-28 lg:self-start">
           <p className="mg-eyebrow mg-eyebrow--ruled mb-4">Everything you get</p>

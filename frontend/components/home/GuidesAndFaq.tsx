@@ -40,7 +40,7 @@ const FAQS = [
 export default function GuidesAndFaq() {
   return (
     <>
-      <section className="mg-section mg-band--mist" aria-labelledby="guides-heading">
+      <section className="mg-section mg-band--sky" aria-labelledby="guides-heading">
         <div className="mg-shell">
           <Reveal>
             <SectionHead

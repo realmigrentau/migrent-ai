@@ -37,12 +37,17 @@ export default function Home() {
 
       {/* 1 · the photograph */}
       <MigrentHero />
-      {/* 2 · the editorial line the hero's fog runs into */}
-      <LifestyleIntro />
-      {/* 3 · the thing to do */}
+      {/* 2 · the thing to do, immediately.
+             Search used to sit third, behind an editorial line, so the first
+             action on a page about finding a room was a paragraph. It is now
+             the first thing under the photograph. Moving it costs the hero
+             nothing: the intro's fog hand-off was a #fff-to-#fff gradient
+             once the page ground went white, so it was already a no-op. */}
       <SearchConsole />
       <TrustStrip />
 
+      {/* 3 · the editorial line, now a lead-in to the argument */}
+      <LifestyleIntro />
       {/* 4 · why it matters */}
       <WhyItMatters />
       {/* 5 · how it works */}

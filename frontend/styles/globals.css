@@ -1578,3 +1578,64 @@ select.input-field {
 }
 .mg-chip:hover,
 .chip:hover { border-color: var(--color-ink-4); }
+
+
+/* ══════════════════════════════════════════════════════════════
+   MORE FILTERS  ·  the optional half of the search panel
+   A native <details>, so it is keyboard operable and announces its own
+   expanded state without any JavaScript or ARIA of ours.
+   ══════════════════════════════════════════════════════════════ */
+.mg-more {
+  border-top: 1px solid var(--color-line);
+  padding-top: 0.75rem;
+}
+.mg-more__summary {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  cursor: pointer;
+  list-style: none;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-ink);
+  border-radius: var(--radius-control);
+  transition: color var(--duration-fast) var(--ease-out);
+}
+.mg-more__summary::-webkit-details-marker { display: none; }
+.mg-more__summary::after {
+  content: "";
+  width: 8px;
+  height: 8px;
+  margin-left: auto;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: rotate(45deg) translate(-2px, -2px);
+  transition: transform var(--duration-fast) var(--ease-out);
+}
+.mg-more[open] .mg-more__summary::after {
+  transform: rotate(-135deg) translate(-2px, -2px);
+}
+.mg-more__summary:hover { color: var(--color-accent); }
+.mg-more__summary:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+.mg-more__count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: var(--radius-pill);
+  background: var(--color-primary);
+  color: var(--color-primary-fg);
+  font-size: 11px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mg-more__summary::after { transition: none; }
+}

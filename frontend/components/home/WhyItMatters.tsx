@@ -26,7 +26,7 @@ const OURS = [
 
 export default function WhyItMatters() {
   return (
-    <section className="mg-section mg-band--mist" aria-labelledby="why-heading">
+    <section className="mg-section mg-band--sand" aria-labelledby="why-heading">
       <div className="mg-shell">
         <Reveal>
           <SectionHead

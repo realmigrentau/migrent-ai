@@ -16,7 +16,7 @@ const ITEMS = [
 
 export default function TrustStrip() {
   return (
-    <section className="mg-band--mist mg-band--edge-top mg-band--edge-bottom" aria-label="What MigRent guarantees">
+    <section className="mg-band--green mg-band--edge-top mg-band--edge-bottom" aria-label="What MigRent guarantees">
       <div className="mg-shell py-5">
         <ul className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 sm:gap-x-12 list-none m-0 p-0">
           {ITEMS.map((t) => (

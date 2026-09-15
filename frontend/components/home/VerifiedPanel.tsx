@@ -46,7 +46,7 @@ export default function VerifiedPanel() {
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start 0.85", "end 0.55"] });
 
   return (
-    <section ref={ref} className="mg-section mg-band--air" aria-labelledby="verified-heading">
+    <section ref={ref} className="mg-section mg-band--sky" aria-labelledby="verified-heading">
       <div className="mg-shell grid lg:grid-cols-[1.05fr_0.95fr] gap-12 lg:gap-20 items-start">
         <div>
           <p className="mg-eyebrow mg-eyebrow--ruled mb-6">Verified owners</p>

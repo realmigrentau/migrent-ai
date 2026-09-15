@@ -448,6 +448,13 @@ export default function SeekerSearch({ initialFilters, initialPage, serverToday 
     statusRef.current?.focus();
   };
 
+  /* How many of the optional filters are set, for the More-filters badge. */
+  const advancedFilterCount = [
+    filters.propertyType, filters.stationName, filters.minStay,
+    filters.adults > 1 || filters.children > 0 || filters.infants > 0,
+    filters.couplesOk, filters.femaleOnly, filters.verifiedOwner, filters.nearStation,
+  ].filter(Boolean).length;
+
   // ── Active chips ──
   const activeFilters: { label: string; clear: () => void }[] = [];
   const chip = (cond: boolean, label: string, clear: () => void) => cond && activeFilters.push({ label, clear });
@@ -586,22 +593,6 @@ export default function SeekerSearch({ initialFilters, initialPage, serverToday 
         </div>
       </FilterSection>
 
-      <FilterSection title="Property type" defaultOpen={false}>
-        <div className="flex flex-wrap gap-1.5">
-          {[
-            { value: "", label: "All" },
-            { value: "house", label: "House" },
-            { value: "apartment", label: "Apartment" },
-            { value: "unit", label: "Unit" },
-            { value: "studio", label: "Studio" },
-            { value: "granny_flat", label: "Granny flat" },
-            { value: "townhouse", label: "Townhouse" },
-          ].map((opt) => (
-            <TogglePill key={opt.value} active={filters.propertyType === opt.value} onClick={() => update("propertyType", filters.propertyType === opt.value ? "" : opt.value)} label={opt.label} />
-          ))}
-        </div>
-      </FilterSection>
-
       <FilterSection title="Dates" defaultOpen={Boolean(filters.checkIn || filters.checkOut)}>
         <div className="grid grid-cols-2 gap-2">
           <label className="block">
@@ -622,57 +613,6 @@ export default function SeekerSearch({ initialFilters, initialPage, serverToday 
         )}
       </FilterSection>
 
-      <FilterSection title="Guests" defaultOpen={false}>
-        <div className="space-y-2.5">
-          <GuestCounter id="guests-adults" label="Adults (18+)" value={filters.adults} onDec={() => update("adults", Math.max(1, filters.adults - 1))} onInc={() => update("adults", Math.min(20, filters.adults + 1))} min={1} />
-          <GuestCounter id="guests-children" label="Children (2-17)" value={filters.children} onDec={() => update("children", Math.max(0, filters.children - 1))} onInc={() => update("children", Math.min(20, filters.children + 1))} />
-          <GuestCounter id="guests-infants" label="Infants (0-2)" value={filters.infants} onDec={() => update("infants", Math.max(0, filters.infants - 1))} onInc={() => update("infants", Math.min(20, filters.infants + 1))} />
-          <GuestCounter id="guests-pets" label="Pets" value={filters.pets} onDec={() => update("pets", Math.max(0, filters.pets - 1))} onInc={() => update("pets", Math.min(10, filters.pets + 1))} />
-        </div>
-      </FilterSection>
-
-      <FilterSection title="Near a station" defaultOpen={Boolean(filters.stationName)}>
-        <div className="space-y-2">
-          <StationAutocomplete
-            value={selectedStation?.name || filters.stationName}
-            onSelect={(station) => {
-              setSelectedStation(station);
-              setFilters((p) => ({ ...p, stationName: station ? station.name : "", stationDistance: station ? "15" : p.stationDistance, page: 1 }));
-            }}
-            onClear={() => {
-              setSelectedStation(null);
-              setFilters((p) => ({ ...p, stationName: "", stationDistance: "any", page: 1 }));
-            }}
-          />
-          {(filters.stationName || filters.stationDistance !== "any") && (
-            <div className="flex flex-wrap gap-1.5 items-center" role="group" aria-label="Walking distance">
-              <span className="text-[11px] text-[var(--color-ink-3)] mr-0.5">Walk:</span>
-              {(["15", "30", "any"] as const).map((val) => (
-                <button key={val} type="button" onClick={() => update("stationDistance", val)} aria-pressed={filters.stationDistance === val}
-                  className={`px-2.5 min-h-[36px] rounded-lg text-[11px] font-medium transition-all ${filters.stationDistance === val ? "bg-[var(--color-accent)] text-[color:var(--color-primary-fg)] shadow-sm" : "bg-[var(--color-surface-sunk)] text-[var(--color-ink-2)] hover:bg-[var(--color-line)]"}`}>
-                  {val === "15" ? "< 15 min" : val === "30" ? "< 30 min" : "Any"}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-      </FilterSection>
-
-      <FilterSection title="Minimum stay" defaultOpen={false}>
-        <div className="flex flex-wrap gap-1.5">
-          {[
-            { value: "", label: "Any" },
-            { value: "1 week", label: "1 week" },
-            { value: "2 weeks", label: "2 weeks" },
-            { value: "1 month", label: "1 month" },
-            { value: "3 months", label: "3 months" },
-            { value: "6 months", label: "6 months" },
-          ].map((opt) => (
-            <TogglePill key={opt.value} active={filters.minStay === opt.value} onClick={() => update("minStay", filters.minStay === opt.value ? "" : opt.value)} label={opt.label} />
-          ))}
-        </div>
-      </FilterSection>
-
       <FilterSection title="Amenities & features" defaultOpen>
         <div className="flex flex-wrap gap-1.5">
           <TogglePill active={filters.furnished} onClick={() => update("furnished", !filters.furnished)} label="Furnished" />
@@ -686,12 +626,104 @@ export default function SeekerSearch({ initialFilters, initialPage, serverToday 
         </div>
       </FilterSection>
 
-      <FilterSection title="Preferences" defaultOpen={false}>
-        <div className="flex flex-wrap gap-1.5">
-          <TogglePill active={filters.femaleOnly} onClick={() => update("femaleOnly", !filters.femaleOnly)} label="Female only" />
-          <TogglePill active={filters.verifiedOwner} onClick={() => update("verifiedOwner", !filters.verifiedOwner)} label="ID-verified hosts" />
+      {/* Everything past this point is optional.
+          The panel used to stack ten filter groups at once, which is a wall
+          rather than a tool. The five above are the ones a search actually
+          turns on - where, how much, what kind of room, when you need it,
+          and whether it is furnished with the bills in. The rest sit behind
+          one control that says how many of them are on.
+
+          Dates and Amenities are deliberately NOT in here: the homepage
+          search console collects a move-in date, and "furnished" and "bills
+          included" are the two things someone arriving in the country with
+          nothing filters on first. Burying them broke both. */}
+      <details className="mg-more">
+        <summary className="mg-more__summary">
+          <span>More filters</span>
+          {advancedFilterCount > 0 && (
+            <span className="mg-more__count" aria-label={`${advancedFilterCount} active`}>
+              {advancedFilterCount}
+            </span>
+          )}
+        </summary>
+        <div className="space-y-4 pt-3">
+        <FilterSection title="Property type" defaultOpen={false}>
+          <div className="flex flex-wrap gap-1.5">
+            {[
+              { value: "", label: "All" },
+              { value: "house", label: "House" },
+              { value: "apartment", label: "Apartment" },
+              { value: "unit", label: "Unit" },
+              { value: "studio", label: "Studio" },
+              { value: "granny_flat", label: "Granny flat" },
+              { value: "townhouse", label: "Townhouse" },
+            ].map((opt) => (
+              <TogglePill key={opt.value} active={filters.propertyType === opt.value} onClick={() => update("propertyType", filters.propertyType === opt.value ? "" : opt.value)} label={opt.label} />
+            ))}
+          </div>
+        </FilterSection>
+
+        <FilterSection title="Guests" defaultOpen={false}>
+          <div className="space-y-2.5">
+            <GuestCounter id="guests-adults" label="Adults (18+)" value={filters.adults} onDec={() => update("adults", Math.max(1, filters.adults - 1))} onInc={() => update("adults", Math.min(20, filters.adults + 1))} min={1} />
+            <GuestCounter id="guests-children" label="Children (2-17)" value={filters.children} onDec={() => update("children", Math.max(0, filters.children - 1))} onInc={() => update("children", Math.min(20, filters.children + 1))} />
+            <GuestCounter id="guests-infants" label="Infants (0-2)" value={filters.infants} onDec={() => update("infants", Math.max(0, filters.infants - 1))} onInc={() => update("infants", Math.min(20, filters.infants + 1))} />
+            <GuestCounter id="guests-pets" label="Pets" value={filters.pets} onDec={() => update("pets", Math.max(0, filters.pets - 1))} onInc={() => update("pets", Math.min(10, filters.pets + 1))} />
+          </div>
+        </FilterSection>
+
+        <FilterSection title="Near a station" defaultOpen={Boolean(filters.stationName)}>
+          <div className="space-y-2">
+            <StationAutocomplete
+              value={selectedStation?.name || filters.stationName}
+              onSelect={(station) => {
+                setSelectedStation(station);
+                setFilters((p) => ({ ...p, stationName: station ? station.name : "", stationDistance: station ? "15" : p.stationDistance, page: 1 }));
+              }}
+              onClear={() => {
+                setSelectedStation(null);
+                setFilters((p) => ({ ...p, stationName: "", stationDistance: "any", page: 1 }));
+              }}
+            />
+            {(filters.stationName || filters.stationDistance !== "any") && (
+              <div className="flex flex-wrap gap-1.5 items-center" role="group" aria-label="Walking distance">
+                <span className="text-[11px] text-[var(--color-ink-3)] mr-0.5">Walk:</span>
+                {(["15", "30", "any"] as const).map((val) => (
+                  <button key={val} type="button" onClick={() => update("stationDistance", val)} aria-pressed={filters.stationDistance === val}
+                    className={`px-2.5 min-h-[36px] rounded-lg text-[11px] font-medium transition-all ${filters.stationDistance === val ? "bg-[var(--color-accent)] text-[color:var(--color-primary-fg)] shadow-sm" : "bg-[var(--color-surface-sunk)] text-[var(--color-ink-2)] hover:bg-[var(--color-line)]"}`}>
+                    {val === "15" ? "< 15 min" : val === "30" ? "< 30 min" : "Any"}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </FilterSection>
+
+        <FilterSection title="Minimum stay" defaultOpen={false}>
+          <div className="flex flex-wrap gap-1.5">
+            {[
+              { value: "", label: "Any" },
+              { value: "1 week", label: "1 week" },
+              { value: "2 weeks", label: "2 weeks" },
+              { value: "1 month", label: "1 month" },
+              { value: "3 months", label: "3 months" },
+              { value: "6 months", label: "6 months" },
+            ].map((opt) => (
+              <TogglePill key={opt.value} active={filters.minStay === opt.value} onClick={() => update("minStay", filters.minStay === opt.value ? "" : opt.value)} label={opt.label} />
+            ))}
+          </div>
+        </FilterSection>
+
+        <FilterSection title="Preferences" defaultOpen={false}>
+          <div className="flex flex-wrap gap-1.5">
+            <TogglePill active={filters.femaleOnly} onClick={() => update("femaleOnly", !filters.femaleOnly)} label="Female only" />
+            <TogglePill active={filters.verifiedOwner} onClick={() => update("verifiedOwner", !filters.verifiedOwner)} label="ID-verified hosts" />
+          </div>
+        </FilterSection>
+
         </div>
-      </FilterSection>
+      </details>
+
 
       <button type="submit" disabled={searching} className="btn-primary w-full min-h-[44px] py-3 rounded-xl text-sm font-bold">
         {searching ? (
