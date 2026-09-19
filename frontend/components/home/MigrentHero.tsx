@@ -1,97 +1,72 @@
-import { useEffect, useRef } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import Link from "next/link";
 import HeroNavigation from "./HeroNavigation";
-import { HeroFrontPlate, HeroSkyPlate } from "./HeroPropertyScene";
-import { SCENE_ZOOM, WORDMARK_LAG } from "./heroComposition";
+import { HeroPreviewCard, HeroSky } from "./HeroSunrise";
 
 /**
  * MIGRENT hero.
  *
- * What the reference actually does, measured frame by frame: the whole
- * composition travels with the page at 1:1. There is no pin, no scroll
- * jacking and - because the capture is a single flat plate - no parallax
- * between the type and the building. The gap between the wordmark's cap top
- * and the roof ridge holds at 254px +/- 1 across every frame of the travel.
+ * Rebuilt to the shape of the dayflow.so hero, which does one thing very
+ * well: it performs a sunrise once, on arrival, and then stays at dawn. The
+ * point is not the animation. It is that the page opens at night and the
+ * rest of the site lives in the morning, so the hero explains its own colour
+ * rather than sitting on top of a palette it does not belong to.
  *
- * So this does not invent a differential the reference does not have. The
- * depth comes from the three things a layered build can do that a flat plate
- * cannot, all of them small:
+ * Structurally that is: navigation inside the hero over the dark sky, a
+ * centred display line, one sentence under it, a single button, a line of
+ * small print, then the product's own surface clipped by the fold. The card
+ * being cut off is the design - it says there is more below without needing
+ * a scroll cue.
  *
- *   1. the wordmark lags the scene by 7%, so it settles a little further
- *      behind the roofline as the hero leaves rather than sliding off it
- *   2. a 4.5% push-in on the scene, anchored on the roof ridge so the
- *      building does not drift while it grows
- *   3. the fog deepens and the navigation lifts away
+ * What went, and why:
  *
- * Everything is transform and opacity on a scrubbed timeline. React renders
- * once; GSAP writes to the two elements directly after that.
+ *   the villa plates      the sky is now drawn, not photographed, so the two
+ *                         occluding plates and their matte have no job
+ *   the GSAP timeline     the reference has no scroll motion in its hero at
+ *                         all. The entrance is a CSS stagger that runs once;
+ *                         nothing here is scrubbed, so there is no
+ *                         ScrollTrigger, no pin and no scrub to keep alive
+ *   the giant wordmark    replaced by a sentence, because the reference
+ *                         leads with a claim rather than a logo
+ *
+ * The photographic hero's files are still on disk (HeroPropertyScene.tsx,
+ * heroComposition.ts, /public/hero/*.webp). Nothing imports them now.
  */
-
-const REDUCED_MOTION = "(prefers-reduced-motion: reduce)";
-
 export default function MigrentHero() {
-  const rootRef = useRef<HTMLElement>(null);
-  const wordmarkRef = useRef<HTMLHeadingElement>(null);
-  const navRef = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    const root = rootRef.current;
-    if (!root) return;
-    if (window.matchMedia(REDUCED_MOTION).matches) return;
-
-    gsap.registerPlugin(ScrollTrigger);
-
-    const ctx = gsap.context(() => {
-      const scenes = root.querySelectorAll(".mg-hero__scene");
-
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: root,
-          start: "top top",
-          // One hero-height of travel, the same distance the reference covers
-          // before the editorial line settles. No pin: a normal scroll stays
-          // a normal scroll.
-          end: "bottom top",
-          scrub: 0.6,
-          invalidateOnRefresh: true,
-        },
-        defaults: { ease: "none" },
-      });
-
-      const travel = () => root.offsetHeight;
-
-      tl.to(scenes, { scale: 1 + SCENE_ZOOM }, 0)
-        .to(wordmarkRef.current, { y: () => travel() * WORDMARK_LAG }, 0)
-        .to(".mg-hero__veil", { opacity: 1 }, 0)
-        // The reference drops its navigation the moment the page moves; this
-        // is the same idea with a short ramp so it does not blink out.
-        // autoAlpha, not opacity: it also flips visibility at zero, which
-        // takes the pills' backdrop-filter off the compositor's list for the
-        // rest of the scroll instead of leaving it re-blurring every frame.
-        .to(navRef.current, { autoAlpha: 0, y: -22, duration: 0.32 }, 0);
-    }, root);
-
-    return () => ctx.revert();
-  }, []);
-
   return (
-    <section className="mg-hero" ref={rootRef}>
-      <HeroSkyPlate />
+    <section className="mg-hero">
+      <HeroNavigation />
 
-      <h1 className="mg-hero__wordmark" ref={wordmarkRef}>
-        {/* The visible mark is the brand; the sentence is what a screen
-            reader and a crawler need from an h1. */}
-        <span className="sr-only">MIGRENT - a real home in Australia, found the right way</span>
-        <span aria-hidden="true">MIGRENT</span>
-      </h1>
+      <HeroSky />
 
-      <HeroFrontPlate />
+      {/* Each child of the head rises in turn. The delays are on the
+          children in styles/hero.css, not here, so the order is whatever
+          the markup says it is. */}
+      <div className="mg-hero__head">
+        <h1 className="mg-hero__title">Find a home. Feel at home.</h1>
 
-      <div className="mg-hero__fog" aria-hidden="true" />
-      <div className="mg-hero__veil" aria-hidden="true" />
+        <p className="mg-hero__sub">
+          Every host is ID-checked before a room goes live. Renters pay nothing.
+        </p>
 
-      <HeroNavigation navRef={navRef} />
+        <Link href="/seeker/search" className="mg-hero__cta">
+          Find a room
+        </Link>
+
+        <p className="mg-hero__micro">
+          Hosts are ID-checked. Renters pay no fees. Rooms across Australia.
+        </p>
+      </div>
+
+      {/* Fixed height with overflow hidden: the card is taller than the box,
+          so the fold cuts it. */}
+      <div className="mg-hero__cardwrap">
+        <HeroPreviewCard />
+      </div>
+
+      <div className="mg-hero__trust">
+        <span className="mg-hero__trustitem">No rental history needed</span>
+        <span className="mg-hero__trustitem">No fees for renters</span>
+      </div>
     </section>
   );
 }

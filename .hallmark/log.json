@@ -1,5 +1,15 @@
 [
   {
+    "date": "2026-09-19",
+    "scope": "homepage hero",
+    "macrostructure": "Marquee Hero (centred) + clipped product capture",
+    "theme": "studied-DNA (source: https://www.dayflow.so/)",
+    "theme_axes": "dark->light / classical-serif display / warm (dawn orange 40) over cool (sky 230)",
+    "vibe": "night to dawn, arrival, one-shot sunrise",
+    "enrichment": "E-tier A: pure-CSS sunrise (3 cross-fading gradient plates + disc + bloom), no video asset",
+    "brief": "MigRent - replaced the cinematic villa hero with a 1:1 rebuild of the dayflow.so hero DNA. Copy: 'Find a home. Feel at home.' Nav dropped to plain centred links with no CTA (reference behaviour). Fixed the reference's contrast defect: its white headline rests at 1.92:1, ours at 8.2:1."
+  },
+  {
     "date": "2026-09-12",
     "scope": "app",
     "macrostructure": "Marquee Hero (unchanged) + Long Document / Workbench families",

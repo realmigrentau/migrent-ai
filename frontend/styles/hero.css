@@ -1,239 +1,660 @@
+/* Hallmark · macrostructure: Marquee Hero · H1 hero knobs: alignment=centred, capture=clipped-by-fold, cta=single
+ * theme: studied-DNA (source: https://www.dayflow.so/) · studied: yes · DNA-source: url + live render
+ * observed-fonts: Instrument Serif + Figtree · rebuilt with: Newsreader + Schibsted Grotesk (project stack)
+ * observed-sky: #77aeff · observed-accent: #ff8133 · paper: night #071131 → dawn #ffb084 → ground #fff
+ * nav: N1b minus right cluster · footer: unchanged (page-level)
+ * pre-emit critique: P5 H5 E4 S5 R4 V4
+ */
+
 /* ══════════════════════════════════════════════════════════════
-   MIGRENT cinematic hero
-   Rebuilt from the reference capture as three real layers:
+   MIGRENT hero  ·  the sunrise
 
-       sky plate  →  live MIGRENT type  →  foreground plate  →  fog  →  UI
+   Built to the shape of the dayflow.so hero. The page opens at night and
+   walks to dawn once, over five seconds, then holds there for good. The
+   sections below live in the morning it arrives at, so the hero explains
+   the palette it hands them rather than sitting on top of it.
 
-   The two plates are the same photograph. The foreground one has the sky
-   knocked out above the building silhouette, so the roofline genuinely
-   occludes the type instead of a z-index pretending it does. Because the
-   plates are identical where they overlap, a soft edge on the matte cannot
-   show as a seam.
+   The layer order, back to front:
 
-   Every composition number lives in a custom property on .mg-hero, so the
-   tablet and phone layouts are four or five overrides rather than a second
-   set of rules. See components/home/heroComposition.ts for where the
-   numbers came from.
+       night plate → dusk plate → dawn plate → bloom → sun → foot → UI
+
+   The three plates are static gradients that cross-fade forward. Only
+   opacity and transform are animated, so nothing leaves the compositor,
+   and every layer ends at its final opacity - the rest state is just where
+   the animation stopped, held by animation-fill-mode: forwards.
+
+   Colour is measured, not invented: each plate below is a frame of the
+   reference sampled at three heights. See components/home/HeroSunrise.tsx
+   for the sample table.
+
+   Two deliberate departures from the reference, both noted at their rule:
+   the sky keeps a deep band at the top so white type stays legible at the
+   rest state, and the foot resolves to the page ground rather than the
+   reference's warm white.
    ══════════════════════════════════════════════════════════════ */
 
 .mg-hero {
-  /* ── scene box: where the photograph sits inside the hero ──
-     Landscape screens let the plate cover the whole hero. Portrait ones pull
-     it back to a fixed-aspect box so the building is not cropped to a sliver;
-     --scene-w-vw is its width in vw and the sky above it is continued in CSS. */
-  /* svh, not %, because these feed calc() expressions that end up as a
-     font-size, where a percentage would resolve against the font size
-     instead of the hero. */
-  --scene-top: 0svh;
-  --scene-height: 100%;
-  --scene-w-vw: 0; /* 0 = cover the hero */
-  --scene-x: 0px;
+  /* Where the hero hands off. Declared here rather than read from
+     --color-bg because a token referenced only from hand-written CSS can be
+     tree-shaken out of the Tailwind build (see design.md, trap 2). */
+  --mg-ground: #ffffff;
 
-  /* object-position Y. 42% puts the roof ridge at 42% of the scene box at
-     every aspect ratio - see heroComposition.ts. */
-  --plate-focus: 42%;
-  --plate-focus-x: 50%;
+  /* One clock for the whole sunrise. Everything below is a share of it. */
+  --mg-sunrise: 5s;
+  --mg-sunrise-ease: cubic-bezier(0.33, 1, 0.68, 1);
 
-  /* Where the roof ridge lands in the hero. Everything in the composition is
-     measured from this line, the way it is in the reference. */
-  --ridge: 42svh;
+  /* The reference's entrance: .9s, easeOutCubic, staggered by ~120ms. */
+  --mg-rise: 0.9s;
+  --mg-rise-ease: cubic-bezier(0.215, 0.61, 0.355, 1);
 
-  /* ── wordmark ──
-     Sized off viewport width so the word spans the screen the way it does in
-     the reference (82% of it), then capped against height so a short, wide
-     window cannot drive the word up into the navigation. */
-  /* Width sets the size; height only ever takes over to stop the word
-     climbing into the navigation on a short, wide window. The headroom term
-     is the size at which the cap top would land 26px under the pills:
-     capTop = 42% - 0.5543 x size, and the pills end at 2.87% + their height. */
-  --wm-headroom: calc((var(--ridge) - 2.87svh - var(--nav-pill-h) - 26px) / 0.5543);
-  --wm-size: min(27.1vw, var(--wm-headroom));
-  --wm-track: -0.028em;
-  /* Archivo at wdth 62 and weight 515 reproduces the reference's stem-to-cap
-     ratio of 0.149 and its 4.48 width-to-cap; measured, not eyeballed. */
-  --wm-width: 62;
-  --wm-weight: 515;
-
-  /* Baseline sits 19.2% of a cap height below the ridge, as measured off the
-     reference. Archivo's cap is 0.686em and its line box, at line-height
-     0.82, starts 0.0588em above the cap, which is where 0.6131 comes from:
-     0.686 - 0.192 x 0.686 + 0.0588. Keeping this as a formula rather than a
-     percentage is what holds the type against the roof at every aspect. */
-  --wm-top: calc(var(--ridge) - 0.6131 * var(--wm-size));
-
-  /* ── navigation ──
-     Solved from the reference's six pill widths rather than guessed: two
-     unknowns (text size and horizontal padding) against the measured widths
-     of "Stay" and "Reserve Now" give 18px text in 30px of padding at a
-     1440px viewport, which is 1.25vw and 2.1vw. */
-  --nav-top: clamp(14px, 2.87svh, 34px);
-  --nav-pill-h: clamp(38px, 3.15vw, 52px);
-  --nav-pill-px: clamp(15px, 2.1vw, 34px);
-  --nav-font: clamp(13px, 1.25vw, 19px);
-  --nav-gap: clamp(7px, 0.85vw, 14px);
+  --mg-nav-top: clamp(14px, 2.6svh, 30px);
 
   position: relative;
-  width: 100%;
-  height: 100vh; /* fallback for engines without svh */
-  height: 100svh;
-  min-height: 540px;
-  /* The plate fades to white at its foot and the section below is white, so
-     anything the scene does not cover reads as more fog, never as a gap. */
-  background: #fff;
-  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
   isolation: isolate;
+  overflow: hidden;
+  padding: clamp(74px, 12svh, 116px) clamp(20px, 5vw, 80px) clamp(36px, 6svh, 64px);
+  /* Tall enough that the card's lower edge runs past a typical fold. The
+     cut is the point: it says there is more underneath without a scroll
+     cue to say it. */
+  min-height: min(1245px, 112svh);
+  background: #04091f;
 }
 
-/* ── the sky that continues above the plate on portrait screens ──
-   A two-pixel slice of the plate's own top edge, stretched. It has to span
-   exactly the same box as the scene, not the hero: the plate is wider than
-   the screen there, so stretching the slice across the viewport instead
-   would compress the sky's horizontal colour run and put a visible step at
-   the joint. The overlay only deepens it going up, the way sky does. */
-.mg-hero__skytop {
+:where(.dark) .mg-hero {
+  --mg-ground: #10150f;
+}
+
+/* ══════════════ the sky ══════════════ */
+
+.mg-hero__sky {
   position: absolute;
-  left: 0;
-  width: 100%;
-  top: 0;
-  height: calc(var(--scene-top) + 2px);
+  inset: 0;
   z-index: 0;
-  background-image:
-    linear-gradient(to bottom, rgba(0, 74, 134, 0.55) 0%, rgba(0, 74, 134, 0.16) 55%, rgba(0, 74, 134, 0) 100%),
-    url("/hero/sky-edge.webp");
-  background-size: 100% 100%, 100% 100%;
-  background-repeat: no-repeat;
   pointer-events: none;
 }
 
-.mg-hero__scene {
-  position: absolute;
-  left: 0;
-  width: 100%;
-  top: var(--scene-top);
-  height: var(--scene-height);
-  z-index: 1;
-  transform-origin: 50% var(--plate-focus);
-  will-change: transform;
-  pointer-events: none;
-}
-
-/* Two wrappers so the wordmark can be their sibling and still sit between
-   them: a transformed element opens its own stacking context, so a child
-   z-index could never reach out past the plate above it. */
-.mg-hero__scene--back {
-  z-index: 1;
-}
-
-.mg-hero__scene--front {
-  z-index: 3;
+/* In dark mode the same walk arrives somewhere dimmer, because a full dawn
+   handing off to a near-black page is a wall rather than a horizon. */
+:where(.dark) .mg-hero__sky {
+  filter: brightness(0.66) saturate(0.94);
 }
 
 .mg-hero__plate {
   position: absolute;
   inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: var(--plate-focus-x) var(--plate-focus);
-  user-select: none;
-  -webkit-user-drag: none;
 }
 
-/* ── the giant word, between the two plates ── */
-.mg-hero__wordmark {
+/* t = 0.00s. sky #071131 · horizon #073669 · low #04305f */
+.mg-hero__plate--night {
+  background: linear-gradient(
+    180deg,
+    #04091f 0%,
+    #071131 18%,
+    #05173c 40%,
+    #082f5d 64%,
+    #073669 76%,
+    #05305f 89%,
+    #04294f 100%
+  );
+}
+
+/* t = 2.90s. sky #4b79ce · horizon #cfb4ca · low #ffdabb */
+.mg-hero__plate--dusk {
+  opacity: 0;
+  background: linear-gradient(
+    180deg,
+    #1e3f86 0%,
+    #2f5cb4 16%,
+    #4b79ce 30%,
+    #7c88c6 46%,
+    #9a95c8 58%,
+    #cfb4ca 74%,
+    #f0cfc2 87%,
+    #ffdabb 100%
+  );
+}
+
+/* t = 4.94s, the rest state. sky #93bbf8 · horizon #ffe2be · low #ffb084
+   Departure from the reference: its sky reads #93bbf8 all the way to the
+   top edge, which leaves white type at 1.9:1 once the sun is up - the hero
+   opens perfectly legible and walks itself into failing. Holding a deep
+   band through the first third fixes it at 5:1 without touching the part
+   of the frame anyone is looking at, and a sky that is deepest at the
+   zenith and brightest at the horizon is what a sky actually does. */
+.mg-hero__plate--dawn {
+  opacity: 0;
+  background: linear-gradient(
+    180deg,
+    #1d3f8e 0%,
+    #24499b 14%,
+    #2a52a4 28%,
+    #3260b6 40%,
+    #5c8ade 50%,
+    #a8bce6 58%,
+    #d3cde2 65%,
+    #ffe2be 76%,
+    #ffc59e 85%,
+    #ffb084 93%,
+    #fff1e7 100%
+  );
+}
+
+/* The halo is its own layer and much wider than the disc, so the light
+   reaches further up the sky than the sun is big.
+   Both this and the disc are sized to stay clear of .mg-hero__head. An
+   earlier pass had the bloom spanning the whole hero, which put a warm
+   white wash directly behind the small print and took it to 3.5:1. The
+   light belongs under the type, not behind it. */
+.mg-hero__bloom {
   position: absolute;
-  left: 0;
-  right: 0;
-  top: var(--wm-top);
-  z-index: 2;
-  margin: 0;
-  text-align: center;
-  font-family: var(--font-condensed), "Archivo Narrow", "Roboto Condensed", ui-sans-serif, sans-serif;
-  font-size: var(--wm-size);
-  font-weight: var(--wm-weight);
-  font-variation-settings: "wdth" var(--wm-width);
-  line-height: 0.82;
-  letter-spacing: var(--wm-track);
-  /* letter-spacing is added after the last glyph too, so centring the line
-     box would sit the word off-centre by half a track. */
-  text-indent: calc(-1 * var(--wm-track));
-  color: #fff;
-  white-space: nowrap;
-  /* The reference bloom the type into the sky where it meets the roof. The
-     foreground plate carries the photographic half of that glow, this is the
-     live half, so the two read as one atmosphere. */
-  text-shadow: 0 0 60px rgba(255, 255, 255, 0.42), 0 0 22px rgba(255, 255, 255, 0.18);
-  will-change: transform;
-  pointer-events: none;
-  -webkit-font-smoothing: antialiased;
+  left: 50%;
+  bottom: -18%;
+  width: min(1900px, 132%);
+  aspect-ratio: 1.9;
+  opacity: 0;
+  transform: translate(-50%, 18%) scale(0.86);
+  background: radial-gradient(
+    ellipse at 50% 50%,
+    rgba(255, 219, 168, 0.6) 0%,
+    rgba(255, 190, 137, 0.32) 32%,
+    rgba(255, 168, 120, 0.13) 56%,
+    rgba(255, 162, 116, 0) 76%
+  );
 }
 
-/* ── atmosphere ──
-   Two stacked layers, not one ramp: a wide low-opacity haze that starts
-   around the umbrellas, and a tighter one that closes to solid white at the
-   very bottom so the section below joins with no visible boundary. */
-.mg-hero__fog,
-.mg-hero__veil {
+.mg-hero__sun {
+  position: absolute;
+  left: 50%;
+  bottom: 2%;
+  width: min(980px, 48%);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  opacity: 0.3;
+  transform: translate(-50%, 62%);
+  background: radial-gradient(
+    circle at 50% 50%,
+    #fff9ea 0%,
+    #fff2d6 40%,
+    #ffe4b6 64%,
+    #ffd09a 80%,
+    #ffbb86 91%,
+    rgba(255, 178, 126, 0) 100%
+  );
+}
+
+/* Closes the last stretch to the page ground, so the hero ends on the
+   colour the next section starts on instead of meeting it at a line. */
+.mg-hero__foot {
   position: absolute;
   left: 0;
   right: 0;
   bottom: -1px;
-  pointer-events: none;
-}
-
-.mg-hero__fog {
-  /* The plate carries its own photographed haze and, at ordinary window
-     shapes, that haze is still on screen at the fold - so this only closes
-     the last stretch to solid white. It has to grow on wide, short windows,
-     where cover-cropping pushes the plate's white foot below the fold; hence
-     the aspect-ratio steps rather than one height that over-fogs everything. */
-  height: var(--fog-h, 24%);
-  z-index: 4;
-  background:
-    linear-gradient(
-      to bottom,
-      rgba(255, 255, 255, 0) 0%,
-      rgba(255, 255, 255, 0.04) 48%,
-      rgba(255, 255, 255, 0.16) 72%,
-      rgba(255, 255, 255, 0.5) 89%,
-      #fff 100%
-    ),
-    radial-gradient(150% 60% at 50% 128%, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0) 72%);
-}
-
-@media (min-aspect-ratio: 17 / 10) {
-  .mg-hero {
-    --fog-h: 42%;
-  }
-}
-
-@media (min-aspect-ratio: 21 / 10) {
-  .mg-hero {
-    --fog-h: 68%;
-  }
-}
-
-/* Driven by scroll: the white grows as the hero leaves. Promoted, or the
-   compositor repaints a full-viewport gradient on every frame of the fade. */
-.mg-hero__veil {
-  height: 88%;
-  z-index: 5;
-  opacity: 0;
-  will-change: opacity;
+  height: 16%;
   background: linear-gradient(
     to bottom,
-    rgba(255, 255, 255, 0) 0%,
-    rgba(255, 255, 255, 0.28) 42%,
-    rgba(255, 255, 255, 0.7) 74%,
-    rgba(255, 255, 255, 0.95) 100%
+    transparent 0%,
+    color-mix(in oklab, var(--mg-ground) 16%, transparent) 44%,
+    color-mix(in oklab, var(--mg-ground) 58%, transparent) 74%,
+    color-mix(in oklab, var(--mg-ground) 88%, transparent) 91%,
+    var(--mg-ground) 100%
   );
 }
 
-/* ══════════════ floating navigation ══════════════ */
+/* ══════════════ the sunrise ══════════════
+   One shot. No loop, no reverse, no scroll binding. A loop would nag; this
+   resolves and stays resolved, which is the only reason the genre change at
+   the fold reads as a journey rather than an inconsistency. */
+
+@keyframes mgSkyDusk {
+  0%,
+  6% {
+    opacity: 0;
+  }
+  52%,
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes mgSkyDawn {
+  0%,
+  44% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes mgSunRise {
+  0% {
+    opacity: 0.3;
+    transform: translate(-50%, 62%);
+  }
+  22% {
+    opacity: 0.92;
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+@keyframes mgBloomIn {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 18%) scale(0.86);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+}
+
+/* ══════════════ the entrance ══════════════
+   The reference's own numbers: .9s, easeOutCubic, opacity from a hair above
+   zero, an 18px rise and an 8px blur that clears. Staggered 120ms apart. */
+
+@keyframes mgHeroRise {
+  0% {
+    opacity: 0.011;
+    transform: translateY(18px);
+    filter: blur(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: blur(0);
+  }
+}
+
+/* Opt in, never override: with no-preference as the gate, a reader who has
+   asked for less motion never has an animation applied that a later rule
+   has to undo. Everything below is decoration on a page that is already
+   fully painted and readable without it. */
+@media (prefers-reduced-motion: no-preference) {
+  .mg-hero__plate--dusk {
+    animation: mgSkyDusk var(--mg-sunrise) var(--mg-sunrise-ease) both;
+  }
+
+  .mg-hero__plate--dawn {
+    animation: mgSkyDawn var(--mg-sunrise) var(--mg-sunrise-ease) both;
+  }
+
+  .mg-hero__sun {
+    animation: mgSunRise var(--mg-sunrise) var(--mg-sunrise-ease) both;
+  }
+
+  .mg-hero__bloom {
+    animation: mgBloomIn var(--mg-sunrise) var(--mg-sunrise-ease) both;
+  }
+
+  .mg-hero__head > *,
+  .mg-hero__cardwrap,
+  .mg-hero__trustitem {
+    animation: mgHeroRise var(--mg-rise) var(--mg-rise-ease) both;
+  }
+
+  .mg-hero__head > :nth-child(2) {
+    animation-delay: 0.12s;
+  }
+
+  .mg-hero__head > :nth-child(3) {
+    animation-delay: 0.24s;
+  }
+
+  .mg-hero__head > :nth-child(4) {
+    animation-delay: 0.32s;
+  }
+
+  .mg-hero__cardwrap {
+    animation-delay: 0.35s;
+  }
+
+  .mg-hero__trustitem {
+    animation-duration: 0.7s;
+    animation-delay: 0.55s;
+  }
+
+  .mg-hero__trustitem + .mg-hero__trustitem {
+    animation-delay: 0.65s;
+  }
+}
+
+/* With reduced motion the sky is simply already at dawn. Same picture, no
+   journey - which is the honest translation of a five-second sunrise. */
+@media (prefers-reduced-motion: reduce) {
+  .mg-hero__plate--dusk,
+  .mg-hero__plate--dawn,
+  .mg-hero__bloom {
+    opacity: 1;
+  }
+
+  .mg-hero__sun {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+/* ══════════════ the head ══════════════ */
+
+.mg-hero__head {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(14px, 1.8svh, 20px);
+  width: 100%;
+  max-width: 760px;
+}
+
+.mg-hero__title {
+  margin: 0;
+  max-width: 17ch;
+  font-family: var(--font-display), ui-serif, Georgia, "Times New Roman", serif;
+  font-optical-sizing: auto;
+  /* The reference sets 44px at a 1180px window and does not chase the
+     viewport much past it. A display line this short does not need to. */
+  font-size: clamp(31px, 4.5vw, 54px);
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: -0.014em;
+  color: #fff;
+  text-wrap: balance;
+  /* A display size against a 320px screen will overflow on one long word
+     unless it is allowed to break inside it. */
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+
+.mg-hero__sub {
+  margin: 0;
+  max-width: 34ch;
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  font-size: clamp(15.5px, 1.5vw, 21px);
+  font-weight: 400;
+  line-height: 1.3;
+  color: rgba(255, 255, 255, 0.94);
+  text-wrap: balance;
+}
+
+/* The one thing on the screen that looks pressable. */
+.mg-hero__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 4px;
+  min-height: 52px;
+  padding: 0 clamp(26px, 3vw, 38px);
+  border-radius: 999px;
+  border: 1px solid #fff;
+  background: #fff;
+  color: #10233f;
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  font-size: clamp(15px, 1.15vw, 17px);
+  font-weight: 600;
+  letter-spacing: -0.004em;
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    background-color 200ms var(--mg-rise-ease),
+    border-color 200ms var(--mg-rise-ease),
+    transform 200ms var(--mg-rise-ease);
+}
+
+.mg-hero__cta:hover {
+  background: rgba(255, 255, 255, 0.91);
+  border-color: rgba(255, 255, 255, 0.91);
+}
+
+.mg-hero__cta:active {
+  transform: translateY(1px);
+}
+
+.mg-hero__micro {
+  margin: 0;
+  max-width: 44ch;
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  font-size: clamp(12.5px, 0.95vw, 14px);
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.92);
+  text-wrap: balance;
+}
+
+/* Drawn on a sky that runs from near-black to mid-blue, so it needs both a
+   light ring and a dark one to survive either end. Never animated: focus
+   has to be instant. */
+.mg-hero__cta:focus-visible,
+.mg-navlink:focus-visible,
+.mg-nav__brand:focus-visible,
+.mg-nav__toggle:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+  box-shadow: 0 0 0 5px rgba(9, 29, 62, 0.5);
+}
+
+/* ══════════════ the product card ══════════════ */
+
+.mg-hero__cardwrap {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-top: clamp(22px, 4svh, 46px);
+}
+
+.mg-hero__card {
+  width: min(636px, 100%);
+  padding: 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.92);
+  background: linear-gradient(
+    215.5deg,
+    rgba(235, 243, 253, 0.8) 8%,
+    rgba(255, 255, 255, 0.72) 38%,
+    rgba(240, 241, 248, 0.8) 67%,
+    rgba(255, 250, 248, 0.8) 96%
+  );
+  -webkit-backdrop-filter: blur(135px);
+  backdrop-filter: blur(135px);
+  box-shadow:
+    0 -3px 12px 3px rgba(255, 255, 255, 0.25),
+    0 7px 14px rgba(168, 121, 84, 0.2);
+  text-align: left;
+}
+
+.mg-hero__cardface {
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.72);
+  padding: clamp(16px, 2.4vw, 22px);
+}
+
+.mg-hero__cardhead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(23, 26, 23, 0.09);
+}
+
+.mg-hero__cardtitle {
+  font-family: var(--font-display), ui-serif, Georgia, serif;
+  font-optical-sizing: auto;
+  font-size: clamp(17px, 1.5vw, 20px);
+  font-weight: 400;
+  color: #16201f;
+}
+
+.mg-hero__cardmeta {
+  font-family: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #6c7a6f;
+}
+
+.mg-hero__cardgrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.mg-hero__field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(23, 26, 23, 0.1);
+  background: rgba(255, 255, 255, 0.86);
+}
+
+.mg-hero__fieldlabel {
+  font-family: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #6c7a6f;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mg-hero__fieldvalue {
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  font-size: clamp(13px, 1.1vw, 15px);
+  line-height: 1.2;
+  color: #16201f;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* These read as placeholders because they are drawn as placeholders. A
+   filled-in suburb and a weekly rent would read as stock we can show. */
+.mg-hero__fieldvalue--ghost {
+  color: #9aa69c;
+}
+
+.mg-hero__cardbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.mg-hero__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  font-size: clamp(11.5px, 1vw, 13px);
+  color: #3f4740;
+}
+
+.mg-hero__chipdot {
+  flex: none;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #2f6b4f;
+  box-shadow: 0 0 0 3px rgba(47, 107, 79, 0.15);
+}
+
+.mg-hero__cardbtn {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  padding: 9px 18px;
+  border-radius: 999px;
+  background: #132720;
+  color: #fff;
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  font-size: clamp(12.5px, 1vw, 14px);
+  font-weight: 600;
+  line-height: 1;
+}
+
+.mg-hero__results {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(23, 26, 23, 0.09);
+}
+
+.mg-hero__row {
+  height: clamp(58px, 8vw, 74px);
+  border-radius: 8px;
+  border: 1px solid rgba(23, 26, 23, 0.07);
+  border-left-width: 3px;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.mg-hero__row--a {
+  border-left-color: #3f6b57;
+}
+
+.mg-hero__row--b {
+  border-left-color: #1f6a8c;
+}
+
+.mg-hero__row--c {
+  border-left-color: #b96848;
+}
+
+/* ══════════════ the trust line ══════════════ */
+
+.mg-hero__trust {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  margin-top: clamp(20px, 3.4svh, 34px);
+}
+
+.mg-hero__trustitem {
+  display: inline-flex;
+  align-items: center;
+  min-height: 46px;
+  padding: 0 20px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.34);
+  background: linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.1));
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  font-size: clamp(12.5px, 1vw, 14px);
+  font-weight: 500;
+  line-height: 1;
+  color: #15243d;
+  white-space: nowrap;
+}
+
+/* ══════════════ navigation ══════════════
+   Wordmark left, links centred, phone toggle right. No pills and no action:
+   the reference keeps the top of the page quiet so the one button under the
+   headline is the only thing that looks pressable. */
 
 .mg-nav {
   position: absolute;
-  top: var(--nav-top);
+  top: var(--mg-nav-top);
   left: 0;
   right: 0;
   z-index: 10;
@@ -242,7 +663,6 @@
   align-items: center;
   gap: 16px;
   padding: 0 clamp(14px, 1.4vw, 26px);
-  will-change: transform, opacity;
 }
 
 .mg-nav__brand {
@@ -250,21 +670,20 @@
   display: inline-flex;
   align-items: center;
   font-family: var(--font-condensed), "Archivo Narrow", "Roboto Condensed", ui-sans-serif, sans-serif;
-  font-size: clamp(25px, 2.6vw, 40px);
+  font-size: clamp(21px, 2vw, 30px);
   font-weight: 700;
-  font-variation-settings: "wdth" var(--wm-width);
+  font-variation-settings: "wdth" 72;
   letter-spacing: 0.012em;
   line-height: 1;
   color: #fff;
   text-decoration: none;
-  text-shadow: 0 1px 18px rgba(4, 42, 74, 0.28);
 }
 
 .mg-nav__links {
   justify-self: center;
   display: flex;
   align-items: center;
-  gap: var(--nav-gap);
+  gap: clamp(14px, 1.9vw, 30px);
   list-style: none;
   margin: 0;
   padding: 0;
@@ -274,71 +693,33 @@
   justify-self: end;
   display: flex;
   align-items: center;
-  gap: var(--nav-gap);
 }
 
-.mg-pill {
+.mg-navlink {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  height: var(--nav-pill-h);
-  padding: 0 var(--nav-pill-px);
-  border-radius: 999px;
   font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
-  font-size: var(--nav-font);
+  font-size: clamp(13.5px, 1.05vw, 15.5px);
   font-weight: 500;
   letter-spacing: -0.004em;
   line-height: 1;
   white-space: nowrap;
   text-decoration: none;
+  color: rgba(255, 255, 255, 0.86);
+  transition: color 180ms var(--mg-rise-ease);
+}
+
+.mg-navlink:hover,
+.mg-navlink[aria-current="page"] {
   color: #fff;
-  background: rgba(255, 255, 255, 0.13);
-  border: 1px solid rgba(255, 255, 255, 0.28);
-  -webkit-backdrop-filter: blur(14px) saturate(1.25);
-  backdrop-filter: blur(14px) saturate(1.25);
-  transition: background-color 180ms var(--ease-mr, ease), border-color 180ms var(--ease-mr, ease),
-    color 180ms var(--ease-mr, ease), transform 180ms var(--ease-mr, ease);
-  cursor: pointer;
-}
-
-.mg-pill:hover {
-  background: rgba(255, 255, 255, 0.24);
-  border-color: rgba(255, 255, 255, 0.44);
-}
-
-.mg-pill:active {
-  transform: translateY(1px);
-}
-
-.mg-pill--solid,
-.mg-pill[aria-current="page"] {
-  background: #fff;
-  border-color: #fff;
-  color: #0b2b46;
-  font-weight: 600;
-}
-
-.mg-pill--solid:hover,
-.mg-pill[aria-current="page"]:hover {
-  background: rgba(255, 255, 255, 0.92);
-  border-color: rgba(255, 255, 255, 0.92);
-}
-
-/* Focus is drawn on a dark-to-light background, so it needs both rings. */
-.mg-pill:focus-visible,
-.mg-nav__brand:focus-visible,
-.mg-nav__toggle:focus-visible {
-  outline: 2px solid #fff;
-  outline-offset: 3px;
-  box-shadow: 0 0 0 5px rgba(11, 43, 70, 0.45);
 }
 
 .mg-nav__toggle {
   display: none;
   align-items: center;
   justify-content: center;
-  width: var(--nav-pill-h);
-  height: var(--nav-pill-h);
+  width: 42px;
+  height: 42px;
   border-radius: 999px;
   color: #fff;
   background: rgba(255, 255, 255, 0.13);
@@ -348,8 +729,8 @@
   cursor: pointer;
 }
 
-/* The sheet's blur would otherwise show the nav's own pills ghosting through
-   behind its header. */
+/* The sheet's blur would otherwise show the nav ghosting through behind its
+   own header. */
 .mg-nav--hidden {
   visibility: hidden;
 }
@@ -362,8 +743,8 @@
   display: flex;
   flex-direction: column;
   padding: 20px;
-  gap: 10px;
-  background: rgba(6, 44, 76, 0.72);
+  gap: 4px;
+  background: rgba(7, 26, 62, 0.78);
   -webkit-backdrop-filter: blur(22px) saturate(1.3);
   backdrop-filter: blur(22px) saturate(1.3);
 }
@@ -375,12 +756,11 @@
   margin-bottom: 12px;
 }
 
-.mg-nav__sheet .mg-pill {
-  width: 100%;
-  height: 52px;
-  font-size: 16px;
-  justify-content: flex-start;
-  padding: 0 22px;
+.mg-navlink--sheet {
+  min-height: 52px;
+  padding: 0 4px;
+  font-size: 17px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 /* ══════════════ editorial section under the hero ══════════════ */
@@ -407,18 +787,22 @@
 .mg-intro__headline {
   margin: 0 auto;
   max-width: 18ch;
-  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-display), ui-serif, Georgia, 'Times New Roman', serif;
+  font-optical-sizing: auto;
   font-size: clamp(30px, 3.4vw, 58px);
-  font-weight: 300;
-  line-height: 1.1;
-  letter-spacing: -0.021em;
+  font-weight: 350;
+  line-height: 1.12;
+  letter-spacing: -0.012em;
   color: #16201f;
   text-wrap: balance;
 }
 
+/* This line is the page's type specimen - the first thing under the
+   photograph and the only heading on the homepage that gets both halves of
+   the system in one breath: the serif, and the script on the last word. */
 .mg-intro__headline strong {
   font-weight: 700;
-  letter-spacing: -0.026em;
+  letter-spacing: -0.022em;
 }
 
 /* ── dark theme ──
@@ -457,46 +841,11 @@
   pointer-events: none;
 }
 
-/* ══════════════ breakpoints ══════════════
-   Not a scaled-down desktop: the plate is pulled back and re-anchored so the
-   building still reads as a building on a phone. */
+/* ══════════════ breakpoints ══════════════ */
 
-/* laptops */
-@media (max-width: 1279px) {
-  .mg-hero {
-    --wm-size: min(27.1vw, var(--wm-headroom));
-  }
-}
-
-/* ── portrait and near-portrait ──
-   Cover-cropping a 1.48:1 plate into a tall box leaves a sliver of building
-   blown up past its own resolution. So the plate stops covering and becomes a
-   fixed-aspect box wider than the screen, anchored high enough that its white
-   foot lands inside the hero. --ridge is recomputed from that box, and the
-   wordmark follows it through the same formula as on desktop. */
+/* Tablet and below: the centred link row will not fit beside a wordmark, so
+   it becomes the sheet. */
 @media (max-width: 1023px) {
-  .mg-hero__scene,
-  .mg-hero__skytop {
-    left: 50%;
-    margin-left: calc(var(--scene-w-vw) * -0.5vw + var(--scene-x));
-    width: calc(var(--scene-w-vw) * 1vw);
-  }
-
-  .mg-hero__scene {
-    height: auto;
-    aspect-ratio: 1652 / 1114;
-  }
-
-  /* 0.28331 = 0.4201 ridge / 1.4829 plate aspect: the ridge as a share of the
-     scene box's own width, which is what --scene-w-vw is measured in. */
-  .mg-hero {
-    --scene-w-vw: 160;
-    --scene-top: 0svh;
-    --plate-focus-x: 44%;
-    --ridge: calc(var(--scene-top) + var(--scene-w-vw) * 0.28331vw);
-    --wm-size: min(27vw, var(--wm-headroom));
-  }
-
   .mg-nav__links {
     display: none;
   }
@@ -504,73 +853,74 @@
   .mg-nav__toggle {
     display: inline-flex;
   }
+
+  .mg-hero {
+    min-height: min(1100px, 108svh);
+  }
+
+  .mg-hero__sun {
+    width: min(820px, 74%);
+  }
+
+  .mg-hero__bloom {
+    width: min(1600px, 180%);
+  }
 }
 
-/* phone */
+/* Phone. The three search cells stack: at this width they would each be
+   about 90px wide, which turns every label into two lines. */
 @media (max-width: 767px) {
   .mg-hero {
-    --scene-w-vw: 230;
-    --scene-top: 10svh;
-    --plate-focus-x: 40%;
-    --wm-size: min(28vw, var(--wm-headroom));
-    --wm-track: -0.024em;
-    --nav-top: clamp(14px, 2.2svh, 22px);
-    --nav-pill-h: 40px;
-    --nav-pill-px: 18px;
-    --nav-font: 13.5px;
+    padding-top: clamp(64px, 11svh, 92px);
+    min-height: auto;
   }
 
-  .mg-hero__scene {
-    transform-origin: 50% 30%;
+  .mg-hero__cardgrid {
+    grid-template-columns: minmax(0, 1fr);
   }
 
-  .mg-intro__headline {
-    max-width: 15ch;
+  .mg-hero__cardbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .mg-hero__cardbtn {
+    justify-content: center;
+  }
+
+  .mg-hero__trust {
+    gap: 8px;
+  }
+
+  .mg-hero__trustitem {
+    padding: 0 15px;
+  }
+
+  .mg-hero__sun {
+    width: min(700px, 104%);
   }
 }
 
-/* short phones: a squarer plate keeps the building off the wordmark */
-@media (max-width: 767px) and (max-height: 720px) {
-  .mg-hero {
-    --scene-w-vw: 205;
-    --scene-top: 4svh;
-  }
-}
-
-/* Landscape phones and short tablets: the pulled-back portrait box would be
-   taller than the window, so those go back to the cover composition. */
-@media (max-width: 1023px) and (max-height: 560px) {
-  .mg-hero {
-    --scene-w-vw: 0;
-    --scene-top: 0svh;
-    --scene-height: 100%;
-    --ridge: 42svh;
-    --plate-focus-x: 50%;
-    --wm-size: min(27.1vw, var(--wm-headroom));
-    min-height: 0;
+/* Small phones. The trust pills are the first thing that has to give: two
+   of them side by side at 320px is four lines of text in two pills. */
+@media (max-width: 400px) {
+  .mg-hero__trust {
+    flex-direction: column;
+    align-items: center;
   }
 
-  .mg-hero__scene,
-  .mg-hero__skytop {
-    left: 0;
-    margin-left: 0;
+  .mg-hero__trustitem {
     width: 100%;
-  }
-
-  .mg-hero__scene {
-    height: 100%;
-    aspect-ratio: auto;
+    justify-content: center;
   }
 }
 
-/* ── reduced motion ──
-   Same composition, no travel. The scroll timeline is never built (see
-   MigrentHero), so these only guard the entrance transitions. */
-@media (prefers-reduced-motion: reduce) {
-  .mg-hero__scene,
-  .mg-hero__wordmark,
-  .mg-nav {
-    will-change: auto;
-    transform: none !important;
+/* Landscape phones: a 112svh hero on a 380px-tall window is four screens of
+   sky before anything happens. */
+@media (max-height: 560px) and (orientation: landscape) {
+  .mg-hero {
+    min-height: auto;
+    padding-top: clamp(56px, 14svh, 84px);
   }
 }
