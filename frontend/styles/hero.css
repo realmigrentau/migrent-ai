@@ -28,9 +28,9 @@
    for the sample table.
 
    Two deliberate departures from the reference, both noted at their rule:
-   the sky keeps a deep band at the top so white type stays legible at the
-   rest state, and the foot resolves to the page ground rather than the
-   reference's warm white.
+   the type walks from white to ink as the sky brightens (the reference
+   leaves its headline white and lands at 1.7:1), and the foot resolves to
+   the page ground rather than the reference's warm white.
    ══════════════════════════════════════════════════════════════ */
 
 .mg-hero {
@@ -118,27 +118,35 @@
   );
 }
 
-/* t = 4.94s, the rest state. sky #93bbf8 · horizon #ffe2be · low #ffb084
-   Departure from the reference: its sky reads #93bbf8 all the way to the
-   top edge, which leaves white type at 1.9:1 once the sun is up - the hero
-   opens perfectly legible and walks itself into failing. Holding a deep
-   band through the first third fixes it at 5:1 without touching the part
-   of the frame anyone is looking at, and a sky that is deepest at the
-   zenith and brightest at the horizon is what a sky actually does. */
+/* t = 4.94s, the rest state.
+   These are the reference's own numbers, sampled off its frames and then
+   checked a second time against a screen recording of the live page:
+   top #93bbf8 · behind the headline #b8c6eb · mid #f6dcd4 · low #ffb084.
+   The whole frame ends up bright and warm, not just the bottom of it.
+
+   An earlier pass here held a deep navy band across the top third to keep
+   white type legible. It did keep the type legible, and it also stopped
+   the hero looking like a sunrise - it read as a blue page with a warm
+   strip along the bottom. The sky is the thing being copied, so the sky
+   gets copied; legibility is solved on the type instead, in mgTypeInk
+   below, which walks the words from white to ink over the same clock. */
 .mg-hero__plate--dawn {
   opacity: 0;
   background: linear-gradient(
     180deg,
-    #1d3f8e 0%,
-    #24499b 14%,
-    #2a52a4 28%,
-    #3260b6 40%,
-    #5c8ade 50%,
-    #a8bce6 58%,
-    #d3cde2 65%,
-    #ffe2be 76%,
-    #ffc59e 85%,
-    #ffb084 93%,
+    #8ab8fd 0%,
+    #93bbf8 8%,
+    #a9c3f0 18%,
+    #b8c6eb 26%,
+    #c8cce5 34%,
+    #d6d0e0 42%,
+    #e8d6d8 49%,
+    #f6dcd4 56%,
+    #ffe2be 68%,
+    #ffcfa0 79%,
+    #ffb98c 86%,
+    #ffb084 90%,
+    #ffcba6 96%,
     #fff1e7 100%
   );
 }
@@ -175,14 +183,21 @@
   border-radius: 50%;
   opacity: 0.3;
   transform: translate(-50%, 62%);
+  /* Fades the whole way out rather than holding near-opaque to 91% and
+     dropping off a cliff. The old stops drew a flat disc with a visible
+     rim - an orange ball sitting in front of the sky instead of light
+     coming through it. Every stop now carries its own alpha, so the edge
+     dissolves into the plate underneath. */
   background: radial-gradient(
     circle at 50% 50%,
-    #fff9ea 0%,
-    #fff2d6 40%,
-    #ffe4b6 64%,
-    #ffd09a 80%,
-    #ffbb86 91%,
-    rgba(255, 178, 126, 0) 100%
+    rgba(255, 252, 241, 0.98) 0%,
+    rgba(255, 247, 226, 0.93) 16%,
+    rgba(255, 236, 198, 0.82) 31%,
+    rgba(255, 219, 168, 0.62) 45%,
+    rgba(255, 199, 143, 0.4) 58%,
+    rgba(255, 183, 128, 0.22) 70%,
+    rgba(255, 173, 120, 0.09) 82%,
+    rgba(255, 168, 116, 0) 93%
   );
 }
 
@@ -255,6 +270,37 @@
   }
 }
 
+/* ══════════════ the type, as the sky brightens ══════════════
+   The sky this copies ends bright: #93bbf8 at the top, #b8c6eb behind the
+   headline. White type on that is 1.7:1, which is what the reference
+   actually ships - it opens legible on night and walks itself into being
+   hard to read. Copying the sky and not that is the whole point of
+   rebuilding it rather than screenshotting it.
+
+   So the words travel too. They start white against the night and arrive
+   at an ink drawn from the same blue, which lands the headline at about
+   9:1 on the sky behind it. The swap is deliberately quick and late -
+   between 52% and 66% of the clock - so it happens while the sky is
+   passing through its mid lavender, where both white and ink still read,
+   rather than dragging a grey midpoint across the whole five seconds. */
+
+.mg-hero__title { --mg-ink-rest: #12213d; }
+.mg-hero__sub { --mg-ink-rest: #1c2942; }
+.mg-hero__micro { --mg-ink-rest: #2b3550; }
+.mg-navlink { --mg-ink-rest: #14233f; }
+.mg-nav__brand { --mg-ink-rest: #12213d; }
+
+@keyframes mgTypeInk {
+  0%,
+  52% {
+    color: #fff;
+  }
+  66%,
+  100% {
+    color: var(--mg-ink-rest);
+  }
+}
+
 /* ══════════════ the entrance ══════════════
    The reference's own numbers: .9s, easeOutCubic, opacity from a hair above
    zero, an 18px rise and an 8px blur that clears. Staggered 120ms apart. */
@@ -293,22 +339,35 @@
     animation: mgBloomIn var(--mg-sunrise) var(--mg-sunrise-ease) both;
   }
 
-  .mg-hero__head > *,
   .mg-hero__cardwrap,
   .mg-hero__trustitem {
     animation: mgHeroRise var(--mg-rise) var(--mg-rise-ease) both;
   }
 
+  /* Two animations on one element, so every delay below is a pair: the
+     entrance is staggered, the ink never is - it has to stay in step with
+     the sky no matter which line it is painting. */
+  .mg-hero__head > * {
+    animation:
+      mgHeroRise var(--mg-rise) var(--mg-rise-ease) both,
+      mgTypeInk var(--mg-sunrise) var(--mg-sunrise-ease) both;
+  }
+
+  .mg-navlink,
+  .mg-nav__brand {
+    animation: mgTypeInk var(--mg-sunrise) var(--mg-sunrise-ease) both;
+  }
+
   .mg-hero__head > :nth-child(2) {
-    animation-delay: 0.12s;
+    animation-delay: 0.12s, 0s;
   }
 
   .mg-hero__head > :nth-child(3) {
-    animation-delay: 0.24s;
+    animation-delay: 0.24s, 0s;
   }
 
   .mg-hero__head > :nth-child(4) {
-    animation-delay: 0.32s;
+    animation-delay: 0.32s, 0s;
   }
 
   .mg-hero__cardwrap {
@@ -337,6 +396,15 @@
   .mg-hero__sun {
     opacity: 1;
     transform: translate(-50%, 0);
+  }
+
+  /* No walk, so the words are simply already ink on the already-bright sky. */
+  .mg-hero__title,
+  .mg-hero__sub,
+  .mg-hero__micro,
+  .mg-navlink,
+  .mg-nav__brand {
+    color: var(--mg-ink-rest);
   }
 }
 
