@@ -69,7 +69,7 @@ export default function About() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {stats.map((stat, i) => (
               <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="card p-4 rounded-2xl text-center">
-                <p className="text-2xl font-bold text-[var(--color-primary)]">{stat.value}</p>
+                <p className="font-serif type-heavy text-[32px] leading-none text-[var(--color-primary)]">{stat.value}</p>
                 <p className="text-xs font-bold uppercase tracking-wider text-[var(--color-ink)] mt-1">{stat.label}</p>
                 <p className="text-xs text-[var(--color-ink-3)] mt-0.5">{stat.detail}</p>
               </motion.div>

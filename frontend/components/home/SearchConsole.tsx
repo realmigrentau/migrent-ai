@@ -39,7 +39,7 @@ export default function SearchConsole() {
         <Reveal className="text-center">
           <p className="mg-eyebrow mb-4">Start here</p>
           <h2 id="search-heading" className="mg-h2 max-w-[20ch] mx-auto">
-            Find a room you can <strong>trust</strong>
+            Find a room you can <strong className="type-script">trust</strong>
           </h2>
           <p className="mg-lead mt-5 max-w-[46ch] mx-auto">
             Rooms for migrants, students, and new arrivals. No rental history needed.

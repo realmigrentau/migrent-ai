@@ -22,10 +22,11 @@
        the sky                   kept inside the photograph, plus a
                                  narrow --color-info tint for callouts
 
-   Type is the hero's own editorial voice - Hanken Grotesk at 300 with a
-   bold word, exactly what .mg-intro__headline does - which is now the
-   site-wide display treatment, so no serif competes with the wordmark
-   anywhere.
+   Type is the site-wide system: Newsreader for the headings, Schibsted
+   Grotesk for the body, and the script accent on the two or three lines
+   that are about arriving rather than about how the product works. The
+   wordmark keeps its own condensed face, so nothing competes with it -
+   the serif is a reading voice at a different scale, not a second logo.
    ══════════════════════════════════════════════════════════════ */
 
 [data-home] {
@@ -167,17 +168,23 @@ body:has([data-home]) {
 @layer components {
   /* ══════════════════════════════════════════════════════════════
      TYPOGRAPHY
-     The hero has no serif in it. Its editorial line is Hanken Grotesk at
-     300 with one bold word, so that is the page's display voice too.
-     Any component that still asks for .font-serif (the shared header,
-     footer and subnav) is re-voiced here rather than forked.
+     The hero is a photograph with an architectural wordmark cut across
+     it; the page under it is an argument you read. So the wordmark keeps
+     its condensed grotesque and everything below is set the way a long
+     read is set - Newsreader for the headings, Schibsted Grotesk for the
+     body, and the script accent on the two or three lines that are about
+     arriving rather than about how the product works.
+     These rules mirror .font-serif in globals.css so a component that
+     asks for either class lands in the same voice.
      ══════════════════════════════════════════════════════════════ */
 
   .mg-eyebrow {
     display: block;
     font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
     font-size: clamp(10.5px, 0.86vw, 12.5px);
-    font-weight: 500;
+    /* 700 at 11px with 0.17em of tracking - below that it dissolves into the
+       whitespace above the heading and stops doing its job. */
+    font-weight: 700;
     letter-spacing: 0.17em;
     text-transform: uppercase;
     color: var(--color-ink-3);
@@ -201,7 +208,8 @@ body:has([data-home]) {
   .mg-display,
   .mg-h2,
   .mg-h3 {
-    font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+    font-family: var(--font-display), ui-serif, Georgia, 'Times New Roman', serif;
+    font-optical-sizing: auto;
     color: var(--color-ink);
     margin: 0;
     text-wrap: balance;
@@ -209,49 +217,52 @@ body:has([data-home]) {
 
   .mg-display {
     font-size: clamp(2.3rem, 5.2vw, 4.5rem);
-    font-weight: 300;
-    line-height: 1.04;
-    letter-spacing: -0.028em;
+    font-weight: 350;
+    line-height: 1.06;
+    letter-spacing: -0.016em;
   }
 
   .mg-h2 {
     font-size: clamp(1.85rem, 3.5vw, 3.15rem);
-    font-weight: 300;
-    line-height: 1.08;
-    letter-spacing: -0.023em;
+    font-weight: 350;
+    line-height: 1.1;
+    letter-spacing: -0.014em;
   }
 
   .mg-h3 {
     font-size: clamp(1.1rem, 1.35vw, 1.375rem);
     font-weight: 600;
-    line-height: 1.22;
-    letter-spacing: -0.014em;
+    line-height: 1.26;
+    letter-spacing: -0.004em;
     text-wrap: pretty;
   }
 
-  /* Emphasis is weight, never italics - the hero's rule. */
+  /* Emphasis is weight, colour or the script accent - never italics.
+     700 against the 350 around it - see .font-serif strong in globals.css
+     for why the bold has to be this far from the line it sits in. */
   .mg-display strong,
   .mg-h2 strong {
     font-weight: 700;
-    letter-spacing: -0.03em;
+    letter-spacing: -0.022em;
   }
 
   /* The belief band's line: display voice, but set at reading width so a
      long sentence stays a sentence rather than becoming a poster. */
   .mg-statement {
-    font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+    font-family: var(--font-display), ui-serif, Georgia, 'Times New Roman', serif;
+    font-optical-sizing: auto;
     color: var(--color-ink);
     font-size: clamp(1.7rem, 4.2vw, 3.25rem);
-    font-weight: 300;
-    line-height: 1.22;
-    letter-spacing: -0.022em;
+    font-weight: 350;
+    line-height: 1.26;
+    letter-spacing: -0.012em;
     text-wrap: pretty;
   }
 
   /* The step titles, which sit between a section heading and a card title. */
   .mg-h3--lg {
     font-size: clamp(1.3rem, 2vw, 1.7rem);
-    font-weight: 500;
+    font-weight: 600;
     letter-spacing: -0.018em;
   }
 
@@ -286,7 +297,10 @@ body:has([data-home]) {
   .mg-numeral {
     font-family: var(--font-condensed), "Archivo Narrow", "Roboto Condensed", ui-sans-serif, sans-serif;
     font-variation-settings: "wdth" 62;
-    font-weight: 500;
+    /* 700 at wdth 62 - a condensed face has less stem to see, so the weight
+       has to go further than it would at normal width to read as a number
+       you are meant to count with. */
+    font-weight: 700;
     letter-spacing: -0.02em;
     line-height: 0.82;
     font-variant-numeric: tabular-nums;

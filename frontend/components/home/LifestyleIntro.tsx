@@ -9,9 +9,11 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
  * see. The reveal is a one-shot on enter rather than a scrub - eyebrow first,
  * headline 140ms behind it, both on expo.out. Nothing bounces.
  *
- * It is also the page's type specimen: a light grotesque with one word in
- * bold. Every heading below borrows that treatment (see .mg-h2 in
- * styles/home.css), which is what keeps the page in the hero's voice.
+ * It is also the page's type specimen, and the only place both halves of the
+ * system land in one breath: the display serif, and the script on the word
+ * the whole site is about. Every heading below borrows the serif (see .mg-h2
+ * in styles/home.css); almost none of them get the script - see .type-script
+ * in styles/globals.css for when a word has earned it.
  */
 
 const REDUCED_MOTION = "(prefers-reduced-motion: reduce)";
@@ -48,7 +50,7 @@ export default function LifestyleIntro() {
       <h2 className="mg-intro__headline" id="intro-heading" data-intro="headline">
         Where arriving
         <br />
-        becomes <strong>home</strong>
+        becomes <strong className="type-script">home</strong>
       </h2>
     </section>
   );

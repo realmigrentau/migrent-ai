@@ -46,7 +46,7 @@ export default function ClosingCta() {
         <Reveal>
           <p className="mg-eyebrow mb-5">Free to browse · No credit file needed</p>
           <h2 id="closing-heading" className="mg-display max-w-[16ch]">
-            Ready to find your <strong>room?</strong>
+            Ready to find your <strong className="type-script">room</strong>?
           </h2>
         </Reveal>
 

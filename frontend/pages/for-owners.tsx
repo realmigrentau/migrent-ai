@@ -208,7 +208,7 @@ export default function ForOwners() {
             </motion.div>
             <motion.div {...reveal} transition={{ ...reveal.transition, delay: 0.1 }} className="ocean-card rounded-[var(--radius-xl)] border border-[var(--color-line)] shadow-[var(--shadow-card)] p-8">
               <div className="flex items-baseline gap-2">
-                <span className="font-serif text-[64px] leading-none tracking-[-0.03em] text-[var(--color-ink)]">$99</span>
+                <span className="font-serif type-heavy text-[64px] leading-none tracking-[-0.03em] text-[var(--color-ink)]">$99</span>
                 <span className="font-mono text-[13px] text-[var(--color-ink-2)]">AUD · one-time, per property</span>
               </div>
               <hr className="rule-soft my-6" />
@@ -229,7 +229,7 @@ export default function ForOwners() {
         <div className="max-w-[1280px] mx-auto px-6 md:px-10 lg:px-14 py-20 md:py-28">
           <motion.div {...reveal} className="max-w-[760px]">
             <div className="eyebrow mb-5">Free to list · Verified seekers</div>
-            <h2 className="font-serif text-[40px] md:text-[60px] leading-[0.98] tracking-[-0.03em] text-[var(--color-ink)]">Ready to list your room?</h2>
+            <h2 className="font-serif text-[40px] md:text-[60px] leading-[0.98] tracking-[-0.03em] text-[var(--color-ink)]">Ready to list your <strong className="type-script">room</strong>?</h2>
             <p className="mt-5 text-[17px] text-[var(--color-ink-2)] leading-[1.55] max-w-[560px]">Join hosts across Australia opening their doors to verified renters - and getting paid safely.</p>
             <div className="flex flex-wrap gap-3 mt-8">
               <Link href="/dashboard/owner" className="btn-primary h-12 px-7 text-[15px]">Start hosting <ArrowRight className="w-4 h-4" /></Link>

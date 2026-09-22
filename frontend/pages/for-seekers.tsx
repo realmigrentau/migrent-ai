@@ -74,7 +74,7 @@ export default function ForSeekers() {
               <h1 className="font-serif text-[44px] sm:text-[58px] xl:text-[64px] font-medium leading-[0.98] tracking-[-0.025em] text-[var(--color-ink)] [overflow-wrap:anywhere]">
                 Find your room.
                 <br />
-                <span className="text-[var(--color-primary)]">Feel at home.</span>
+                <span className="text-[var(--color-primary)]">Feel at <strong className="type-script">home</strong>.</span>
               </h1>
               <p className="mt-6 text-[17px] sm:text-[18px] text-[var(--color-ink-2)] max-w-[48ch] leading-[1.55]">
                 Verified rooms across Australia for migrants, students, and new arrivals - with no rental history or local credit file needed.

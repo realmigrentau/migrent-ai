@@ -100,7 +100,7 @@ export default function Pricing() {
               >
                 <div className="eyebrow mb-5">{p.tag}</div>
                 <div className="flex items-baseline gap-2.5">
-                  <span className="font-serif text-[56px] md:text-[64px] leading-none tracking-[-0.03em] text-[var(--color-ink)]">{p.price}</span>
+                  <span className="font-serif type-heavy text-[56px] md:text-[64px] leading-none tracking-[-0.03em] text-[var(--color-ink)]">{p.price}</span>
                   <span className="font-mono text-[12.5px] text-[var(--color-ink-2)]">{p.unit}</span>
                 </div>
                 <h2 className="font-serif text-[22px] tracking-[-0.01em] text-[var(--color-ink)] mt-5 leading-[1.15]">{p.title}</h2>

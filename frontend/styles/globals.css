@@ -9,8 +9,10 @@
    The homepage hero is the benchmark. These are the villa's colours
    rather than its sky: deep-forest primary, soft-linen grounds, a
    rationed terracotta roofline, muted sage for everything interactive.
-   ONE display family - the hero's own Hanken Grotesk light. Space Mono
-   survives for eyebrows and meta only.
+   Type is three voices with three jobs: Newsreader for headings,
+   Schibsted Grotesk for body and UI, Style Script for the accent word in a
+   handful of headings. Space Mono keeps eyebrows and meta; Archivo keeps
+   the wordmark.
    ══════════════════════════════════════════════════════════════ */
 
 @theme {
@@ -175,14 +177,23 @@
   --measure: 68ch;
 
   /* ── Typography ──
-     ONE display family and ONE UI family. The display voice is the
-     homepage hero's own: Hanken Grotesk at 300 with a single bold word,
-     tight tracking. Fraunces was retired - the hero has no serif in it,
-     so a serif everywhere else was the seam the brief describes.
-     Space Mono survives for eyebrows/meta only. */
-  --font-sans: 'Hanken Grotesk', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  --font-serif: 'Hanken Grotesk', ui-sans-serif, system-ui, -apple-system, sans-serif;
-  --font-display: 'Hanken Grotesk', ui-sans-serif, system-ui, -apple-system, sans-serif;
+     Three voices, three jobs (see lib/fonts.ts for why).
+
+       display  Newsreader - every heading. A reading serif with an
+                optical-size axis, so a 64px hero and an 18px card title are
+                drawn with different contrast rather than one outline scaled.
+       sans     Schibsted Grotesk - body, UI, buttons, forms. A news
+                grotesque, built to hold up at 13px on a form label.
+       script   Style Script - one accent word in a handful of headings.
+                Never a whole line, never body copy. See .type-script.
+
+     Mono stays Space Mono for eyebrows, labels, prices and meta; the
+     condensed wordmark face stays Archivo (--font-condensed, set from
+     lib/fonts.ts). Both were the distinctive parts of the old stack. */
+  --font-sans: 'Schibsted Grotesk', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-serif: 'Newsreader', ui-serif, 'Iowan Old Style', Georgia, 'Times New Roman', serif;
+  --font-display: 'Newsreader', ui-serif, 'Iowan Old Style', Georgia, 'Times New Roman', serif;
+  --font-script: 'Style Script', 'Snell Roundhand', 'Segoe Script', cursive;
   --font-mono: 'Space Mono', 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
 }
 
@@ -201,6 +212,9 @@
   --color-deep: #132720;
   --color-deep-2: #0c1913;
   --color-coral-700: #822d25;
+  /* Only ever read as var(--font-script) from .type-script - no utility
+     references it, so @theme alone would not survive the tree-shake. */
+  --font-script: 'Style Script', 'Snell Roundhand', 'Segoe Script', cursive;
   --radius-modal: 26px;
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
   --duration-slow: 320ms;
@@ -345,7 +359,9 @@ body {
   background: var(--color-bg);
   color: var(--color-ink);
   transition: background-color 0.3s ease, color 0.3s ease;
-  font-feature-settings: 'ss01', 'cv11';
+  /* 'ss01'/'cv11' were Hanken's (really Inter's) alternate-glyph sets. They
+     mean nothing in Schibsted Grotesk, and leaving a feature tag pointed at
+     a face that does not define it is how you get one stray glyph later. */
 }
 
 /* Inside @layer base, not unlayered.
@@ -373,6 +389,23 @@ body {
     font-weight: 600;
     color: var(--color-ink);
   }
+
+  /* h1 only, on purpose.
+
+     A page title is the one heading on an app route that belongs to the same
+     conversation as the marketing pages, so it is set in the display serif
+     whether or not the call site remembered `.font-serif` - which is how
+     /seeker/search and /faq ended up as the only pages on the site with a
+     grotesque title.
+
+     h2-h4 are NOT included. There are ~94 `text-lg font-bold` h2s in the
+     dashboard, settings and legal pages; those are labels you scan, not
+     titles you read, and the grotesque is the more legible face at 18px.
+     In @layer base, so `.font-serif` and any font-* utility still win. */
+  h1 {
+    font-family: var(--font-display);
+    font-optical-sizing: auto;
+  }
 }
 
 ::selection { background: var(--color-primary); color: var(--color-primary-fg); }
@@ -393,18 +426,28 @@ body {
 /* ══════════════════════════════════════════════════════════════
    TYPE UTILITIES
    ══════════════════════════════════════════════════════════════ */
-/* .font-serif is the site's display class. The name is historical - it is
-   referenced on ~400 headings across 60 routes - but it no longer loads a
-   serif. It now carries the homepage hero's own display treatment, which is
-   what makes a section three screens down still read as the same page as
-   the photograph: Hanken Grotesk, tight tracking, light at display sizes. */
+/* .font-serif is the site's display class, referenced on ~400 headings
+   across 60 routes. For one release the name was a lie - it resolved to the
+   same grotesque as the body - and that was the whole problem: a page whose
+   heading and its own caption are the same face at two weights has no voice,
+   it has a size chart. It loads a serif again.
+
+   font-optical-sizing is load-bearing here, not decoration. Newsreader has a
+   real opsz axis, so this one class draws a 64px hero with fine hairlines and
+   an 18px card title with the sturdier, wider-spaced cut that survives at
+   that size - instead of shrinking one outline and hoping. */
 .font-serif {
   font-family: var(--font-display);
   font-optical-sizing: auto;
   font-variation-settings: normal;
   font-style: normal;            /* display is always roman */
-  letter-spacing: -0.022em;
-  font-weight: 500;
+  letter-spacing: -0.006em;      /* a serif needs far less negative than a grotesque */
+  /* 600, not 500, below display scale. The size hook further down takes the
+     big headings back to 350, so this weight only ever lands on card titles,
+     city names and figures - the places where a heading has to hold its own
+     against a body paragraph two lines below it rather than float above a
+     whole section. */
+  font-weight: 600;
 }
 
 /* Weight tracks size, the way the hero's headline does: light and wide-set
@@ -431,9 +474,9 @@ body {
 .font-serif[class*="text-[7"],
 .display-1,
 .display-2 {
-  font-weight: 300;
-  letter-spacing: -0.028em;
-  line-height: 1.04;
+  font-weight: 350;
+  letter-spacing: -0.016em;
+  line-height: 1.06;
 }
 
 /* Explicit display steps, for headings sized with clamp() rather than a
@@ -447,23 +490,86 @@ body {
   font-size: clamp(2rem, 3.2vw + 0.6rem, 3.1rem);
 }
 
-/* The hero's one-bold-word emphasis. Emphasis is weight and colour, never
-   italics - anti-slop rule 1. */
+/* The one-emphasised-word heading. Emphasis is weight, colour or the script
+   accent below - never italics (anti-slop rule 1).
+
+   700 against the 350 of the line around it. Newsreader's bold is a real
+   drawn weight rather than a smeared regular, so the jump reads as two
+   different voices in one sentence instead of one voice getting louder -
+   which is the whole point of setting a heading light. The extra negative
+   tracking is because a bold serif sets wider at the same size; without it
+   the emphasised word looks like it was pasted in from a bigger heading. */
 .display-1 strong,
 .display-2 strong,
 .font-serif strong {
+  font-weight: 700;
+  letter-spacing: -0.022em;
+  font-style: normal;
+}
+
+/* The heavy figure: prices, counts, anything that is a NUMBER doing the
+   talking. It has to beat the `[class*="text-["]` size hooks above, which is
+   why it is spelled out against them rather than left as a bare class - the
+   attribute selectors match at the same specificity and would otherwise win
+   on source order. */
+.type-heavy,
+.font-serif.type-heavy,
+.display-1.type-heavy,
+.display-2.type-heavy {
   font-weight: 700;
   letter-spacing: -0.03em;
   font-style: normal;
 }
 
+/* ── The script accent ──
+   One word inside a heading, in a handful of places on the whole site. The
+   rules it has to obey, because the audience for this site is largely reading
+   in a second language:
+
+     · one word, never a phrase and never a whole heading
+     · never body copy, never a label, never a button, never anything small
+     · never the only thing carrying a meaning - the sentence has to read the
+       same with the accent switched off
+
+   The size bump is not styling flourish: Style Script's x-height is about a
+   fifth shorter than Newsreader's at the same em, so at 1em the accent word
+   reads as a size mistake. line-height: 1 keeps the taller ascenders from
+   opening up the heading's leading, and the trailing padding gives the exit
+   stroke somewhere to go before whatever follows - kept small, because the
+   word is often followed by a question mark rather than a space and a bigger
+   gap reads as a typo. */
+.type-script {
+  font-family: var(--font-script);
+  font-weight: 400;
+  font-style: normal;
+  font-size: 1.16em;
+  line-height: 1;
+  letter-spacing: 0;             /* scripts are drawn already fitted */
+  padding-inline-end: 0.04em;
+}
+
+/* Written as its own rule rather than folded into .type-script so it also
+   beats `.font-serif strong` and `.mg-h2 strong`, which are more specific
+   than a bare class and would otherwise put the weight back. */
+.font-serif strong.type-script,
+.display-1 strong.type-script,
+.display-2 strong.type-script,
+strong.type-script,
+em.type-script {
+  font-weight: 400;
+  font-style: normal;
+  letter-spacing: 0;
+}
+
 .font-mono { font-family: var(--font-mono); letter-spacing: -0.01em; }
 
 /* Eyebrow: mono, uppercase, wide-set, in the deep-forest primary. */
+/* Bold, not regular: at 11px with 0.16em of tracking a mono regular reads as
+   faint grey furniture. The bold is what makes it a label. */
 .eyebrow {
   font-family: var(--font-mono);
   font-size: 11px;
-  font-weight: 400;
+  font-weight: 700;
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--color-primary);
@@ -629,7 +735,10 @@ body {
 .btn-ghost,
 .btn-danger {
   font-family: var(--font-sans);
-  font-weight: 600;
+  /* 700. Schibsted Grotesk's bold is tight and square-shouldered, and a
+     button is the one place on the page where the type is the object you are
+     aiming at rather than something you are reading. */
+  font-weight: 700;
   font-size: 0.9375rem;
   letter-spacing: -0.005em;
   line-height: 1;
@@ -712,7 +821,7 @@ body {
 /* Text/link button - the fifth variant, no box at all */
 .btn-text {
   font-family: var(--font-sans);
-  font-weight: 600;
+  font-weight: 700;
   font-size: 0.9375rem;
   color: var(--color-accent);
   background: none;

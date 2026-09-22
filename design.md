@@ -98,23 +98,76 @@ flip. Bands use `--color-deep`, which is dark in both themes. Use `.mg-ground-de
 rather than restating a colour on each child.
 
 ## Typography
-Two families. All display is roman - italic headers are banned.
+Three voices with three jobs, plus mono for meta and a condensed face for the
+wordmark. All display is roman - italic headers are banned.
 
-- Display + Body/UI: **Hanken Grotesk**. The display voice is the hero's own -
-  weight 300 at display sizes with a single bold word for emphasis, tracking
-  -0.028em; 500 at card-heading sizes; body at 400.
+- Headings: **Newsreader**. A reading serif with a real `opsz` axis, so
+  `.font-serif` (which sets `font-optical-sizing: auto`) draws a 64px hero with
+  fine hairlines and an 18px card title with the sturdier cut that survives at
+  that size. Weight 350 at display sizes, 500 at card-heading sizes, tracking
+  -0.016em / -0.006em. A serif needs far less negative tracking than a
+  grotesque; do not carry the old numbers over.
+- Body / UI: **Schibsted Grotesk**. A news grotesque with open apertures and a
+  generous x-height - it has to stay legible at 13px on a form label, and a
+  large share of this audience is reading in a second language. Variable range
+  is 400-900 and nothing in the UI is set below 400.
+- Accent: **Style Script**, via `.type-script`. See below.
+- Figures: `.type-heavy` - Newsreader 700 for prices and counts. It is spelled
+  out against the `[class*="text-["]` size hooks in `globals.css` because those
+  match at the same specificity and would otherwise win on source order.
 - Mono: **Space Mono** - eyebrows, labels, prices, meta.
-- `.font-serif` is the display class. The name is historical and is referenced
-  on ~400 headings across 60 routes; it no longer loads a serif. Weight tracks
-  size automatically via `.font-serif.text-4xl` and `.font-serif[class*="text-[4"]`
-  style hooks, so call sites did not have to change.
+- Wordmark: **Archivo** at `wdth` 62 (`--font-condensed`) - the hero mark and
+  numerals only.
+- `.font-serif` is the display class, referenced on ~400 headings across 60
+  routes. Weight tracks size automatically via `.font-serif.text-4xl` and
+  `.font-serif[class*="text-[4"]` style hooks, so call sites did not change.
 
-**Fraunces was retired.** The hero photograph contains no serif, so a serif on
-every other page was the visible seam between the hero and the rest of the
-site. Removing it also drops a three-axis variable font from the critical path.
+**Why this replaced the single-grotesque stack.** For one release display, body
+and the `.font-serif` class all resolved to Hanken Grotesk. A page whose heading
+and its own caption are the same face at two weights has no voice, it has a size
+chart - and that is the house style of every template on the internet. The
+wordmark is architecture; the page under it is something you read. Two different
+jobs, so two different faces.
 
-Emphasis inside a heading is carried by **weight and accent colour**, never
-italics.
+### The script accent
+One word inside a heading, in a handful of places on the whole site. It marks
+the word the page is emotionally about - *home*, *trust*, *room* - never the
+functional ones (steps, filters, FAQ). The rules, which are not negotiable
+because of who reads this site:
+
+- one word, never a phrase and never a whole heading;
+- never body copy, a label, a button, or anything small;
+- never the only thing carrying a meaning - the sentence has to read the same
+  with the accent switched off;
+- never on an i18n string. Style Script is latin-subset; a `zh`, `ar` or `ru`
+  translation would fall through to whatever the OS calls cursive.
+
+Punctuation stays in the serif: `your <strong class="type-script">room</strong>?`
+
+Current call sites: the homepage intro line, the search heading, the homepage
+close, the `for-seekers` hero, the `for-owners` close.
+
+Emphasis inside a heading is otherwise carried by **weight and accent colour**,
+never italics.
+
+### The weight scale
+The page is set light and then hit hard in a few places. The gap is the point:
+a heading at 350 with one word at 700 reads as two voices in one sentence,
+where 500-against-600 just reads as one voice getting slightly louder.
+
+| Where | Weight |
+| --- | --- |
+| Display headings (`.font-serif` at text-4xl+, `.mg-display`, `.mg-h2`, `.display-*`) | 350 |
+| The emphasised word inside them (`strong`) | **700** |
+| Card and row titles (`.font-serif` below display scale, `.mg-h3`, `.mg-h3--lg`) | 600 |
+| Body, leads, meta | 400 |
+| Buttons (`.btn-*`), field labels | **700** |
+| Eyebrows (`.eyebrow` mono, `.mg-eyebrow`) | **700** |
+| Figures (`.type-heavy`, `.mg-numeral`) | **700** |
+
+Bold serif sets wider than light serif at the same size, so every 700 above
+carries extra negative tracking (-0.022em on emphasis, -0.03em on figures).
+Without it the bold word looks pasted in from a larger heading.
 
 ## Spacing
 4-point named scale (Tailwind v4 spacing + the `--space-*` tokens in tokens.css).
@@ -161,7 +214,7 @@ scroll) + Framer Motion.
 ## What pages MUST share
 - The wordmark / Logo + "MigRent" in the display face.
 - Deep-forest primary + sage accent + rationed terracotta.
-- Hanken Grotesk (display + body) + Space Mono (meta).
+- Newsreader (headings) + Schibsted Grotesk (body/UI) + Space Mono (meta).
 - One button system (`.btn-primary` / `-secondary` / `-outline` / `-ghost` /
   `-danger` / `.btn-text`), one field system, one card system, one radius scale.
 - The deep-forest footer as the close.

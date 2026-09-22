@@ -39,9 +39,10 @@
   --color-danger-500: #a33a2c;
   --color-info-500: #1f6a8c;
 
-  /* ── type ── one display/UI family, one mono ── */
-  --font-display: 'Hanken Grotesk', ui-sans-serif, system-ui, sans-serif;
-  --font-sans: 'Hanken Grotesk', ui-sans-serif, system-ui, sans-serif;
+  /* ── type ── display serif, UI grotesque, script accent, mono meta ── */
+  --font-display: 'Newsreader', ui-serif, Georgia, 'Times New Roman', serif;
+  --font-sans: 'Schibsted Grotesk', ui-sans-serif, system-ui, sans-serif;
+  --font-script: 'Style Script', 'Snell Roundhand', cursive;
   --font-mono: 'Space Mono', ui-monospace, Menlo, monospace;
 
   /* ── radius ── */
