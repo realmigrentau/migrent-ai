@@ -45,3 +45,6 @@ next-env.d.ts
 /playwright-report/
 /blob-report/
 /.env.production.local
+
+# ...except the local template, which holds no secrets
+!.env.local.example

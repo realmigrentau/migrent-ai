@@ -6,6 +6,7 @@ import { supabase } from "../../lib/supabase";
 import { useAuth } from "../../hooks/useAuth";
 import SignInButton from "../../components/SignInButton";
 import ConsentCheckboxes from "../../components/legal/ConsentCheckboxes";
+import { ONBOARDING_PATH, authCallbackUrl } from "../../lib/authRedirect";
 import { Logo } from "../../components/ui/Logo";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
@@ -13,7 +14,7 @@ import { useTranslation } from "react-i18next";
 export default function SignUp() {
   const { t } = useTranslation();
   const router = useRouter();
-  const { session } = useAuth();
+  const { session, refreshing } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [msg, setMsg] = useState("");
@@ -31,12 +32,24 @@ export default function SignUp() {
   const [fieldErrors, setFieldErrors] = useState<{ email?: string; password?: string }>({});
   const [checkEmail, setCheckEmail] = useState<string | null>(null);
   const [msgTone, setMsgTone] = useState<"error" | "info">("error");
+  const [resendState, setResendState] = useState<"idle" | "sending" | "sent" | "failed">("idle");
 
   useEffect(() => {
-    if (session) void router.push("/onboarding");
-  }, [session, router]);
+    if (session && !refreshing) void router.replace(ONBOARDING_PATH);
+  }, [session, refreshing, router]);
 
   if (session) return null;
+
+  const handleResend = async () => {
+    if (!checkEmail || resendState === "sending") return;
+    setResendState("sending");
+    const { error } = await supabase.auth.resend({
+      type: "signup",
+      email: checkEmail,
+      options: { emailRedirectTo: authCallbackUrl(window.location.origin, ONBOARDING_PATH) },
+    });
+    setResendState(error ? "failed" : "sent");
+  };
 
   const handleSignUp = async (e?: React.FormEvent) => {
     e?.preventDefault();
@@ -71,6 +84,9 @@ export default function SignUp() {
         email: email.trim(),
         password,
         options: {
+          // The confirmation email links back here, on this origin, rather
+          // than to Supabase's Site URL (see lib/authRedirect.ts).
+          emailRedirectTo: authCallbackUrl(window.location.origin, ONBOARDING_PATH),
           data: {
             type: "seeker",
             legal_accepted_at: new Date().toISOString(),
@@ -91,10 +107,11 @@ export default function SignUp() {
         setMsg("An account with this email already exists. Sign in instead, or reset your password.");
       } else if (!data.session) {
         setMsgTone("info");
+        setResendState("idle");
         setCheckEmail(email.trim());
         setMsg(`Check your email. We sent a confirmation link to ${email.trim()}.`);
       } else {
-        void router.push("/onboarding");
+        void router.replace(ONBOARDING_PATH);
       }
     } catch (err) {
       const offline = typeof navigator !== "undefined" && navigator.onLine === false;
@@ -209,10 +226,7 @@ export default function SignUp() {
             </p>
           )}
 
-          <SignInButton
-            redirectTo={typeof window !== "undefined" ? window.location.origin : undefined}
-            disabled={!allConsented}
-          />
+          <SignInButton next={ONBOARDING_PATH} disabled={!allConsented} />
 
           <div id="signup-status" role={msgTone === "error" ? "alert" : "status"} aria-live={msgTone === "error" ? "assertive" : "polite"} aria-atomic="true">
             {msg && (
@@ -227,7 +241,18 @@ export default function SignUp() {
               >
                 {msg}
                 {checkEmail && (
-                  <span className="block mt-1 text-[12px]">Did not get it? Check spam, or <Link href="/magic-link-login" className="underline">request a new link</Link>.</span>
+                  <span className="block mt-1 text-[12px]">
+                    Open it in this browser to finish. Did not get it? Check spam, or{" "}
+                    {resendState === "sent" ? (
+                      "we have sent another."
+                    ) : resendState === "failed" ? (
+                      "wait a minute before asking for another."
+                    ) : (
+                      <button type="button" onClick={handleResend} disabled={resendState === "sending"} className="underline font-semibold disabled:opacity-60">
+                        {resendState === "sending" ? "sending..." : "resend the email"}
+                      </button>
+                    )}
+                  </span>
                 )}
               </motion.p>
             )}

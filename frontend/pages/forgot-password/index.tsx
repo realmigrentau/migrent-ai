@@ -4,7 +4,7 @@ import Head from "next/head";
 import { motion } from "framer-motion";
 import { Mail, ArrowLeft } from "lucide-react";
 import { supabase } from "../../lib/supabase";
-import { FRONTEND_BASE_URL } from "../../lib/apiBase";
+import { RESET_PASSWORD_PATH, authCallbackUrl } from "../../lib/authRedirect";
 
 /**
  * Password reset request.
@@ -31,7 +31,9 @@ export default function ForgotPassword() {
 
     const { error: resetError } = await supabase.auth.resetPasswordForEmail(
       email.trim(),
-      { redirectTo: `${FRONTEND_BASE_URL}/reset-password` }
+      // Same origin as this page: the reset link can only be redeemed in the
+      // browser that asked for it (lib/authRedirect.ts).
+      { redirectTo: authCallbackUrl(window.location.origin, RESET_PASSWORD_PATH) }
     );
 
     setLoading(false);

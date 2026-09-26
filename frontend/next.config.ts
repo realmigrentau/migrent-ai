@@ -9,13 +9,15 @@ import { THEME_BOOTSTRAP_SCRIPT } from "./lib/themeBootstrap";
 const THEME_BOOTSTRAP_HASH = `sha256-${createHash("sha256").update(THEME_BOOTSTRAP_SCRIPT, "utf8").digest("base64")}`;
 
 // The API origin, so preview deployments pointing at a different backend
-// are not blocked by connect-src.
+// are not blocked by connect-src. In development with no env var set,
+// lib/apiBase.ts falls back to http://localhost:8000, so allow that too;
+// without it every API call on a local run fails as "Failed to fetch".
 const API_ORIGIN = (() => {
   try {
     const u = new URL(process.env.NEXT_PUBLIC_API_BASE_URL || "");
     return u.origin.startsWith("http") ? u.origin : "";
   } catch {
-    return "";
+    return process.env.NODE_ENV === "production" ? "" : "http://localhost:8000";
   }
 })();
 
@@ -61,6 +63,15 @@ const nextConfig: NextConfig = {
 
   async redirects() {
     return [
+      // Supabase sends people to its Site URL (the homepage) whenever the
+      // redirect a sign-in asked for is not on its allow-list. Forward those
+      // arrivals to the page that can finish the sign-in; the query string
+      // (?code=, ?token_hash=, ?error_description=) passes through as is.
+      // Temporary, so no browser caches it.
+      { source: "/", has: [{ type: "query", key: "code" }], destination: "/auth/callback", permanent: false },
+      { source: "/", has: [{ type: "query", key: "token_hash" }], destination: "/auth/callback", permanent: false },
+      { source: "/", has: [{ type: "query", key: "error_description" }], destination: "/auth/callback", permanent: false },
+
       // Deduped pages - permanent redirects preserve old links and bookmarks.
       { source: "/seeker/search-extended", destination: "/seeker/search", permanent: true },
       { source: "/rental-laws", destination: "/resources/rental-laws", permanent: true },
