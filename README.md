@@ -30,6 +30,19 @@ cp .env.local.example .env.local
 npm run dev
 ```
 
+### Supabase sign-in settings
+
+Supabase > Authentication > URL Configuration must read:
+
+- **Site URL**: `https://migrent.vercel.app`
+- **Redirect URLs**: `https://migrent.vercel.app/**` and `http://localhost:3000/**`
+
+Every sign-in (Google, sign-up confirmation, magic link, password reset)
+returns to `/auth/callback` on the site it started from
+(`frontend/lib/authRedirect.ts`). If that address is not in the list,
+Supabase sends people to the Site URL instead, and a sign-in started on one
+site cannot finish on another.
+
 ## Verify
 
 ```bash

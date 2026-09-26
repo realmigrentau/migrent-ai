@@ -53,3 +53,6 @@ next-env.d.ts
 # output in data/suburbs/ is what the site builds from and IS committed.
 /.abs-cache/
 /.next-verify/
+
+# ...except the local template, which holds no secrets
+!.env.local.example

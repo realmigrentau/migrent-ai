@@ -70,7 +70,7 @@ function validateSuburbCityFormat(value: string): string | undefined {
 
 export default function OnboardingPage() {
   const router = useRouter();
-  const { session, user } = useAuth();
+  const { session, user, loading: authLoading } = useAuth();
   const [isReady, setIsReady] = useState(false);
 
   // Form fields
@@ -102,14 +102,17 @@ export default function OnboardingPage() {
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
 
-  // Auth gate
+  // Auth gate. Wait for the session to load first: arriving straight from
+  // /auth/callback there is no cached copy yet, and treating "still loading"
+  // as "signed out" bounced brand-new accounts back to the sign-in page.
   useEffect(() => {
+    if (authLoading) return;
     if (!session || !user) {
-      router.push("/signin");
+      router.replace("/signin?redirect=/onboarding");
       return;
     }
     setIsReady(true);
-  }, [session, user, router]);
+  }, [session, user, authLoading, router]);
 
   // ── Station lookup (debounced) ──────────────────────────
 
