@@ -22,7 +22,18 @@ export default function Layout({ children }: { children: ReactNode }) {
   const isDashboard = router.pathname.startsWith("/dashboard");
   const isPricing = router.pathname === "/pricing";
   const isMarketing = ["/for-seekers", "/for-owners", "/about", "/features"].includes(router.pathname);
-  const isFullWidth = isAdminRoute || isHomePage || isPricing || isMarketing;
+  /* The Resources hubs lay out their own bands, including the deep-forest
+     close, so they need the full width rather than the centred article
+     container. Listed explicitly: /resources/rental-laws and
+     /resources/roi-calculator are built for the narrow container and keep
+     it. */
+  const isResourceHub = [
+    "/resources",
+    "/resources/guides",
+    "/resources/tools",
+    "/resources/help",
+  ].includes(router.pathname);
+  const isFullWidth = isAdminRoute || isHomePage || isPricing || isMarketing || isResourceHub;
 
   return (
     /* data-home scopes styles/home.css: the homepage's tokens are taken from

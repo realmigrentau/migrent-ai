@@ -97,6 +97,25 @@ const nextConfig: NextConfig = {
       // and code of conduct all point at the community guidelines, so that one
       // is authoritative.
       { source: "/rules", destination: "/rules-community-guidelines", permanent: true },
+
+      // ── Resources consolidation ──
+      // The Resources dropdown carried eight destinations, two of which were
+      // not resources and four of which were two pairs of the same thing.
+      // Four index pages folded into three hubs. Only the indexes moved:
+      // these sources match exactly, so /guides/host-first, /blog/:slug,
+      // /help/:slug and /help/category/:slug all still resolve to their own
+      // pages and every article URL that was indexed or bookmarked is
+      // unchanged.
+      //
+      // Guides and Blog were the same job twice - eight step-by-step guides
+      // on one page, six written pieces on the other, both of them "read
+      // this before you rent".
+      { source: "/guides", destination: "/resources/guides", permanent: true },
+      { source: "/blog", destination: "/resources/guides", permanent: true },
+      // FAQ and Help were the other duplicated pair: forty translated
+      // questions on one, twenty articles and a search box on the other.
+      { source: "/faq", destination: "/resources/help", permanent: true },
+      { source: "/help", destination: "/resources/help", permanent: true },
     ];
   },
 

@@ -265,7 +265,7 @@ export default function ForSeekers() {
             <p className="mt-5 text-[17px] text-[var(--color-ink-2)] leading-[1.55] max-w-[560px]">Join migrants, students, and professionals who found a home they can trust through MigRent.</p>
             <div className="flex flex-wrap gap-3 mt-8">
               <Link href="/seeker/search" className="btn-primary h-12 px-7 text-[15px]">Start searching <ArrowRight className="w-4 h-4" /></Link>
-              <Link href="/faq" className="btn-secondary h-12 px-7 text-[15px]">Questions? Read the FAQ</Link>
+              <Link href="/resources/help" className="btn-secondary h-12 px-7 text-[15px]">Questions? Read the FAQ</Link>
             </div>
           </motion.div>
         </div>

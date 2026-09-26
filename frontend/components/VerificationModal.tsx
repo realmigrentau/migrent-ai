@@ -133,7 +133,7 @@ export default function VerificationModal({
                       community safe.
                     </p>
                     <Link
-                      href="/help/verification"
+                      href="/help/verify-your-identity"
                       className="text-sm font-semibold text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] transition-colors"
                     >
                       Learn more about verification

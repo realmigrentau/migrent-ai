@@ -312,7 +312,7 @@ export default function SupportTab({
 
         <div className="ml-14 grid grid-cols-1 sm:grid-cols-2 gap-3">
           <Link
-            href="/help"
+            href="/resources/help"
             className="flex items-center gap-3 p-3 rounded-xl border border-[var(--color-line)] hover:bg-[var(--color-surface)]/50 transition-colors group"
           >
             <BookOpen className="w-5 h-5 text-[var(--color-primary)]" />

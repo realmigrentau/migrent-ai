@@ -49,7 +49,7 @@ export default function GuidesAndFaq() {
               emphasis="well."
               headingId="guides-heading"
               aside={
-                <Link href="/guides" className="mg-link">
+                <Link href="/resources/guides" className="mg-link">
                   All guides <ArrowRight className="w-4 h-4" aria-hidden="true" />
                 </Link>
               }
@@ -59,10 +59,10 @@ export default function GuidesAndFaq() {
           <ul className="list-none m-0 p-0 mt-10 grid sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-9">
             {GUIDES.map((g, i) => (
               <Reveal as="li" key={g.t} delay={(i % 4) * 0.05}>
-                <Link href="/guides" className="group block">
+                <Link href="/resources/guides" className="group block">
                   <hr className="mg-rule mb-5 transition-colors group-hover:bg-[var(--color-primary)]" />
                   <span className="mg-icon" aria-hidden="true">
-                    <g.icon className="w-[21px] h-[21px]" strokeWidth={1.7} />
+                    <g.icon className="w-5 h-5" strokeWidth={1.75} />
                   </span>
                   <h3 className="mg-h3 mt-5">{g.t}</h3>
                   <p className="mg-body mt-2">{g.d}</p>
@@ -83,7 +83,7 @@ export default function GuidesAndFaq() {
             <h2 id="faq-heading" className="mg-h2 max-w-[12ch]">
               Questions, <strong>answered.</strong>
             </h2>
-            <Link href="/faq" className="mg-link mt-7">
+            <Link href="/resources/help" className="mg-link mt-7">
               See all FAQs <ArrowRight className="w-4 h-4" aria-hidden="true" />
             </Link>
           </Reveal>

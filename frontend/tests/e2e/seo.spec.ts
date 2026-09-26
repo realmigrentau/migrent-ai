@@ -24,7 +24,7 @@ test("sitemap lists only public canonical pages with real dates", async ({ reque
   expect(lastmods.filter((d) => d !== today).length).toBeGreaterThan(0);
 });
 
-for (const path of ["/", "/pricing", "/for-seekers", "/blog", "/listing/11111111-1111-4111-8111-000000000001"]) {
+for (const path of ["/", "/pricing", "/for-seekers", "/resources/guides", "/listing/11111111-1111-4111-8111-000000000001"]) {
   test(`metadata is unique and single on ${path}`, async ({ page }) => {
     await page.goto(path);
     await expect(page.locator("head title")).toHaveCount(1);
@@ -67,4 +67,40 @@ test("structured data is valid JSON and only asserts real facts", async ({ page 
       expect(parsed.address.streetAddress).toBeUndefined();
     }
   }
+});
+
+/**
+ * The Resources consolidation folded four index pages into three hubs.
+ * Only the indexes moved: every article URL underneath them is unchanged,
+ * and that is the half of this that is easy to break later.
+ */
+test("retired Resources indexes redirect, and their articles do not", async ({ page }) => {
+  const moved: [string, string][] = [
+    ["/guides", "/resources/guides"],
+    ["/blog", "/resources/guides"],
+    ["/faq", "/resources/help"],
+    ["/help", "/resources/help"],
+  ];
+  for (const [from, to] of moved) {
+    await page.goto(from);
+    expect(new URL(page.url()).pathname, `${from} should land on ${to}`).toBe(to);
+  }
+
+  const kept = ["/guides/find-fast", "/blog/bond-rights-migrants", "/help/verify-your-identity"];
+  for (const path of kept) {
+    const res = await page.goto(path);
+    expect(res?.status(), `${path} should still be served`).toBe(200);
+    expect(new URL(page.url()).pathname, `${path} must not redirect`).toBe(path);
+  }
+});
+
+test("the Resources dropdown offers no more than four destinations", async ({ page, isMobile }) => {
+  test.skip(isMobile, "the dropdown is an accordion below lg");
+  await page.goto("/pricing");
+  await page.getByRole("button", { name: "Resources" }).click();
+  const panel = page.locator("#nav-panel-resources");
+  await expect(panel).toBeVisible();
+  const count = await panel.getByRole("link").count();
+  expect(count).toBeGreaterThan(0);
+  expect(count).toBeLessThanOrEqual(4);
 });

@@ -17,8 +17,8 @@ const columns: { heading: string; links: { label: string; href: string }[] }[] =
     links: [
       { label: "Search rooms", href: "/seeker/search" },
       { label: "How it works", href: "/for-seekers" },
-      { label: "FAQ", href: "/faq" },
-      { label: "Guides", href: "/guides" },
+      { label: "Help centre", href: "/resources/help" },
+      { label: "Guides & articles", href: "/resources/guides" },
       { label: "Tenant rights", href: "/resources/rental-laws" },
     ],
   },
@@ -39,8 +39,7 @@ const columns: { heading: string; links: { label: string; href: string }[] }[] =
       { label: "Suburb guides", href: "/suburbs" },
       { label: "Mentors", href: "/mentors" },
       { label: "Resources", href: "/resources" },
-      { label: "Help centre", href: "/help" },
-      { label: "Blog", href: "/blog" },
+      { label: "Tools & checklists", href: "/resources/tools" },
     ],
   },
   {

@@ -127,7 +127,7 @@ export default function HelpCategoryPage() {
             This category doesn't exist. Browse all categories in the Help Center.
           </p>
           <Link
-            href="/help"
+            href="/resources/help"
             className="inline-flex items-center gap-2 px-5 py-2.5 bg-[var(--color-primary)] hover:bg-[var(--color-primary-500)] text-[color:var(--color-primary-fg)] rounded-xl text-sm font-semibold transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
@@ -146,7 +146,7 @@ export default function HelpCategoryPage() {
 
         {/* Breadcrumb */}
         <nav className="flex items-center gap-1.5 text-xs text-[var(--color-ink-3)] flex-wrap">
-          <Link href="/help" className="hover:text-[var(--color-primary)] transition-colors font-medium">
+          <Link href="/resources/help" className="hover:text-[var(--color-primary)] transition-colors font-medium">
             Help Center
           </Link>
           <ChevronRight className="w-3 h-3" />
@@ -266,7 +266,7 @@ export default function HelpCategoryPage() {
 
         {/* Back link */}
         <Link
-          href="/help"
+          href="/resources/help"
           className="inline-flex items-center gap-2 text-sm text-[var(--color-ink-3)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] transition-colors font-medium"
         >
           <ArrowLeft className="w-4 h-4" />

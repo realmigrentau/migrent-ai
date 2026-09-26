@@ -1,7 +1,9 @@
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
-const PAGES = ["/", "/seeker/search?suburb=Kellyville", "/signin", "/signup", "/contact", "/pricing", "/faq", "/listing/11111111-1111-4111-8111-000000000001"];
+// /resources/* are the consolidated Resources hubs; they replaced /faq,
+// /guides, /blog and /help, whose URLs are 301s now.
+const PAGES = ["/", "/seeker/search?suburb=Kellyville", "/signin", "/signup", "/contact", "/pricing", "/resources", "/resources/guides", "/resources/tools", "/resources/help", "/listing/11111111-1111-4111-8111-000000000001"];
 
 for (const path of PAGES) {
   test(`axe: ${path} has no serious or critical violations`, async ({ page }) => {
@@ -76,7 +78,7 @@ test("homepage header is reachable by keyboard over the hero", async ({ page }) 
 });
 
 test("FAQ accordion is keyboard operable and announces state", async ({ page }) => {
-  await page.goto("/faq");
+  await page.goto("/resources/help");
   const first = page.locator("main h3 > button[aria-expanded]").first();
   await first.focus();
   await page.keyboard.press("Enter");

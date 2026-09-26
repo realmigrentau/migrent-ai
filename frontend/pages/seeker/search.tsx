@@ -117,8 +117,10 @@ function FilterChip({ label, onRemove }: { label: string; onRemove: () => void }
 
 function FilterSection({ title, children, defaultOpen = true }: { title: string; children: React.ReactNode; defaultOpen?: boolean }) {
   const [open, setOpen] = useState(defaultOpen);
-  /* See the note in pages/faq.tsx: a module-level counter desynchronises
-     between the server and client renders and breaks aria-controls. */
+  /* useId, not a module-level counter: a counter desynchronises between the
+     server and client renders, which leaves aria-controls pointing at an id
+     that does not exist. (The FAQ hit this first; that page now lives in
+     components/resources/FaqAccordion.tsx.) */
   const id = `filter-section-${useId()}`;
   return (
     <div className="border-b border-[var(--color-line)] pb-4">

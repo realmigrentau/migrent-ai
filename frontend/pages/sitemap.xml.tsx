@@ -24,13 +24,15 @@ const STATIC_PAGES: Entry[] = [
   { path: "/about", priority: "0.7", changefreq: "monthly" },
   { path: "/mentors", priority: "0.6", changefreq: "monthly" },
   { path: "/become-mentor", priority: "0.5", changefreq: "monthly" },
-  { path: "/faq", priority: "0.7", changefreq: "monthly" },
-  { path: "/guides", priority: "0.7", changefreq: "weekly" },
-  { path: "/resources", priority: "0.6", changefreq: "monthly" },
+  // Resources: the three consolidated hubs. /guides, /blog, /faq and /help
+  // are 301s now (see next.config.ts) and a redirect must not be submitted
+  // for indexing, so they are gone from here rather than merely reordered.
+  { path: "/resources", priority: "0.7", changefreq: "monthly" },
+  { path: "/resources/guides", priority: "0.8", changefreq: "weekly" },
+  { path: "/resources/tools", priority: "0.7", changefreq: "monthly" },
+  { path: "/resources/help", priority: "0.7", changefreq: "monthly" },
   { path: "/resources/rental-laws", priority: "0.5", changefreq: "monthly" },
   { path: "/suburbs", priority: "0.8", changefreq: "weekly" },
-  { path: "/blog", priority: "0.7", changefreq: "weekly" },
-  { path: "/help", priority: "0.6", changefreq: "monthly" },
   { path: "/contact", priority: "0.5", changefreq: "yearly" },
   { path: "/safety-verification", priority: "0.5", changefreq: "monthly" },
   { path: "/safety-reporting", priority: "0.4", changefreq: "yearly" },

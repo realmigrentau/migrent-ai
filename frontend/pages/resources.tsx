@@ -1,517 +1,281 @@
 import Link from "next/link";
+import { useDeferredValue, useMemo, useState } from "react";
 import SEOHead from "../components/SEOHead";
-import { motion, type Variants } from "framer-motion";
-import { useTranslation } from "react-i18next";
+import ResourceHero from "../components/resources/ResourceHero";
+import ResourceIcon from "../components/resources/ResourceIcon";
+import ResourceSearch from "../components/resources/ResourceSearch";
+import ResourceCard, { Arrow, CategoryChip } from "../components/resources/ResourceCard";
+import {
+  RESOURCES_IN_PROGRESS,
+  RESOURCE_ARTICLES,
+  RESOURCE_HUBS,
+  RESOURCE_TOOLS,
+  getFeaturedArticle,
+  searchResources,
+} from "../data/resources";
 
-const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 30 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: { delay: i * 0.1, duration: 0.5, ease: "easeOut" },
-  }),
-};
+/**
+ * The Resources overview.
+ *
+ * What was here before was six full-bleed panels, each with a hand-drawn
+ * fake UI mock-up inside it - a fake blog feed, a fake API response, a fake
+ * Discord server, a fake careers board with three invented job openings -
+ * and it advertised a Developer API that does not exist and a community
+ * chat that has not launched. It was the single largest piece of invented
+ * content on the site.
+ *
+ * It is now what an overview should be: one sentence, one search box that
+ * covers every resource at once, the three real destinations, and the
+ * things people actually open.
+ */
 
-/* ── Mock UI illustrations for each resource section ─────────────── */
+const RESULTS_ID = "resources-results";
 
-function MockBlog() {
-  return (
-    <div className="w-full h-full flex flex-col gap-3 p-6">
-      <div className="text-white/80 text-xs font-semibold uppercase tracking-wider mb-1">Latest Posts</div>
-      {[
-        { title: "5 Tips for First-Time Migrants", date: "Feb 2026", tag: "Guide" },
-        { title: "Sydney Rental Market Update", date: "Jan 2026", tag: "Market" },
-        { title: "How to Spot Rental Scams", date: "Jan 2026", tag: "Safety" },
-      ].map((post, i) => (
-        <div key={i} className="bg-white/10 backdrop-blur-sm rounded-xl p-3 flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-white/15 shrink-0 flex items-center justify-center">
-            <svg className="w-5 h-5 text-white/60" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
-            </svg>
-          </div>
-          <div className="flex-1 min-w-0">
-            <div className="text-white/90 text-xs font-medium truncate">{post.title}</div>
-            <div className="text-white/40 text-[10px] mt-0.5">{post.date}</div>
-          </div>
-          <span className="text-[9px] font-medium text-white/60 bg-white/10 px-2 py-0.5 rounded-full">{post.tag}</span>
-        </div>
-      ))}
-    </div>
-  );
-}
+export default function ResourcesLanding() {
+  const [query, setQuery] = useState("");
+  const deferredQuery = useDeferredValue(query);
+  const hits = useMemo(() => searchResources(deferredQuery), [deferredQuery]);
+  const searching = query.trim().length > 0;
 
-function MockCalculator() {
-  return (
-    <div className="w-full h-full flex flex-col gap-3 p-6">
-      <div className="text-white/80 text-xs font-semibold uppercase tracking-wider mb-1">ROI Calculator</div>
-      <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 space-y-3">
-        <div className="flex items-center justify-between">
-          <span className="text-white/60 text-xs">Weekly Rent</span>
-          <span className="text-white/90 text-sm font-bold">$380</span>
-        </div>
-        <div className="flex items-center justify-between">
-          <span className="text-white/60 text-xs">Property Value</span>
-          <span className="text-white/90 text-sm font-bold">$650K</span>
-        </div>
-        <div className="h-px bg-white/10" />
-        <div className="flex items-center justify-between">
-          <span className="text-white/60 text-xs">Annual ROI</span>
-          <span className="text-[var(--color-accent)] text-sm font-bold">5.2%</span>
-        </div>
-      </div>
-      <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
-        <motion.div
-          initial={{ width: 0 }}
-          animate={{ width: "52%" }}
-          transition={{ duration: 2, ease: "easeOut", repeat: Infinity, repeatType: "reverse" }}
-          className="h-full bg-[var(--color-primary)] from-[var(--color-accent)] to-[var(--color-accent)] rounded-full"
-        />
-      </div>
-      <div className="text-white/40 text-[10px]">Based on Sydney metro averages</div>
-    </div>
-  );
-}
-
-function MockAPIDocs() {
-  return (
-    <div className="w-full h-full flex flex-col gap-3 p-6 font-mono">
-      <div className="flex items-center gap-2 mb-1">
-        <div className="w-2 h-2 rounded-full bg-[var(--color-accent)]" />
-        <span className="text-white/80 text-xs font-sans font-semibold uppercase tracking-wider">API v2</span>
-      </div>
-      <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 text-[10px] space-y-1">
-        <div className="text-[var(--color-primary)]">GET <span className="text-white/60">/api/v2/listings</span></div>
-        <div className="text-[var(--color-accent)]">POST <span className="text-white/60">/api/v2/bookings</span></div>
-        <div className="text-[var(--color-warn-500)]">PUT <span className="text-white/60">/api/v2/profile</span></div>
-      </div>
-      <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3">
-        <div className="text-white/40 text-[9px] mb-1">Response</div>
-        <div className="text-[10px] text-[var(--color-accent)]">{`{`}</div>
-        <div className="text-[10px] text-white/60 pl-3">{`"status": "200 OK",`}</div>
-        <div className="text-[10px] text-white/60 pl-3">{`"data": [...],`}</div>
-        <div className="text-[10px] text-[var(--color-accent)]">{`}`}</div>
-      </div>
-    </div>
-  );
-}
-
-function MockDiscord() {
-  return (
-    <div className="w-full h-full flex flex-col gap-3 p-6">
-      <div className="flex items-center gap-2 mb-1">
-        <div className="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center text-white text-sm font-bold">M</div>
-        <div>
-          <div className="text-white/90 text-sm font-semibold">MigRent Community</div>
-          <div className="flex items-center gap-1">
-            <span className="w-2 h-2 rounded-full bg-[var(--color-accent)]" />
-            <span className="text-[var(--color-accent)] text-[10px]">Launching soon</span>
-          </div>
-        </div>
-      </div>
-      {[
-        { channel: "# general", msg: "Welcome to Sydney!", user: "Maria" },
-        { channel: "# housing-tips", msg: "Check bond laws first", user: "Ahmed" },
-        { channel: "# introductions", msg: "Just arrived from BR!", user: "Lucas" },
-      ].map((item, i) => (
-        <div key={i} className="bg-white/10 backdrop-blur-sm rounded-xl p-2.5">
-          <div className="text-white/40 text-[9px] font-medium mb-1">{item.channel}</div>
-          <div className="flex items-center gap-2">
-            <div className="w-5 h-5 rounded-full bg-white/15 shrink-0" />
-            <div>
-              <span className="text-[var(--color-primary)] text-[10px] font-medium">{item.user}: </span>
-              <span className="text-white/70 text-[10px]">{item.msg}</span>
-            </div>
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function MockCareers() {
-  return (
-    <div className="w-full h-full flex flex-col gap-3 p-6">
-      <div className="flex items-center gap-2 mb-1">
-        <svg className="w-5 h-5 text-[var(--color-warn-500)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-        </svg>
-        <span className="text-white/80 text-xs font-semibold uppercase tracking-wider">Open Roles</span>
-      </div>
-      {[
-        { role: "Senior Full-Stack Engineer", type: "Full-time" },
-        { role: "AI/ML Engineer", type: "Full-time" },
-        { role: "Product Designer", type: "Contract" },
-      ].map((job, i) => (
-        <div key={i} className="bg-white/10 backdrop-blur-sm rounded-xl p-3 flex items-center justify-between">
-          <div>
-            <div className="text-white/90 text-xs font-medium">{job.role}</div>
-            <div className="text-white/40 text-[10px] mt-0.5">Sydney, AU</div>
-          </div>
-          <span className="text-[9px] font-medium text-white/60 bg-white/10 px-2 py-0.5 rounded-full">{job.type}</span>
-        </div>
-      ))}
-      <div className="flex gap-2 mt-auto">
-        {["Remote OK", "Visa Sponsor", "Equity"].map((perk) => (
-          <span key={perk} className="text-[9px] text-white/40 bg-white/5 px-2 py-0.5 rounded">{perk}</span>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function MockRentalLaws() {
-  return (
-    <div className="w-full h-full flex flex-col gap-3 p-6">
-      <div className="text-white/80 text-xs font-semibold uppercase tracking-wider mb-1">AU Rental Checklist</div>
-      {[
-        { text: "Bond lodged with Fair Trading", done: true },
-        { text: "Condition report signed", done: true },
-        { text: "Lease agreement reviewed", done: true },
-        { text: "Renter rights booklet received", done: false },
-        { text: "Emergency repairs contact saved", done: false },
-      ].map((item, i) => (
-        <div key={i} className="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-xl p-2.5">
-          <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 ${
-            item.done ? "bg-[var(--color-accent)]/20" : "bg-white/10"
-          }`}>
-            {item.done ? (
-              <svg className="w-3 h-3 text-[var(--color-accent)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-              </svg>
-            ) : (
-              <div className="w-2 h-2 rounded-full bg-white/20" />
-            )}
-          </div>
-          <span className={`text-[10px] ${item.done ? "text-white/70" : "text-white/40"}`}>{item.text}</span>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-/* ── Resource data ─────────────────────────────────────────────────── */
-
-const resources = [
-  {
-    id: "blog",
-    titleKey: "resources.blog.title",
-    descKey: "resources.blog.desc",
-    icon: "M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z",
-    color: "from-[var(--color-primary)] to-[var(--color-primary)]",
-    iconColor: "text-[var(--color-primary)]",
-    bgColor: "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10",
-    headline: "MigRent Blog",
-    subline: "Tips, news, and migrant community stories",
-    MockUI: MockBlog,
-    href: "/blog",
-    bullets: [
-      "Weekly rental market updates",
-      "Migrant housing success stories",
-      "Expert tips for hosts & seekers",
-    ],
-  },
-  {
-    id: "calculator",
-    titleKey: "resources.calculator.title",
-    descKey: "resources.calculator.desc",
-    icon: "M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z",
-    color: "from-[var(--color-accent)] to-[var(--color-accent)]",
-    iconColor: "text-[var(--color-accent)]",
-    bgColor: "bg-[var(--color-accent-50)] dark:bg-[var(--color-accent)]/10",
-    headline: "Owner ROI Calculator",
-    subline: "Estimate returns on your spare room listing",
-    MockUI: MockCalculator,
-    href: "/resources/roi-calculator",
-    bullets: [
-      "Suburb-level rent estimates",
-      "Annual yield projections",
-      "Compare room types & configurations",
-    ],
-  },
-  {
-    id: "api",
-    titleKey: "resources.apiDocs.title",
-    descKey: "resources.apiDocs.desc",
-    icon: "M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4",
-    color: "from-[var(--color-primary)] to-[var(--color-primary)]",
-    iconColor: "text-[var(--color-primary)]",
-    bgColor: "bg-[var(--color-primary-50)] dark:bg-[var(--color-primary)]/10",
-    headline: "Developer API Docs",
-    subline: "Build integrations on the MigRent platform",
-    MockUI: MockAPIDocs,
-    href: "/resources/api-docs",
-    bullets: [
-      "RESTful API with JSON responses",
-      "OAuth 2.0 authentication",
-      "Webhooks for real-time events",
-    ],
-  },
-  {
-    id: "discord",
-    titleKey: "resources.discord.title",
-    descKey: "resources.discord.desc",
-    icon: "M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z",
-    color: "from-[var(--color-primary)] to-[var(--color-primary)]",
-    iconColor: "text-[var(--color-primary)]",
-    bgColor: "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10",
-    headline: "Join MigRent Discord",
-    subline: "Connect with migrants and hosts across Australia",
-    MockUI: MockDiscord,
-    href: "/resources/discord",
-    bullets: [
-      "City-specific channels",
-      "Real-time housing alerts",
-      "Community events & meetups",
-    ],
-  },
-  {
-    id: "careers",
-    titleKey: "resources.careers.title",
-    descKey: "resources.careers.desc",
-    icon: "M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z",
-    color: "from-[var(--color-warn-500)] to-[var(--color-warn-500)]",
-    iconColor: "text-[var(--color-warn-500)]",
-    bgColor: "bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-500)]/10",
-    headline: "Join MigRent Team",
-    subline: "Help migrants find home in Australia",
-    MockUI: MockCareers,
-    href: "/careers",
-    bullets: [
-      "Engineering, design & product roles",
-      "Visa sponsorship available",
-      "Hybrid work from Sydney HQ",
-    ],
-  },
-  {
-    id: "rental-laws",
-    titleKey: "resources.rentalLaws.title",
-    descKey: "resources.rentalLaws.desc",
-    icon: "M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3",
-    color: "from-[var(--color-primary)] to-[var(--color-primary)]",
-    iconColor: "text-[var(--color-primary)]",
-    bgColor: "bg-[var(--color-primary-50)] dark:bg-[var(--color-primary)]/10",
-    headline: "Australian Rental Laws for Migrants",
-    subline: "Know your rights as a renter in Australia",
-    MockUI: MockRentalLaws,
-    href: "/resources/rental-laws",
-    bullets: [
-      "State-by-state tenancy laws",
-      "Bond rules & dispute processes",
-      "Migrant-specific housing rights",
-    ],
-  },
-];
-
-export default function Resources() {
-  const { t } = useTranslation();
+  const featured = getFeaturedArticle();
+  /* The three newest written pieces. They are already stored newest-first,
+     so this is a slice rather than a sort - no date parsing, and no way to
+     show a piece that is not really the latest. */
+  const latest = RESOURCE_ARTICLES.filter((a) => a.date && a.key !== featured.key).slice(0, 3);
 
   return (
     <>
-      <SEOHead title="Resources for MigRent Hosts & Seekers" description="MigRent resources - blog, ROI calculator, API docs, Discord community, careers, and Australian rental laws for migrants." />
+      <SEOHead
+        title="Resources"
+        description="Everything you need for your move: guides and articles, tools and checklists, and a help centre for the questions in between."
+        breadcrumbs={[
+          { name: "Home", path: "/" },
+          { name: "Resources", path: "/resources" },
+        ]}
+      />
 
-      <div className="space-y-24">
-        {/* ── Hero ───────────────────────────────────────────────── */}
-        <section className="relative text-center py-20 overflow-hidden">
-          <div className="absolute top-0 left-1/4 w-96 h-96 bg-[var(--color-primary)]/15 dark:bg-[var(--color-primary)]/8 hidden " />
-          <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-[var(--color-primary)]/12 dark:bg-[var(--color-primary)]/6 hidden " style={{ animationDelay: "1s" }} />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[var(--color-primary)]/5 dark:bg-[var(--color-primary)]/5 hidden " />
+      <ResourceHero
+        eyebrow="Resources"
+        title={
+          <>
+            Everything you need for your <strong>move.</strong>
+          </>
+        }
+        lead="Three places to look: what to read, what to use, and what to ask. Search all of it at once, or start with a hub below."
+      >
+        <div className="max-w-[560px]">
+          <ResourceSearch
+            value={query}
+            onChange={setQuery}
+            label="Search all resources"
+            placeholder="Search everything - bond, suburbs, visas, earnings..."
+            resultsId={RESULTS_ID}
+          />
+        </div>
+      </ResourceHero>
 
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="relative z-10 max-w-3xl mx-auto"
-          >
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 border border-[var(--color-primary-100)] dark:border-[var(--color-primary)]/20 text-xs font-medium text-[var(--color-primary)] dark:text-[var(--color-primary)] mb-6">
-              <span className="w-2 h-2 rounded-full bg-[var(--color-primary)] animate-pulse" />
-              {t("resources.heroBadge")}
+      <div id={RESULTS_ID}>
+        {searching ? (
+          <section className="mg-section--sm" aria-labelledby="search-heading">
+            <div className="mg-container mg-container--narrow">
+              <h2 id="search-heading" className="font-serif text-[24px] tracking-[-0.014em]" aria-live="polite">
+                {hits.length} {hits.length === 1 ? "result" : "results"} for &ldquo;{query}&rdquo;
+              </h2>
+
+              {hits.length > 0 ? (
+                <ul className="list-none m-0 p-0 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 mt-7">
+                  {hits.map((hit) => (
+                    <li key={hit.key}>
+                      <article className="res-card">
+                        <div className="flex items-center gap-2.5 mb-3.5">
+                          <CategoryChip category={hit.category} />
+                          <span className="res-kind">{hit.label}</span>
+                        </div>
+                        <h3 className="res-card__title">
+                          <Link href={hit.href} className="res-card__link">
+                            {hit.title}
+                          </Link>
+                        </h3>
+                        <p className="res-card__summary mt-2 flex-1">{hit.summary}</p>
+                        <div className="flex items-center justify-between gap-3 mt-5 pt-4 border-t border-[var(--color-line)]">
+                          <span className="res-card__meta">
+                            {hit.readMinutes ? `${hit.readMinutes} min read` : "Tool"}
+                          </span>
+                          <Arrow label="Open" />
+                        </div>
+                      </article>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <div className="res-empty mt-7">
+                  <p className="font-serif text-[20px] text-[var(--color-ink)]">
+                    Nothing here matches that.
+                  </p>
+                  <p className="text-sm text-[var(--color-ink-2)] mt-2 max-w-[46ch] mx-auto">
+                    Try a single word - bond, visa, suburb, scam, earnings - or ask us
+                    and we will answer it properly.
+                  </p>
+                  <div className="flex flex-wrap justify-center gap-3 mt-6">
+                    <button
+                      type="button"
+                      className="btn-secondary h-11 px-5 text-sm"
+                      onClick={() => setQuery("")}
+                    >
+                      Clear search
+                    </button>
+                    <Link href="/contact" className="btn-outline h-11 px-5 text-sm">
+                      Ask us
+                    </Link>
+                  </div>
+                </div>
+              )}
             </div>
+          </section>
+        ) : (
+          <>
+            {/* The three destinations. Exactly the three in the navbar
+                dropdown, read from the same array, so they can never drift
+                apart again. */}
+            <section className="mg-section--sm" aria-labelledby="hubs-heading">
+              <div className="mg-container mg-container--narrow">
+                <h2 id="hubs-heading" className="sr-only">
+                  Resource hubs
+                </h2>
+                <ul className="list-none m-0 p-0 grid gap-5 md:grid-cols-3">
+                  {RESOURCE_HUBS.map((hub) => (
+                    <li key={hub.id}>
+                      <Link href={hub.href} className="res-tile group">
+                        <span className="res-icon mb-6">
+                          <ResourceIcon name={hub.icon} />
+                        </span>
+                        <h3 className="font-serif text-[21px] leading-[1.2] tracking-[-0.01em] text-[var(--color-ink)]">
+                          {hub.title}
+                        </h3>
+                        <p className="res-card__summary mt-2.5 flex-1">{hub.description}</p>
+                        <span className="mt-6">
+                          <Arrow label="Browse" />
+                        </span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </section>
 
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight leading-tight">
-              <span className="text-[color:var(--color-primary)]">
-                Resources for MigRent
-              </span>
-              <br />
-              <span className="text-[var(--color-ink)]">Hosts & Seekers</span>
-            </h1>
-
-            <p className="mt-6 text-lg md:text-xl text-[var(--color-ink-3)] max-w-2xl mx-auto leading-relaxed">
-              {t("resources.heroSubtitle")}
-            </p>
-
-            {/* Quick nav pills */}
-            <div className="mt-10 flex flex-wrap justify-center gap-2">
-              {resources.map((r) => (
-                <Link key={r.id} href={`#${r.id}`}>
-                  <motion.span
-                    whileHover={{ scale: 1.05, y: -2 }}
-                    whileTap={{ scale: 0.97 }}
-                    className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-medium border transition-all cursor-pointer
-                      bg-white dark:bg-white/5 border-[var(--color-line)]
-                      hover:border-[var(--color-line-2)] dark:hover:border-[var(--color-line-2)] hover:shadow-md
-                      text-[var(--color-ink-2)]`}
-                  >
-                    <svg className={`w-3.5 h-3.5 ${r.iconColor}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d={r.icon} />
+            {/* Popular. Real pages people open, not a "featured" slot
+                filled with whatever was newest. */}
+            <section className="mg-section--sm pt-0" aria-labelledby="popular-heading">
+              <div className="mg-container mg-container--narrow">
+                <div className="flex flex-wrap items-baseline justify-between gap-4">
+                  <h2 id="popular-heading" className="font-serif text-[24px] tracking-[-0.014em]">
+                    Most useful first
+                  </h2>
+                  <Link href="/resources/guides" className="mg-link">
+                    All guides and articles
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
                     </svg>
-                    {t(r.titleKey)}
-                  </motion.span>
-                </Link>
-              ))}
-            </div>
-          </motion.div>
-        </section>
-
-        {/* ── Resource sections ───────────────────────────────────── */}
-        {resources.map((resource, i) => {
-          const isEven = i % 2 === 0;
-          const MockUI = resource.MockUI;
-
-          return (
-            <section key={resource.id} id={resource.id} className="scroll-mt-24">
-              <motion.div
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, margin: "-80px" }}
-                custom={0}
-                variants={fadeUp}
-                className={`flex flex-col ${isEven ? "md:flex-row" : "md:flex-row-reverse"} items-center gap-10 md:gap-16`}
-              >
-                {/* Visual */}
-                <div className="w-full md:w-1/2">
-                  <motion.div
-                    whileHover={{ y: -6, scale: 1.01 }}
-                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                    className={`relative rounded-2xl overflow-hidden bg-[var(--color-primary-soft)] ${resource.color} aspect-[4/3] shadow-xl`}
-                  >
-                    <div className="absolute top-4 left-4 flex gap-1.5 z-10">
-                      <div className="w-2.5 h-2.5 rounded-full bg-white/20" />
-                      <div className="w-2.5 h-2.5 rounded-full bg-white/15" />
-                      <div className="w-2.5 h-2.5 rounded-full bg-white/10" />
-                    </div>
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent" />
-                    <div className="absolute bottom-4 right-4 w-24 h-24 rounded-full bg-white/8 blur-2xl" />
-                    <div className="absolute top-8 right-8 w-16 h-16 rounded-full bg-white/8 blur-xl" />
-                    <div className="relative z-[1] h-full flex items-center justify-center pt-6">
-                      <MockUI />
-                    </div>
-                  </motion.div>
+                  </Link>
                 </div>
 
-                {/* Content */}
-                <div className="w-full md:w-1/2">
-                  <div className={`inline-flex items-center justify-center w-12 h-12 rounded-xl ${resource.bgColor} mb-4`}>
-                    <svg className={`w-6 h-6 ${resource.iconColor}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d={resource.icon} />
-                    </svg>
-                  </div>
+                <ul className="list-none m-0 p-0 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 mt-6">
+                  <li>
+                    <ResourceCard
+                      href={featured.href}
+                      title={featured.title}
+                      summary={featured.summary}
+                      category={featured.category}
+                      kind={featured.kind}
+                      readMinutes={featured.readMinutes}
+                    />
+                  </li>
+                  {RESOURCE_TOOLS.slice(0, 2).map((tool) => (
+                    <li key={tool.id}>
+                      <article className="res-card">
+                        <div className="flex items-center gap-2.5 mb-3.5">
+                          <CategoryChip category={tool.category} />
+                          <span className="res-kind">Tool</span>
+                        </div>
+                        <h3 className="res-card__title">
+                          <Link href={tool.href} className="res-card__link">
+                            {tool.title}
+                          </Link>
+                        </h3>
+                        <p className="res-card__summary mt-2 flex-1">{tool.summary}</p>
+                        <div className="flex items-center justify-end mt-5 pt-4 border-t border-[var(--color-line)]">
+                          <Arrow label={tool.action} />
+                        </div>
+                      </article>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </section>
 
-                  <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-[var(--color-ink)]">
-                    {resource.headline}
+            {latest.length > 0 && (
+              <section className="mg-section--sm pt-0" aria-labelledby="latest-heading">
+                <div className="mg-container mg-container--narrow">
+                  <h2 id="latest-heading" className="font-serif text-[24px] tracking-[-0.014em]">
+                    Latest writing
                   </h2>
-                  <p className="text-sm text-[var(--color-ink-3)] mt-1 font-medium">
-                    {resource.subline}
-                  </p>
-
-                  <p className="mt-4 text-base text-[var(--color-ink-3)] leading-relaxed">
-                    {t(resource.descKey)}
-                  </p>
-
-                  <ul className="mt-6 space-y-3">
-                    {resource.bullets.map((bullet, bi) => (
-                      <li key={bi} className="flex items-center gap-3 text-sm text-[var(--color-ink-2)]">
-                        <span className={`w-5 h-5 rounded-full ${resource.bgColor} flex items-center justify-center shrink-0`}>
-                          <svg className={`w-3 h-3 ${resource.iconColor}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                          </svg>
-                        </span>
-                        {bullet}
+                  <ul className="list-none m-0 p-0 grid gap-5 sm:grid-cols-3 mt-6">
+                    {latest.map((a) => (
+                      <li key={a.key}>
+                        <ResourceCard
+                          href={a.href}
+                          title={a.title}
+                          summary={a.summary}
+                          category={a.category}
+                          kind={a.kind}
+                          readMinutes={a.readMinutes}
+                          date={a.date}
+                        />
                       </li>
                     ))}
                   </ul>
 
-                  {resource.href ? (
-                    <Link href={resource.href}>
-                      <motion.span
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.98 }}
-                        className="inline-block mt-6 btn-primary text-sm px-6 py-2.5 rounded-xl"
-                      >
-                        {t("resources.visitLink")}
-                      </motion.span>
-                    </Link>
-                  ) : (
-                    <span className="inline-flex items-center gap-1 mt-6 text-xs font-medium text-[var(--color-ink-3)] bg-[var(--color-surface-muted)] dark:bg-white/5 px-3 py-1.5 rounded-full">
-                      <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                      {t("resources.comingSoon")}
-                    </span>
-                  )}
+                  <p className="text-[13px] text-[var(--color-ink-3)] mt-9">
+                    Also in development:{" "}
+                    {RESOURCES_IN_PROGRESS.map((item, i) => (
+                      <span key={item.href}>
+                        {i > 0 && ", "}
+                        <Link
+                          href={item.href}
+                          className="text-[var(--color-ink-2)] underline underline-offset-2 decoration-[var(--color-line-2)] hover:text-[var(--color-primary)] transition-colors"
+                        >
+                          {item.label}
+                        </Link>
+                      </span>
+                    ))}
+                    .
+                  </p>
                 </div>
-              </motion.div>
-            </section>
-          );
-        })}
-
-        {/* ── Stats bar ──────────────────────────────────────────── */}
-        <section>
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="rounded-2xl bg-[var(--color-primary)] from-[var(--color-primary)] via-[var(--color-primary)] to-[var(--color-primary)] p-[1px]"
-          >
-            <div className="rounded-2xl bg-[var(--color-surface-2)] p-8 md:p-10">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-                {[
-                  { value: "6", label: "Resource categories" },
-                  { value: "8", label: "Languages supported" },
-                  { value: "Soon", label: "Discord community" },
-                  { value: "7 days", label: "Safety response" },
-                ].map((stat, si) => (
-                  <motion.div
-                    key={stat.label}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: si * 0.1, duration: 0.5 }}
-                  >
-                    <div className="text-2xl md:text-3xl font-black text-[color:var(--color-primary)]">
-                      {stat.value}
-                    </div>
-                    <div className="text-xs text-[var(--color-ink-3)] mt-1 font-medium">{stat.label}</div>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-          </motion.div>
-        </section>
-
-        {/* ── CTA ────────────────────────────────────────────────── */}
-        <section className="text-center py-12">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="max-w-lg mx-auto"
-          >
-            <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-[var(--color-ink)]">
-              {t("resources.cta.title")}
-            </h2>
-            <p className="mt-3 text-[var(--color-ink-3)]">
-              {t("resources.cta.subtitle")}
-            </p>
-            <Link href="/contact">
-              <motion.span whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }} className="inline-block mt-6 btn-primary text-base px-8 py-3.5 rounded-xl">
-                {t("resources.cta.button")}
-              </motion.span>
-            </Link>
-          </motion.div>
-        </section>
+              </section>
+            )}
+          </>
+        )}
       </div>
+
+      <section className="mg-ground-deep mg-section--sm">
+        <div className="mg-container mg-container--narrow text-center">
+          <h2 className="font-serif text-[26px] sm:text-[32px] leading-[1.12] tracking-[-0.018em]">
+            Ready to start looking?
+          </h2>
+          <p className="text-[15px] text-[var(--color-ink-2)] mt-3 max-w-[48ch] mx-auto">
+            Every room on MigRent comes from a host whose ID and control of the
+            property were checked before it went live.
+          </p>
+          <div className="flex flex-wrap justify-center gap-3 mt-7">
+            <Link href="/seeker/search" className="btn-primary h-11 px-6 text-sm">
+              Search rooms
+            </Link>
+            <Link href="/for-owners" className="btn-outline h-11 px-6 text-sm">
+              List a room
+            </Link>
+          </div>
+        </div>
+      </section>
     </>
   );
 }
