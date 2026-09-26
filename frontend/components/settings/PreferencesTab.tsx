@@ -92,59 +92,13 @@ export default function PreferencesTab({
 
   return (
     <div className="space-y-6">
-      {/* Appearance mode */}
-      <GlassCard delay={0.05}>
-        <div className="flex items-start gap-4 mb-4">
-          <div className="w-10 h-10 rounded-[10px] bg-[var(--color-surface-sunk)] flex items-center justify-center shrink-0 text-[var(--color-ink-2)]">
-            <Palette className="w-5 h-5" />
-          </div>
-          <div>
-            <h3 className="font-semibold text-[var(--color-ink)] tracking-[-0.005em]">Appearance mode</h3>
-            <p className="text-xs text-[var(--color-ink-3)]">Pick how MigRent looks. Switch any time.</p>
-          </div>
-        </div>
-
-        <div className="ml-14">
-          <div className="grid grid-cols-3 gap-3">
-            {(
-              [
-                { value: "light", label: "Light", icon: Sun },
-                { value: "dark", label: "Dark", icon: Moon },
-                { value: "auto", label: "Auto", icon: Monitor },
-              ] as const
-            ).map((option) => {
-              const Icon = option.icon;
-              const isActive =
-                option.value === "auto"
-                  ? false
-                  : theme === option.value;
-
-              return (
-                <button
-                  key={option.value}
-                  onClick={() => {
-                    if (option.value !== "auto") {
-                      setTheme(option.value as "light" | "dark");
-                    }
-                  }}
-                  className={`flex flex-col items-center gap-2 p-4 rounded-[10px] border-2 transition-colors ${
-                    isActive
-                      ? "border-[var(--color-ink)] bg-[var(--color-surface-sunk)]"
-                      : "border-[var(--color-line)] hover:border-[var(--color-line-2)]"
-                  } ${option.value === "auto" ? "opacity-50 cursor-not-allowed" : ""}`}
-                >
-                  <div className="w-10 h-10 rounded-[10px] bg-[var(--color-surface-sunk)] flex items-center justify-center text-[var(--color-ink-2)]">
-                    <Icon className="w-5 h-5" />
-                  </div>
-                  <span className="text-xs font-semibold text-[var(--color-ink)]">{option.label}</span>
-                  {isActive && <Check className="w-3.5 h-3.5 text-[var(--color-ink)]" />}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      </GlassCard>
-
+      {/* Appearance mode was here.
+          MigRent is light only now - the homepage hero performs a sunrise
+          and hands the reader to sections that live in the morning it
+          arrives at, which a dark theme has nowhere to land. The control
+          went with it rather than staying on as three buttons that no
+          longer change anything. useTheme() still resolves, always to
+          "light", so nothing that reads it had to change. */}
 
       {/* Region & Timezone */}
       <GlassCard delay={0.15}>

@@ -77,7 +77,7 @@ export default function HowItWorks() {
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-3">
                     <span className="mg-icon" aria-hidden="true">
-                      <s.icon className="w-[21px] h-[21px]" strokeWidth={1.7} />
+                      <s.icon className="w-5 h-5" strokeWidth={1.75} />
                     </span>
                     <h3 className="mg-h3 mg-h3--lg">{s.title}</h3>
                   </div>

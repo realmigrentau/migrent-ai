@@ -120,7 +120,7 @@ export default function SearchConsole() {
         <Reveal delay={0.14} className="mt-7 flex flex-wrap justify-center gap-2.5">
           {CHIPS.map((c) => (
             <span key={c.label} className="mg-chip">
-              <c.icon className="w-4 h-4" strokeWidth={1.9} aria-hidden="true" />
+              <c.icon className="w-4 h-4" strokeWidth={1.75} aria-hidden="true" />
               {c.label}
             </span>
           ))}

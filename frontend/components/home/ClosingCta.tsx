@@ -61,7 +61,7 @@ export default function ClosingCta() {
             <Reveal as="li" key={p.tag} delay={0.12 + i * 0.08}>
               <div className="mg-card mg-card--lift h-full p-7 sm:p-9 flex flex-col">
                 <span className="mg-icon mg-icon--lg" aria-hidden="true">
-                  <p.icon className="w-6 h-6" strokeWidth={1.7} />
+                  <p.icon className="w-6 h-6" strokeWidth={1.75} />
                 </span>
                 <p className="mg-eyebrow mt-6">{p.tag}</p>
                 <h3 className="mg-h3 mg-h3--lg mt-3">{p.title}</h3>
@@ -80,7 +80,7 @@ export default function ClosingCta() {
         <Reveal delay={0.28} className="mt-12 flex flex-wrap gap-x-8 gap-y-3">
           {CHIPS.map((c) => (
             <span key={c.label} className="inline-flex items-center gap-2.5 text-[13.5px] font-medium text-[var(--color-ink-2)]">
-              <c.icon className="w-4 h-4 text-[var(--color-accent)]" strokeWidth={1.9} aria-hidden="true" />
+              <c.icon className="w-4 h-4 text-[var(--color-accent)]" strokeWidth={1.75} aria-hidden="true" />
               {c.label}
             </span>
           ))}

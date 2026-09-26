@@ -16,43 +16,49 @@
    ══════════════════════════════════════════════════════════════ */
 
 @theme {
-  /* ── Primary: deep forest (action + brand + dark bands) ──
-     The villa's palms and shuttered doorways, not its sky. White on
-     --color-primary is 15.7:1; it is the page's one confident dark. */
-  --color-primary-50: #eef2ef;
-  --color-primary-100: #dce4df;
-  --color-primary-200: #b8c6bd;
-  --color-primary-400: #4e6b5c;
-  --color-primary-500: #2a4438;
-  --color-primary-600: #1b3329;
-  --color-primary-700: #132720;
-  --color-primary-900: #0c1913;
-  --color-primary: #132720;
-  --color-primary-soft: #dce4df;
-  --color-primary-fg: #f5f2ea;
+  /* ── Primary: the hero's night sky (action + brand + dark bands) ──
+     Was a deep forest green, taken from the villa photograph. The hero is
+     a sunrise now, and a forest primary under it left the page arguing
+     with itself: the top of the screen opened on navy and every button
+     below it was green. This is the night the hero opens on, so the page
+     closes on the colour it started with. White on --color-primary is
+     14.9:1; it is still the one confident dark. */
+  --color-primary-50: #eef1f7;
+  --color-primary-100: #dfe4ef;
+  --color-primary-200: #bcc5dc;
+  --color-primary-400: #4a5878;
+  --color-primary-500: #2b3757;
+  --color-primary-600: #212c48;
+  --color-primary-700: #1a2540;
+  --color-primary-900: #111829;
+  --color-primary: #1a2540;
+  --color-primary-soft: #dfe4ef;
+  --color-primary-fg: #fdfcfa;
 
   /* Theme-stable deep ground.
      --color-primary flips meaning between themes (deep forest on light,
      lifted sage on dark) because it has to stay legible as an action
      colour. A *band* must not flip - the footer and the deep panels are
      dark in both themes - so they use this instead. */
-  --color-deep: #132720;
-  --color-deep-2: #0c1913;
+  --color-deep: #1a2540;
+  --color-deep-2: #111829;
 
-  /* ── Accent: muted sage / eucalyptus ──
-     The general-purpose interactive tint. It is deliberately NOT
-     terracotta: --color-accent is referenced at ~670 call sites, and a
-     rust that loud, repeated that often, is the "huge areas of peach"
-     problem in a different hue. Sage carries the volume; terracotta
-     stays rare and therefore stays expensive. 5.4:1 on linen. */
-  --color-accent-50: #eef3f0;
-  --color-accent-100: #dbe7e0;
-  --color-accent-500: #4a7c64;
-  --color-accent-600: #3f6b57;
-  --color-accent-700: #335847;
-  --color-accent: #3f6b57;
-  --color-accent-soft: #dbe7e0;
-  --color-accent-fg: #f5f2ea;
+  /* ── Accent: the dawn, muted ──
+     The general-purpose interactive tint, at ~670 call sites. It was sage,
+     on the reasoning that a rust repeated that often becomes "huge areas
+     of peach". That reasoning still holds, which is why this is a muted
+     sienna and not the bright #ff8133 the hero resolves to: dark enough to
+     set type at 5.6:1 on white, quiet enough to sit under six hundred
+     icons without shouting. The bright end of the family lives in
+     --color-terracotta-500, and stays rare. */
+  --color-accent-50: #f9f1ec;
+  --color-accent-100: #f0ded2;
+  --color-accent-500: #b56a45;
+  --color-accent-600: #9c5a3c;
+  --color-accent-700: #824a31;
+  --color-accent: #9c5a3c;
+  --color-accent-soft: #f0ded2;
+  --color-accent-fg: #fdfcfa;
 
   /* ── Terracotta: the Mediterranean roofline ──
      Rationed on purpose - eyebrows, small badges, selected states, hairline
@@ -96,11 +102,11 @@
   /* ── Ink + surfaces (light) ──
      Grounds alternate linen -> white -> cool off-white -> deep forest.
      No large warm-peach field anywhere in the scale. */
-  --color-ink: #171a17;          /* near-black charcoal · 15.7:1 on linen */
-  --color-ink-2: #3f4740;        /* body · 8.6:1 */
-  --color-ink-muted: #5d655b;    /* muted warm olive-grey · 5.4:1 */
-  --color-ink-3: #5d655b;
-  --color-ink-4: #656c62;        /* placeholder · 4.8:1 */
+  --color-ink: #1a1917;          /* near-black, warm · 15.9:1 on white */
+  --color-ink-2: #454240;        /* body · 9.1:1 */
+  --color-ink-muted: #6b6660;    /* muted warm grey · 5.4:1 */
+  --color-ink-3: #6b6660;
+  --color-ink-4: #77726b;        /* placeholder · 4.6:1 */
 
   /* White throughout. There is no tinted page ground: sections are told
      apart by hairline rules and by the deep-forest bands, not by a wash.
@@ -109,7 +115,7 @@
   --color-bg: #ffffff;           /* the page ground */
   --color-surface: #ffffff;      /* panels sit on the same white */
   --color-surface-2: #ffffff;    /* cards - defined by their border */
-  --color-surface-cool: #f6f9f7; /* alternate band - a whisper of green */
+  --color-surface-cool: #faf8f5; /* alternate band - a whisper of warm */
   --color-surface-muted: #f4f4f2;/* subtle fill: chips, hover states */
   --color-surface-warm: #fafafa;
   --color-surface-sunk: #f2f2f0;
@@ -134,10 +140,16 @@
   --color-success-50: #e4efe7;
   --color-success-500: #2f6b4f;
   --color-success-600: #275a42;
-  --color-trust: #2f6b4f;
-  --color-trust-soft: #e4efe7;
-  --color-trust-fg: #f5f2ea;
-  --color-trust-ink: #1d4431;
+  /* Verification, not success. It was the same green as --color-success,
+     which put a green tick on every badge on the homepage and made the
+     page read as a checklist. Verification is an authority claim, so it
+     now carries the brand's own dark; --color-success stays green because
+     a green tick for "saved" is feedback, and feedback should not be
+     brand-coloured. */
+  --color-trust: #1a2540;
+  --color-trust-soft: #dfe4ef;
+  --color-trust-fg: #fdfcfa;
+  --color-trust-ink: #111829;
 
   /* ── Radius scale ──
      Small controls 10 · inputs/buttons 12 · cards 20 · editorial 26.
@@ -209,8 +221,8 @@
    Keep this list in sync with anything referenced only from CSS.
    ══════════════════════════════════════════════════════════════ */
 :root {
-  --color-deep: #132720;
-  --color-deep-2: #0c1913;
+  --color-deep: #1a2540;
+  --color-deep-2: #111829;
   --color-coral-700: #822d25;
   /* Only ever read as var(--font-script) from .type-script - no utility
      references it, so @theme alone would not survive the tree-shake. */

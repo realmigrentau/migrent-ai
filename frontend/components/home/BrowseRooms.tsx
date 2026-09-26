@@ -54,7 +54,7 @@ function ListingCard({ listing }: { listing: Listing }) {
         </div>
         {listing.verified && (
           <span className="absolute bottom-3 left-3 inline-flex items-center gap-1.5 h-[24px] px-2.5 rounded-full bg-[var(--color-surface-2)]/95 backdrop-blur text-[var(--color-trust-ink)] text-[11px] font-semibold shadow-[var(--shadow-soft)]">
-            <Check className="w-3 h-3" strokeWidth={2.8} aria-hidden="true" /> Verified host
+            <Check className="w-3 h-3" strokeWidth={1.75} aria-hidden="true" /> Verified host
           </span>
         )}
       </div>

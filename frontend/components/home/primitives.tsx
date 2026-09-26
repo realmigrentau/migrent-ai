@@ -138,7 +138,7 @@ export function FeatureRow({
   return (
     <div className="flex gap-4 sm:gap-6">
       <span className={`mg-icon${tone === "trust" ? " mg-icon--trust" : ""}`} aria-hidden="true">
-        <Icon className="w-[21px] h-[21px]" strokeWidth={1.7} />
+        <Icon className="w-5 h-5" strokeWidth={1.75} />
       </span>
       <div className="min-w-0">
         <h3 className="mg-h3">{title}</h3>

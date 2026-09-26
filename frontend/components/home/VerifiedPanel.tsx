@@ -72,7 +72,7 @@ export default function VerifiedPanel() {
           {POINTS.map((p) => (
             <li key={p.title} className="flex gap-5 py-6 first:pt-0 last:pb-0">
               <span className="mg-icon mg-icon--trust" aria-hidden="true">
-                <p.icon className="w-[21px] h-[21px]" strokeWidth={1.75} />
+                <p.icon className="w-5 h-5" strokeWidth={1.75} />
               </span>
               <div className="min-w-0">
                 <h3 className="mg-h3">{p.title}</h3>

@@ -334,15 +334,14 @@ body:has([data-home]) {
     max-width: var(--mg-max-narrow);
   }
 
-  /* The ground is white and the alternate band is #fafafa, which is a
-     difference you feel rather than see. That is the point - but it is far
-     too faint to mark where a section ends, so on this palette the rules
-     do that job and every light band carries one at its top edge. */
-  .mg-band--air,
-  .mg-band--mist {
-    border-top: 1px solid var(--color-line);
-  }
-
+  /* No rule between sections.
+     Every light band used to carry a 1px hairline at its top edge, because
+     white-on-#fafafa is a difference you feel rather than see and the rule
+     was doing the work of saying "a section ended here". Stacked down a
+     long page that reads as a stack of boxes - you see the joins before
+     you see the content. The tinted bands below now fade in and out at
+     their own edges instead, so a section is told apart by its weather
+     rather than by a line drawn around it. */
   .mg-band--air {
     background: var(--mg-air);
   }
@@ -361,14 +360,38 @@ body:has([data-home]) {
 
      Dark mode gets the same three as tinted near-blacks rather than light
      panels, so the alternation survives with the lights off. */
-  .mg-band--green { background: #eef4f0; }
-  .mg-band--sky   { background: #f4f7f9; }
-  .mg-band--sand  { background: #faf6f0; }
+  /* The tint each one holds through its middle. Green is gone: the hero
+     resolves to a warm dawn and a pale green band under it was the single
+     loudest thing on the page, a cool wash sitting directly beneath a warm
+     one. These are all warm now, and all within a couple of points of the
+     white ground, which is what lets them fade to nothing at the edges. */
+  .mg-band--green { --mg-band-tint: #f8f5f1; }
+  .mg-band--sky   { --mg-band-tint: #f5f7fa; }
+  .mg-band--sand  { --mg-band-tint: #faf6f0; }
 
+  /* The fade is a fixed distance rather than a percentage so a short
+     section and a tall one hand off at the same rate. 128px is about the
+     depth at which the eye stops being able to find the edge. */
   .mg-band--green,
   .mg-band--sky,
   .mg-band--sand {
-    border-top: 1px solid var(--color-line);
+    background-image: linear-gradient(
+      to bottom,
+      var(--color-bg) 0,
+      var(--mg-band-tint) 128px,
+      var(--mg-band-tint) calc(100% - 128px),
+      var(--color-bg) 100%
+    );
+  }
+
+  /* A band shorter than both fades would never reach its own tint, so it
+     gets a single soft ramp instead of two that collide in the middle. */
+  @supports (height: 1cqh) {
+    .mg-band--green,
+    .mg-band--sky,
+    .mg-band--sand {
+      container-type: inline-size;
+    }
   }
 
   /* A deep band brings its own edge, and the band under the hero hands off
@@ -381,47 +404,99 @@ body:has([data-home]) {
     border-top: 0;
   }
 
-  /* A hairline that only exists where two same-value bands meet. */
-  .mg-band--edge-top {
-    border-top: 1px solid var(--color-line);
-  }
+  /* Where two same-value bands meet there is genuinely nothing to see, so
+     these two still mark the join - but as a rule that fades out towards
+     the gutters rather than running wall to wall. A line that stops before
+     the edge of the screen reads as a join; one that does not reads as a
+     border. */
+  .mg-band--edge-top,
   .mg-band--edge-bottom {
-    border-bottom: 1px solid var(--color-line);
+    position: relative;
+  }
+
+  .mg-band--edge-top::before,
+  .mg-band--edge-bottom::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 1px;
+    pointer-events: none;
+    background: linear-gradient(
+      to right,
+      transparent 0,
+      var(--color-line) 18%,
+      var(--color-line) 82%,
+      transparent 100%
+    );
+  }
+
+  .mg-band--edge-top::before {
+    top: 0;
+  }
+
+  .mg-band--edge-bottom::after {
+    bottom: 0;
   }
 
   html.dark [data-home] .mg-band--green { background: #141c17; }
   html.dark [data-home] .mg-band--sky   { background: #121a1e; }
   html.dark [data-home] .mg-band--sand  { background: #1a1713; }
 
-  /* The one deep band on the page. It was a night sky; it is now the
-     forest after dark, which is what the rest of the site's primary is.
-     Ratios on --color-primary-900: ink 18.0 · ink-2 11.8 · ink-3 8.3 ·
-     accent 8.4 · trust 8.2 · terracotta 7.0. */
+  /* The one deep band on the page, and the page's second night.
+     It was the forest after dark, because the site's primary was green.
+     The hero opens on a night sky and walks to dawn, so the closing band
+     going back to that same night is the page arriving where it started -
+     and it means the two darkest things on the screen are the same colour
+     rather than two different opinions.
+
+     The warm blooms are the dawn light still in the frame. They read off
+     --color-accent-500, which is sienna now, so they warm the navy instead
+     of tinting it green.
+
+     Ratios on --color-deep-2 (#111829): ink 17.6 · ink-2 11.2 · ink-3 7.9
+     · accent 8.2 · trust 9.3 · terracotta 7.6. */
   .mg-band--deep {
     --color-ink: #ffffff;
-    --color-ink-2: #ccd3cb;
-    --color-ink-3: #aab2a8;
-    --color-ink-muted: #aab2a8;
-    --color-ink-4: #aab2a8;
-    --color-line: rgb(245 242 234 / 0.16);
-    --color-line-2: rgb(245 242 234 / 0.3);
-    --color-surface: rgb(245 242 234 / 0.05);
-    --color-surface-2: rgb(245 242 234 / 0.06);
-    --color-surface-sunk: rgb(245 242 234 / 0.08);
-    --color-primary: #f5f2ea;
+    --color-ink-2: #d4d2cd;
+    --color-ink-3: #aeaba4;
+    --color-ink-muted: #aeaba4;
+    --color-ink-4: #aeaba4;
+    --color-line: rgb(253 252 250 / 0.16);
+    --color-line-2: rgb(253 252 250 / 0.3);
+    --color-surface: rgb(253 252 250 / 0.05);
+    --color-surface-2: rgb(253 252 250 / 0.06);
+    --color-surface-sunk: rgb(253 252 250 / 0.08);
+    --color-primary: #fdfcfa;
     --color-primary-500: #ffffff;
-    --color-primary-700: #e6e2d6;
+    --color-primary-700: #e8e5e0;
     --color-primary-fg: var(--color-deep-2);
-    --color-primary-50: rgb(245 242 234 / 0.1);
-    --color-accent: #8fbba1;
-    --color-trust: #6fbf95;
-    --color-terracotta: #d9906e;
-    --color-terracotta-500: #d9906e;
+    --color-primary-50: rgb(253 252 250 / 0.1);
+    --color-accent: #e0a07c;
+    --color-trust: #a8bce6;
+    --color-terracotta: #e8a887;
+    --color-terracotta-500: #e8a887;
+    position: relative;
     color: #fff;
     background:
-      radial-gradient(78% 62% at 84% -4%, color-mix(in oklab, var(--color-accent-500) 18%, transparent), transparent 64%),
-      radial-gradient(64% 58% at 4% 104%, color-mix(in oklab, var(--color-accent-500) 22%, transparent), transparent 62%),
+      radial-gradient(78% 62% at 84% -4%, color-mix(in oklab, var(--color-accent-500) 20%, transparent), transparent 64%),
+      radial-gradient(64% 58% at 4% 104%, color-mix(in oklab, var(--color-accent-500) 24%, transparent), transparent 62%),
       var(--color-deep-2);
+  }
+
+  /* The arrival. Without this the band starts as a flat slab against the
+     white above it, which is the hardest edge on the page - you see the
+     rectangle before you read the heading inside it. A short ramp from the
+     page ground into the navy turns that edge into a horizon. */
+  .mg-band--deep::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 100%;
+    height: clamp(72px, 9svh, 132px);
+    pointer-events: none;
+    background: linear-gradient(to bottom, transparent 0, var(--color-deep-2) 100%);
   }
 
   /* The sun bloom from the top-right of the plate, for air bands that need

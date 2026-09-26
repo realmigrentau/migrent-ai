@@ -21,7 +21,7 @@ export default function TrustStrip() {
         <ul className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 sm:gap-x-12 list-none m-0 p-0">
           {ITEMS.map((t) => (
             <li key={t.label} className="inline-flex items-center gap-2.5">
-              <t.icon className="w-[17px] h-[17px] text-[var(--color-accent)]" strokeWidth={1.9} aria-hidden="true" />
+              <t.icon className="w-[18px] h-[18px] text-[var(--color-accent)]" strokeWidth={1.75} aria-hidden="true" />
               <span className="text-[13.5px] font-medium text-[var(--color-ink-2)] tracking-[-0.005em]">{t.label}</span>
             </li>
           ))}

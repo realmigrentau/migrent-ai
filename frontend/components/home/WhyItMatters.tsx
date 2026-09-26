@@ -61,7 +61,7 @@ export default function WhyItMatters() {
                 {OURS.map((t) => (
                   <li key={t} className="flex gap-4 py-4 first:pt-0">
                     <span className="mt-0.5 shrink-0 text-[var(--color-trust)]" aria-hidden="true">
-                      <Check className="w-[18px] h-[18px]" strokeWidth={2.4} />
+                      <Check className="w-[18px] h-[18px]" strokeWidth={1.75} />
                     </span>
                     <span className="text-[15.5px] leading-[1.55] font-medium text-[var(--color-ink)]">{t}</span>
                   </li>

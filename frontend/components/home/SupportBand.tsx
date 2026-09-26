@@ -70,12 +70,12 @@ export default function SupportBand() {
           <Reveal delay={0.1}>
             <div className="mg-card mg-wash-sun overflow-hidden p-7 sm:p-9">
               <span className="mg-icon mg-icon--lg mg-icon--trust" aria-hidden="true">
-                <UsersRound className="w-6 h-6" strokeWidth={1.6} />
+                <UsersRound className="w-6 h-6" strokeWidth={1.75} />
               </span>
               <ul className="list-none m-0 p-0 mt-6 mg-rows">
                 {MENTOR_POINTS.map((t) => (
                   <li key={t} className="flex gap-3.5 py-4 first:pt-0 last:pb-0">
-                    <Check className="w-[18px] h-[18px] mt-0.5 shrink-0 text-[var(--color-trust)]" strokeWidth={2.4} aria-hidden="true" />
+                    <Check className="w-[18px] h-[18px] mt-0.5 shrink-0 text-[var(--color-trust)]" strokeWidth={1.75} aria-hidden="true" />
                     <span className="text-[15px] leading-[1.55] text-[var(--color-ink-2)]">{t}</span>
                   </li>
                 ))}
@@ -101,7 +101,7 @@ export default function SupportBand() {
                     {a.n}
                   </span>
                   <span className="text-[var(--color-primary-400)]" aria-hidden="true">
-                    <a.icon className="w-[18px] h-[18px]" strokeWidth={1.8} />
+                    <a.icon className="w-[18px] h-[18px]" strokeWidth={1.75} />
                   </span>
                 </div>
                 <h3 className="mg-h3 mt-4">{a.title}</h3>
