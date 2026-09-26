@@ -2,6 +2,7 @@
 @import "./hero.css";
 @import "./home.css";
 @import "./resources.css";
+@import "./suburbs.css";
 
 @custom-variant dark (&:where(.dark, .dark *));
 

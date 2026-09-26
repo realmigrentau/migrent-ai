@@ -20,6 +20,13 @@ const API_ORIGIN = (() => {
 })();
 
 const nextConfig: NextConfig = {
+  /* Two `next dev` processes cannot share a build directory - the second one
+     fails to take .next/dev/lock and exits. Setting NEXT_DIST_DIR gives a
+     second server its own, which is what lets a review session run the app
+     while someone else is already working in the same checkout. Unset, this
+     is exactly the previous behaviour. */
+  distDir: process.env.NEXT_DIST_DIR || ".next",
+
   reactStrictMode: true,
   poweredByHeader: false,
   productionBrowserSourceMaps: false,
@@ -47,6 +54,21 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "images.unsplash.com" },
       { protocol: "https", hostname: "nsnwwfbidishftlrimer.supabase.co" },
     ],
+  },
+
+  // The generated suburb data lives in data/suburbs/ and is read at runtime
+  // with fs. Next cannot trace a path it assembles at runtime (the detail
+  // bucket is chosen from the SAL code), so the directory is declared here.
+  // Without this, every suburb page 500s on Vercel with ENOENT while working
+  // perfectly in dev.
+  outputFileTracingIncludes: {
+    "/suburbs": ["./data/suburbs/**"],
+    "/suburb/[state]/[slug]": ["./data/suburbs/**"],
+    "/suburb/[name]": ["./data/suburbs/**"],
+    "/api/suburbs/search": ["./data/suburbs/**"],
+    "/api/suburbs/region": ["./data/suburbs/**"],
+    "/sitemap-suburbs.xml": ["./data/suburbs/**"],
+    "/sitemap-suburbs-[page].xml": ["./data/suburbs/**"],
   },
 
   // Tree-shake heavy icon / animation / chart packages

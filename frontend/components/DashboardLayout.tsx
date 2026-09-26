@@ -143,7 +143,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             { href: "/dashboard", label: "Overview", icon: <LayoutDashboard className="w-[18px] h-[18px]" /> },
             { href: "/seeker/search", label: "Search", icon: <Search className="w-[18px] h-[18px]" /> },
             { href: "/seeker/wishlist", label: "Saved listings", icon: <Heart className="w-[18px] h-[18px]" /> },
-            { href: "/suburb/kellyville", label: "Suburbs", icon: <Map className="w-[18px] h-[18px]" /> },
+            { href: "/suburbs", label: "Suburbs", icon: <Map className="w-[18px] h-[18px]" /> },
           ],
         },
         {

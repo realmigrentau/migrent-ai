@@ -27,3 +27,4 @@ Disallow: /mentor-session-success
 Disallow: /seeker/wishlist
 
 Sitemap: https://migrent.vercel.app/sitemap.xml
+Sitemap: https://migrent.vercel.app/sitemap-suburbs.xml
