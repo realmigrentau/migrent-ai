@@ -1,0 +1,604 @@
+/* ══════════════════════════════════════════════════════════════
+   SITE HEADER  ·  components/ui/mega-navbar.tsx
+
+   Three 21st.dev components, one per layer, each copied from its own
+   compiled source and checked against its rendered light theme:
+
+     Navbar 1 (preetsuthar17)            the shell - floating white pill,
+                                         logo, primary action, phone menu
+     Dorpdown Navigation (ln-dev7)       the items - triggers, the sliding
+                                         hover pill, the columned panels
+     Tubelight Navbar (ayushmxxn)        "you are here" - the lamp over
+                                         the current section
+
+   Each value below names the reference class it came from. Colours go
+   through MigRent's tokens: the two shadcn references are token-driven,
+   and in their light theme zinc-200 borders and zinc-100 fills are within
+   two points of --color-line and --color-surface-muted. Their `primary`
+   (zinc-900) becomes the site's navy, and Navbar 1's hard-coded black
+   button follows it so the header has one dark, not two.
+
+   Departures are accessibility only, each made where the reference is
+   not looking: focus rings, 44px touch targets built from padding plus a
+   matching negative margin so nothing moves, and the hover pill painted
+   under the label instead of tinting it.
+   ══════════════════════════════════════════════════════════════ */
+
+:root {
+  --site-nav-primary-5: color-mix(in srgb, var(--color-primary) 5%, transparent);
+  --site-nav-primary-10: color-mix(in srgb, var(--color-primary) 10%, transparent);
+  --site-nav-primary-20: color-mix(in srgb, var(--color-primary) 20%, transparent);
+  /* Tailwind's default transition curve, which every reference inherits. */
+  --site-nav-ease: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── Position: Tubelight "fixed sm:top-0 sm:pt-6", Navbar 1 "py-6 px-4" ── */
+
+.site-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  display: flex;
+  justify-content: center;
+  /* --site-banner-h is set only while the backend-status banner is up. */
+  padding: calc(24px + var(--site-banner-h, 0px)) 16px 0;
+  /* The wrapper spans the viewport; only the pill takes the pointer, or
+     the strip around it would swallow clicks meant for the page. */
+  pointer-events: none;
+  transition: transform 0.4s cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+
+/* The sheet's own z-index only counts inside this header, which shares
+   z-50 with the support widget - and the widget comes later in the page,
+   so it floated over an open menu and could be clicked through a modal.
+   While the sheet is up the whole header lifts above it, still below the
+   skip link, toasts and confirm dialogs at 100 and up. */
+.site-nav[data-sheet="open"] { z-index: 90; }
+
+/* The page's room for the header: 24px + the 60px pill, plus the banner. */
+.site-nav-spacer { height: calc(84px + var(--site-banner-h, 0px)); }
+
+/* Over the homepage hero the header waits off-screen. The extra 24px
+   takes the pill's shadow with it rather than leaving a grey rim. */
+.site-nav[data-revealed="false"] {
+  transform: translateY(calc(-100% - 24px));
+}
+
+/* ── The pill: Navbar 1 "px-6 py-3 bg-white rounded-full shadow-lg" ── */
+
+.site-nav__bar {
+  pointer-events: auto;
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  /* The reference is max-w-3xl because it holds four words and a button.
+     This holds four menus, a language picker, an account control and a
+     button, so the cap is widened to keep that content on one line. */
+  max-width: 1040px;
+  padding: 12px 24px;
+  background: #ffffff;
+  border-radius: 9999px;
+  box-shadow:
+    0 10px 15px -3px rgb(0 0 0 / 0.1),
+    0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+/* ── Logo: Navbar 1 "w-8 h-8 mr-6", scale .8 -> 1, hover rotate 10 ── */
+
+.site-nav__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-right: 24px;
+  flex-shrink: 0;
+  color: var(--color-ink);
+  border-radius: 9999px;
+}
+
+.site-nav__mark {
+  display: inline-flex;
+  width: 32px;
+  height: 32px;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease-in-out;
+  animation: site-nav-pop 0.3s ease-in-out backwards;
+}
+
+.site-nav__brand:hover .site-nav__mark { transform: rotate(10deg); }
+
+.site-nav__wordmark {
+  font-family: var(--font-serif);
+  font-size: 22px;
+  line-height: 1;
+  letter-spacing: -0.012em;
+}
+
+.site-nav__au {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  color: var(--color-ink-muted);
+  margin-top: 2px;
+}
+
+/* ── Items: Dorpdown "relative flex items-center space-x-0" ── */
+
+.site-nav__items {
+  display: none;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 1024px) {
+  .site-nav__items { display: flex; }
+}
+
+/* Navbar 1's link entrance: opacity 0, y -10, .3s. */
+.site-nav__items > li {
+  position: relative;
+  animation: site-nav-drop 0.3s ease-in-out backwards;
+}
+
+/* Dorpdown trigger: "text-sm py-1.5 px-4 gap-1 text-muted-foreground
+   hover:text-foreground transition-colors duration-300". */
+.site-nav__trigger {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 6px 16px;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 400;
+  white-space: nowrap;
+  color: var(--color-ink-muted);
+  background: transparent;
+  border: 0;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: color 0.3s var(--site-nav-ease);
+}
+
+.site-nav__trigger:hover,
+.site-nav__trigger[aria-expanded="true"] {
+  color: var(--color-ink);
+}
+
+/* Tubelight's current item: "bg-muted text-primary". */
+.site-nav__trigger[data-active="true"] {
+  color: var(--color-primary);
+  background: var(--color-surface-muted);
+}
+
+.site-nav__trigger:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Dorpdown chevron: "h-4 w-4 group-hover:rotate-180 duration-300". */
+.site-nav__chevron {
+  width: 16px;
+  height: 16px;
+  flex: none;
+  transition: transform 0.3s var(--site-nav-ease);
+}
+
+.site-nav__trigger:hover .site-nav__chevron,
+.site-nav__trigger[aria-expanded="true"] .site-nav__chevron {
+  transform: rotate(180deg);
+}
+
+/* Dorpdown hover pill: layoutId "hover-bg", "bg-primary/10", radius 99.
+   The reference paints it over the label at 10%; it is under it here so
+   the label keeps full contrast. It looks the same. */
+.site-nav__hover {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: 99px;
+  background: var(--site-nav-primary-10);
+  pointer-events: none;
+}
+
+/* ── The lamp: Tubelight, layoutId "lamp" ──
+   "absolute inset-0 w-full bg-primary/5 rounded-full -z-10". Like the
+   reference, the tint sits under the item's own muted fill, so what shows
+   is the fill at rest and the tint only while the lamp travels. */
+.site-nav__lamp {
+  position: absolute;
+  inset: 0;
+  z-index: -10;
+  width: 100%;
+  border-radius: 9999px;
+  background: var(--site-nav-primary-5);
+  pointer-events: none;
+}
+
+/* "absolute -top-2 left-1/2 -translate-x-1/2 w-8 h-1 bg-primary
+   rounded-t-full". In Tubelight the bar has 4px of padding and a 1px
+   border, so -top-2 lands the lamp 3px proud of the pill's top edge - a
+   light fixed to the rim. This pill has 12px of padding round a 32px item
+   (14px to the rim), so the same 3px is -17px. */
+.site-nav__lamp-bar {
+  position: absolute;
+  top: -17px;
+  left: 50%;
+  width: 32px;
+  height: 4px;
+  transform: translateX(-50%);
+  border-radius: 9999px 9999px 0 0;
+  background: var(--color-primary);
+}
+
+.site-nav__lamp-bar > span {
+  position: absolute;
+  border-radius: 9999px;
+  background: var(--site-nav-primary-20);
+}
+
+/* "w-12 h-6 blur-md -top-2 -left-2" */
+.site-nav__lamp-bar > span:nth-child(1) { width: 48px; height: 24px; top: -8px; left: -8px; filter: blur(12px); }
+/* "w-8 h-6 blur-md -top-1" */
+.site-nav__lamp-bar > span:nth-child(2) { width: 32px; height: 24px; top: -4px; left: 0; filter: blur(12px); }
+/* "w-4 h-4 blur-sm top-0 left-2" */
+.site-nav__lamp-bar > span:nth-child(3) { width: 16px; height: 16px; top: 0; left: 8px; filter: blur(4px); }
+
+/* ── Panel: Dorpdown ──
+   Wrapper "w-auto absolute left-0 top-full pt-2": the 8px gap is padding
+   inside the hover target, so the pointer never crosses dead space. */
+.site-nav__drop {
+  position: absolute;
+  left: 0;
+  top: 100%;
+  width: auto;
+  padding-top: 8px;
+}
+
+/* "bg-background border border-border p-4 w-max", radius 16, no shadow. */
+.site-nav__panel {
+  width: max-content;
+  max-width: calc(100vw - 24px);
+  padding: 16px;
+  background: #ffffff;
+  border: 1px solid var(--color-line);
+  border-radius: 16px;
+}
+
+/* "w-fit shrink-0 flex space-x-9 overflow-hidden" */
+.site-nav__cols {
+  display: flex;
+  gap: 36px;
+  width: fit-content;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.site-nav__col { width: 100%; }
+
+/* "mb-4 text-sm font-medium capitalize text-muted-foreground". A styled
+   label with aria-labelledby rather than an h3: an open panel would
+   otherwise put h3s ahead of the page's h1 in the heading outline. */
+.site-nav__col-title {
+  margin: 0 0 16px;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 500;
+  text-transform: capitalize;
+  color: var(--color-ink-muted);
+}
+
+/* "space-y-6" */
+.site-nav__list {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* "flex items-start space-x-3 group" */
+.site-nav__row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  border-radius: 6px;
+}
+
+.site-nav__row:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 4px;
+}
+
+/* "border border-border text-foreground rounded-md size-9 shrink-0
+   group-hover:bg-accent group-hover:text-accent-foreground
+   transition-colors duration-300" */
+.site-nav__box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  color: var(--color-ink);
+  border: 1px solid var(--color-line);
+  border-radius: 6px;
+  transition:
+    background-color 0.3s var(--site-nav-ease),
+    color 0.3s var(--site-nav-ease);
+}
+
+.site-nav__row:hover .site-nav__box,
+.site-nav__row:focus-visible .site-nav__box {
+  background: var(--color-surface-muted);
+  color: var(--color-ink);
+}
+
+/* "h-5 w-5 flex-none" */
+.site-nav__box svg { width: 20px; height: 20px; flex: none; }
+
+/* "leading-5 w-max" */
+.site-nav__text { width: max-content; line-height: 20px; }
+
+/* "text-sm font-medium text-foreground" */
+.site-nav__label {
+  display: block;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 500;
+  color: var(--color-ink);
+}
+
+/* "text-xs text-muted-foreground group-hover:text-foreground
+   transition-colors duration-300" */
+.site-nav__desc {
+  display: block;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--color-ink-muted);
+  transition: color 0.3s var(--site-nav-ease);
+}
+
+.site-nav__row:hover .site-nav__desc,
+.site-nav__row:focus-visible .site-nav__desc {
+  color: var(--color-ink);
+}
+
+/* ── Right-hand side ── */
+
+.site-nav__end {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+@media (min-width: 1024px) {
+  .site-nav__end { display: flex; }
+}
+
+/* Navbar 1 button: "px-5 py-2 text-sm text-white bg-black rounded-full
+   hover:bg-gray-800 transition-colors", wrapped in whileHover scale 1.05,
+   entering from x 20 after .2s. Black -> the site's primary; gray-800 is
+   the lighter step of black, --color-primary-500 the lighter step of navy. */
+.site-nav__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 20px;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 400;
+  white-space: nowrap;
+  color: var(--color-primary-fg);
+  background: var(--color-primary);
+  border-radius: 9999px;
+  transition:
+    background-color 0.15s var(--site-nav-ease),
+    transform 0.2s ease-out;
+  animation: site-nav-slide 0.3s ease-in-out 0.2s backwards;
+}
+
+.site-nav__cta:hover {
+  background: var(--color-primary-500);
+  transform: scale(1.05);
+}
+
+.site-nav__cta:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 3px;
+}
+
+/* ── Phone: Navbar 1 "md:hidden" toggle, "h-6 w-6", whileTap .9 ──
+   The icon stays exactly where the reference draws it; the 10px of
+   padding and the matching negative margin make it a 44px target. */
+.site-nav__toggle {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px;
+  margin: -10px;
+  color: var(--color-ink);
+  background: none;
+  border: 0;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: transform 0.1s ease-out;
+}
+
+.site-nav__toggle:active { transform: scale(0.9); }
+.site-nav__toggle:focus-visible { outline: 2px solid var(--color-primary); outline-offset: -4px; }
+.site-nav__toggle svg { width: 24px; height: 24px; }
+
+@media (min-width: 1024px) {
+  .site-nav__toggle { display: none; }
+}
+
+/* Navbar 1 sheet: "fixed inset-0 bg-white z-50 pt-24 px-6". */
+.site-nav__sheet {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  padding: 96px 24px 40px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: #ffffff;
+  pointer-events: auto;
+}
+
+/* "absolute top-6 right-6 p-2", X "h-6 w-6". */
+.site-nav__close {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  display: inline-flex;
+  padding: 8px;
+  margin: -2px;
+  border: 2px solid transparent;
+  color: var(--color-ink);
+  background: none;
+  border-radius: 9999px;
+  cursor: pointer;
+}
+
+.site-nav__close svg { width: 24px; height: 24px; }
+.site-nav__close:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 0; }
+
+/* "flex flex-col space-y-6". Each row is 24px of text in a 44px target,
+   and the gap drops by the same 20px, so the rhythm is still 48px. */
+.site-nav__sheet-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* "text-base text-gray-900 font-medium" */
+.site-nav__sheet-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 0;
+  font-family: inherit;
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 500;
+  text-align: left;
+  color: var(--color-ink);
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.site-nav__sheet-link[aria-current] { color: var(--color-primary); }
+.site-nav__sheet-link:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; border-radius: 6px; }
+
+.site-nav__sheet-link .site-nav__chevron { width: 20px; height: 20px; }
+.site-nav__sheet-link[aria-expanded="true"] .site-nav__chevron { transform: rotate(180deg); }
+
+/* A dropdown opened in the sheet: the same icon rows as the desktop
+   panel, one column, each a full 44px target. */
+.site-nav__sheet-sub {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 4px 0 12px;
+  padding: 0;
+  list-style: none;
+}
+
+.site-nav__sheet-sub .site-nav__row {
+  align-items: center;
+  min-height: 44px;
+}
+
+.site-nav__sheet-title {
+  margin: 16px 0 4px;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 500;
+  text-transform: capitalize;
+  color: var(--color-ink-muted);
+}
+
+/* "pt-6", then "w-full px-5 py-3 text-base text-white bg-black
+   rounded-full". */
+.site-nav__sheet-foot { padding-top: 24px; }
+
+.site-nav__sheet-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 12px 20px;
+  font-size: 16px;
+  line-height: 24px;
+  color: var(--color-primary-fg);
+  background: var(--color-primary);
+  border-radius: 9999px;
+  transition: background-color 0.15s var(--site-nav-ease);
+}
+
+.site-nav__sheet-cta:hover { background: var(--color-primary-500); }
+.site-nav__sheet-cta:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 3px; }
+
+/* ── Entrances: Navbar 1, each "duration .3", framer's tween curve ── */
+
+@keyframes site-nav-pop { from { transform: scale(0.8); } }
+@keyframes site-nav-drop { from { opacity: 0; transform: translateY(-10px); } }
+@keyframes site-nav-slide { from { opacity: 0; transform: translateX(20px); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .site-nav,
+  .site-nav *,
+  .site-nav__sheet,
+  .site-nav__sheet * {
+    animation: none !important;
+    transition: none !important;
+  }
+  .site-nav__brand:hover .site-nav__mark,
+  .site-nav__cta:hover { transform: none; }
+}
+
+/* ── Language picker, in the header ──
+   An icon trigger in the same voice as the others: Dorpdown's colours and
+   hover fill, without a label. Its list is drawn as one of the panels. */
+.site-nav__lang { padding: 8px; }
+.site-nav__lang:hover { background: var(--site-nav-primary-10); }
+.site-nav__lang svg { width: 16px; height: 16px; }
+
+.site-nav__lang-list {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  z-index: 70;
+  min-width: 180px;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  background: #ffffff;
+  border: 1px solid var(--color-line);
+  border-radius: 16px;
+}
+
+.site-nav__lang-option { border-radius: 8px; }
+
+/* In the phone sheet the list opens in place, below its row, so the
+   sheet's own scrolling cannot clip it. */
+.site-nav__lang-list--sheet {
+  position: static;
+  margin-top: 4px;
+}

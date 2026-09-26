@@ -57,7 +57,15 @@
         "desc": "Help new arrivals settle in a city you know"
       }
     },
-    "signIn": "Sign in"
+    "signIn": "Sign in",
+    "group": {
+      "search": "Search",
+      "beforeYouRent": "Before you rent",
+      "getStarted": "Get started",
+      "whatYouGet": "What you get",
+      "learn": "Learn",
+      "support": "Support"
+    }
   },
   "home": {
     "badge": "Now live across Australia",

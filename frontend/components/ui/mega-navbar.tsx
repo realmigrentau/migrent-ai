@@ -1,113 +1,256 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useState, useEffect, useRef, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { AnimatePresence, LayoutGroup, MotionConfig, motion } from "framer-motion";
+import { ChevronDown, Menu, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../../hooks/useAuth";
-import { navItems, type DropdownItem, type NavLinkDropdown } from "../../lib/navData";
+import {
+  groupDropdownItems,
+  navItems,
+  type DropdownItem,
+  type NavLinkDropdown,
+} from "../../lib/navData";
 import { Logo } from "./Logo";
 import LanguageSwitcher from "./LanguageSwitcher";
 
 /**
- * `revealAfterVh` keeps the header out of the way of a full-bleed hero: it
- * stays translated off the top until the page has scrolled past that fraction
- * of the viewport height, then slides in. A fraction rather than a pixel
- * count so the threshold follows a window resize on its own.
+ * The site header.
  *
- * ── The dropdowns ──
- * They are disclosures, not ARIA menus. A `role="menu"` promises a widget
- * where arrow keys are the only way to move and Tab leaves entirely; these
- * are lists of links, so they are a button with aria-expanded controlling a
- * list, which is what the APG disclosure-navigation pattern describes and
- * what screen readers already handle well. Arrow keys still work as a
- * convenience, and Tab still walks the links.
+ * Built from three 21st.dev components, each owning one layer. The styles
+ * live in styles/navbar.css with every value traced to its source class:
  *
- * Three things that were wrong before and are fixed here:
- *   · the trigger had no aria-expanded, aria-haspopup or aria-controls, so
- *     a screen reader announced "Resources, button" and nothing about the
- *     eight links that appeared;
- *   · Escape closed the panel but left focus nowhere;
- *   · the panel was separated from its trigger by a 8px margin, so moving
- *     the pointer diagonally between them crossed dead space. The gap is
- *     now transparent padding inside the hover target.
+ *   Navbar 1              the floating pill, the logo, the primary action,
+ *                         and the full-screen phone menu
+ *   Dorpdown Navigation   the triggers, the hover pill that slides between
+ *                         them, and the panels of titled icon columns that
+ *                         morph from one menu to the next
+ *   Tubelight Navbar      the lamp that marks the section you are in
+ *
+ * Nothing about how a visitor uses it changed underneath:
+ *
+ *  - The dropdowns are disclosures, not ARIA menus. A `role="menu"` promises
+ *    a widget where arrow keys are the only way to move and Tab leaves
+ *    entirely; these are lists of links, so each is a button with
+ *    aria-expanded controlling a region, per the APG disclosure-navigation
+ *    pattern. Arrow keys still move through a panel as a convenience.
+ *  - Escape closes a panel and puts focus back on the button that opened it.
+ *  - Hover opens at once and closes after a short delay, so the pointer can
+ *    travel from a trigger into its panel. The 8px gap between them is
+ *    padding inside the hover target, never dead space.
+ *  - A click after a hover-open leaves the panel open. Before, the hover
+ *    opened it and the click that followed toggled it shut again.
+ *  - On the homepage the header waits off-screen until the hero has scrolled
+ *    past, and appears the moment anything in it takes focus, so keyboard
+ *    users can still reach it from the top of the page.
  */
+
+type OpenReason = "hover" | "click" | "key";
+
+/** The account panel, drawn with the same rows as the site menus. */
+const ACCOUNT_ICON = {
+  search: "M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z",
+  home: "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6",
+  chat: "M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z",
+  heart: "M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z",
+  help: "M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z",
+  settings: "M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065zM15 12a3 3 0 11-6 0 3 3 0 016 0z",
+};
+
+const ACCOUNT_MENU: NavLinkDropdown = {
+  type: "dropdown",
+  id: "account",
+  labelKey: "nav.myAccount",
+  matchPrefixes: ["/dashboard", "/account", "/messages", "/seeker/wishlist"],
+  items: [
+    { href: "/dashboard/seeker", iconPath: ACCOUNT_ICON.search, groupKey: "nav.iAmA", titleKey: "nav.seeker", descKey: "nav.findRoom" },
+    { href: "/dashboard/owner", iconPath: ACCOUNT_ICON.home, groupKey: "nav.iAmA", titleKey: "nav.owner", descKey: "nav.listRoom" },
+    { href: "/messages", iconPath: ACCOUNT_ICON.chat, groupKey: "nav.myAccount", titleKey: "nav.messages" },
+    { href: "/seeker/wishlist", iconPath: ACCOUNT_ICON.heart, groupKey: "nav.myAccount", titleKey: "nav.wishlist" },
+    { href: "/resources/help", iconPath: ACCOUNT_ICON.help, groupKey: "nav.myAccount", title: "Help Centre" },
+    { href: "/account/settings", iconPath: ACCOUNT_ICON.settings, groupKey: "nav.myAccount", titleKey: "nav.settings" },
+  ],
+};
+
+/** Tubelight's lamp. One instance on the page, so it slides between items. */
+function Lamp() {
+  return (
+    <motion.span
+      layoutId="site-nav-lamp"
+      className="site-nav__lamp"
+      initial={false}
+      transition={{ type: "spring", stiffness: 300, damping: 30 }}
+      aria-hidden="true"
+    >
+      <span className="site-nav__lamp-bar">
+        <span />
+        <span />
+        <span />
+      </span>
+    </motion.span>
+  );
+}
+
+/** Dorpdown's hover pill. The radius is set as a style, as in the source, so
+ *  framer can hold it round while the pill stretches between items. */
+function HoverPill() {
+  return (
+    <motion.span
+      layoutId="site-nav-hover"
+      className="site-nav__hover"
+      style={{ borderRadius: 99 }}
+      aria-hidden="true"
+    />
+  );
+}
+
+function ItemIcon({ path }: { path: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d={path} />
+    </svg>
+  );
+}
+
 export default function MegaNavbar({ revealAfterVh = 0 }: { revealAfterVh?: number } = {}) {
   const router = useRouter();
   const { t } = useTranslation();
   const { session } = useAuth();
 
-  const [scrolled, setScrolled] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [accountOpen, setAccountOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [hovered, setHovered] = useState<string | null>(null);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileExpanded, setMobileExpanded] = useState<string | null>(null);
 
-  const accountRef = useRef<HTMLDivElement>(null);
-  const navRef = useRef<HTMLUListElement>(null);
+  const headerRef = useRef<HTMLElement>(null);
   const panelRef = useRef<HTMLDivElement | null>(null);
   const triggerRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
   const hoverTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const openedBy = useRef<OpenReason | null>(null);
+  const toggleRef = useRef<HTMLButtonElement>(null);
+  const closeRef = useRef<HTMLButtonElement>(null);
+  const sheetRef = useRef<HTMLDivElement>(null);
 
-  // Label text: a literal wins over a translation key. The Resources hubs
-  // take theirs from data/resources.ts so the navbar and the pages cannot
-  // describe the same destination two different ways.
+  // A literal title wins over a key. The Resources hubs take theirs from
+  // data/resources.ts so the header and the pages cannot word them apart.
   const itemTitle = (item: DropdownItem) => item.title ?? (item.titleKey ? t(item.titleKey) : "");
   const itemDesc = (item: DropdownItem) => item.desc ?? (item.descKey ? t(item.descKey) : "");
 
-  // Which dropdown owns the current route.
-  const isDropdownActive = useCallback(
-    (item: NavLinkDropdown) =>
-      item.matchPrefixes.some(
-        (p) => router.pathname === p || router.pathname.startsWith(`${p}/`),
-      ),
+  const matches = useCallback(
+    (prefixes: string[]) =>
+      prefixes.some((p) => router.pathname === p || router.pathname.startsWith(`${p}/`)),
     [router.pathname],
   );
 
-  const closeDropdown = useCallback((refocus?: string) => {
+  // -- Reveal over the homepage hero -----------------------------------
+  const [scrolledPast, setScrolledPast] = useState(revealAfterVh <= 0);
+  const [focusWithin, setFocusWithin] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () =>
+      setScrolledPast(revealAfterVh <= 0 || window.scrollY > window.innerHeight * revealAfterVh);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [revealAfterVh]);
+
+  const revealed = scrolledPast || focusWithin || mobileOpen || openDropdown !== null;
+
+  // -- Opening and closing ---------------------------------------------
+  const clearHoverTimer = () => {
     if (hoverTimeout.current) clearTimeout(hoverTimeout.current);
+    hoverTimeout.current = null;
+  };
+
+  const closeDropdown = useCallback((refocus?: string) => {
+    clearHoverTimer();
+    openedBy.current = null;
     setOpenDropdown(null);
     if (refocus) triggerRefs.current.get(refocus)?.focus();
   }, []);
 
-  // Close dropdowns on click outside
-  useEffect(() => {
-    const handleClick = (e: MouseEvent) => {
-      if (accountRef.current && !accountRef.current.contains(e.target as Node)) {
-        setAccountOpen(false);
+  const openByHover = (id: string) => {
+    clearHoverTimer();
+    if (openDropdown !== id) openedBy.current = "hover";
+    setOpenDropdown(id);
+  };
+
+  const scheduleClose = () => {
+    clearHoverTimer();
+    hoverTimeout.current = setTimeout(() => {
+      openedBy.current = null;
+      setOpenDropdown(null);
+    }, 180);
+  };
+
+  /* A pointer that hovered a trigger has already opened its panel, so the
+     click that follows is confirmation, not a toggle. The second click
+     closes it, which is what touch and a deliberate mouse both expect. */
+  const onTriggerClick = (id: string) => {
+    if (openDropdown === id) {
+      if (openedBy.current === "hover") {
+        openedBy.current = "click";
+        return;
       }
-      if (navRef.current && !navRef.current.contains(e.target as Node)) {
+      closeDropdown();
+      return;
+    }
+    openedBy.current = "click";
+    setOpenDropdown(id);
+  };
+
+  // Clicking anywhere outside the header closes an open panel.
+  useEffect(() => {
+    const onDown = (e: MouseEvent) => {
+      if (headerRef.current && !headerRef.current.contains(e.target as Node)) {
+        clearHoverTimer();
+        openedBy.current = null;
         setOpenDropdown(null);
       }
     };
-    document.addEventListener("mousedown", handleClick);
-    return () => document.removeEventListener("mousedown", handleClick);
+    document.addEventListener("mousedown", onDown);
+    return () => document.removeEventListener("mousedown", onDown);
   }, []);
 
-  // Escape key closes all dropdowns
+  // Escape closes whatever is open and returns focus to what opened it.
   useEffect(() => {
-    const handleKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        setOpenDropdown((current) => {
-          if (current) triggerRefs.current.get(current)?.focus();
-          return null;
-        });
-        setAccountOpen(false);
-      }
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== "Escape") return;
+      setOpenDropdown((current) => {
+        if (current) triggerRefs.current.get(current)?.focus();
+        return null;
+      });
+      openedBy.current = null;
+      setMobileOpen((open) => {
+        if (open) requestAnimationFrame(() => toggleRef.current?.focus());
+        return false;
+      });
     };
-    document.addEventListener("keydown", handleKey);
-    return () => document.removeEventListener("keydown", handleKey);
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
   }, []);
 
-  /* Keep an open panel inside the window.
-     A panel is centred under its own trigger, and the trigger nearest the
-     end of the nav centres a 520px panel past the right edge on a narrow
-     laptop. This measures the card once, as it mounts, and nudges it back
-     with a margin.
-     A margin rather than a transform on purpose: framer-motion owns the
-     `transform` of the wrapper it animates, so writing one there would be
-     overwritten and the panel would lose its centring. The wrapper keeps
-     its -50% on the separate `translate` property, and the correction lands
-     on the card, which nothing else touches. */
+  /* Navigating closes every menu, as soon as navigation starts rather than
+     after the next page has rendered under an open panel. */
+  useEffect(() => {
+    const onStart = () => {
+      clearHoverTimer();
+      openedBy.current = null;
+      setOpenDropdown(null);
+      setHovered(null);
+      setMobileOpen(false);
+      setMobileExpanded(null);
+    };
+    router.events.on("routeChangeStart", onStart);
+    return () => router.events.off("routeChangeStart", onStart);
+  }, [router.events]);
+
+  useEffect(() => () => clearHoverTimer(), []);
+
+  /* Keep an open panel inside the window. The panels hang from the left of
+     their trigger, as in the reference, so the ones nearest the right of
+     the header run off a laptop screen. Measured once on mount and nudged
+     back with a margin: framer owns this element's transform. */
   const measurePanel = useCallback((el: HTMLDivElement | null) => {
     panelRef.current = el;
     if (!el) return;
@@ -116,79 +259,30 @@ export default function MegaNavbar({ revealAfterVh = 0 }: { revealAfterVh?: numb
     const pad = 12;
     let delta = 0;
     if (rect.right > window.innerWidth - pad) delta = window.innerWidth - pad - rect.right;
-    else if (rect.left < pad) delta = pad - rect.left;
+    if (rect.left + delta < pad) delta = pad - rect.left;
     if (delta !== 0) el.style.marginLeft = `${delta}px`;
   }, []);
 
-  // Starts hidden on the server too, so it never flashes over the hero.
-  const [scrolledPast, setScrolledPast] = useState(revealAfterVh <= 0);
-
-  /* Keyboard users must be able to reach the header before they have
-     scrolled anywhere. While it was `inert` over the hero, the theme,
-     language and account controls were out of the accessibility tree
-     entirely until you scrolled 86% of a viewport - tabbing from the top
-     of the homepage skipped straight past them, and a screen reader never
-     announced them. Focus now reveals the header the same way scrolling
-     does, which is the standard skip-link behaviour and costs the hero
-     nothing: nothing is focusable up there until someone presses Tab. */
-  const [focusWithin, setFocusWithin] = useState(false);
-  const revealed = scrolledPast || focusWithin;
-
-  useEffect(() => {
-    const onScroll = () => {
-      setScrolled(window.scrollY > 20);
-      setScrolledPast(revealAfterVh <= 0 || window.scrollY > window.innerHeight * revealAfterVh);
-    };
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, [revealAfterVh]);
-
-  // Close menus on route change
-  useEffect(() => {
-    setMobileOpen(false);
-    setOpenDropdown(null);
-    setMobileExpanded(null);
-  }, [router.pathname]);
-
-  /* Hover open is immediate; hover close waits. The delay is what lets the
-     pointer travel from the trigger into the panel, and the panel's own
-     mouseenter cancels it. */
-  const handleDropdownEnter = (id: string) => {
-    if (hoverTimeout.current) clearTimeout(hoverTimeout.current);
-    setOpenDropdown(id);
-  };
-
-  const handleDropdownLeave = () => {
-    if (hoverTimeout.current) clearTimeout(hoverTimeout.current);
-    hoverTimeout.current = setTimeout(() => setOpenDropdown(null), 180);
-  };
-
-  useEffect(() => () => {
-    if (hoverTimeout.current) clearTimeout(hoverTimeout.current);
-  }, []);
-
-  /** Move focus between the links inside an open panel. */
+  // -- Keyboard inside a panel -----------------------------------------
   const focusItem = (panel: HTMLElement | null, index: number) => {
     if (!panel) return;
     const links = Array.from(panel.querySelectorAll<HTMLAnchorElement>("a[href]"));
     if (links.length === 0) return;
-    const wrapped = ((index % links.length) + links.length) % links.length;
-    links[wrapped]?.focus();
+    links[((index % links.length) + links.length) % links.length]?.focus();
   };
 
   const onTriggerKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>, id: string) => {
     if (e.key === "ArrowDown" || e.key === "Enter" || e.key === " ") {
       e.preventDefault();
+      openedBy.current = "key";
       setOpenDropdown(id);
-      // The panel mounts this tick; focus it on the next frame.
+      // The panel mounts this tick; focus its first link on the next frame.
       requestAnimationFrame(() => focusItem(panelRef.current, 0));
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
+      openedBy.current = "key";
       setOpenDropdown(id);
       requestAnimationFrame(() => focusItem(panelRef.current, -1));
-    } else if (e.key === "Escape") {
-      closeDropdown();
     }
   };
 
@@ -196,7 +290,6 @@ export default function MegaNavbar({ revealAfterVh = 0 }: { revealAfterVh?: numb
     const panel = e.currentTarget;
     const links = Array.from(panel.querySelectorAll<HTMLAnchorElement>("a[href]"));
     const current = links.indexOf(document.activeElement as HTMLAnchorElement);
-
     if (e.key === "ArrowDown") {
       e.preventDefault();
       focusItem(panel, current + 1);
@@ -215,522 +308,386 @@ export default function MegaNavbar({ revealAfterVh = 0 }: { revealAfterVh?: numb
     }
   };
 
-  // Shared nav link classes
-  const navLinkClass = (active: boolean) =>
-    `relative px-3 py-2 rounded-[6px] text-[13.5px] tracking-[-0.005em] transition-colors duration-150 bg-transparent border-0 outline-none appearance-none ${
-      active
-        ? "text-[var(--color-ink)] font-semibold"
-        : "text-[var(--color-ink-2)] font-medium hover:text-[var(--color-ink)] hover:bg-[var(--color-surface-sunk)]"
-    }`;
+  // -- The phone sheet ---------------------------------------------------
+  /* It is a modal dialog while it is up: the page behind does not scroll,
+     focus starts on the close button and cannot wander out behind the
+     sheet, and closing it returns focus to the button that opened it. */
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const frame = requestAnimationFrame(() => closeRef.current?.focus());
+    return () => {
+      cancelAnimationFrame(frame);
+      document.body.style.overflow = previous;
+    };
+  }, [mobileOpen]);
 
-  const navLinkClassMobile = (active: boolean) =>
-    `flex items-center min-h-[44px] px-3 py-2.5 rounded-[8px] text-sm transition-colors ${
-      active
-        ? "text-[var(--color-ink)] font-semibold bg-[var(--color-surface-sunk)]"
-        : "text-[var(--color-ink-2)] font-medium hover:text-[var(--color-ink)] hover:bg-[var(--color-surface-sunk)]"
-    }`;
+  const closeSheet = () => {
+    setMobileOpen(false);
+    requestAnimationFrame(() => toggleRef.current?.focus());
+  };
 
-  return (
-    <motion.header
-      initial={{ y: -60 }}
-      animate={{ y: revealed ? 0 : -72 }}
-      transition={{ duration: 0.4, ease: [0.2, 0.7, 0.3, 1] }}
-      onFocusCapture={() => setFocusWithin(true)}
-      onBlurCapture={(e) => {
-        if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setFocusWithin(false);
-      }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-200 ${
-        revealed ? "" : "pointer-events-none"
-      } ${
-        scrolled
-          ? "bg-[var(--color-surface)]/97 backdrop-blur-xl border-b border-[var(--color-line)]"
-          : "bg-[var(--color-surface)]/90 backdrop-blur-md border-b border-[var(--color-line)]/60"
-      }`}
-    >
-      <nav className="max-w-[1280px] mx-auto h-[60px] px-4 sm:px-6 lg:px-10 grid grid-cols-[auto_1fr_auto] items-center gap-4">
-        {/* Logo (left) */}
-        <Link href={session ? "/dashboard" : "/"} className="inline-flex items-center gap-2.5 group text-[var(--color-ink)] shrink-0">
-          <Logo size={26} className="transition-transform group-hover:scale-105" />
-          <span className="font-serif text-[22px] leading-none tracking-[-0.012em]">
-            MigRent
-          </span>
-          <span className="eyebrow ml-0.5 mt-0.5">AU</span>
-        </Link>
+  const trapFocus = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key !== "Tab" || !sheetRef.current) return;
+    const focusable = Array.from(
+      sheetRef.current.querySelectorAll<HTMLElement>("a[href], button:not([disabled])"),
+    ).filter((el) => el.offsetParent !== null);
+    if (focusable.length === 0) return;
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  };
 
-        {/* Desktop nav (centered) */}
-        <ul className="hidden lg:flex items-center justify-center gap-0.5" ref={navRef}>
-          {navItems.map((item, index) => {
-            if (item.type === "link") {
-              const active = router.pathname === item.href;
-              return (
-                <li key={item.href} className="flex items-center gap-1">
-                  <Link href={item.href} className={navLinkClass(active)}>
-                    {t(item.labelKey)}
-                    {active && (
-                      <motion.div
-                        layoutId="navIndicator"
-                        className="absolute -bottom-[3px] left-3 right-3 h-[2px] bg-[var(--color-ink)] rounded-full"
-                        transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                      />
-                    )}
-                  </Link>
-                  {/* Dashboard link - after Home */}
-                  {index === 0 && session && (
-                    <Link
-                      href="/dashboard"
-                      className={navLinkClass(router.pathname.startsWith("/dashboard"))}
-                    >
-                      {t("nav.dashboard")}
-                      {router.pathname.startsWith("/dashboard") && (
-                        <motion.div
-                          layoutId="navIndicator"
-                          className="absolute -bottom-[3px] left-3 right-3 h-[2px] bg-[var(--color-ink)] rounded-full"
-                          transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                        />
-                      )}
-                    </Link>
-                  )}
-                </li>
-              );
-            }
+  // -- Pieces --------------------------------------------------------------
+  const hoverHandlers = (key: string) => ({
+    onMouseEnter: () => setHovered(key),
+    onMouseLeave: () => setHovered((h) => (h === key ? null : h)),
+    onFocus: () => setHovered(key),
+    onBlur: () => setHovered((h) => (h === key ? null : h)),
+  });
 
-            // Dropdown item
-            const active = isDropdownActive(item);
-            const open = openDropdown === item.id;
-            const panelId = `nav-panel-${item.id}`;
-            /* Four items sit in two columns, three in one. The panel is only
-               as wide as it needs to be, so the Resources menu is a short
-               readable list instead of a 520px grid with two empty cells. */
-            const twoUp = item.items.length > 3;
+  /** One dropdown: a Dorpdown trigger and its panel of titled columns. */
+  const renderDropdown = (item: NavLinkDropdown) => {
+    const open = openDropdown === item.id;
+    const active = matches(item.matchPrefixes);
+    const panelId = `nav-panel-${item.id}`;
+    const groups = groupDropdownItems(item.items);
 
-            return (
-              <li
-                key={item.id}
-                className="relative"
-                onMouseEnter={() => handleDropdownEnter(item.id)}
-                onMouseLeave={handleDropdownLeave}
+    return (
+      <li
+        key={item.id}
+        onMouseEnter={() => openByHover(item.id)}
+        onMouseLeave={scheduleClose}
+      >
+        <button
+          ref={(el) => {
+            if (el) triggerRefs.current.set(item.id, el);
+            else triggerRefs.current.delete(item.id);
+          }}
+          type="button"
+          className="site-nav__trigger"
+          data-active={active ? "true" : undefined}
+          aria-current={active ? "true" : undefined}
+          aria-expanded={open}
+          aria-controls={panelId}
+          onClick={() => onTriggerClick(item.id)}
+          onKeyDown={(e) => onTriggerKeyDown(e, item.id)}
+          {...hoverHandlers(item.id)}
+        >
+          <span>{t(item.labelKey)}</span>
+          <ChevronDown className="site-nav__chevron" strokeWidth={2} aria-hidden="true" />
+          {active && <Lamp />}
+          {(hovered === item.id || open) && <HoverPill />}
+        </button>
+
+        <AnimatePresence>
+          {open && (
+            <div className="site-nav__drop">
+              <motion.div
+                layoutId="site-nav-menu"
+                ref={measurePanel}
+                id={panelId}
+                className="site-nav__panel"
+                style={{ borderRadius: 16 }}
+                onKeyDown={(e) => onPanelKeyDown(e, item.id)}
               >
-                <button
-                  ref={(el) => {
-                    if (el) triggerRefs.current.set(item.id, el);
-                    else triggerRefs.current.delete(item.id);
-                  }}
-                  type="button"
-                  className={`${navLinkClass(active || open)} inline-flex items-center gap-1`}
-                  aria-expanded={open}
-                  aria-haspopup="true"
-                  aria-controls={panelId}
-                  onClick={() => (open ? closeDropdown() : setOpenDropdown(item.id))}
-                  onKeyDown={(e) => onTriggerKeyDown(e, item.id)}
-                >
-                  {t(item.labelKey)}
-                  <svg
-                    className={`w-3.5 h-3.5 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                    aria-hidden="true"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-                  </svg>
-                  {active && !openDropdown && (
-                    <motion.div
-                      layoutId="navIndicator"
-                      className="absolute -bottom-[3px] left-3 right-3 h-[2px] bg-[var(--color-ink)] rounded-full"
-                      transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                    />
-                  )}
-                </button>
-
-                {/* Dropdown panel.
-                    The wrapper carries pt-2 rather than the card carrying
-                    mt-2, so the visual gap is inside the hover target and
-                    the pointer never crosses dead space on its way in. */}
-                <AnimatePresence>
-                  {open && (
-                    <motion.div
-                      key={item.id}
-                      /* Opacity and Y only. Scale would change the box while
-                         the overflow correction below is measuring it. */
-                      initial={{ opacity: 0, y: 6 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: 6 }}
-                      transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
-                      className="absolute top-full left-1/2 -translate-x-1/2 pt-2 z-50"
-                      onMouseEnter={() => handleDropdownEnter(item.id)}
-                      onMouseLeave={handleDropdownLeave}
-                    >
-                      <div
-                        ref={measurePanel}
-                        id={panelId}
-                        onKeyDown={(e) => onPanelKeyDown(e, item.id)}
-                        className={`rounded-[16px] bg-[var(--color-surface-2)] border border-[var(--color-line)] shadow-[var(--shadow-pop)] overflow-hidden max-w-[calc(100vw-24px)] ${
-                          twoUp ? "w-[520px]" : "w-[368px]"
-                        }`}
-                      >
+                <div className="site-nav__cols">
+                  {groups.map((group, gi) => {
+                    const titleId = `${panelId}-g${gi}`;
+                    return (
+                      <motion.div layout key={group.titleKey ?? gi} className="site-nav__col">
+                        {group.titleKey && (
+                          <p id={titleId} className="site-nav__col-title">
+                            {t(group.titleKey)}
+                          </p>
+                        )}
                         <ul
-                          className={`list-none m-0 p-2.5 grid gap-0.5 ${twoUp ? "grid-cols-2" : "grid-cols-1"}`}
-                          aria-label={t(item.labelKey)}
+                          className="site-nav__list"
+                          aria-labelledby={group.titleKey ? titleId : undefined}
+                          aria-label={group.titleKey ? undefined : t(item.labelKey)}
                         >
-                          {item.items.map((dropItem) => (
-                            <li key={dropItem.href}>
-                              <Link
-                                href={dropItem.href}
-                                onClick={() => closeDropdown()}
-                                className="group/item flex items-start gap-3 p-3 rounded-[11px] hover:bg-[var(--color-surface-sunk)] transition-colors duration-150"
-                              >
-                                <span className="w-9 h-9 rounded-[9px] bg-[var(--color-surface-sunk)] flex items-center justify-center shrink-0 text-[var(--color-ink-2)] transition-colors duration-150 group-hover/item:bg-[var(--color-primary-50)] group-hover/item:text-[var(--color-primary)]">
-                                  <svg className="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} aria-hidden="true">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d={dropItem.iconPath} />
-                                  </svg>
+                          {group.items.map((entry) => (
+                            <li key={entry.href}>
+                              <Link href={entry.href} className="site-nav__row" onClick={() => closeDropdown()}>
+                                <span className="site-nav__box">
+                                  <ItemIcon path={entry.iconPath} />
                                 </span>
-                                <span className="flex-1 min-w-0">
-                                  <span className="block text-[13.5px] font-semibold text-[var(--color-ink)] leading-tight">
-                                    {itemTitle(dropItem)}
-                                  </span>
-                                  <span className="block text-[12px] text-[var(--color-ink-3)] mt-1 leading-snug">
-                                    {itemDesc(dropItem)}
-                                  </span>
+                                <span className="site-nav__text">
+                                  <span className="site-nav__label">{itemTitle(entry)}</span>
+                                  {itemDesc(entry) && <span className="site-nav__desc">{itemDesc(entry)}</span>}
                                 </span>
-                                {/* The hover indicator. Transform only. */}
-                                <svg
-                                  className="w-3.5 h-3.5 shrink-0 mt-1 text-[var(--color-ink-4)] opacity-0 -translate-x-1 transition-[opacity,transform] duration-150 group-hover/item:opacity-100 group-hover/item:translate-x-0 group-focus-visible/item:opacity-100 group-focus-visible/item:translate-x-0"
-                                  fill="none"
-                                  viewBox="0 0 24 24"
-                                  stroke="currentColor"
-                                  strokeWidth={2}
-                                  aria-hidden="true"
-                                >
-                                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                                </svg>
                               </Link>
                             </li>
                           ))}
                         </ul>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </li>
-            );
-          })}
-        </ul>
+                      </motion.div>
+                    );
+                  })}
+                </div>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>
+      </li>
+    );
+  };
 
-        {/* Right cell - actions on desktop, hamburger on mobile */}
-        <div className="flex items-center justify-end gap-2">
+  const listRoomHref = session ? "/owner/listings/new" : "/for-owners";
+  const signInActive = router.pathname === "/signin";
 
-        {/* Actions (right) */}
-        <ul className="hidden lg:flex items-center gap-2 justify-end">
-          {/* Language */}
-          <li>
-            <LanguageSwitcher />
-          </li>
-          {/* List a room */}
-          <li>
+  /* The sheet's rows, flattened so each can take its place in the
+     stagger - Navbar 1 brings its links in one after another. */
+  const sheetRows: { key: string; node: React.ReactNode }[] = [
+    ...navItems.map((item) => {
+      if (item.type === "link") {
+        const active = router.pathname === item.href;
+        return {
+          key: item.href,
+          node: (
             <Link
-              href={session ? "/owner/listings/new" : "/for-owners"}
-              className="btn-primary btn-compact"
+              href={item.href}
+              className="site-nav__sheet-link"
+              aria-current={active ? "page" : undefined}
+              onClick={() => setMobileOpen(false)}
             >
-              List a room
+              {t(item.labelKey)}
             </Link>
-          </li>
-
-          {/* Account / Sign Up */}
-          <li>
-            {session ? (
-              <div ref={accountRef} className="relative">
-                <button
-                  onClick={() => setAccountOpen(!accountOpen)}
-                  className="btn-outline btn-compact"
-                  aria-expanded={accountOpen}
-                  aria-haspopup="true"
-                >
-                  {t("nav.myAccount")}
-                  <svg className={`w-3.5 h-3.5 transition-transform ${accountOpen ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5} aria-hidden="true">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
-                <AnimatePresence>
-                  {accountOpen && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 8, scale: 0.95 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: 8, scale: 0.95 }}
-                      transition={{ duration: 0.15 }}
-                      className="absolute right-0 mt-2 w-56 rounded-xl bg-[var(--color-surface-2)] border border-[var(--color-line)] shadow-xl overflow-hidden z-50"
-                    >
-                      <p className="px-4 pt-3 pb-2 eyebrow">
-                        {t("nav.iAmA")}
-                      </p>
-                      <Link
-                        href="/dashboard/seeker"
-                        onClick={() => setAccountOpen(false)}
-                        className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-[var(--color-ink)] hover:bg-[var(--color-surface-sunk)] transition-colors"
-                      >
-                        <svg className="w-5 h-5 text-[var(--color-ink-3)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} aria-hidden="true">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                        </svg>
-                        {t("nav.seeker")}
-                        <span className="text-xs text-[var(--color-ink-3)] ml-auto">{t("nav.findRoom")}</span>
-                      </Link>
-                      <Link
-                        href="/dashboard/owner"
-                        onClick={() => setAccountOpen(false)}
-                        className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-[var(--color-ink)] hover:bg-[var(--color-surface-sunk)] transition-colors"
-                      >
-                        <svg className="w-5 h-5 text-[var(--color-ink-3)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} aria-hidden="true">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                        </svg>
-                        {t("nav.owner")}
-                        <span className="text-xs text-[var(--color-ink-3)] ml-auto">{t("nav.listRoom")}</span>
-                      </Link>
-                      <div className="border-t border-[var(--color-line)]">
-                        <Link
-                          href="/messages"
-                          onClick={() => setAccountOpen(false)}
-                          className="flex items-center gap-3 px-4 py-3 text-sm text-[var(--color-ink-2)] hover:bg-[var(--color-surface-sunk)] transition-colors"
-                        >
-                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} aria-hidden="true">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                          </svg>
-                          {t("nav.messages")}
-                        </Link>
-                        <Link
-                          href="/seeker/wishlist"
-                          onClick={() => setAccountOpen(false)}
-                          className="flex items-center gap-3 px-4 py-3 text-sm text-[var(--color-ink-2)] hover:bg-[var(--color-surface-sunk)] transition-colors"
-                        >
-                          <svg className="w-4 h-4 text-[var(--color-coral-500)]" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                          </svg>
-                          {t("nav.wishlist")}
-                        </Link>
-                        <Link
-                          href="/resources/help"
-                          onClick={() => setAccountOpen(false)}
-                          className="flex items-center gap-3 px-4 py-3 text-sm text-[var(--color-ink-2)] hover:bg-[var(--color-surface-sunk)] transition-colors"
-                        >
-                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} aria-hidden="true">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" />
-                          </svg>
-                          Help Centre
-                        </Link>
-                        <Link
-                          href="/account/settings"
-                          onClick={() => setAccountOpen(false)}
-                          className="flex items-center gap-3 px-4 py-3 text-sm text-[var(--color-ink-2)] hover:bg-[var(--color-surface-sunk)] transition-colors"
-                        >
-                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} aria-hidden="true">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                          </svg>
-                          {t("nav.settings")}
-                        </Link>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            ) : (
-              /* Secondary, not primary. The header carries one filled
-                 button and it is "List a room" - the action a visitor
-                 cannot reach any other way. Search is reachable from the
-                 hero, the nav and every listing card, and signing up is a
-                 step inside those flows rather than a destination. */
-              <Link
-                href="/signin"
-                className="btn-outline btn-compact"
-              >
-                {t("nav.signIn")}
-              </Link>
+          ),
+        };
+      }
+      const expanded = mobileExpanded === item.id;
+      const sectionId = `mobile-section-${item.id}`;
+      return {
+        key: item.id,
+        node: (
+          <>
+            <button
+              type="button"
+              className="site-nav__sheet-link"
+              aria-expanded={expanded}
+              aria-controls={sectionId}
+              aria-current={matches(item.matchPrefixes) ? "true" : undefined}
+              onClick={() => setMobileExpanded(expanded ? null : item.id)}
+            >
+              {t(item.labelKey)}
+              <ChevronDown className="site-nav__chevron" strokeWidth={2} aria-hidden="true" />
+            </button>
+            {expanded && (
+              <ul className="site-nav__sheet-sub" id={sectionId}>
+                {item.items.map((entry) => (
+                  <li key={entry.href}>
+                    <Link href={entry.href} className="site-nav__row" onClick={() => setMobileOpen(false)}>
+                      <span className="site-nav__box">
+                        <ItemIcon path={entry.iconPath} />
+                      </span>
+                      <span className="site-nav__label">{itemTitle(entry)}</span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
             )}
-          </li>
-        </ul>
+          </>
+        ),
+      };
+    }),
+    session
+      ? {
+          key: "account",
+          node: (
+            <>
+              <p className="site-nav__sheet-title">{t("nav.myAccount")}</p>
+              <ul className="site-nav__sheet-sub">
+                {ACCOUNT_MENU.items.map((entry) => (
+                  <li key={entry.href}>
+                    <Link href={entry.href} className="site-nav__row" onClick={() => setMobileOpen(false)}>
+                      <span className="site-nav__box">
+                        <ItemIcon path={entry.iconPath} />
+                      </span>
+                      <span className="site-nav__label">{itemTitle(entry)}</span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </>
+          ),
+        }
+      : {
+          key: "signin",
+          node: (
+            <Link
+              href="/signin"
+              className="site-nav__sheet-link"
+              aria-current={signInActive ? "page" : undefined}
+              onClick={() => setMobileOpen(false)}
+            >
+              {t("nav.signIn")}
+            </Link>
+          ),
+        },
+    { key: "language", node: <LanguageSwitcher variant="sheet" /> },
+  ];
 
-        {/* Mobile: language + hamburger */}
-        <div className="lg:hidden flex items-center gap-2">
-          <LanguageSwitcher />
-          <button
-            onClick={() => setMobileOpen(!mobileOpen)}
-            className="flex flex-col gap-1.5 p-2"
-            aria-label={mobileOpen ? "Close menu" : "Open menu"}
-            aria-expanded={mobileOpen}
-            aria-controls="mobile-nav-panel"
-          >
-            <motion.span
-              animate={mobileOpen ? { rotate: 45, y: 7 } : { rotate: 0, y: 0 }}
-              className="block w-6 h-0.5 bg-[var(--color-ink-2)]"
-            />
-            <motion.span
-              animate={mobileOpen ? { opacity: 0 } : { opacity: 1 }}
-              className="block w-6 h-0.5 bg-[var(--color-ink-2)]"
-            />
-            <motion.span
-              animate={mobileOpen ? { rotate: -45, y: -7 } : { rotate: 0, y: 0 }}
-              className="block w-6 h-0.5 bg-[var(--color-ink-2)]"
-            />
-          </button>
-        </div>
-        </div>
-      </nav>
+  return (
+    <MotionConfig reducedMotion="user">
+      <header
+        ref={headerRef}
+        className="site-nav"
+        data-revealed={revealed ? "true" : "false"}
+        data-sheet={mobileOpen ? "open" : undefined}
+        onFocusCapture={() => setFocusWithin(true)}
+        onBlurCapture={(e) => {
+          if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setFocusWithin(false);
+        }}
+      >
+        <LayoutGroup id="site-nav">
+          <nav className="site-nav__bar" aria-label="Primary">
+            <Link href={session ? "/dashboard" : "/"} className="site-nav__brand">
+              <span className="site-nav__mark" aria-hidden="true">
+                <Logo size={32} title="" />
+              </span>
+              <span className="site-nav__wordmark">MigRent</span>
+              <span className="site-nav__au">AU</span>
+            </Link>
 
-      {/* Mobile menu.
-          It lives inside the fixed header and overlays the page, so opening
-          it moves nothing: the document behind keeps its scroll position and
-          the page does not reflow. */}
-      <AnimatePresence>
-        {mobileOpen && (
-          <motion.div
-            id="mobile-nav-panel"
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-            className={`lg:hidden overflow-hidden mt-2 ${session ? "max-w-5xl" : "max-w-4xl"} mx-auto rounded-[14px] bg-[var(--color-surface-2)]/97 backdrop-blur-xl border border-[var(--color-line)] shadow-[var(--shadow-pop)]`}
-          >
-            <div className="px-4 py-3 space-y-1 max-h-[80vh] overflow-y-auto">
-              {navItems.map((item, index) => {
-                if (item.type === "link") {
-                  const active = router.pathname === item.href;
-                  return (
-                    <div key={item.href}>
-                      <Link
-                        href={item.href}
-                        className={navLinkClassMobile(active)}
-                        onClick={() => setMobileOpen(false)}
-                      >
-                        {t(item.labelKey)}
-                      </Link>
-                      {/* Dashboard after Home */}
-                      {index === 0 && session && (
-                        <Link
-                          href="/dashboard"
-                          className={navLinkClassMobile(router.pathname.startsWith("/dashboard"))}
-                          onClick={() => setMobileOpen(false)}
-                        >
-                          {t("nav.dashboard")}
-                        </Link>
-                      )}
-                    </div>
-                  );
-                }
-
-                /* Dropdown -> accordion. One level deep, never two: the
-                   same three or four destinations as the desktop panel,
-                   each row a comfortable 48px tap target. */
-                const expanded = mobileExpanded === item.id;
-                const sectionId = `mobile-section-${item.id}`;
+            <ul className="site-nav__items">
+              {navItems.map((item) => {
+                if (item.type === "dropdown") return renderDropdown(item);
+                const active = router.pathname === item.href;
+                const key = item.href;
                 return (
-                  <div key={item.id}>
-                    <button
-                      type="button"
-                      onClick={() => setMobileExpanded(expanded ? null : item.id)}
-                      aria-expanded={expanded}
-                      aria-controls={sectionId}
-                      className="w-full flex items-center justify-between min-h-[44px] px-3 py-2.5 rounded-[8px] text-sm font-medium text-[var(--color-ink-2)] hover:bg-[var(--color-surface-sunk)] transition-colors"
+                  /* Dorpdown closes an open panel as soon as the pointer
+                     reaches a plain link beside it. */
+                  <li key={key} onMouseEnter={() => closeDropdown()}>
+                    <Link
+                      href={item.href}
+                      className="site-nav__trigger"
+                      data-active={active ? "true" : undefined}
+                      aria-current={active ? "page" : undefined}
+                      {...hoverHandlers(key)}
                     >
                       {t(item.labelKey)}
-                      <svg
-                        className={`w-4 h-4 transition-transform duration-200 ${expanded ? "rotate-180" : ""}`}
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth={2}
-                        aria-hidden="true"
-                      >
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-                      </svg>
-                    </button>
-                    <AnimatePresence initial={false}>
-                      {expanded && (
-                        <motion.div
-                          id={sectionId}
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: "auto", opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
-                          className="overflow-hidden"
-                        >
-                          <ul className="list-none m-0 pl-3 pb-2 space-y-0.5">
-                            {item.items.map((subItem) => (
-                              <li key={subItem.href}>
-                                <Link
-                                  href={subItem.href}
-                                  onClick={() => setMobileOpen(false)}
-                                  className="flex items-center gap-3 min-h-[48px] px-3 py-2.5 rounded-[8px] text-sm text-[var(--color-ink-2)] hover:bg-[var(--color-surface-sunk)] transition-colors"
-                                >
-                                  <span className="w-8 h-8 rounded-[7px] bg-[var(--color-surface-sunk)] flex items-center justify-center shrink-0 text-[var(--color-ink-3)]">
-                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} aria-hidden="true">
-                                      <path strokeLinecap="round" strokeLinejoin="round" d={subItem.iconPath} />
-                                    </svg>
-                                  </span>
-                                  <span className="font-medium">{itemTitle(subItem)}</span>
-                                </Link>
-                              </li>
-                            ))}
-                          </ul>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
+                      {active && <Lamp />}
+                      {hovered === key && <HoverPill />}
+                    </Link>
+                  </li>
                 );
               })}
+            </ul>
 
-              {/* Account section */}
-              {session ? (
-                <>
-                  <div className="border-t border-[var(--color-line)] pt-2 mt-2">
-                    <p className="px-3 pt-1 pb-1 eyebrow">
-                      {t("nav.myAccount")} - {t("nav.iAmA")}
-                    </p>
+            <div className="site-nav__end">
+              <ul className="site-nav__items">
+                <li onMouseEnter={() => closeDropdown()}>
+                  <LanguageSwitcher variant="nav" />
+                </li>
+                {session ? (
+                  renderDropdown(ACCOUNT_MENU)
+                ) : (
+                  <li onMouseEnter={() => closeDropdown()}>
                     <Link
-                      href="/dashboard/seeker"
-                      onClick={() => setMobileOpen(false)}
-                      className="flex items-center gap-3 min-h-[44px] px-3 py-2.5 rounded-[8px] text-sm font-medium text-[var(--color-ink-2)] hover:text-[var(--color-ink)] hover:bg-[var(--color-surface-sunk)] transition-colors"
+                      href="/signin"
+                      className="site-nav__trigger"
+                      data-active={signInActive ? "true" : undefined}
+                      aria-current={signInActive ? "page" : undefined}
+                      {...hoverHandlers("signin")}
                     >
-                      <svg className="w-5 h-5 text-[var(--color-ink-3)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} aria-hidden="true">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                      </svg>
-                      {t("nav.seeker")}
+                      {t("nav.signIn")}
+                      {signInActive && <Lamp />}
+                      {hovered === "signin" && <HoverPill />}
                     </Link>
-                    <Link
-                      href="/dashboard/owner"
-                      onClick={() => setMobileOpen(false)}
-                      className="flex items-center gap-3 min-h-[44px] px-3 py-2.5 rounded-[8px] text-sm font-medium text-[var(--color-ink-2)] hover:text-[var(--color-ink)] hover:bg-[var(--color-surface-sunk)] transition-colors"
-                    >
-                      <svg className="w-5 h-5 text-[var(--color-ink-3)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} aria-hidden="true">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                      </svg>
-                      {t("nav.owner")}
-                    </Link>
-                    <Link
-                      href="/account/settings"
-                      onClick={() => setMobileOpen(false)}
-                      className="flex items-center gap-3 min-h-[44px] px-3 py-2.5 rounded-[8px] text-sm font-medium text-[var(--color-ink-2)] hover:bg-[var(--color-surface-sunk)] transition-colors"
-                    >
-                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} aria-hidden="true">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                      </svg>
-                      {t("nav.settings")}
-                    </Link>
-                  </div>
-                </>
-              ) : (
-                <Link
-                  href="/signup"
-                  onClick={() => setMobileOpen(false)}
-                  style={{ color: "var(--color-primary-fg)" }}
-                  className="flex items-center justify-center min-h-[44px] mt-2 px-4 py-2.5 rounded-full text-sm font-semibold text-center bg-[var(--color-primary)] text-[color:var(--color-primary-fg)] hover:bg-[var(--color-primary-500)] transition-colors"
-                >
-                  {t("nav.signUp")}
-                </Link>
-              )}
+                  </li>
+                )}
+              </ul>
+              {/* The header's one filled button - the action a visitor
+                  cannot reach any other way. Search is in the hero, the
+                  nav and every listing card; signing up is a step inside
+                  those flows rather than a destination. */}
+              <Link href={listRoomHref} className="site-nav__cta">
+                {t("nav.listRoom")}
+              </Link>
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.header>
+
+            <button
+              ref={toggleRef}
+              type="button"
+              className="site-nav__toggle"
+              aria-label="Open menu"
+              aria-expanded={mobileOpen}
+              aria-controls="mobile-nav-panel"
+              onClick={() => setMobileOpen(true)}
+            >
+              <Menu strokeWidth={2} aria-hidden="true" />
+            </button>
+          </nav>
+        </LayoutGroup>
+
+        <AnimatePresence>
+          {mobileOpen && (
+            <motion.div
+              ref={sheetRef}
+              id="mobile-nav-panel"
+              className="site-nav__sheet"
+              role="dialog"
+              aria-modal="true"
+              aria-label="Menu"
+              /* Lenis owns wheel scrolling on the page; this lets the sheet
+                 scroll natively when its contents are taller than a phone. */
+              data-lenis-prevent=""
+              onKeyDown={trapFocus}
+              initial={{ opacity: 0, x: "100%" }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: "100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+            >
+              <motion.button
+                ref={closeRef}
+                type="button"
+                className="site-nav__close"
+                aria-label="Close menu"
+                onClick={closeSheet}
+                whileTap={{ scale: 0.9 }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.2 }}
+              >
+                <X strokeWidth={2} aria-hidden="true" />
+              </motion.button>
+
+              <ul className="site-nav__sheet-list">
+                {sheetRows.map((row, i) => (
+                  <motion.li
+                    key={row.key}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: 20 }}
+                    transition={{ delay: i * 0.1 + 0.1 }}
+                  >
+                    {row.node}
+                  </motion.li>
+                ))}
+              </ul>
+
+              <motion.div
+                className="site-nav__sheet-foot"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 20 }}
+                transition={{ delay: 0.5 }}
+              >
+                <Link href={listRoomHref} className="site-nav__sheet-cta" onClick={() => setMobileOpen(false)}>
+                  {t("nav.listRoom")}
+                </Link>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </header>
+    </MotionConfig>
   );
 }

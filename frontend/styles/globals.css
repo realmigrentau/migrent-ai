@@ -3,6 +3,7 @@
 @import "./home.css";
 @import "./resources.css";
 @import "./suburbs.css";
+@import "./navbar.css";
 
 @custom-variant dark (&:where(.dark, .dark *));
 

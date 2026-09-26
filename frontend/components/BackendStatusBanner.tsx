@@ -33,6 +33,31 @@ export default function BackendStatusBanner() {
   const [dismissed, setDismissed] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const failCount = useRef(0);
+  const bannerRef = useRef<HTMLDivElement>(null);
+  const visible = status === "down" && !dismissed;
+
+  /* The header floats over the page, so a banner left in the page flow
+     sits underneath it. While this one is up it is fixed to the top
+     instead, and publishes its height as --site-banner-h: the header and
+     the page spacer both add that, so everything moves down by exactly
+     the banner and back again when it goes. A ResizeObserver because the
+     text wraps onto a second line on a phone. */
+  useEffect(() => {
+    const root = document.documentElement;
+    const el = bannerRef.current;
+    if (!visible || !el) {
+      root.style.removeProperty("--site-banner-h");
+      return;
+    }
+    const publish = () => root.style.setProperty("--site-banner-h", `${el.offsetHeight}px`);
+    publish();
+    const observer = new ResizeObserver(publish);
+    observer.observe(el);
+    return () => {
+      observer.disconnect();
+      root.style.removeProperty("--site-banner-h");
+    };
+  }, [visible]);
 
   useEffect(() => {
     let cancelled = false;
@@ -60,13 +85,14 @@ export default function BackendStatusBanner() {
     };
   }, []);
 
-  if (status !== "down" || dismissed) return null;
+  if (!visible) return null;
 
   return (
     <div
+      ref={bannerRef}
       role="status"
       aria-live="polite"
-      className="w-full bg-[#f4e4cf] dark:bg-[#2c1e10] border-b border-[var(--color-warn-500)]/30 text-[var(--color-ink)]"
+      className="fixed top-0 left-0 right-0 z-[55] w-full bg-[#f4e4cf] dark:bg-[#2c1e10] border-b border-[var(--color-warn-500)]/30 text-[var(--color-ink)]"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 flex items-center gap-3 text-[13px]">
         <span className="inline-flex w-2 h-2 rounded-full bg-[var(--color-warn-500)] flex-shrink-0" />
