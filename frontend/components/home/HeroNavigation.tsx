@@ -38,20 +38,25 @@ export type HeroNavItem = { labelKey: string; href: string };
  *
  * navData's top level is four audience-first entries. Three of them are
  * dropdowns, which have no href of their own, so each one resolves to the
- * first destination in its first column - the page that dropdown exists to
- * send people to. That is /seeker/search for Find a stay, /for-owners for
- * For owners and /guides for Resources.
+ * first item in its list - the page that dropdown exists to send people to.
+ * That is /seeker/search for Find a stay, /for-owners for For owners and
+ * /resources/guides for Resources.
  *
  * Labels come through the same i18n keys the header uses, so the hero is
  * translated in all eight locales instead of being the one English-only row
  * on the page.
  */
 export function heroNavItems(): HeroNavItem[] {
-  return navItems.map((item) =>
-    item.type === "link"
-      ? { labelKey: item.labelKey, href: item.href }
-      : { labelKey: item.labelKey, href: item.columns[0][0].href },
-  );
+  return navItems.flatMap((item) => {
+    if (item.type === "link") return [{ labelKey: item.labelKey, href: item.href }];
+    /* Resources builds its items from RESOURCE_HUBS in data/resources.ts, so
+       this list is data now, not a literal. Reading [0].href straight off it
+       throws the moment that data is empty, and this renders server-side on
+       the homepage - an empty array would be a blank 500 on the front door
+       rather than a missing link. Drop the entry instead. */
+    const first = item.items[0];
+    return first ? [{ labelKey: item.labelKey, href: first.href }] : [];
+  });
 }
 
 export const HERO_NAV_CTA = { labelKey: "nav.findRoom", href: "/seeker/search" };
@@ -123,7 +128,7 @@ export default function HeroNavigation({ navRef }: { navRef?: React.Ref<HTMLElem
             aria-label="Open menu"
             onClick={() => setOpen(true)}
           >
-            <Menu className="w-5 h-5" strokeWidth={1.9} aria-hidden="true" />
+            <Menu className="w-5 h-5" strokeWidth={1.75} aria-hidden="true" />
           </button>
         </div>
       </nav>
@@ -140,7 +145,7 @@ export default function HeroNavigation({ navRef }: { navRef?: React.Ref<HTMLElem
               aria-label="Close menu"
               onClick={() => setOpen(false)}
             >
-              <X className="w-5 h-5" strokeWidth={1.9} aria-hidden="true" />
+              <X className="w-5 h-5" strokeWidth={1.75} aria-hidden="true" />
             </button>
           </div>
           {items.map((item) => (

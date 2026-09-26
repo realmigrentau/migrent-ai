@@ -140,18 +140,18 @@ export default function Contact() {
               <h2 className="text-xl font-semibold tracking-tight text-[var(--color-ink)]">Quick answers</h2>
               <p className="text-sm text-[var(--color-ink-3)] mt-1">Most questions are answered in seconds.</p>
             </div>
-            <Link href="/faq" className="text-sm text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] font-medium">
+            <Link href="/resources/help" className="text-sm text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] font-medium">
               Browse all FAQs →
             </Link>
           </div>
           <div className="grid sm:grid-cols-2 gap-3">
             {[
-              { q: "How does identity verification work?", href: "/faq" },
-              { q: "How do bookings and payments work?", href: "/faq" },
-              { q: "Can I cancel a booking?", href: "/faq" },
-              { q: "How do I list my property?", href: "/help" },
-              { q: "Is MigRent only for migrants and students?", href: "/faq" },
-              { q: "How do I report a suspicious listing?", href: "/help" },
+              { q: "How does identity verification work?", href: "/resources/help" },
+              { q: "How do bookings and payments work?", href: "/resources/help" },
+              { q: "Can I cancel a booking?", href: "/resources/help" },
+              { q: "How do I list my property?", href: "/resources/help" },
+              { q: "Is MigRent only for migrants and students?", href: "/resources/help" },
+              { q: "How do I report a suspicious listing?", href: "/resources/help" },
             ].map((item) => (
               <Link
                 key={item.q}

@@ -14,7 +14,7 @@ import { chromium } from "@playwright/test";
 
 const base = process.argv[2] || "http://127.0.0.1:3100";
 const RUNS = Number(process.env.PERF_RUNS || 3);
-const PAGES = ["/", "/seeker/search?suburb=Kellyville", "/listing/11111111-1111-4111-8111-000000000001", "/pricing"];
+const PAGES = ["/", "/suburbs", "/suburb/nsw/kellyville", "/seeker/search?suburb=Kellyville", "/listing/11111111-1111-4111-8111-000000000001", "/pricing"];
 const BUDGET = { lcp: 2500, cls: 0.1, inp: 200 };
 
 const browser = await chromium.launch();

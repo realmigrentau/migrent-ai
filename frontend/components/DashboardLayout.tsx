@@ -128,7 +128,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           title: "Account",
           items: [
             { href: "/dashboard/owner-profile", label: "Profile", icon: <User className="w-[18px] h-[18px]" /> },
-            { href: "/help", label: "Help Centre", icon: <HelpCircle className="w-[18px] h-[18px]" /> },
+            { href: "/resources/help", label: "Help Centre", icon: <HelpCircle className="w-[18px] h-[18px]" /> },
             { href: "/account/settings", label: "Settings", icon: <Settings className="w-[18px] h-[18px]" /> },
           ],
         },
@@ -143,7 +143,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             { href: "/dashboard", label: "Overview", icon: <LayoutDashboard className="w-[18px] h-[18px]" /> },
             { href: "/seeker/search", label: "Search", icon: <Search className="w-[18px] h-[18px]" /> },
             { href: "/seeker/wishlist", label: "Saved listings", icon: <Heart className="w-[18px] h-[18px]" /> },
-            { href: "/suburb/kellyville", label: "Suburbs", icon: <Map className="w-[18px] h-[18px]" /> },
+            { href: "/suburbs", label: "Suburbs", icon: <Map className="w-[18px] h-[18px]" /> },
           ],
         },
         {
@@ -157,7 +157,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           title: "Account",
           items: [
             { href: "/dashboard/seeker-profile", label: "Profile", icon: <User className="w-[18px] h-[18px]" /> },
-            { href: "/help", label: "Help Centre", icon: <HelpCircle className="w-[18px] h-[18px]" /> },
+            { href: "/resources/help", label: "Help Centre", icon: <HelpCircle className="w-[18px] h-[18px]" /> },
             { href: "/account/settings", label: "Settings", icon: <Settings className="w-[18px] h-[18px]" /> },
           ],
         },
@@ -170,7 +170,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         items: [
           { href: "/dashboard", label: "Overview", icon: <LayoutDashboard className="w-[18px] h-[18px]" /> },
           { href: "/messages", label: "Messages", icon: <MessageCircle className="w-[18px] h-[18px]" /> },
-          { href: "/help", label: "Help Centre", icon: <HelpCircle className="w-[18px] h-[18px]" /> },
+          { href: "/resources/help", label: "Help Centre", icon: <HelpCircle className="w-[18px] h-[18px]" /> },
           { href: "/account/settings", label: "Settings", icon: <Settings className="w-[18px] h-[18px]" /> },
         ],
       },
@@ -189,7 +189,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         { href: "/owner/listings", label: "Listings", icon: <ListOrdered className="w-5 h-5" /> },
         { href: "/dashboard/owner-profile", label: "Profile", icon: <User className="w-5 h-5" /> },
         { href: "/messages", label: "Messages", icon: <MessageCircle className="w-5 h-5" /> },
-        { href: "/help", label: "Support", icon: <HelpCircle className="w-5 h-5" /> },
+        { href: "/resources/help", label: "Support", icon: <HelpCircle className="w-5 h-5" /> },
       ];
     }
 
@@ -198,7 +198,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       { href: "/seeker/search", label: "Search", icon: <Search className="w-5 h-5" /> },
       { href: "/dashboard/seeker-profile", label: "Profile", icon: <User className="w-5 h-5" /> },
       { href: "/messages", label: "Messages", icon: <MessageCircle className="w-5 h-5" /> },
-      { href: "/help", label: "Support", icon: <HelpCircle className="w-5 h-5" /> },
+      { href: "/resources/help", label: "Support", icon: <HelpCircle className="w-5 h-5" /> },
     ];
   };
 

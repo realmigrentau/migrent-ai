@@ -24,13 +24,17 @@ const STATIC_PAGES: Entry[] = [
   { path: "/about", priority: "0.7", changefreq: "monthly" },
   { path: "/mentors", priority: "0.6", changefreq: "monthly" },
   { path: "/become-mentor", priority: "0.5", changefreq: "monthly" },
-  { path: "/faq", priority: "0.7", changefreq: "monthly" },
-  { path: "/guides", priority: "0.7", changefreq: "weekly" },
-  { path: "/resources", priority: "0.6", changefreq: "monthly" },
+  // Resources: the three consolidated hubs. /guides, /blog, /faq and /help
+  // are 301s now (see next.config.ts) and a redirect must not be submitted
+  // for indexing, so they are gone from here rather than merely reordered.
+  { path: "/resources", priority: "0.7", changefreq: "monthly" },
+  { path: "/resources/guides", priority: "0.8", changefreq: "weekly" },
+  { path: "/resources/tools", priority: "0.7", changefreq: "monthly" },
+  { path: "/resources/help", priority: "0.7", changefreq: "monthly" },
   { path: "/resources/rental-laws", priority: "0.5", changefreq: "monthly" },
+  // The 15,334 individual suburb pages are in /sitemap-suburbs.xml, which
+  // is a sitemap index over 5,000-URL chunks. Only the directory itself is here.
   { path: "/suburbs", priority: "0.8", changefreq: "weekly" },
-  { path: "/blog", priority: "0.7", changefreq: "weekly" },
-  { path: "/help", priority: "0.6", changefreq: "monthly" },
   { path: "/contact", priority: "0.5", changefreq: "yearly" },
   { path: "/safety-verification", priority: "0.5", changefreq: "monthly" },
   { path: "/safety-reporting", priority: "0.4", changefreq: "yearly" },
@@ -57,7 +61,6 @@ function urlTag(loc: string, changefreq: string, priority: string, lastmod?: str
 }
 
 function generateSitemap(
-  suburbSlugs: string[] = [],
   listings: { id: string; updated_at?: string; created_at?: string }[] = []
 ): string {
   const tags: string[] = [];
@@ -75,9 +78,6 @@ function generateSitemap(
   for (const article of HELP_ARTICLES) {
     tags.push(urlTag(`${SITE_URL}/help/${article.slug}`, "monthly", "0.5", LASTMOD["data:helpData"]));
   }
-  for (const slug of suburbSlugs) {
-    tags.push(urlTag(`${SITE_URL}/suburb/${slug}`, "weekly", "0.7", null));
-  }
   // Listing pages: only published, still-available listings come back from
   // the search endpoint, so expired and unmoderated rooms never appear here.
   for (const l of listings) {
@@ -92,22 +92,6 @@ ${tags.join("\n")}
 }
 
 export const getServerSideProps: GetServerSideProps = async ({ res }) => {
-  // Pull the live suburb list from the backend so any suburb that exists gets
-  // into the sitemap. If the backend is unreachable, ship the sitemap without
-  // suburb URLs rather than failing the whole sitemap.
-  let suburbSlugs: string[] = [];
-  try {
-    const r = await fetch(`${API_BASE_URL}/suburb/`);
-    if (r.ok) {
-      const data = await r.json();
-      suburbSlugs = (data.suburbs || [])
-        .map((s: { slug?: string }) => s.slug)
-        .filter((s: string | undefined): s is string => Boolean(s));
-    }
-  } catch {
-    // Backend unreachable - sitemap still ships with all static + content URLs.
-  }
-
   // Approved listings only. The search endpoint already filters to
   // moderation_status = 'approved', so drafts and rejected listings cannot
   // leak into the sitemap.
@@ -130,7 +114,7 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
     "Cache-Control",
     "public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400"
   );
-  res.write(generateSitemap(suburbSlugs, listings));
+  res.write(generateSitemap(listings));
   res.end();
   return { props: {} };
 };

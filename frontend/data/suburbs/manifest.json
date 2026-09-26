@@ -1,0 +1,476 @@
+{
+  "generatedAt": "2026-09-26T07:21:22.293Z",
+  "asgsEdition": "3",
+  "censusYear": "2021",
+  "minPopulationForRates": 50,
+  "minListingSample": 5,
+  "counts": {
+    "rawSalRecords": 15353,
+    "excludedSpecialPurpose": 19,
+    "publicPlaces": 15334,
+    "assignedToCapital": 3397,
+    "assignedToUrbanArea": 1835,
+    "assignedToStateRemainder": 10102,
+    "failedValidation": 0,
+    "regions": 112,
+    "disambiguatedNames": 290,
+    "missingBoundaryGeometry": 0
+  },
+  "coverage": {
+    "population": 14648,
+    "medianAge": 14835,
+    "medianWeeklyRent": 12513,
+    "medianWeeklyHouseholdIncome": 14674,
+    "overseasBornPct": 11047,
+    "topCountriesOfBirth": 9691,
+    "rentedDwellingsPct": 11022,
+    "amenityCounts": 6856,
+    "nearestTransport": 8759,
+    "centre": 15334,
+    "postcode": 15334,
+    "editorial": 16
+  },
+  "excluded": [
+    {
+      "salCode": "19494",
+      "name": "No usual address (NSW)",
+      "reason": "ABS special-purpose code"
+    },
+    {
+      "salCode": "19797",
+      "name": "Migratory - Offshore - Shipping (NSW)",
+      "reason": "ABS special-purpose code"
+    },
+    {
+      "salCode": "29494",
+      "name": "No usual address (Vic.)",
+      "reason": "ABS special-purpose code"
+    },
+    {
+      "salCode": "29797",
+      "name": "Migratory - Offshore - Shipping (Vic.)",
+      "reason": "ABS special-purpose code"
+    },
+    {
+      "salCode": "39494",
+      "name": "No usual address (Qld)",
+      "reason": "ABS special-purpose code"
+    },
+    {
+      "salCode": "39797",
+      "name": "Migratory - Offshore - Shipping (Qld)",
+      "reason": "ABS special-purpose code"
+    },
+    {
+      "salCode": "49494",
+      "name": "No usual address (SA)",
+      "reason": "ABS special-purpose code"
+    },
+    {
+      "salCode": "49797",
+      "name": "Migratory - Offshore - Shipping (SA)",
+      "reason": "ABS special-purpose code"
+    },
+    {
+      "salCode": "59494",
+      "name": "No usual address (WA)",
+      "reason": "ABS special-purpose code"
+    },
+    {
+      "salCode": "59797",
+      "name": "Migratory - Offshore - Shipping (WA)",
+      "reason": "ABS special-purpose code"
+    },
+    {
+      "salCode": "69494",
+      "name": "No usual address (Tas.)",
+      "reason": "ABS special-purpose code"
+    },
+    {
+      "salCode": "69797",
+      "name": "Migratory - Offshore - Shipping (Tas.)",
+      "reason": "ABS special-purpose code"
+    },
+    {
+      "salCode": "79494",
+      "name": "No usual address (NT)",
+      "reason": "ABS special-purpose code"
+    },
+    {
+      "salCode": "79797",
+      "name": "Migratory - Offshore - Shipping (NT)",
+      "reason": "ABS special-purpose code"
+    },
+    {
+      "salCode": "89494",
+      "name": "No usual address (ACT)",
+      "reason": "ABS special-purpose code"
+    },
+    {
+      "salCode": "89797",
+      "name": "Migratory - Offshore - Shipping (ACT)",
+      "reason": "ABS special-purpose code"
+    },
+    {
+      "salCode": "99494",
+      "name": "No usual address (OT)",
+      "reason": "ABS special-purpose code"
+    },
+    {
+      "salCode": "99797",
+      "name": "Migratory - Offshore - Shipping (OT)",
+      "reason": "ABS special-purpose code"
+    },
+    {
+      "salCode": "ZZZZZ",
+      "name": "Outside Australia",
+      "reason": "ABS special-purpose code"
+    }
+  ],
+  "amenities": {
+    "fetchedAt": "2026-09-26T03:07:08.870Z",
+    "categories": [
+      {
+        "key": "train_station",
+        "label": "Train and metro stations"
+      },
+      {
+        "key": "tram_stop",
+        "label": "Tram and light rail stops"
+      },
+      {
+        "key": "ferry_terminal",
+        "label": "Ferry terminals"
+      },
+      {
+        "key": "bus_stop",
+        "label": "Bus stops"
+      },
+      {
+        "key": "supermarket",
+        "label": "Supermarkets"
+      },
+      {
+        "key": "pharmacy",
+        "label": "Pharmacies"
+      },
+      {
+        "key": "medical",
+        "label": "Medical centres and clinics"
+      },
+      {
+        "key": "hospital",
+        "label": "Hospitals"
+      },
+      {
+        "key": "school",
+        "label": "Schools"
+      },
+      {
+        "key": "university",
+        "label": "Universities and colleges"
+      },
+      {
+        "key": "library",
+        "label": "Libraries"
+      }
+    ],
+    "unavailableCategories": [
+      "park"
+    ],
+    "tilesUnanswered": {},
+    "allCategories": [
+      {
+        "key": "train_station",
+        "label": "Train and metro stations"
+      },
+      {
+        "key": "tram_stop",
+        "label": "Tram and light rail stops"
+      },
+      {
+        "key": "ferry_terminal",
+        "label": "Ferry terminals"
+      },
+      {
+        "key": "bus_stop",
+        "label": "Bus stops"
+      },
+      {
+        "key": "supermarket",
+        "label": "Supermarkets"
+      },
+      {
+        "key": "pharmacy",
+        "label": "Pharmacies"
+      },
+      {
+        "key": "medical",
+        "label": "Medical centres and clinics"
+      },
+      {
+        "key": "hospital",
+        "label": "Hospitals"
+      },
+      {
+        "key": "school",
+        "label": "Schools"
+      },
+      {
+        "key": "university",
+        "label": "Universities and colleges"
+      },
+      {
+        "key": "library",
+        "label": "Libraries"
+      },
+      {
+        "key": "park",
+        "label": "Parks"
+      }
+    ]
+  },
+  "sources": [
+    {
+      "id": "abs-asgs-sal",
+      "group": "geography",
+      "organisation": "Australian Bureau of Statistics",
+      "dataset": "ASGS Edition 3 - Suburbs and Localities (SAL) allocation file",
+      "edition": "Edition 3 (July 2021 - June 2026)",
+      "referencePeriod": "2021",
+      "geographyLevel": "Mesh Block to Suburb and Locality (SAL)",
+      "url": "https://www.abs.gov.au/statistics/standards/australian-statistical-geography-standard-asgs/edition-3-july-2021-june-2026/access-and-downloads/allocation-files/SAL_2021_AUST.xlsx",
+      "landingUrl": "https://www.abs.gov.au/statistics/standards/australian-statistical-geography-standard-asgs/edition-3-july-2021-june-2026/non-abs-structures/suburbs-and-localities",
+      "licence": {
+        "name": "Creative Commons Attribution 4.0 International",
+        "url": "https://creativecommons.org/licenses/by/4.0/",
+        "attribution": "Source: Australian Bureau of Statistics, Australian Statistical Geography Standard (ASGS) Edition 3 and Census of Population and Housing 2021. Licensed under CC BY 4.0."
+      },
+      "provides": [
+        "SAL code",
+        "SAL name",
+        "state"
+      ],
+      "limitations": null,
+      "tables": null,
+      "downloadedAt": null,
+      "sha256": null,
+      "bytes": null
+    },
+    {
+      "id": "abs-asgs-mb",
+      "group": "geography",
+      "organisation": "Australian Bureau of Statistics",
+      "dataset": "ASGS Edition 3 - Mesh Block allocation file",
+      "edition": "Edition 3 (July 2021 - June 2026)",
+      "referencePeriod": "2021",
+      "geographyLevel": "Mesh Block to SA1/SA2/SA3/SA4/GCCSA/State",
+      "url": "https://www.abs.gov.au/statistics/standards/australian-statistical-geography-standard-asgs/edition-3-july-2021-june-2026/access-and-downloads/allocation-files/MB_2021_AUST.xlsx",
+      "landingUrl": "https://www.abs.gov.au/statistics/standards/australian-statistical-geography-standard-asgs/latest-release",
+      "licence": {
+        "name": "Creative Commons Attribution 4.0 International",
+        "url": "https://creativecommons.org/licenses/by/4.0/",
+        "attribution": "Source: Australian Bureau of Statistics, Australian Statistical Geography Standard (ASGS) Edition 3 and Census of Population and Housing 2021. Licensed under CC BY 4.0."
+      },
+      "provides": [
+        "Greater Capital City Statistical Area",
+        "SA2/SA3/SA4",
+        "mesh block area"
+      ],
+      "limitations": null,
+      "tables": null,
+      "downloadedAt": null,
+      "sha256": null,
+      "bytes": null
+    },
+    {
+      "id": "abs-asgs-sua",
+      "group": "geography",
+      "organisation": "Australian Bureau of Statistics",
+      "dataset": "ASGS Edition 3 - Significant Urban Areas allocation file",
+      "edition": "Edition 3 (July 2021 - June 2026)",
+      "referencePeriod": "2021",
+      "geographyLevel": "SA2 to Significant Urban Area (SUA)",
+      "url": "https://www.abs.gov.au/statistics/standards/australian-statistical-geography-standard-asgs/edition-3-july-2021-june-2026/access-and-downloads/allocation-files/SUA_2021_AUST.xlsx",
+      "landingUrl": "https://www.abs.gov.au/statistics/standards/australian-statistical-geography-standard-asgs/edition-3-july-2021-june-2026/significant-urban-areas-urban-centres-and-localities-section-state",
+      "licence": {
+        "name": "Creative Commons Attribution 4.0 International",
+        "url": "https://creativecommons.org/licenses/by/4.0/",
+        "attribution": "Source: Australian Bureau of Statistics, Australian Statistical Geography Standard (ASGS) Edition 3 and Census of Population and Housing 2021. Licensed under CC BY 4.0."
+      },
+      "provides": [
+        "Significant Urban Area (regional city grouping)"
+      ],
+      "limitations": null,
+      "tables": null,
+      "downloadedAt": null,
+      "sha256": null,
+      "bytes": null
+    },
+    {
+      "id": "abs-asgs-ucl",
+      "group": "geography",
+      "organisation": "Australian Bureau of Statistics",
+      "dataset": "ASGS Edition 3 - Urban Centres and Localities / Section of State allocation file",
+      "edition": "Edition 3 (July 2021 - June 2026)",
+      "referencePeriod": "2021",
+      "geographyLevel": "Mesh Block to UCL / Section of State",
+      "url": "https://www.abs.gov.au/statistics/standards/australian-statistical-geography-standard-asgs/edition-3-july-2021-june-2026/access-and-downloads/allocation-files/UCL_SOSR_SOS_2021_AUST.xlsx",
+      "landingUrl": "https://www.abs.gov.au/statistics/standards/australian-statistical-geography-standard-asgs/edition-3-july-2021-june-2026/significant-urban-areas-urban-centres-and-localities-section-state",
+      "licence": {
+        "name": "Creative Commons Attribution 4.0 International",
+        "url": "https://creativecommons.org/licenses/by/4.0/",
+        "attribution": "Source: Australian Bureau of Statistics, Australian Statistical Geography Standard (ASGS) Edition 3 and Census of Population and Housing 2021. Licensed under CC BY 4.0."
+      },
+      "provides": [
+        "Urban Centre / Locality",
+        "Section of State (urban, rural, remote)"
+      ],
+      "limitations": null,
+      "tables": null,
+      "downloadedAt": null,
+      "sha256": null,
+      "bytes": null
+    },
+    {
+      "id": "abs-asgs-poa",
+      "group": "geography",
+      "organisation": "Australian Bureau of Statistics",
+      "dataset": "ASGS Edition 3 - Postal Areas (POA) allocation file",
+      "edition": "Edition 3 (July 2021 - June 2026)",
+      "referencePeriod": "2021",
+      "geographyLevel": "Mesh Block to ABS Postal Area",
+      "url": "https://www.abs.gov.au/statistics/standards/australian-statistical-geography-standard-asgs/edition-3-july-2021-june-2026/access-and-downloads/allocation-files/POA_2021_AUST.xlsx",
+      "landingUrl": "https://www.abs.gov.au/statistics/standards/australian-statistical-geography-standard-asgs/edition-3-july-2021-june-2026/non-abs-structures/postal-areas",
+      "licence": {
+        "name": "Creative Commons Attribution 4.0 International",
+        "url": "https://creativecommons.org/licenses/by/4.0/",
+        "attribution": "Source: Australian Bureau of Statistics, Australian Statistical Geography Standard (ASGS) Edition 3 and Census of Population and Housing 2021. Licensed under CC BY 4.0."
+      },
+      "provides": [
+        "ABS Postal Area approximation of postcodes"
+      ],
+      "limitations": "ABS Postal Areas approximate Australia Post postcodes from Mesh Blocks. They are not the legal postcode boundaries, they are not maintained by Australia Post, and one suburb can fall in more than one Postal Area. We label them as approximate and never present them as official postcodes.",
+      "tables": null,
+      "downloadedAt": null,
+      "sha256": null,
+      "bytes": null
+    },
+    {
+      "id": "abs-asgs-sal-boundaries",
+      "group": "geography",
+      "organisation": "Australian Bureau of Statistics",
+      "dataset": "ASGS Edition 3 - Suburbs and Localities digital boundaries (GDA2020, ESRI Shapefile)",
+      "edition": "Edition 3 (July 2021 - June 2026)",
+      "referencePeriod": "2021",
+      "geographyLevel": "SAL polygon extents",
+      "url": "https://www.abs.gov.au/statistics/standards/australian-statistical-geography-standard-asgs/edition-3-july-2021-june-2026/access-and-downloads/digital-boundary-files/SAL_2021_AUST_GDA2020_SHP.zip",
+      "landingUrl": "https://www.abs.gov.au/statistics/standards/australian-statistical-geography-standard-asgs/edition-3-july-2021-june-2026/access-and-downloads/digital-boundary-files",
+      "licence": {
+        "name": "Creative Commons Attribution 4.0 International",
+        "url": "https://creativecommons.org/licenses/by/4.0/",
+        "attribution": "Source: Australian Bureau of Statistics, Australian Statistical Geography Standard (ASGS) Edition 3 and Census of Population and Housing 2021. Licensed under CC BY 4.0."
+      },
+      "provides": [
+        "Suburb extent and centre point (GDA2020)"
+      ],
+      "limitations": "We read each SAL's published bounding box and use its centre as the suburb's reference point. That is the centre of the extent, not a population-weighted centroid, so for long or L-shaped localities it can sit away from where people actually live. Distances derived from it are labelled approximate.",
+      "tables": null,
+      "downloadedAt": null,
+      "sha256": null,
+      "bytes": null
+    },
+    {
+      "id": "abs-census-2021-gcp-sal",
+      "group": "census",
+      "organisation": "Australian Bureau of Statistics",
+      "dataset": "Census of Population and Housing 2021, General Community Profile DataPack (Suburbs and Localities)",
+      "edition": "2021 GCP DataPack, short header, Release 2",
+      "referencePeriod": "2021 Census (10 August 2021)",
+      "geographyLevel": "Suburb and Locality (SAL)",
+      "url": "https://www.abs.gov.au/census/find-census-data/datapacks/download/2021_GCP_SAL_for_AUS_short-header.zip",
+      "landingUrl": "https://www.abs.gov.au/census/find-census-data/datapacks",
+      "licence": {
+        "name": "Creative Commons Attribution 4.0 International",
+        "url": "https://creativecommons.org/licenses/by/4.0/",
+        "attribution": "Source: Australian Bureau of Statistics, Australian Statistical Geography Standard (ASGS) Edition 3 and Census of Population and Housing 2021. Licensed under CC BY 4.0."
+      },
+      "provides": [
+        "Population",
+        "Median age",
+        "Median weekly household income",
+        "Median weekly rent (all dwellings)",
+        "Average household size",
+        "Residents born overseas",
+        "Country of birth",
+        "Language used at home",
+        "Tenure and dwelling structure"
+      ],
+      "limitations": "Census counts are a point-in-time measure from August 2021, not a current estimate. The ABS suppresses or randomly perturbs small cells to protect confidentiality, so very small localities show zeroes or blanks rather than real values; we treat those as unavailable rather than as zero. Median weekly rent is the median across all rented dwellings, whole houses and units included - it is not a room rent.",
+      "tables": {
+        "G01": "Selected Person Characteristics by Sex",
+        "G02": "Selected Medians and Averages",
+        "G09F-G09H": "Country of Birth of Person by Age by Sex (persons totals)",
+        "G13C-G13E": "Language Used at Home by Proficiency in Spoken English by Sex (persons totals)",
+        "G37": "Dwelling Structure by Tenure Type and Landlord Type"
+      },
+      "downloadedAt": null,
+      "sha256": null,
+      "bytes": null
+    },
+    {
+      "id": "osm-amenities",
+      "group": "amenities",
+      "organisation": "OpenStreetMap contributors",
+      "dataset": "OpenStreetMap public transport stops and community amenities (via Overpass API)",
+      "edition": "Live extract",
+      "referencePeriod": "Extracted at import time",
+      "geographyLevel": "Point features within each suburb's bounding box",
+      "url": "https://overpass-api.de/api/interpreter",
+      "landingUrl": "https://www.openstreetmap.org/copyright",
+      "licence": {
+        "name": "Open Database License (ODbL) 1.0",
+        "url": "https://opendatacommons.org/licenses/odbl/1-0/",
+        "attribution": "© OpenStreetMap contributors, available under the Open Database License."
+      },
+      "provides": [
+        "Train, metro, tram and ferry stops",
+        "Supermarkets, pharmacies, medical centres and hospitals",
+        "Schools and universities",
+        "Libraries and parks"
+      ],
+      "limitations": "OpenStreetMap is contributed by volunteers, so coverage is excellent in cities and patchy in remote areas. A count of zero means nothing was mapped inside the suburb's boundary, which is not the same as nothing being there. We count features, we do not rate them, and we do not publish a walkability score because no free national dataset supports one.",
+      "tables": null,
+      "downloadedAt": null,
+      "sha256": null,
+      "bytes": null
+    },
+    {
+      "id": "migrent-listings",
+      "group": "platform",
+      "organisation": "MigRent",
+      "dataset": "MigRent verified room listings",
+      "edition": "Live",
+      "referencePeriod": "Rolling 90 days to the import date",
+      "geographyLevel": "Listing suburb and state, matched to SAL",
+      "url": null,
+      "landingUrl": "/seeker/search",
+      "licence": {
+        "name": "MigRent internal data",
+        "url": null,
+        "attribution": "MigRent platform data."
+      },
+      "provides": [
+        "Active verified rooms",
+        "Advertised weekly room price",
+        "Bills included",
+        "Furnished"
+      ],
+      "limitations": "These are advertised asking prices for rooms listed on MigRent, not agreed rents and not a whole-suburb market measure. We publish a median only where the minimum sample is met, and we never describe listing availability as a suburb vacancy rate.",
+      "tables": null,
+      "downloadedAt": null,
+      "sha256": null,
+      "bytes": null
+    }
+  ]
+}

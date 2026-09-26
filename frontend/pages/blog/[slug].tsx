@@ -41,7 +41,7 @@ export default function BlogPost({ slug }: { slug: string }) {
     return (
       <div className="text-center py-20">
         <h1 className="text-2xl font-bold text-[var(--color-ink)] mb-4">Post not found</h1>
-        <Link href="/blog" className="btn-primary px-6 py-2.5 rounded-xl inline-block">
+        <Link href="/resources/guides" className="btn-primary px-6 py-2.5 rounded-xl inline-block">
           Back to Blog
         </Link>
       </div>
@@ -58,13 +58,14 @@ export default function BlogPost({ slug }: { slug: string }) {
         title={post.title}
         description={post.excerpt}
         ogType="article"
-        breadcrumbs={[{ name: "Home", path: "/" }, { name: "Blog", path: "/blog" }, { name: post.title, path: `/blog/${post.slug}` }]}
+        breadcrumbs={[{ name: "Home", path: "/" }, { name: "Resources", path: "/resources" }, { name: "Guides & Articles", path: "/resources/guides" }, { name: post.title, path: `/blog/${post.slug}` }]}
       />
 
       <div className="max-w-4xl mx-auto">
         <Breadcrumb
           items={[
-            { label: "Blog", href: "/blog" },
+            { label: "Resources", href: "/resources" },
+            { label: "Guides & Articles", href: "/resources/guides" },
             { label: post.title },
           ]}
         />

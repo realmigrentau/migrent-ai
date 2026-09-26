@@ -88,11 +88,19 @@ const ROUTES: Array<[string, PageMeta]> = [
   ["/contact", { title: "Contact us", description: "Get in touch with the MigRent team." }],
   ["/careers", { title: "Careers", description: "Open roles at MigRent." }],
   ["/press", { title: "Press", description: "MigRent in the press. Media enquiries and brand assets." }],
-  ["/blog", { title: "Blog", description: "Stories, guides, and updates from the MigRent team." }],
-  ["/guides", { title: "Guides", description: "Practical guides to finding a room, settling in, and renting safely in Australia." }],
-  ["/resources", { title: "Resources", description: "Helpful resources for migrants, students, and hosts." }],
+  // The consolidated Resources hubs. These sit ABOVE the bare "/resources"
+  // entry because getPageMeta matches by prefix and takes the first hit.
+  ["/resources/guides", { title: "Guides & Articles", description: "Practical advice for moving, living and settling in Australia." }],
+  ["/resources/tools", { title: "Tools & Checklists", description: "Planners, calculators and lookups for your move." }],
+  ["/resources/help", { title: "Help Centre", description: "Quick answers to common questions about MigRent." }],
+  ["/resources", { title: "Resources", description: "Everything you need for your move: guides, tools and answers." }],
+  // /blog, /guides and /help no longer have index pages - the three hubs
+  // above replaced them - but each is still the prefix that gives its
+  // surviving detail routes (/blog/:slug, /guides/:id, /help/:slug) a
+  // default title, so the entries stay.
+  ["/blog", { title: "Article", description: "Stories, guides, and updates from the MigRent team." }],
+  ["/guides", { title: "Guide", description: "Practical guides to finding a room, settling in, and renting safely in Australia." }],
   ["/help", { title: "Help centre", description: "Browse answers to common questions about MigRent." }],
-  ["/faq", { title: "FAQ", description: "Common questions about MigRent for seekers and hosts." }],
   ["/features", { title: "Features", description: "Verification, AI matching, secure payments, and more." }],
   ["/mentors", { title: "Local mentors", description: "Book a one-on-one with a local who can help you settle in." }],
   ["/become-mentor", { title: "Become a mentor", description: "Help newcomers find their feet in your city and earn on your terms." }],

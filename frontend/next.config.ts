@@ -22,6 +22,13 @@ const API_ORIGIN = (() => {
 })();
 
 const nextConfig: NextConfig = {
+  /* Two `next dev` processes cannot share a build directory - the second one
+     fails to take .next/dev/lock and exits. Setting NEXT_DIST_DIR gives a
+     second server its own, which is what lets a review session run the app
+     while someone else is already working in the same checkout. Unset, this
+     is exactly the previous behaviour. */
+  distDir: process.env.NEXT_DIST_DIR || ".next",
+
   reactStrictMode: true,
   poweredByHeader: false,
   productionBrowserSourceMaps: false,
@@ -49,6 +56,21 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "images.unsplash.com" },
       { protocol: "https", hostname: "nsnwwfbidishftlrimer.supabase.co" },
     ],
+  },
+
+  // The generated suburb data lives in data/suburbs/ and is read at runtime
+  // with fs. Next cannot trace a path it assembles at runtime (the detail
+  // bucket is chosen from the SAL code), so the directory is declared here.
+  // Without this, every suburb page 500s on Vercel with ENOENT while working
+  // perfectly in dev.
+  outputFileTracingIncludes: {
+    "/suburbs": ["./data/suburbs/**"],
+    "/suburb/[state]/[slug]": ["./data/suburbs/**"],
+    "/suburb/[name]": ["./data/suburbs/**"],
+    "/api/suburbs/search": ["./data/suburbs/**"],
+    "/api/suburbs/region": ["./data/suburbs/**"],
+    "/sitemap-suburbs.xml": ["./data/suburbs/**"],
+    "/sitemap-suburbs-[page].xml": ["./data/suburbs/**"],
   },
 
   // Tree-shake heavy icon / animation / chart packages
@@ -108,6 +130,25 @@ const nextConfig: NextConfig = {
       // and code of conduct all point at the community guidelines, so that one
       // is authoritative.
       { source: "/rules", destination: "/rules-community-guidelines", permanent: true },
+
+      // ── Resources consolidation ──
+      // The Resources dropdown carried eight destinations, two of which were
+      // not resources and four of which were two pairs of the same thing.
+      // Four index pages folded into three hubs. Only the indexes moved:
+      // these sources match exactly, so /guides/host-first, /blog/:slug,
+      // /help/:slug and /help/category/:slug all still resolve to their own
+      // pages and every article URL that was indexed or bookmarked is
+      // unchanged.
+      //
+      // Guides and Blog were the same job twice - eight step-by-step guides
+      // on one page, six written pieces on the other, both of them "read
+      // this before you rent".
+      { source: "/guides", destination: "/resources/guides", permanent: true },
+      { source: "/blog", destination: "/resources/guides", permanent: true },
+      // FAQ and Help were the other duplicated pair: forty translated
+      // questions on one, twenty articles and a search box on the other.
+      { source: "/faq", destination: "/resources/help", permanent: true },
+      { source: "/help", destination: "/resources/help", permanent: true },
     ];
   },
 

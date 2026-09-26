@@ -1,0 +1,82 @@
+{
+  "auburn": {
+    "salCode": "10107",
+    "state": "nsw",
+    "slug": "auburn"
+  },
+  "bankstown": {
+    "salCode": "10181",
+    "state": "nsw",
+    "slug": "bankstown"
+  },
+  "blacktown": {
+    "salCode": "10396",
+    "state": "nsw",
+    "slug": "blacktown"
+  },
+  "hurstville": {
+    "salCode": "11971",
+    "state": "nsw",
+    "slug": "hurstville"
+  },
+  "kellyville": {
+    "salCode": "12096",
+    "state": "nsw",
+    "slug": "kellyville"
+  },
+  "kingsford": {
+    "salCode": "12164",
+    "state": "nsw",
+    "slug": "kingsford"
+  },
+  "lakemba": {
+    "salCode": "12266",
+    "state": "nsw",
+    "slug": "lakemba"
+  },
+  "marrickville": {
+    "salCode": "12514",
+    "state": "nsw",
+    "slug": "marrickville"
+  },
+  "newtown": {
+    "salCode": "12969",
+    "state": "nsw",
+    "slug": "newtown"
+  },
+  "parramatta": {
+    "salCode": "13167",
+    "state": "nsw",
+    "slug": "parramatta"
+  },
+  "strathfield": {
+    "salCode": "13690",
+    "state": "nsw",
+    "slug": "strathfield"
+  },
+  "brunswick": {
+    "salCode": "20361",
+    "state": "vic",
+    "slug": "brunswick"
+  },
+  "carlton": {
+    "salCode": "20495",
+    "state": "vic",
+    "slug": "carlton"
+  },
+  "footscray": {
+    "salCode": "20935",
+    "state": "vic",
+    "slug": "footscray"
+  },
+  "sunnybank": {
+    "salCode": "32694",
+    "state": "qld",
+    "slug": "sunnybank"
+  },
+  "west-end": {
+    "salCode": "33033",
+    "state": "qld",
+    "slug": "west-end-brisbane"
+  }
+}

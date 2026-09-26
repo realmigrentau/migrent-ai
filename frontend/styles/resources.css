@@ -1,0 +1,450 @@
+/* ══════════════════════════════════════════════════════════════
+   RESOURCES  ·  the consolidated hubs
+
+   Not a second theme. Every colour, radius, shadow and duration below
+   resolves to a Riviera token from globals.css, so the section inherits
+   dark mode, the reduced-motion rules and any future palette change for
+   free. What lives here is only the shape the Resources pages need and
+   nothing else on the site does: the category chip family, the resource
+   card, the hub tile and the FAQ disclosure.
+
+   Two rules this file is built around, both from design.md:
+
+     · Terracotta is rationed. It appears as one small "Money" chip and
+       nowhere else in the section. No warm block anywhere.
+     · Cards are defined by a hairline and by spacing, not by a shadow.
+       The shadow appears on hover, and then barely.
+
+   Everything animates transform and opacity only, so a filter change or a
+   card hover never lays the page out again.
+   ══════════════════════════════════════════════════════════════ */
+
+@layer components {
+  /* ── Category chips ───────────────────────────────────────────────
+     One controlled accent per category, all from the existing scale, so
+     five categories read as five members of one family rather than as a
+     rainbow. The pale ground is always the matching -50 step, which is
+     already dark-mode aware, and the ink is always a text-safe step, so
+     every pairing clears AA in both themes. The label is the information;
+     the colour only supports it. */
+  .res-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    padding: 3px 9px;
+    border-radius: var(--radius-pill);
+    font-size: 11.5px;
+    font-weight: 600;
+    line-height: 1.5;
+    letter-spacing: 0.005em;
+    white-space: nowrap;
+    background: var(--color-surface-muted);
+    color: var(--color-ink-2);
+  }
+
+  .res-chip--housing {
+    background: var(--color-accent-50);
+    color: var(--color-accent-700);
+  }
+  .res-chip--hosting {
+    background: var(--color-primary-50);
+    color: var(--color-primary);
+  }
+  /* --color-terracotta, not the -700 step. -700 is the darkest terracotta
+     and reads well on linen, but in dark mode it stays dark (#b06a4b) while
+     its -50 ground drops to #241610, which measured 4.18:1 - under AA for
+     11.5px text. The base token is the one that flips with the theme
+     (#a0563a light, #d9906e dark) and clears AA in both. */
+  .res-chip--money {
+    background: var(--color-terracotta-50);
+    color: var(--color-terracotta);
+  }
+  .res-chip--rights {
+    background: var(--color-info-50);
+    color: var(--color-info-500);
+  }
+  .res-chip--safety {
+    background: var(--color-warn-50);
+    color: var(--color-warn-600);
+  }
+
+  /* The content-type label. Deliberately neutral: it tells Guide from
+     Article from Update without competing with the category colour. */
+  .res-kind {
+    display: inline-flex;
+    align-items: center;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-ink-3);
+  }
+
+  /* ── Filter chips ─────────────────────────────────────────────────
+     Buttons, not links - they change the view rather than navigate. */
+  .res-filter {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45em;
+    min-height: 36px;
+    padding: 0 14px;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--color-line);
+    background: var(--color-surface-2);
+    color: var(--color-ink-2);
+    font-size: 13.5px;
+    font-weight: 500;
+    line-height: 1;
+    white-space: nowrap;
+    transition:
+      border-color var(--duration-fast) var(--ease-out),
+      background-color var(--duration-fast) var(--ease-out),
+      color var(--duration-fast) var(--ease-out);
+  }
+
+  .res-filter:hover {
+    border-color: var(--color-line-2);
+    color: var(--color-ink);
+  }
+
+  .res-filter[aria-pressed="true"] {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    color: var(--color-primary-fg);
+  }
+
+  /* The count that rides along inside a chip. */
+  .res-filter__count {
+    font-variant-numeric: tabular-nums;
+    font-size: 11.5px;
+    color: var(--color-ink-3);
+  }
+  .res-filter[aria-pressed="true"] .res-filter__count {
+    color: var(--color-primary-fg);
+    opacity: 0.72;
+  }
+
+  /* ── Cards ────────────────────────────────────────────────────────
+     One card, used for articles, tools and hubs. It lifts 3px, which is
+     the site-wide card hover from design.md, and gains a hairline rather
+     than a shadow bloom. */
+  .res-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: var(--color-surface-2);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-card);
+    padding: 22px;
+    transition:
+      transform var(--duration-base) var(--ease-out),
+      border-color var(--duration-base) var(--ease-out),
+      box-shadow var(--duration-base) var(--ease-out);
+  }
+
+  .res-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--color-line-2);
+    box-shadow: var(--shadow-card);
+  }
+
+  /* The whole card is one target: the heading carries the link and this
+     stretches it over the card, so there is exactly one tab stop and one
+     accessible name per card rather than three. */
+  .res-card__link::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+  }
+
+  .res-card:has(.res-card__link:focus-visible) {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+  .res-card .res-card__link:focus-visible {
+    outline: none;
+  }
+
+  .res-card__title {
+    font-family: var(--font-serif);
+    font-optical-sizing: auto;
+    font-size: 1.0625rem;
+    font-weight: 500;
+    line-height: 1.28;
+    letter-spacing: -0.006em;
+    color: var(--color-ink);
+    text-wrap: pretty;
+  }
+
+  .res-card:hover .res-card__title {
+    color: var(--color-primary);
+  }
+
+  .res-card__summary {
+    font-size: 0.875rem;
+    line-height: 1.58;
+    color: var(--color-ink-2);
+    text-wrap: pretty;
+  }
+
+  .res-card__meta {
+    font-size: 12px;
+    color: var(--color-ink-3);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* The arrow that answers "is this clickable". 3px, the same nudge the
+     buttons use. */
+  .res-arrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35em;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-primary);
+  }
+  .res-arrow svg {
+    flex: none;
+    transition: transform var(--duration-base) var(--ease-out);
+  }
+  .res-card:hover .res-arrow svg,
+  .res-tile:hover .res-arrow svg {
+    transform: translateX(3px);
+  }
+
+  /* ── Hub tile ─────────────────────────────────────────────────────
+     The landing page's three destinations. Larger than a card, with the
+     category icon in the brand's icon capsule. */
+  .res-tile {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: var(--color-surface-2);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-xl);
+    padding: 26px;
+    transition:
+      transform var(--duration-base) var(--ease-out),
+      border-color var(--duration-base) var(--ease-out),
+      box-shadow var(--duration-base) var(--ease-out);
+  }
+
+  .res-tile:hover {
+    transform: translateY(-3px);
+    border-color: var(--color-line-2);
+    box-shadow: var(--shadow-card);
+  }
+
+  .res-tile:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 3px;
+  }
+
+  /* ── The icon capsule ─────────────────────────────────────────────
+     Same square-ish capsule as the homepage's .mg-icon, restated here so
+     the Resources pages do not depend on a class the homepage scopes its
+     own tokens to. One size, one stroke, everywhere in the section. */
+  .res-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    flex: none;
+    border-radius: 13px;
+    background: var(--color-primary-50);
+    color: var(--color-primary);
+    border: 1px solid var(--color-primary-100);
+  }
+  .res-icon--sm {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+  }
+
+  /* ── Search ───────────────────────────────────────────────────────
+     Built on .input-field so the focus ring, the disabled state and the
+     dark-mode surface are the site's, not this section's.
+     The padding that makes room for the icon and the clear button is
+     NOT here - see the unlayered block at the end of this file. */
+  .res-search {
+    position: relative;
+  }
+  .res-search__icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--color-ink-3);
+    pointer-events: none;
+  }
+  .res-search__clear {
+    position: absolute;
+    right: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-sm);
+    color: var(--color-ink-3);
+    transition: color var(--duration-micro) var(--ease-out),
+      background-color var(--duration-micro) var(--ease-out);
+  }
+  .res-search__clear:hover {
+    color: var(--color-ink);
+    background: var(--color-surface-muted);
+  }
+
+  /* ── FAQ disclosure ───────────────────────────────────────────────
+     A real <button aria-expanded> inside a heading, and a panel that is
+     removed from the document when closed. The grid-rows trick animates
+     height without animating height: the row track is the only thing that
+     changes, so nothing around it is laid out again. */
+  .res-faq {
+    border-top: 1px solid var(--color-line);
+  }
+  .res-faq:last-child {
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .res-faq__q {
+    width: 100%;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 56px;
+    padding: 15px 4px;
+    text-align: left;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    line-height: 1.45;
+    color: var(--color-ink);
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    transition: color var(--duration-micro) var(--ease-out);
+  }
+  .res-faq__q:hover {
+    color: var(--color-primary);
+  }
+
+  /* A plus that becomes a minus. Two rules and a rotation - no icon font,
+     no library, and it animates transform only. */
+  .res-faq__sign {
+    position: relative;
+    flex: none;
+    width: 14px;
+    height: 14px;
+    margin-top: 4px;
+  }
+  .res-faq__sign::before,
+  .res-faq__sign::after {
+    content: "";
+    position: absolute;
+    inset: 50% 0 auto 0;
+    height: 1.5px;
+    background: var(--color-ink-3);
+    border-radius: 1px;
+    transition: transform var(--duration-base) var(--ease-out);
+  }
+  .res-faq__sign::after {
+    transform: rotate(90deg);
+  }
+  .res-faq__q[aria-expanded="true"] .res-faq__sign::after {
+    transform: rotate(0deg);
+  }
+  .res-faq__q[aria-expanded="true"] .res-faq__sign::before,
+  .res-faq__q[aria-expanded="true"] .res-faq__sign::after {
+    background: var(--color-primary);
+  }
+
+  .res-faq__panel {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows var(--duration-base) var(--ease-out);
+  }
+  .res-faq__panel[data-open="true"] {
+    grid-template-rows: 1fr;
+  }
+  .res-faq__panel > div {
+    overflow: hidden;
+  }
+  .res-faq__a {
+    padding: 0 4px 18px;
+    font-size: 0.875rem;
+    line-height: 1.65;
+    color: var(--color-ink-2);
+    max-width: var(--measure);
+  }
+
+  /* A linked FAQ lands with its heading clear of the sticky header. */
+  .res-faq {
+    scroll-margin-top: 84px;
+  }
+
+  /* ── Empty state ──────────────────────────────────────────────────
+     A dashed hairline rather than another filled card, so "nothing here"
+     never looks like a result. */
+  .res-empty {
+    border: 1px dashed var(--color-line-2);
+    border-radius: var(--radius-card);
+    padding: 44px 24px;
+    text-align: center;
+    background: var(--color-surface);
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   UNLAYERED  ·  the one rule that has to beat a cascade layer
+
+   design.md's first codebase trap: an unlayered declaration beats every
+   layered one however specific it is, and .input-field in globals.css is
+   unlayered. Its `padding-inline: 14px` therefore won over
+   `@layer components { .res-search .input-field { padding-left: 44px } }`,
+   and the search icon sat on top of the first letter of the placeholder on
+   every Resources page.
+
+   So this rule lives outside the layer, next to the rule it is correcting.
+   Nothing else in this file needs to: every other class here is new, and
+   new names have nothing to out-rank.
+
+   It also has to be `padding-inline`, not `padding-left`/`padding-right`.
+   .input-field sets the logical shorthand, and a physical longhand
+   competing with a logical one is decided by document order rather than by
+   specificity - which .input-field wins, because it is declared later in
+   globals.css than this imported file. Same property, plain specificity
+   contest, and it is symmetric anyway: the icon and the clear button each
+   want the same 44px, in both writing directions.
+   ══════════════════════════════════════════════════════════════ */
+.res-search .input-field {
+  padding-inline: 44px;
+}
+
+/* Motion is decoration in this section: with it switched off, the chips,
+   cards and disclosures all still work, they just arrive. */
+@media (prefers-reduced-motion: reduce) {
+  .res-card,
+  .res-tile,
+  .res-arrow svg,
+  .res-faq__sign::before,
+  .res-faq__sign::after,
+  .res-faq__panel {
+    transition-duration: 1ms;
+  }
+  .res-card:hover,
+  .res-tile:hover {
+    transform: none;
+  }
+  .res-card:hover .res-arrow svg,
+  .res-tile:hover .res-arrow svg {
+    transform: none;
+  }
+}

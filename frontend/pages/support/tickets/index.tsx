@@ -147,7 +147,7 @@ export default function MyTickets() {
 
         {/* Help center link */}
         <div className="mt-8 text-center">
-          <Link href="/help" className="text-sm text-[var(--color-primary)] hover:text-[var(--color-primary)] font-medium">
+          <Link href="/resources/help" className="text-sm text-[var(--color-primary)] hover:text-[var(--color-primary)] font-medium">
             Browse Help Center
           </Link>
         </div>

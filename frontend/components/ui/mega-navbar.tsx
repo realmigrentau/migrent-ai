@@ -3,9 +3,8 @@ import { useRouter } from "next/router";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
-import { useTheme } from "../../hooks/useTheme";
 import { useAuth } from "../../hooks/useAuth";
-import { navItems, type NavLinkDropdown } from "../../lib/navData";
+import { navItems, type DropdownItem, type NavLinkDropdown } from "../../lib/navData";
 import { Logo } from "./Logo";
 import LanguageSwitcher from "./LanguageSwitcher";
 
@@ -14,11 +13,27 @@ import LanguageSwitcher from "./LanguageSwitcher";
  * stays translated off the top until the page has scrolled past that fraction
  * of the viewport height, then slides in. A fraction rather than a pixel
  * count so the threshold follows a window resize on its own.
+ *
+ * ── The dropdowns ──
+ * They are disclosures, not ARIA menus. A `role="menu"` promises a widget
+ * where arrow keys are the only way to move and Tab leaves entirely; these
+ * are lists of links, so they are a button with aria-expanded controlling a
+ * list, which is what the APG disclosure-navigation pattern describes and
+ * what screen readers already handle well. Arrow keys still work as a
+ * convenience, and Tab still walks the links.
+ *
+ * Three things that were wrong before and are fixed here:
+ *   · the trigger had no aria-expanded, aria-haspopup or aria-controls, so
+ *     a screen reader announced "Resources, button" and nothing about the
+ *     eight links that appeared;
+ *   · Escape closed the panel but left focus nowhere;
+ *   · the panel was separated from its trigger by a 8px margin, so moving
+ *     the pointer diagonally between them crossed dead space. The gap is
+ *     now transparent padding inside the hover target.
  */
 export default function MegaNavbar({ revealAfterVh = 0 }: { revealAfterVh?: number } = {}) {
   const router = useRouter();
   const { t } = useTranslation();
-  const { theme, toggle, mounted } = useTheme();
   const { session } = useAuth();
 
   const [scrolled, setScrolled] = useState(false);
@@ -29,16 +44,30 @@ export default function MegaNavbar({ revealAfterVh = 0 }: { revealAfterVh?: numb
 
   const accountRef = useRef<HTMLDivElement>(null);
   const navRef = useRef<HTMLUListElement>(null);
+  const panelRef = useRef<HTMLDivElement | null>(null);
+  const triggerRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
   const hoverTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const isSignIn = router.pathname === "/signin";
+  // Label text: a literal wins over a translation key. The Resources hubs
+  // take theirs from data/resources.ts so the navbar and the pages cannot
+  // describe the same destination two different ways.
+  const itemTitle = (item: DropdownItem) => item.title ?? (item.titleKey ? t(item.titleKey) : "");
+  const itemDesc = (item: DropdownItem) => item.desc ?? (item.descKey ? t(item.descKey) : "");
 
-  // Check if a dropdown's route is active
+  // Which dropdown owns the current route.
   const isDropdownActive = useCallback(
     (item: NavLinkDropdown) =>
-      router.pathname.startsWith(`/${item.id}`),
+      item.matchPrefixes.some(
+        (p) => router.pathname === p || router.pathname.startsWith(`${p}/`),
+      ),
     [router.pathname],
   );
+
+  const closeDropdown = useCallback((refocus?: string) => {
+    if (hoverTimeout.current) clearTimeout(hoverTimeout.current);
+    setOpenDropdown(null);
+    if (refocus) triggerRefs.current.get(refocus)?.focus();
+  }, []);
 
   // Close dropdowns on click outside
   useEffect(() => {
@@ -58,12 +87,37 @@ export default function MegaNavbar({ revealAfterVh = 0 }: { revealAfterVh?: numb
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
-        setOpenDropdown(null);
+        setOpenDropdown((current) => {
+          if (current) triggerRefs.current.get(current)?.focus();
+          return null;
+        });
         setAccountOpen(false);
       }
     };
     document.addEventListener("keydown", handleKey);
     return () => document.removeEventListener("keydown", handleKey);
+  }, []);
+
+  /* Keep an open panel inside the window.
+     A panel is centred under its own trigger, and the trigger nearest the
+     end of the nav centres a 520px panel past the right edge on a narrow
+     laptop. This measures the card once, as it mounts, and nudges it back
+     with a margin.
+     A margin rather than a transform on purpose: framer-motion owns the
+     `transform` of the wrapper it animates, so writing one there would be
+     overwritten and the panel would lose its centring. The wrapper keeps
+     its -50% on the separate `translate` property, and the correction lands
+     on the card, which nothing else touches. */
+  const measurePanel = useCallback((el: HTMLDivElement | null) => {
+    panelRef.current = el;
+    if (!el) return;
+    el.style.marginLeft = "0px";
+    const rect = el.getBoundingClientRect();
+    const pad = 12;
+    let delta = 0;
+    if (rect.right > window.innerWidth - pad) delta = window.innerWidth - pad - rect.right;
+    else if (rect.left < pad) delta = pad - rect.left;
+    if (delta !== 0) el.style.marginLeft = `${delta}px`;
   }, []);
 
   // Starts hidden on the server too, so it never flashes over the hero.
@@ -97,16 +151,68 @@ export default function MegaNavbar({ revealAfterVh = 0 }: { revealAfterVh?: numb
     setMobileExpanded(null);
   }, [router.pathname]);
 
-  // Desktop hover handlers with delay to prevent flicker
+  /* Hover open is immediate; hover close waits. The delay is what lets the
+     pointer travel from the trigger into the panel, and the panel's own
+     mouseenter cancels it. */
   const handleDropdownEnter = (id: string) => {
     if (hoverTimeout.current) clearTimeout(hoverTimeout.current);
     setOpenDropdown(id);
   };
 
   const handleDropdownLeave = () => {
-    hoverTimeout.current = setTimeout(() => {
-      setOpenDropdown(null);
-    }, 150);
+    if (hoverTimeout.current) clearTimeout(hoverTimeout.current);
+    hoverTimeout.current = setTimeout(() => setOpenDropdown(null), 180);
+  };
+
+  useEffect(() => () => {
+    if (hoverTimeout.current) clearTimeout(hoverTimeout.current);
+  }, []);
+
+  /** Move focus between the links inside an open panel. */
+  const focusItem = (panel: HTMLElement | null, index: number) => {
+    if (!panel) return;
+    const links = Array.from(panel.querySelectorAll<HTMLAnchorElement>("a[href]"));
+    if (links.length === 0) return;
+    const wrapped = ((index % links.length) + links.length) % links.length;
+    links[wrapped]?.focus();
+  };
+
+  const onTriggerKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>, id: string) => {
+    if (e.key === "ArrowDown" || e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      setOpenDropdown(id);
+      // The panel mounts this tick; focus it on the next frame.
+      requestAnimationFrame(() => focusItem(panelRef.current, 0));
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setOpenDropdown(id);
+      requestAnimationFrame(() => focusItem(panelRef.current, -1));
+    } else if (e.key === "Escape") {
+      closeDropdown();
+    }
+  };
+
+  const onPanelKeyDown = (e: React.KeyboardEvent<HTMLDivElement>, id: string) => {
+    const panel = e.currentTarget;
+    const links = Array.from(panel.querySelectorAll<HTMLAnchorElement>("a[href]"));
+    const current = links.indexOf(document.activeElement as HTMLAnchorElement);
+
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      focusItem(panel, current + 1);
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      focusItem(panel, current - 1);
+    } else if (e.key === "Home") {
+      e.preventDefault();
+      focusItem(panel, 0);
+    } else if (e.key === "End") {
+      e.preventDefault();
+      focusItem(panel, -1);
+    } else if (e.key === "Escape") {
+      e.preventDefault();
+      closeDropdown(id);
+    }
   };
 
   // Shared nav link classes
@@ -118,7 +224,7 @@ export default function MegaNavbar({ revealAfterVh = 0 }: { revealAfterVh?: numb
     }`;
 
   const navLinkClassMobile = (active: boolean) =>
-    `block px-3 py-2.5 rounded-[8px] text-sm transition-colors ${
+    `flex items-center min-h-[44px] px-3 py-2.5 rounded-[8px] text-sm transition-colors ${
       active
         ? "text-[var(--color-ink)] font-semibold bg-[var(--color-surface-sunk)]"
         : "text-[var(--color-ink-2)] font-medium hover:text-[var(--color-ink)] hover:bg-[var(--color-surface-sunk)]"
@@ -190,6 +296,13 @@ export default function MegaNavbar({ revealAfterVh = 0 }: { revealAfterVh?: numb
 
             // Dropdown item
             const active = isDropdownActive(item);
+            const open = openDropdown === item.id;
+            const panelId = `nav-panel-${item.id}`;
+            /* Four items sit in two columns, three in one. The panel is only
+               as wide as it needs to be, so the Resources menu is a short
+               readable list instead of a 520px grid with two empty cells. */
+            const twoUp = item.items.length > 3;
+
             return (
               <li
                 key={item.id}
@@ -198,16 +311,26 @@ export default function MegaNavbar({ revealAfterVh = 0 }: { revealAfterVh?: numb
                 onMouseLeave={handleDropdownLeave}
               >
                 <button
-                  className={`${navLinkClass(active || openDropdown === item.id)} inline-flex items-center gap-1`}
-                  onClick={() => setOpenDropdown(openDropdown === item.id ? null : item.id)}
+                  ref={(el) => {
+                    if (el) triggerRefs.current.set(item.id, el);
+                    else triggerRefs.current.delete(item.id);
+                  }}
+                  type="button"
+                  className={`${navLinkClass(active || open)} inline-flex items-center gap-1`}
+                  aria-expanded={open}
+                  aria-haspopup="true"
+                  aria-controls={panelId}
+                  onClick={() => (open ? closeDropdown() : setOpenDropdown(item.id))}
+                  onKeyDown={(e) => onTriggerKeyDown(e, item.id)}
                 >
                   {t(item.labelKey)}
                   <svg
-                    className={`w-3.5 h-3.5 transition-transform duration-200 ${openDropdown === item.id ? "rotate-180" : ""}`}
+                    className={`w-3.5 h-3.5 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
                     strokeWidth={2}
+                    aria-hidden="true"
                   >
                     <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                   </svg>
@@ -220,47 +343,71 @@ export default function MegaNavbar({ revealAfterVh = 0 }: { revealAfterVh?: numb
                   )}
                 </button>
 
-                {/* Mega dropdown panel */}
+                {/* Dropdown panel.
+                    The wrapper carries pt-2 rather than the card carrying
+                    mt-2, so the visual gap is inside the hover target and
+                    the pointer never crosses dead space on its way in. */}
                 <AnimatePresence>
-                  {openDropdown === item.id && (
+                  {open && (
                     <motion.div
-                      initial={{ opacity: 0, y: 8, scale: 0.97 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: 8, scale: 0.97 }}
-                      transition={{ duration: 0.15, ease: "easeOut" }}
-                      className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-[520px] rounded-[14px] bg-[var(--color-surface-2)] border border-[var(--color-line)] shadow-[var(--shadow-modal)] overflow-hidden z-50"
+                      key={item.id}
+                      /* Opacity and Y only. Scale would change the box while
+                         the overflow correction below is measuring it. */
+                      initial={{ opacity: 0, y: 6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 6 }}
+                      transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
+                      className="absolute top-full left-1/2 -translate-x-1/2 pt-2 z-50"
                       onMouseEnter={() => handleDropdownEnter(item.id)}
                       onMouseLeave={handleDropdownLeave}
                     >
-                      <div className="grid grid-cols-2 gap-0 p-3">
-                        {item.columns.map((col, ci) => (
-                          <div key={ci} className="space-y-1">
-                            {col.map((dropItem) => (
+                      <div
+                        ref={measurePanel}
+                        id={panelId}
+                        onKeyDown={(e) => onPanelKeyDown(e, item.id)}
+                        className={`rounded-[16px] bg-[var(--color-surface-2)] border border-[var(--color-line)] shadow-[var(--shadow-pop)] overflow-hidden max-w-[calc(100vw-24px)] ${
+                          twoUp ? "w-[520px]" : "w-[368px]"
+                        }`}
+                      >
+                        <ul
+                          className={`list-none m-0 p-2.5 grid gap-0.5 ${twoUp ? "grid-cols-2" : "grid-cols-1"}`}
+                          aria-label={t(item.labelKey)}
+                        >
+                          {item.items.map((dropItem) => (
+                            <li key={dropItem.href}>
                               <Link
-                                key={dropItem.href}
                                 href={dropItem.href}
-                                onClick={() => setOpenDropdown(null)}
-                                className="flex items-start gap-3 p-3 rounded-[10px] hover:bg-[var(--color-surface-sunk)] transition-colors group"
+                                onClick={() => closeDropdown()}
+                                className="group/item flex items-start gap-3 p-3 rounded-[11px] hover:bg-[var(--color-surface-sunk)] transition-colors duration-150"
                               >
-                                <div
-                                  className={`w-9 h-9 rounded-[8px] bg-[var(--color-surface-sunk)] flex items-center justify-center shrink-0 text-[var(--color-ink-2)] transition-colors group-hover:bg-[var(--color-surface)] group-hover:text-[var(--color-ink)]`}
-                                >
-                                  <svg className="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                                <span className="w-9 h-9 rounded-[9px] bg-[var(--color-surface-sunk)] flex items-center justify-center shrink-0 text-[var(--color-ink-2)] transition-colors duration-150 group-hover/item:bg-[var(--color-primary-50)] group-hover/item:text-[var(--color-primary)]">
+                                  <svg className="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} aria-hidden="true">
                                     <path strokeLinecap="round" strokeLinejoin="round" d={dropItem.iconPath} />
                                   </svg>
-                                </div>
-                                <div>
-                                  <p className="text-sm font-semibold text-[var(--color-ink)] leading-tight">
-                                    {t(dropItem.titleKey)}
-                                  </p>
-                                  <p className="text-xs text-[var(--color-ink-3)] mt-0.5 leading-snug">
-                                    {t(dropItem.descKey)}
-                                  </p>
-                                </div>
+                                </span>
+                                <span className="flex-1 min-w-0">
+                                  <span className="block text-[13.5px] font-semibold text-[var(--color-ink)] leading-tight">
+                                    {itemTitle(dropItem)}
+                                  </span>
+                                  <span className="block text-[12px] text-[var(--color-ink-3)] mt-1 leading-snug">
+                                    {itemDesc(dropItem)}
+                                  </span>
+                                </span>
+                                {/* The hover indicator. Transform only. */}
+                                <svg
+                                  className="w-3.5 h-3.5 shrink-0 mt-1 text-[var(--color-ink-4)] opacity-0 -translate-x-1 transition-[opacity,transform] duration-150 group-hover/item:opacity-100 group-hover/item:translate-x-0 group-focus-visible/item:opacity-100 group-focus-visible/item:translate-x-0"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  stroke="currentColor"
+                                  strokeWidth={2}
+                                  aria-hidden="true"
+                                >
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                                </svg>
                               </Link>
-                            ))}
-                          </div>
-                        ))}
+                            </li>
+                          ))}
+                        </ul>
                       </div>
                     </motion.div>
                   )}
@@ -279,29 +426,6 @@ export default function MegaNavbar({ revealAfterVh = 0 }: { revealAfterVh?: numb
           <li>
             <LanguageSwitcher />
           </li>
-          {/* Theme toggle */}
-          {mounted && (
-            <li>
-              <button
-                type="button"
-                onClick={toggle}
-                className="w-11 h-11 rounded-[10px] bg-transparent border border-[var(--color-line)] outline-none appearance-none text-[var(--color-ink-2)] hover:text-[var(--color-ink)] hover:border-[var(--color-line-2)] hover:bg-[var(--color-surface-sunk)] transition-colors inline-flex items-center justify-center"
-                aria-label="Dark mode"
-                aria-pressed={theme === "dark"}
-              >
-                {theme === "dark" ? (
-                  <svg className="w-[16px] h-[16px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-                  </svg>
-                ) : (
-                  <svg className="w-[16px] h-[16px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-                  </svg>
-                )}
-              </button>
-            </li>
-          )}
-
           {/* List a room */}
           <li>
             <Link
@@ -319,9 +443,11 @@ export default function MegaNavbar({ revealAfterVh = 0 }: { revealAfterVh?: numb
                 <button
                   onClick={() => setAccountOpen(!accountOpen)}
                   className="btn-outline btn-compact"
+                  aria-expanded={accountOpen}
+                  aria-haspopup="true"
                 >
                   {t("nav.myAccount")}
-                  <svg className={`w-3.5 h-3.5 transition-transform ${accountOpen ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                  <svg className={`w-3.5 h-3.5 transition-transform ${accountOpen ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5} aria-hidden="true">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                   </svg>
                 </button>
@@ -342,7 +468,7 @@ export default function MegaNavbar({ revealAfterVh = 0 }: { revealAfterVh?: numb
                         onClick={() => setAccountOpen(false)}
                         className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-[var(--color-ink)] hover:bg-[var(--color-surface-sunk)] transition-colors"
                       >
-                        <svg className="w-5 h-5 text-[var(--color-ink-3)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                        <svg className="w-5 h-5 text-[var(--color-ink-3)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} aria-hidden="true">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                         </svg>
                         {t("nav.seeker")}
@@ -353,7 +479,7 @@ export default function MegaNavbar({ revealAfterVh = 0 }: { revealAfterVh?: numb
                         onClick={() => setAccountOpen(false)}
                         className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-[var(--color-ink)] hover:bg-[var(--color-surface-sunk)] transition-colors"
                       >
-                        <svg className="w-5 h-5 text-[var(--color-ink-3)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                        <svg className="w-5 h-5 text-[var(--color-ink-3)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} aria-hidden="true">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                         </svg>
                         {t("nav.owner")}
@@ -365,7 +491,7 @@ export default function MegaNavbar({ revealAfterVh = 0 }: { revealAfterVh?: numb
                           onClick={() => setAccountOpen(false)}
                           className="flex items-center gap-3 px-4 py-3 text-sm text-[var(--color-ink-2)] hover:bg-[var(--color-surface-sunk)] transition-colors"
                         >
-                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} aria-hidden="true">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                           </svg>
                           {t("nav.messages")}
@@ -375,17 +501,17 @@ export default function MegaNavbar({ revealAfterVh = 0 }: { revealAfterVh?: numb
                           onClick={() => setAccountOpen(false)}
                           className="flex items-center gap-3 px-4 py-3 text-sm text-[var(--color-ink-2)] hover:bg-[var(--color-surface-sunk)] transition-colors"
                         >
-                          <svg className="w-4 h-4 text-[var(--color-coral-500)]" fill="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-4 h-4 text-[var(--color-coral-500)]" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
                           </svg>
                           {t("nav.wishlist")}
                         </Link>
                         <Link
-                          href="/guides"
+                          href="/resources/help"
                           onClick={() => setAccountOpen(false)}
                           className="flex items-center gap-3 px-4 py-3 text-sm text-[var(--color-ink-2)] hover:bg-[var(--color-surface-sunk)] transition-colors"
                         >
-                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} aria-hidden="true">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" />
                           </svg>
                           Help Centre
@@ -395,7 +521,7 @@ export default function MegaNavbar({ revealAfterVh = 0 }: { revealAfterVh?: numb
                           onClick={() => setAccountOpen(false)}
                           className="flex items-center gap-3 px-4 py-3 text-sm text-[var(--color-ink-2)] hover:bg-[var(--color-surface-sunk)] transition-colors"
                         >
-                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} aria-hidden="true">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                             <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                           </svg>
@@ -422,28 +548,9 @@ export default function MegaNavbar({ revealAfterVh = 0 }: { revealAfterVh?: numb
           </li>
         </ul>
 
-        {/* Mobile: language + toggle + hamburger */}
+        {/* Mobile: language + hamburger */}
         <div className="lg:hidden flex items-center gap-2">
           <LanguageSwitcher />
-          {mounted && (
-            <button
-              type="button"
-              onClick={toggle}
-              className="w-11 h-11 inline-flex items-center justify-center rounded-[6px] text-[var(--color-ink-3)]"
-              aria-label="Dark mode"
-              aria-pressed={theme === "dark"}
-            >
-              {theme === "dark" ? (
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-                </svg>
-              ) : (
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-                </svg>
-              )}
-            </button>
-          )}
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
             className="flex flex-col gap-1.5 p-2"
@@ -468,7 +575,10 @@ export default function MegaNavbar({ revealAfterVh = 0 }: { revealAfterVh?: numb
         </div>
       </nav>
 
-      {/* Mobile menu */}
+      {/* Mobile menu.
+          It lives inside the fixed header and overlays the page, so opening
+          it moves nothing: the document behind keeps its scroll position and
+          the page does not reflow. */}
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
@@ -476,7 +586,7 @@ export default function MegaNavbar({ revealAfterVh = 0 }: { revealAfterVh?: numb
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.2 }}
+            transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
             className={`lg:hidden overflow-hidden mt-2 ${session ? "max-w-5xl" : "max-w-4xl"} mx-auto rounded-[14px] bg-[var(--color-surface-2)]/97 backdrop-blur-xl border border-[var(--color-line)] shadow-[var(--shadow-pop)]`}
           >
             <div className="px-4 py-3 space-y-1 max-h-[80vh] overflow-y-auto">
@@ -485,7 +595,11 @@ export default function MegaNavbar({ revealAfterVh = 0 }: { revealAfterVh?: numb
                   const active = router.pathname === item.href;
                   return (
                     <div key={item.href}>
-                      <Link href={item.href} className={navLinkClassMobile(active)}>
+                      <Link
+                        href={item.href}
+                        className={navLinkClassMobile(active)}
+                        onClick={() => setMobileOpen(false)}
+                      >
                         {t(item.labelKey)}
                       </Link>
                       {/* Dashboard after Home */}
@@ -493,6 +607,7 @@ export default function MegaNavbar({ revealAfterVh = 0 }: { revealAfterVh?: numb
                         <Link
                           href="/dashboard"
                           className={navLinkClassMobile(router.pathname.startsWith("/dashboard"))}
+                          onClick={() => setMobileOpen(false)}
                         >
                           {t("nav.dashboard")}
                         </Link>
@@ -501,13 +616,19 @@ export default function MegaNavbar({ revealAfterVh = 0 }: { revealAfterVh?: numb
                   );
                 }
 
-                // Dropdown → accordion
+                /* Dropdown -> accordion. One level deep, never two: the
+                   same three or four destinations as the desktop panel,
+                   each row a comfortable 48px tap target. */
                 const expanded = mobileExpanded === item.id;
+                const sectionId = `mobile-section-${item.id}`;
                 return (
                   <div key={item.id}>
                     <button
+                      type="button"
                       onClick={() => setMobileExpanded(expanded ? null : item.id)}
-                      className="w-full flex items-center justify-between px-3 py-2.5 rounded-[8px] text-sm font-medium text-[var(--color-ink-2)] hover:bg-[var(--color-surface-sunk)] transition-colors"
+                      aria-expanded={expanded}
+                      aria-controls={sectionId}
+                      className="w-full flex items-center justify-between min-h-[44px] px-3 py-2.5 rounded-[8px] text-sm font-medium text-[var(--color-ink-2)] hover:bg-[var(--color-surface-sunk)] transition-colors"
                     >
                       {t(item.labelKey)}
                       <svg
@@ -516,35 +637,39 @@ export default function MegaNavbar({ revealAfterVh = 0 }: { revealAfterVh?: numb
                         viewBox="0 0 24 24"
                         stroke="currentColor"
                         strokeWidth={2}
+                        aria-hidden="true"
                       >
                         <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                       </svg>
                     </button>
-                    <AnimatePresence>
+                    <AnimatePresence initial={false}>
                       {expanded && (
                         <motion.div
+                          id={sectionId}
                           initial={{ height: 0, opacity: 0 }}
                           animate={{ height: "auto", opacity: 1 }}
                           exit={{ height: 0, opacity: 0 }}
-                          transition={{ duration: 0.2 }}
+                          transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
                           className="overflow-hidden"
                         >
-                          <div className="pl-3 pb-2 space-y-0.5">
-                            {item.columns.flat().map((subItem) => (
-                              <Link
-                                key={subItem.href}
-                                href={subItem.href}
-                                className="flex items-center gap-3 px-3 py-2 rounded-[8px] text-sm text-[var(--color-ink-2)] hover:bg-[var(--color-surface-sunk)] transition-colors"
-                              >
-                                <div className="w-7 h-7 rounded-[6px] bg-[var(--color-surface-sunk)] flex items-center justify-center shrink-0 text-[var(--color-ink-3)]">
-                                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                                    <path strokeLinecap="round" strokeLinejoin="round" d={subItem.iconPath} />
-                                  </svg>
-                                </div>
-                                {t(subItem.titleKey)}
-                              </Link>
+                          <ul className="list-none m-0 pl-3 pb-2 space-y-0.5">
+                            {item.items.map((subItem) => (
+                              <li key={subItem.href}>
+                                <Link
+                                  href={subItem.href}
+                                  onClick={() => setMobileOpen(false)}
+                                  className="flex items-center gap-3 min-h-[48px] px-3 py-2.5 rounded-[8px] text-sm text-[var(--color-ink-2)] hover:bg-[var(--color-surface-sunk)] transition-colors"
+                                >
+                                  <span className="w-8 h-8 rounded-[7px] bg-[var(--color-surface-sunk)] flex items-center justify-center shrink-0 text-[var(--color-ink-3)]">
+                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} aria-hidden="true">
+                                      <path strokeLinecap="round" strokeLinejoin="round" d={subItem.iconPath} />
+                                    </svg>
+                                  </span>
+                                  <span className="font-medium">{itemTitle(subItem)}</span>
+                                </Link>
+                              </li>
                             ))}
-                          </div>
+                          </ul>
                         </motion.div>
                       )}
                     </AnimatePresence>
@@ -561,27 +686,30 @@ export default function MegaNavbar({ revealAfterVh = 0 }: { revealAfterVh?: numb
                     </p>
                     <Link
                       href="/dashboard/seeker"
-                      className="flex items-center gap-3 px-3 py-2.5 rounded-[8px] text-sm font-medium text-[var(--color-ink-2)] hover:text-[var(--color-ink)] hover:bg-[var(--color-surface-sunk)] transition-colors"
+                      onClick={() => setMobileOpen(false)}
+                      className="flex items-center gap-3 min-h-[44px] px-3 py-2.5 rounded-[8px] text-sm font-medium text-[var(--color-ink-2)] hover:text-[var(--color-ink)] hover:bg-[var(--color-surface-sunk)] transition-colors"
                     >
-                      <svg className="w-5 h-5 text-[var(--color-ink-3)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                      <svg className="w-5 h-5 text-[var(--color-ink-3)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} aria-hidden="true">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                       </svg>
                       {t("nav.seeker")}
                     </Link>
                     <Link
                       href="/dashboard/owner"
-                      className="flex items-center gap-3 px-3 py-2.5 rounded-[8px] text-sm font-medium text-[var(--color-ink-2)] hover:text-[var(--color-ink)] hover:bg-[var(--color-surface-sunk)] transition-colors"
+                      onClick={() => setMobileOpen(false)}
+                      className="flex items-center gap-3 min-h-[44px] px-3 py-2.5 rounded-[8px] text-sm font-medium text-[var(--color-ink-2)] hover:text-[var(--color-ink)] hover:bg-[var(--color-surface-sunk)] transition-colors"
                     >
-                      <svg className="w-5 h-5 text-[var(--color-ink-3)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                      <svg className="w-5 h-5 text-[var(--color-ink-3)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} aria-hidden="true">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                       </svg>
                       {t("nav.owner")}
                     </Link>
                     <Link
                       href="/account/settings"
-                      className="flex items-center gap-3 px-3 py-2.5 rounded-[8px] text-sm font-medium text-[var(--color-ink-2)] hover:bg-[var(--color-surface-sunk)] transition-colors"
+                      onClick={() => setMobileOpen(false)}
+                      className="flex items-center gap-3 min-h-[44px] px-3 py-2.5 rounded-[8px] text-sm font-medium text-[var(--color-ink-2)] hover:bg-[var(--color-surface-sunk)] transition-colors"
                     >
-                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} aria-hidden="true">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                         <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                       </svg>
@@ -592,8 +720,9 @@ export default function MegaNavbar({ revealAfterVh = 0 }: { revealAfterVh?: numb
               ) : (
                 <Link
                   href="/signup"
+                  onClick={() => setMobileOpen(false)}
                   style={{ color: "var(--color-primary-fg)" }}
-                  className="block mt-2 px-4 py-2.5 rounded-full text-sm font-semibold text-center bg-[var(--color-primary)] text-[color:var(--color-primary-fg)] hover:bg-[var(--color-primary-500)] transition-colors"
+                  className="flex items-center justify-center min-h-[44px] mt-2 px-4 py-2.5 rounded-full text-sm font-semibold text-center bg-[var(--color-primary)] text-[color:var(--color-primary-fg)] hover:bg-[var(--color-primary-500)] transition-colors"
                 >
                   {t("nav.signUp")}
                 </Link>

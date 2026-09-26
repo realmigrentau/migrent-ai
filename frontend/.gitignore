@@ -46,5 +46,13 @@ next-env.d.ts
 /blob-report/
 /.env.production.local
 
+# ABS + OpenStreetMap source downloads for the suburb directory ETL.
+# ~430MB of Census archives, allocation files and boundary shapefiles, plus
+# the unpacked shapefile and the Overpass extract. Re-fetch with
+# scripts/abs/fetch-sources.mjs and scripts/abs/fetch-osm.mjs; the generated
+# output in data/suburbs/ is what the site builds from and IS committed.
+/.abs-cache/
+/.next-verify/
+
 # ...except the local template, which holds no secrets
 !.env.local.example

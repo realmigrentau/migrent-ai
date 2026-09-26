@@ -36,7 +36,7 @@ export default function GuidePage({ id }: { id: string }) {
     return (
       <div className="text-center py-20">
         <h1 className="text-2xl font-bold text-[var(--color-ink)] mb-4">Guide not found</h1>
-        <Link href="/guides" className="btn-primary px-6 py-2.5 rounded-xl inline-block">
+        <Link href="/resources/guides" className="btn-primary px-6 py-2.5 rounded-xl inline-block">
           Back to Guides
         </Link>
       </div>
@@ -53,13 +53,14 @@ export default function GuidePage({ id }: { id: string }) {
         title={guide.title}
         description={guide.description}
         ogType="article"
-        breadcrumbs={[{ name: "Home", path: "/" }, { name: "Guides", path: "/guides" }, { name: guide.title, path: `/guides/${guide.id}` }]}
+        breadcrumbs={[{ name: "Home", path: "/" }, { name: "Resources", path: "/resources" }, { name: "Guides & Articles", path: "/resources/guides" }, { name: guide.title, path: `/guides/${guide.id}` }]}
       />
 
       <div className="max-w-6xl mx-auto">
         <Breadcrumb
           items={[
-            { label: "Guides", href: "/guides" },
+            { label: "Resources", href: "/resources" },
+            { label: "Guides & Articles", href: "/resources/guides" },
             { label: guide.title },
           ]}
         />
