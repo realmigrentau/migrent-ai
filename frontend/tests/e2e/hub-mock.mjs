@@ -441,6 +441,12 @@ export function handleHub(req, url, body, send) {
   if (p === "/hub/features") return send(200, me(RENTER).features), true;
   if (p === "/hub/listing-events") return send(200, { ok: true }), true;
   if (p === "/auth/store-legal-acceptance") return send(200, { status: "accepted" }), true;
+  if (p === "/reports" && req.method === "POST") {
+    const rid = uidFromAuth(req);
+    if (!rid) return send(401, { detail: "Sign in to continue" }), true;
+    S.reports.unshift({ id: uuid(), reporter_id: rid, item_type: body.item_type || "listing", item_id: body.item_id, reason: body.category, details: body.message || null, status: "pending", priority: "normal", created_at: iso(now()) });
+    return send(200, { status: "ok" }), true;
+  }
 
   if (!p.startsWith("/hub/") && !p.startsWith("/notification-center")) return false;
   const uid = uidFromAuth(req);

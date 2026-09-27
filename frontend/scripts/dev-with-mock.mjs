@@ -20,7 +20,6 @@ const env = {
   NEXT_PUBLIC_SUPABASE_URL: `http://127.0.0.1:${MOCK}`,
   NEXT_PUBLIC_SUPABASE_ANON_KEY: "anon-test-key",
   NEXT_PUBLIC_FRONTEND_URL: `http://localhost:${PORT}`,
-  NEXT_PUBLIC_MAPTILER_KEY: process.env.NEXT_PUBLIC_MAPTILER_KEY || "",
   NEXT_PUBLIC_HCAPTCHA_SITE_KEY: "",
 };
 
