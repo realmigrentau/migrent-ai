@@ -40,6 +40,14 @@ from routes_owner_verification import router as owner_verification_router
 from routes_notification_center import router as notification_center_router
 from routes_spam_moderation import router as spam_moderation_router
 from routes_internal import router as internal_router
+from routes_hub import router as hub_router
+from routes_hub_renter import router as hub_renter_router
+from routes_applications import router as hub_applications_router
+from routes_inspections import router as hub_inspections_router
+from routes_hub_messages import router as hub_messages_router
+from routes_hub_owner import router as hub_owner_router
+from routes_tenancies import router as hub_tenancies_router
+from routes_hub_admin import router as hub_admin_router
 
 # ── Startup validation ──────────────────────────────────────
 ENV = os.environ.get("ENV", "development")
@@ -78,7 +86,7 @@ if SENTRY_DSN:
 # The interactive API docs publish every endpoint and schema. Keep them for
 # local development, hide them in production.
 app = FastAPI(
-    title="MigRent AI",
+    title="Migrent API",
     version="0.1.0",
     docs_url=None if IS_PRODUCTION else "/docs",
     redoc_url=None if IS_PRODUCTION else "/redoc",
@@ -107,13 +115,17 @@ if ENV != "production":
     allowed_origins.append("http://localhost:3000")
 if FRONTEND_URL:
     allowed_origins.append(FRONTEND_URL)
+# Migrent Hub on its own origin (hub.<domain>), once it has one.
+HUB_BASE_URL = os.environ.get("HUB_BASE_URL", "").rstrip("/")
+if HUB_BASE_URL:
+    allowed_origins.append(HUB_BASE_URL)
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allow_headers=["Authorization", "Content-Type", "X-Cron-Secret"],
+    allow_headers=["Authorization", "Content-Type", "X-Cron-Secret", "X-Migrent-View-As"],
     expose_headers=["X-Total-Count", "X-Has-More"],
 )
 
@@ -146,6 +158,15 @@ app.include_router(owner_verification_router)
 app.include_router(notification_center_router)
 app.include_router(spam_moderation_router)
 app.include_router(internal_router)
+# Migrent Hub
+app.include_router(hub_router)
+app.include_router(hub_renter_router)
+app.include_router(hub_applications_router)
+app.include_router(hub_inspections_router)
+app.include_router(hub_messages_router)
+app.include_router(hub_owner_router)
+app.include_router(hub_tenancies_router)
+app.include_router(hub_admin_router)
 app.include_router(webhook_router)
 
 # Note: each router defines its own prefix (/auth, /listings, /matches, /deals)

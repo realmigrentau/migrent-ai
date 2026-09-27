@@ -14,47 +14,53 @@ logger = logging.getLogger(__name__)
 MAILJET_API_KEY = os.environ.get("MAILJET_API_KEY", "")
 MAILJET_SECRET_KEY = os.environ.get("MAILJET_SECRET_KEY", "")
 FROM_EMAIL = os.environ.get("FROM_EMAIL", "migrentau@gmail.com")
-FROM_NAME = os.environ.get("FROM_NAME", "MigRent")
+FROM_NAME = os.environ.get("FROM_NAME", "Migrent")
 FRONTEND_URL = os.environ.get("FRONTEND_URL", "https://migrent.vercel.app")
 
-# Brand colors
-BRAND_COLOR = "#E11D48"
-BRAND_BG = "#f6f9fc"
+# Brand colours: Migrent cobalt on a cool off-white. White on #3153D9 is
+# 5.9:1, so button labels stay readable at 16px.
+BRAND_COLOR = "#3153D9"
+BRAND_BG = "#F6F8FC"
 
 
 def _email_layout(content: str, preview: str = "") -> str:
-    """Wrap email content in the standard MigRent HTML layout."""
+    """Wrap email content in the standard Migrent HTML layout.
+
+    Table-free, single column, 600px max: renders on phone clients and
+    reads in order for screen readers. `preview` becomes the hidden inbox
+    preview line.
+    """
+    import html as _html
+
+    hub = os.environ.get("HUB_BASE_URL", "").rstrip("/") or f"{FRONTEND_URL}/hub"
+    preview_html = (
+        f'<div style="display:none;max-height:0;overflow:hidden;opacity:0;">{_html.escape(preview)}</div>' if preview else ""
+    )
     return f"""<!DOCTYPE html>
-<html>
+<html lang="en-AU">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MigRent</title>
+  <meta name="color-scheme" content="light">
+  <title>Migrent</title>
 </head>
-<body style="margin:0;padding:0;background-color:{BRAND_BG};font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Ubuntu,sans-serif;">
-  <div style="max-width:600px;margin:0 auto;background:#ffffff;border-radius:8px;overflow:hidden;">
-    <!-- Header -->
-    <div style="background-color:{BRAND_COLOR};padding:24px 32px;text-align:center;">
-      <a href="{FRONTEND_URL}" style="text-decoration:none;">
-        <span style="color:#ffffff;font-size:28px;font-weight:bold;letter-spacing:-0.5px;">MigRent</span>
+<body style="margin:0;padding:24px 12px;background-color:{BRAND_BG};font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;color:#101828;">
+  {preview_html}
+  <div role="article" aria-label="Migrent" style="max-width:600px;margin:0 auto;background:#ffffff;border-radius:20px;overflow:hidden;border:1px solid #E4E9F0;">
+    <div style="padding:28px 32px 0;">
+      <a href="{FRONTEND_URL}" style="text-decoration:none;color:#101828;font-size:20px;font-weight:800;letter-spacing:-0.4px;">
+        <span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:#3D63F3;margin-right:8px;vertical-align:middle;"></span>Migrent
       </a>
     </div>
-
-    <!-- Content -->
-    <div style="padding:32px;">
+    <div style="padding:20px 32px 32px;">
       {content}
     </div>
-
-    <!-- Footer -->
-    <div style="border-top:1px solid #e6ebf1;padding:24px 32px;text-align:center;">
-      <p style="color:#8898aa;font-size:14px;margin:0 0 8px;">MigRent - Find your home in Australia</p>
-      <p style="color:#8898aa;font-size:12px;margin:0 0 8px;">
-        <a href="{FRONTEND_URL}" style="color:{BRAND_COLOR};text-decoration:none;">Website</a> |
-        <a href="{FRONTEND_URL}/support" style="color:{BRAND_COLOR};text-decoration:none;">Support</a> |
-        <a href="{FRONTEND_URL}/settings" style="color:{BRAND_COLOR};text-decoration:none;">Email Preferences</a>
-      </p>
-      <p style="color:#b0b8c4;font-size:11px;line-height:16px;margin:8px 0 0;">
-        You are receiving this email because you have an account on MigRent.
+    <div style="border-top:1px solid #E4E9F0;padding:20px 32px;">
+      <p style="color:#667085;font-size:13px;line-height:20px;margin:0 0 6px;">Migrent - find, secure and manage a home in Australia.</p>
+      <p style="color:#667085;font-size:13px;line-height:20px;margin:0;">
+        <a href="{hub}" style="color:{BRAND_COLOR};text-decoration:none;">Open Migrent Hub</a> &middot;
+        <a href="{hub}/settings#notifications" style="color:{BRAND_COLOR};text-decoration:none;">Email preferences</a> &middot;
+        <a href="{FRONTEND_URL}/contact" style="color:{BRAND_COLOR};text-decoration:none;">Support</a>
       </p>
     </div>
   </div>
@@ -63,8 +69,8 @@ def _email_layout(content: str, preview: str = "") -> str:
 
 
 def _button(text: str, url: str, color: str = BRAND_COLOR) -> str:
-    return f"""<div style="text-align:center;margin:24px 0;">
-      <a href="{url}" style="background-color:{color};border-radius:8px;color:#ffffff;font-size:16px;font-weight:600;text-decoration:none;padding:14px 32px;display:inline-block;">{text}</a>
+    return f"""<div style="margin:24px 0;">
+      <a href="{url}" style="background-color:{color};border-radius:12px;color:#ffffff;font-size:16px;font-weight:600;text-decoration:none;padding:14px 28px;display:inline-block;">{text}</a>
     </div>"""
 
 
@@ -608,53 +614,6 @@ def send_listing_removed_to_owner(
     )
 
     _send_email(owner_email, subject, _email_layout(content), text)
-
-
-def send_new_message_notification(
-    recipient_email: str,
-    recipient_name: str,
-    sender_name: str,
-    message_preview: str,
-    listing_title: str | None = None,
-    thread_url: str = "",
-):
-    """Send email notification when a user receives a new message."""
-    subject = f"New message from {sender_name}"
-
-    preview_text = message_preview[:200] + "..." if len(message_preview) > 200 else message_preview
-    about = f" about <strong>{listing_title}</strong>" if listing_title else ""
-    thread_link = thread_url or f"{FRONTEND_URL}/messages"
-
-    content = f"""
-    <h2 style="font-size:24px;font-weight:bold;color:#1a1a1a;margin:0 0 16px;">New Message</h2>
-    <p style="font-size:15px;line-height:24px;color:#374151;margin:0 0 12px;">Hi {recipient_name},</p>
-    <p style="font-size:15px;line-height:24px;color:#374151;margin:0 0 12px;">
-      <strong>{sender_name}</strong> sent you a message{about}:
-    </p>
-
-    <div style="background:#f3f4f6;border-radius:8px;padding:20px;margin:16px 0;border-left:3px solid {BRAND_COLOR};">
-      <p style="font-size:15px;font-style:italic;color:#374151;line-height:24px;margin:0;">
-        "{preview_text}"
-      </p>
-    </div>
-
-    {_button("Reply Now", thread_link)}
-
-    <p style="font-size:13px;color:#9ca3af;text-align:center;margin:8px 0 0;">
-      You can manage your message notifications in your account settings.
-    </p>
-    """
-
-    text = (
-        f"Hi {recipient_name},\n\n"
-        f"{sender_name} sent you a message"
-        f"{f' about {listing_title}' if listing_title else ''}:\n\n"
-        f'"{preview_text}"\n\n'
-        f"Reply: {thread_link}\n\n"
-        f"- The MigRent Team"
-    )
-
-    _send_email(recipient_email, subject, _email_layout(content, f"New message from {sender_name}"), text)
 
 
 def send_listing_expiring_to_owner(
