@@ -21,6 +21,10 @@ const API_ORIGIN = (() => {
   }
 })();
 
+// Migrent Hub's own host, once DNS exists (see lib/hub/routes.ts). Read at
+// build time: routing by host has to be static configuration.
+const HUB_HOST = (process.env.NEXT_PUBLIC_HUB_HOST || "").trim().toLowerCase();
+
 const nextConfig: NextConfig = {
   /* Two `next dev` processes cannot share a build directory - the second one
      fails to take .next/dev/lock and exits. Setting NEXT_DIST_DIR gives a
@@ -83,8 +87,27 @@ const nextConfig: NextConfig = {
     ],
   },
 
+  async rewrites() {
+    if (!HUB_HOST) return [];
+    return {
+      // Everything on the Hub host is a Hub page: hub.<domain>/applications
+      // renders pages/hub/applications. Framework assets, API routes and
+      // paths proxy.ts already rewrote are left alone.
+      beforeFiles: [
+        { source: "/", has: [{ type: "host", value: HUB_HOST }], destination: "/hub" },
+        { source: "/:path((?!_next/|api/|hub(?:/|$)).*)", has: [{ type: "host", value: HUB_HOST }], destination: "/hub/:path" },
+      ],
+      afterFiles: [],
+      fallback: [],
+    };
+  },
+
   async redirects() {
     return [
+      // Once the Hub has its own host, its old /hub/* addresses move there.
+      ...(HUB_HOST
+        ? [{ source: "/hub/:path*", missing: [{ type: "host" as const, value: HUB_HOST }], destination: `https://${HUB_HOST}/:path*`, permanent: true }]
+        : []),
       // Supabase sends people to its Site URL (the homepage) whenever the
       // redirect a sign-in asked for is not on its allow-list. Forward those
       // arrivals to the page that can finish the sign-in; the query string

@@ -414,7 +414,7 @@ def counts(request: Request, authorization: Optional[str] = Header(None)):
     sb = get_supabase_admin()
     from routes_hub_messages import unread_total
 
-    out = {"messages": unread_total(sb, actor), "notifications": 0, "applications": 0, "maintenance": 0}
+    out = {"messages": unread_total(sb, actor), "notifications": 0, "applications": 0, "maintenance": 0, "tenancies": 0}
     try:
         n = sb.table("notifications").select("id", count="exact").eq("user_id", actor.id).eq("is_read", False).execute()
         out["notifications"] = n.count or 0
@@ -429,6 +429,8 @@ def counts(request: Request, authorization: Optional[str] = Header(None)):
         else:
             a = sb.table("applications").select("id", count="exact").eq("renter_id", actor.id).eq("status", "changes_requested").execute()
             out["applications"] = a.count or 0
+            t = sb.table("tenancies").select("id", count="exact").eq("renter_id", actor.id).in_("status", ["upcoming", "active"]).execute()
+            out["tenancies"] = t.count or 0
     except Exception:
         pass
     return out

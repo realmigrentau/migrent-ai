@@ -1,0 +1,119 @@
+/**
+ * Where Migrent Hub lives, and how to link into it.
+ *
+ * The Hub's pages are files under pages/hub. Where they are served depends
+ * on configuration, and every link goes through these helpers so nothing
+ * else has to know:
+ *
+ *   NEXT_PUBLIC_HUB_HOST unset (today)
+ *     The Hub is served on the main site under /hub
+ *     (migrent.vercel.app/hub/applications). Same origin, so one sign-in
+ *     session covers the site and the Hub.
+ *
+ *   NEXT_PUBLIC_HUB_HOST=hub.migrent.com.au (once DNS exists)
+ *     proxy.ts serves the Hub at the root of that host
+ *     (hub.migrent.com.au/applications) and 308-redirects any /hub/* request
+ *     on the main site there. NEXT_PUBLIC_AUTH_COOKIE_DOMAIN=.migrent.com.au
+ *     lets both hosts share the session.
+ *
+ * A Hub path is always written without the prefix ("/applications"). The
+ * Pages Router needs the file path as `href` and the address to show as
+ * `as`, which is what hubLink() returns.
+ */
+
+export const HUB_HOST = (process.env.NEXT_PUBLIC_HUB_HOST || "").trim().toLowerCase();
+export const HUB_PREFIX = "/hub";
+
+/** The public site's origin, for links that leave the Hub on a hub host. */
+export const SITE_ORIGIN = (process.env.NEXT_PUBLIC_SITE_ORIGIN || process.env.NEXT_PUBLIC_FRONTEND_URL || "").replace(/\/+$/, "");
+
+export function hubOnOwnHost(): boolean {
+  return Boolean(HUB_HOST);
+}
+
+function clean(path: string): string {
+  if (!path || path === "/") return "";
+  return path.startsWith("/") ? path : `/${path}`;
+}
+
+/** The file route Next.js resolves: always /hub/... */
+export function hubPage(path: string): string {
+  return `${HUB_PREFIX}${clean(path)}` || HUB_PREFIX;
+}
+
+/** The address a person sees and shares. */
+export function hubUrl(path: string): string {
+  const p = clean(path);
+  if (hubOnOwnHost()) return p || "/";
+  return `${HUB_PREFIX}${p}`;
+}
+
+/** Absolute Hub URL, for leaving the public site (and for emails). */
+export function hubAbsoluteUrl(path: string): string {
+  if (hubOnOwnHost()) return `https://${HUB_HOST}${clean(path) || "/"}`;
+  return hubUrl(path);
+}
+
+/** href/as pair for next/link and router.push inside the Hub. */
+export function hubLink(path: string): { href: string; as: string } {
+  const [pathname, rest = ""] = splitQuery(path);
+  const suffix = rest ? `?${rest}` : "";
+  return { href: `${hubPage(pathname)}${suffix}`, as: `${hubUrl(pathname)}${suffix}` };
+}
+
+function splitQuery(path: string): [string, string] {
+  const hashFree = path.split("#")[0];
+  const i = hashFree.indexOf("?");
+  return i === -1 ? [hashFree, ""] : [hashFree.slice(0, i), hashFree.slice(i + 1)];
+}
+
+/**
+ * A link from the Hub back to the public site. Relative while both share
+ * an origin; absolute once the Hub has its own host.
+ */
+export function siteUrl(path: string): string {
+  const p = path.startsWith("/") ? path : `/${path}`;
+  if (hubOnOwnHost() && SITE_ORIGIN) return `${SITE_ORIGIN}${p}`;
+  return p;
+}
+
+/** Strip the /hub prefix from a router asPath, for `next` parameters. */
+export function toHubPath(asPath: string): string {
+  if (asPath === HUB_PREFIX) return "/";
+  if (asPath.startsWith(`${HUB_PREFIX}/`) || asPath.startsWith(`${HUB_PREFIX}?`)) return asPath.slice(HUB_PREFIX.length) || "/";
+  return asPath || "/";
+}
+
+/**
+ * Validate a Hub `next` destination: a same-origin Hub path, never an
+ * auth page (that loops) and never anything that could leave the site.
+ */
+export function safeHubPath(input: unknown, fallback = "/"): string {
+  if (typeof input !== "string") return fallback;
+  let value = input.trim();
+  if (!value || value.length > 1024) return fallback;
+  if (!value.startsWith("/") || value.startsWith("//") || value.startsWith("/\\") || value.includes("\\")) return fallback;
+  if (/[\u0000-\u001f\u007f\s]/.test(value) || /%0[ad]/i.test(value)) return fallback;
+  if (/^\/[^/?#]*:/.test(value)) return fallback;
+  value = toHubPath(value);
+  const bare = value.split("?")[0].split("#")[0];
+  if (/^\/(sign-in|sign-up|forgot-password|reset-password|auth|verify-mfa)(\/|$)/.test(bare)) return fallback;
+  return value;
+}
+
+/** Hub pages that do not need a session. */
+export const HUB_PUBLIC_PATHS = ["/sign-in", "/sign-up", "/forgot-password", "/reset-password", "/auth/callback"];
+
+export function isHubPublicPath(hubPath: string): boolean {
+  const bare = hubPath.split("?")[0];
+  return HUB_PUBLIC_PATHS.some((p) => bare === p || bare.startsWith(`${p}/`));
+}
+
+/** The sign-in URL that returns to `next` once signed in. */
+export function hubSignInUrl(next?: string, extra?: Record<string, string>): string {
+  const params = new URLSearchParams();
+  if (next && next !== "/") params.set("next", next);
+  for (const [k, v] of Object.entries(extra ?? {})) params.set(k, v);
+  const q = params.toString();
+  return `${hubUrl("/sign-in")}${q ? `?${q}` : ""}`;
+}
