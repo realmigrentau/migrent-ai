@@ -15,7 +15,7 @@ import { useTranslation } from "react-i18next";
 export default function SignIn() {
   const { t } = useTranslation();
   const router = useRouter();
-  const { session } = useAuth();
+  const { session, refreshing } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [msg, setMsg] = useState("");
@@ -26,11 +26,14 @@ export default function SignIn() {
   // Default to /dashboard for returning users
   const redirectUrl = safeRedirectPath(router.query.redirect);
 
+  // Wait for Supabase to confirm the session: the cached copy useAuth
+  // renders from can be stale, and acting on it bounces between here and
+  // the server-side guard on private pages.
   useEffect(() => {
-    if (session) {
-      router.push(redirectUrl);
+    if (session && !refreshing) {
+      router.replace(redirectUrl);
     }
-  }, [session, redirectUrl, router]);
+  }, [session, refreshing, redirectUrl, router]);
 
   const [fieldErrors, setFieldErrors] = useState<{ email?: string; password?: string }>({});
 
@@ -210,7 +213,7 @@ export default function SignIn() {
             <div className="flex-1 h-px bg-[var(--color-line)]" />
           </div>
 
-          <SignInButton redirectTo={typeof window !== "undefined" ? window.location.origin : undefined} />
+          <SignInButton next={redirectUrl} />
 
           <div id="signin-status" role="alert" aria-live="assertive" aria-atomic="true">
           {msg && (

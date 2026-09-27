@@ -5,6 +5,7 @@ import { supabase } from "../../lib/supabase";
 import { useAuth } from "../../hooks/useAuth";
 import ConsentCheckboxes from "../../components/legal/ConsentCheckboxes";
 import { motion } from "framer-motion";
+import { ONBOARDING_PATH, authCallbackUrl } from "../../lib/authRedirect";
 
 import { API_BASE_URL as API_BASE } from "../../lib/apiBase";
 function generatePollingId(): string {
@@ -102,7 +103,7 @@ export default function MagicLinkSignup() {
       email,
       options: {
         shouldCreateUser: true,
-        emailRedirectTo: `${window.location.origin}/auth/callback?polling_id=${pollingId}`,
+        emailRedirectTo: authCallbackUrl(window.location.origin, ONBOARDING_PATH, { polling_id: pollingId }),
         data: {
           type: "seeker",
           legal_accepted_at: new Date().toISOString(),

@@ -358,7 +358,10 @@ export async function searchListings(params: Record<string, string>, token?: str
     if (!res.ok) throw new Error(`searchListings failed: ${res.status}`);
     return await res.json();
   } catch (err) {
-    console.error("searchListings error:", err);
+    // Every caller renders an empty state for []. A warning rather than an
+    // error: in development console.error opens the Next.js error overlay
+    // over the homepage whenever the API is asleep or not running.
+    console.warn("searchListings error:", err);
     return [];
   }
 }

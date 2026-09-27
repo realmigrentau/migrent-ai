@@ -4,6 +4,7 @@ import Link from "next/link";
 import { supabase } from "../../lib/supabase";
 import { useAuth } from "../../hooks/useAuth";
 import { motion } from "framer-motion";
+import { authCallbackUrl } from "../../lib/authRedirect";
 
 import { API_BASE_URL as API_BASE } from "../../lib/apiBase";
 function generatePollingId(): string {
@@ -83,7 +84,7 @@ export default function MagicLinkLogin() {
       email,
       options: {
         shouldCreateUser: false,
-        emailRedirectTo: `${window.location.origin}/auth/callback?polling_id=${pollingId}`,
+        emailRedirectTo: authCallbackUrl(window.location.origin, "/dashboard", { polling_id: pollingId }),
       },
     });
     if (error) {
