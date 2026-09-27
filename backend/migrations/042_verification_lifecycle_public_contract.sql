@@ -21,6 +21,14 @@
 
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
+-- Reconciliation (applied to production 2026-09-28): public_listings below
+-- selects daily_price and room_type, which an early migration was meant to
+-- add but never reached the production database. Adding them here, nullable,
+-- lets this file run on a database that is missing them.
+ALTER TABLE public.listings
+  ADD COLUMN IF NOT EXISTS daily_price numeric,
+  ADD COLUMN IF NOT EXISTS room_type text;
+
 
 -- ══════════════════════════════════════════════════════════════
 -- 1. Listing lifecycle columns and the complete status set
@@ -528,3 +536,12 @@ GRANT EXECUTE ON FUNCTION public.current_user_is_admin() TO authenticated;
 --
 -- Expect an error when approving a listing whose owner is unverified:
 --   UPDATE listings SET moderation_status = 'approved' WHERE id = '<unverified owner listing>';
+
+
+-- ══════════════════════════════════════════════════════════════
+-- 11. Lock the badge backup
+-- ══════════════════════════════════════════════════════════════
+-- New tables in `public` inherit Supabase's default anon/authenticated
+-- grants. The backup above only needs to be readable from the SQL editor.
+ALTER TABLE public._backup_042_profile_badges ENABLE ROW LEVEL SECURITY;
+REVOKE ALL ON public._backup_042_profile_badges FROM anon, authenticated;
