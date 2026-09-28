@@ -168,7 +168,7 @@ Off unless `AI_LISTING_ASSIST_ENABLED=true` **and** an Anthropic credential is s
 ## Deploy order
 
 1. **Backend (Render)** from this commit. The Hub endpoints answer "not set up yet" until step 2; nothing existing changes.
-2. **Migration 043** in Supabase (SQL editor or `apply_migration`). Additive and idempotent; it also creates the private `renter-documents` and `maintenance-photos` buckets.
+2. **Migration 043** in Supabase (SQL editor or `apply_migration`). Additive and idempotent; it also creates the private `renter-documents` and `maintenance-photos` buckets. **Applied to production on 2026-09-28** (version `20260928094712`), ahead of the backend: the current backend ignores the new tables and columns, so the order is safe either way.
 3. **Frontend (Vercel)** from this commit. The old dashboard, owner, wishlist, messages and account pages now redirect into the Hub.
 4. **Scheduled jobs** on Render (table above).
 5. Later: the Hub host (see [Where it lives](#where-it-lives)).
