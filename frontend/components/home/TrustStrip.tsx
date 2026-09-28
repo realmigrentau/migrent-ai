@@ -1,32 +1,28 @@
-import { FileCheck2, Lock, MessagesSquare, ShieldCheck } from "lucide-react";
+import { FileCheck2, MessagesSquare, ShieldCheck, Wallet } from "lucide-react";
 
 /**
- * The quiet line between the search and the argument.
- *
- * Deliberately not a card row: four claims on a hairline band, so it reads
- * as a caption under the search rather than the page's first feature grid.
+ * Four true things, directly under the house. A caption, not a feature
+ * grid: no cards, no band, just the line the hero hands over on.
  */
 
 const ITEMS = [
-  { icon: ShieldCheck, label: "Verified hosts" },
-  { icon: Lock, label: "Bond protected" },
-  { icon: FileCheck2, label: "No history needed" },
-  { icon: MessagesSquare, label: "Real support" },
+  { icon: ShieldCheck, label: "Hosts ID-checked before listing" },
+  { icon: FileCheck2, label: "No rental history needed" },
+  { icon: Wallet, label: "Renters pay no fees" },
+  { icon: MessagesSquare, label: "Real people when you need help" },
 ];
 
 export default function TrustStrip() {
   return (
-    <section className="mg-band--green mg-band--edge-top mg-band--edge-bottom" aria-label="What Migrent guarantees">
-      <div className="mg-shell py-5">
-        <ul className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 sm:gap-x-12 list-none m-0 p-0">
-          {ITEMS.map((t) => (
-            <li key={t.label} className="inline-flex items-center gap-2.5">
-              <t.icon className="w-[18px] h-[18px] text-[var(--color-accent)]" strokeWidth={1.75} aria-hidden="true" />
-              <span className="text-[13.5px] font-medium text-[var(--color-ink-2)] tracking-[-0.005em]">{t.label}</span>
-            </li>
-          ))}
-        </ul>
-      </div>
+    <section aria-label="What renting through Migrent means" className="relative z-[1] pb-4 pt-2">
+      <ul className="site-shell m-0 flex list-none flex-wrap items-center justify-center gap-x-8 gap-y-3 p-0">
+        {ITEMS.map((t) => (
+          <li key={t.label} className="inline-flex items-center gap-2.5">
+            <t.icon className="h-[18px] w-[18px] text-[color:var(--color-primary)]" strokeWidth={1.9} aria-hidden="true" />
+            <span className="text-[14px] font-semibold tracking-[-0.005em] text-[color:var(--color-ink-2)]">{t.label}</span>
+          </li>
+        ))}
+      </ul>
     </section>
   );
 }

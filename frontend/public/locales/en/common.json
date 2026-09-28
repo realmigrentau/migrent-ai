@@ -25,8 +25,8 @@
         "desc": "Filter by suburb, budget, transport and household"
       },
       "howItWorks": {
-        "title": "How it works",
-        "desc": "What renting through Migrent actually involves"
+        "title": "How renting works",
+        "desc": "Host checks, bonds, applications, and what Migrent is not"
       },
       "suburbs": {
         "title": "Suburb guides",
@@ -38,7 +38,7 @@
       },
       "whyList": {
         "title": "Why list with Migrent",
-        "desc": "Free to list, verified seekers, no rent commission"
+        "desc": "Free to list, applicants with a Rental Profile, no rent commission"
       },
       "listRoom": {
         "title": "List a room",
@@ -46,7 +46,7 @@
       },
       "pricing": {
         "title": "Pricing",
-        "desc": "Free for seekers, one $99 fee per owner match"
+        "desc": "Free for renters. Hosts pay only when a stay is booked"
       },
       "features": {
         "title": "Features",
@@ -55,6 +55,10 @@
       "becomeMentor": {
         "title": "Become a mentor",
         "desc": "Help new arrivals settle in a city you know"
+      },
+      "mentors": {
+        "title": "Mentors",
+        "desc": "Talk to someone who has made the same move"
       }
     },
     "signIn": "Sign in",
@@ -65,7 +69,8 @@
       "whatYouGet": "What you get",
       "learn": "Learn",
       "support": "Support"
-    }
+    },
+    "help": "Help"
   },
   "home": {
     "badge": "Now live across Australia",

@@ -81,11 +81,15 @@
      button, so the cap is widened to keep that content on one line. */
   max-width: 1040px;
   padding: 12px 24px;
-  background: var(--color-surface);
+  /* The Hub's floating rail, as a pill: frosted glass with a hairline, so
+     the sunrise shows through it on the homepage and the canvas elsewhere. */
+  background: var(--color-glass);
   border-radius: 9999px;
   box-shadow:
-    0 10px 15px -3px rgb(0 0 0 / 0.1),
-    0 4px 6px -4px rgb(0 0 0 / 0.1);
+    0 0 0 1px var(--color-glass-line),
+    var(--shadow-nav);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px);
 }
 
 /* ── Logo: Navbar 1 "w-8 h-8 mr-6", scale .8 -> 1, hover rotate 10 ── */
@@ -606,7 +610,6 @@
 /* Dark theme: the bar, panels, phone sheet and language list sit on the
    near-black page, so they take a hairline edge instead of relying on a
    shadow nobody can see. Light is unchanged (the surface token is white). */
-:where(.dark) .site-nav__bar,
 :where(.dark) .site-nav__panel,
 :where(.dark) .site-nav__lang-list {
   box-shadow:

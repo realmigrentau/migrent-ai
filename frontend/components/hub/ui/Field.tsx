@@ -171,14 +171,15 @@ export function Segmented<T extends string>({ value, onChange, options, label, s
             tabIndex={selected ? 0 : -1}
             onClick={() => onChange(o.value)}
             onKeyDown={(e) => {
-              if (e.key === "ArrowRight" || e.key === "ArrowDown") {
-                e.preventDefault();
-                onChange(options[(i + 1) % options.length].value);
-              }
-              if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
-                e.preventDefault();
-                onChange(options[(i - 1 + options.length) % options.length].value);
-              }
+              const step = e.key === "ArrowRight" || e.key === "ArrowDown" ? 1 : e.key === "ArrowLeft" || e.key === "ArrowUp" ? -1 : 0;
+              if (!step) return;
+              e.preventDefault();
+              const next = (i + step + options.length) % options.length;
+              onChange(options[next].value);
+              // Roving tabindex: focus follows the selection, or it is left
+              // on a button that has just left the tab order.
+              const radios = e.currentTarget.parentElement?.querySelectorAll<HTMLButtonElement>('[role="radio"]');
+              radios?.[next]?.focus();
             }}
             className={cn(
               "inline-flex items-center justify-center gap-1.5 rounded-[9px] font-semibold transition-all duration-150",

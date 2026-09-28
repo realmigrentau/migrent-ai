@@ -1,5 +1,3 @@
-import { RESOURCE_HUBS, RESOURCE_ICON } from "../data/resources";
-
 export interface NavLinkSimple {
   type: "link";
   href: string;
@@ -61,19 +59,18 @@ export type NavItem = NavLinkSimple | NavLinkDropdown;
  * rainbow of rose/blue/green/purple/cyan/pink was the one place the site
  * still picked colours at random).
  *
- * ── On Resources ──
- * It used to carry eight items in a 520px two-column grid: Guides, Blog,
- * ROI calculator, Rental laws, FAQ, Help, Become a mentor and Careers. Two
- * of those were not resources at all, and four were two pairs of the same
- * thing (Guides/Blog, FAQ/Help) with descriptions too similar to choose
- * between. It is three destinations now, read from data/resources.ts:
+ * ── The 2026-09-29 consolidation ──
+ * Four entries, matching the pages that now exist:
  *
- *     Guides & Articles   /resources/guides
- *     Tools & Checklists  /resources/tools
- *     Help Centre         /resources/help
+ *     Find a stay   search, suburb guides, how renting works, mentors
+ *     For owners    why list with Migrent, pricing
+ *     Guides        articles, rental laws and checklists (/guides)
+ *     Help          answers and contact (/help)
  *
- * Careers and Become a mentor did not go anywhere - both are still linked
- * from the footer, and Become a mentor from /mentors and the homepage.
+ * Mentors moved inside "Find a stay" (it is one part of settling in, not a
+ * product of its own), and the three Resources hubs became Guides and Help.
+ * Listing a property is the header's own button, so it is not repeated in
+ * the For owners panel.
  */
 
 const ICON = {
@@ -82,9 +79,7 @@ const ICON = {
   shield: "M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z",
   route: "M13 10V3L4 14h7v7l9-11h-7z",
   home: "M3 12l9-9 9 9M5 10v10a1 1 0 001 1h3a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1h3a1 1 0 001-1V10",
-  plus: "M12 4v16m8-8H4",
   tag: "M7 7h.01M3 6a1 1 0 011-1h5.586a1 1 0 01.707.293l8.414 8.414a1 1 0 010 1.414l-5.586 5.586a1 1 0 01-1.414 0L3.293 12.293A1 1 0 013 11.586V6z",
-  spark: "M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z",
 } as const;
 
 export const navItems: NavItem[] = [
@@ -92,46 +87,26 @@ export const navItems: NavItem[] = [
     type: "dropdown",
     labelKey: "nav.findStay",
     id: "stay",
-    matchPrefixes: ["/seeker/search", "/for-seekers", "/suburbs", "/suburb", "/safety-verification"],
+    matchPrefixes: ["/seeker/search", "/how-renting-works", "/suburbs", "/suburb", "/mentors", "/mentor", "/become-mentor"],
     items: [
       { href: "/seeker/search", iconPath: ICON.search, groupKey: "nav.group.search", titleKey: "nav.item.search.title", descKey: "nav.item.search.desc" },
       { href: "/suburbs", iconPath: ICON.compass, groupKey: "nav.group.search", titleKey: "nav.item.suburbs.title", descKey: "nav.item.suburbs.desc" },
-      { href: "/for-seekers", iconPath: ICON.route, groupKey: "nav.group.beforeYouRent", titleKey: "nav.item.howItWorks.title", descKey: "nav.item.howItWorks.desc" },
-      { href: "/safety-verification", iconPath: ICON.shield, groupKey: "nav.group.beforeYouRent", titleKey: "nav.item.safety.title", descKey: "nav.item.safety.desc" },
+      { href: "/how-renting-works", iconPath: ICON.shield, groupKey: "nav.group.beforeYouRent", titleKey: "nav.item.howItWorks.title", descKey: "nav.item.howItWorks.desc" },
+      { href: "/mentors", iconPath: ICON.route, groupKey: "nav.group.beforeYouRent", titleKey: "nav.item.mentors.title", descKey: "nav.item.mentors.desc" },
     ],
   },
   {
     type: "dropdown",
     labelKey: "nav.forOwners",
     id: "owners",
-    matchPrefixes: ["/for-owners", "/owner/listings/new", "/pricing", "/features"],
+    matchPrefixes: ["/for-owners", "/pricing"],
     items: [
       { href: "/for-owners", iconPath: ICON.home, groupKey: "nav.group.getStarted", titleKey: "nav.item.whyList.title", descKey: "nav.item.whyList.desc" },
-      { href: "/owner/listings/new", iconPath: ICON.plus, groupKey: "nav.group.getStarted", titleKey: "nav.item.listRoom.title", descKey: "nav.item.listRoom.desc" },
-      { href: "/pricing", iconPath: ICON.tag, groupKey: "nav.group.whatYouGet", titleKey: "nav.item.pricing.title", descKey: "nav.item.pricing.desc" },
-      { href: "/features", iconPath: ICON.spark, groupKey: "nav.group.whatYouGet", titleKey: "nav.item.features.title", descKey: "nav.item.features.desc" },
+      { href: "/pricing", iconPath: ICON.tag, groupKey: "nav.group.getStarted", titleKey: "nav.item.pricing.title", descKey: "nav.item.pricing.desc" },
     ],
   },
-  { type: "link", href: "/mentors", labelKey: "nav.mentors" },
-  {
-    type: "dropdown",
-    labelKey: "nav.resources",
-    id: "resources",
-    /* The hub routes plus the detail routes that live under them, so the
-       trigger still reads as current while you are inside a guide, a blog
-       post or a help article. */
-    matchPrefixes: ["/resources", "/guides", "/blog", "/help"],
-    items: RESOURCE_HUBS.map((hub) => ({
-      href: hub.href,
-      iconPath: RESOURCE_ICON[hub.icon],
-      /* Reading material in one column, getting help in the other. Keyed
-         on the hub id so a fourth hub lands under "Learn" by default rather
-         than silently vanishing from the panel. */
-      groupKey: hub.id === "help" ? "nav.group.support" : "nav.group.learn",
-      title: hub.title,
-      desc: hub.description,
-    })),
-  },
+  { type: "link", href: "/guides", labelKey: "nav.guides" },
+  { type: "link", href: "/help", labelKey: "nav.help" },
 ];
 
 export interface DropdownGroup {
