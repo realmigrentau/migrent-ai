@@ -199,7 +199,7 @@ export default function MaintenancePage() {
                   {uploading ?? "Add photos"}
                 </button>
               )}
-              <input ref={file} type="file" accept="image/jpeg,image/png,image/webp" multiple className="sr-only" onChange={(e) => void addPhotos(e.target.files)} />
+              <input ref={file} type="file" aria-label="Add photos of the problem" tabIndex={-1} accept="image/jpeg,image/png,image/webp" multiple className="sr-only" onChange={(e) => void addPhotos(e.target.files)} />
             </div>
           </Panel>
 

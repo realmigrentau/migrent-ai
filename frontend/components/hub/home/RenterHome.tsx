@@ -35,7 +35,7 @@ function NextActionCard({ action, lead }: { action: NextAction; lead?: boolean }
       <div className="flex items-end justify-between gap-3">
         <div className="flex min-w-0 flex-col gap-0.5">
           <p className={cn("text-[15.5px] font-semibold leading-snug", lead ? "" : "text-[color:var(--color-ink)]")}>{action.title}</p>
-          {body && <p className={cn("line-clamp-2 text-[13.5px]", lead ? "opacity-85" : "text-[color:var(--color-ink-2)]")}>{body}</p>}
+          {body && <p className={cn("line-clamp-2 text-[13.5px]", lead ? "text-[color:var(--color-primary-fg)]" : "text-[color:var(--color-ink-2)]")}>{body}</p>}
         </div>
         <ArrowRight className="h-5 w-5 shrink-0 transition-transform group-hover:translate-x-1" strokeWidth={1.75} aria-hidden />
       </div>

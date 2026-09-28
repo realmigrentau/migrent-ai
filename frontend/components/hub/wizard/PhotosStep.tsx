@@ -102,6 +102,8 @@ export default function PhotosStep({ images, onChange }: { images: string[]; onC
         <input
           ref={input}
           type="file"
+          aria-label="Choose listing photos"
+          tabIndex={-1}
           multiple
           accept="image/jpeg,image/png,image/webp,image/heic,image/heif"
           className="sr-only"

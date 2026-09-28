@@ -214,6 +214,8 @@ export default function MaintenanceForm({ open, onClose, tenancyId, emergency }:
           <input
             ref={input}
             type="file"
+            aria-label="Add photos of the problem"
+            tabIndex={-1}
             accept="image/jpeg,image/png,image/webp"
             multiple
             className="sr-only"

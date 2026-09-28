@@ -104,7 +104,7 @@ function ProfileCard({ me }: { me: HubMe }) {
         <div className="flex items-center gap-4">
           <Avatar name={me.name || me.email} src={me.avatar_url} size={72} />
           <div className="flex flex-col gap-2">
-            <input ref={file} type="file" accept="image/jpeg,image/png,image/webp" className="sr-only" id="settings-photo" onChange={(e) => e.target.files?.[0] && void uploadPhoto(e.target.files[0])} />
+            <input ref={file} type="file" aria-label="Upload a profile photo" tabIndex={-1} accept="image/jpeg,image/png,image/webp" className="sr-only" id="settings-photo" onChange={(e) => e.target.files?.[0] && void uploadPhoto(e.target.files[0])} />
             <Button variant="secondary" size="sm" loading={photoBusy} icon={<Camera className="h-4 w-4" strokeWidth={1.75} />} onClick={() => file.current?.click()}>
               {me.avatar_url ? "Change photo" : "Add a photo"}
             </Button>
@@ -361,6 +361,8 @@ function VerificationCard({ me }: { me: HubMe }) {
           <input
             ref={file}
             type="file"
+            aria-label="Choose your ID document"
+            tabIndex={-1}
             accept="image/jpeg,image/png,image/webp,application/pdf"
             className="sr-only"
             id="id-file"

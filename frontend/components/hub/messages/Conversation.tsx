@@ -42,6 +42,9 @@ export default function Conversation({ threadKey, onBack }: { threadKey: string;
   const { data, error, loading, refetch } = useHubQuery<ConversationData>(key);
   const [text, setText] = useState("");
   const [local, setLocal] = useState<Message[]>([]);
+  // Delivered messages keep the React key of their optimistic copy, so the
+  // bubble updates in place instead of fading out and back in.
+  const [renderKey, setRenderKey] = useState<Record<string, string>>({});
   const [attachment, setAttachment] = useState<Pending | null>(null);
   const [uploading, setUploading] = useState<number | null>(null);
   const [reportOpen, setReportOpen] = useState(false);
@@ -134,8 +137,10 @@ export default function Conversation({ threadKey, onBack }: { threadKey: string;
       }
       try {
         const res = await hubApi.post<{ message: Message }>(`/hub/inbox/${threadKey}/messages`, { text: body, attachment_path: att?.path, attachment_name: att?.name, attachment_type: att?.type });
+        setRenderKey((k) => ({ ...k, [res.message.id]: tempId }));
         setLocal((xs) => xs.filter((m) => m.id !== tempId));
-        setQueryData<ConversationData>(key, (prev) => (prev ? { ...prev, messages: [...prev.messages, res.message] } : prev!));
+        // A poll may already have brought it in; never show it twice.
+        setQueryData<ConversationData>(key, (prev) => (prev ? { ...prev, messages: prev.messages.some((m) => m.id === res.message.id) ? prev.messages : [...prev.messages, res.message] } : prev!));
         invalidate("/hub/inbox?");
         // Attachments come back with a signed link on the next read.
         if (att) void refetch().catch(() => {});
@@ -302,7 +307,7 @@ export default function Conversation({ threadKey, onBack }: { threadKey: string;
               const grouped = next && next.from_me === m.from_me && new Date(next.created_at).getTime() - new Date(m.created_at).getTime() < 5 * 60_000;
               const isLastMine = m.from_me && !messages.slice(i + 1).some((x) => x.from_me);
               return (
-                <motion.li key={m.id} layout={!reduce} initial={reduce ? false : { opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }} className="flex flex-col">
+                <motion.li key={renderKey[m.id] ?? m.id} layout={!reduce} initial={reduce ? false : { opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }} className="flex flex-col">
                   {header && <p className="my-4 text-center text-[12px] font-semibold text-[color:var(--color-ink-4)]">{header}</p>}
                   <div className={cn("flex max-w-[82%] flex-col gap-1 sm:max-w-[70%]", m.from_me ? "self-end items-end" : "self-start items-start")}>
                     {m.attachment_type?.startsWith("image/") && m.attachment_url ? (
@@ -381,7 +386,7 @@ export default function Conversation({ threadKey, onBack }: { threadKey: string;
           </div>
         )}
         <div className="flex items-end gap-2">
-          <input ref={file} type="file" accept="image/jpeg,image/png,image/webp,image/gif,application/pdf" className="sr-only" id="conv-file" onChange={(e) => e.target.files?.[0] && void upload(e.target.files[0])} />
+          <input ref={file} type="file" aria-label="Attach a photo or PDF" tabIndex={-1} accept="image/jpeg,image/png,image/webp,image/gif,application/pdf" className="sr-only" id="conv-file" onChange={(e) => e.target.files?.[0] && void upload(e.target.files[0])} />
           <IconButton label="Attach a photo or PDF" size="sm" onClick={() => file.current?.click()} disabled={uploading !== null}>
             <Paperclip className="h-5 w-5" strokeWidth={1.75} />
           </IconButton>

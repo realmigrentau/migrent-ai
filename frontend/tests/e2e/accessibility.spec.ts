@@ -43,7 +43,7 @@ test("empty sign-in submission announces field errors", async ({ page }) => {
   await email.fill("renter@example.test");
   await page.getByLabel("Password").fill("not-the-password");
   await page.getByLabel("Password").press("Enter");
-  await expect(page.getByRole("alert")).toContainText(/do not match/i);
+  await expect(page.getByRole("alert").filter({ hasText: /do not match/i })).toBeVisible();
 });
 
 /* Dark mode was retired (lib/themeBootstrap.ts), and with it the header's

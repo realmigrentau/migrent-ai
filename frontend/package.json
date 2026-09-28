@@ -9,7 +9,7 @@
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
     "test:unit": "vitest run",
-    "build:test": "cp .env.test .env.production.local && next build && rm -f .env.production.local",
+    "build:test": "sh -c 'set -a; . ./.env.test; set +a; next build'",
     "test:e2e": "playwright test",
     "test": "npm run test:unit && npm run test:e2e",
     "content:lastmod": "node scripts/content-lastmod.mjs",

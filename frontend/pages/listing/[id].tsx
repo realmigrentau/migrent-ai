@@ -485,7 +485,8 @@ export default function ListingDetailPage({ initialListing }: { initialListing?:
 
         {showMobileCTA && !isOwner && !bookingSuccess && isPublished && (
           <div className="fixed bottom-0 left-0 right-0 z-40 lg:hidden bg-[var(--color-surface)]/95 backdrop-blur-lg border-t border-[var(--color-line)] px-4 py-3 safe-area-pb">
-            <div className="flex items-center justify-between gap-4">
+            {/* pr-20 keeps the action clear of the support button in the corner. */}
+            <div className="flex items-center justify-between gap-4 pr-20">
               <div>
                 <span className="text-lg font-semibold text-[var(--color-ink)] tabular-nums">${listing.weekly_price}</span>
                 <span className="text-sm text-[var(--color-ink-3)]"> / week</span>

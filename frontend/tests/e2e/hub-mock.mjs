@@ -134,7 +134,12 @@ function card(l, ownerView = false) {
   if (ownerView) Object.assign(c, { moderation_status: meta.moderation_status || "approved", property_id: meta.property || null, occupancy: meta.occupancy || "vacant", occupied_until: null, street_address: meta.address || "12 Example Street" });
   return c;
 }
-const listingById = (id) => LISTINGS.find((l) => l.id === id);
+// Listings created through the Hub wizard. Kept apart from LISTINGS, which
+// the public search mock also serves: a draft in review is not searchable,
+// and the public-site tests count search results.
+const CREATED = [];
+const listingById = (id) => LISTINGS.find((l) => l.id === id) || CREATED.find((l) => l.id === id);
+const allListings = () => [...LISTINGS, ...CREATED];
 const ownerOf = (id) => OWNED[id]?.owner || "aaaa0000-0000-4000-8000-00000000000f";
 
 /* ── State ──────────────────────────────────────────────── */
@@ -317,7 +322,7 @@ function unitStatus(l) {
 }
 
 function portfolio(uid) {
-  const units = LISTINGS.filter((l) => ownerOf(l.id) === uid).map((l) => {
+  const units = allListings().filter((l) => ownerOf(l.id) === uid).map((l) => {
     const c = card(l, true);
     c.status = unitStatus(l);
     c.pending_applications = S.applications.filter((a) => a.listing_id === l.id && ["submitted", "under_review", "shortlisted"].includes(a.status)).length;
@@ -491,7 +496,6 @@ export function handleHub(req, url, body, send) {
         if (!body?.password && !body?.oauth_confirmed) return send(400, { detail: "Please confirm with your password" }), true;
         if (body.password && body.password !== TEST_PASSWORD) return send(401, { detail: "Incorrect password" }), true;
         meta.moderation_status = "deleted";
-        LISTINGS = LISTINGS.filter((x) => x.id !== l.id);
         return send(200, { message: "Listing deleted successfully" }), true;
       }
       return send(200, { id: l.id, moderation_status: meta.moderation_status, available_to: l.available_to }), true;
@@ -925,7 +929,7 @@ export function handleHub(req, url, body, send) {
       if (!data.available_from) problems.push({ step: "availability", field: "available_from", message: "Choose when it is available from" });
       if (problems.length) return send(422, { detail: { message: "A few things are needed before this can go live", problems } }), true;
       const id = uuid();
-      LISTINGS.push({ id, title: data.title, suburb: data.suburb, city: "Sydney", postcode: Number(data.postcode), weekly_price: Number(data.weekly_price), description: data.description, images: data.images, property_type: data.property_type, place_type: data.place_type, bedrooms: data.bedrooms, bathrooms: data.bathrooms, furnished: data.furnished, bills_included: data.bills_included, available_from: data.available_from, available_to: null, display_address: `${data.suburb} ${data.postcode}`, public_state: "unavailable" });
+      CREATED.push({ id, title: data.title, suburb: data.suburb, city: "Sydney", postcode: Number(data.postcode), weekly_price: Number(data.weekly_price), description: data.description, images: data.images, property_type: data.property_type, place_type: data.place_type, bedrooms: data.bedrooms, bathrooms: data.bathrooms, furnished: data.furnished, bills_included: data.bills_included, available_from: data.available_from, available_to: null, display_address: `${data.suburb} ${data.postcode}`, public_state: "unavailable" });
       OWNED[id] = { owner: uid, property: d.property_id || "prop-smith", unit_label: data.unit_label || null, moderation_status: "pending_approval", occupancy: "vacant", address: data.street_address };
       d.submitted_at = iso(now());
       return send(200, { listing_id: id, property_id: OWNED[id].property, moderation_status: "pending_approval", needs_verification: false }), true;

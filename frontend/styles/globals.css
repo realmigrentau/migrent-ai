@@ -32,17 +32,19 @@
 
 @theme static {
   /* ── Primary: Migrent cobalt ──
-     #3D63F3 carries white text at 4.9:1 and reads at 4.6:1 as text on
-     the Hub canvas. -600 is the text-safe step for small links (6.2:1). */
+     The brief's #3D63F3 read at 4.45:1 as small text on the grey
+     surfaces (#f2f4f8) - just under AA. #365DF3 is the same cobalt 1.5%
+     deeper: white text on it is 5.2:1, and as text it is at least 4.6:1
+     on every light surface. -600 is the step for small links (6.2:1). */
   --color-primary-50: #eef2ff;
   --color-primary-100: #dde5ff;
   --color-primary-200: #bfccff;
   --color-primary-400: #6b8cff;
-  --color-primary-500: #3d63f3;
+  --color-primary-500: #365df3;
   --color-primary-600: #3153d9;
   --color-primary-700: #2948bf;
   --color-primary-900: #1a2c7a;
-  --color-primary: #3d63f3;
+  --color-primary: #365df3;
   --color-primary-hover: #3153d9;
   --color-primary-pressed: #2948bf;
   --color-primary-soft: #eaf0ff;
@@ -59,7 +61,7 @@
      one brand colour, not two competing ones. */
   --color-accent-50: #eef2ff;
   --color-accent-100: #dde5ff;
-  --color-accent-500: #3d63f3;
+  --color-accent-500: #365df3;
   --color-accent-600: #3153d9;
   --color-accent-700: #2948bf;
   --color-accent: #3153d9;
@@ -107,12 +109,12 @@
   --color-warn-600: #7f4a00;
 
   /* ── Ink ──
-     Primary 16.7:1 on canvas · body 7.7:1 · muted 5.0:1 · placeholder 4.6:1 */
+     Primary 16.7:1 on canvas · body 7.7:1 · muted 5.4:1 · placeholder 4.9:1 */
   --color-ink: #101828;
   --color-ink-2: #475467;
-  --color-ink-muted: #667085;
-  --color-ink-3: #667085;
-  --color-ink-4: #6b7588;
+  --color-ink-muted: #5d6678;
+  --color-ink-3: #5d6678;   /* 5.1:1 even on the palest tint (#eaf0ff) */
+  --color-ink-4: #626d80;   /* 4.6:1 on the same: timestamps and hints still pass AA */
 
   /* ── Grounds ──
      The public site reads on white; Migrent Hub reads on a cool canvas

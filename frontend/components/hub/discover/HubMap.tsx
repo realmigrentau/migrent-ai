@@ -98,7 +98,7 @@ export default function HubMap({ homes, activeId, dark, onHover, onSelect, onMov
         source: "homes",
         filter: ["has", "point_count"],
         paint: {
-          "circle-color": dark ? "#6b8cff" : "#3d63f3",
+          "circle-color": dark ? "#6b8cff" : "#365df3",
           "circle-radius": ["step", ["get", "point_count"], 18, 10, 22, 30, 28],
           "circle-stroke-width": 3,
           "circle-stroke-color": dark ? "#0f131a" : "#ffffff",

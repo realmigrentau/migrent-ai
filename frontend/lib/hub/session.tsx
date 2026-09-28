@@ -108,14 +108,14 @@ export function HubSessionProvider({ children }: { children: ReactNode }) {
     await hubApi.post("/hub/admin/view-as", { user_id: user.id, reason });
     setViewAs(user);
     setViewAsState(user);
-    clearQueryCache();
+    clearQueryCache({ refetch: true });
   }, []);
 
   const endViewAs = useCallback(async () => {
     const current = getViewAs();
     setViewAs(null);
     setViewAsState(null);
-    clearQueryCache();
+    clearQueryCache({ refetch: true });
     if (current) await hubApi.post("/hub/admin/view-as/end", { user_id: current.id }).catch(() => {});
   }, []);
 

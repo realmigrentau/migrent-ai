@@ -407,7 +407,7 @@ export function DocumentsSection({ documents, onUploaded, onDeleted, selectable,
             </Select>
           )}
         </Field>
-        <input ref={input} type="file" accept="application/pdf,image/jpeg,image/png,image/webp" className="sr-only" id="hub-doc-upload" onChange={(e) => e.target.files?.[0] && void upload(e.target.files[0])} />
+        <input ref={input} type="file" aria-label="Upload a document" tabIndex={-1} accept="application/pdf,image/jpeg,image/png,image/webp" className="sr-only" id="hub-doc-upload" onChange={(e) => e.target.files?.[0] && void upload(e.target.files[0])} />
         <Button variant="secondary" icon={<Upload className="h-4 w-4" strokeWidth={1.9} />} onClick={() => input.current?.click()} loading={progress !== null}>
           Choose a file
         </Button>

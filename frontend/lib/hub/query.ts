@@ -69,8 +69,20 @@ export function invalidate(prefix: string) {
   }
 }
 
-export function clearQueryCache() {
+/**
+ * Forget everything (the viewer changed: sign-out, or an admin starting or
+ * ending view-as). Mounted readers are told, and with `refetch` they load
+ * again as the new viewer instead of waiting on data that will never come.
+ */
+export function clearQueryCache(opts: { refetch?: boolean } = {}) {
+  const mountedKeys = Array.from(subs.entries())
+    .filter(([, set]) => set.size > 0)
+    .map(([key]) => key);
   cache.clear();
+  for (const key of mountedKeys) {
+    emit(key);
+    if (opts.refetch) void load(key, () => hubApi.get(key)).catch(() => {});
+  }
 }
 
 /**

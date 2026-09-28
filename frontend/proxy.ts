@@ -58,9 +58,7 @@ function hubSignIn(req: NextRequest, hubPath: string) {
   const url = new URL(base, req.url);
   const target = hubPath + (req.nextUrl.search || "");
   if (target && target !== "/" && target.startsWith("/") && !target.startsWith("//")) url.searchParams.set("next", target);
-  const res = NextResponse.redirect(url);
-  res.headers.set("Cache-Control", "private, no-store");
-  return res;
+  return privateHeaders(NextResponse.redirect(url));
 }
 
 /** Hub sign-in, then back to the site page that asked. */

@@ -122,7 +122,6 @@
   }
   .res-filter[aria-pressed="true"] .res-filter__count {
     color: var(--color-primary-fg);
-    opacity: 0.72;
   }
 
   /* ── Cards ────────────────────────────────────────────────────────
