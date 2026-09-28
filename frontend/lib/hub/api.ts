@@ -67,10 +67,17 @@ export async function hubFetch<T>(path: string, init: { method?: string; body?: 
     if (!token) throw new HubError("Your session has ended. Sign in again to continue.", 401);
     headers.Authorization = `Bearer ${token}`;
   }
-  // Viewing as a customer applies to reads of their data, never to admin
-  // endpoints and never to writes (the API refuses those anyway).
+  // Viewing as a customer is read-only and only ever shows their data.
+  // Admin endpoints stay the admin's own. Anything else is refused here
+  // rather than sent: a write would land on the admin's account, and
+  // endpoints outside /hub do not understand view-as and would show the
+  // admin's own data under the customer's name.
   const viewAs = getViewAs();
-  if (viewAs && method === "GET" && !path.startsWith("/hub/admin")) headers["X-Migrent-View-As"] = viewAs.id;
+  if (viewAs && !path.startsWith("/hub/admin")) {
+    if (method !== "GET") throw new HubError("Viewing as a customer is read-only. Nothing can be changed.", 403);
+    if (!path.startsWith("/hub/")) throw new HubError("This isn't shown while viewing as a customer.", 403);
+    headers["X-Migrent-View-As"] = viewAs.id;
+  }
 
   let body: BodyInit | undefined;
   if (init.body instanceof FormData) body = init.body;

@@ -199,7 +199,7 @@ export default function PropertyPage() {
         }
       />
 
-      <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_320px]">
+      <div className="grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1fr)_320px]">
         <div className="flex min-w-0 flex-col gap-10">
           <Section title="Listings" description={p.units.length > 1 ? "Each room or unit is listed on its own." : undefined}>
             {p.units.length === 0 ? (

@@ -34,7 +34,7 @@ test.describe("desktop", () => {
     await page.setViewportSize({ width: 1024, height: 800 });
     await page.goto("/pricing");
     await expect(page.locator(".site-nav__bar")).toHaveCSS("height", "60px");
-    await expect(banner(page).getByRole("link", { name: "List a room" })).toBeInViewport();
+    await expect(banner(page).getByRole("link", { name: "List a property" })).toBeInViewport();
   });
 
   test("the lamp marks the section you are in", async ({ page }) => {
@@ -140,7 +140,7 @@ test.describe("phone", () => {
   test("the pill carries only the logo and the menu button", async ({ page }) => {
     await page.goto("/pricing");
     await expect(banner(page).getByRole("button", { name: "Open menu" })).toBeVisible();
-    await expect(banner(page).getByRole("link", { name: "List a room" })).toBeHidden();
+    await expect(banner(page).getByRole("link", { name: "List a property" })).toBeHidden();
   });
 
   test("the menu is a modal: focus goes in, stays in, and comes back", async ({ page }) => {
@@ -154,7 +154,7 @@ test.describe("phone", () => {
 
     // Shift+Tab from the first control wraps to the last, not out behind.
     await page.keyboard.press("Shift+Tab");
-    await expect(sheet.getByRole("link", { name: "List a room" })).toBeFocused();
+    await expect(sheet.getByRole("link", { name: "List a property" })).toBeFocused();
 
     await page.keyboard.press("Escape");
     await expect(sheet).toHaveCount(0);

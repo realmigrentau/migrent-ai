@@ -161,7 +161,7 @@ export default function MaintenancePage() {
         }
       />
 
-      <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_340px]">
+      <div className="grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1fr)_340px]">
         <div className="flex min-w-0 flex-col gap-8">
           {r.urgency === "emergency" && open && data.emergency && <EmergencyPanel g={data.emergency} />}
           {r.status === "scheduled" && r.scheduled_for && (

@@ -81,7 +81,7 @@
      button, so the cap is widened to keep that content on one line. */
   max-width: 1040px;
   padding: 12px 24px;
-  background: #ffffff;
+  background: var(--color-surface);
   border-radius: 9999px;
   box-shadow:
     0 10px 15px -3px rgb(0 0 0 / 0.1),
@@ -269,7 +269,7 @@
   width: max-content;
   max-width: calc(100vw - 24px);
   padding: 16px;
-  background: #ffffff;
+  background: var(--color-surface);
   border: 1px solid var(--color-line);
   border-radius: 16px;
 }
@@ -451,7 +451,7 @@
   padding: 96px 24px 40px;
   overflow-y: auto;
   overscroll-behavior: contain;
-  background: #ffffff;
+  background: var(--color-surface);
   pointer-events: auto;
 }
 
@@ -589,7 +589,7 @@
   margin: 0;
   padding: 6px;
   list-style: none;
-  background: #ffffff;
+  background: var(--color-surface);
   border: 1px solid var(--color-line);
   border-radius: 16px;
 }
@@ -601,4 +601,16 @@
 .site-nav__lang-list--sheet {
   position: static;
   margin-top: 4px;
+}
+
+/* Dark theme: the bar, panels, phone sheet and language list sit on the
+   near-black page, so they take a hairline edge instead of relying on a
+   shadow nobody can see. Light is unchanged (the surface token is white). */
+:where(.dark) .site-nav__bar,
+:where(.dark) .site-nav__panel,
+:where(.dark) .site-nav__lang-list {
+  box-shadow:
+    0 0 0 1px var(--color-line-2),
+    0 10px 15px -3px rgb(0 0 0 / 0.4),
+    0 4px 6px -4px rgb(0 0 0 / 0.4);
 }

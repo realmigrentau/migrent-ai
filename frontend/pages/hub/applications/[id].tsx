@@ -55,7 +55,7 @@ function RenterView({ d }: { d: ApplicationDetail }) {
   const next = nextStepCopy(d);
   const canWithdraw = !isClosed(status) && status !== "finalised";
   return (
-    <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_340px]">
+    <div className="grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1fr)_340px]">
       <div className="flex min-w-0 flex-col gap-10">
         {!isClosed(status) && status !== "draft" && (
           <Panel>
@@ -170,7 +170,7 @@ function OwnerView({ d, refetch, admin }: { d: ApplicationDetail; refetch: () =>
   }
 
   return (
-    <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_340px]">
+    <div className="grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1fr)_340px]">
       <div className="flex min-w-0 flex-col gap-8">
         <Panel className="flex flex-col gap-5 sm:flex-row sm:items-center">
           <Avatar name={s?.name || d.renter?.name} src={s?.avatar_url} size={64} />

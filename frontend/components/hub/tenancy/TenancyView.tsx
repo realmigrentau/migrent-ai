@@ -286,7 +286,7 @@ export default function TenancyView({ d, refetch }: { d: TenancyDetail; refetch:
   const openRepairs = d.maintenance.filter((m) => m.status !== "resolved" && m.status !== "closed");
 
   return (
-    <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_340px]">
+    <div className="grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1fr)_340px]">
       <div className="flex min-w-0 flex-col gap-10">
         {/* The home */}
         <Panel padded={false} className="overflow-hidden">
@@ -337,8 +337,8 @@ export default function TenancyView({ d, refetch }: { d: TenancyDetail; refetch:
                   {overdue.length} rent date{overdue.length === 1 ? " has" : "s have"} passed without a payment recorded{owner ? ". Record it once it arrives, or waive it." : ". If you've paid, let the owner know so they can record it."}
                 </p>
               )}
-              <div className="overflow-hidden rounded-[18px] border border-[var(--color-line)]">
-                <table className="w-full text-left text-[14px]">
+              <div className="overflow-x-auto rounded-[18px] border border-[var(--color-line)]">
+                <table className="w-full min-w-[300px] text-left text-[14px]">
                   <caption className="sr-only">Rent record</caption>
                   <thead className="bg-[var(--color-surface-muted)] text-[12.5px] font-semibold text-[color:var(--color-ink-3)]">
                     <tr>

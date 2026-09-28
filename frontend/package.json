@@ -15,7 +15,8 @@
     "content:lastmod": "node scripts/content-lastmod.mjs",
     "check:headers": "node scripts/check-security-headers.mjs",
     "perf:budget": "node scripts/perf-budget.mjs",
-    "dev:mock": "node scripts/dev-with-mock.mjs"
+    "dev:mock": "node scripts/dev-with-mock.mjs",
+    "preview:e2e": "node scripts/preview-e2e.mjs"
   },
   "dependencies": {
     "@hcaptcha/react-hcaptcha": "^2.0.2",

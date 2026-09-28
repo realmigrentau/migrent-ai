@@ -4,79 +4,82 @@ A locked design system for this app. Every page redesign reads this file before
 emitting code. Do not regenerate per page - extend or amend this file when the
 system needs to grow.
 
-System name: **Riviera** (v2, 2026-09-12). Supersedes "Sand & Ocean".
-
-The homepage hero - the Mediterranean villa photograph - is the benchmark for
-the whole site. Riviera is built from the villa rather than from its sky: a
-deep-forest primary (the palms), soft-linen and warm-paper grounds (the stucco
-and the haze), a rationed terracotta (the roofline), and muted sage for
-everything interactive. The azure that dominates the photograph stays inside
-the photograph; it survives in the UI only as `--color-info` for callouts,
-because a sky-blue action colour is what made the rest of the site read as a
-different, cooler product than the hero.
+System name: **Cobalt** (v3, 2026-09-28). Supersedes Riviera (v2, forest and
+sage) and the dawn palette. One system for the public site and Migrent Hub:
+the site is editorial and discovery-led, the Hub calmer and task-led, and a
+button, badge or card is the same object in both. `styles/globals.css` is the
+source of truth for every value; this file explains the rules.
 
 Built to read as human-made, not generated: no italic headers, no gradient
 text, no fake browser chrome, no invented metrics.
 
-/ Hallmark - genre: editorial x modern-minimal (warm-atmospheric) - route: custom
-/ design-system: design.md - designed-as-app - v2
+/ Hallmark - genre: editorial x modern-minimal - route: custom
+/ design-system: design.md - designed-as-app - v3
 
 ## Genre
-Editorial warmth meets modern-minimal structure, with atmospheric (photographic,
-immersive) heroes. NOT the dark-AI-tool "atmospheric" register - this is a
-home-finding marketplace, so warmth and trust lead.
+Editorial warmth on the public site, calm product UI in the Hub. This is a
+home-finding marketplace, so trust and clarity lead.
 
 ## Macrostructure family
 Pages within a family share the family's shape; they vary only in component
 archetypes and hero treatment.
 
-- Marketing pages: **Marquee Hero** (atmospheric media hero) -> stat/trust band ->
-  editorial content sections -> sideways-scroll showcase -> statement CTA.
-  Variation knobs: hero media (video / gradient-field / photo), section order.
-- App pages (dashboard, account, owner, seeker): **Workbench** - calm, functional,
-  no enrichment. Linen and paper surfaces, deep-forest primary actions,
-  generous spacing.
+- Marketing pages: **Marquee Hero** (the sunrise hero) -> trust band ->
+  editorial sections -> sideways-scroll showcase -> statement CTA.
+- **Migrent Hub** (every signed-in screen): floating navigation rail on
+  desktop (expanded 248px / compact 76px), five-tab bottom bar on phones,
+  a page header (title, one line of description, actions), then sections of
+  cards and rows. No marketing enrichment. See `docs/hub.md`.
 - Content pages (legal, guides, blog, faq): **Long Document** - one editorial
   column, display headings, generous measure, mono eyebrows.
 
-## Theme (Riviera) - SINGLE THEME
-There is ONE theme. Light is warm coastal; dark is the same brand after dark
-(a tinted near-black with a green cast, never pure #000). Do not reintroduce
-data-palette variants.
+## Theme (Cobalt) - light, dark and system
+One preference for the whole of Migrent (`migrent-theme` in localStorage:
+`light`, `dark` or `system`), applied before first paint by
+`lib/themeBootstrap.ts`. Dark is the same brand at night: a tinted near-black
+(#090b10), never pure black.
 
 ### Light (live token names in styles/globals.css)
 
-- `--color-bg`          soft linen (page ground)   #f5f2ea
-- `--color-surface`     warm paper                 #fbf9f4
-- `--color-surface-2`   elevated card              #ffffff
-- `--color-surface-cool` cooler alternate band     #f8f8f5
-- `--color-ink`         near-black charcoal        #171a17   15.7:1 on linen
-- `--color-ink-2`       body                       #3f4740   8.6:1
-- `--color-ink-3`       muted warm olive-grey      #5d655b   5.4:1
-- `--color-line`        soft border                #e2ded1
-- `--color-primary`     deep forest                #132720   14.0:1 on linen
-- `--color-accent`      muted sage / eucalyptus    #3f6b57   5.4:1
-- `--color-terracotta`  roofline, text-safe step   #a0563a   4.8:1
-- `--color-terracotta-500` roofline, fill          #b96848
-- `--color-trust`       verification only          #2f6b4f   5.6:1
-- `--color-info-500`    the hero's sky, callouts   #1f6a8c
-- `--color-deep`        theme-stable dark band     #132720
+- `--color-canvas`         page ground behind cards      #f6f8fc
+- `--color-surface`        cards and panels              #ffffff
+- `--color-surface-muted`  quiet fills, chips            #f2f4f8
+- `--color-ink`            headings                      #101828   16.7:1
+- `--color-ink-2`          body                          #475467    7.7:1
+- `--color-ink-3`          secondary text                #5d6678    5.1:1 on the palest tint
+- `--color-ink-4`          hints, timestamps             #626d80    4.6:1 on the palest tint
+- `--color-line` / `-2`    borders                       #e4e9f0 / #d6dce5
+- `--color-primary`        cobalt: action, brand, verification  #365df3  white on it 5.2:1, as text >= 4.6:1
+- `--color-primary-soft`   selected and highlighted fills #eaf0ff
+- `--color-deep`           theme-stable navy for footer and deep bands  #141b33
+- status: `--color-success-*`, `--color-warn-*`, `--color-danger-*`, `--color-info-*` - status only, never decoration
+
+The brief's cobalt was #3D63F3; at 4.45:1 as small text on the grey surfaces it
+missed AA, so the live value is the same hue 1.5% deeper.
 
 ### Dark
 
-Canvas #10150f, paper #171c15, card #1f251c. The forest primary lifts to sage
-(#8fbba1) so it stays visible; terracotta warms to #d9906e.
+Canvas #090b10, surface #0f131a, elevated #151a23, lines are white at 8% and
+14%. Cobalt lifts to #6b8cff with near-black text on it; ink steps are
+#f5f7fa / #c0c7d2 / #a8b0bd / #808a9a, all >= 4.5:1 where they are used.
 
 ### Accent discipline
-- **Deep forest** is the action colour and the one confident dark. Primary
-  buttons, deep bands, the footer.
-- **Sage** is the general interactive tint - links, icons, small emphasis. It
-  carries the volume precisely so terracotta does not have to.
-- **Terracotta is rationed.** Eyebrows, small badges, selected states, hairline
-  rules, step numerals, the occasional CTA detail. **Never a full-width section
-  background.** It is the single easiest way to undo this system.
-- Alternate major sections linen -> white -> cool off-white, with one or two
-  deep-forest bands per page and the deep footer as the close.
+- **Cobalt** is the one action colour. One primary button per view; secondary
+  actions are outlined or ghost.
+- **Status colours carry meaning only.** A green badge means done, amber means
+  needs attention, red means blocked or dangerous. Every status also has a
+  label and an icon - never colour alone.
+- **Terracotta** survives only in public-site editorial detail (eyebrows,
+  rules). It does not appear in the Hub.
+
+### Shape, depth and motion (Hub)
+- Radii: 24px navigation rail, 22px cards, 18-20px panels and lists, 12-16px
+  controls, full pills for chips, badges and the composer.
+- Depth: hairline borders first; shadows only on floating things (rail, tab
+  bar, menus, dialogs, sticky action bars).
+- Motion: 150-280ms, `--ease-out` (cubic-bezier(0.22, 1, 0.36, 1)); content
+  rises 6-8px as it appears; everything respects `prefers-reduced-motion`.
+- Icons: lucide, stroke 1.75, 16-20px.
 
 ### Two traps that are specific to this codebase
 1. **Unlayered CSS beats every cascade layer.** `a { color: inherit }` sat
@@ -91,10 +94,10 @@ Canvas #10150f, paper #171c15, card #1f251c. The forest primary lifts to sage
    declared in the plain `:root` block below `@theme` - see `--color-deep`.
 
 ### A third, about theme-flipping tokens
-`--color-primary` means *deep forest* on light and *lifted sage* on dark,
-because it has to stay legible as an action colour in both. A **band** must not
-flip. Bands use `--color-deep`, which is dark in both themes. Use `.mg-ground-deep`
-(or `.site-footer`), which re-point the ink, line and button tokens together
+`--color-primary` flips between themes (#365df3 light, #6b8cff dark) so it
+stays legible as an action colour. A **band** must not flip. Bands use
+`--color-deep`, which is dark in both themes. Use `.mg-ground-deep` (or
+`.site-footer`), which re-point the ink, line and button tokens together
 rather than restating a colour on each child.
 
 ## Typography
@@ -107,10 +110,10 @@ wordmark. All display is roman - italic headers are banned.
   that size. Weight 350 at display sizes, 500 at card-heading sizes, tracking
   -0.016em / -0.006em. A serif needs far less negative tracking than a
   grotesque; do not carry the old numbers over.
-- Body / UI: **Schibsted Grotesk**. A news grotesque with open apertures and a
-  generous x-height - it has to stay legible at 13px on a form label, and a
-  large share of this audience is reading in a second language. Variable range
-  is 400-900 and nothing in the UI is set below 400.
+- Body / UI: **Manrope**, on the public site and everywhere in Migrent Hub
+  (Hub headings too, weight 600, tracking -0.022em). Open apertures and a
+  generous x-height keep it legible at 13px, and a large share of this
+  audience reads in a second language. Nothing in the UI is set below 400.
 - Accent: **Style Script**, via `.type-script`. See below.
 - Figures: `.type-heavy` - Newsreader 700 for prices and counts. It is spelled
   out against the `[class*="text-["]` size hooks in `globals.css` because those
@@ -199,11 +202,13 @@ scroll) + Framer Motion.
 - `:focus-visible` ring shows instantly, never animated, >= 3:1 contrast.
 
 ## CTA voice
-- Primary CTA: deep-forest fill, linen text, `--radius-control` 12px,
+- Primary CTA: cobalt fill, white text (near-black on the lifted dark-theme cobalt), `--radius-control` 12px,
   confident verb labels ("Find your room", "Start hosting", "I'm a Seeker").
   Use `.btn-primary`; do not hand-roll a filled button - the hand-rolled ones
   are where the near-black-on-near-black contrast bugs came from.
-- Secondary CTA: outline on linen, ink text, same radius (`.btn-outline`).
+- Secondary CTA: outline on the surface, ink text, same radius (`.btn-outline`).
+- In Migrent Hub, use the Hub components (`components/hub/ui/Button.tsx`:
+  `Button`, `ButtonLink`, `IconButton`); they read the same tokens.
 
 ## Per-page allowances
 - Marketing pages MAY use enrichment: the hero video, gradient mood-fields,
@@ -213,15 +218,15 @@ scroll) + Framer Motion.
 
 ## What pages MUST share
 - The wordmark / Logo + "Migrent" in the display face.
-- Deep-forest primary + sage accent + rationed terracotta.
-- Newsreader (headings) + Schibsted Grotesk (body/UI) + Space Mono (meta).
+- Cobalt primary; status colours for status only.
+- Newsreader (editorial display) + Manrope (body/UI) + Space Mono (meta).
 - One button system (`.btn-primary` / `-secondary` / `-outline` / `-ghost` /
   `-danger` / `.btn-text`), one field system, one card system, one radius scale.
-- The deep-forest footer as the close.
+- The deep navy footer (`--color-deep`) as the close on the public site.
 - CTA voice (fill style, radius, padding rhythm).
 - The mono terracotta eyebrow -> display heading rhythm (eyebrow stacked ABOVE heading,
   same column - never the tag-left / heading-right two-column pattern).
-- Sand surfaces, warm hairlines, soft shadows.
+- Cool canvas and white surfaces, hairline borders, shadows only on floating things.
 
 ## What pages MAY differ on
 - Macrostructure within the page-type family.

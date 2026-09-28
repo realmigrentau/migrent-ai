@@ -275,7 +275,7 @@ export default function HubHome() {
           )}
         </div>
 
-        <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_360px]">
+        <div className="grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1fr)_360px]">
           <div className="flex min-w-0 flex-col gap-10">
             <header className="flex flex-col gap-3">
               <p className="text-[13.5px] font-semibold text-[color:var(--color-primary)]">{kindLabel(card)}</p>
