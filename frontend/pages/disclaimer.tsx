@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 export default function Disclaimer() {
   return (
     <>
-      <SEOHead title="Platform Disclaimer" description="MigRent Platform Disclaimer - understand the limitations of our service and your responsibilities as a user." />
+      <SEOHead title="Platform Disclaimer" description="Migrent Platform Disclaimer - understand the limitations of our service and your responsibilities as a user." />
 
       <div className="max-w-3xl mx-auto space-y-10">
         {/* Hero */}
@@ -30,7 +30,7 @@ export default function Disclaimer() {
           <section className="card p-6 rounded-2xl space-y-3 border-l-4 border-l-amber-500">
             <h2 className="text-lg font-bold text-[var(--color-ink)]">Important Notice</h2>
             <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
-              <p>MigRent is an <strong>online introduction service only</strong>. We connect room owners with accommodation seekers. We do NOT:</p>
+              <p>Migrent is an <strong>online introduction service only</strong>. We connect room owners with accommodation seekers. We do NOT:</p>
               <ul className="list-disc list-inside space-y-1.5">
                 <li>Guarantee the condition, safety, legality, or suitability of any property</li>
                 <li>Verify the accuracy of any listing, photo, or description</li>
@@ -46,7 +46,7 @@ export default function Disclaimer() {
           <section className="card p-6 rounded-2xl space-y-3">
             <h2 className="text-lg font-bold text-[var(--color-ink)]">1. Property Condition - &quot;As Is&quot;</h2>
             <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
-              <p>All properties listed on MigRent are presented on an &quot;as is&quot; basis. MigRent does not inspect, verify, or warrant the condition of any property. This includes but is not limited to:</p>
+              <p>All properties listed on Migrent are presented on an &quot;as is&quot; basis. Migrent does not inspect, verify, or warrant the condition of any property. This includes but is not limited to:</p>
               <ul className="list-disc list-inside space-y-1.5">
                 <li>Structural integrity and building compliance</li>
                 <li>Cleanliness, furnishings, and amenities</li>
@@ -65,7 +65,7 @@ export default function Disclaimer() {
           <section className="card p-6 rounded-2xl space-y-3">
             <h2 className="text-lg font-bold text-[var(--color-ink)]">2. User Interactions</h2>
             <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
-              <p>MigRent is not responsible for:</p>
+              <p>Migrent is not responsible for:</p>
               <ul className="list-disc list-inside space-y-1.5">
                 <li>Scams, fraud, or misrepresentation by any user</li>
                 <li>Disputes between owners and seekers</li>
@@ -81,7 +81,7 @@ export default function Disclaimer() {
           <section className="card p-6 rounded-2xl space-y-3">
             <h2 className="text-lg font-bold text-[var(--color-ink)]">3. Financial Disclaimer</h2>
             <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
-              <p>MigRent charges flat platform fees only ($99 per deal for owners, $19 optional for seekers). We do not:</p>
+              <p>Migrent charges flat platform fees only ($99 per deal for owners, $19 optional for seekers). We do not:</p>
               <ul className="list-disc list-inside space-y-1.5">
                 <li>Collect, hold, or manage rent payments</li>
                 <li>Collect, hold, or manage bonds or security deposits</li>
@@ -97,7 +97,7 @@ export default function Disclaimer() {
           <section className="card p-6 rounded-2xl space-y-3">
             <h2 className="text-lg font-bold text-[var(--color-ink)]">4. No Legal Advice</h2>
             <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
-              <p>Information provided on MigRent, including our <Link href="/rental-laws" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">rental laws guide</Link> and <Link href="/code-of-conduct" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">STRA code of conduct</Link>, is for general informational purposes only. It does not constitute legal advice. You should seek independent legal advice for your specific circumstances.</p>
+              <p>Information provided on Migrent, including our <Link href="/rental-laws" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">rental laws guide</Link> and <Link href="/code-of-conduct" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">STRA code of conduct</Link>, is for general informational purposes only. It does not constitute legal advice. You should seek independent legal advice for your specific circumstances.</p>
             </div>
           </section>
 
@@ -107,9 +107,9 @@ export default function Disclaimer() {
             <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
               <p>To the maximum extent permitted by Australian law:</p>
               <ul className="list-disc list-inside space-y-1.5">
-                <li>MigRent excludes all liability for indirect, incidental, special, consequential, or punitive damages</li>
-                <li>MigRent&apos;s total aggregate liability shall not exceed the platform fees you have paid in the preceding 12 months</li>
-                <li>Users indemnify MigRent against all claims arising from their use of the platform or any arrangement made through it</li>
+                <li>Migrent excludes all liability for indirect, incidental, special, consequential, or punitive damages</li>
+                <li>Migrent&apos;s total aggregate liability shall not exceed the platform fees you have paid in the preceding 12 months</li>
+                <li>Users indemnify Migrent against all claims arising from their use of the platform or any arrangement made through it</li>
               </ul>
               <p>Nothing in this disclaimer excludes rights that cannot be excluded under Australian Consumer Law.</p>
             </div>
@@ -119,20 +119,20 @@ export default function Disclaimer() {
           <section className="card p-6 rounded-2xl space-y-3">
             <h2 className="text-lg font-bold text-[var(--color-ink)]">6. Your Responsibilities</h2>
             <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
-              <p>As a user of MigRent, you are responsible for:</p>
+              <p>As a user of Migrent, you are responsible for:</p>
               <ul className="list-disc list-inside space-y-1.5">
                 <li>Conducting your own due diligence on properties and users</li>
                 <li>Personally inspecting properties before committing</li>
                 <li>Creating your own tenancy agreements and collecting your own bonds</li>
                 <li>Complying with all applicable laws, including rental laws and anti-discrimination laws</li>
-                <li>Reporting suspicious activity, scams, or unsafe listings to MigRent</li>
+                <li>Reporting suspicious activity, scams, or unsafe listings to Migrent</li>
               </ul>
             </div>
           </section>
 
           {/* Legal Disclaimer */}
           <div className="card-subtle p-4 rounded-xl text-xs text-[var(--color-ink-3)] leading-relaxed">
-            <p>This disclaimer is part of MigRent&apos;s <Link href="/terms-of-service" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">Terms of Service</Link>. For full legal terms, please refer to our Terms of Service. MigRent recommends consulting a qualified Australian lawyer for specific legal advice. Last reviewed: March 2026.</p>
+            <p>This disclaimer is part of Migrent&apos;s <Link href="/terms-of-service" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">Terms of Service</Link>. For full legal terms, please refer to our Terms of Service. Migrent recommends consulting a qualified Australian lawyer for specific legal advice. Last reviewed: March 2026.</p>
           </div>
 
           {/* CTA */}

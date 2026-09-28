@@ -3,69 +3,78 @@
 @import "./home.css";
 @import "./resources.css";
 @import "./suburbs.css";
+@import "./navbar.css";
+@import "./hub.css";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
 /* ══════════════════════════════════════════════════════════════
-   MIGRENT DESIGN TOKENS  ·  "Riviera" (Hallmark, design.md v2)
-   The homepage hero is the benchmark. These are the villa's colours
-   rather than its sky: deep-forest primary, soft-linen grounds, a
-   rationed terracotta roofline, muted sage for everything interactive.
-   Type is three voices with three jobs: Newsreader for headings,
-   Schibsted Grotesk for body and UI, Style Script for the accent word in a
-   handful of headings. Space Mono keeps eyebrows and meta; Archivo keeps
-   the wordmark.
+   MIGRENT DESIGN TOKENS  ·  "Cobalt" (shared by the site and Migrent Hub)
+   One family, two moods. The public site is editorial and discovery-led;
+   Migrent Hub is calmer and task-led. Both read these tokens, so a
+   button, a badge or a card is the same object in both places.
+
+   Colour is built on one electric cobalt. It is the action colour, the
+   brand colour and the verification colour. Status colours (success,
+   warning, danger) are reserved for status and never used to decorate.
+   The navy that the homepage sunrise opens on survives as --color-deep,
+   the theme-stable ground for footer and deep bands.
+
+   Type: Manrope for everything you read and use (UI, body, headings in
+   the Hub); Newsreader for editorial display on the public site and the
+   Hub greeting; Space Mono for small caps meta; Archivo for the wordmark.
+
+   Contrast (WCAG 2.2, AA): every text token below is >= 4.5:1 on the
+   surfaces it sits on, in both themes. The brief's suggested muted
+   greys (#8A94A6 light, #727C8C dark) were 3.1:1 and 4.4:1, so the
+   muted steps are one notch stronger.
    ══════════════════════════════════════════════════════════════ */
 
-@theme {
-  /* ── Primary: the hero's night sky (action + brand + dark bands) ──
-     Was a deep forest green, taken from the villa photograph. The hero is
-     a sunrise now, and a forest primary under it left the page arguing
-     with itself: the top of the screen opened on navy and every button
-     below it was green. This is the night the hero opens on, so the page
-     closes on the colour it started with. White on --color-primary is
-     14.9:1; it is still the one confident dark. */
-  --color-primary-50: #eef1f7;
-  --color-primary-100: #dfe4ef;
-  --color-primary-200: #bcc5dc;
-  --color-primary-400: #4a5878;
-  --color-primary-500: #2b3757;
-  --color-primary-600: #212c48;
-  --color-primary-700: #1a2540;
-  --color-primary-900: #111829;
-  --color-primary: #1a2540;
-  --color-primary-soft: #dfe4ef;
-  --color-primary-fg: #fdfcfa;
+@theme static {
+  /* ── Primary: Migrent cobalt ──
+     The brief's #3D63F3 read at 4.45:1 as small text on the grey
+     surfaces (#f2f4f8) - just under AA. #365DF3 is the same cobalt 1.5%
+     deeper: white text on it is 5.2:1, and as text it is at least 4.6:1
+     on every light surface. -600 is the step for small links (6.2:1). */
+  --color-primary-50: #eef2ff;
+  --color-primary-100: #dde5ff;
+  --color-primary-200: #bfccff;
+  --color-primary-400: #6b8cff;
+  --color-primary-500: #365df3;
+  --color-primary-600: #3153d9;
+  --color-primary-700: #2948bf;
+  --color-primary-900: #1a2c7a;
+  --color-primary: #365df3;
+  --color-primary-hover: #3153d9;
+  --color-primary-pressed: #2948bf;
+  --color-primary-soft: #eaf0ff;
+  --color-primary-fg: #ffffff;
 
-  /* Theme-stable deep ground.
-     --color-primary flips meaning between themes (deep forest on light,
-     lifted sage on dark) because it has to stay legible as an action
-     colour. A *band* must not flip - the footer and the deep panels are
-     dark in both themes - so they use this instead. */
-  --color-deep: #1a2540;
-  --color-deep-2: #111829;
+  /* Theme-stable deep ground: the footer and deep bands stay dark in both
+     themes. A cobalt-leaning navy, the colour the homepage sunrise opens on. */
+  --color-deep: #141b33;
+  --color-deep-2: #0c1122;
 
-  /* ── Accent: the dawn, muted ──
-     The general-purpose interactive tint, at ~670 call sites. It was sage,
-     on the reasoning that a rust repeated that often becomes "huge areas
-     of peach". That reasoning still holds, which is why this is a muted
-     sienna and not the bright #ff8133 the hero resolves to: dark enough to
-     set type at 5.6:1 on white, quiet enough to sit under six hundred
-     icons without shouting. The bright end of the family lives in
-     --color-terracotta-500, and stays rare. */
-  --color-accent-50: #f9f1ec;
-  --color-accent-100: #f0ded2;
-  --color-accent-500: #b56a45;
-  --color-accent-600: #9c5a3c;
-  --color-accent-700: #824a31;
-  --color-accent: #9c5a3c;
-  --color-accent-soft: #f0ded2;
-  --color-accent-fg: #fdfcfa;
+  /* ── Accent ──
+     Used as the general interactive tint (icons, links, selected states)
+     at hundreds of call sites. It is the same cobalt family on purpose:
+     one brand colour, not two competing ones. */
+  --color-accent-50: #eef2ff;
+  --color-accent-100: #dde5ff;
+  --color-accent-500: #365df3;
+  --color-accent-600: #3153d9;
+  --color-accent-700: #2948bf;
+  --color-accent: #3153d9;
+  --color-accent-soft: #eaf0ff;
+  --color-accent-fg: #ffffff;
 
-  /* ── Terracotta: the Mediterranean roofline ──
-     Rationed on purpose - eyebrows, small badges, selected states, hairline
-     rules, the occasional CTA detail. Never a full-width section ground.
-     -500 is the fill; -600/-700 are the text-safe steps. */
+  /* Secondary cool accent: data marks, map clusters, soft highlights. */
+  --color-sky-300: #89b7ff;
+  --color-sky-100: #e3efff;
+
+  /* ── Terracotta: the sunrise ──
+     Belongs to the homepage hero and nowhere else. Kept so the hero's own
+     CSS keeps resolving. */
   --color-terracotta-50: #fbf0eb;
   --color-terracotta-100: #f4ded3;
   --color-terracotta-500: #b96848;
@@ -73,10 +82,9 @@
   --color-terracotta-700: #8a4830;
   --color-terracotta: #a0563a;
   --color-terracotta-soft: #f4ded3;
-  --color-terracotta-fg: #fbf9f4;
+  --color-terracotta-fg: #ffffff;
 
-  /* ── Legacy "brand" alias - kept so existing utilities like
-        text-brand / bg-brand keep working without touching call sites. ── */
+  /* ── Legacy "brand" alias - existing text-brand / bg-brand utilities. ── */
   --color-brand-50: var(--color-primary-50);
   --color-brand-100: var(--color-primary-100);
   --color-brand-200: var(--color-primary-200);
@@ -88,123 +96,104 @@
   --color-brand-900: var(--color-primary-900);
   --color-brand: var(--color-primary);
 
-  /* ── Coral (hearts/favourites/urgency only) ── */
-  --color-coral-50: #fbeeec;
-  --color-coral-100: #f6dad6;
-  --color-coral-500: #b8453a;
-  --color-coral-600: #9d382e;
-  --color-coral-700: #822d25;
+  /* ── Coral: saved-home hearts only ── */
+  --color-coral-50: #fdeded;
+  --color-coral-100: #fad7d8;
+  --color-coral-500: #d9444a;
+  --color-coral-600: #b8363b;
+  --color-coral-700: #962b2f;
 
-  /* ── Warm amber (warnings) - kept distinct from terracotta so a
-        warning never reads as decoration ── */
-  --color-warn-50: #faf1e2;
-  --color-warn-500: #9a6318;
-  --color-warn-600: #824f11;
+  /* ── Warning (reserved) ── */
+  --color-warn-50: #fff4e0;
+  --color-warn-500: #9a5b00;
+  --color-warn-600: #7f4a00;
 
-  /* ── Ink + surfaces (light) ──
-     Grounds alternate linen -> white -> cool off-white -> deep forest.
-     No large warm-peach field anywhere in the scale. */
-  --color-ink: #1a1917;          /* near-black, warm · 15.9:1 on white */
-  --color-ink-2: #454240;        /* body · 9.1:1 */
-  --color-ink-muted: #6b6660;    /* muted warm grey · 5.4:1 */
-  --color-ink-3: #6b6660;
-  --color-ink-4: #77726b;        /* placeholder · 4.6:1 */
+  /* ── Ink ──
+     Primary 16.7:1 on canvas · body 7.7:1 · muted 5.4:1 · placeholder 4.9:1 */
+  --color-ink: #101828;
+  --color-ink-2: #475467;
+  --color-ink-muted: #5d6678;
+  --color-ink-3: #5d6678;   /* 5.1:1 even on the palest tint (#eaf0ff) */
+  --color-ink-4: #626d80;   /* 4.6:1 on the same: timestamps and hints still pass AA */
 
-  /* White throughout. There is no tinted page ground: sections are told
-     apart by hairline rules and by the deep-forest bands, not by a wash.
-     The warm linen this replaced read as yellow against the hero's white
-     hand-off, which is what made it look dingy rather than warm. */
-  --color-bg: #ffffff;           /* the page ground */
-  --color-surface: #ffffff;      /* panels sit on the same white */
-  --color-surface-2: #ffffff;    /* cards - defined by their border */
-  --color-surface-cool: #faf8f5; /* alternate band - a whisper of warm */
-  --color-surface-muted: #f4f4f2;/* subtle fill: chips, hover states */
-  --color-surface-warm: #fafafa;
-  --color-surface-sunk: #f2f2f0;
+  /* ── Grounds ──
+     The public site reads on white; Migrent Hub reads on a cool canvas
+     (#F6F8FC) with white surfaces, so panels lift without heavy shadows. */
+  --color-bg: #ffffff;
+  --color-canvas: #f6f8fc;
+  --color-surface: #ffffff;
+  --color-surface-2: #ffffff;
+  --color-surface-cool: #fafbfd;
+  --color-surface-muted: #f2f4f8;
+  --color-surface-warm: #fafbfd;
+  --color-surface-sunk: #eef1f6;
+  --color-surface-hover: #f4f6fa;
 
-  /* With no tinted ground the rules carry the structure, so they are a
-     touch stronger than a decorative hairline would be. */
-  --color-line: #e6e6e2;         /* soft border */
-  --color-line-2: #d4d4cf;       /* stronger divider */
-  --color-hairline: #e6e6e2;     /* legacy alias */
+  /* ── Lines ── */
+  --color-line: #e4e9f0;
+  --color-line-2: #d6dce5;
+  --color-hairline: #e4e9f0;
 
-  /* ── Status ── */
-  --color-danger-50: #f8e9e6;
-  --color-danger-500: #a33a2c;
-  --color-danger-600: #8a3025;
-  /* Info keeps a narrow line back to the hero's sky - callouts only. */
-  --color-info-50: #e7f1f6;
-  --color-info-500: #1f6a8c;
+  /* ── Status (reserved: never decorative) ── */
+  --color-danger-50: #fdeceb;
+  --color-danger-500: #c0362c;
+  --color-danger-600: #a12b22;
+  --color-info-50: #eef2ff;
+  --color-info-500: #2948bf;
+  --color-success-50: #e7f5ec;
+  --color-success-500: #1e7a4c;
+  --color-success-600: #17643e;
 
-  /* ── Trust (verification badges only) ──
-     A deeper green than --color-accent so "verified" is not the same
-     colour as ordinary emphasis. */
-  --color-success-50: #e4efe7;
-  --color-success-500: #2f6b4f;
-  --color-success-600: #275a42;
-  /* Verification, not success. It was the same green as --color-success,
-     which put a green tick on every badge on the homepage and made the
-     page read as a checklist. Verification is an authority claim, so it
-     now carries the brand's own dark; --color-success stays green because
-     a green tick for "saved" is feedback, and feedback should not be
-     brand-coloured. */
-  --color-trust: #1a2540;
-  --color-trust-soft: #dfe4ef;
-  --color-trust-fg: #fdfcfa;
-  --color-trust-ink: #111829;
+  /* ── Trust (verification badges) ──
+     Cobalt, the brand's own colour: verification is Migrent vouching that
+     a check happened, not a generic green tick. */
+  --color-trust: #2948bf;
+  --color-trust-soft: #eaf0ff;
+  --color-trust-fg: #ffffff;
+  --color-trust-ink: #1e3593;
 
-  /* ── Radius scale ──
-     Small controls 10 · inputs/buttons 12 · cards 20 · editorial 26.
-     One scale, no pill-vs-square mixing outside the tag/chip family. */
+  /* ── Radius ──
+     Controls 10-12 · inputs 12 · cards 16 · imagery 18 · major surfaces 22
+     · floating navigation 24. Pills only for chips and tags. */
   --radius-sm: 10px;
   --radius-control: 12px;
   --radius-md: 12px;
   --radius-lg: 16px;
-  --radius-card: 20px;
-  --radius-xl: 26px;
-  --radius-modal: 26px;
+  --radius-image: 18px;
+  --radius-card: 16px;
+  --radius-panel: 22px;
+  --radius-xl: 24px;
+  --radius-modal: 24px;
   --radius-pill: 999px;
 
-  /* ── Shadows - sparing, tinted with the forest rather than grey ── */
-  --shadow-soft: 0 1px 2px rgb(20 30 25 / 0.04);
-  --shadow-card: 0 1px 2px rgb(20 30 25 / 0.04), 0 10px 35px -12px rgb(20 30 25 / 0.10);
-  --shadow-pop: 0 2px 8px rgb(20 30 25 / 0.05), 0 18px 44px -16px rgb(20 30 25 / 0.16);
-  --shadow-modal: 0 28px 64px -20px rgb(20 30 25 / 0.24);
+  /* ── Shadows - cool, soft, rare ── */
+  --shadow-soft: 0 1px 2px rgb(16 24 40 / 0.05);
+  --shadow-card: 0 1px 2px rgb(16 24 40 / 0.04), 0 8px 24px -12px rgb(16 24 40 / 0.10);
+  --shadow-pop: 0 2px 6px rgb(16 24 40 / 0.05), 0 16px 40px -14px rgb(16 24 40 / 0.18);
+  --shadow-modal: 0 24px 64px -18px rgb(16 24 40 / 0.28);
+  --shadow-nav: 0 1px 1px rgb(16 24 40 / 0.03), 0 12px 32px -16px rgb(16 24 40 / 0.18);
 
-  /* ── Motion - one system, sophisticated easing, no bounce ── */
+  /* ── Motion ── */
   --ease-mr: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
-  --duration-micro: 180ms;   /* hover tints, icon nudges */
-  --duration-fast: 200ms;    /* buttons, inputs */
-  --duration-base: 260ms;    /* cards */
-  --duration-slow: 320ms;    /* dropdowns */
-  --duration-panel: 380ms;   /* modals, drawers */
-  --duration-reveal: 640ms;  /* editorial section reveals */
+  --duration-micro: 150ms;
+  --duration-fast: 200ms;
+  --duration-base: 240ms;
+  --duration-slow: 300ms;
+  --duration-panel: 340ms;
+  --duration-reveal: 640ms;
 
-  /* ── Layout rhythm - one spacing scale for every route ── */
+  /* ── Layout rhythm ── */
   --space-section: clamp(72px, 8vw, 128px);
   --space-section-sm: clamp(48px, 5vw, 88px);
-  --space-gutter: clamp(20px, 4vw, 56px);
+  --space-gutter: clamp(16px, 4vw, 56px);
   --space-max: 1280px;
   --space-max-narrow: 940px;
   --measure: 68ch;
 
-  /* ── Typography ──
-     Three voices, three jobs (see lib/fonts.ts for why).
-
-       display  Newsreader - every heading. A reading serif with an
-                optical-size axis, so a 64px hero and an 18px card title are
-                drawn with different contrast rather than one outline scaled.
-       sans     Schibsted Grotesk - body, UI, buttons, forms. A news
-                grotesque, built to hold up at 13px on a form label.
-       script   Style Script - one accent word in a handful of headings.
-                Never a whole line, never body copy. See .type-script.
-
-     Mono stays Space Mono for eyebrows, labels, prices and meta; the
-     condensed wordmark face stays Archivo (--font-condensed, set from
-     lib/fonts.ts). Both were the distinctive parts of the old stack. */
-  --font-sans: 'Schibsted Grotesk', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  /* ── Typography ── (families are set from lib/fonts.ts) */
+  --font-sans: 'Manrope', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --font-serif: 'Newsreader', ui-serif, 'Iowan Old Style', Georgia, 'Times New Roman', serif;
   --font-display: 'Newsreader', ui-serif, 'Iowan Old Style', Georgia, 'Times New Roman', serif;
   --font-script: 'Style Script', 'Snell Roundhand', 'Segoe Script', cursive;
@@ -213,137 +202,133 @@
 
 /* ══════════════════════════════════════════════════════════════
    TOKENS THAT HAND-WRITTEN CSS NEEDS
-   Tailwind v4 tree-shakes any @theme variable no generated utility
-   references, so a token used only from a stylesheet (never as a
-   `bg-*` / `text-*` class) is silently dropped from the output. When
-   that happened to --color-deep, `background: ..., var(--color-deep)`
-   became an invalid declaration, the whole background was thrown away,
-   and the footer rendered light-on-light. Declaring them in a plain
-   :root puts them beyond the tree-shaker's reach.
-   Keep this list in sync with anything referenced only from CSS.
+   Tailwind v4 used to tree-shake any @theme variable no generated
+   utility referenced; when that happened to --color-deep the footer
+   rendered light-on-light. The block above is now `@theme static`, which
+   always emits every token, so that class of bug is gone. This :root
+   block is kept for tokens that exist only here (glass, color-scheme).
    ══════════════════════════════════════════════════════════════ */
 :root {
-  --color-deep: #1a2540;
-  --color-deep-2: #111829;
-  --color-coral-700: #822d25;
-  /* Only ever read as var(--font-script) from .type-script - no utility
-     references it, so @theme alone would not survive the tree-shake. */
+  color-scheme: light;
+  --color-deep: #141b33;
+  --color-deep-2: #0c1122;
+  --color-coral-700: #962b2f;
+  --color-canvas: #f6f8fc;
+  --color-surface-hover: #f4f6fa;
+  --color-primary-hover: #3153d9;
+  --color-primary-pressed: #2948bf;
+  --color-sky-300: #89b7ff;
+  --color-glass: rgb(255 255 255 / 0.72);
+  --color-glass-line: rgb(16 24 40 / 0.08);
+  --shadow-nav: 0 1px 1px rgb(16 24 40 / 0.03), 0 12px 32px -16px rgb(16 24 40 / 0.18);
   --font-script: 'Style Script', 'Snell Roundhand', 'Segoe Script', cursive;
-  --radius-modal: 26px;
+  --radius-modal: 24px;
+  --radius-panel: 22px;
+  --radius-image: 18px;
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
-  --duration-slow: 320ms;
-  --duration-panel: 380ms;
-}
-
-html.dark {
-  --color-deep: #0b100c;
-  --color-deep-2: #070b08;
+  --duration-slow: 300ms;
+  --duration-panel: 340ms;
 }
 
 /* ══════════════════════════════════════════════════════════════
-   DARK THEME  ·  Riviera (single theme)
-   A deep-forest night: the canvas is a tinted near-black with a green
-   cast, never pure #000 (anti-slop rule 7). Same brand with the lights
-   out - the forest primary lifts to sage so it stays visible, and the
-   terracotta warms rather than glows.
-   Every value below is >= 4.5:1 on the surface it sits on.
+   DARK THEME
+   Designed on its own, not inverted: near-black charcoal grounds with
+   the faintest cool cast, elevation by lighter surfaces rather than
+   shadows, translucent hairlines, and a luminous cobalt that holds 6:1.
+   Filled primary buttons carry near-black text because white on a
+   luminous cobalt fails contrast.
    ══════════════════════════════════════════════════════════════ */
 html.dark {
-  /* warm off-white ink, carrying the same linen warmth as light mode */
-  --color-ink: #efede4;          /* 15.8:1 on canvas */
-  --color-ink-2: #c4c6bb;        /* 10.7:1 */
-  --color-ink-muted: #9aa093;    /* 6.9:1 canvas · 5.8:1 on cards */
-  --color-ink-3: #9aa093;
-  --color-ink-4: #868c80;        /* placeholder · 4.5:1 on inputs */
+  color-scheme: dark;
 
-  /* deep forest night: a tinted near-black with a green cast, never #000 */
-  --color-bg: #10150f;
-  --color-surface: #171c15;
-  --color-surface-2: #1f251c;    /* elevated card */
-  --color-surface-cool: #161a15;
-  --color-surface-muted: #232a20;
-  --color-surface-warm: #1d2119;
-  --color-surface-sunk: #0b0f0a;
+  --color-ink: #f5f7fa;          /* 18.3:1 on bg */
+  --color-ink-2: #c0c7d2;        /* body */
+  --color-ink-muted: #a8b0bd;    /* 8.5:1 on surface */
+  --color-ink-3: #a8b0bd;
+  --color-ink-4: #808a9a;        /* placeholder / meta, 5.0:1 on elevated */
 
-  --color-line: #2b3328;
-  --color-line-2: #3b4537;
-  --color-hairline: #2b3328;
+  --color-bg: #090b10;
+  --color-canvas: #090b10;
+  --color-surface: #0f131a;
+  --color-surface-2: #151a23;    /* elevated */
+  --color-surface-cool: #0c1016;
+  --color-surface-muted: #1a202b;
+  --color-surface-warm: #12161e;
+  --color-surface-sunk: #07090d;
+  --color-surface-hover: #1a202b;
 
-  /* forest is invisible on a forest ground, so the primary lifts to the
-     sage the palms read as at dusk. Same family, lights out. */
-  --color-primary-50: #17211b;
-  --color-primary-100: #1e2b23;
-  --color-primary-200: #2c4034;
-  --color-primary-400: #5d8a70;
-  --color-primary-500: #7dae93;
-  --color-primary-600: #8fbba1;
-  --color-primary-700: #a4c9b3;
-  --color-primary-900: #cde0d5;
-  --color-primary: #8fbba1;      /* 7.3:1 on cards */
-  --color-primary-fg: #10150f;   /* 8.6:1 on the sage fill */
-  --color-primary-soft: #1e2b23;
+  --color-line: rgb(255 255 255 / 0.08);
+  --color-line-2: rgb(255 255 255 / 0.14);
+  --color-hairline: rgb(255 255 255 / 0.08);
 
-  /* Still a dark band in dark mode - one step below the canvas so it
-     reads as an ending rather than as another card. */
-  --color-deep: #0b100c;
-  --color-deep-2: #070b08;
+  --color-primary-50: #141b33;
+  --color-primary-100: #1b2547;
+  --color-primary-200: #2a3a73;
+  --color-primary-400: #4e6fe8;
+  --color-primary-500: #6b8cff;
+  --color-primary-600: #7b98ff;
+  --color-primary-700: #93aaff;
+  --color-primary-900: #d3dcff;
+  --color-primary: #6b8cff;      /* 6.0:1 on surface */
+  --color-primary-hover: #7b98ff;
+  --color-primary-pressed: #5a7cf5;
+  --color-primary-fg: #0b1020;   /* 6.2:1 on the cobalt fill */
+  --color-primary-soft: #172040;
 
-  --color-accent-50: #17211b;
-  --color-accent-100: #1e2b23;
-  --color-accent-500: #8fbba1;
-  --color-accent-600: #7dae93;
-  --color-accent-700: #6b9c81;
-  --color-accent: #8fbba1;
-  --color-accent-soft: #1e2b23;
-  --color-accent-fg: #10150f;
+  --color-deep: #0c0f16;
+  --color-deep-2: #07090d;
 
-  /* the roofline, lifted */
+  --color-accent-50: #141b33;
+  --color-accent-100: #1b2547;
+  --color-accent-500: #6b8cff;
+  --color-accent-600: #7b98ff;
+  --color-accent-700: #93aaff;
+  --color-accent: #7b98ff;
+  --color-accent-soft: #172040;
+  --color-accent-fg: #0b1020;
+
+  --color-sky-300: #89b7ff;
+  --color-sky-100: #13223d;
+
   --color-terracotta-50: #241610;
   --color-terracotta-100: #33201a;
   --color-terracotta-500: #d9906e;
   --color-terracotta-600: #c67d5c;
   --color-terracotta-700: #b06a4b;
-  --color-terracotta: #d9906e;   /* 6.1:1 on cards */
+  --color-terracotta: #d9906e;
   --color-terracotta-soft: #2e1d14;
-  --color-terracotta-fg: #10150f;
+  --color-terracotta-fg: #0b1020;
 
-  --color-success-500: #6fbf95;
-  --color-success-600: #5aa87f;
-  --color-success-50: #142a1f;
-  --color-trust: #6fbf95;        /* 7.1:1 on cards */
-  --color-trust-soft: #173023;
-  --color-trust-fg: #0d1a13;
-  --color-trust-ink: #b4e3c9;
+  --color-success-50: #10251a;
+  --color-success-500: #5bc98a;
+  --color-success-600: #4bb57a;
+  --color-trust: #7b98ff;
+  --color-trust-soft: #172040;
+  --color-trust-fg: #0b1020;
+  --color-trust-ink: #c9d5ff;
 
-  --color-warn-500: #d9a05b;     /* 6.8:1 */
-  --color-warn-600: #c28a45;
-  --color-warn-50: #2a1f0e;
-  --color-coral-500: #e08175;
-  --color-coral-600: #c96c61;
-  --color-coral-100: #331916;
-  --color-coral-50: #281412;
-  --color-danger-500: #e08175;
-  --color-danger-600: #c96c61;
-  --color-danger-50: #281412;
-  --color-info-500: #7fc0de;
-  --color-info-50: #12242c;
+  --color-warn-50: #2a1f0b;
+  --color-warn-500: #f0b44c;
+  --color-warn-600: #dca03a;
+  --color-coral-50: #2c1415;
+  --color-coral-100: #3a1a1c;
+  --color-coral-500: #f2777c;
+  --color-coral-600: #e0666b;
+  --color-coral-700: #c95a5f;
+  --color-danger-50: #2c1412;
+  --color-danger-500: #f2877b;
+  --color-danger-600: #e0766a;
+  --color-info-50: #141b33;
+  --color-info-500: #7b98ff;
 
-  /* depth via forest-black shadows, not grey borders */
-  --shadow-soft: 0 1px 2px rgb(4 8 5 / 0.6);
-  --shadow-card: 0 2px 8px rgb(4 8 5 / 0.55), 0 16px 40px -14px rgb(4 8 5 / 0.8);
-  --shadow-pop: 0 18px 44px -16px rgb(4 8 5 / 0.75), 0 2px 10px rgb(4 8 5 / 0.6);
-  --shadow-modal: 0 30px 70px -22px rgb(4 8 5 / 0.85);
-}
+  --color-glass: rgb(15 19 26 / 0.72);
+  --color-glass-line: rgb(255 255 255 / 0.08);
 
-/* A faint bloom at the top edge so the canvas reads as lit rather than
-   flat: terracotta over sage, both under 7% - it should register without
-   being seen. */
-html.dark body {
-  background-image:
-    radial-gradient(55% 32% at 50% -6%, color-mix(in oklab, var(--color-terracotta-500) 6%, transparent), transparent 70%),
-    radial-gradient(75% 45% at 50% -10%, color-mix(in oklab, var(--color-accent-500) 5%, transparent), transparent 68%);
-  background-attachment: fixed;
-  background-repeat: no-repeat;
+  --shadow-soft: 0 1px 2px rgb(0 0 0 / 0.4);
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.4), 0 12px 32px -16px rgb(0 0 0 / 0.6);
+  --shadow-pop: 0 2px 8px rgb(0 0 0 / 0.45), 0 18px 44px -16px rgb(0 0 0 / 0.7);
+  --shadow-modal: 0 28px 70px -20px rgb(0 0 0 / 0.8);
+  --shadow-nav: 0 1px 0 rgb(255 255 255 / 0.04) inset, 0 16px 40px -18px rgb(0 0 0 / 0.8);
 }
 
 /* ══════════════════════════════════════════════════════════════

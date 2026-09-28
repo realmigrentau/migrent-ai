@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 export default function CookiePolicy() {
   return (
     <>
-      <SEOHead title="Cookie Policy" description="MigRent Cookie Policy - what cookies we use, why, and how to manage them." />
+      <SEOHead title="Cookie Policy" description="Migrent Cookie Policy - what cookies we use, why, and how to manage them." />
 
       <div className="max-w-3xl mx-auto space-y-10">
         {/* Hero */}
@@ -30,7 +30,7 @@ export default function CookiePolicy() {
           <section className="card p-6 rounded-2xl space-y-3">
             <h2 className="text-lg font-bold text-[var(--color-ink)]">What Are Cookies?</h2>
             <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
-              <p>Cookies are small text files stored on your device when you visit a website. They help websites remember your preferences and improve your experience. MigRent uses a minimal set of cookies - we do not use advertising or tracking cookies.</p>
+              <p>Cookies are small text files stored on your device when you visit a website. They help websites remember your preferences and improve your experience. Migrent uses a minimal set of cookies - we do not use advertising or tracking cookies.</p>
             </div>
           </section>
 
@@ -95,7 +95,7 @@ export default function CookiePolicy() {
                 <li><strong>Cross-site tracking:</strong> We do not track your activity on other websites</li>
                 <li><strong>User profiling cookies:</strong> We do not build profiles for targeted advertising</li>
               </ul>
-              <p>MigRent does not sell your data to advertisers or any third parties.</p>
+              <p>Migrent does not sell your data to advertisers or any third parties.</p>
             </div>
           </section>
 
@@ -105,11 +105,11 @@ export default function CookiePolicy() {
             <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
               <p>You can manage cookies through your browser settings:</p>
               <ul className="list-disc list-inside space-y-1.5">
-                <li><strong>Block all cookies:</strong> This will prevent MigRent from remembering your login session and preferences</li>
+                <li><strong>Block all cookies:</strong> This will prevent Migrent from remembering your login session and preferences</li>
                 <li><strong>Delete cookies:</strong> You can clear cookies at any time, but you will need to log in again</li>
                 <li><strong>Block third-party cookies:</strong> This will block analytics cookies but essential cookies will still work</li>
               </ul>
-              <p>Note: Blocking essential cookies will prevent you from logging in or using core features of MigRent.</p>
+              <p>Note: Blocking essential cookies will prevent you from logging in or using core features of Migrent.</p>
             </div>
           </section>
 
@@ -117,7 +117,7 @@ export default function CookiePolicy() {
           <section className="card p-6 rounded-2xl space-y-3">
             <h2 className="text-lg font-bold text-[var(--color-ink)]">Local Storage</h2>
             <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
-              <p>In addition to cookies, MigRent uses browser local storage for:</p>
+              <p>In addition to cookies, Migrent uses browser local storage for:</p>
               <ul className="list-disc list-inside space-y-1.5">
                 <li>Session cache (faster loading on return visits)</li>
                 <li>Theme preference (dark/light mode)</li>

@@ -7,7 +7,7 @@ export default function ServerError() {
   return (
     <>
       <Head>
-        <title key="title">Something Went Wrong | MigRent</title>
+        <title key="title">Something Went Wrong | Migrent</title>
       </Head>
 
       <div className="min-h-[60vh] flex items-center justify-center px-4">

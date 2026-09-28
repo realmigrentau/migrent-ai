@@ -8,6 +8,8 @@ and safe to run more often than needed.
     POST /internal/cron/expire-listings      approved -> expired once
                                               available_to has passed
     POST /internal/cron/expiry-reminders     email owners 7 days before
+    POST /internal/cron/saved-search-alerts  ?cadence=instant|daily|weekly
+    POST /internal/cron/inspection-reminders the day before an inspection
 
 Auth: header `X-Cron-Secret` must equal the CRON_SECRET environment
 variable. With CRON_SECRET unset, the endpoints refuse every request.
@@ -75,3 +77,28 @@ def cron_expiry_reminders(request: Request, x_cron_secret: str | None = Header(N
         except Exception:
             logger.exception("expiry reminder failed for listing %s", row.get("id"))
     return {"reminded": sent, "ran_at": datetime.now(timezone.utc).isoformat()}
+
+
+@router.post("/cron/saved-search-alerts")
+@limiter.limit("30/minute")
+def cron_saved_search_alerts(request: Request, cadence: str = "daily", x_cron_secret: str | None = Header(None)):
+    _require_cron_secret(x_cron_secret)
+    if cadence not in ("instant", "daily", "weekly"):
+        raise HTTPException(status_code=400, detail="cadence must be instant, daily or weekly")
+    from routes_hub_renter import run_saved_search_alerts
+
+    sb = get_supabase_admin()
+    notified = run_saved_search_alerts(sb, cadence=cadence)
+    return {"notified": notified, "cadence": cadence, "ran_at": datetime.now(timezone.utc).isoformat()}
+
+
+@router.post("/cron/inspection-reminders")
+@limiter.limit("30/minute")
+def cron_inspection_reminders(request: Request, x_cron_secret: str | None = Header(None)):
+    _require_cron_secret(x_cron_secret)
+    from routes_inspections import send_inspection_reminders
+
+    sb = get_supabase_admin()
+    sent = send_inspection_reminders(sb)
+    return {"reminded": sent, "ran_at": datetime.now(timezone.utc).isoformat()}
+

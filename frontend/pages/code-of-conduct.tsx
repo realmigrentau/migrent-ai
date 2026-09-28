@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 export default function CodeOfConduct() {
   return (
     <>
-      <SEOHead title="NSW STRA Code of Conduct" description="Summary of the NSW Short-Term Rental Accommodation Code of Conduct and how it applies to MigRent users." />
+      <SEOHead title="NSW STRA Code of Conduct" description="Summary of the NSW Short-Term Rental Accommodation Code of Conduct and how it applies to Migrent users." />
 
       <div className="max-w-3xl mx-auto space-y-10">
         {/* Hero */}
@@ -32,7 +32,7 @@ export default function CodeOfConduct() {
             <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
               <p>New South Wales has a mandatory Code of Conduct for Short-Term Rental Accommodation (STRA) under the Fair Trading Regulation. This code applies to hosts, guests, and booking platforms operating in NSW.</p>
               <p>This page is a <strong>summary only</strong>. For the full official code, visit the <a href="https://www.nsw.gov.au/housing-and-construction/short-term-rental-accommodation" target="_blank" rel="noopener noreferrer" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">NSW Government STRA page</a>.</p>
-              <p>MigRent is an introduction service. While some listings on MigRent may fall under STRA regulations, we inform all users of their obligations under the code.</p>
+              <p>Migrent is an introduction service. While some listings on Migrent may fall under STRA regulations, we inform all users of their obligations under the code.</p>
             </div>
           </section>
 
@@ -81,7 +81,7 @@ export default function CodeOfConduct() {
                 <li>Cooperate with NSW Fair Trading investigations</li>
                 <li>Remove listings upon government direction for serious or repeated violations</li>
               </ul>
-              <p>MigRent complies with these obligations. If you believe a listing violates the STRA Code of Conduct, please <Link href="/safety-reporting" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">report it here</Link>.</p>
+              <p>Migrent complies with these obligations. If you believe a listing violates the STRA Code of Conduct, please <Link href="/safety-reporting" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">report it here</Link>.</p>
             </div>
           </section>
 
@@ -93,7 +93,7 @@ export default function CodeOfConduct() {
               <ul className="list-disc list-inside space-y-1.5">
                 <li>Penalty notices from NSW Fair Trading</li>
                 <li>Exclusion from the STRA Register (which prevents listing)</li>
-                <li>On MigRent: listing removal and account suspension</li>
+                <li>On Migrent: listing removal and account suspension</li>
               </ul>
             </div>
           </section>
@@ -103,7 +103,7 @@ export default function CodeOfConduct() {
             <h2 className="text-lg font-bold text-[var(--color-ink)]">Other States</h2>
             <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
               <p>This page focuses on NSW as it has the most comprehensive STRA framework. Other states have varying levels of STRA regulation. See our <Link href="/rental-laws" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">Australian Rental Laws Guide</Link> for an overview of each state.</p>
-              <p>Regardless of your state, MigRent expects all users to comply with local laws and our <Link href="/rules-community-guidelines" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">Community Guidelines</Link>.</p>
+              <p>Regardless of your state, Migrent expects all users to comply with local laws and our <Link href="/rules-community-guidelines" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">Community Guidelines</Link>.</p>
             </div>
           </section>
 

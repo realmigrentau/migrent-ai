@@ -131,7 +131,7 @@ export default function HelpCentre() {
     <>
       <SEOHead
         title="Help Centre"
-        description="Answers to common questions about MigRent - accounts, verification, searching, listing a room, bookings, payments and safety."
+        description="Answers to common questions about Migrent - accounts, verification, searching, listing a room, bookings, payments and safety."
         breadcrumbs={[
           { name: "Home", path: "/" },
           { name: "Resources", path: "/resources" },
@@ -151,7 +151,7 @@ export default function HelpCentre() {
       <ResourceHero
         eyebrow="Resources"
         title="Help Centre"
-        lead="Quick answers to common questions about MigRent. Search everything at once, browse by topic, or read the questions we are asked most."
+        lead="Quick answers to common questions about Migrent. Search everything at once, browse by topic, or read the questions we are asked most."
         crumb="Help Centre"
       >
         <div className="max-w-[520px]">

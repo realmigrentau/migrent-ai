@@ -19,7 +19,7 @@ const line = "#ded6c6";
 const svg = `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
   <rect width="${W}" height="${H}" fill="${sand}"/>
   <rect x="44" y="44" width="${W - 88}" height="${H - 88}" rx="30" fill="${paper}" stroke="${line}" stroke-width="2"/>
-  <text x="96" y="138" font-family="Georgia, 'Times New Roman', serif" font-size="36" font-weight="700" fill="${ocean}">MigRent</text>
+  <text x="96" y="138" font-family="Georgia, 'Times New Roman', serif" font-size="36" font-weight="700" fill="${ocean}">Migrent</text>
   <text x="96" y="214" font-family="Helvetica, Arial, sans-serif" font-size="22" letter-spacing="3" fill="${sea}">VERIFIED RENTALS &#183; AUSTRALIA</text>
   <text x="92" y="306" font-family="Georgia, 'Times New Roman', serif" font-size="70" font-weight="700" fill="${ink}">A real home in Australia,</text>
   <text x="92" y="386" font-family="Georgia, 'Times New Roman', serif" font-size="70" font-weight="700" fill="${ocean}">found the right way.</text>

@@ -108,7 +108,7 @@ export default function ReportModal({ listingId, itemType, itemId, isOpen, onClo
                 <div className="text-4xl mb-3">✅</div>
                 <h3 className="text-lg font-semibold text-[var(--color-ink)] mb-2">Report Submitted</h3>
                 <p className="text-[var(--color-ink-2)] text-sm mb-4">
-                  Thank you for helping keep MigRent safe. Our team will review this {isProfile ? "profile" : "listing"}.
+                  Thank you for helping keep Migrent safe. Our team will review this {isProfile ? "profile" : "listing"}.
                 </p>
                 <button
                   onClick={handleClose}

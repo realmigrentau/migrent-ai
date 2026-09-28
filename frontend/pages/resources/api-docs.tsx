@@ -4,7 +4,7 @@ import SEOHead from "../../components/SEOHead";
 import Breadcrumb from "../../components/content/Breadcrumb";
 
 /**
- * Honest placeholder: a public MigRent API does not exist yet. The previous
+ * Honest placeholder: a public Migrent API does not exist yet. The previous
  * version of this page documented fictional v2 endpoints, API keys and OAuth
  * flows - removed as part of the no-invented-content rule. Reinstate real
  * docs here when the API ships (the old copy lives in data/apiDocsData.ts).
@@ -14,7 +14,7 @@ export default function ApiDocs() {
     <>
       <SEOHead
         title="Developer API - in development"
-        description="The MigRent developer API is in development and not yet available."
+        description="The Migrent developer API is in development and not yet available."
         noIndex
       />
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
@@ -31,7 +31,7 @@ export default function ApiDocs() {
           </span>
           <div className="eyebrow mt-6">In development</div>
           <h1 className="font-serif text-[36px] sm:text-[44px] leading-[1.05] tracking-[-0.02em] text-[var(--color-ink)] mt-2">
-            The MigRent API is on its way.
+            The Migrent API is on its way.
           </h1>
           <p className="text-[15px] text-[var(--color-ink-2)] leading-[1.6] mt-4 max-w-[52ch] mx-auto">
             We are building a developer API for listings and suburb data. It is

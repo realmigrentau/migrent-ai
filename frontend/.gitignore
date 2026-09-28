@@ -56,3 +56,7 @@ next-env.d.ts
 
 # ...except the local template, which holds no secrets
 !.env.local.example
+/.next-mock/
+
+# Production build the Playwright suite runs against (NEXT_DIST_DIR=.next-e2e).
+/.next-e2e/

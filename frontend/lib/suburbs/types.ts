@@ -190,10 +190,10 @@ export interface Manifest {
 }
 
 /**
- * MigRent's own room-market figures, computed from verified listings only.
+ * Migrent's own room-market figures, computed from verified listings only.
  *
  * Deliberately never called a vacancy rate: this is what is advertised on
- * MigRent right now, not a measure of the suburb's rental market.
+ * Migrent right now, not a measure of the suburb's rental market.
  */
 export interface ListingStats {
   activeListings: number;

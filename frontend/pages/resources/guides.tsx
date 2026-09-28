@@ -73,7 +73,7 @@ export default function GuidesHub() {
       <ResourceHero
         eyebrow="Resources"
         title="Guides & Articles"
-        lead="Practical advice for moving, living and settling in Australia. Written by the MigRent team, and kept to what we can actually stand behind."
+        lead="Practical advice for moving, living and settling in Australia. Written by the Migrent team, and kept to what we can actually stand behind."
         crumb="Guides & Articles"
       >
         <div className="max-w-[520px]">

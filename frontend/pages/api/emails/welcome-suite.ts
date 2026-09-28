@@ -45,9 +45,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     const welcomeHtml = await renderToHtml(emailTemplates.welcome({ userName: name, userRole: role, day: 1 }));
-    await sendEmail({ to: user.email, subject: "Welcome to MigRent!", html: welcomeHtml });
+    await sendEmail({ to: user.email, subject: "Welcome to Migrent!", html: welcomeHtml });
     const legalHtml = await renderToHtml(emailTemplates.legalReminder({ userName: name }));
-    await sendEmail({ to: user.email, subject: "Review your MigRent terms and policies", html: legalHtml });
+    await sendEmail({ to: user.email, subject: "Review your Migrent terms and policies", html: legalHtml });
     return res.status(200).json({ success: true });
   } catch (error) {
     console.error("Welcome suite email error:", error instanceof Error ? error.message : error);

@@ -3,7 +3,6 @@ Messaging endpoints for real-time chat between seeker and owner.
 Supports direct messages (from profiles) and listing-based messages.
 """
 
-import os
 import re
 import logging
 from fastapi import APIRouter, File, Header, HTTPException, Request, UploadFile
@@ -17,9 +16,6 @@ from pydantic import BaseModel, Field
 from db import get_supabase_admin
 from auth_utils import get_current_user
 from limiter import limiter
-from email_bookings import send_new_message_notification
-from notifications import send_push_to_user
-from notification_service import notify
 
 logger = logging.getLogger(__name__)
 
@@ -151,97 +147,59 @@ def send_message(
     if not result.data:
         raise HTTPException(status_code=500, detail="Failed to send message")
 
-    # Send email notification to receiver (fire-and-forget)
-    try:
-        sb_admin = get_supabase_admin()
-        receiver_profile = sb_admin.table("profiles").select("name, preferred_name").eq("id", str(body.receiver_id)).execute()
-        receiver_user = sb_admin.auth.admin.get_user_by_id(str(body.receiver_id))
-        receiver_email = receiver_user.user.email if receiver_user and receiver_user.user else None
-
-        if receiver_email and receiver_profile.data:
-            sender_profile = sb_admin.table("profiles").select("name, preferred_name").eq("id", str(body.sender_id)).execute()
-            sender_name = "Someone"
-            if sender_profile.data:
-                sender_name = sender_profile.data[0].get("preferred_name") or sender_profile.data[0].get("name", "Someone")
-
-            recipient_name = receiver_profile.data[0].get("preferred_name") or receiver_profile.data[0].get("name", "there")
-
-            listing_title = None
-            if body.listing_id:
-                listing_res = sb_admin.table("listings").select("title, address").eq("id", str(body.listing_id)).execute()
-                if listing_res.data:
-                    listing_title = listing_res.data[0].get("title") or listing_res.data[0].get("address")
-
-            FRONTEND_URL = os.environ.get("FRONTEND_URL", "https://migrent.vercel.app")
-            if body.listing_id:
-                thread_url = f"{FRONTEND_URL}/messages?listing={body.listing_id}&user={body.sender_id}"
-            else:
-                thread_url = f"{FRONTEND_URL}/messages?user={body.sender_id}"
-
-            send_new_message_notification(
-                recipient_email=receiver_email,
-                recipient_name=recipient_name,
-                sender_name=sender_name,
-                message_preview=body.message_text[:300],
-                listing_title=listing_title,
-                thread_url=thread_url,
-            )
-    except Exception as e:
-        logger.warning("Failed to send message notification email: %s", e)
-
-    # Push notification to receiver (fire-and-forget)
-    try:
-        sb_admin_push = get_supabase_admin()
-        sender_prof = sb_admin_push.table("profiles").select("name, preferred_name").eq("id", str(body.sender_id)).execute()
-        push_sender_name = "Someone"
-        if sender_prof.data:
-            push_sender_name = sender_prof.data[0].get("preferred_name") or sender_prof.data[0].get("name", "Someone")
-
-        FRONTEND = os.environ.get("FRONTEND_URL", "https://migrent.vercel.app")
-        if body.listing_id:
-            push_url = f"{FRONTEND}/messages?listing={body.listing_id}&user={body.sender_id}"
-        else:
-            push_url = f"{FRONTEND}/messages?user={body.sender_id}"
-
-        send_push_to_user(
-            user_id=str(body.receiver_id),
-            title=f"New message from {push_sender_name}",
-            body=body.message_text[:100],
-            url=push_url,
-        )
-    except Exception as e:
-        logger.warning("Failed to send push notification: %s", e)
-
-    # In-app notification for receiver
-    try:
-        FRONTEND = os.environ.get("FRONTEND_URL", "https://migrent.vercel.app")
-        if body.listing_id:
-            notif_url = f"/messages?listing={body.listing_id}&user={body.sender_id}"
-        else:
-            notif_url = f"/messages?user={body.sender_id}"
-
-        sb_notif = get_supabase_admin()
-        sender_prof_n = sb_notif.table("profiles").select("name, preferred_name").eq("id", str(body.sender_id)).execute()
-        notif_sender = "Someone"
-        if sender_prof_n.data:
-            notif_sender = sender_prof_n.data[0].get("preferred_name") or sender_prof_n.data[0].get("name", "Someone")
-
-        notify(
-            user_id=str(body.receiver_id),
-            event="message_received",
-            title=f"New message from {notif_sender}",
-            body=body.message_text[:150],
-            cta_url=notif_url,
-            entity_type="message",
-            entity_id=str(body.listing_id) if body.listing_id else None,
-        )
-    except Exception:
-        pass
+    _notify_new_message(sb, body)
 
     return {
         "success": True,
         "message": result.data[0]
     }
+
+
+def thread_key(listing_id: Optional[str], other_user_id: str) -> str:
+    """The Hub's conversation key: listing + the other person."""
+    return f"{listing_id or 'direct'}_{other_user_id}"
+
+
+def _notify_new_message(sb, body: MessageCreate) -> None:
+    """One notification per message: in-app always, plus email and push
+    through notify() - which respects the receiver's email preferences - unless
+    they muted this conversation. Links straight to the conversation in
+    Migrent Hub. Never raises."""
+    try:
+        from hub_common import notify_user
+
+        receiver = str(body.receiver_id)
+        key = thread_key(str(body.listing_id) if body.listing_id else None, str(body.sender_id))
+        try:
+            state = sb.table("conversation_states").select("muted").eq("user_id", receiver).eq("thread_key", key).execute()
+            if state.data and state.data[0].get("muted"):
+                return
+        except Exception:
+            pass  # table missing before 043: nothing is muted
+
+        sender = sb.table("profiles").select("name, preferred_name").eq("id", str(body.sender_id)).execute()
+        sender_name = "Someone"
+        if sender.data:
+            sender_name = (sender.data[0].get("preferred_name") or sender.data[0].get("name") or "Someone").split(" ")[0]
+        about = ""
+        if body.listing_id:
+            listing = sb.table("listings").select("title, suburb").eq("id", str(body.listing_id)).execute()
+            if listing.data:
+                about = f" about {listing.data[0].get('title') or listing.data[0].get('suburb') or 'a home'}"
+        preview = (body.message_text or "").strip()
+        preview = preview[:160] + ("..." if len(preview) > 160 else "") if preview else "Sent an attachment"
+        notify_user(
+            sb,
+            receiver,
+            "message_received",
+            f"New message from {sender_name}{about}",
+            preview,
+            f"/messages/{key}",
+            entity_type="message",
+            entity_id=str(body.listing_id) if body.listing_id else None,
+        )
+    except Exception as e:
+        logger.warning("Failed to notify about new message: %s", e)
 
 
 ATTACHMENT_BUCKET = "message-attachments"

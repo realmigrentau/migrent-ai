@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { BadgeCheck } from "lucide-react";
 import SEOHead from "../components/SEOHead";
+import { hubFromSite } from "../lib/hub/routes";
 
 /**
  * Landing page for Stripe's success redirect after the optional $19
@@ -31,13 +32,13 @@ export default function VerificationSuccess() {
           </p>
           <div className="flex flex-wrap justify-center gap-3 mt-8">
             <Link
-              href="/account/settings?tab=verification"
+              href={hubFromSite.path("/settings#verification")}
               className="btn-primary h-[44px] px-6 rounded-[10px] inline-flex items-center text-[14.5px]"
             >
               View verification status
             </Link>
             <Link
-              href="/dashboard"
+              href={hubFromSite.home()}
               className="h-[44px] px-6 rounded-[10px] inline-flex items-center text-[14.5px] font-semibold border border-[var(--color-line-2)] text-[var(--color-ink)] hover:bg-[var(--color-surface-2)] transition-colors"
             >
               Go to dashboard

@@ -1,4 +1,4 @@
-# MigRent Operations & Backup Guide
+# Migrent Operations & Backup Guide
 
 ## Architecture Overview
 

@@ -147,7 +147,7 @@ export default function SourcesPanel({
             distances here are straight-line and labelled as such.
           </li>
           <li>
-            <strong>Vacancy rates.</strong> We know how many rooms are advertised on MigRent. That is
+            <strong>Vacancy rates.</strong> We know how many rooms are advertised on Migrent. That is
             not the same measure and is never presented as one.
           </li>
         </ul>

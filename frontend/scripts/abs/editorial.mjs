@@ -15,7 +15,7 @@
  *  - Every safety claim ("Safe, family-friendly neighbourhood"). The old
  *    safety score had no methodology and has been removed; the prose version
  *    of the same unsourced claim goes with it.
- *  - Every vacancy claim ("Brisbane's vacancy is tight"). MigRent listing
+ *  - Every vacancy claim ("Brisbane's vacancy is tight"). Migrent listing
  *    availability is not a suburb vacancy rate and we never had one.
  *  - Census figures quoted inline ("median age 32", "six in ten residents").
  *    Not because they were wrong - they check out against the 2021 Census -

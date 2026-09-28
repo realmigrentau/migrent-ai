@@ -19,7 +19,7 @@ export default function SupportWidget() {
 
   // Chat state
   const [messages, setMessages] = useState<ChatMessage[]>([
-    { from: "bot", text: "Hi! I'm MigRent's support assistant. Ask me anything about bookings, your account, payments, safety, or legal questions." },
+    { from: "bot", text: "Hi! I'm Migrent's support assistant. Ask me anything about bookings, your account, payments, safety, or legal questions." },
   ]);
   const [chatInput, setChatInput] = useState("");
   const [typing, setTyping] = useState(false);
@@ -103,7 +103,7 @@ export default function SupportWidget() {
       <button
         onClick={() => setOpen(!open)}
         className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-[var(--color-primary)] hover:bg-[var(--color-primary)] text-[color:var(--color-primary-fg)] shadow-lg hover:shadow-xl transition-all flex items-center justify-center"
-        aria-label="MigRent Support"
+        aria-label="Migrent Support"
       >
         {open ? (
           <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -135,7 +135,7 @@ export default function SupportWidget() {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="font-bold text-base">MigRent Support</h3>
+                  <h3 className="font-bold text-base">Migrent Support</h3>
                   <div className="flex items-center gap-1.5">
                     <span className="w-2 h-2 rounded-full bg-green-300 animate-pulse" />
                     <span className="text-rose-100 text-xs">Online</span>

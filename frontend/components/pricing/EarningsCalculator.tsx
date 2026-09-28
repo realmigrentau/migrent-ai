@@ -117,7 +117,7 @@ export default function EarningsCalculator() {
           Owner Earnings Calculator
         </h2>
         <p className="mt-3 text-[var(--color-ink-3)] text-sm max-w-lg mx-auto">
-          See how much you could earn renting on MigRent. Adjust the sliders to match your property.
+          See how much you could earn renting on Migrent. Adjust the sliders to match your property.
         </p>
       </motion.div>
 
@@ -172,7 +172,7 @@ export default function EarningsCalculator() {
                 blurred={locked}
               />
               <StatCard
-                label="MigRent Fee"
+                label="Migrent Fee"
                 value={`$${outputs.migrentFee.toLocaleString()}`}
                 icon={Minus}
                 color="pink"
@@ -215,7 +215,7 @@ export default function EarningsCalculator() {
             </motion.div>
 
             <p className="text-xs text-[var(--color-ink-3)] text-center">
-              MigRent fee is a one-time $99 per property, charged only when matched with a tenant.
+              Migrent fee is a one-time $99 per property, charged only when matched with a tenant.
             </p>
           </div>
         </div>

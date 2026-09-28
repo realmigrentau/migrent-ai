@@ -185,22 +185,22 @@ export const SOURCES = [
   {
     id: "migrent-listings",
     group: "platform",
-    organisation: "MigRent",
-    dataset: "MigRent verified room listings",
+    organisation: "Migrent",
+    dataset: "Migrent verified room listings",
     edition: "Live",
     referencePeriod: "Rolling 90 days to the import date",
     geographyLevel: "Listing suburb and state, matched to SAL",
     url: null,
     landingUrl: "/seeker/search",
     file: null,
-    licence: { name: "MigRent internal data", url: null, attribution: "MigRent platform data." },
+    licence: { name: "Migrent internal data", url: null, attribution: "Migrent platform data." },
     provides: ["Active verified rooms", "Advertised weekly room price", "Bills included", "Furnished"],
     limitations:
-      "These are advertised asking prices for rooms listed on MigRent, not agreed rents and not a whole-suburb market measure. We publish a median only where the minimum sample is met, and we never describe listing availability as a suburb vacancy rate.",
+      "These are advertised asking prices for rooms listed on Migrent, not agreed rents and not a whole-suburb market measure. We publish a median only where the minimum sample is met, and we never describe listing availability as a suburb vacancy rate.",
   },
 ];
 
-/** Minimum number of listings before a MigRent median is shown at all. */
+/** Minimum number of listings before a Migrent median is shown at all. */
 export const MIN_LISTING_SAMPLE = 5;
 
 /** Only these Overpass categories are imported, with the tag filters used. */

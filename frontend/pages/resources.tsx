@@ -263,7 +263,7 @@ export default function ResourcesLanding() {
             Ready to start looking?
           </h2>
           <p className="text-[15px] text-[var(--color-ink-2)] mt-3 max-w-[48ch] mx-auto">
-            Every room on MigRent comes from a host whose ID and control of the
+            Every room on Migrent comes from a host whose ID and control of the
             property were checked before it went live.
           </p>
           <div className="flex flex-wrap justify-center gap-3 mt-7">

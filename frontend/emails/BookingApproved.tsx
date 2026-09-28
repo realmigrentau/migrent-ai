@@ -72,7 +72,7 @@ export default function BookingApproved({
       </Section>
 
       <Text style={muted}>
-        Secure payment powered by Stripe. Your payment details are never stored on MigRent.
+        Secure payment powered by Stripe. Your payment details are never stored on Migrent.
       </Text>
     </EmailLayout>
   );

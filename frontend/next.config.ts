@@ -21,6 +21,45 @@ const API_ORIGIN = (() => {
   }
 })();
 
+// Migrent Hub's own host, once DNS exists (see lib/hub/routes.ts). Read at
+// build time: routing by host has to be static configuration.
+const HUB_HOST = (process.env.NEXT_PUBLIC_HUB_HOST || "").trim().toLowerCase();
+// Where the Hub is served: its own host once one is set, /hub until then.
+const HUB_BASE = HUB_HOST ? `https://${HUB_HOST}` : "/hub";
+
+// Old signed-in pages and their Migrent Hub equivalents (lib/hub/routes.ts
+// routes old notification links the same way).
+const LEGACY_TO_HUB: [string, string][] = [
+  ["/dashboard", "/"],
+  ["/dashboard/owner", "/"],
+  ["/dashboard/seeker", "/"],
+  ["/dashboard/notifications", "/activity"],
+  ["/dashboard/owner-profile", "/settings"],
+  ["/dashboard/seeker-profile", "/profile"],
+  ["/owner/dashboard", "/"],
+  ["/owner/profile", "/settings"],
+  ["/owner/setup", "/properties/new"],
+  ["/owner/listings", "/properties"],
+  ["/owner/listings/new", "/properties/new"],
+  ["/owner/listings/edit/:id", "/listings/:id/edit"],
+  ["/owner/listings/:id", "/listings/:id"],
+  ["/seeker/dashboard", "/"],
+  ["/seeker/profile", "/profile"],
+  ["/seeker/wishlist", "/saved"],
+  ["/seeker/saved", "/saved"],
+  ["/messages", "/messages"],
+  ["/account/messages", "/messages"],
+  ["/account/messages/:userId", "/messages/direct_:userId"],
+  ["/account/settings", "/settings"],
+  ["/onboarding", "/welcome"],
+  ["/signin", "/sign-in"],
+  ["/signup", "/sign-up"],
+  ["/magic-link-login", "/sign-in"],
+  ["/magic-link-signup", "/sign-up"],
+  ["/forgot-password", "/forgot-password"],
+  ["/reset-password", "/reset-password"],
+];
+
 const nextConfig: NextConfig = {
   /* Two `next dev` processes cannot share a build directory - the second one
      fails to take .next/dev/lock and exits. Setting NEXT_DIST_DIR gives a
@@ -83,8 +122,27 @@ const nextConfig: NextConfig = {
     ],
   },
 
+  async rewrites() {
+    if (!HUB_HOST) return [];
+    return {
+      // Everything on the Hub host is a Hub page: hub.<domain>/applications
+      // renders pages/hub/applications. Framework assets, API routes and
+      // paths proxy.ts already rewrote are left alone.
+      beforeFiles: [
+        { source: "/", has: [{ type: "host", value: HUB_HOST }], destination: "/hub" },
+        { source: "/:path((?!_next/|api/|hub(?:/|$)).*)", has: [{ type: "host", value: HUB_HOST }], destination: "/hub/:path" },
+      ],
+      afterFiles: [],
+      fallback: [],
+    };
+  },
+
   async redirects() {
     return [
+      // Once the Hub has its own host, its old /hub/* addresses move there.
+      ...(HUB_HOST
+        ? [{ source: "/hub/:path*", missing: [{ type: "host" as const, value: HUB_HOST }], destination: `https://${HUB_HOST}/:path*`, permanent: true }]
+        : []),
       // Supabase sends people to its Site URL (the homepage) whenever the
       // redirect a sign-in asked for is not on its allow-list. Forward those
       // arrivals to the page that can finish the sign-in; the query string
@@ -112,19 +170,19 @@ const nextConfig: NextConfig = {
       // router.replace in an effect. That is a soft 404 to a crawler and a
       // flash of blank page to a person. Real 301s instead.
       { source: "/seeker/room/:id", destination: "/listing/:id", permanent: true },
-      { source: "/account/messages", destination: "/messages", permanent: true },
-      { source: "/seeker/dashboard", destination: "/dashboard", permanent: true },
-      { source: "/seeker/saved", destination: "/seeker/wishlist", permanent: true },
 
-      // Duplicate pages. Two parallel hierarchies had grown up: /dashboard/*
-      // pages compose the shared DashboardLayout, ProfileForm and
-      // VerificationSummaryCard, while these older standalone versions
-      // reimplemented the same screens by hand. Owners saw a different
-      // dashboard depending on whether they arrived from a marketing CTA or
-      // from /owner/setup. The /dashboard/* versions win.
-      { source: "/owner/dashboard", destination: "/dashboard/owner", permanent: true },
-      { source: "/owner/profile", destination: "/dashboard/owner-profile", permanent: true },
-      { source: "/seeker/profile", destination: "/dashboard/seeker-profile", permanent: true },
+      // ── Migrent Hub ──
+      // Everything a signed-in person does now lives in Migrent Hub. The
+      // older dashboard, owner and account pages send people to the Hub page
+      // that does the same job. Temporary (307), because the destination
+      // host changes when NEXT_PUBLIC_HUB_HOST is set.
+      // Never on the Hub's own host, where /messages and friends are Hub pages.
+      ...LEGACY_TO_HUB.map(([source, to]) => ({
+        source,
+        destination: to === "/" && !HUB_HOST ? HUB_BASE : `${HUB_BASE}${to}`,
+        permanent: false,
+        ...(HUB_HOST ? { missing: [{ type: "host" as const, value: HUB_HOST }] } : {}),
+      })),
 
       // Two rules pages with overlapping content. The footer, terms of service
       // and code of conduct all point at the community guidelines, so that one

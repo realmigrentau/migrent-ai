@@ -22,7 +22,7 @@ export default function Press() {
 
   return (
     <>
-      <SEOHead title="Press & Media" description="MigRent press kit - company facts, milestones, media assets, and press contact information." />
+      <SEOHead title="Press & Media" description="Migrent press kit - company facts, milestones, media assets, and press contact information." />
 
       <div className="space-y-16">
         {/* Hero */}
@@ -71,7 +71,7 @@ export default function Press() {
               </p>
               <div className="card-subtle p-4 rounded-xl space-y-1 mt-2">
                 <p className="font-semibold text-[var(--color-ink)]">{t("press.companyDetails")}</p>
-                <p>Trading name: MigRent</p>
+                <p>Trading name: Migrent</p>
                 <p>ABN: 22 669 566 941</p>
 
                 <p>Headquarters: Sydney, Australia</p>

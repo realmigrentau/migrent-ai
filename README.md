@@ -1,8 +1,8 @@
-# MigRent
+# Migrent
 
 A room-finding marketplace for migrants, students and new arrivals in
 Australia. Hosts have their government ID checked before a room goes live;
-renters pay MigRent nothing; MigRent never holds rent or bond.
+renters pay Migrent nothing; Migrent never holds rent or bond.
 
 ## Stack
 

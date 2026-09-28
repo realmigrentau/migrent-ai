@@ -1,19 +1,18 @@
 /**
  * The inline theme bootstrap. Kept in one exported string so the CSP hash in
  * next.config.ts and the script tag in _document.tsx are computed from the
- * same bytes. Do not add whitespace inside the script without knowing the
- * hash changes with it (it is recomputed at build, so that is fine).
+ * same bytes (the hash is recomputed at build, so editing this is safe).
  *
- * MigRent is light only. This used to read localStorage, fall back to the OS
- * `prefers-color-scheme`, and put `.dark` on <html> before first paint - and
- * it was the real switch, not the button in the header. Removing the button
- * and leaving this in place would have kept every visitor whose laptop is in
- * dark mode on a dark site with no way back.
+ * One preference for the whole of Migrent - the public site and Migrent Hub
+ * share it: "light", "dark" or "system" (the default), stored under
+ * THEME_STORAGE_KEY. It runs before first paint and puts `.dark` on <html>
+ * when the resolved theme is dark, so there is no flash of the wrong theme
+ * and server-rendered markup never has to guess.
  *
- * It still runs, because two things need undoing rather than merely not
- * doing: a `.dark` class cached in a prerendered document, and a stored
- * "dark" from before the change that would otherwise sit in the reader's
- * browser forever. So it clears both, once, before first paint.
+ * `data-theme-pref` records the preference itself, so the toggle can render
+ * the right state on its first client render.
  */
+export const THEME_STORAGE_KEY = "migrent-theme";
+
 export const THEME_BOOTSTRAP_SCRIPT =
-  "(function(){try{document.documentElement.classList.remove('dark');if(localStorage.getItem('theme')){localStorage.removeItem('theme');}}catch(e){}})();";
+  "(function(){try{var d=document.documentElement,p=localStorage.getItem('migrent-theme');if(p!=='light'&&p!=='dark')p='system';var k=p==='dark'||(p==='system'&&window.matchMedia('(prefers-color-scheme: dark)').matches);d.classList.toggle('dark',k);d.style.colorScheme=k?'dark':'light';d.setAttribute('data-theme-pref',p);}catch(e){}})();";

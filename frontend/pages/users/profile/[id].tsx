@@ -181,7 +181,7 @@ export default function PublicProfilePage() {
               {profile.response_time !== null && (
                 <StatCard value={profile.response_time} label="Response time" icon="⚡" />
               )}
-              <StatCard value={`${profile.months_on_platform || "<1"}`} label="Months on MigRent" icon="📅" />
+              <StatCard value={`${profile.months_on_platform || "<1"}`} label="Months on Migrent" icon="📅" />
               <StatCard
                 value={`${profile.rooms_owned + profile.properties_owned}`}
                 label="Properties"
@@ -322,7 +322,7 @@ export default function PublicProfilePage() {
                 onClick={() => {
                   if (navigator.share) {
                     navigator.share({
-                      title: `${displayName} on MigRent`,
+                      title: `${displayName} on Migrent`,
                       url: window.location.href,
                     });
                   } else {

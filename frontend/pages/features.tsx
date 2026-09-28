@@ -85,7 +85,7 @@ function MockBooking() {
       <div className="rounded-[var(--radius-card)] border border-[var(--color-line)] bg-[var(--color-surface)] p-4 mb-4">
         <div className="flex justify-between text-[13px] text-[var(--color-ink-2)]"><span>Rent · 4 weeks</span><span className="font-mono tabular-nums text-[var(--color-ink)]">$1,240</span></div>
         <div className="flex justify-between text-[13px] text-[var(--color-ink-2)] mt-2"><span>Bond (lodged with your state authority)</span><span className="font-mono tabular-nums text-[var(--color-ink)]">$620</span></div>
-        <div className="flex justify-between text-[13px] mt-2"><span className="text-[var(--color-ink-2)]">MigRent renter fee</span><span className="font-mono tabular-nums font-bold text-[var(--color-accent)]">$0</span></div>
+        <div className="flex justify-between text-[13px] mt-2"><span className="text-[var(--color-ink-2)]">Migrent renter fee</span><span className="font-mono tabular-nums font-bold text-[var(--color-accent)]">$0</span></div>
         <hr className="rule-soft my-3" />
         <div className="flex justify-between text-[14px] font-semibold text-[var(--color-ink)]"><span>Move-in total</span><span className="font-mono tabular-nums">$1,860</span></div>
       </div>
@@ -133,7 +133,7 @@ const deepFeatures = [
     icon: Sparkles,
     eyebrow: "Smart matching",
     title: "Matching that learns what you actually want",
-    body: "Tell us how you live - budget, commute, lifestyle - and MigRent surfaces the rooms that genuinely fit, not just the newest listings.",
+    body: "Tell us how you live - budget, commute, lifestyle - and Migrent surfaces the rooms that genuinely fit, not just the newest listings.",
     points: ["Ranked by fit, not by ad spend", "Learns from what you save and skip", "Built around migrant needs first"],
     Mock: MockMatching,
     flip: false,
@@ -180,7 +180,7 @@ const moreFeatures = [
 export default function Features() {
   return (
     <>
-      <SEOHead title="Features - Built for arriving" description="Smart matching, verified hosts, instant booking, migrant-first filters, suburb reports, and a mentor network. Everything MigRent does, in one place." />
+      <SEOHead title="Features - Built for arriving" description="Smart matching, verified hosts, instant booking, migrant-first filters, suburb reports, and a mentor network. Everything Migrent does, in one place." />
 
       <PageSubnav
         title="Features"

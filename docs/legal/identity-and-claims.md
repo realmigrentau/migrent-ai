@@ -6,18 +6,18 @@ Single source in code: `frontend/lib/siteIdentity.ts` (fees mirrored in `backend
 
 | Item | Value | Source |
 |---|---|---|
-| Brand name | MigRent (never "MigRent AI") | `siteIdentity.brandName` |
+| Brand name | Migrent (never "Migrent AI") | `siteIdentity.brandName` |
 | ABN | 22 669 566 941 | appeared consistently in prior copy |
 | Live domain | https://migrent.vercel.app | `lib/site.ts` |
 | Support channel | email, weekdays, reply within one business day | `siteIdentity.support` |
 | Host fee | AUD $99 per property, charged when the first booking on that property is confirmed; later bookings on the same property incur nothing (`FEE_MODEL=per_property`) | `siteIdentity.fees.host`, `backend/payments.py`, `routes_bookings.listing_fee_due` |
-| Seeker fees | $0. MigRent never holds rent, bond or deposit. Stripe processes the host fee only. | `siteIdentity.fees.seeker` |
+| Seeker fees | $0. Migrent never holds rent, bond or deposit. Stripe processes the host fee only. | `siteIdentity.fees.seeker` |
 | Paid seeker "verification" ($19) | disabled (`SEEKER_VERIFICATION_ENABLED=false`); it set a `verified` flag without checking anything | `routes_verification.py` |
 | Legacy "deals" flow | retired (410) | `routes_deals.py` |
 
 ## Release blockers: decisions only the owner and Australian counsel can make
 
-1. **Legal entity.** Old copy said "MigRent Pty Ltd", "Sole Trader" and "MigRent AI". Public copy now shows the trading name and ABN only, with "Entity details are being confirmed" where a structure was previously asserted. Set `siteIdentity.legalEntity` once confirmed.
+1. **Legal entity.** Old copy said "Migrent Pty Ltd", "Sole Trader" and "Migrent AI". Public copy now shows the trading name and ABN only, with "Entity details are being confirmed" where a structure was previously asserted. Set `siteIdentity.legalEntity` once confirmed.
 2. **Principal place of business.** Old copy said both "Sydney, NSW" and "Naarm / Melbourne". Public copy now says "Australia". The arbitration seat in `/contact-legal` and `/support-disputes` still says Sydney; counsel must confirm the seat and governing law.
 3. **Custom domain.** `migrent.com.au` is registered with no DNS. It must not appear in canonical URLs, sitemaps or "email us at" copy until it resolves and role mailboxes exist (`siteIdentity.plannedDomainLive`).
 4. **Role email addresses.** Only `migrentau@gmail.com` works. `support@ / legal@ / privacy@migrent.com.au` do not exist and were removed from public copy. Gmail as the sending address also fails DMARC; verify a sending domain in Resend before relying on transactional mail.

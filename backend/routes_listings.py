@@ -30,6 +30,8 @@ from matching_engine import calculate_match_score, generate_match_reasons
 from models import ListingCreate, ListingUpdate
 from public_dto import (
     listing_public_state,
+    place_type_spellings,
+    property_type_spellings,
     to_owner_listing,
     to_public_listing,
 )
@@ -43,35 +45,16 @@ router = APIRouter(prefix="/listings", tags=["listings"])
 # Every column the server needs to build a public card or page. The DTO layer
 # strips what the viewer may not see; selecting an explicit list keeps the
 # payload small on the hottest endpoint on the site.
-# Three columns this file used to select do not exist in the production
-# database: listings.daily_price, listings.room_type and profiles.public_id.
-# PostgREST rejects a select naming an unknown column, so every listings
-# endpoint returned 500 and search was dead on the live site.
-#
-# The database is behind the deployed code - migration 042 was never applied,
-# and the two listings columns come from an earlier migration that is also
-# missing. Omitting them here is the stopgap that gets search working without
-# touching the database.
-#
-# Nothing reads them: the frontend types all three as optional and already
-# falls back (weekly_price || daily_price * 7, property_type || room_type),
-# so their absence changes no rendered output.
-#
-# Once the database is reconciled, put them back in one commit and delete
-# this note. Anything else that 042 adds - paused_at, expired_at,
-# listing_fee_paid_at, over_18_confirmed_at, the public_listings and
-# public_profiles views, listing_events - is still missing, so pause, renew
-# and the public-profile contract stay broken until then.
 SEARCH_COLUMNS = (
-    "id, owner_id, title, address, suburb, city, postcode, weekly_price, "
-    "description, images, property_type, place_type, bedrooms, beds, bathrooms, "
+    "id, owner_id, title, address, suburb, city, postcode, weekly_price, daily_price, "
+    "description, images, property_type, place_type, room_type, bedrooms, beds, bathrooms, "
     "bathroom_type, max_guests, furnished, bills_included, parking, air_conditioning, "
     "pets_allowed, couples_ok, gender_preference, instant_book, instant_book_enabled, "
     "available_from, available_to, min_stay, min_stay_weeks, max_stay_weeks, latitude, "
     "longitude, nearest_transport, station_distance_min, moderation_status, hidden_at, created_at"
 )
 
-OWNER_PROFILE_COLUMNS = "id, name, preferred_name, custom_pfp, bio, about_me, badges, created_at"
+OWNER_PROFILE_COLUMNS = "id, public_id, name, preferred_name, custom_pfp, bio, about_me, badges, created_at"
 VERIFICATION_COLUMNS = "user_id, email_verified, phone_verified, id_status, fully_verified, id_reviewed_at"
 
 
@@ -170,11 +153,22 @@ async def create_listing(
     authorization: str = Header(...),
 ):
     user = get_current_user(authorization)
+    # The account's role comes from the database (profiles.role, set through
+    # Migrent Hub onboarding or settings), not from user_metadata, which the
+    # user can rewrite. user_metadata is only a fallback for accounts that
+    # have never chosen.
+    try:
+        role_rows = get_supabase_admin().table("profiles").select("role").eq("id", str(user.id)).execute().data or []
+    except Exception:
+        role_rows = []
+    profile_role = role_rows[0].get("role") if role_rows else None
     user_meta = user.user_metadata or {}
     user_type = user_meta.get("user_type") or user_meta.get("type")
-    # Allow owner type OR users without a type set (e.g. Google OAuth users)
-    if user_type and user_type != "owner":
-        raise HTTPException(status_code=403, detail="Only owners can create listings")
+    if profile_role == "seeker" or (profile_role is None and user_type and user_type != "owner"):
+        raise HTTPException(
+            status_code=403,
+            detail="Listing a property is done from an owner account. You can switch in Migrent Hub > Settings.",
+        )
 
     # Verification gates PUBLISHING, not creating. An unverified owner can
     # build and save a draft, which no search, public page or booking can
@@ -498,7 +492,7 @@ def resume_listing(request: Request, listing_id: str, authorization: str = Heade
     if row["moderation_status"] != STATUS_PAUSED:
         raise HTTPException(status_code=400, detail="This listing is not paused.")
     if row.get("paused_by_admin"):
-        raise HTTPException(status_code=403, detail="This listing was paused by MigRent. Contact support to have it reviewed.")
+        raise HTTPException(status_code=403, detail="This listing was paused by Migrent. Contact support to have it reviewed.")
 
     from routes_owner_verification import check_owner_verified
 
@@ -611,9 +605,9 @@ def search_listings(
             if cities:
                 q = q.in_("city", cities)
         if property_type:
-            q = q.eq("property_type", property_type)
+            q = q.in_("property_type", property_type_spellings(property_type))
         if place_type:
-            q = q.eq("place_type", place_type)
+            q = q.in_("place_type", place_type_spellings(place_type))
         if furnished is True:
             q = q.eq("furnished", True)
         if bills_included is True:

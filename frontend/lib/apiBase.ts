@@ -44,7 +44,7 @@ function resolveApiBaseUrl(): string {
     if (!warnedApi && typeof window !== "undefined") {
       // Loud, visible-in-prod error so missing config is impossible to miss.
       console.error(
-        "[MigRent] NEXT_PUBLIC_API_BASE_URL is not set in production. " +
+        "[Migrent] NEXT_PUBLIC_API_BASE_URL is not set in production. " +
           "API requests will fail. Set this env var in your Vercel project settings.",
       );
       warnedApi = true;
@@ -54,7 +54,7 @@ function resolveApiBaseUrl(): string {
 
   if (!warnedApi) {
     console.warn(
-      "[MigRent] NEXT_PUBLIC_API_BASE_URL is not set. " +
+      "[Migrent] NEXT_PUBLIC_API_BASE_URL is not set. " +
         "Falling back to http://localhost:8000 for local development.",
     );
     warnedApi = true;
@@ -74,7 +74,7 @@ function resolveFrontendBaseUrl(): string {
     }
     if (!warnedFrontend) {
       console.error(
-        "[MigRent] NEXT_PUBLIC_FRONTEND_URL is not set in production. " +
+        "[Migrent] NEXT_PUBLIC_FRONTEND_URL is not set in production. " +
           "Set this env var in your Vercel project settings.",
       );
       warnedFrontend = true;
@@ -84,7 +84,7 @@ function resolveFrontendBaseUrl(): string {
 
   if (!warnedFrontend) {
     console.warn(
-      "[MigRent] NEXT_PUBLIC_FRONTEND_URL is not set. " +
+      "[Migrent] NEXT_PUBLIC_FRONTEND_URL is not set. " +
         "Falling back to http://localhost:3000 for local development.",
     );
     warnedFrontend = true;

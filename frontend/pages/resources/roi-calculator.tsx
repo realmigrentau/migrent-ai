@@ -6,6 +6,7 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGri
 import Breadcrumb from "../../components/content/Breadcrumb";
 import { getAllSuburbs } from "../../data/suburbs";
 import OwnerGuard from "../../components/OwnerGuard";
+import { hubFromSite } from "../../lib/hub/routes";
 
 const roomTypes = ["single", "double", "ensuite", "studio"] as const;
 type RoomType = (typeof roomTypes)[number];
@@ -51,7 +52,7 @@ export default function ROICalculator() {
 
   return (
     <>
-      <SEOHead title="Owner ROI Calculator" description="Calculate your return on investment from listing spare rooms on MigRent." />
+      <SEOHead title="Owner ROI Calculator" description="Calculate your return on investment from listing spare rooms on Migrent." />
 
       <div className="max-w-6xl mx-auto">
         <Breadcrumb
@@ -81,7 +82,7 @@ export default function ROICalculator() {
             Estimate Your <span className="text-[color:var(--color-primary)]">Rental Income</span>
           </h1>
           <p className="mt-3 text-[var(--color-ink-3)] max-w-xl mx-auto">
-            Calculate potential returns from listing your spare room on MigRent.
+            Calculate potential returns from listing your spare room on Migrent.
           </p>
         </motion.div>
 
@@ -292,8 +293,8 @@ export default function ROICalculator() {
           className="text-center mt-16 py-12"
         >
           <h2 className="text-2xl font-black text-[var(--color-ink)]">Ready to start earning?</h2>
-          <p className="text-[var(--color-ink-3)] mt-2">List your spare room on MigRent in minutes.</p>
-          <Link href="/signup">
+          <p className="text-[var(--color-ink-3)] mt-2">List your spare room on Migrent in minutes.</p>
+          <Link href={hubFromSite.listProperty()}>
             <motion.span whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }} className="inline-block mt-6 btn-primary text-base px-8 py-3.5 rounded-xl">
               List Your Room
             </motion.span>

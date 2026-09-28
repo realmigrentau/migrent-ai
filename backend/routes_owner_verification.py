@@ -304,7 +304,7 @@ def review_id_submission(
                 user_id=user_id,
                 event="verification_status_changed",
                 title="ID verification approved",
-                body="Your government ID has been verified. You can now list rooms on MigRent.",
+                body="Your government ID has been verified. You can now list rooms on Migrent.",
                 cta_url="/owner/listings/new",
                 entity_type="verification",
                 entity_id=user_id,

@@ -11,7 +11,7 @@ import type { RegionCard } from "../../pages/api/suburbs/region";
  *
  * The headline figure follows what we can actually stand behind:
  *
- *   1. the median advertised room price on MigRent, when enough listings
+ *   1. the median advertised room price on Migrent, when enough listings
  *      exist in this suburb to compute one,
  *   2. otherwise the 2021 Census population, which we always have,
  *   3. and nothing at all where even that is missing.
@@ -40,7 +40,7 @@ export default function SuburbCard({ place }: { place: RegionCard }) {
         {hasPrice ? (
           <span className="sub-card__figure">
             <span className="sub-card__figure-value">${place.medianWeeklyRoomPrice}</span>
-            <span className="sub-card__figure-label">median room, per week, on MigRent</span>
+            <span className="sub-card__figure-label">median room, per week, on Migrent</span>
           </span>
         ) : place.population > 0 ? (
           <span className="sub-card__figure">
@@ -59,7 +59,7 @@ export default function SuburbCard({ place }: { place: RegionCard }) {
           )}
           {hasRooms && (
             <span className="sub-tag sub-tag--terracotta">
-              {place.activeListings} {place.activeListings === 1 ? "room" : "rooms"} on MigRent
+              {place.activeListings} {place.activeListings === 1 ? "room" : "rooms"} on Migrent
             </span>
           )}
           {place.hasEditorial && <span className="sub-tag sub-tag--sky">Written guide</span>}

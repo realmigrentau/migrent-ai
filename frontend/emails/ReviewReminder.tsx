@@ -33,7 +33,7 @@ export default function ReviewReminder({
       </Text>
 
       <Text style={paragraph}>
-        Your review helps {otherPartyName} and future users on MigRent make
+        Your review helps {otherPartyName} and future users on Migrent make
         better decisions. It only takes a minute.
       </Text>
 

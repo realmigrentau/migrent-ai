@@ -1,5 +1,5 @@
 """
-MigRent V1 Matching Engine
+Migrent V1 Matching Engine
 
 Transparent, rules-based scoring against real seeker profile data.
 No AI black-box. No hallucinated scores. Degrades gracefully when data is missing.

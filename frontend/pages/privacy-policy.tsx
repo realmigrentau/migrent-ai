@@ -1,11 +1,12 @@
 import Link from "next/link";
 import SEOHead from "../components/SEOHead";
 import { motion } from "framer-motion";
+import { hubFromSite } from "../lib/hub/routes";
 
 export default function PrivacyPolicy() {
   return (
     <>
-      <SEOHead title="Privacy Policy" description="MigRent Privacy Policy - how we collect, use, and protect your data. Australian Privacy Principles and GDPR compliant." />
+      <SEOHead title="Privacy Policy" description="Migrent Privacy Policy - how we collect, use, and protect your data. Australian Privacy Principles and GDPR compliant." />
 
       <div className="max-w-3xl mx-auto space-y-10">
         {/* Hero */}
@@ -30,9 +31,9 @@ export default function PrivacyPolicy() {
           <section className="card p-6 rounded-2xl space-y-3">
             <h2 className="text-lg font-bold text-[var(--color-ink)]">1. Introduction</h2>
             <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
-              <p>MigRent (&quot;we&quot;, &quot;us&quot;, &quot;our&quot;) is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our platform at migrent.vercel.app.</p>
-              <p>MigRent operates under ABN 22 669 566 941 in Australia. We comply with the Australian Privacy Act 1988 (Cth), the Australian Privacy Principles (APPs), and applicable GDPR provisions for users located in the European Economic Area (EEA).</p>
-              <p>MigRent is an online introduction service only. We facilitate connections between room owners and accommodation seekers. We do not collect rent, bonds, or manage tenancy agreements.</p>
+              <p>Migrent (&quot;we&quot;, &quot;us&quot;, &quot;our&quot;) is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our platform at migrent.vercel.app.</p>
+              <p>Migrent operates under ABN 22 669 566 941 in Australia. We comply with the Australian Privacy Act 1988 (Cth), the Australian Privacy Principles (APPs), and applicable GDPR provisions for users located in the European Economic Area (EEA).</p>
+              <p>Migrent is an online introduction service only. We facilitate connections between room owners and accommodation seekers. We do not collect rent, bonds, or manage tenancy agreements.</p>
             </div>
           </section>
 
@@ -92,7 +93,7 @@ export default function PrivacyPolicy() {
             <h2 className="text-lg font-bold text-[var(--color-ink)]">3. How We Use Your Information</h2>
             <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-2">
               <ul className="list-disc list-inside space-y-1.5">
-                <li>To operate the MigRent platform and provide our matching services</li>
+                <li>To operate the Migrent platform and provide our matching services</li>
                 <li>To create and manage your account</li>
                 <li>To facilitate communication between seekers and owners</li>
                 <li>To process platform fees via Stripe</li>
@@ -157,7 +158,7 @@ export default function PrivacyPolicy() {
           <section className="card p-6 rounded-2xl space-y-3">
             <h2 className="text-lg font-bold text-[var(--color-ink)]">5. Data Sharing with Other Users</h2>
             <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
-              <p>When you use MigRent, certain profile information is visible to other users to facilitate connections:</p>
+              <p>When you use Migrent, certain profile information is visible to other users to facilitate connections:</p>
               <ul className="list-disc list-inside space-y-1.5">
                 <li><strong>Public profile:</strong> Preferred name, profile photo, bio, preferences, and verification status</li>
                 <li><strong>Listing details:</strong> Property information, photos, pricing (for owners)</li>
@@ -227,7 +228,7 @@ export default function PrivacyPolicy() {
           <section className="card p-6 rounded-2xl space-y-3">
             <h2 className="text-lg font-bold text-[var(--color-ink)]">8. GDPR Rights (EU/EEA Users)</h2>
             <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
-              <p>If you are located in the European Economic Area (EEA), you have additional rights under the General Data Protection Regulation (GDPR). As MigRent serves migrants who may originate from EU/EEA countries, we extend these protections:</p>
+              <p>If you are located in the European Economic Area (EEA), you have additional rights under the General Data Protection Regulation (GDPR). As Migrent serves migrants who may originate from EU/EEA countries, we extend these protections:</p>
               <ul className="list-disc list-inside space-y-1.5">
                 <li><strong>Right to Portability</strong> - Request your data in a machine-readable format (JSON or CSV)</li>
                 <li><strong>Right to Erasure</strong> - Request deletion of all personal data (&quot;right to be forgotten&quot;)</li>
@@ -279,7 +280,7 @@ export default function PrivacyPolicy() {
             <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
               <p>If you have questions about this Privacy Policy or wish to exercise your rights, contact us:</p>
               <div className="card-subtle p-4 rounded-xl space-y-1">
-                <p className="font-semibold text-[var(--color-ink)]">MigRent - Privacy Inquiries</p>
+                <p className="font-semibold text-[var(--color-ink)]">Migrent - Privacy Inquiries</p>
                 <p>ABN: 22 669 566 941</p>
                 <p>Email: <a href="mailto:migrentau@gmail.com" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">migrentau@gmail.com</a></p>
                 <p>Location: Sydney, Australia</p>
@@ -290,7 +291,7 @@ export default function PrivacyPolicy() {
 
           {/* Legal Disclaimer */}
           <div className="card-subtle p-4 rounded-xl text-xs text-[var(--color-ink-3)] leading-relaxed">
-            <p>This privacy policy is provided for informational purposes. MigRent recommends consulting a qualified privacy law professional for specific legal advice. Last reviewed: March 2026.</p>
+            <p>This privacy policy is provided for informational purposes. Migrent recommends consulting a qualified privacy law professional for specific legal advice. Last reviewed: March 2026.</p>
           </div>
 
           {/* CTA */}
@@ -298,7 +299,7 @@ export default function PrivacyPolicy() {
             <h3 className="text-lg font-bold text-[var(--color-ink)] mb-2">Ready to get started?</h3>
             <p className="text-sm text-[var(--color-ink-2)] mb-4">Find safe, verified rooms across Australia.</p>
             <div className="flex gap-3 justify-center">
-              <Link href="/signup">
+              <Link href={hubFromSite.signUp()}>
                 <motion.span whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }} className="inline-block btn-primary text-sm px-6 py-2.5 rounded-xl">
                   Sign Up Free
                 </motion.span>

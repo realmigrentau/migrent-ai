@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useAuth } from "../hooks/useAuth";
 import { refreshBadges } from "../lib/api";
+import { hubFromSite } from "../lib/hub/routes";
 
 export default function PaymentSuccess() {
   const router = useRouter();
@@ -132,7 +133,7 @@ export default function PaymentSuccess() {
           transition={{ delay: 1.2 }}
           className="flex flex-col sm:flex-row gap-3 justify-center pt-2"
         >
-          <Link href="/dashboard" className="btn-primary py-2.5 px-6 rounded-[10px] text-sm inline-block">
+          <Link href={hubFromSite.home()} className="btn-primary py-2.5 px-6 rounded-[10px] text-sm inline-block">
             View deal
           </Link>
           <Link href="/seeker/search" className="btn-secondary py-2.5 px-6 rounded-[10px] text-sm inline-block">

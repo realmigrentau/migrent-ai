@@ -154,17 +154,17 @@ async def create_ticket(body: TicketCreate, authorization: Optional[str] = Heade
         try:
             resend.api_key = RESEND_API_KEY
             resend.Emails.send({
-                "from": "MigRent Support <onboarding@resend.dev>",
+                "from": "Migrent Support <onboarding@resend.dev>",
                 "to": [email],
                 "subject": f"We received your request: {body.subject}",
                 "html": f"""
-                <h2>Thanks for contacting MigRent Support</h2>
+                <h2>Thanks for contacting Migrent Support</h2>
                 <p>We've received your request and will get back to you within 24 hours.</p>
                 <p><strong>Ticket ID:</strong> {ticket_id[:8]}</p>
                 <p><strong>Subject:</strong> {body.subject}</p>
                 <p>You can view your ticket status in your <a href="https://migrent-ai.vercel.app/support/tickets">support dashboard</a>.</p>
                 <br/>
-                <p>- The MigRent Team</p>
+                <p>- The Migrent Team</p>
                 """,
             })
         except Exception:

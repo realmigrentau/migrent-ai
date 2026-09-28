@@ -1,4 +1,4 @@
-// Static Help Center content for MigRent V1.
+// Static Help Center content for Migrent V1.
 // This file is the primary source of truth for help categories, articles, FAQs,
 // and popular searches. All content is hardcoded so the Help Center works
 // immediately without backend seeding.
@@ -40,7 +40,7 @@ export const HELP_CATEGORIES: StaticHelpCategory[] = [
     id: "cat-1",
     slug: "getting-started",
     name: "Getting Started",
-    description: "New to MigRent? Start here to understand how the platform works for seekers and owners.",
+    description: "New to Migrent? Start here to understand how the platform works for seekers and owners.",
     icon: "Rocket",
     gradient: "from-blue-500 to-indigo-600",
     articleCount: 3,
@@ -85,7 +85,7 @@ export const HELP_CATEGORIES: StaticHelpCategory[] = [
     id: "cat-6",
     slug: "safety-reporting",
     name: "Safety & Reporting",
-    description: "Stay safe on MigRent. Learn how to report issues, block users, and get help.",
+    description: "Stay safe on Migrent. Learn how to report issues, block users, and get help.",
     icon: "AlertTriangle",
     gradient: "from-orange-500 to-red-600",
     articleCount: 1,
@@ -94,7 +94,7 @@ export const HELP_CATEGORIES: StaticHelpCategory[] = [
     id: "cat-7",
     slug: "legal-policies",
     name: "Legal & Policies",
-    description: "Rental law basics, bond rules, visa rights, and MigRent's own policies.",
+    description: "Rental law basics, bond rules, visa rights, and Migrent's own policies.",
     icon: "FileText",
     gradient: "from-purple-500 to-violet-600",
     articleCount: 2,
@@ -125,13 +125,13 @@ export const POPULAR_SEARCHES = [
 
 export const QUICK_FAQS: QuickFAQ[] = [
   {
-    question: "How does MigRent work?",
+    question: "How does Migrent work?",
     answer:
-      "MigRent connects migrants and students in Australia with verified room owners. Seekers browse listings, request bookings, and pay securely through the platform. Owners list their rooms, review applicants, and receive payments directly to their bank account via Stripe.",
+      "Migrent connects migrants and students in Australia with verified room owners. Seekers browse listings, request bookings, and pay securely through the platform. Owners list their rooms, review applicants, and receive payments directly to their bank account via Stripe.",
     category: "getting-started",
   },
   {
-    question: "Is MigRent free to use?",
+    question: "Is Migrent free to use?",
     answer:
       "Creating an account and browsing listings is completely free. A small service fee applies when a booking is confirmed. Owners do not pay to list - the fee is charged to the platform on successful bookings.",
     category: "getting-started",
@@ -155,9 +155,9 @@ export const QUICK_FAQS: QuickFAQ[] = [
     category: "bookings-payments",
   },
   {
-    question: "Can I use MigRent on any visa?",
+    question: "Can I use Migrent on any visa?",
     answer:
-      "Yes. MigRent is designed for migrants and students on any visa type - student, skilled worker, working holiday, partner, and more. Listings are Australia-wide and do not discriminate by visa status.",
+      "Yes. Migrent is designed for migrants and students on any visa type - student, skilled worker, working holiday, partner, and more. Listings are Australia-wide and do not discriminate by visa status.",
     category: "legal-policies",
   },
 ];
@@ -167,7 +167,7 @@ export const HELP_ARTICLES: StaticHelpArticle[] = [
   {
     id: "art-1",
     slug: "how-migrent-works",
-    title: "How MigRent works",
+    title: "How Migrent works",
     category: "getting-started",
     categoryName: "Getting Started",
     audience: "both",
@@ -175,10 +175,10 @@ export const HELP_ARTICLES: StaticHelpArticle[] = [
     readingTime: 3,
     featured: true,
     type: "guide",
-    summary: "A complete overview of the MigRent platform - how seekers find rooms and owners list properties.",
-    body: `## Welcome to MigRent
+    summary: "A complete overview of the Migrent platform - how seekers find rooms and owners list properties.",
+    body: `## Welcome to Migrent
 
-MigRent is Australia's rental marketplace built specifically for migrants, international students, and newcomers. We connect people looking for rooms with owners who welcome tenants from all backgrounds.
+Migrent is Australia's rental marketplace built specifically for migrants, international students, and newcomers. We connect people looking for rooms with owners who welcome tenants from all backgrounds.
 
 ## For seekers
 
@@ -210,10 +210,10 @@ If you ever need help, you're in the right place. Browse the Help Center for art
     readingTime: 2,
     featured: false,
     type: "guide",
-    summary: "Step-by-step guide to signing up for MigRent as a seeker or owner.",
-    body: `## Creating your MigRent account
+    summary: "Step-by-step guide to signing up for Migrent as a seeker or owner.",
+    body: `## Creating your Migrent account
 
-Getting started on MigRent takes less than two minutes. Here's how:
+Getting started on Migrent takes less than two minutes. Here's how:
 
 ## Step 1 - Sign up
 
@@ -231,7 +231,7 @@ Fill in your name, a profile photo, a short bio, and your move-in preferences (i
 
 Head to Settings > Verification to upload your ID. This is optional but strongly recommended - verified users get a trust badge and appear higher in search results.
 
-## Step 5 - Start using MigRent
+## Step 5 - Start using Migrent
 
 Seekers can now browse listings and send booking requests. Owners can post their first room listing. Check your dashboard for personalised recommendations and next steps.`,
     updatedAt: "2026-04-01",
@@ -247,7 +247,7 @@ Seekers can now browse listings and send booking requests. Owners can post their
     readingTime: 2,
     featured: false,
     type: "faq",
-    summary: "Understand the difference between a Seeker and Owner account on MigRent.",
+    summary: "Understand the difference between a Seeker and Owner account on Migrent.",
     body: `## What is a Seeker?
 
 A Seeker is someone looking for a room to rent. As a seeker you can:
@@ -418,7 +418,7 @@ If you don't receive the email within 10 minutes, check your spam folder or cont
 
 - Use a unique password not used on any other site
 - Enable two-factor authentication when it becomes available
-- Never share your login credentials with anyone, including MigRent staff`,
+- Never share your login credentials with anyone, including Migrent staff`,
     updatedAt: "2026-04-01",
   },
 
@@ -524,10 +524,10 @@ If a listing you've saved gets taken before you book, it will show as Unavailabl
     readingTime: 2,
     featured: false,
     type: "guide",
-    summary: "Understand how MigRent's AI matching engine finds the best listings for your needs.",
+    summary: "Understand how Migrent's AI matching engine finds the best listings for your needs.",
     body: `## What is AI matching?
 
-MigRent uses an AI-powered matching engine to suggest the most relevant listings for each seeker. Rather than just showing all available listings, we rank and surface the ones most likely to be a great fit for you.
+Migrent uses an AI-powered matching engine to suggest the most relevant listings for each seeker. Rather than just showing all available listings, we rank and surface the ones most likely to be a great fit for you.
 
 ## How it works
 
@@ -575,7 +575,7 @@ Regular search returns all listings matching your filter criteria. AI matching r
     readingTime: 4,
     featured: true,
     type: "guide",
-    summary: "Step-by-step guide to creating and publishing your first room listing on MigRent.",
+    summary: "Step-by-step guide to creating and publishing your first room listing on Migrent.",
     body: `## Before you start
 
 Make sure you have the following ready before creating your listing:
@@ -860,7 +860,7 @@ Instant Book does not bypass identity checks. Seekers still need a complete prof
   {
     id: "art-15",
     slug: "how-payments-work",
-    title: "How payments work on MigRent",
+    title: "How payments work on Migrent",
     category: "bookings-payments",
     categoryName: "Bookings & Payments",
     audience: "both",
@@ -868,10 +868,10 @@ Instant Book does not bypass identity checks. Seekers still need a complete prof
     readingTime: 3,
     featured: false,
     type: "guide",
-    summary: "Understand how MigRent handles payments securely for both seekers and owners.",
+    summary: "Understand how Migrent handles payments securely for both seekers and owners.",
     body: `## Payment processing
 
-All payments on MigRent are processed by Stripe, one of the world's most trusted payment platforms. Your card details are never stored on MigRent's servers.
+All payments on Migrent are processed by Stripe, one of the world's most trusted payment platforms. Your card details are never stored on Migrent's servers.
 
 ## For seekers
 
@@ -900,7 +900,7 @@ Once connected, payouts are typically transferred within 2-5 business days after
 
 ## Service fees
 
-MigRent charges a small service fee on successful bookings. This fee is shown transparently at checkout before you confirm. The fee covers platform costs, payment processing, and support.
+Migrent charges a small service fee on successful bookings. This fee is shown transparently at checkout before you confirm. The fee covers platform costs, payment processing, and support.
 
 ## Payment disputes
 
@@ -921,7 +921,7 @@ If you believe you've been charged incorrectly, contact support within 7 days of
     summary: "Learn how to cancel a booking and understand the refund policy.",
     body: `## Cancellation policy
 
-Cancellation policies vary by listing. The policy is always shown on the listing page and at checkout before you confirm. Standard policies on MigRent:
+Cancellation policies vary by listing. The policy is always shown on the listing page and at checkout before you confirm. Standard policies on Migrent:
 
 ### Flexible
 
@@ -976,10 +976,10 @@ If you believe a booking was made fraudulently, do not cancel it yourself. Conta
     readingTime: 3,
     featured: false,
     type: "safety",
-    summary: "Report suspicious users, scam listings, or abusive behaviour directly from MigRent.",
+    summary: "Report suspicious users, scam listings, or abusive behaviour directly from Migrent.",
     body: `## Your safety is our priority
 
-MigRent has a zero-tolerance policy for scams, harassment, discrimination, and fraudulent listings. We take all reports seriously and investigate within 24 hours.
+Migrent has a zero-tolerance policy for scams, harassment, discrimination, and fraudulent listings. We take all reports seriously and investigate within 24 hours.
 
 ## How to report a listing
 
@@ -1015,7 +1015,7 @@ If you have been scammed financially, report to:
 - Scamwatch: scamwatch.gov.au
 - Your bank's fraud line
 
-Then contact MigRent support with your case reference number.
+Then contact Migrent support with your case reference number.
 
 ## What we do with reports
 
@@ -1081,9 +1081,9 @@ At the end of your tenancy, the owner has a set period to either return your bon
 
 If you disagree with a deduction, you can apply to your state's tenancy tribunal for a bond dispute resolution.
 
-## MigRent and bonds
+## Migrent and bonds
 
-MigRent does not hold bonds on behalf of owners or seekers. Bond payments should be made directly between tenant and owner and lodged as required by law. Always get a receipt.`,
+Migrent does not hold bonds on behalf of owners or seekers. Bond payments should be made directly between tenant and owner and lodged as required by law. Always get a receipt.`,
     updatedAt: "2026-04-01",
   },
   {
@@ -1110,7 +1110,7 @@ Students on a student visa can rent privately. You have full tenancy rights. Som
 
 ### Working holiday visa (subclass 417 / 462)
 
-Working holiday makers can rent privately. Given the temporary nature of the visa, you may prefer shorter-term rentals. MigRent has many listings with flexible durations of 1-6 months.
+Working holiday makers can rent privately. Given the temporary nature of the visa, you may prefer shorter-term rentals. Migrent has many listings with flexible durations of 1-6 months.
 
 ### Skilled and employer-sponsored visas
 

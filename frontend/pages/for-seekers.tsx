@@ -58,7 +58,7 @@ export default function ForSeekers() {
         title="For Seekers"
         links={[
           { label: "How it works", href: "#how" },
-          { label: "Why MigRent", href: "#why" },
+          { label: "Why Migrent", href: "#why" },
           { label: "Filters", href: "#filters" },
           { label: "Cities", href: "#cities" },
         ]}
@@ -185,7 +185,7 @@ export default function ForSeekers() {
         <div className="max-w-[1280px] mx-auto px-6 md:px-10 lg:px-14 py-20 md:py-28">
           <div className="grid lg:grid-cols-[0.85fr_1.15fr] gap-10 lg:gap-16">
             <motion.div {...reveal} className="lg:sticky lg:top-24 lg:self-start">
-              <div className="eyebrow mb-3">Why seekers choose MigRent</div>
+              <div className="eyebrow mb-3">Why seekers choose Migrent</div>
               <h2 className="font-serif text-[34px] md:text-[52px] leading-[1.0] tracking-[-0.03em] text-[var(--color-ink)]">Built for your first rental here.</h2>
               <p className="mt-5 text-[16px] text-[var(--color-ink-2)] leading-[1.6] max-w-[42ch]">Everything the usual market makes hard, made simple and safe.</p>
               <Link href="/seeker/search" className="btn-primary h-11 px-5 text-sm mt-7">Browse rooms <ArrowRight className="w-3.5 h-3.5" /></Link>
@@ -211,7 +211,7 @@ export default function ForSeekers() {
               <div className="eyebrow mb-3">Search that gets it</div>
               <h2 className="font-serif text-[34px] md:text-[48px] leading-[1.0] tracking-[-0.03em] text-[var(--color-ink)]">Filters made for arriving.</h2>
               <p className="mt-5 text-[16px] text-[var(--color-ink-2)] leading-[1.6] max-w-[44ch]">
-                Most rental sites filter by price and bedrooms. MigRent also filters by the things that decide whether a place works for someone new to the country.
+                Most rental sites filter by price and bedrooms. Migrent also filters by the things that decide whether a place works for someone new to the country.
               </p>
               <Link href="/seeker/search" className="btn-primary h-11 px-5 text-sm mt-7">Try the search <ArrowRight className="w-3.5 h-3.5" /></Link>
             </motion.div>
@@ -262,7 +262,7 @@ export default function ForSeekers() {
           <motion.div {...reveal} className="max-w-[760px]">
             <div className="eyebrow mb-5">Free to browse · No credit file needed</div>
             <h2 className="font-serif text-[40px] md:text-[60px] leading-[0.98] tracking-[-0.03em] text-[var(--color-ink)]">Ready to find your room?</h2>
-            <p className="mt-5 text-[17px] text-[var(--color-ink-2)] leading-[1.55] max-w-[560px]">Join migrants, students, and professionals who found a home they can trust through MigRent.</p>
+            <p className="mt-5 text-[17px] text-[var(--color-ink-2)] leading-[1.55] max-w-[560px]">Join migrants, students, and professionals who found a home they can trust through Migrent.</p>
             <div className="flex flex-wrap gap-3 mt-8">
               <Link href="/seeker/search" className="btn-primary h-12 px-7 text-[15px]">Start searching <ArrowRight className="w-4 h-4" /></Link>
               <Link href="/resources/help" className="btn-secondary h-12 px-7 text-[15px]">Questions? Read the FAQ</Link>

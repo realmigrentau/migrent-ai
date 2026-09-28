@@ -3,7 +3,7 @@ import { ArrowRight, BadgeCheck, FileCheck2, HeartHandshake, Lock, MessagesSquar
 import { FeatureRow, Reveal } from "./primitives";
 
 /**
- * Everything MigRent actually does, in one hairline column.
+ * Everything Migrent actually does, in one hairline column.
  *
  * This used to be a six-card grid directly under a four-card grid. It is a
  * list now: the heading holds the left rail while the offering rows pass,

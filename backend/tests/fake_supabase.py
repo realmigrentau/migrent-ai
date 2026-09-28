@@ -1,7 +1,7 @@
 """
 An in-memory stand-in for the supabase-py client.
 
-It implements the subset of the PostgREST query builder the MigRent backend
+It implements the subset of the PostgREST query builder the Migrent backend
 uses (select / insert / update / upsert / delete, eq / neq / gt / gte / lt /
 lte / ilike / in_ / is_ / or_, order / range / limit, count="exact") plus the
 auth.get_user, auth.admin.get_user_by_id and storage APIs the routes call.

@@ -114,8 +114,8 @@ export function buildFaqs(
         ? ` The median advertised room price is ${formatAud(listings.medianWeeklyRoomPrice)} a week across ${listings.sampleSize} listings.`
         : " There are not yet enough listings here to publish a median room price.";
     faqs.push({
-      q: `Are there rooms available in ${name} on MigRent?`,
-      a: `${name} currently has ${formatNumber(listings.activeListings)} verified ${listings.activeListings === 1 ? "room" : "rooms"} advertised on MigRent.${priced} This counts what is advertised on MigRent and is not a vacancy rate for the suburb.`,
+      q: `Are there rooms available in ${name} on Migrent?`,
+      a: `${name} currently has ${formatNumber(listings.activeListings)} verified ${listings.activeListings === 1 ? "room" : "rooms"} advertised on Migrent.${priced} This counts what is advertised on Migrent and is not a vacancy rate for the suburb.`,
     });
   }
 

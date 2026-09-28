@@ -14,7 +14,7 @@ export default function LegalReminderEmail({
   userName = "there",
 }: LegalReminderEmailProps) {
   return (
-    <EmailLayout preview={`Review the MigRent terms and policies, ${userName}`}>
+    <EmailLayout preview={`Review the Migrent terms and policies, ${userName}`}>
       <Text style={heading}>Review Our Terms</Text>
 
       <Text style={paragraph}>
@@ -22,17 +22,17 @@ export default function LegalReminderEmail({
       </Text>
 
       <Text style={paragraph}>
-        Thanks for signing up to MigRent! As part of Australian Consumer Law
+        Thanks for signing up to Migrent! As part of Australian Consumer Law
         (ACCC) compliance, we want to make sure you have reviewed our legal
         documents. Here is a quick summary of what you agreed to:
       </Text>
 
       <Section style={tipBox}>
         <Text style={tipTitle}>Your agreements:</Text>
-        <Text style={tipText}>- MigRent is a facilitator only, not a real estate agent</Text>
+        <Text style={tipText}>- Migrent is a facilitator only, not a real estate agent</Text>
         <Text style={tipText}>- You agree to our Terms of Service and Privacy Policy</Text>
         <Text style={tipText}>- You will comply with local rental laws</Text>
-        <Text style={tipText}>- You indemnify MigRent from claims on platform deals</Text>
+        <Text style={tipText}>- You indemnify Migrent from claims on platform deals</Text>
       </Section>
 
       <Text style={paragraph}>

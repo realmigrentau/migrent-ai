@@ -9,6 +9,11 @@ export interface NavLinkSimple {
 export interface DropdownItem {
   href: string;
   iconPath: string;
+  /** Heading of the column this item sits under in the desktop panel. The
+   *  panel draws one titled column per group, in first-appearance order -
+   *  the layout the Dropdown Navigation reference is built around. The
+   *  mobile menu and the hero ignore it and read the list flat. */
+  groupKey?: string;
   /** Translated text. Used unless a literal `title` is given. */
   titleKey?: string;
   descKey?: string;
@@ -22,6 +27,8 @@ export interface DropdownItem {
 export interface NavLinkDropdown {
   type: "dropdown";
   labelKey: string;
+  /** Literal label, used instead of labelKey (e.g. the product name "Migrent Hub"). */
+  label?: string;
   id: string;
   /** One flat list. The navbar decides whether to draw it in one or two
    *  columns from the item count, which is what stopped the Resources
@@ -45,7 +52,7 @@ export type NavItem = NavLinkSimple | NavLinkDropdown;
  * dropdown.
  *
  * Every label names its destination. In particular there is no "Broker"
- * anywhere: MigRent's mentors are people who have made the same move and
+ * anywhere: Migrent's mentors are people who have made the same move and
  * will talk you through it, not licensed real-estate brokers, and labelling
  * them "Broker" promised a regulated service the product does not provide.
  *
@@ -87,10 +94,10 @@ export const navItems: NavItem[] = [
     id: "stay",
     matchPrefixes: ["/seeker/search", "/for-seekers", "/suburbs", "/suburb", "/safety-verification"],
     items: [
-      { href: "/seeker/search", iconPath: ICON.search, titleKey: "nav.item.search.title", descKey: "nav.item.search.desc" },
-      { href: "/for-seekers", iconPath: ICON.route, titleKey: "nav.item.howItWorks.title", descKey: "nav.item.howItWorks.desc" },
-      { href: "/suburbs", iconPath: ICON.compass, titleKey: "nav.item.suburbs.title", descKey: "nav.item.suburbs.desc" },
-      { href: "/safety-verification", iconPath: ICON.shield, titleKey: "nav.item.safety.title", descKey: "nav.item.safety.desc" },
+      { href: "/seeker/search", iconPath: ICON.search, groupKey: "nav.group.search", titleKey: "nav.item.search.title", descKey: "nav.item.search.desc" },
+      { href: "/suburbs", iconPath: ICON.compass, groupKey: "nav.group.search", titleKey: "nav.item.suburbs.title", descKey: "nav.item.suburbs.desc" },
+      { href: "/for-seekers", iconPath: ICON.route, groupKey: "nav.group.beforeYouRent", titleKey: "nav.item.howItWorks.title", descKey: "nav.item.howItWorks.desc" },
+      { href: "/safety-verification", iconPath: ICON.shield, groupKey: "nav.group.beforeYouRent", titleKey: "nav.item.safety.title", descKey: "nav.item.safety.desc" },
     ],
   },
   {
@@ -99,10 +106,10 @@ export const navItems: NavItem[] = [
     id: "owners",
     matchPrefixes: ["/for-owners", "/owner/listings/new", "/pricing", "/features"],
     items: [
-      { href: "/for-owners", iconPath: ICON.home, titleKey: "nav.item.whyList.title", descKey: "nav.item.whyList.desc" },
-      { href: "/owner/listings/new", iconPath: ICON.plus, titleKey: "nav.item.listRoom.title", descKey: "nav.item.listRoom.desc" },
-      { href: "/pricing", iconPath: ICON.tag, titleKey: "nav.item.pricing.title", descKey: "nav.item.pricing.desc" },
-      { href: "/features", iconPath: ICON.spark, titleKey: "nav.item.features.title", descKey: "nav.item.features.desc" },
+      { href: "/for-owners", iconPath: ICON.home, groupKey: "nav.group.getStarted", titleKey: "nav.item.whyList.title", descKey: "nav.item.whyList.desc" },
+      { href: "/owner/listings/new", iconPath: ICON.plus, groupKey: "nav.group.getStarted", titleKey: "nav.item.listRoom.title", descKey: "nav.item.listRoom.desc" },
+      { href: "/pricing", iconPath: ICON.tag, groupKey: "nav.group.whatYouGet", titleKey: "nav.item.pricing.title", descKey: "nav.item.pricing.desc" },
+      { href: "/features", iconPath: ICON.spark, groupKey: "nav.group.whatYouGet", titleKey: "nav.item.features.title", descKey: "nav.item.features.desc" },
     ],
   },
   { type: "link", href: "/mentors", labelKey: "nav.mentors" },
@@ -117,8 +124,38 @@ export const navItems: NavItem[] = [
     items: RESOURCE_HUBS.map((hub) => ({
       href: hub.href,
       iconPath: RESOURCE_ICON[hub.icon],
+      /* Reading material in one column, getting help in the other. Keyed
+         on the hub id so a fourth hub lands under "Learn" by default rather
+         than silently vanishing from the panel. */
+      groupKey: hub.id === "help" ? "nav.group.support" : "nav.group.learn",
       title: hub.title,
       desc: hub.description,
     })),
   },
 ];
+
+export interface DropdownGroup {
+  titleKey: string | null;
+  items: DropdownItem[];
+}
+
+/**
+ * A dropdown's items as titled columns, in first-appearance order.
+ * Items without a group share one untitled column, so a new item added
+ * without a groupKey still shows up rather than disappearing.
+ */
+export function groupDropdownItems(items: DropdownItem[]): DropdownGroup[] {
+  const groups: DropdownGroup[] = [];
+  const byKey = new Map<string | null, DropdownGroup>();
+  for (const item of items) {
+    const key = item.groupKey ?? null;
+    let group = byKey.get(key);
+    if (!group) {
+      group = { titleKey: key, items: [] };
+      byKey.set(key, group);
+      groups.push(group);
+    }
+    group.items.push(item);
+  }
+  return groups;
+}

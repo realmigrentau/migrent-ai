@@ -52,7 +52,7 @@ function unpackBoundaries() {
 async function main() {
   const startedAt = new Date();
   const t0 = Date.now();
-  log(`MigRent suburb directory build - ASGS Edition ${ASGS_EDITION}\n`);
+  log(`Migrent suburb directory build - ASGS Edition ${ASGS_EDITION}\n`);
 
   // -- 1. Geography and the city/region mapping ---------------------------
   log("Geography");

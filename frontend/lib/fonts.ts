@@ -16,8 +16,8 @@
  *   Newsreader        headings. A proper reading serif with an optical-size
  *                     axis, so a 64px hero and an 18px card title are drawn
  *                     with different contrast rather than one outline scaled.
- *   Schibsted Grotesk body, UI, buttons, forms. A news grotesque - open
- *                     apertures, generous x-height, built to stay legible at
+ *   Manrope           body, UI, buttons, forms, and every Hub heading.
+ *                     Open apertures and a generous x-height, legible at
  *                     13px on a form label, which matters for readers whose
  *                     second language this is.
  *   Style Script      the accent. One word, in a handful of headings. See
@@ -27,7 +27,7 @@
  * carries the wordmark - both were the distinctive parts of the old stack and
  * neither was the problem.
  */
-import { Archivo, Newsreader, Schibsted_Grotesk, Space_Mono, Style_Script } from "next/font/google";
+import { Archivo, Manrope, Newsreader, Space_Mono, Style_Script } from "next/font/google";
 
 /**
  * Display face for every heading.
@@ -47,17 +47,18 @@ export const newsreader = Newsreader({
 });
 
 /**
- * Body and UI face.
+ * Body and UI face, shared by the public site and Migrent Hub.
  *
- * Variable range is 400-900, which is the whole range this site asks of its
- * UI text - nothing below 400 is set in the grotesque any more now that the
- * light display weights belong to Newsreader.
+ * Manrope replaced Schibsted Grotesk when the Hub arrived: one UI face for
+ * both products, with open apertures and a generous x-height that holds up
+ * at 13px on a form label, and a geometric warmth that keeps a dense
+ * application screen from reading as enterprise software. Variable 200-800.
  */
-export const schibsted = Schibsted_Grotesk({
+export const manrope = Manrope({
   subsets: ["latin"],
   weight: "variable",
   display: "swap",
-  variable: "--font-schibsted",
+  variable: "--font-manrope",
   fallback: ["ui-sans-serif", "system-ui", "-apple-system", "Segoe UI", "Roboto", "sans-serif"],
 });
 
@@ -104,7 +105,7 @@ export const spaceMono = Space_Mono({
   fallback: ["JetBrains Mono", "ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
 });
 
-export const fontClassName = `${schibsted.variable} ${newsreader.variable} ${styleScript.variable} ${spaceMono.variable} ${archivo.variable}`;
+export const fontClassName = `${manrope.variable} ${newsreader.variable} ${styleScript.variable} ${spaceMono.variable} ${archivo.variable}`;
 
 /** Inline :root override so portals and body-level styles resolve too. */
-export const fontRootCss = `:root{--font-sans:${schibsted.style.fontFamily};--font-serif:${newsreader.style.fontFamily};--font-display:${newsreader.style.fontFamily};--font-script:${styleScript.style.fontFamily};--font-mono:${spaceMono.style.fontFamily};--font-condensed:${archivo.style.fontFamily};}`;
+export const fontRootCss = `:root{--font-sans:${manrope.style.fontFamily};--font-serif:${newsreader.style.fontFamily};--font-display:${newsreader.style.fontFamily};--font-script:${styleScript.style.fontFamily};--font-mono:${spaceMono.style.fontFamily};--font-condensed:${archivo.style.fontFamily};}`;

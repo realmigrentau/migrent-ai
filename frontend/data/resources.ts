@@ -100,7 +100,7 @@ export const RESOURCE_HUBS: ResourceHub[] = [
     id: "help",
     href: "/resources/help",
     title: "Help Centre",
-    description: "Quick answers to common questions about MigRent.",
+    description: "Quick answers to common questions about Migrent.",
     icon: "lifebuoy",
   },
 ];

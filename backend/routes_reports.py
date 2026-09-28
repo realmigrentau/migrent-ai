@@ -39,6 +39,12 @@ def _get_user_id(authorization: str | None) -> str:
         raise HTTPException(status_code=401, detail="Invalid token")
 
 
+def _is_admin(sb, user_id: str) -> bool:
+    res = sb.table("profiles").select("role, is_admin").eq("id", user_id).execute()
+    row = (res.data or [{}])[0] if res.data else {}
+    return bool(row.get("is_admin")) or row.get("role") in ("admin", "superadmin")
+
+
 @router.post("")
 @limiter.limit("5/hour")
 def create_report(
@@ -52,6 +58,8 @@ def create_report(
     # Normalize fields (support both old and new format)
     resolved_id = body.item_id or body.listing_id or ""
     resolved_type = body.item_type or "listing"
+    if resolved_type not in ("listing", "profile", "user", "message", "property"):
+        raise HTTPException(status_code=400, detail="Unknown report type")
     resolved_reason = body.category or body.reason or "Other"
     resolved_details = body.message or body.details or ""
 
@@ -89,10 +97,16 @@ def create_report(
         try:
             resend.api_key = RESEND_API_KEY
 
-            type_label = "Profile" if resolved_type == "profile" else "Listing"
+            import html as _html
+
+            type_label = {"profile": "Profile", "user": "Profile", "message": "Message", "property": "Property"}.get(resolved_type, "Listing")
+            # Reporter-supplied text goes into HTML: escape it.
+            resolved_reason = _html.escape(resolved_reason)
+            resolved_details = _html.escape(resolved_details)
+            resolved_id = _html.escape(resolved_id)
 
             resend.Emails.send({
-                "from": "MigRent Reports <onboarding@resend.dev>",
+                "from": "Migrent Reports <onboarding@resend.dev>",
                 "to": [SUPPORT_EMAIL],
                 "subject": f"🚩 New {type_label} Report – {resolved_reason}",
                 "html": f"""
@@ -146,8 +160,7 @@ def list_reports(
     user_id = _get_user_id(authorization)
     sb = get_supabase_admin()
 
-    profile = sb.table("profiles").select("role").eq("id", user_id).single().execute()
-    if not profile.data or profile.data.get("role") != "admin":
+    if not _is_admin(sb, user_id):
         raise HTTPException(status_code=403, detail="Admin access required")
 
     query = sb.table("reports").select("*").order("created_at", desc=True)
@@ -169,8 +182,7 @@ async def update_report(
     user_id = _get_user_id(authorization)
     sb = get_supabase_admin()
 
-    profile = sb.table("profiles").select("role").eq("id", user_id).single().execute()
-    if not profile.data or profile.data.get("role") != "admin":
+    if not _is_admin(sb, user_id):
         raise HTTPException(status_code=403, detail="Admin access required")
 
     try:

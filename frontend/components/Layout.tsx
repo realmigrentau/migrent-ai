@@ -57,15 +57,16 @@ export default function Layout({ children }: { children: ReactNode }) {
       {/* Backend status banner - sits above the nav when API is unreachable */}
       <BackendStatusBanner />
 
-      {/* Sticky navbar */}
-      {/* The homepage opens on a full-bleed hero with its own floating
-          navigation, so the site header waits until you have scrolled past
-          it - the account, language and theme controls are one screen away
-          rather than gone. */}
+      {/* The homepage opens on a full-bleed hero with its own navigation,
+          so the site header waits until you have scrolled past it - the
+          account and language controls are one screen away rather than
+          gone, and focus brings the header in straight away. */}
       <MegaNavbar revealAfterVh={isHomePage ? 0.86 : 0} />
 
-      {/* Spacer for sticky navbar - the hero sits under it on the homepage */}
-      {!isHomePage && <div className="h-[60px]" />}
+      {/* Room for the floating header: its 24px gap above the pill, the
+          60px pill, and the status banner when there is one. The homepage
+          hero sits under the header instead. */}
+      {!isHomePage && <div className="site-nav-spacer" aria-hidden="true" />}
 
       {/* Page content */}
       <main id="main-content" tabIndex={-1} className={`flex-1 outline-none ${isFullWidth ? "w-full" : "max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8"}`}>

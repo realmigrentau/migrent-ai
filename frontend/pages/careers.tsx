@@ -15,7 +15,7 @@ export default function Careers() {
 
   return (
     <>
-      <SEOHead title="Careers" description="Join MigRent - help build the future of accommodation for migrants and students in Australia." />
+      <SEOHead title="Careers" description="Join Migrent - help build the future of accommodation for migrants and students in Australia." />
 
       <div className="space-y-16">
         {/* Hero */}

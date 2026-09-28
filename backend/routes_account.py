@@ -16,8 +16,57 @@ router = APIRouter(prefix="/account", tags=["account"])
 # ── DELETE /account/delete ──────────────────────────────────────
 
 
+# Applications that someone is still waiting on, and tenancies someone is
+# living in: deleting either side would strand the other person.
+_OPEN_APPLICATION = ("submitted", "under_review", "shortlisted", "changes_requested", "owner_approved", "migrent_review")
+_LIVE_TENANCY = ("upcoming", "active")
+
+
+def _blocking_reason(sb, uid: str) -> str | None:
+    try:
+        live = sb.table("tenancies").select("id").or_(f"owner_id.eq.{uid},renter_id.eq.{uid}").in_("status", list(_LIVE_TENANCY)).limit(1).execute().data
+    except Exception:
+        live = []
+    if live:
+        return "You have a current or upcoming tenancy in Migrent Hub. It needs to end before the account can be deleted."
+    try:
+        open_apps = sb.table("applications").select("id").or_(f"owner_id.eq.{uid},renter_id.eq.{uid}").in_("status", list(_OPEN_APPLICATION)).limit(1).execute().data
+    except Exception:
+        open_apps = []
+    if open_apps:
+        return "You have applications in progress in Migrent Hub. Withdraw them (or decide on them, if you're the owner) before deleting the account."
+    return None
+
+
+def _delete_hub_rows(sb, uid: str) -> None:
+    """Hub rows that point at listings with ON DELETE RESTRICT go first, so
+    the listing delete below cannot fail on them. Children cascade."""
+    for table, columns in (
+        ("tenancies", ("owner_id", "renter_id")),
+        ("applications", ("owner_id", "renter_id")),
+        ("inspection_bookings", ("renter_id",)),
+        ("inspection_slots", ("owner_id",)),
+    ):
+        for column in columns:
+            try:
+                sb.table(table).delete().eq(column, uid).execute()
+            except Exception:
+                logger.warning("Error deleting %s by %s", table, column)
+    # Other people's applications and tenancies on this person's listings.
+    try:
+        ids = [r["id"] for r in (sb.table("listings").select("id").eq("owner_id", uid).execute().data or [])]
+    except Exception:
+        ids = []
+    if ids:
+        for table in ("tenancies", "applications"):
+            try:
+                sb.table(table).delete().in_("listing_id", ids).execute()
+            except Exception:
+                logger.warning("Error deleting %s on the account's listings", table)
+
+
 @router.delete("/delete")
-@limiter.limit("1/hour")
+@limiter.limit("3/hour")
 def delete_account(
     request: Request,
     authorization: str = Header(...),
@@ -30,8 +79,13 @@ def delete_account(
     sb = get_supabase_admin()
     uid = str(user.id)
 
+    reason = _blocking_reason(sb, uid)
+    if reason:
+        raise HTTPException(status_code=409, detail=reason)
+
     try:
         logger.info("Starting account deletion")
+        _delete_hub_rows(sb, uid)
 
         # Delete all deals where user is involved
         try:

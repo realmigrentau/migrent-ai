@@ -1,4 +1,4 @@
-// MigRent Service Worker - Push Notifications + Basic Offline Caching
+// Migrent Service Worker - Push Notifications + Basic Offline Caching
 
 const CACHE_NAME = "migrent-v1";
 const OFFLINE_URLS = ["/", "/dashboard/seeker", "/dashboard/owner"];
@@ -32,7 +32,7 @@ self.addEventListener("fetch", (event) => {
 
 // Push - show notification from FCM payload
 self.addEventListener("push", (event) => {
-  let data = { title: "MigRent", body: "You have a new update", url: "/" };
+  let data = { title: "Migrent", body: "You have a new update", url: "/" };
 
   if (event.data) {
     try {

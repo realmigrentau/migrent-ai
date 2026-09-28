@@ -448,17 +448,17 @@
     {
       "id": "migrent-listings",
       "group": "platform",
-      "organisation": "MigRent",
-      "dataset": "MigRent verified room listings",
+      "organisation": "Migrent",
+      "dataset": "Migrent verified room listings",
       "edition": "Live",
       "referencePeriod": "Rolling 90 days to the import date",
       "geographyLevel": "Listing suburb and state, matched to SAL",
       "url": null,
       "landingUrl": "/seeker/search",
       "licence": {
-        "name": "MigRent internal data",
+        "name": "Migrent internal data",
         "url": null,
-        "attribution": "MigRent platform data."
+        "attribution": "Migrent platform data."
       },
       "provides": [
         "Active verified rooms",
@@ -466,7 +466,7 @@
         "Bills included",
         "Furnished"
       ],
-      "limitations": "These are advertised asking prices for rooms listed on MigRent, not agreed rents and not a whole-suburb market measure. We publish a median only where the minimum sample is met, and we never describe listing availability as a suburb vacancy rate.",
+      "limitations": "These are advertised asking prices for rooms listed on Migrent, not agreed rents and not a whole-suburb market measure. We publish a median only where the minimum sample is met, and we never describe listing availability as a suburb vacancy rate.",
       "tables": null,
       "downloadedAt": null,
       "sha256": null,

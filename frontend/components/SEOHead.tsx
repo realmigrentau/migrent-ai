@@ -31,7 +31,7 @@ interface SEOHeadProps {
 
 const SITE_NAME = siteIdentity.brandName;
 const DEFAULT_DESC =
-  "Rooms across Australia for migrants, students and new arrivals. Hosts are ID-checked before a room goes live, and renters pay MigRent nothing.";
+  "Rooms across Australia for migrants, students and new arrivals. Hosts are ID-checked before a room goes live, and renters pay Migrent nothing.";
 const DEFAULT_OG = `${SITE_URL}/og-default.png`;
 
 /**

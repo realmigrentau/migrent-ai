@@ -67,6 +67,8 @@ PUBLIC_LISTING_FIELDS: tuple[str, ...] = (
     "min_stay",
     "min_stay_weeks",
     "max_stay_weeks",
+    "listing_purpose",
+    "unit_label",
     "nearest_transport",
     "station_distance_min",
     "neighbourhood_vibe",
@@ -386,3 +388,44 @@ def assert_no_forbidden_fields(payload: Any) -> list[str]:
 
     walk(payload, "")
     return found
+
+
+# ---------------------------------------------------------------------------
+# Listing kind spellings
+# ---------------------------------------------------------------------------
+
+# Listings have been written by three forms over time: the original owner
+# form stored labels ("Private room", "House"), the public search sends short
+# codes ("private"), and Migrent Hub uses snake_case ("private_room"). A
+# filter on any one spelling has to match all of them.
+PLACE_TYPE_SPELLINGS = {
+    "entire_place": ("entire_place", "entire", "entire_home", "Entire place", "Entire home"),
+    "private_room": ("private_room", "private", "Private room"),
+    "shared_room": ("shared_room", "shared", "Shared room"),
+    "multiple_rooms": ("multiple_rooms", "multiple", "Multiple rooms"),
+}
+
+
+def place_type_spellings(value: str) -> list[str]:
+    v = (value or "").strip()
+    for spellings in PLACE_TYPE_SPELLINGS.values():
+        if v.lower() in (s.lower() for s in spellings):
+            return list(spellings)
+    return [v]
+
+
+def canonical_place_type(value) -> str | None:
+    if not value:
+        return None
+    v = str(value).strip().lower()
+    for key, spellings in PLACE_TYPE_SPELLINGS.items():
+        if v in (s.lower() for s in spellings):
+            return key
+    return str(value)
+
+
+def property_type_spellings(value: str) -> list[str]:
+    """'house', 'House' and 'HOUSE' are the same kind of home."""
+    v = (value or "").strip()
+    variants = {v, v.lower(), v.capitalize(), v.replace("_", " ").capitalize(), v.lower().replace(" ", "_")}
+    return sorted(x for x in variants if x)

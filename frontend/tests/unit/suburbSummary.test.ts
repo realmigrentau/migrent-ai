@@ -98,7 +98,7 @@ describe("FAQs", () => {
       expect(f.a).not.toMatch(/null|undefined|NaN/);
       // Every answer names where it came from, or says what it is not.
       expect(f.a, f.q).toMatch(
-        /Census|OpenStreetMap|MigRent|ABS|Australian Bureau of Statistics|Postal Area/,
+        /Census|OpenStreetMap|Migrent|ABS|Australian Bureau of Statistics|Postal Area/,
       );
     }
   });

@@ -8,6 +8,7 @@
  */
 import http from "node:http";
 import { URL } from "node:url";
+import { handleHub, setListings } from "./hub-mock.mjs";
 
 const PORT = Number(process.env.MOCK_API_PORT || 8787);
 const today = new Date();
@@ -97,6 +98,8 @@ const EXPIRED = listing("22222222-2222-4222-8222-000000000001", {
   host_verification: unverifiedOwner.verification,
 });
 
+setListings(LISTINGS);
+
 function matches(l, q) {
   const suburb = (q.get("suburb") || "").toLowerCase();
   if (suburb && !(l.suburb.toLowerCase().includes(suburb) || l.city.toLowerCase().includes(suburb))) return false;
@@ -114,14 +117,36 @@ function matches(l, q) {
   return true;
 }
 
-const server = http.createServer((req, res) => {
+function readBody(req) {
+  return new Promise((resolve) => {
+    const chunks = [];
+    req.on("data", (c) => chunks.push(c));
+    req.on("end", () => {
+      const raw = Buffer.concat(chunks).toString();
+      if (!raw || !(req.headers["content-type"] || "").includes("json")) return resolve({});
+      try {
+        resolve(JSON.parse(raw));
+      } catch {
+        resolve({});
+      }
+    });
+  });
+}
+
+const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, `http://127.0.0.1:${PORT}`);
   const send = (status, body, headers = {}) => {
-    res.writeHead(status, { "content-type": "application/json", "access-control-allow-origin": "*", "access-control-expose-headers": "X-Total-Count, X-Has-More", ...headers });
-    res.end(JSON.stringify(body));
+    res.writeHead(status, { "content-type": "application/json", "access-control-allow-origin": req.headers.origin || "*", "access-control-allow-credentials": "true", "access-control-expose-headers": "X-Total-Count, X-Has-More", ...headers });
+    res.end(status === 204 ? "" : JSON.stringify(body));
   };
-  if (req.method === "OPTIONS") return send(204, {}, { "access-control-allow-headers": "authorization, content-type", "access-control-allow-methods": "GET,POST,PATCH,DELETE" });
+  if (req.method === "OPTIONS")
+    return send(204, {}, {
+      "access-control-allow-headers": "authorization, content-type, apikey, x-client-info, x-supabase-api-version, x-migrent-view-as",
+      "access-control-allow-methods": "GET,POST,PUT,PATCH,DELETE",
+    });
   if (url.pathname === "/health" || url.pathname === "/") return send(200, { status: "ok" });
+  const body = ["POST", "PUT", "PATCH", "DELETE"].includes(req.method) ? await readBody(req) : {};
+  if (handleHub(req, url, body, send)) return;
 
   if (url.pathname === "/listings/search") {
     if (url.searchParams.get("suburb") === "__boom__") return send(500, { detail: "boom" });

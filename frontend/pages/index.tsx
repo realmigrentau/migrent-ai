@@ -32,7 +32,7 @@ export default function Home() {
     <>
       <SEOHead
         title="A real home in Australia, found the right way"
-        description="Rooms across Australia for migrants, students and new arrivals. Hosts are ID-checked before a room goes live. Renters pay MigRent nothing."
+        description="Rooms across Australia for migrants, students and new arrivals. Hosts are ID-checked before a room goes live. Renters pay Migrent nothing."
       />
 
       {/* 1 · the photograph */}

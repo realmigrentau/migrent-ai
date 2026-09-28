@@ -1,7 +1,7 @@
 # Public data contract
 
 What an anonymous visitor (or any user who is not the owner or an admin) can
-receive from MigRent, and what they can never receive. Enforced in three
+receive from Migrent, and what they can never receive. Enforced in three
 places that must stay in sync:
 
 | Layer | Where | What it does |

@@ -9,6 +9,7 @@ import SEOHead from "../components/SEOHead";
 import { ToastProvider } from "../components/ui/Toast";
 import { ConfirmProvider } from "../components/ui/ConfirmDialog";
 import { HCAPTCHA_SITE_KEY } from "../lib/recaptcha";
+import { HubSessionProvider } from "../lib/hub/session";
 import { getPageMeta } from "../lib/pageMeta";
 import { fontClassName, fontRootCss } from "../lib/fonts";
 import "../lib/i18n";
@@ -27,9 +28,15 @@ export default function App({ Component, pageProps, router }: AppProps) {
   }, []);
 
   const isAdmin = router.pathname.startsWith(ADMIN_PATH);
-  const isDashboard = router.pathname.startsWith("/dashboard");
+  // Migrent Hub is its own application: its own shell, navigation and
+  // session guard, none of the marketing layout.
+  const isHub = router.pathname === "/hub" || router.pathname.startsWith("/hub/");
 
-  const inner = isAdmin || isDashboard ? (
+  const inner = isHub ? (
+    <HubSessionProvider>
+      <Component {...pageProps} />
+    </HubSessionProvider>
+  ) : isAdmin ? (
     <Layout>
       <Component {...pageProps} />
     </Layout>
@@ -65,7 +72,7 @@ export default function App({ Component, pageProps, router }: AppProps) {
   const wrapped = (
     <ToastProvider>
       <ConfirmProvider>
-        <SEOHead title={meta.title} description={meta.description} noIndex={meta.noIndex} />
+        {!isHub && <SEOHead title={meta.title} description={meta.description} noIndex={meta.noIndex} />}
         {/* Self-hosted font variables (lib/fonts.ts). The style tag is
             allowed by style-src 'unsafe-inline'; it carries no user data. */}
         <style dangerouslySetInnerHTML={{ __html: fontRootCss }} />
@@ -84,7 +91,9 @@ export default function App({ Component, pageProps, router }: AppProps) {
 
   // The captcha provider is only mounted on the pages that call it, so the
   // hCaptcha script is not downloaded on the homepage, search or listings.
-  const needsCaptcha = ["/signin", "/signup", "/magic-link-login", "/magic-link-signup"].some((p) => router.pathname.startsWith(p));
+  const needsCaptcha = ["/hub/sign-in", "/hub/sign-up", "/hub/forgot-password"].some((p) =>
+    router.pathname.startsWith(p),
+  );
   if (!HCAPTCHA_SITE_KEY || !needsCaptcha) {
     return wrapped;
   }

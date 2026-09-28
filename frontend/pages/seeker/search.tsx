@@ -8,7 +8,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "../../hooks/useAuth";
 import { useTheme } from "../../hooks/useTheme";
 import {
-  updateMyProfile,
   searchListingsPage,
   nearbyStations,
   type Station,
@@ -33,6 +32,8 @@ import {
   type SearchFilters,
   type SortBy,
 } from "../../lib/search/searchQuery";
+import { hubFromSite } from "../../lib/hub/routes";
+import { hubApi } from "../../lib/hub/api";
 
 /**
  * /seeker/search
@@ -193,7 +194,7 @@ function priceLabel(l: PublicListing) {
 
 export default function SeekerSearch({ initialFilters, initialPage, serverToday }: Props) {
   const router = useRouter();
-  const { session, user } = useAuth();
+  const { session } = useAuth();
   const { theme } = useTheme();
 
   const [filters, setFilters] = useState<SearchFilters>(initialFilters);
@@ -243,16 +244,50 @@ export default function SeekerSearch({ initialFilters, initialPage, serverToday 
     };
   }, []);
 
-  // ── Wishlist (local + profile) ──
+  // ── Saved homes ──
+  // Signed in, hearts are the same saved homes as Migrent Hub (one store,
+  // the API). Signed out, they live in this browser until sign-in, when
+  // they are moved to the account.
   useEffect(() => {
+    let local: string[] = [];
     try {
       const stored = localStorage.getItem("wishlist");
       const parsed = stored ? JSON.parse(stored) : null;
-      if (Array.isArray(parsed)) setSaved(new Set(parsed));
+      if (Array.isArray(parsed)) local = parsed.filter((x): x is string => typeof x === "string");
     } catch {
       /* corrupt storage: start empty */
     }
-  }, []);
+    if (!session) {
+      setSaved(new Set(local));
+      return;
+    }
+    let alive = true;
+    (async () => {
+      try {
+        const server = new Set((await hubApi.get<{ ids: string[] }>("/hub/saved/ids")).ids);
+        const moving = local.filter((id) => !server.has(id));
+        for (const id of moving) {
+          try {
+            await hubApi.post("/hub/saved", { listing_id: id });
+            server.add(id);
+          } catch {
+            /* no longer available: drop it */
+          }
+        }
+        try {
+          localStorage.removeItem("wishlist");
+        } catch {
+          /* storage unavailable */
+        }
+        if (alive) setSaved(server);
+      } catch {
+        if (alive) setSaved(new Set(local));
+      }
+    })();
+    return () => {
+      alive = false;
+    };
+  }, [session]);
 
   // ── WebGL: decide once, before any map code is downloaded ──
   useEffect(() => {
@@ -406,16 +441,28 @@ export default function SeekerSearch({ initialFilters, initialPage, serverToday 
   };
 
   const toggleSave = (id: string) => {
+    const wasSaved = saved.has(id);
     const next = new Set(saved);
-    if (next.has(id)) next.delete(id);
+    if (wasSaved) next.delete(id);
     else next.add(id);
     setSaved(next);
-    try {
-      localStorage.setItem("wishlist", JSON.stringify(Array.from(next)));
-    } catch {
-      /* storage unavailable */
+    if (!session) {
+      try {
+        localStorage.setItem("wishlist", JSON.stringify(Array.from(next)));
+      } catch {
+        /* storage unavailable */
+      }
+      return;
     }
-    if (session && user?.id) void updateMyProfile(session.access_token, { wishlist: Array.from(next) });
+    const request = wasSaved ? hubApi.del(`/hub/saved/${id}`) : hubApi.post("/hub/saved", { listing_id: id });
+    request.catch(() =>
+      setSaved((cur) => {
+        const undo = new Set(cur);
+        if (wasSaved) undo.add(id);
+        else undo.delete(id);
+        return undo;
+      }),
+    );
   };
 
   const handleUseLocation = () => {
@@ -823,7 +870,7 @@ export default function SeekerSearch({ initialFilters, initialPage, serverToday 
       {isBestMatch && session && !searching && results.length > 0 && (
         <p className="text-xs text-[var(--color-ink-3)] -mt-2">
           Listings ranked by how well they fit your saved preferences: location, budget and features.{" "}
-          <Link href="/dashboard/seeker-profile" className="text-[var(--color-primary)] hover:underline font-medium">Update your preferences</Link>
+          <Link href={hubFromSite.path("/profile")} className="text-[var(--color-primary)] hover:underline font-medium">Update your preferences</Link>
         </p>
       )}
 
@@ -1034,7 +1081,7 @@ export default function SeekerSearch({ initialFilters, initialPage, serverToday 
                   </div>
                   <p className="text-[11px] text-[var(--color-ink-3)] px-1">Circles show the approximate area of each room, not the exact address.</p>
                   {saved.size > 0 && (
-                    <Link href="/seeker/wishlist" className="card p-4 rounded-2xl block">
+                    <Link href={hubFromSite.path("/saved")} className="card p-4 rounded-2xl block">
                       <p className="text-sm font-bold text-[var(--color-ink)]">Wishlist</p>
                       <p className="text-xs text-[var(--color-ink-3)]">{saved.size} saved</p>
                     </Link>

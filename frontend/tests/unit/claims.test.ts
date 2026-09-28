@@ -24,15 +24,15 @@ function walk(dir: string, out: string[] = []): string[] {
 }
 
 const FORBIDDEN: { pattern: RegExp; why: string }[] = [
-  { pattern: /MigRent AI/, why: "brand is MigRent" },
+  { pattern: /Migrent AI/, why: "brand is Migrent" },
   { pattern: /Pty Ltd/, why: "entity type unconfirmed" },
   { pattern: /Sole Trader/, why: "entity type unconfirmed" },
   { pattern: /Naarm/, why: "location unconfirmed" },
   { pattern: /All systems operational/, why: "no status monitoring exists" },
   { pattern: /24\/7/, why: "support is weekdays by email" },
-  { pattern: /MigRent Guarantee/, why: "no guarantee product exists" },
+  { pattern: /Migrent Guarantee/, why: "no guarantee product exists" },
   { pattern: /thousands of (listings|migrants|verified)/i, why: "invented scale" },
-  { pattern: /escrow/i, why: "MigRent holds no bond" },
+  { pattern: /escrow/i, why: "Migrent holds no bond" },
   { pattern: /migrent-ai\.vercel\.app/, why: "old domain" },
   { pattern: /support@migrent\.com\.au|legal@migrent\.com\.au|privacy@migrent\.com\.au/, why: "mailbox does not exist" },
 ];
@@ -54,7 +54,7 @@ describe("public copy carries no unsupported claims", () => {
 describe("site identity", () => {
   it("copyright line asserts only confirmed facts", () => {
     const line = copyrightLine(2026);
-    expect(line).toContain("MigRent");
+    expect(line).toContain("Migrent");
     expect(line).toContain(siteIdentity.abn);
     expect(line).not.toMatch(/Pty|Trader|Sydney|Melbourne|Naarm/);
   });

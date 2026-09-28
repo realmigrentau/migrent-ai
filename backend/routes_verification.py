@@ -61,7 +61,7 @@ def create_verification_session(authorization: str = Header(...)):
                         "currency": "aud",
                         "unit_amount": VERIFICATION_FEE_AUD,
                         "product_data": {
-                            "name": "MigRent Seeker Verification",
+                            "name": "Migrent Seeker Verification",
                         },
                     },
                     "quantity": 1,
@@ -72,7 +72,7 @@ def create_verification_session(authorization: str = Header(...)):
                 "purpose": "verification",
             },
             payment_intent_data={
-                "statement_descriptor": "MigRent Verify",  # max 22 chars
+                "statement_descriptor": "Migrent Verify",  # max 22 chars
             },
             success_url=VERIFICATION_SUCCESS_URL,
             cancel_url=VERIFICATION_CANCEL_URL,

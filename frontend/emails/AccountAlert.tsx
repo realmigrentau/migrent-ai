@@ -93,9 +93,9 @@ function getAlertContent(
       };
     default:
       return {
-        preview: "Account update from MigRent",
+        preview: "Account update from Migrent",
         title: "Account Update",
-        body: data.message || "You have a new update on your MigRent account.",
+        body: data.message || "You have a new update on your Migrent account.",
         highlight: null,
         ctaText: "Go to Dashboard",
         ctaUrl: FRONTEND_URL,

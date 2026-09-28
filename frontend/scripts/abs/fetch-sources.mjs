@@ -65,7 +65,7 @@ async function main() {
 
     process.stdout.write(`↓ ${source.file} ... `);
     const res = await fetch(source.url, {
-      headers: { "User-Agent": "MigRent-suburb-directory-ETL/1.0 (+https://migrent.vercel.app)" },
+      headers: { "User-Agent": "Migrent-suburb-directory-ETL/1.0 (+https://migrent.vercel.app)" },
       redirect: "follow",
     });
     if (!res.ok) throw new Error(`${source.id}: HTTP ${res.status} from ${source.url}`);

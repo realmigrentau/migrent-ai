@@ -50,7 +50,65 @@ DELIVERY_RULES = {
     "listing_flagged":              {"in_app": True, "email": True,  "push": False},
     "listing_hidden":               {"in_app": True, "email": True,  "push": False},
     "listing_removed":              {"in_app": True, "email": True,  "push": False},
+    # Migrent Hub
+    "application_submitted":        {"in_app": True, "email": True,  "push": True},
+    "application_status_changed":   {"in_app": True, "email": True,  "push": True},
+    "application_changes_requested":{"in_app": True, "email": True,  "push": True},
+    "application_approved":         {"in_app": True, "email": True,  "push": True},
+    "application_finalised":        {"in_app": True, "email": True,  "push": True},
+    "application_withdrawn":        {"in_app": True, "email": False, "push": False},
+    "inspection_booked":            {"in_app": True, "email": True,  "push": False},
+    "inspection_changed":           {"in_app": True, "email": True,  "push": True},
+    "inspection_cancelled":         {"in_app": True, "email": True,  "push": True},
+    "inspection_reminder":          {"in_app": True, "email": True,  "push": True},
+    "saved_search_match":           {"in_app": True, "email": True,  "push": False},
+    "maintenance_created":          {"in_app": True, "email": True,  "push": True},
+    "maintenance_updated":          {"in_app": True, "email": True,  "push": False},
+    "tenancy_created":              {"in_app": True, "email": True,  "push": False},
+    "listing_submitted":            {"in_app": True, "email": False, "push": False},
 }
+
+# Which preference switch (Hub > Settings > Notifications) governs the
+# email for each event. In-app notifications are always stored; the
+# switch only decides whether an email is sent as well. Security and
+# account notices have no switch on purpose.
+EMAIL_PREFERENCE_GROUP = {
+    "message_received": "messages",
+    "host_response_sent": "messages",
+    "application_submitted": "applications",
+    "application_status_changed": "applications",
+    "application_changes_requested": "applications",
+    "application_approved": "applications",
+    "application_finalised": "applications",
+    "application_withdrawn": "applications",
+    "booking_request_created": "applications",
+    "booking_approved": "applications",
+    "booking_declined": "applications",
+    "booking_confirmed": "applications",
+    "inspection_booked": "inspections",
+    "inspection_changed": "inspections",
+    "inspection_cancelled": "inspections",
+    "inspection_reminder": "inspections",
+    "saved_search_match": "saved_searches",
+    "match_created": "saved_searches",
+    "maintenance_created": "maintenance",
+    "maintenance_updated": "maintenance",
+    "tenancy_created": "applications",
+    "listing_published": "listings",
+    "listing_rejected": "listings",
+    "listing_changes_requested": "listings",
+    "listing_submitted": "listings",
+    "weekly_summary_ready": "summaries",
+}
+
+
+def email_allowed(prefs: dict | None, event: str) -> bool:
+    """True unless the person switched this group of emails off."""
+    group = EMAIL_PREFERENCE_GROUP.get(event)
+    if not group or not isinstance(prefs, dict):
+        return True
+    email_prefs = prefs.get("email") if isinstance(prefs.get("email"), dict) else {}
+    return email_prefs.get(group, True) is not False
 
 # Friendly labels for notification types (used in UI grouping)
 NOTIFICATION_TYPE_LABELS = {
@@ -70,6 +128,21 @@ NOTIFICATION_TYPE_LABELS = {
     "listing_flagged": "Listings",
     "listing_hidden": "Listings",
     "listing_removed": "Listings",
+    "application_submitted": "Applications",
+    "application_status_changed": "Applications",
+    "application_changes_requested": "Applications",
+    "application_approved": "Applications",
+    "application_finalised": "Applications",
+    "application_withdrawn": "Applications",
+    "inspection_booked": "Inspections",
+    "inspection_changed": "Inspections",
+    "inspection_cancelled": "Inspections",
+    "inspection_reminder": "Inspections",
+    "saved_search_match": "Saved searches",
+    "maintenance_created": "Maintenance",
+    "maintenance_updated": "Maintenance",
+    "tenancy_created": "Home",
+    "listing_submitted": "Listings",
 }
 
 
@@ -78,7 +151,7 @@ def notify(
     event: str,
     title: str,
     body: str,
-    cta_url: str = "/dashboard",
+    cta_url: str = "/hub",
     entity_type: str | None = None,
     entity_id: str | None = None,
     metadata: dict | None = None,
@@ -122,8 +195,9 @@ def notify(
         except Exception as e:
             logger.error("Failed to create notification for user %s: %s", user_id, e)
 
-    # 2. Send email if enabled and recipient provided
-    if rules.get("email") and recipient_email:
+    # 2. Send email if enabled, a recipient exists, and they have not
+    # switched this kind of email off.
+    if rules.get("email") and recipient_email and email_allowed(_email_prefs(user_id), event):
         try:
             _send_notification_email(
                 to=recipient_email,
@@ -145,6 +219,17 @@ def notify(
             logger.error("Failed to send push notification to user %s: %s", user_id, e)
 
 
+def _email_prefs(user_id: str) -> dict:
+    try:
+        sb = get_supabase_admin()
+        res = sb.table("profiles").select("notification_prefs").eq("id", str(user_id)).execute()
+        if res.data:
+            return res.data[0].get("notification_prefs") or {}
+    except Exception:
+        pass
+    return {}
+
+
 def _send_notification_email(
     to: str,
     name: str,
@@ -153,8 +238,17 @@ def _send_notification_email(
     cta_url: str,
     event: str,
 ):
-    """Send a generic notification email using the MigRent template."""
+    """Send a generic notification email using the Migrent template.
+
+    Title, body and name can contain text other people wrote (a listing
+    title, a renter's name), so they are HTML-escaped before they reach the
+    template. The CTA deep-links to the exact Hub page the event is about.
+    """
+    import html as _html
+
     full_url = cta_url if cta_url.startswith("http") else f"{FRONTEND_URL}{cta_url}"
+    safe_title, safe_body, safe_name = _html.escape(title), _html.escape(body), _html.escape(name)
+    safe_url = _html.escape(full_url, quote=True)
 
     # Choose button text based on event type
     button_labels = {
@@ -169,17 +263,29 @@ def _send_notification_email(
         "listing_published": "View Listing",
         "listing_rejected": "Edit Listing",
         "listing_changes_requested": "Edit Listing",
+        "application_submitted": "Review application",
+        "application_status_changed": "View application",
+        "application_changes_requested": "Update application",
+        "application_approved": "View application",
+        "application_finalised": "View next steps",
+        "inspection_booked": "View inspection",
+        "inspection_changed": "View inspection",
+        "inspection_cancelled": "Find another time",
+        "inspection_reminder": "View inspection",
+        "saved_search_match": "See new homes",
+        "maintenance_created": "View request",
+        "maintenance_updated": "View request",
+        "tenancy_created": "View your home",
     }
-    btn_text = button_labels.get(event, "View on MigRent")
+    btn_text = button_labels.get(event, "Open Migrent Hub")
 
     content = f"""
-    <h2 style="font-size:22px;font-weight:bold;color:#1a1a1a;margin:0 0 16px;">{title}</h2>
-    <p style="font-size:15px;line-height:24px;color:#374151;margin:0 0 12px;">Hi {name},</p>
-    <p style="font-size:15px;line-height:24px;color:#374151;margin:0 0 20px;">{body}</p>
-    {_button(btn_text, full_url)}
-    <p style="font-size:12px;color:#9ca3af;text-align:center;margin:8px 0 0;">
-      You can manage your notification preferences in your
-      <a href="{FRONTEND_URL}/account/settings" style="color:{BRAND_COLOR};text-decoration:none;">account settings</a>.
+    <h1 style="font-size:22px;line-height:30px;font-weight:700;color:#101828;margin:0 0 16px;">{safe_title}</h1>
+    <p style="font-size:15px;line-height:24px;color:#344054;margin:0 0 12px;">Hi {safe_name},</p>
+    <p style="font-size:15px;line-height:24px;color:#344054;margin:0 0 8px;">{safe_body}</p>
+    {_button(btn_text, safe_url)}
+    <p style="font-size:13px;line-height:20px;color:#667085;margin:8px 0 0;">
+      Or paste this link into your browser: <a href="{safe_url}" style="color:{BRAND_COLOR};word-break:break-all;">{safe_url}</a>
     </p>
     """
 
@@ -188,7 +294,7 @@ def _send_notification_email(
         f"{title}\n\n"
         f"{body}\n\n"
         f"{btn_text}: {full_url}\n\n"
-        f"- The MigRent Team"
+        f"- The Migrent team"
     )
 
-    _send_email(to, title, _email_layout(content, title), text_body)
+    _send_email(to, title, _email_layout(content, body[:140]), text_body)

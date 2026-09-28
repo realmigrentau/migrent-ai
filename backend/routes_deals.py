@@ -1,7 +1,7 @@
 """
 Stripe webhook and the legacy "deals" endpoints.
 
-The webhook is the only place a payment becomes a fact in MigRent. A
+The webhook is the only place a payment becomes a fact in Migrent. A
 success-page redirect proves nothing (anyone can type the URL), so the
 booking-success and verification-success pages ask the API for the state
 this handler wrote, and never set it themselves.

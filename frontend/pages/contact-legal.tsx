@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 export default function ContactLegal() {
   return (
     <>
-      <SEOHead title="Legal Contact &amp; Arbitration" description="Contact MigRent for legal inquiries, arbitration details, and governing law information." />
+      <SEOHead title="Legal Contact &amp; Arbitration" description="Contact Migrent for legal inquiries, arbitration details, and governing law information." />
 
       <div className="max-w-3xl mx-auto space-y-10">
         {/* Hero */}
@@ -32,7 +32,7 @@ export default function ContactLegal() {
             <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
               <p>For legal inquiries, formal notices, or arbitration-related correspondence, contact:</p>
               <div className="card-subtle p-4 rounded-xl space-y-2">
-                <p className="font-semibold text-[var(--color-ink)] text-base">MigRent - Legal</p>
+                <p className="font-semibold text-[var(--color-ink)] text-base">Migrent - Legal</p>
                 <p><strong>ABN:</strong> 22 669 566 941</p>
                 <p><strong>Email:</strong> <a href="mailto:migrentau@gmail.com" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">migrentau@gmail.com</a></p>
                 <p><strong>Subject line for legal matters:</strong> &quot;Legal Notice&quot; or &quot;Arbitration&quot;</p>
@@ -97,7 +97,7 @@ export default function ContactLegal() {
           <section className="card p-6 rounded-2xl space-y-3">
             <h2 className="text-lg font-bold text-[var(--color-ink)]">Governing Law</h2>
             <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
-              <p>All legal matters relating to MigRent are governed by:</p>
+              <p>All legal matters relating to Migrent are governed by:</p>
               <div className="card-subtle p-4 rounded-xl space-y-2">
                 <p><strong className="text-[var(--color-ink)]">Governing law:</strong> Laws of New South Wales, Australia</p>
                 <p><strong className="text-[var(--color-ink)]">Jurisdiction:</strong> Courts of New South Wales (subject to arbitration clause)</p>
@@ -110,7 +110,7 @@ export default function ContactLegal() {
           <section className="card p-6 rounded-2xl space-y-3">
             <h2 className="text-lg font-bold text-[var(--color-ink)]">Arbitration Process</h2>
             <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
-              <p>As set out in our <Link href="/terms-of-service" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">Terms of Service</Link> (section 13) and <Link href="/support-disputes" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">Dispute Resolution</Link> page, disputes that cannot be resolved through direct communication or MigRent mediation are subject to binding arbitration.</p>
+              <p>As set out in our <Link href="/terms-of-service" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">Terms of Service</Link> (section 13) and <Link href="/support-disputes" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">Dispute Resolution</Link> page, disputes that cannot be resolved through direct communication or Migrent mediation are subject to binding arbitration.</p>
               <div className="card-subtle p-4 rounded-xl space-y-2">
                 <h3 className="font-semibold text-[var(--color-ink)]">Arbitration Details</h3>
                 <ul className="list-disc list-inside space-y-1.5">
@@ -123,7 +123,7 @@ export default function ContactLegal() {
                   <li><strong>Costs:</strong> Each party bears their own costs unless the arbitrator orders otherwise</li>
                 </ul>
               </div>
-              <p>Before commencing arbitration, parties must have completed Steps 1 and 2 of the dispute resolution process (direct resolution and MigRent mediation). See <Link href="/support-disputes" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">full dispute resolution process</Link>.</p>
+              <p>Before commencing arbitration, parties must have completed Steps 1 and 2 of the dispute resolution process (direct resolution and Migrent mediation). See <Link href="/support-disputes" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">full dispute resolution process</Link>.</p>
             </div>
           </section>
 
@@ -155,7 +155,7 @@ export default function ContactLegal() {
 
           {/* Legal Disclaimer */}
           <div className="card-subtle p-4 rounded-xl text-xs text-[var(--color-ink-3)] leading-relaxed">
-            <p>MigRent does not provide legal advice. For legal matters, seek independent advice from a qualified Australian lawyer. Last reviewed: March 2026.</p>
+            <p>Migrent does not provide legal advice. For legal matters, seek independent advice from a qualified Australian lawyer. Last reviewed: March 2026.</p>
           </div>
 
           {/* CTA */}

@@ -12,7 +12,13 @@ if (!supabaseUrl || !supabaseAnonKey) {
 
 /**
  * Browser-side Supabase client using @supabase/ssr.
- * Stores auth tokens in cookies (readable by middleware)
- * AND localStorage (for backward compatibility).
+ * Stores auth tokens in cookies (readable by the proxy) and localStorage.
+ *
+ * NEXT_PUBLIC_AUTH_COOKIE_DOMAIN (e.g. ".migrent.com.au") widens the auth
+ * cookie to every subdomain, so the public site and Migrent Hub on
+ * hub.migrent.com.au share one sign-in. Leave it unset on *.vercel.app:
+ * that is a public suffix and browsers refuse cookies scoped to it.
  */
-export const supabase = createBrowserClient(supabaseUrl, supabaseAnonKey);
+const cookieDomain = process.env.NEXT_PUBLIC_AUTH_COOKIE_DOMAIN || undefined;
+
+export const supabase = createBrowserClient(supabaseUrl, supabaseAnonKey, cookieDomain ? { cookieOptions: { domain: cookieDomain } } : undefined);

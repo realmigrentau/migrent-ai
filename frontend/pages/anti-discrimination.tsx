@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 export default function AntiDiscrimination() {
   return (
     <>
-      <SEOHead title="Fair Housing Policy" description="MigRent Fair Housing Policy - our commitment to anti-discrimination and equal access to accommodation." />
+      <SEOHead title="Fair Housing Policy" description="Migrent Fair Housing Policy - our commitment to anti-discrimination and equal access to accommodation." />
 
       <div className="max-w-3xl mx-auto space-y-10">
         {/* Hero */}
@@ -30,7 +30,7 @@ export default function AntiDiscrimination() {
           <section className="card p-6 rounded-2xl space-y-3 border-l-4 border-l-pink-500">
             <h2 className="text-lg font-bold text-[var(--color-ink)]">Our Commitment</h2>
             <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
-              <p>MigRent is committed to providing a platform free from discrimination. As a service that connects migrants with accommodation, we take anti-discrimination obligations seriously. All users must comply with Australian anti-discrimination laws.</p>
+              <p>Migrent is committed to providing a platform free from discrimination. As a service that connects migrants with accommodation, we take anti-discrimination obligations seriously. All users must comply with Australian anti-discrimination laws.</p>
             </div>
           </section>
 
@@ -67,9 +67,9 @@ export default function AntiDiscrimination() {
 
           {/* Prohibited Conduct */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-[var(--color-ink)]">Prohibited Conduct on MigRent</h2>
+            <h2 className="text-lg font-bold text-[var(--color-ink)]">Prohibited Conduct on Migrent</h2>
             <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
-              <p>The following are strictly prohibited on MigRent:</p>
+              <p>The following are strictly prohibited on Migrent:</p>
               <ul className="list-disc list-inside space-y-1.5">
                 <li><strong>Refusing to list or offer accommodation</strong> to a person based on a protected attribute</li>
                 <li><strong>Listing discriminatory preferences</strong> in property descriptions (e.g., &quot;no students from [country]&quot;, &quot;females only&quot; without lawful exemption)</li>
@@ -98,9 +98,9 @@ export default function AntiDiscrimination() {
           <section className="card p-6 rounded-2xl space-y-3">
             <h2 className="text-lg font-bold text-[var(--color-ink)]">Reporting Discrimination</h2>
             <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
-              <p>If you experience discrimination on MigRent:</p>
+              <p>If you experience discrimination on Migrent:</p>
               <div className="card-subtle p-4 rounded-xl space-y-2">
-                <p><strong className="text-[var(--color-ink)]">1. Report to MigRent:</strong> Email <a href="mailto:migrentau@gmail.com" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">migrentau@gmail.com</a> with subject &quot;Discrimination Report.&quot; Include screenshots and details. We will investigate within 48 hours.</p>
+                <p><strong className="text-[var(--color-ink)]">1. Report to Migrent:</strong> Email <a href="mailto:migrentau@gmail.com" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">migrentau@gmail.com</a> with subject &quot;Discrimination Report.&quot; Include screenshots and details. We will investigate within 48 hours.</p>
                 <p><strong className="text-[var(--color-ink)]">2. Australian Human Rights Commission:</strong> You can lodge a formal complaint at <a href="https://humanrights.gov.au/complaints" target="_blank" rel="noopener noreferrer" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">humanrights.gov.au</a></p>
                 <p><strong className="text-[var(--color-ink)]">3. State anti-discrimination body:</strong> Each state has its own body (e.g., Anti-Discrimination NSW, Victorian Equal Opportunity and Human Rights Commission)</p>
               </div>
@@ -111,14 +111,14 @@ export default function AntiDiscrimination() {
           <section className="card p-6 rounded-2xl space-y-3">
             <h2 className="text-lg font-bold text-[var(--color-ink)]">Consequences</h2>
             <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
-              <p>Users found to have engaged in discriminatory conduct on MigRent may face:</p>
+              <p>Users found to have engaged in discriminatory conduct on Migrent may face:</p>
               <ul className="list-disc list-inside space-y-1.5">
                 <li>Immediate removal of discriminatory listing content</li>
                 <li>Warning issued to the user&apos;s account</li>
                 <li>Temporary or permanent account suspension</li>
                 <li>Reporting to relevant anti-discrimination authorities</li>
               </ul>
-              <p>MigRent has zero tolerance for discrimination, particularly against migrants and people from diverse backgrounds.</p>
+              <p>Migrent has zero tolerance for discrimination, particularly against migrants and people from diverse backgrounds.</p>
             </div>
           </section>
 

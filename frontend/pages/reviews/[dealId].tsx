@@ -7,6 +7,7 @@ import { useDealReview, submitReview } from "../../hooks/useReviews";
 import ReviewForm, { ReviewFormData } from "../../components/reviews/ReviewForm";
 import ReviewCard from "../../components/reviews/ReviewCard";
 import SEOHead from "../../components/SEOHead";
+import { hubFromSite } from "../../lib/hub/routes";
 
 export default function ReviewDealPage() {
   const router = useRouter();
@@ -30,7 +31,7 @@ export default function ReviewDealPage() {
         <div className="card p-8 rounded-2xl max-w-md w-full text-center">
           <h1 className="text-xl font-bold text-[var(--color-ink)] mb-2">Sign in Required</h1>
           <p className="text-sm text-[var(--color-ink-3)] mb-6">Please sign in to leave a review.</p>
-          <Link href="/signin" className="btn-primary py-3 px-6 rounded-xl text-sm inline-block">
+          <Link href={hubFromSite.signIn()} className="btn-primary py-3 px-6 rounded-xl text-sm inline-block">
             Sign In
           </Link>
         </div>
@@ -87,7 +88,7 @@ export default function ReviewDealPage() {
   if (submitted || context.my_review) {
     return (
       <>
-        <SEOHead title="Review Submitted - MigRent" description="Your review has been submitted" />
+        <SEOHead title="Review Submitted - Migrent" description="Your review has been submitted" />
         <div className="min-h-screen py-12 px-4">
           <div className="max-w-lg mx-auto">
             <motion.div
@@ -104,7 +105,7 @@ export default function ReviewDealPage() {
                 Review Submitted!
               </h1>
               <p className="text-sm text-[var(--color-ink-3)] mb-6">
-                Thank you for sharing your experience. Your review helps build trust in the MigRent community.
+                Thank you for sharing your experience. Your review helps build trust in the Migrent community.
               </p>
 
               {/* Show the submitted review */}
@@ -143,7 +144,7 @@ export default function ReviewDealPage() {
   if (!context.can_review) {
     return (
       <>
-        <SEOHead title="Review - MigRent" description="Leave a review" />
+        <SEOHead title="Review - Migrent" description="Leave a review" />
         <div className="min-h-screen py-12 px-4">
           <div className="max-w-lg mx-auto">
             <div className="card p-8 rounded-2xl text-center">
@@ -174,7 +175,7 @@ export default function ReviewDealPage() {
   return (
     <>
       <SEOHead
-        title="Leave a Review - MigRent"
+        title="Leave a Review - Migrent"
         description={`Review your experience with ${context.other_user.name}`}
       />
       <div className="min-h-screen py-8 px-4">

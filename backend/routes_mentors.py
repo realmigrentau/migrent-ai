@@ -16,7 +16,7 @@ STRIPE_SECRET_KEY = os.environ.get("STRIPE_SECRET_KEY", "")
 stripe.api_key = STRIPE_SECRET_KEY
 
 FRONTEND_URL = os.environ.get("FRONTEND_URL", "https://migrent.vercel.app")
-PLATFORM_FEE_PERCENT = 30  # MigRent takes 30%
+PLATFORM_FEE_PERCENT = 30  # Migrent takes 30%
 
 
 # -- Models --
@@ -250,7 +250,7 @@ def create_session(
                     "currency": "aud",
                     "unit_amount": amount,
                     "product_data": {
-                        "name": f"MigRent Mentor Session - {mentor.get('suburb', 'Local Guide')}",
+                        "name": f"Migrent Mentor Session - {mentor.get('suburb', 'Local Guide')}",
                     },
                 },
                 "quantity": 1,

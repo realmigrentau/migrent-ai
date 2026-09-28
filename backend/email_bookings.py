@@ -14,47 +14,53 @@ logger = logging.getLogger(__name__)
 MAILJET_API_KEY = os.environ.get("MAILJET_API_KEY", "")
 MAILJET_SECRET_KEY = os.environ.get("MAILJET_SECRET_KEY", "")
 FROM_EMAIL = os.environ.get("FROM_EMAIL", "migrentau@gmail.com")
-FROM_NAME = os.environ.get("FROM_NAME", "MigRent")
+FROM_NAME = os.environ.get("FROM_NAME", "Migrent")
 FRONTEND_URL = os.environ.get("FRONTEND_URL", "https://migrent.vercel.app")
 
-# Brand colors
-BRAND_COLOR = "#E11D48"
-BRAND_BG = "#f6f9fc"
+# Brand colours: Migrent cobalt on a cool off-white. White on #3153D9 is
+# 5.9:1, so button labels stay readable at 16px.
+BRAND_COLOR = "#3153D9"
+BRAND_BG = "#F6F8FC"
 
 
 def _email_layout(content: str, preview: str = "") -> str:
-    """Wrap email content in the standard MigRent HTML layout."""
+    """Wrap email content in the standard Migrent HTML layout.
+
+    Table-free, single column, 600px max: renders on phone clients and
+    reads in order for screen readers. `preview` becomes the hidden inbox
+    preview line.
+    """
+    import html as _html
+
+    hub = os.environ.get("HUB_BASE_URL", "").rstrip("/") or f"{FRONTEND_URL}/hub"
+    preview_html = (
+        f'<div style="display:none;max-height:0;overflow:hidden;opacity:0;">{_html.escape(preview)}</div>' if preview else ""
+    )
     return f"""<!DOCTYPE html>
-<html>
+<html lang="en-AU">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MigRent</title>
+  <meta name="color-scheme" content="light">
+  <title>Migrent</title>
 </head>
-<body style="margin:0;padding:0;background-color:{BRAND_BG};font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Ubuntu,sans-serif;">
-  <div style="max-width:600px;margin:0 auto;background:#ffffff;border-radius:8px;overflow:hidden;">
-    <!-- Header -->
-    <div style="background-color:{BRAND_COLOR};padding:24px 32px;text-align:center;">
-      <a href="{FRONTEND_URL}" style="text-decoration:none;">
-        <span style="color:#ffffff;font-size:28px;font-weight:bold;letter-spacing:-0.5px;">MigRent</span>
+<body style="margin:0;padding:24px 12px;background-color:{BRAND_BG};font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;color:#101828;">
+  {preview_html}
+  <div role="article" aria-label="Migrent" style="max-width:600px;margin:0 auto;background:#ffffff;border-radius:20px;overflow:hidden;border:1px solid #E4E9F0;">
+    <div style="padding:28px 32px 0;">
+      <a href="{FRONTEND_URL}" style="text-decoration:none;color:#101828;font-size:20px;font-weight:800;letter-spacing:-0.4px;">
+        <span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:#3D63F3;margin-right:8px;vertical-align:middle;"></span>Migrent
       </a>
     </div>
-
-    <!-- Content -->
-    <div style="padding:32px;">
+    <div style="padding:20px 32px 32px;">
       {content}
     </div>
-
-    <!-- Footer -->
-    <div style="border-top:1px solid #e6ebf1;padding:24px 32px;text-align:center;">
-      <p style="color:#8898aa;font-size:14px;margin:0 0 8px;">MigRent - Find your home in Australia</p>
-      <p style="color:#8898aa;font-size:12px;margin:0 0 8px;">
-        <a href="{FRONTEND_URL}" style="color:{BRAND_COLOR};text-decoration:none;">Website</a> |
-        <a href="{FRONTEND_URL}/support" style="color:{BRAND_COLOR};text-decoration:none;">Support</a> |
-        <a href="{FRONTEND_URL}/settings" style="color:{BRAND_COLOR};text-decoration:none;">Email Preferences</a>
-      </p>
-      <p style="color:#b0b8c4;font-size:11px;line-height:16px;margin:8px 0 0;">
-        You are receiving this email because you have an account on MigRent.
+    <div style="border-top:1px solid #E4E9F0;padding:20px 32px;">
+      <p style="color:#667085;font-size:13px;line-height:20px;margin:0 0 6px;">Migrent - find, secure and manage a home in Australia.</p>
+      <p style="color:#667085;font-size:13px;line-height:20px;margin:0;">
+        <a href="{hub}" style="color:{BRAND_COLOR};text-decoration:none;">Open Migrent Hub</a> &middot;
+        <a href="{hub}/settings#notifications" style="color:{BRAND_COLOR};text-decoration:none;">Email preferences</a> &middot;
+        <a href="{FRONTEND_URL}/contact" style="color:{BRAND_COLOR};text-decoration:none;">Support</a>
       </p>
     </div>
   </div>
@@ -63,8 +69,8 @@ def _email_layout(content: str, preview: str = "") -> str:
 
 
 def _button(text: str, url: str, color: str = BRAND_COLOR) -> str:
-    return f"""<div style="text-align:center;margin:24px 0;">
-      <a href="{url}" style="background-color:{color};border-radius:8px;color:#ffffff;font-size:16px;font-weight:600;text-decoration:none;padding:14px 32px;display:inline-block;">{text}</a>
+    return f"""<div style="margin:24px 0;">
+      <a href="{url}" style="background-color:{color};border-radius:12px;color:#ffffff;font-size:16px;font-weight:600;text-decoration:none;padding:14px 28px;display:inline-block;">{text}</a>
     </div>"""
 
 
@@ -157,7 +163,7 @@ def send_booking_request_to_owner(
         f"Estimated rent: AUD ${total_price:,.2f}\n\n"
         f"Review: {FRONTEND_URL}/dashboard/owner\n\n"
         f"You have 48 hours to respond.\n\n"
-        f"- The MigRent Team"
+        f"- The Migrent Team"
     )
 
     _send_email(owner_email, subject, _email_layout(content, f"New booking from {seeker_name}"), text)
@@ -191,12 +197,12 @@ def send_booking_accepted_to_seeker(
     </p>
 
     {_details_box([
-        ("What you pay MigRent", "AUD $0.00"),
+        ("What you pay Migrent", "AUD $0.00"),
         ("Next step", "The host is confirming now. We will email you the moment it is locked in."),
     ])}
 
     <p style="font-size:14px;line-height:22px;color:#374151;margin:16px 0 0;">
-      Rent and bond are arranged directly between you and your host. MigRent
+      Rent and bond are arranged directly between you and your host. Migrent
       does not collect either, so never send money to anyone claiming to be us.
     </p>
     """
@@ -204,11 +210,11 @@ def send_booking_accepted_to_seeker(
     text = (
         f"Hi {seeker_name},\n\n"
         f"Great news. The host has accepted your booking request for: {listing_title}\n\n"
-        f"What you pay MigRent: $0.00\n"
+        f"What you pay Migrent: $0.00\n"
         f"The host is confirming now. We will email you the moment it is locked in.\n\n"
-        f"Rent and bond are arranged directly between you and your host. MigRent\n"
+        f"Rent and bond are arranged directly between you and your host. Migrent\n"
         f"does not collect either, so never send money to anyone claiming to be us.\n\n"
-        f"- The MigRent Team"
+        f"- The Migrent Team"
     )
 
     _send_email(seeker_email, subject, _email_layout(content, f"Booking approved for {listing_title}"), text)
@@ -251,7 +257,7 @@ def send_owner_fee_request(
         f"Your booking with {seeker_name} for {listing_title} is held and ready.\n"
         f"Pay your one-off $99 host listing fee to confirm it: {checkout_url}\n\n"
         f"No commission on rent. One fee, per property, only when you match.\n\n"
-        f"- The MigRent Team"
+        f"- The Migrent Team"
     )
 
     _send_email(owner_email, subject, _email_layout(content, f"Confirm your booking with {seeker_name}"), text)
@@ -271,7 +277,7 @@ def send_booking_declined_to_seeker(
       Unfortunately, the owner has declined your booking request for <strong>{listing_title}</strong>.
     </p>
     <p style="font-size:15px;line-height:24px;color:#374151;margin:0 0 12px;">
-      Don't worry - there are plenty of other great listings on MigRent!
+      Don't worry - there are plenty of other great listings on Migrent!
     </p>
 
     {_button("Browse More Listings", f"{FRONTEND_URL}/seeker/search")}
@@ -289,7 +295,7 @@ def send_booking_declined_to_seeker(
         f"Hi {seeker_name},\n\n"
         f"Unfortunately, the owner has declined your booking request for: {listing_title}\n\n"
         f"Browse more listings: {FRONTEND_URL}/seeker/search\n\n"
-        f"- The MigRent Team"
+        f"- The Migrent Team"
     )
 
     _send_email(seeker_email, subject, _email_layout(content), text)
@@ -340,7 +346,7 @@ def send_booking_confirmed_to_both(
         f"Guest: {seeker_name}\n"
         f"Dates: {check_in} to {check_out}\n\n"
         f"Dashboard: {FRONTEND_URL}/dashboard/owner\n\n"
-        f"- The MigRent Team"
+        f"- The Migrent Team"
     )
 
     _send_email(owner_email, f"Booking confirmed - {listing_title}", _email_layout(owner_content), owner_text)
@@ -380,7 +386,7 @@ def send_booking_confirmed_to_both(
         f"Check-in: {check_in}\nCheck-out: {check_out}\n\n"
         f"Dashboard: {FRONTEND_URL}/dashboard/seeker\n\n"
         f"Welcome to your new home!\n\n"
-        f"- The MigRent Team"
+        f"- The Migrent Team"
     )
 
     _send_email(seeker_email, f"Booking confirmed - {listing_title}", _email_layout(seeker_content), seeker_text)
@@ -403,7 +409,7 @@ def send_listing_approved_to_owner(
     <p style="font-size:15px;line-height:24px;color:#374151;margin:0 0 12px;">Hi {owner_name},</p>
     <p style="font-size:15px;line-height:24px;color:#374151;margin:0 0 12px;">
       Great news! Your listing <strong>{listing_title}</strong> has been reviewed and approved by our team.
-      It is now visible to seekers on MigRent.
+      It is now visible to seekers on Migrent.
     </p>
 
     {_details_box([
@@ -420,9 +426,9 @@ def send_listing_approved_to_owner(
 
     text = (
         f"Hi {owner_name},\n\n"
-        f"Your listing '{listing_title}' has been approved and is now live on MigRent!\n\n"
+        f"Your listing '{listing_title}' has been approved and is now live on Migrent!\n\n"
         f"View your listings: {FRONTEND_URL}/owner/listings\n\n"
-        f"- The MigRent Team"
+        f"- The Migrent Team"
     )
 
     _send_email(owner_email, subject, _email_layout(content, f"Listing approved: {listing_title}"), text)
@@ -469,7 +475,7 @@ def send_listing_rejected_to_owner(
         f"Your listing '{listing_title}' was not approved.\n\n"
         f"Reason: {reason}\n\n"
         f"You can edit and resubmit: {FRONTEND_URL}/owner/listings\n\n"
-        f"- The MigRent Team"
+        f"- The Migrent Team"
     )
 
     _send_email(owner_email, subject, _email_layout(content), text)
@@ -512,7 +518,7 @@ def send_listing_changes_requested_to_owner(
         f"Your listing '{listing_title}' needs some changes before going live.\n\n"
         f"Changes needed: {changes_needed}\n\n"
         f"Edit your listing: {FRONTEND_URL}/owner/listings\n\n"
-        f"- The MigRent Team"
+        f"- The Migrent Team"
     )
 
     _send_email(owner_email, subject, _email_layout(content, f"Changes needed: {listing_title}"), text)
@@ -557,7 +563,7 @@ def send_listing_under_review_to_owner(
         f"Your listing '{listing_title}' is currently under additional review.\n"
         f"This is routine - our team will review it shortly.\n\n"
         f"View your listings: {FRONTEND_URL}/owner/listings\n\n"
-        f"- The MigRent Team"
+        f"- The Migrent Team"
     )
 
     _send_email(owner_email, subject, _email_layout(content, f"Listing under review: {listing_title}"), text)
@@ -580,7 +586,7 @@ def send_listing_removed_to_owner(
     <h2 style="font-size:24px;font-weight:bold;color:#1a1a1a;margin:0 0 16px;">Listing Update</h2>
     <p style="font-size:15px;line-height:24px;color:#374151;margin:0 0 12px;">Hi {owner_name},</p>
     <p style="font-size:15px;line-height:24px;color:#374151;margin:0 0 12px;">
-      After review, your listing <strong>{listing_title}</strong> has been removed from MigRent.
+      After review, your listing <strong>{listing_title}</strong> has been removed from Migrent.
     </p>
 
     <div style="background:#fef3c7;border-radius:8px;padding:16px 20px;margin:16px 0;border-left:3px solid #f59e0b;">
@@ -604,57 +610,10 @@ def send_listing_removed_to_owner(
         f"Your listing '{listing_title}' has been removed.\n\n"
         f"Reason: {reason}\n\n"
         f"If you believe this was a mistake, contact support: {FRONTEND_URL}/support\n\n"
-        f"- The MigRent Team"
+        f"- The Migrent Team"
     )
 
     _send_email(owner_email, subject, _email_layout(content), text)
-
-
-def send_new_message_notification(
-    recipient_email: str,
-    recipient_name: str,
-    sender_name: str,
-    message_preview: str,
-    listing_title: str | None = None,
-    thread_url: str = "",
-):
-    """Send email notification when a user receives a new message."""
-    subject = f"New message from {sender_name}"
-
-    preview_text = message_preview[:200] + "..." if len(message_preview) > 200 else message_preview
-    about = f" about <strong>{listing_title}</strong>" if listing_title else ""
-    thread_link = thread_url or f"{FRONTEND_URL}/messages"
-
-    content = f"""
-    <h2 style="font-size:24px;font-weight:bold;color:#1a1a1a;margin:0 0 16px;">New Message</h2>
-    <p style="font-size:15px;line-height:24px;color:#374151;margin:0 0 12px;">Hi {recipient_name},</p>
-    <p style="font-size:15px;line-height:24px;color:#374151;margin:0 0 12px;">
-      <strong>{sender_name}</strong> sent you a message{about}:
-    </p>
-
-    <div style="background:#f3f4f6;border-radius:8px;padding:20px;margin:16px 0;border-left:3px solid {BRAND_COLOR};">
-      <p style="font-size:15px;font-style:italic;color:#374151;line-height:24px;margin:0;">
-        "{preview_text}"
-      </p>
-    </div>
-
-    {_button("Reply Now", thread_link)}
-
-    <p style="font-size:13px;color:#9ca3af;text-align:center;margin:8px 0 0;">
-      You can manage your message notifications in your account settings.
-    </p>
-    """
-
-    text = (
-        f"Hi {recipient_name},\n\n"
-        f"{sender_name} sent you a message"
-        f"{f' about {listing_title}' if listing_title else ''}:\n\n"
-        f'"{preview_text}"\n\n'
-        f"Reply: {thread_link}\n\n"
-        f"- The MigRent Team"
-    )
-
-    _send_email(recipient_email, subject, _email_layout(content, f"New message from {sender_name}"), text)
 
 
 def send_listing_expiring_to_owner(
@@ -667,7 +626,7 @@ def send_listing_expiring_to_owner(
     """Seven days before a listing's availability ends, ask the owner to
     extend it or let it lapse. Without this, rooms silently vanished from
     search and owners assumed the site had stopped working."""
-    subject = f"Your listing '{listing_title}' comes off MigRent on {available_to}"
+    subject = f"Your listing '{listing_title}' comes off Migrent on {available_to}"
     renew_url = f"{FRONTEND_URL}/owner/listings/edit/{listing_id}"
 
     content = f"""
@@ -688,7 +647,7 @@ def send_listing_expiring_to_owner(
         f"Your listing '{listing_title}' is set as available until {available_to}. "
         f"After that it will come off search.\n\n"
         f"Extend the dates here if it is still free: {renew_url}\n\n"
-        f"- The MigRent Team"
+        f"- The Migrent Team"
     )
 
     _send_email(owner_email, subject, _email_layout(content, f"{listing_title} expires {available_to}"), text)
@@ -703,7 +662,7 @@ def send_listing_paused_to_owner(
     listing_id: str,
 ):
     """An admin has taken a listing offline and needs specific things fixed."""
-    subject = f"Action needed: '{listing_title}' is paused on MigRent"
+    subject = f"Action needed: '{listing_title}' is paused on Migrent"
     edit_url = f"{FRONTEND_URL}/owner/listings/edit/{listing_id}"
     items = "".join(f"<li style='margin:0 0 6px;'>{a}</li>" for a in required_actions)
 
@@ -727,6 +686,6 @@ def send_listing_paused_to_owner(
     text = (
         f"Hi {owner_name},\n\nWe have paused your listing '{listing_title}'.\n\nWhy: {reason}\n\n"
         + "To bring it back:\n" + "\n".join(f"- {a}" for a in required_actions)
-        + f"\n\nUpdate it here: {edit_url}\n\n- The MigRent Team"
+        + f"\n\nUpdate it here: {edit_url}\n\n- The Migrent Team"
     )
     _send_email(owner_email, subject, _email_layout(content, f"{listing_title} is paused"), text)

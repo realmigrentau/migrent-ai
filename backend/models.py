@@ -162,7 +162,7 @@ class ProfileUpdate(BaseModel):
     interests: Optional[list[str]] = Field(None, max_length=5)
     custom_pfp: Optional[str] = None
     occupation: Optional[str] = Field(None, max_length=100)
-    # MigRent is an adults-only service; see docs/policies/age-and-safeguarding.md
+    # Migrent is an adults-only service; see docs/policies/age-and-safeguarding.md
     age: Optional[int] = Field(None, ge=18, le=120)
     over_18: Optional[bool] = None
     visa_type: Optional[str] = None

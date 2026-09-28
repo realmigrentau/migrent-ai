@@ -3,7 +3,7 @@ import { test, expect } from "@playwright/test";
 test("robots.txt blocks private surfaces and points at the sitemap", async ({ request }) => {
   const res = await request.get("/robots.txt");
   const body = await res.text();
-  for (const p of ["/admin", "/dashboard", "/messages", "/signin", "/payment-success"]) expect(body).toContain(`Disallow: ${p}`);
+  for (const p of ["/admin", "/hub", "/dashboard", "/messages", "/signin", "/payment-success"]) expect(body).toContain(`Disallow: ${p}`);
   expect(body).toContain("Sitemap: https://migrent.vercel.app/sitemap.xml");
 });
 
@@ -34,11 +34,11 @@ for (const path of ["/", "/pricing", "/for-seekers", "/resources/guides", "/list
     await expect(page.locator('head meta[name="theme-color"]')).toHaveCount(2); // light + dark, from _document only
     const title = await page.title();
     expect(title.length).toBeGreaterThan(10);
-    expect(title).not.toContain("MigRent AI");
+    expect(title).not.toContain("Migrent AI");
   });
 }
 
-for (const path of ["/signin", "/signup", "/forgot-password"]) {
+for (const path of ["/hub/sign-in", "/hub/sign-up", "/hub/forgot-password"]) {
   test(`${path} is noindex`, async ({ page }) => {
     await page.goto(path);
     await expect(page.locator('head meta[name="robots"]')).toHaveAttribute("content", /noindex/);
@@ -49,7 +49,7 @@ test("no unsupported claims on public pages", async ({ page }) => {
   for (const path of ["/", "/pricing", "/for-seekers", "/features", "/contact", "/listing/11111111-1111-4111-8111-000000000001"]) {
     await page.goto(path);
     const text = await page.locator("body").innerText();
-    for (const claim of ["24/7", "All systems operational", "MigRent Guarantee", "thousands of", "MigRent AI", "Pty Ltd", "Sole Trader", "Naarm"]) {
+    for (const claim of ["24/7", "All systems operational", "Migrent Guarantee", "thousands of", "Migrent AI", "Pty Ltd", "Sole Trader", "Naarm"]) {
       expect(text, `${claim} on ${path}`).not.toContain(claim);
     }
   }

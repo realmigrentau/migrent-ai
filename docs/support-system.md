@@ -1,4 +1,4 @@
-# MigRent Support System - Architecture & Operations Guide
+# Migrent Support System - Architecture & Operations Guide
 
 ## System Overview
 
@@ -92,7 +92,7 @@ User (in-app/email/form)
 5. **For pending_customer tickets:**
    - Resend gentle reminder to customer:
      ```
-     Subject: We're waiting for your reply - MigRent Support
+     Subject: We're waiting for your reply - Migrent Support
      Body: Hi {{name}},
            We noticed you haven't responded to your support ticket yet.
            Your ticket: {{subject}}
@@ -117,7 +117,7 @@ User (in-app/email/form)
 2. **Wait** - 2 hours delay
 3. **Resend (CSAT Email)** - Send to customer:
    ```
-   Subject: How did we do? Rate your MigRent support experience
+   Subject: How did we do? Rate your Migrent support experience
    Body:
      Hi there,
 

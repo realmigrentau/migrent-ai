@@ -1,43 +1,89 @@
-import { useCallback } from "react";
+import { useCallback, useSyncExternalStore } from "react";
+import { THEME_STORAGE_KEY } from "../lib/themeBootstrap";
 
-/* Deliberately still a union. The hook only ever answers "light", but
-   several call sites compare against "dark" to pick a class or an icon,
-   and narrowing the type turns each of those into a compile error for no
-   benefit. They now take their light branch and nothing else changes. */
-type Theme = "light" | "dark";
+export type Theme = "light" | "dark";
+export type ThemePreference = Theme | "system";
 
 /**
- * The site is light only.
+ * The shared light/dark preference for the public site and Migrent Hub.
  *
- * There used to be a real light/dark toggle here, reading the stored choice
- * or the OS preference and putting a `.dark` class on <html>. It went
- * because the homepage hero is a sunrise: the page performs night turning
- * into morning and then hands the reader to the sections below, which live
- * in the morning it arrived at. A dark theme puts that walk somewhere it
- * cannot land, and the two halves of the site stop agreeing about what time
- * of day it is.
- *
- * The hook is kept rather than deleted because it is imported in several
- * places and each one only wants `theme` to render an icon or a label. It
- * now always answers "light", never touches the document, and `toggle` is a
- * no-op. Every `:where(.dark)` rule in the stylesheets is dead code rather
- * than a bug - harmless, and the obvious place to start if dark mode ever
- * comes back.
+ * lib/themeBootstrap.ts applies it before first paint; this hook reads and
+ * changes it afterwards. The <html> class is the single source of truth for
+ * the resolved theme, so every component (and every tab, through the
+ * storage event) agrees. "system" follows the OS live.
  */
+
+const listeners = new Set<() => void>();
+
+function readPreference(): ThemePreference {
+  if (typeof window === "undefined") return "system";
+  try {
+    const p = window.localStorage.getItem(THEME_STORAGE_KEY);
+    return p === "light" || p === "dark" ? p : "system";
+  } catch {
+    return "system";
+  }
+}
+
+function systemDark(): boolean {
+  return typeof window !== "undefined" && window.matchMedia?.("(prefers-color-scheme: dark)").matches;
+}
+
+function apply(pref: ThemePreference) {
+  const dark = pref === "dark" || (pref === "system" && systemDark());
+  const root = document.documentElement;
+  // Suppress transitions for the one frame the palette swaps, so a hundred
+  // elements do not animate their colours at once.
+  root.classList.add("theme-switching");
+  root.classList.toggle("dark", dark);
+  root.style.colorScheme = dark ? "dark" : "light";
+  root.setAttribute("data-theme-pref", pref);
+  window.requestAnimationFrame(() => window.requestAnimationFrame(() => root.classList.remove("theme-switching")));
+  listeners.forEach((l) => l());
+}
+
+let wired = false;
+function wire() {
+  if (wired || typeof window === "undefined") return;
+  wired = true;
+  window.matchMedia?.("(prefers-color-scheme: dark)").addEventListener?.("change", () => {
+    if (readPreference() === "system") apply("system");
+  });
+  window.addEventListener("storage", (e) => {
+    if (e.key === THEME_STORAGE_KEY) apply(readPreference());
+  });
+}
+
+function subscribe(cb: () => void) {
+  wire();
+  listeners.add(cb);
+  return () => listeners.delete(cb);
+}
+
+const snapshot = () => `${readPreference()}|${typeof document !== "undefined" && document.documentElement.classList.contains("dark") ? "dark" : "light"}`;
+
 export function useTheme() {
-  const setTheme = useCallback((_t: Theme) => {
-    /* Intentionally empty: the preference no longer has anywhere to go. */
-  }, []);
-  const toggle = useCallback(() => {
-    /* Intentionally empty - see the note above. */
+  const value = useSyncExternalStore(subscribe, snapshot, () => "server");
+  const mounted = value !== "server";
+  const [prefRaw, resolvedRaw] = mounted ? value.split("|") : ["system", "light"];
+  const preference = prefRaw as ThemePreference;
+  const theme = resolvedRaw as Theme;
+
+  const setPreference = useCallback((p: ThemePreference) => {
+    try {
+      if (p === "system") window.localStorage.removeItem(THEME_STORAGE_KEY);
+      else window.localStorage.setItem(THEME_STORAGE_KEY, p);
+    } catch {
+      /* private mode: still apply for this page */
+    }
+    apply(p);
   }, []);
 
-  /* `mounted` is false on purpose, and it is the switch that actually
-     removes the button.
-     Every theme toggle in the app - both of them in the header, one more in
-     the admin sidebar - is wrapped in `{mounted && ...}`, because a toggle
-     that renders before the stored theme is read would flash the wrong
-     icon. Answering false means none of them render at all, which retires
-     the control from components this change does not otherwise touch. */
-  return { theme: "light" as Theme, setTheme, toggle, mounted: false };
+  const setTheme = useCallback((t: Theme) => setPreference(t), [setPreference]);
+  const toggle = useCallback(() => {
+    const dark = document.documentElement.classList.contains("dark");
+    setPreference(dark ? "light" : "dark");
+  }, [setPreference]);
+
+  return { theme, preference, setPreference, setTheme, toggle, mounted };
 }

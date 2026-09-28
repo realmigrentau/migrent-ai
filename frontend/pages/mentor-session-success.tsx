@@ -2,12 +2,13 @@ import Head from "next/head";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { CheckCircle2, MessageCircle, ArrowRight } from "lucide-react";
+import { hubFromSite } from "../lib/hub/routes";
 
 export default function MentorSessionSuccessPage() {
   return (
     <>
       <Head>
-        <title key="title">Session Booked! - MigRent</title>
+        <title key="title">Session Booked! - Migrent</title>
       </Head>
 
       <div className="max-w-lg mx-auto px-4 py-16 text-center space-y-6">
@@ -29,7 +30,7 @@ export default function MentorSessionSuccessPage() {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          <Link href="/messages">
+          <Link href={hubFromSite.path(hubFromSite.path("/messages"))}>
             <motion.span
               whileHover={{ scale: 1.03 }}
               className="inline-flex items-center gap-2 bg-[var(--color-primary)] hover:bg-[var(--color-primary-500)] text-[color:var(--color-primary-fg)] font-semibold px-6 py-2.5 rounded-xl text-sm transition-colors cursor-pointer"

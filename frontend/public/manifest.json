@@ -1,6 +1,6 @@
 {
-  "name": "MigRent",
-  "short_name": "MigRent",
+  "name": "Migrent",
+  "short_name": "Migrent",
   "description": "Rooms across Australia for migrants, students and new arrivals. Hosts are ID-checked; renters pay nothing.",
   "start_url": "/",
   "display": "standalone",
