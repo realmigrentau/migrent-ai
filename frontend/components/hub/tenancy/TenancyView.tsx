@@ -281,8 +281,10 @@ export default function TenancyView({ d, refetch }: { d: TenancyDetail; refetch:
   const today = todayIso();
   const upcomingPayments = payments.filter((p) => p.due_date >= today || p.status === "due" || p.status === "partial");
   const visiblePayments = showAllPayments ? payments : [...payments.filter((p) => p.due_date < today && (p.status === "paid" || p.status === "waived")).slice(-3), ...upcomingPayments.slice(0, 6)];
-  const next = d.ledger.next_payment;
+  // "Next" is the first unpaid date from today on. Anything earlier and
+  // still unpaid is overdue and called out on its own, never as "next".
   const overdue = payments.filter((p) => p.due_date < today && (p.status === "due" || p.status === "partial"));
+  const next = payments.find((p) => p.due_date >= today && (p.status === "due" || p.status === "partial")) ?? null;
   const openRepairs = d.maintenance.filter((m) => m.status !== "resolved" && m.status !== "closed");
 
   return (
@@ -301,7 +303,7 @@ export default function TenancyView({ d, refetch }: { d: TenancyDetail; refetch:
                 <h2 className="text-[21px] font-semibold tracking-[-0.015em] text-[color:var(--color-ink)]">{l?.title ?? "Your home"}</h2>
                 <p className="mt-1 text-[14px] text-[color:var(--color-ink-2)]">{l?.street_address || l?.display_address}</p>
               </div>
-              <dl className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+              <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <Fact icon={<CalendarDays className="h-4 w-4" strokeWidth={1.75} />} label="Lease" value={`${day(t.start_date)} - ${t.end_date ? day(t.end_date) : "ongoing"}`} />
                 <Fact icon={<CircleDollarSign className="h-4 w-4" strokeWidth={1.75} />} label="Rent" value={`${aud(t.rent_amount)} a week, paid ${FREQ[t.rent_frequency]}`} />
                 {t.bond_amount != null && <Fact icon={<KeyRound className="h-4 w-4" strokeWidth={1.75} />} label="Bond" value={aud(t.bond_amount)} />}
