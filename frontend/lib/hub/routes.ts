@@ -117,3 +117,48 @@ export function hubSignInUrl(next?: string, extra?: Record<string, string>): str
   const q = params.toString();
   return `${hubUrl("/sign-in")}${q ? `?${q}` : ""}`;
 }
+
+/**
+ * Older signed-in pages and where they live in the Hub now. Used to route
+ * notification links written before the Hub existed; next.config.ts sends
+ * the same paths to the same places.
+ */
+const LEGACY_TO_HUB: [RegExp, (m: RegExpMatchArray) => string][] = [
+  [/^\/dashboard(?:\/(?:owner|seeker))?\/?$/, () => "/"],
+  [/^\/owner\/listings\/new\/?$/, () => "/properties/new"],
+  [/^\/owner\/listings\/edit\/([^/?#]+)\/?$/, (m) => `/listings/${m[1]}/edit`],
+  [/^\/owner\/listings\/?$/, () => "/properties"],
+  [/^\/(?:account\/)?messages\/?$/, () => "/messages"],
+  [/^\/account\/settings\/?$/, () => "/settings"],
+  [/^\/seeker\/wishlist\/?$/, () => "/saved"],
+  [/^\/seeker\/search\/?$/, () => "/discover"],
+  [/^\/onboarding\/?$/, () => "/welcome"],
+];
+
+/**
+ * Where a stored link (a notification's cta_url) should go: a Hub path to
+ * open in place, or an address on the public site.
+ */
+export function resolveStoredLink(url: string | null | undefined): { hub: string } | { href: string } {
+  if (!url) return { hub: "/activity" };
+  let path = url.trim();
+  try {
+    if (/^https?:\/\//i.test(path)) {
+      const u = new URL(path);
+      const host = u.host.toLowerCase();
+      const rest = `${u.pathname}${u.search}${u.hash}`;
+      if (HUB_HOST && host === HUB_HOST) return { hub: rest || "/" };
+      if (typeof window !== "undefined" && host !== window.location.host) return { href: u.toString() };
+      path = rest;
+    }
+  } catch {
+    return { hub: "/activity" };
+  }
+  if (path === HUB_PREFIX || path.startsWith(`${HUB_PREFIX}/`) || path.startsWith(`${HUB_PREFIX}?`)) return { hub: toHubPath(path) };
+  const bare = path.split("?")[0].split("#")[0];
+  for (const [re, to] of LEGACY_TO_HUB) {
+    const m = bare.match(re);
+    if (m) return { hub: to(m) };
+  }
+  return { href: siteUrl(path) };
+}

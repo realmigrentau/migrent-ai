@@ -267,9 +267,11 @@ export default function HubHome() {
             ))}
           </div>
           {images.length > 1 && (
-            <Button variant="secondary" size="sm" className="absolute bottom-4 right-4 hidden sm:inline-flex" icon={<Images className="h-4 w-4" strokeWidth={1.75} />} onClick={() => setPhotosOpen(true)}>
+            <span className="absolute bottom-4 right-4 hidden sm:block">
+              <Button variant="secondary" size="sm" icon={<Images className="h-4 w-4" strokeWidth={1.75} />} onClick={() => setPhotosOpen(true)}>
               All {images.length} photos
             </Button>
+            </span>
           )}
         </div>
 

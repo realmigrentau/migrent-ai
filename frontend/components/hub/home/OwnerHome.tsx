@@ -174,9 +174,11 @@ export default function OwnerHome() {
                 : "Everything in your portfolio is up to date."}
           </p>
         </div>
-        <ButtonLink to="/properties/new" icon={<Plus className="h-5 w-5" strokeWidth={1.9} />} className="hidden sm:inline-flex">
-          List a property
-        </ButtonLink>
+        <span className="hidden sm:block">
+          <ButtonLink to="/properties/new" icon={<Plus className="h-5 w-5" strokeWidth={1.9} />}>
+            List a property
+          </ButtonLink>
+        </span>
       </Reveal>
 
       {empty ? (

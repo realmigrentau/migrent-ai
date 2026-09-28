@@ -400,3 +400,25 @@ def test_home_is_role_specific(client):
     owner = client.get("/hub/home", headers=auth(VERIFIED_OWNER_ID)).json()
     assert renter["role"] == "renter" and "next_actions" in renter and "completion" in renter
     assert owner["role"] == "owner" and "portfolio" in owner and "attention" in owner
+
+
+def test_account_deletion_waits_for_live_tenancies_and_open_applications(client, db):
+    # An application in progress blocks deleting either side.
+    app_id = start_and_submit(client)
+    r = client.delete("/account/delete", headers=auth(SEEKER_ID))
+    assert r.status_code == 409 and "applications in progress" in r.json()["detail"]
+    assert client.delete("/account/delete", headers=auth(VERIFIED_OWNER_ID)).status_code == 409
+
+    # Withdrawn, it no longer blocks; the Hub rows go with the account.
+    assert client.post(f"/hub/applications/{app_id}/withdraw", headers=auth(SEEKER_ID), json={}).status_code == 200
+    r = client.delete("/account/delete", headers=auth(SEEKER_ID))
+    assert r.status_code == 200, r.text
+    assert not [a for a in db.rows("applications") if a["renter_id"] == SEEKER_ID]
+    assert not [p for p in db.rows("profiles") if p["id"] == SEEKER_ID]
+
+
+def test_account_deletion_blocked_by_a_current_tenancy(client):
+    finalised_tenancy(client)
+    r = client.delete("/account/delete", headers=auth(SEEKER_ID))
+    assert r.status_code == 409 and "tenancy" in r.json()["detail"]
+    assert client.delete("/account/delete", headers=auth(VERIFIED_OWNER_ID)).status_code == 409

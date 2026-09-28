@@ -448,6 +448,11 @@ export function handleHub(req, url, body, send) {
     return send(200, { status: "ok" }), true;
   }
 
+  if (p === "/messages/attachments" && req.method === "POST") {
+    if (!uidFromAuth(req)) return send(401, { detail: "Sign in to continue" }), true;
+    return send(200, { attachment_path: `${uidFromAuth(req)}/${Date.now()}_mock.pdf`, attachment_name: "document.pdf", attachment_type: "application/pdf" }), true;
+  }
+
   if (!p.startsWith("/hub/") && !p.startsWith("/notification-center")) return false;
   const uid = uidFromAuth(req);
   if (!uid) return send(401, { detail: "Sign in to continue" }), true;

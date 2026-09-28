@@ -87,8 +87,8 @@ function AccountMenu({ align = "end" }: { align?: "start" | "end" }) {
         </button>
       )}
       items={[
-        { label: role === "owner" ? "Your profile" : role === "admin" ? "Your account" : "Rental Profile", icon: <UserRound className="h-4 w-4" strokeWidth={1.75} />, onSelect: () => void navigate(role === "admin" ? "/settings" : "/profile") },
-        { label: "Settings", icon: <Settings className="h-4 w-4" strokeWidth={1.75} />, onSelect: () => void navigate("/settings") },
+        ...(role === "renter" ? [{ label: "Rental Profile", icon: <UserRound className="h-4 w-4" strokeWidth={1.75} />, onSelect: () => void navigate("/profile") }] : []),
+        { label: role === "renter" ? "Settings" : "Account and settings", icon: <Settings className="h-4 w-4" strokeWidth={1.75} />, onSelect: () => void navigate("/settings") },
         { label: "Back to Migrent", icon: <ArrowLeft className="h-4 w-4" strokeWidth={1.75} />, onSelect: () => void (window.location.href = siteUrl("/")) },
         {
           label: "Sign out",
@@ -149,6 +149,10 @@ interface HubShellProps {
   fullBleed?: boolean;
   /** Owner pages show "List a property" as a floating action on phones. */
   fab?: ReactNode;
+  /** Phones: the page takes the whole screen (an open conversation), so the top bar and tab bar step aside. */
+  immersive?: boolean;
+  /** Desktop: the page fills the viewport exactly and scrolls inside itself. */
+  fitDesktop?: boolean;
 }
 
 /**
@@ -156,7 +160,7 @@ interface HubShellProps {
  * nothing protected renders until the session, MFA and onboarding checks
  * have passed.
  */
-export default function HubShell({ children, title, fullBleed, fab }: HubShellProps) {
+export default function HubShell({ children, title, fullBleed, fab, immersive, fitDesktop }: HubShellProps) {
   const router = useRouter();
   const { status, role, meError, refreshMe } = useHub();
   const reduce = useReducedMotion();
@@ -303,7 +307,7 @@ export default function HubShell({ children, title, fullBleed, fab }: HubShellPr
       </nav>
 
       {/* Phone and tablet top bar */}
-      <header className="sticky top-0 z-30 flex h-14 items-center justify-between gap-3 border-b border-[var(--color-glass-line)] bg-[var(--color-glass)] px-4 backdrop-blur-xl lg:hidden">
+      <header className={cn("sticky top-0 z-30 flex h-14 items-center justify-between gap-3 border-b border-[var(--color-glass-line)] bg-[var(--color-glass)] px-4 backdrop-blur-xl lg:hidden", immersive && "!hidden")}>
         <HubLink to="/" aria-label="Migrent Hub home">
           <HubMark />
         </HubLink>
@@ -319,7 +323,7 @@ export default function HubShell({ children, title, fullBleed, fab }: HubShellPr
       <main
         id="hub-main"
         tabIndex={-1}
-        className={cn("hub-main hub-bottom-space outline-none", fullBleed ? "" : "px-4 pt-6 sm:px-6 lg:pr-8 lg:pt-10")}
+        className={cn("hub-main outline-none", !immersive && "hub-bottom-space", fitDesktop && "lg:pb-0", fullBleed ? "" : "px-4 pt-6 sm:px-6 lg:pr-8 lg:pt-10")}
         style={{ ["--rail" as string]: `${railWidth + 32}px` }}
       >
         <div className="lg:pl-[var(--rail)]">
@@ -335,10 +339,10 @@ export default function HubShell({ children, title, fullBleed, fab }: HubShellPr
         </div>
       </main>
 
-      {fab && <div className="hub-fab lg:hidden">{fab}</div>}
+      {fab && !immersive && <div className="hub-fab lg:hidden">{fab}</div>}
 
       {/* Phone tab bar */}
-      <nav aria-label="Migrent Hub" className="hub-tabbar lg:hidden">
+      <nav aria-label="Migrent Hub" className={cn("hub-tabbar lg:hidden", immersive && "!hidden")}>
         {tabs.map((item) => {
           const active = isActive(item, hubPath);
           const Icon = item.icon;

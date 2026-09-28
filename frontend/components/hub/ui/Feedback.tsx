@@ -208,3 +208,34 @@ export function ProgressRing({ value, size = 56, label }: { value: number; size?
     </div>
   );
 }
+
+/** Quiet autosave status: the person should never wonder whether their work was kept. */
+export function SaveStatus({ state, onRetry, className }: { state: "idle" | "saving" | "saved" | "error"; onRetry?: () => void; className?: string }) {
+  return (
+    <span role="status" aria-live="polite" className={cn("inline-flex items-center gap-1.5 text-[13px] font-medium", className)}>
+      {state === "saving" && (
+        <>
+          <span className="h-2 w-2 animate-pulse rounded-full bg-[var(--color-primary)]" aria-hidden />
+          <span className="text-[color:var(--color-ink-3)]">Saving</span>
+        </>
+      )}
+      {state === "saved" && (
+        <>
+          <CheckCircle2 className="h-3.5 w-3.5 text-[color:var(--color-success-500)]" strokeWidth={2} aria-hidden />
+          <span className="text-[color:var(--color-ink-3)]">Saved</span>
+        </>
+      )}
+      {state === "error" && (
+        <>
+          <AlertTriangle className="h-3.5 w-3.5 text-[color:var(--color-danger-500)]" strokeWidth={2} aria-hidden />
+          <span className="text-[color:var(--color-danger-500)]">Not saved</span>
+          {onRetry && (
+            <button type="button" onClick={onRetry} className="font-semibold text-[color:var(--color-primary)] underline-offset-2 hover:underline">
+              Retry
+            </button>
+          )}
+        </>
+      )}
+    </span>
+  );
+}

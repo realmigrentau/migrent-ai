@@ -197,3 +197,37 @@ export function inspectionIcs(opts: { id: string; title: string; start: string; 
     .filter(Boolean)
     .join("\r\n");
 }
+
+/** Minutes the zone is ahead of UTC at a given instant (DST-aware). */
+function zoneOffsetMinutes(instant: Date, tz: string): number {
+  const parts = new Intl.DateTimeFormat("en-US", { timeZone: tzOk(tz), hourCycle: "h23", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit" }).formatToParts(instant);
+  const get = (t: string) => Number(parts.find((p) => p.type === t)?.value);
+  const asUtc = Date.UTC(get("year"), get("month") - 1, get("day"), get("hour") % 24, get("minute"), get("second"));
+  return Math.round((asUtc - instant.getTime()) / 60000);
+}
+
+/**
+ * "2026-10-03" + "10:30" in Australia/Perth -> the UTC ISO instant. Owners
+ * type times in the property's own zone; the API stores UTC.
+ */
+export function zonedToIso(date: string, hhmm: string, tz: string): string {
+  const [y, m, d] = date.split("-").map(Number);
+  const [h, mi] = hhmm.split(":").map(Number);
+  const guess = new Date(Date.UTC(y, m - 1, d, h, mi));
+  let offset = zoneOffsetMinutes(guess, tz);
+  let utc = new Date(guess.getTime() - offset * 60000);
+  // Re-check across a daylight-saving boundary.
+  const second = zoneOffsetMinutes(utc, tz);
+  if (second !== offset) {
+    offset = second;
+    utc = new Date(guess.getTime() - offset * 60000);
+  }
+  return utc.toISOString();
+}
+
+/** The YYYY-MM-DD and HH:MM an instant falls on in a zone (for editing). */
+export function isoToZoned(iso: string, tz: string): { date: string; time: string } {
+  const parts = new Intl.DateTimeFormat("en-CA", { timeZone: tzOk(tz), hourCycle: "h23", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit" }).formatToParts(new Date(iso));
+  const get = (t: string) => parts.find((p) => p.type === t)?.value ?? "00";
+  return { date: `${get("year")}-${get("month")}-${get("day")}`, time: `${get("hour")}:${get("minute")}` };
+}
