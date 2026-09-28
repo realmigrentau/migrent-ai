@@ -28,7 +28,6 @@ export default function App({ Component, pageProps, router }: AppProps) {
   }, []);
 
   const isAdmin = router.pathname.startsWith(ADMIN_PATH);
-  const isDashboard = router.pathname.startsWith("/dashboard");
   // Migrent Hub is its own application: its own shell, navigation and
   // session guard, none of the marketing layout.
   const isHub = router.pathname === "/hub" || router.pathname.startsWith("/hub/");
@@ -37,7 +36,7 @@ export default function App({ Component, pageProps, router }: AppProps) {
     <HubSessionProvider>
       <Component {...pageProps} />
     </HubSessionProvider>
-  ) : isAdmin || isDashboard ? (
+  ) : isAdmin ? (
     <Layout>
       <Component {...pageProps} />
     </Layout>
@@ -92,7 +91,7 @@ export default function App({ Component, pageProps, router }: AppProps) {
 
   // The captcha provider is only mounted on the pages that call it, so the
   // hCaptcha script is not downloaded on the homepage, search or listings.
-  const needsCaptcha = ["/signin", "/signup", "/magic-link-login", "/magic-link-signup", "/hub/sign-in", "/hub/sign-up", "/hub/forgot-password"].some((p) =>
+  const needsCaptcha = ["/hub/sign-in", "/hub/sign-up", "/hub/forgot-password"].some((p) =>
     router.pathname.startsWith(p),
   );
   if (!HCAPTCHA_SITE_KEY || !needsCaptcha) {

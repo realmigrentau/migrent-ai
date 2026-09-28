@@ -5,7 +5,7 @@ import { copyrightLine } from "../lib/siteIdentity";
 
 /* Site footer.
  *
- * A full directory of everything MigRent offers, with a brand band and a
+ * A full directory of everything Migrent offers, with a brand band and a
  * trust strip on top. Every colour, hairline and radius comes from a token,
  * so on the homepage - where styles/home.css re-points those tokens at the
  * hero's palette - the footer arrives in the same sky without a second
@@ -89,7 +89,7 @@ export default function SiteFooter() {
           <div>
             <Link href="/" className="inline-flex items-center gap-2.5 text-[var(--color-ink)]">
               <Logo size={30} />
-              <span className="font-serif text-[26px] leading-none tracking-[-0.015em]">MigRent</span>
+              <span className="font-serif text-[26px] leading-none tracking-[-0.015em]">Migrent</span>
             </Link>
             <h2 className="site-footer__headline font-serif text-[30px] md:text-[40px] leading-[1.06] tracking-[-0.025em] text-[var(--color-ink)] mt-6 max-w-[16ch]">
               A real home in Australia, found the right way.

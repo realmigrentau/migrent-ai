@@ -1,5 +1,5 @@
 """
-Spam detection scoring engine for MigRent listings.
+Spam detection scoring engine for Migrent listings.
 
 Runs a series of rule-based checks against listing content and owner behaviour.
 Each rule returns a score (0-100 contribution) and a human-readable reason.
@@ -492,7 +492,7 @@ def notify_founder_spam(listing_id: str, result: dict, listing_title: str, owner
     founder_email = os.environ.get("FOUNDER_EMAIL", os.environ.get("SUPPORT_EMAIL", "migrentau@gmail.com"))
 
     severity = "HIDDEN" if result["action"] == "hide" else "FLAGGED"
-    subject = f"[MigRent Moderation] Listing {severity} - {listing_title or 'Untitled'}"
+    subject = f"[Migrent Moderation] Listing {severity} - {listing_title or 'Untitled'}"
 
     reasons_html = ""
     for reason in result["reasons"][:10]:
@@ -529,7 +529,7 @@ def notify_founder_spam(listing_id: str, result: dict, listing_title: str, owner
     {_button("Review in Admin Panel", f"{FRONTEND_URL}/admin/spam-moderation")}
 
     <p style="font-size:12px;color:#9ca3af;text-align:center;margin:8px 0 0;">
-      This is an automated alert from the MigRent spam detection system.
+      This is an automated alert from the Migrent spam detection system.
     </p>
     """
 
@@ -539,7 +539,7 @@ def notify_founder_spam(listing_id: str, result: dict, listing_title: str, owner
         f"Spam Score: {result['spam_score']}/100\n\n"
         f"Reasons:\n" + "\n".join(f"- {r}" for r in result["reasons"][:10]) + "\n\n"
         f"Review: {FRONTEND_URL}/admin/spam-moderation\n\n"
-        f"- MigRent System"
+        f"- Migrent System"
     )
 
     try:

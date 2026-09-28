@@ -1,11 +1,12 @@
 import Link from "next/link";
 import SEOHead from "../components/SEOHead";
 import { motion } from "framer-motion";
+import { hubFromSite } from "../lib/hub/routes";
 
 export default function RulesCommunityGuidelines() {
   return (
     <>
-      <SEOHead title="Community Guidelines" description="MigRent community rules - listing standards, guest expectations, dispute resolution, and platform conduct." />
+      <SEOHead title="Community Guidelines" description="Migrent community rules - listing standards, guest expectations, dispute resolution, and platform conduct." />
 
       <div className="max-w-3xl mx-auto space-y-10">
         {/* Hero */}
@@ -30,7 +31,7 @@ export default function RulesCommunityGuidelines() {
           <section className="card p-6 rounded-2xl space-y-3">
             <h2 className="text-lg font-bold text-[var(--color-ink)]">Our Community Standards</h2>
             <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
-              <p>MigRent is built on trust, respect, and transparency. These guidelines apply to all users - both owners and seekers. Violations may result in content removal, account suspension, or termination.</p>
+              <p>Migrent is built on trust, respect, and transparency. These guidelines apply to all users - both owners and seekers. Violations may result in content removal, account suspension, or termination.</p>
             </div>
           </section>
 
@@ -59,7 +60,7 @@ export default function RulesCommunityGuidelines() {
                 <li>Be truthful and accurate in your profile and during any verification process</li>
                 <li>Respect house rules, neighbours, and applicable tenancy or lodging laws</li>
                 <li>Do not ghost owners after agreeing to an arrangement</li>
-                <li>Understand that MigRent may present an optional one-time AUD $19 platform fee when a successful match occurs</li>
+                <li>Understand that Migrent may present an optional one-time AUD $19 platform fee when a successful match occurs</li>
                 <li>Do not encourage or agree to arrangements where an owner intends to circumvent platform fees</li>
                 <li>Leave the property in the condition you found it</li>
                 <li>Communicate openly about any issues during your stay</li>
@@ -76,8 +77,8 @@ export default function RulesCommunityGuidelines() {
                 <li>Do not post misleading photos or descriptions</li>
                 <li>Comply with relevant tenancy or lodging laws and anti-discrimination rules</li>
                 <li>Do not demand unlawful payments (e.g. excessive bond or hidden charges)</li>
-                <li>Agree to pay MigRent&apos;s one-time AUD $99 platform fee on each successful match</li>
-                <li>Do not use MigRent to find seekers and then move the arrangement off-platform to avoid fees</li>
+                <li>Agree to pay Migrent&apos;s one-time AUD $99 platform fee on each successful match</li>
+                <li>Do not use Migrent to find seekers and then move the arrangement off-platform to avoid fees</li>
                 <li>Provide a safe, clean, and habitable living environment</li>
                 <li>Respond to enquiries in a timely manner</li>
               </ul>
@@ -104,14 +105,14 @@ export default function RulesCommunityGuidelines() {
           <section className="card p-6 rounded-2xl space-y-3">
             <h2 className="text-lg font-bold text-[var(--color-ink)]">Dispute Resolution</h2>
             <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
-              <p>MigRent encourages users to resolve disputes directly and amicably. If you cannot reach a resolution:</p>
+              <p>Migrent encourages users to resolve disputes directly and amicably. If you cannot reach a resolution:</p>
               <ol className="list-decimal list-inside space-y-1.5">
                 <li>Attempt direct communication with the other party</li>
                 <li>Document all interactions and agreements</li>
-                <li>Contact MigRent at <a href="https://mail.google.com/mail/?view=cm&fs=1&to=migrentau@gmail.com" target="_blank" rel="noopener noreferrer" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">migrentau@gmail.com</a> for assistance</li>
+                <li>Contact Migrent at <a href="https://mail.google.com/mail/?view=cm&fs=1&to=migrentau@gmail.com" target="_blank" rel="noopener noreferrer" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">migrentau@gmail.com</a> for assistance</li>
                 <li>For serious disputes, seek independent legal advice or contact your state&apos;s tenancy authority</li>
               </ol>
-              <p>MigRent may mediate informally but is not a dispute resolution service and cannot enforce outcomes between users.</p>
+              <p>Migrent may mediate informally but is not a dispute resolution service and cannot enforce outcomes between users.</p>
             </div>
           </section>
 
@@ -126,7 +127,7 @@ export default function RulesCommunityGuidelines() {
                 <li>Fire safety and habitability standards</li>
                 <li>Insurance and liability requirements</li>
               </ul>
-              <p>MigRent does not provide legal advice and is not responsible for users&apos; regulatory compliance.</p>
+              <p>Migrent does not provide legal advice and is not responsible for users&apos; regulatory compliance.</p>
             </div>
           </section>
 
@@ -134,7 +135,7 @@ export default function RulesCommunityGuidelines() {
           <section className="card p-6 rounded-2xl space-y-3">
             <h2 className="text-lg font-bold text-[var(--color-ink)]">Enforcement</h2>
             <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
-              <p>MigRent may take the following actions for guideline violations:</p>
+              <p>Migrent may take the following actions for guideline violations:</p>
               <ul className="list-disc list-inside space-y-1.5">
                 <li><strong>Warning</strong> - First-time or minor violations</li>
                 <li><strong>Content removal</strong> - Listings or messages that violate standards</li>
@@ -149,7 +150,7 @@ export default function RulesCommunityGuidelines() {
             <h3 className="text-lg font-bold text-[var(--color-ink)] mb-2">Join a trusted community</h3>
             <p className="text-sm text-[var(--color-ink-2)] mb-4">Sign up and start connecting with verified users.</p>
             <div className="flex gap-3 justify-center">
-              <Link href="/signup">
+              <Link href={hubFromSite.signUp()}>
                 <motion.span whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }} className="inline-block btn-primary text-sm px-6 py-2.5 rounded-xl">
                   Sign Up Free
                 </motion.span>

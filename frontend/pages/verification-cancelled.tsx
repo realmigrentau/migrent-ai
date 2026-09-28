@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ShieldQuestion } from "lucide-react";
 import SEOHead from "../components/SEOHead";
+import { hubFromSite } from "../lib/hub/routes";
 
 /**
  * Landing page for Stripe's cancel redirect if the optional $19
@@ -30,7 +31,7 @@ export default function VerificationCancelled() {
           </p>
           <div className="flex flex-wrap justify-center gap-3 mt-8">
             <Link
-              href="/account/settings?tab=verification"
+              href={hubFromSite.path("/settings#verification")}
               className="btn-primary h-[44px] px-6 rounded-[10px] inline-flex items-center text-[14.5px]"
             >
               Back to verification

@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 MAILJET_API_KEY = os.environ.get("MAILJET_API_KEY", "")
 MAILJET_SECRET_KEY = os.environ.get("MAILJET_SECRET_KEY", "")
 FROM_EMAIL = os.environ.get("FROM_EMAIL", "migrentau@gmail.com")
-FROM_NAME = os.environ.get("FROM_NAME", "MigRent")
+FROM_NAME = os.environ.get("FROM_NAME", "Migrent")
 FRONTEND_URL = os.environ.get("FRONTEND_URL", "https://migrent.vercel.app")
 
 BRAND_COLOR = "#E11D48"
@@ -31,14 +31,14 @@ def _email_layout(content: str) -> str:
   <div style="max-width:600px;margin:0 auto;background:#ffffff;border-radius:8px;overflow:hidden;">
     <div style="background-color:{BRAND_COLOR};padding:24px 32px;text-align:center;">
       <a href="{FRONTEND_URL}" style="text-decoration:none;">
-        <span style="color:#ffffff;font-size:28px;font-weight:bold;letter-spacing:-0.5px;">MigRent</span>
+        <span style="color:#ffffff;font-size:28px;font-weight:bold;letter-spacing:-0.5px;">Migrent</span>
       </a>
     </div>
     <div style="padding:32px;">{content}</div>
     <div style="border-top:1px solid #e6ebf1;padding:24px 32px;text-align:center;">
-      <p style="color:#8898aa;font-size:14px;margin:0 0 8px;">MigRent - Find your home in Australia</p>
+      <p style="color:#8898aa;font-size:14px;margin:0 0 8px;">Migrent - Find your home in Australia</p>
       <p style="color:#b0b8c4;font-size:11px;line-height:16px;margin:8px 0 0;">
-        You are receiving this email because you have an account on MigRent.
+        You are receiving this email because you have an account on Migrent.
       </p>
     </div>
   </div>
@@ -78,7 +78,7 @@ def send_id_approved_email(to_email: str, owner_name: str, fully_verified: bool)
         extra = """
         <div style="background:#ecfdf5;border-radius:8px;padding:16px;text-align:center;margin:16px 0;">
           <p style="color:#059669;font-size:16px;font-weight:600;margin:0;">You are now fully verified!</p>
-          <p style="color:#059669;font-size:14px;margin:8px 0 0;">You can now create and list rooms on MigRent.</p>
+          <p style="color:#059669;font-size:14px;margin:8px 0 0;">You can now create and list rooms on Migrent.</p>
         </div>
         <div style="text-align:center;margin:24px 0;">
           <a href="{url}/owner/listings/new" style="background-color:#059669;border-radius:8px;color:#ffffff;font-size:16px;font-weight:600;text-decoration:none;padding:14px 32px;display:inline-block;">List Your Room</a>
@@ -97,7 +97,7 @@ def send_id_approved_email(to_email: str, owner_name: str, fully_verified: bool)
     </p>
     {extra}
     """
-    _send(to_email, "Your MigRent ID has been approved", _email_layout(content))
+    _send(to_email, "Your Migrent ID has been approved", _email_layout(content))
 
 
 def send_id_rejected_email(to_email: str, owner_name: str, reason: str):
@@ -126,7 +126,7 @@ def send_id_rejected_email(to_email: str, owner_name: str, reason: str):
       <a href="{FRONTEND_URL}/account/settings?tab=verification" style="background-color:{BRAND_COLOR};border-radius:8px;color:#ffffff;font-size:16px;font-weight:600;text-decoration:none;padding:14px 32px;display:inline-block;">Re-upload ID</a>
     </div>
     """
-    _send(to_email, "Update on your MigRent ID verification", _email_layout(content))
+    _send(to_email, "Update on your Migrent ID verification", _email_layout(content))
 
 
 def send_founder_id_review_alert(founder_email: str, owner_name: str, owner_email: str, document_type: str):

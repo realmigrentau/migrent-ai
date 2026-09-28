@@ -1,12 +1,12 @@
 /**
- * The single source of truth for who MigRent is, what it charges and how to
+ * The single source of truth for who Migrent is, what it charges and how to
  * reach it. Every footer, legal page, contact page, email template and
  * pricing surface reads from here. Nothing below may be duplicated as a
  * string literal elsewhere; tests/unit/siteIdentity.test.ts greps for
  * drift.
  *
  * Fields marked `confirmed: false` are NOT verified facts. The site
- * previously alternated between "MigRent", "MigRent AI", "MigRent Pty Ltd",
+ * previously alternated between "Migrent", "Migrent AI", "Migrent Pty Ltd",
  * "Sole Trader", "Sydney" and "Naarm / Melbourne". Until the owner and
  * Australian counsel confirm the legal identity, public copy uses the
  * neutral forms exposed by the helpers at the bottom of this file. See
@@ -20,15 +20,15 @@ export const IDENTITY_VERSION = "2026-09-03";
 export const siteIdentity = {
   version: IDENTITY_VERSION,
 
-  /** Public brand name. Always "MigRent". Never "MigRent AI". */
-  brandName: "MigRent",
+  /** Public brand name. Always "Migrent". Never "Migrent AI". */
+  brandName: "Migrent",
 
   /** Registered business identifiers. */
   abn: "22 669 566 941",
 
   /** UNCONFIRMED. Options observed in old copy: "Sole Trader", "Pty Ltd". */
   legalEntity: {
-    name: "MigRent",
+    name: "Migrent",
     entityType: null as "sole_trader" | "pty_ltd" | null,
     confirmed: false,
   },
@@ -83,7 +83,7 @@ export const siteIdentity = {
       /** The paid seeker badge is switched off (it verified nothing). */
       verification: { enabled: false, fee: 19 },
     },
-    /** MigRent never holds rent, bonds or deposits. Stripe processes the
+    /** Migrent never holds rent, bonds or deposits. Stripe processes the
      * host fee only. */
     holdsRentOrBond: false,
   },
@@ -102,7 +102,7 @@ export const siteIdentity = {
   removedClaims: [
     "24/7 support",
     "All systems operational",
-    "MigRent Guarantee",
+    "Migrent Guarantee",
     "thousands of listings",
     "every host verified (as an absolute)",
     "no rental history needed (as an absolute)",
@@ -139,5 +139,5 @@ export function hostFeeSentence(): string {
 }
 
 export function seekerFeeSentence(): string {
-  return "Renters pay MigRent nothing. Browsing, messaging and applying are free, and MigRent never handles your rent or bond.";
+  return "Renters pay Migrent nothing. Browsing, messaging and applying are free, and Migrent never handles your rent or bond.";
 }

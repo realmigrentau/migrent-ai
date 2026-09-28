@@ -67,7 +67,7 @@ export default function TicketPage() {
   return (
     <>
       <Head>
-        <title key="title">{ticket.subject} - MigRent Support</title>
+        <title key="title">{ticket.subject} - Migrent Support</title>
       </Head>
 
       <div className="max-w-3xl mx-auto">

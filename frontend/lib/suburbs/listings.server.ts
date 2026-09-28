@@ -1,5 +1,5 @@
 /**
- * MigRent's own room figures, from MigRent's own listings.
+ * Migrent's own room figures, from Migrent's own listings.
  *
  * These are the only numbers on a suburb page that are ours rather than the
  * ABS's, and they are the ones most likely to be misread, so the rules are

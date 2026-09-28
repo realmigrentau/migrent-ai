@@ -146,9 +146,9 @@ export default function SuburbPage({
             </div>
           </header>
 
-          {/* 4. What MigRent itself can tell you */}
+          {/* 4. What Migrent itself can tell you */}
           <section className="sub-rooms" aria-labelledby="h-rooms">
-            <h2 className="sub-section-title" id="h-rooms">Rooms on MigRent</h2>
+            <h2 className="sub-section-title" id="h-rooms">Rooms on Migrent</h2>
             {listings === null ? (
               <p className="sub-rooms__none">
                 Live room data is temporarily unavailable. Try the{" "}
@@ -157,7 +157,7 @@ export default function SuburbPage({
             ) : listings.activeListings === 0 ? (
               <div className="sub-rooms__none">
                 <p>
-                  There are no verified rooms advertised in {detail.name} on MigRent right now. This
+                  There are no verified rooms advertised in {detail.name} on Migrent right now. This
                   counts what is listed with us - it is not a vacancy rate for the suburb.
                 </p>
                 <Link className="sub-btn sub-btn--primary" href={`/seeker/search?suburb=${encodeURIComponent(detail.name)}`}>
@@ -177,7 +177,7 @@ export default function SuburbPage({
                     fieldKey="medianWeeklyRoomPrice"
                     value={listings.medianWeeklyRoomPrice != null ? `${formatAud(listings.medianWeeklyRoomPrice)} / week` : null}
                     sources={sources}
-                    note={`Not enough recent MigRent listings in ${detail.name} to publish a median. We publish one once there are at least 5.`}
+                    note={`Not enough recent Migrent listings in ${detail.name} to publish a median. We publish one once there are at least 5.`}
                   />
                 </dl>
                 <p className="sub-rooms__asof">
@@ -255,7 +255,7 @@ export default function SuburbPage({
                 {c.medianWeeklyRent != null && (
                   <p className="sub-caveat">
                     The Census median covers whole rented dwellings - houses and units - at August
-                    2021. It is not a room rent and not a current market rate. MigRent&apos;s own room
+                    2021. It is not a room rent and not a current market rate. Migrent&apos;s own room
                     figures are in the section above.
                   </p>
                 )}
@@ -339,7 +339,7 @@ export default function SuburbPage({
           {/* Editorial, clearly separated from anything sourced */}
           {detail.editorial && (
             <section className="sub-editorial" aria-labelledby="h-editorial">
-              <h2 className="sub-section-title" id="h-editorial">From the MigRent team</h2>
+              <h2 className="sub-section-title" id="h-editorial">From the Migrent team</h2>
               <p className="sub-editorial__lead">{detail.editorial.summary}</p>
               <div className="sub-editorial__cols">
                 <div>
@@ -356,7 +356,7 @@ export default function SuburbPage({
                 </div>
               </div>
               <p className="sub-editorial__stamp">
-                Written and reviewed by the MigRent team on {formatDate(detail.editorial.reviewedOn)}.
+                Written and reviewed by the Migrent team on {formatDate(detail.editorial.reviewedOn)}.
                 This section is opinion, not data.
               </p>
             </section>
@@ -404,7 +404,7 @@ export default function SuburbPage({
           <section className="sub-cta">
             <h2>Looking for a room in {detail.name}?</h2>
             <p>
-              MigRent lists rooms from hosts who are ID-checked before their listing goes live, and
+              Migrent lists rooms from hosts who are ID-checked before their listing goes live, and
               renters pay us nothing.
             </p>
             <div className="sub-cta__actions">

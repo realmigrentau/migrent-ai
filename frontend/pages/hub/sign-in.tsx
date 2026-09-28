@@ -8,7 +8,8 @@ import { Button } from "../../components/hub/ui/Button";
 import { Field, Input } from "../../components/hub/ui/Field";
 import { InlineAlert } from "../../components/hub/ui/Feedback";
 import { supabase } from "../../lib/supabase";
-import { safeHubPath } from "../../lib/hub/routes";
+import { safeHubPath, siteUrl } from "../../lib/hub/routes";
+import { safeRedirectPath } from "../../lib/safeRedirect";
 import { useHub } from "../../lib/hub/session";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -34,11 +35,19 @@ export default function SignIn() {
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  // A page on the main site (support tickets, a payment result) that sent
+  // the person here to sign in. Same-origin paths only.
+  const siteReturn = typeof router.query.return === "string" ? safeRedirectPath(router.query.return, "") : "";
+
   // Already signed in: go straight on.
   useEffect(() => {
     if (!router.isReady) return;
+    if (status === "ready" && siteReturn) {
+      window.location.replace(siteUrl(siteReturn));
+      return;
+    }
     if (status === "ready" || status === "needs-onboarding" || status === "needs-mfa") void navigate(next, { replace: true });
-  }, [status, router.isReady, next, navigate]);
+  }, [status, router.isReady, next, navigate, siteReturn]);
 
   const reason =
     intent === "apply"

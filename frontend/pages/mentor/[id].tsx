@@ -140,7 +140,7 @@ export default function MentorProfilePage() {
   return (
     <>
       <Head>
-        <title key="title">{name} - Local Mentor in {mentor.suburb} - MigRent</title>
+        <title key="title">{name} - Local Mentor in {mentor.suburb} - Migrent</title>
         <meta key="description" name="description" content={`Book a session with ${name}, a local mentor in ${mentor.suburb}. ${mentor.languages.join(", ")} speaker.`} />
       </Head>
 

@@ -30,7 +30,7 @@ export default function WhyItMatters() {
       <div className="mg-shell">
         <Reveal>
           <SectionHead
-            eyebrow="Why MigRent"
+            eyebrow="Why Migrent"
             heading="Renting here asks for a past you have not"
             emphasis="had yet."
             headingId="why-heading"
@@ -56,7 +56,7 @@ export default function WhyItMatters() {
 
           <Reveal delay={0.1}>
             <div className="mg-card mg-wash-sun overflow-hidden p-7 sm:p-9 lg:p-11 shadow-[var(--shadow-card)]">
-              <p className="mg-eyebrow mg-eyebrow--accent mb-6">The MigRent way</p>
+              <p className="mg-eyebrow mg-eyebrow--accent mb-6">The Migrent way</p>
               <ul className="list-none m-0 p-0 mg-rows">
                 {OURS.map((t) => (
                   <li key={t} className="flex gap-4 py-4 first:pt-0">

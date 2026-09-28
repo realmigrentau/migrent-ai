@@ -162,3 +162,15 @@ export function resolveStoredLink(url: string | null | undefined): { hub: string
   }
   return { href: siteUrl(path) };
 }
+
+/**
+ * Links from the public site into the Hub. Absolute once the Hub has its
+ * own host, /hub/... until then.
+ */
+export const hubFromSite = {
+  home: () => hubAbsoluteUrl("/"),
+  signIn: (returnTo?: string) => hubAbsoluteUrl(`/sign-in${returnTo ? `?return=${encodeURIComponent(returnTo)}` : ""}`),
+  signUp: () => hubAbsoluteUrl("/sign-up"),
+  listProperty: () => hubAbsoluteUrl(`/sign-up?intent=list&next=${encodeURIComponent("/properties/new")}`),
+  path: (hubPath: string) => hubAbsoluteUrl(hubPath),
+};

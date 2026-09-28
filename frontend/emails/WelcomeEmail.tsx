@@ -19,15 +19,15 @@ export default function WelcomeEmail({
 }: WelcomeEmailProps) {
   if (day === 1) {
     return (
-      <EmailLayout preview={`Welcome to MigRent, ${userName}!`}>
-        <Text style={heading}>Welcome to MigRent!</Text>
+      <EmailLayout preview={`Welcome to Migrent, ${userName}!`}>
+        <Text style={heading}>Welcome to Migrent!</Text>
 
         <Text style={paragraph}>
           Hi {userName},
         </Text>
 
         <Text style={paragraph}>
-          Thanks for joining MigRent - Australia's platform for international
+          Thanks for joining Migrent - Australia's platform for international
           students and migrants finding shared accommodation.
         </Text>
 
@@ -72,7 +72,7 @@ export default function WelcomeEmail({
 
   if (day === 3) {
     return (
-      <EmailLayout preview={`Complete your MigRent profile, ${userName}`}>
+      <EmailLayout preview={`Complete your Migrent profile, ${userName}`}>
         <Text style={heading}>Complete Your Profile</Text>
 
         <Text style={paragraph}>
@@ -80,7 +80,7 @@ export default function WelcomeEmail({
         </Text>
 
         <Text style={paragraph}>
-          Profiles with a photo and bio get <strong>3x more responses</strong> on MigRent.
+          Profiles with a photo and bio get <strong>3x more responses</strong> on Migrent.
           Take a minute to complete yours!
         </Text>
 
@@ -111,7 +111,7 @@ export default function WelcomeEmail({
       </Text>
 
       <Text style={paragraph}>
-        You've been on MigRent for a week now. {userRole === "seeker"
+        You've been on Migrent for a week now. {userRole === "seeker"
           ? "Have you found a room you like? Remember, the best listings go fast!"
           : "Have you listed your room yet? Seekers are actively searching for accommodation."
         }
@@ -119,7 +119,7 @@ export default function WelcomeEmail({
 
       <Section style={{ textAlign: "center", margin: "24px 0" }}>
         <Button style={button} href={FRONTEND_URL}>
-          Check Out MigRent
+          Check Out Migrent
         </Button>
       </Section>
 

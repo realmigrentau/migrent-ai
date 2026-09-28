@@ -77,7 +77,7 @@ async function overpass(query, label) {
         method: "POST",
         headers: {
           "Content-Type": "text/plain; charset=utf-8",
-          "User-Agent": "MigRent-suburb-directory-ETL/1.0 (+https://migrent.vercel.app)",
+          "User-Agent": "Migrent-suburb-directory-ETL/1.0 (+https://migrent.vercel.app)",
         },
         body: query,
       });

@@ -31,7 +31,7 @@ export type HeroNavItem = { labelKey: string; href: string };
  * The hero's links are derived from lib/navData, not written out again here.
  *
  * They used to be a second, hand-maintained list, and it had already drifted
- * once: the header dropped "Broker" when it turned out MigRent's mentors are
+ * once: the header dropped "Broker" when it turned out Migrent's mentors are
  * people who have made the same move rather than licensed agents, and this
  * list kept its own copy of the old idea for a while afterwards. Two lists
  * describing one site is a bug with a delay on it.

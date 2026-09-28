@@ -1,11 +1,12 @@
 import Link from "next/link";
 import SEOHead from "../components/SEOHead";
 import { motion } from "framer-motion";
+import { hubFromSite } from "../lib/hub/routes";
 
 export default function SafetyVerification() {
   return (
     <>
-      <SEOHead title="Safety & Verification" description="How MigRent keeps you safe - ID verification (VEVO), trust scores, Superhost criteria, and safety guidelines." />
+      <SEOHead title="Safety & Verification" description="How Migrent keeps you safe - ID verification (VEVO), trust scores, Superhost criteria, and safety guidelines." />
 
       <div className="max-w-3xl mx-auto space-y-10">
         {/* Hero */}
@@ -30,7 +31,7 @@ export default function SafetyVerification() {
           <section className="card p-6 rounded-2xl space-y-3">
             <h2 className="text-lg font-bold text-[var(--color-ink)]">Our Approach to Safety</h2>
             <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
-              <p>MigRent employs multiple layers of trust and verification to create a safer room-finding experience. While no platform can guarantee safety, we work hard to provide the tools and information you need to make informed decisions.</p>
+              <p>Migrent employs multiple layers of trust and verification to create a safer room-finding experience. While no platform can guarantee safety, we work hard to provide the tools and information you need to make informed decisions.</p>
             </div>
           </section>
 
@@ -66,7 +67,7 @@ export default function SafetyVerification() {
           <section className="card p-6 rounded-2xl space-y-3">
             <h2 className="text-lg font-bold text-[var(--color-ink)]">AI Match &amp; Trust Scores</h2>
             <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
-              <p>MigRent uses AI-assisted matching to help connect seekers with suitable rooms. Match scores consider factors such as:</p>
+              <p>Migrent uses AI-assisted matching to help connect seekers with suitable rooms. Match scores consider factors such as:</p>
               <ul className="list-disc list-inside space-y-1.5">
                 <li>Location preferences and proximity</li>
                 <li>Budget range compatibility</li>
@@ -106,7 +107,7 @@ export default function SafetyVerification() {
                 <li>Use written agreements or clear messages confirming all terms</li>
                 <li>Ask about bills, bond, notice periods, and house rules upfront</li>
                 <li>Be cautious of deals that seem too good to be true</li>
-                <li>Keep all communication on the MigRent platform where possible</li>
+                <li>Keep all communication on the Migrent platform where possible</li>
                 <li>Report suspicious behaviour immediately using the Report button</li>
               </ul>
             </div>
@@ -143,14 +144,14 @@ export default function SafetyVerification() {
 
           {/* Disclaimer */}
           <div className="card-subtle p-6 rounded-2xl border-l-2 border-l-amber-500">
-            <p className="text-sm text-[var(--color-ink-3)] mb-2"><strong className="text-[var(--color-ink-2)]">Disclaimer:</strong> MigRent does not guarantee the safety, suitability, or legality of any person or property. Users must make their own independent checks and decisions.</p>
+            <p className="text-sm text-[var(--color-ink-3)] mb-2"><strong className="text-[var(--color-ink-2)]">Disclaimer:</strong> Migrent does not guarantee the safety, suitability, or legality of any person or property. Users must make their own independent checks and decisions.</p>
           </div>
 
           {/* CTA */}
           <div className="card p-6 rounded-2xl bg-[var(--color-primary-soft)] from-[var(--color-accent-50)] to-[var(--color-accent-soft)]/50 dark:from-[var(--color-accent)]/10 dark:to-[var(--color-surface)] border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)] text-center">
-            <h3 className="text-lg font-bold text-[var(--color-ink)] mb-2">Stay safe on MigRent</h3>
+            <h3 className="text-lg font-bold text-[var(--color-ink)] mb-2">Stay safe on Migrent</h3>
             <p className="text-sm text-[var(--color-ink-2)] mb-4">Complete your verification to build trust with other users.</p>
-            <Link href="/signup">
+            <Link href={hubFromSite.signUp()}>
               <motion.span whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }} className="inline-block btn-primary text-sm px-6 py-2.5 rounded-xl">
                 Get Verified
               </motion.span>

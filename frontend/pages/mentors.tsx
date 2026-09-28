@@ -71,7 +71,7 @@ export default function MentorsPage() {
 
   return (
     <>
-      <SEOHead title="Find a Local Mentor - MigRent" description="Connect with verified local mentors who help new arrivals settle into their suburb. Video calls, suburb walks, and local tips." />
+      <SEOHead title="Find a Local Mentor - Migrent" description="Connect with verified local mentors who help new arrivals settle into their suburb. Video calls, suburb walks, and local tips." />
 
       <div className="max-w-4xl mx-auto px-4 py-8 space-y-8">
         {/* Hero */}

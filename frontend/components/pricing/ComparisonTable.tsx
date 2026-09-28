@@ -57,7 +57,7 @@ export default function ComparisonTable() {
         className="text-center mb-10"
       >
         <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-[var(--color-ink)]">
-          Why MigRent?
+          Why Migrent?
         </h2>
         <p className="mt-3 text-[var(--color-ink-3)] text-sm max-w-lg mx-auto">
           See how we compare to traditional rental platforms in Australia.
@@ -90,7 +90,7 @@ export default function ComparisonTable() {
                 <th className="text-center p-4 min-w-[100px]">
                   <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--color-primary)]">
                     <Sparkles className="w-3 h-3 text-[color:var(--color-primary-fg)]" />
-                    <span className="font-semibold text-[color:var(--color-primary-fg)]">MigRent</span>
+                    <span className="font-semibold text-[color:var(--color-primary-fg)]">Migrent</span>
                   </div>
                 </th>
               </tr>

@@ -80,7 +80,7 @@ export default function Contact() {
 
   return (
     <>
-      <SEOHead title="Contact MigRent | Real humans, real answers" description="Get in touch with MigRent. Email support, contact form, safety reporting, legal escalation, and partnerships - all in one place." />
+      <SEOHead title="Contact Migrent | Real humans, real answers" description="Get in touch with Migrent. Email support, contact form, safety reporting, legal escalation, and partnerships - all in one place." />
 
       <div className="max-w-5xl mx-auto space-y-14">
         {/* HERO */}
@@ -91,7 +91,7 @@ export default function Contact() {
               {supportPromise()}
             </span>
             <h1 className="text-4xl md:text-5xl font-semibold tracking-tight text-[var(--color-ink)]">
-              Contact MigRent
+              Contact Migrent
             </h1>
             <p className="text-base md:text-lg text-[var(--color-ink-2)] max-w-2xl leading-relaxed">
               Real humans. Real answers. Whether you're a seeker, an owner, or someone with a legal or safety concern -
@@ -150,7 +150,7 @@ export default function Contact() {
               { q: "How do bookings and payments work?", href: "/resources/help" },
               { q: "Can I cancel a booking?", href: "/resources/help" },
               { q: "How do I list my property?", href: "/resources/help" },
-              { q: "Is MigRent only for migrants and students?", href: "/resources/help" },
+              { q: "Is Migrent only for migrants and students?", href: "/resources/help" },
               { q: "How do I report a suspicious listing?", href: "/resources/help" },
             ].map((item) => (
               <Link
@@ -470,10 +470,10 @@ export default function Contact() {
           <div className="card p-6 rounded-2xl">
             <h3 className="font-semibold text-[var(--color-ink)] text-base mb-2">A note from the founder</h3>
             <p className="text-sm text-[var(--color-ink-2)] leading-relaxed">
-              Hi - I'm Anesh, the founder of MigRent. We're a small, focused team building MigRent for migrants and students in Australia. Email goes straight to a real human inbox. If something's not working or you just want to say hello, write to us. We read everything.
+              Hi - I'm Anesh, the founder of Migrent. We're a small, focused team building Migrent for migrants and students in Australia. Email goes straight to a real human inbox. If something's not working or you just want to say hello, write to us. We read everything.
             </p>
             <Link href="/about" className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] mt-4">
-              About MigRent
+              About Migrent
               <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
               </svg>

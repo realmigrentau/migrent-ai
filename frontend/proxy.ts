@@ -23,7 +23,8 @@ import { createMiddlewareSupabaseClient } from "./lib/supabase-middleware";
  *    path is not advertised. The client-side AdminGate stays as a second
  *    factor but is not the only gate.
  *  - The older private surfaces (dashboard, owner, account, messages, ...)
- *    still need a session; most now redirect into the Hub (next.config.ts).
+ *    redirect into the Hub (next.config.ts). The few site pages that still
+ *    need a session send people to Hub sign-in with `return`, and back.
  *
  * If the auth check itself fails (Supabase unreachable), private pages
  * fail closed to sign-in rather than rendering a protected shell.
@@ -33,14 +34,11 @@ const HUB_PUBLIC = ["/hub/sign-in", "/hub/sign-up", "/hub/forgot-password", "/hu
 
 const PUBLIC_SEEKER_PATHS = ["/seeker/search"];
 
+// The old dashboard, owner, account and messages pages redirect into the
+// Hub (next.config.ts) before this runs; these are the site pages that still
+// need a session.
 const PRIVATE_PREFIXES = [
-  "/dashboard",
-  "/owner",
-  "/seeker",
-  "/account",
-  "/messages",
   "/support/tickets",
-  "/onboarding",
   "/reviews",
   "/payment-success",
   "/payment-cancelled",
@@ -65,10 +63,11 @@ function hubSignIn(req: NextRequest, hubPath: string) {
   return res;
 }
 
+/** Hub sign-in, then back to the site page that asked. */
 function toSignIn(req: NextRequest, pathname: string) {
-  const signInUrl = new URL("/signin", req.url);
+  const signInUrl = new URL(HUB_HOST ? `https://${HUB_HOST}/sign-in` : "/hub/sign-in", req.url);
   const target = pathname + (req.nextUrl.search || "");
-  if (target.startsWith("/") && !target.startsWith("//")) signInUrl.searchParams.set("redirect", target);
+  if (target.startsWith("/") && !target.startsWith("//")) signInUrl.searchParams.set("return", target);
   const res = NextResponse.redirect(signInUrl);
   res.headers.set("Cache-Control", "private, no-store");
   return res;
@@ -184,17 +183,8 @@ export const config = {
     "/hub/:path*",
     "/admin",
     "/admin/:path*",
-    "/dashboard",
-    "/dashboard/:path*",
-    "/owner/:path*",
-    "/seeker/:path*",
-    "/account/:path*",
-    "/messages",
-    "/messages/:path*",
     "/support/tickets",
     "/support/tickets/:path*",
-    "/onboarding",
-    "/onboarding/:path*",
     "/reviews/:path*",
     "/payment-success",
     "/payment-cancelled",

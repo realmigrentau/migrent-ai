@@ -3,7 +3,7 @@ import AxeBuilder from "@axe-core/playwright";
 
 // /resources/* are the consolidated Resources hubs; they replaced /faq,
 // /guides, /blog and /help, whose URLs are 301s now.
-const PAGES = ["/", "/seeker/search?suburb=Kellyville", "/signin", "/signup", "/contact", "/pricing", "/resources", "/resources/guides", "/resources/tools", "/resources/help", "/listing/11111111-1111-4111-8111-000000000001"];
+const PAGES = ["/", "/seeker/search?suburb=Kellyville", "/hub/sign-in", "/hub/sign-up", "/contact", "/pricing", "/resources", "/resources/guides", "/resources/tools", "/resources/help", "/listing/11111111-1111-4111-8111-000000000001"];
 
 for (const path of PAGES) {
   test(`axe: ${path} has no serious or critical violations`, async ({ page }) => {
@@ -32,19 +32,18 @@ test("skip link and landmarks", async ({ page }) => {
 });
 
 test("empty sign-in submission announces field errors", async ({ page }) => {
-  await page.goto("/signin");
+  await page.goto("/hub/sign-in");
   await page.getByRole("button", { name: /^Sign in$/ }).click();
   const email = page.getByLabel("Email");
   await expect(email).toHaveAttribute("aria-invalid", "true");
   const describedBy = await email.getAttribute("aria-describedby");
   expect(describedBy).toBeTruthy();
-  await expect(page.locator(`#${describedBy}`)).toContainText(/email/i);
-  await expect(page.locator("#signin-status[role=alert]")).toContainText(/./);
-  // Enter submits the form.
-  await email.fill("someone@example.com");
-  await page.getByLabel("Password").fill("x");
+  await expect(page.locator(`[id="${describedBy?.split(" ")[0]}"]`)).toContainText(/email/i);
+  // Enter submits; a wrong password is announced.
+  await email.fill("renter@example.test");
+  await page.getByLabel("Password").fill("not-the-password");
   await page.getByLabel("Password").press("Enter");
-  await expect(page.locator("#signin-status")).toContainText(/./);
+  await expect(page.getByRole("alert")).toContainText(/do not match/i);
 });
 
 /* Dark mode was retired (lib/themeBootstrap.ts), and with it the header's

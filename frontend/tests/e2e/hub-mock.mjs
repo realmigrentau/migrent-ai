@@ -350,6 +350,7 @@ function me(uid) {
     email: u.email,
     name: u.name,
     avatar_url: null,
+    bio: u.bio || "",
     public_id: `pub${uid.slice(-4)}`,
     role,
     is_admin: Boolean(u.is_admin),
@@ -554,6 +555,8 @@ export function handleHub(req, url, body, send) {
   }
   if (p === "/hub/settings" && req.method === "PATCH") {
     if (body.name) u.name = body.name;
+    if (typeof body.bio === "string") u.bio = body.bio;
+    if (body.owner_kind) u.owner_kind = body.owner_kind;
     if (body.notification_prefs) u.prefs = body.notification_prefs;
     return send(200, me(uid)), true;
   }

@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { hubFromSite } from "../lib/hub/routes";
 
 export default function PaymentCancelled() {
   return (
@@ -32,10 +33,10 @@ export default function PaymentCancelled() {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
-          <Link href="/dashboard" className="btn-primary py-2.5 px-6 rounded-[10px] text-sm inline-block">
+          <Link href={hubFromSite.home()} className="btn-primary py-2.5 px-6 rounded-[10px] text-sm inline-block">
             Seeker Dashboard
           </Link>
-          <Link href="/dashboard/owner" className="btn-secondary py-2.5 px-6 rounded-[10px] text-sm inline-block">
+          <Link href={hubFromSite.path("/applications")} className="btn-secondary py-2.5 px-6 rounded-[10px] text-sm inline-block">
             Owner Dashboard
           </Link>
         </div>

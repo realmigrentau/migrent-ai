@@ -36,7 +36,7 @@ const benefits = [
   },
   {
     title: "Direct Support",
-    desc: "Get help from MigRent staff and experienced community members any time of day.",
+    desc: "Get help from Migrent staff and experienced community members any time of day.",
     icon: "M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z",
     color: "text-[var(--color-primary)]",
     bgColor: "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10",
@@ -66,7 +66,7 @@ const rules = [
 export default function Discord() {
   return (
     <>
-      <SEOHead title="Join MigRent Discord Community" description="The MigRent community Discord is launching soon - housing tips, scam alerts, and support for migrants across Australia." />
+      <SEOHead title="Join Migrent Discord Community" description="The Migrent community Discord is launching soon - housing tips, scam alerts, and support for migrants across Australia." />
 
       <div className="max-w-5xl mx-auto">
         <Breadcrumb
@@ -88,7 +88,7 @@ export default function Discord() {
             Launching soon
           </div>
           <h1 className="text-3xl md:text-5xl font-black tracking-tight text-[var(--color-ink)]">
-            Join the <span className="text-[color:var(--color-primary)]">MigRent Community</span>
+            Join the <span className="text-[color:var(--color-primary)]">Migrent Community</span>
           </h1>
           <p className="mt-4 text-lg text-[var(--color-ink-3)] max-w-xl mx-auto">
             Connect with migrants and hosts across Australia. Get housing tips, share experiences, and find support.

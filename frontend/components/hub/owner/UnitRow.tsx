@@ -25,7 +25,7 @@ export default function UnitRow({ u, fallbackLabel }: { u: ListingCard; fallback
         </div>
       </div>
       <div className="hidden items-center gap-4 sm:flex">
-        {(u.pending_applications ?? 0) > 0 && (
+        {(u.pending_applications ?? 0) > 0 && !/application/i.test(u.status?.label ?? "") && (
           <span className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-[color:var(--color-primary)]">
             <FileText className="h-4 w-4" strokeWidth={1.75} aria-hidden />
             {u.pending_applications} to review

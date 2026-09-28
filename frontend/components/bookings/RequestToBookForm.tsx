@@ -229,7 +229,7 @@ export default function RequestToBookForm({
             <span className="text-[var(--color-ink)] tabular-nums">${listing.weekly_price.toLocaleString()}</span>
           </div>
           <div className="flex justify-between py-1.5 text-[13px]">
-            <span className="text-[var(--color-ink-2)]">MigRent renter fee</span>
+            <span className="text-[var(--color-ink-2)]">Migrent renter fee</span>
             <span className="text-[var(--color-accent)] font-bold tabular-nums">$0</span>
           </div>
           <div className="h-px bg-[var(--color-line)] my-2" />
@@ -238,14 +238,14 @@ export default function RequestToBookForm({
             <span className="tabular-nums">${(totalRent + listing.weekly_price).toLocaleString()}</span>
           </div>
           <p className="text-[11.5px] text-[var(--color-ink-3)] leading-relaxed mt-2">
-            Rent and bond are paid directly to your host, not to MigRent.
+            Rent and bond are paid directly to your host, not to Migrent.
           </p>
         </div>
       )}
 
       {/* Bond guidance.
-          This banner used to claim MigRent held the bond itself.
-          MigRent never holds bond money, and in NSW, VIC and QLD a residential bond
+          This banner used to claim Migrent held the bond itself.
+          Migrent never holds bond money, and in NSW, VIC and QLD a residential bond
           must be lodged with the state bond authority rather than held by a
           third party, so the claim was both untrue and not something we could
           lawfully build as described. */}

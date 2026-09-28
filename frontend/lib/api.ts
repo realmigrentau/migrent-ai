@@ -2323,6 +2323,9 @@ export interface PublicListing {
   available_to?: string | null;
   min_stay?: string | null;
   min_stay_weeks?: number | null;
+  /** "long_term" (apply through Migrent Hub) or "short_stay" (request a stay). */
+  listing_purpose?: "long_term" | "short_stay" | "sale" | null;
+  unit_label?: string | null;
   max_stay_weeks?: number | null;
   nearest_transport?: string | null;
   station_distance_min?: number | null;

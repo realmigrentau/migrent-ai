@@ -46,7 +46,7 @@ export default class MapErrorBoundary extends Component<Props, State> {
 export function reportMapFailure(error: unknown, componentStack?: string) {
   if (typeof window === "undefined") return;
   const err = error instanceof Error ? error : new Error(String(error));
-  console.warn("[MigRent] Map unavailable:", err.message);
+  console.warn("[Migrent] Map unavailable:", err.message);
   if (!process.env.NEXT_PUBLIC_SENTRY_DSN) return;
   import("@sentry/nextjs")
     .then((Sentry) => {

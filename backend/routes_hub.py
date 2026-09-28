@@ -108,6 +108,7 @@ def me(request: Request, authorization: Optional[str] = Header(None)):
         "email": actor.email,
         "name": actor.display_name if actor.display_name != "there" else "",
         "avatar_url": p.get("custom_pfp"),
+        "bio": p.get("bio") or p.get("about_me") or "",
         "public_id": p.get("public_id"),
         "role": public_role(p, actor.is_admin),
         "is_admin": actor.is_admin,
@@ -231,6 +232,8 @@ def switch_role(request: Request, body: RoleBody, authorization: Optional[str] =
 
 class SettingsBody(BaseModel):
     name: Optional[str] = Field(None, min_length=1, max_length=80)
+    # Shown on the public owner card beside every listing.
+    bio: Optional[str] = Field(None, max_length=1000)
     owner_kind: Optional[str] = None
     notification_prefs: Optional[dict] = None
 
@@ -252,6 +255,8 @@ def update_settings(request: Request, body: SettingsBody, authorization: Optiona
     patch: dict = {}
     if body.name is not None:
         patch["preferred_name"] = body.name.strip()
+    if body.bio is not None:
+        patch["bio"] = body.bio.strip() or None
     if body.owner_kind is not None:
         patch["owner_kind"] = body.owner_kind
     if body.notification_prefs is not None:

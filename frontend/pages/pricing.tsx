@@ -18,6 +18,7 @@ import PricingFAQ from "../components/pricing/PricingFAQ";
 import TestimonialCarousel from "../components/pricing/TestimonialCarousel";
 import PageSubnav from "../components/ui/PageSubnav";
 import { reveal, ScrollStatement } from "../components/marketing/motion";
+import { hubFromSite } from "../lib/hub/routes";
 
 /* Hallmark · genre: editorial · design-system: design.md · designed-as-app
  * macrostructure: Marquee Hero family (marketing) · page: pricing */
@@ -28,7 +29,7 @@ const plans = [
     price: "$0",
     unit: "forever",
     title: "Search, apply, and book - free",
-    body: "Renters never pay MigRent a service fee. Browse every listing, message hosts, and apply without a credit card.",
+    body: "Renters never pay Migrent a service fee. Browse every listing, message hosts, and apply without a credit card.",
     points: ["Browse all verified listings", "Message hosts and apply free", "Guidance on lodging your bond safely", "Mentor network included"],
     cta: { label: "Start searching", href: "/seeker/search" },
     featured: false,
@@ -40,24 +41,24 @@ const plans = [
     title: "Free to list. Pay when it works.",
     body: "List and edit your rooms for free. You pay one fee per property when you find your tenant - nothing before, nothing after.",
     points: ["Free to list, free to edit", "No commission on weekly rent", "No subscriptions or hidden fees", "Secure card payments through Stripe"],
-    cta: { label: "Start listing", href: "/dashboard/owner" },
+    cta: { label: "Start listing", href: hubFromSite.listProperty() },
     featured: true,
   },
 ];
 
 const included = [
   { icon: BadgeCheck, title: "Host verification", body: "Government ID and proof-of-property checks on every host, before listing." },
-  { icon: Lock, title: "Bond guidance", body: "Plain-English help lodging the bond with your state authority, for both sides. MigRent never holds the money." },
+  { icon: Lock, title: "Bond guidance", body: "Plain-English help lodging the bond with your state authority, for both sides. Migrent never holds the money." },
   { icon: Wallet, title: "Stripe payments", body: "Card details never touch our servers. Payments are processed by Stripe." },
   { icon: ShieldCheck, title: "Dispute guidance", body: "Clear, plain-English guidance if something goes wrong, for both sides." },
   { icon: MessagesSquare, title: "Human support", body: "A real team that answers - not a chatbot maze." },
-  { icon: FileCheck2, title: "No lock-in", body: "No contracts with MigRent itself. Your lease is between you and your host." },
+  { icon: FileCheck2, title: "No lock-in", body: "No contracts with Migrent itself. Your lease is between you and your host." },
 ];
 
 export default function Pricing() {
   return (
     <>
-      <SEOHead title="Pricing - Simple and honest" description="MigRent pricing - seekers browse, apply, and book free. Owners list free and pay a one-time AUD $99 fee per property match. No subscriptions, no rent commissions, no hidden fees." />
+      <SEOHead title="Pricing - Simple and honest" description="Migrent pricing - seekers browse, apply, and book free. Owners list free and pay a one-time AUD $99 fee per property match. No subscriptions, no rent commissions, no hidden fees." />
 
       <PageSubnav
         title="Pricing"
@@ -68,7 +69,7 @@ export default function Pricing() {
           { label: "Compare", href: "#compare" },
           { label: "FAQ", href: "#faq" },
         ]}
-        cta={{ label: "Sign up", href: "/signup" }}
+        cta={{ label: "Sign up", href: hubFromSite.signUp() }}
       />
 
       {/* 1 · HERO + PLANS */}
@@ -193,7 +194,7 @@ export default function Pricing() {
               Join hosts and seekers across Australia. List your room free, or start your search today.
             </p>
             <div className="flex flex-wrap gap-3 mt-8">
-              <Link href="/signup" className="btn-primary h-12 px-7 text-[15px]">Sign up free <ArrowRight className="w-4 h-4" /></Link>
+              <Link href={hubFromSite.signUp()} className="btn-primary h-12 px-7 text-[15px]">Sign up free <ArrowRight className="w-4 h-4" /></Link>
               <Link href="/contact" className="btn-secondary h-12 px-7 text-[15px]"><MessageCircle className="w-4 h-4" /> Talk to us</Link>
             </div>
           </motion.div>

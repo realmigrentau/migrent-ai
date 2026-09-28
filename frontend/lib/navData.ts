@@ -27,6 +27,8 @@ export interface DropdownItem {
 export interface NavLinkDropdown {
   type: "dropdown";
   labelKey: string;
+  /** Literal label, used instead of labelKey (e.g. the product name "Migrent Hub"). */
+  label?: string;
   id: string;
   /** One flat list. The navbar decides whether to draw it in one or two
    *  columns from the item count, which is what stopped the Resources
@@ -50,7 +52,7 @@ export type NavItem = NavLinkSimple | NavLinkDropdown;
  * dropdown.
  *
  * Every label names its destination. In particular there is no "Broker"
- * anywhere: MigRent's mentors are people who have made the same move and
+ * anywhere: Migrent's mentors are people who have made the same move and
  * will talk you through it, not licensed real-estate brokers, and labelling
  * them "Broker" promised a regulated service the product does not provide.
  *

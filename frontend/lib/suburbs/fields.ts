@@ -121,7 +121,7 @@ export const FIELDS: Record<string, FieldMeta> = {
     methodology:
       "The five largest overseas countries of birth by persons counted, from Census tables G09F to G09H. Australia, the 'elsewhere' residual and 'not stated' are excluded.",
     limitation:
-      "This is a description of who lives somewhere, nothing more. MigRent does not rank suburbs by the origins of their residents.",
+      "This is a description of who lives somewhere, nothing more. Migrent does not rank suburbs by the origins of their residents.",
   },
   topLanguagesAtHome: {
     key: "topLanguagesAtHome",
@@ -206,25 +206,25 @@ export const FIELDS: Record<string, FieldMeta> = {
   },
   activeListings: {
     key: "activeListings",
-    label: "Rooms on MigRent",
-    measure: "Approved, visible MigRent room listings in this suburb",
+    label: "Rooms on Migrent",
+    measure: "Approved, visible Migrent room listings in this suburb",
     sourceId: LISTINGS,
     quality: "verified",
     unit: "count",
     limitation:
-      "This is how many rooms are advertised on MigRent right now. It is not a vacancy rate and says nothing about the suburb's wider rental market.",
+      "This is how many rooms are advertised on Migrent right now. It is not a vacancy rate and says nothing about the suburb's wider rental market.",
   },
   medianWeeklyRoomPrice: {
     key: "medianWeeklyRoomPrice",
-    label: "Median advertised room price on MigRent",
-    measure: "Median advertised weekly price of verified MigRent room listings",
+    label: "Median advertised room price on Migrent",
+    measure: "Median advertised weekly price of verified Migrent room listings",
     sourceId: LISTINGS,
     quality: "derived",
     unit: "audWeekly",
     methodology:
-      "The median advertised weekly price across approved, visible MigRent listings in this suburb. Published only where the minimum sample is met.",
+      "The median advertised weekly price across approved, visible Migrent listings in this suburb. Published only where the minimum sample is met.",
     limitation:
-      "Advertised asking prices, not agreed rents, and only for rooms listed on MigRent. It is not a market median for the suburb.",
+      "Advertised asking prices, not agreed rents, and only for rooms listed on Migrent. It is not a market median for the suburb.",
   },
 };
 
@@ -242,7 +242,7 @@ export function fieldMeta(key: string): FieldMeta {
 /** Human labels for the quality flags, used in the data-quality chip. */
 export const QUALITY_LABELS: Record<DataQuality, string> = {
   verified: "Published figure",
-  derived: "Calculated by MigRent",
+  derived: "Calculated by Migrent",
   approximate: "Approximate",
   insufficient_sample: "Not enough data",
   unavailable: "Not available",

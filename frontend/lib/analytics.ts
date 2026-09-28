@@ -1,5 +1,5 @@
 /**
- * Lightweight analytics helpers for MigRent.
+ * Lightweight analytics helpers for Migrent.
  * Uses Vercel Analytics (auto-injected via next.config) and
  * optional custom event tracking via a simple fetch wrapper.
  */

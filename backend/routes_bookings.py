@@ -29,7 +29,7 @@ STRIPE_SECRET_KEY = os.environ.get("STRIPE_SECRET_KEY", "")
 stripe.api_key = STRIPE_SECRET_KEY
 
 OWNER_FEE_AUD = HOST_LISTING_FEE_CENTS  # AUD 99.00 in cents
-# No seeker fee. Renters pay MigRent nothing, per the pricing page.
+# No seeker fee. Renters pay Migrent nothing, per the pricing page.
 # The $19 that used to live here was billed to the seeker alongside the
 # host's $99 in a single checkout session. See create_owner_fee_checkout.
 
@@ -91,7 +91,7 @@ def create_owner_fee_checkout(booking_id: str) -> stripe.checkout.Session:
     $19 seeker fee, and that session was handed to the seeker: returned to
     their browser on instant book, emailed to them on request-to-book. The
     renter was therefore charged $118 at a checkout the pricing page describes
-    as "$0 forever. Renters never pay MigRent a service fee." The host, meanwhile,
+    as "$0 forever. Renters never pay Migrent a service fee." The host, meanwhile,
     was never charged at all.
 
     Code now matches the published pricing: renters pay nothing, hosts pay a
@@ -108,7 +108,7 @@ def create_owner_fee_checkout(booking_id: str) -> stripe.checkout.Session:
                 "price_data": {
                     "currency": "aud",
                     "unit_amount": OWNER_FEE_AUD,
-                    "product_data": {"name": "MigRent host listing fee"},
+                    "product_data": {"name": "Migrent host listing fee"},
                 },
                 "quantity": 1,
             },
@@ -282,7 +282,7 @@ def create_booking(
     if is_instant:
         # Instant book: the room is held for the seeker straight away and the
         # host is invoiced their $99 to confirm. The seeker is never sent to
-        # checkout - they owe MigRent nothing - so checkout_url stays None and
+        # checkout - they owe Migrent nothing - so checkout_url stays None and
         # the frontend shows a confirmation instead of redirecting to Stripe.
         try:
             session = create_owner_fee_checkout(booking_id)
@@ -487,7 +487,7 @@ def respond_to_booking(
         listing_title = "Listing"
 
         # Tell the seeker they were approved. No payment link: renters owe
-        # MigRent nothing, and this email used to carry a $118 Stripe checkout.
+        # Migrent nothing, and this email used to carry a $118 Stripe checkout.
         try:
             seeker_id = booking["seeker_id"]
             seeker_user = sb.auth.admin.get_user_by_id(seeker_id)

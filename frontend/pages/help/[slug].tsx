@@ -146,7 +146,7 @@ export default function HelpArticlePage({ slug }: { slug: string }) {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <Head>
-          <title key="title">Article not found - MigRent Help</title>
+          <title key="title">Article not found - Migrent Help</title>
         </Head>
         <div className="max-w-2xl mx-auto text-center py-20">
           <div className="w-16 h-16 rounded-2xl bg-[var(--color-surface-muted)] flex items-center justify-center mx-auto mb-4">
@@ -176,7 +176,7 @@ export default function HelpArticlePage({ slug }: { slug: string }) {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      <SEOHead title="{article.title} - MigRent Help" description={article.summary} />
+      <SEOHead title="{article.title} - Migrent Help" description={article.summary} />
 
       <div className="max-w-5xl mx-auto pb-16">
         <div className="lg:grid lg:grid-cols-[1fr_280px] lg:gap-8">

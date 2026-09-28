@@ -100,7 +100,7 @@ export default function AdminUsers() {
           User <span className="gradient-text">Management</span>
         </h1>
         <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-          Search, filter, and manage all MigRent user accounts.
+          Search, filter, and manage all Migrent user accounts.
         </p>
       </div>
 

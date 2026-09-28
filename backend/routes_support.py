@@ -41,7 +41,7 @@ def submit_contact(request: Request, body: ContactRequest):
         try:
             resend.api_key = RESEND_API_KEY
             resend.Emails.send({
-                "from": "MigRent Support <onboarding@resend.dev>",
+                "from": "Migrent Support <onboarding@resend.dev>",
                 "to": [SUPPORT_EMAIL],
                 "subject": f"New support request from {body.name} ({body.role})",
                 "html": f"""

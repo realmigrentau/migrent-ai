@@ -25,7 +25,7 @@ const FAQS = [
   },
   {
     q: "How is my bond protected?",
-    a: "By being lodged with your state's bond authority rather than held by your host. We show you how to do it and what receipt to ask for. MigRent never holds your money.",
+    a: "By being lodged with your state's bond authority rather than held by your host. We show you how to do it and what receipt to ask for. Migrent never holds your money.",
   },
   {
     q: "What does it cost renters?",

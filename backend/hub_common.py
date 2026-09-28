@@ -79,7 +79,7 @@ class HubActor:
 
 PROFILE_COLUMNS = (
     "id, email, name, preferred_name, full_name, role, is_admin, custom_pfp, public_id, owner_kind, "
-    "hub_onboarded_at, notification_prefs, phone, created_at, onboarding_completed, disabled_at"
+    "hub_onboarded_at, notification_prefs, phone, created_at, onboarding_completed, disabled_at, bio, about_me"
 )
 
 
@@ -88,7 +88,7 @@ def load_profile(sb, user_id: str) -> dict:
         res = sb.table("profiles").select(PROFILE_COLUMNS).eq("id", str(user_id)).execute()
     except Exception:
         # Before 043 the Hub columns do not exist; fall back to the old set.
-        res = sb.table("profiles").select("id, email, name, preferred_name, role, is_admin, custom_pfp, created_at").eq("id", str(user_id)).execute()
+        res = sb.table("profiles").select("id, email, name, preferred_name, role, is_admin, custom_pfp, created_at, bio, about_me").eq("id", str(user_id)).execute()
     return (res.data or [{}])[0] if res.data else {}
 
 

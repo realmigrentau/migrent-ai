@@ -37,7 +37,7 @@ export default function VerificationCarousel({ profile, badges, onVerifyClick }:
       verified: profile.government_id_status === "approved",
       detail:
         profile.government_id_status === "approved"
-          ? `Government ID checked by MigRent${badges.verifiedLabel ? ` (${badges.verifiedLabel})` : ""}`
+          ? `Government ID checked by Migrent${badges.verifiedLabel ? ` (${badges.verifiedLabel})` : ""}`
           : profile.government_id_status === "pending"
             ? "Submitted, awaiting review"
             : profile.government_id_status === "rejected"

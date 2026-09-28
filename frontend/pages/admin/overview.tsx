@@ -3,14 +3,15 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import AdminLayout from "../../components/AdminLayout";
 import { fetchAdminStats } from "../../lib/adminApi";
+import { hubFromSite } from "../../lib/hub/routes";
 
 const quickLinks = [
   { label: "Manage Users", href: "/admin/users", desc: "View, edit, suspend accounts" },
   { label: "Revenue Report", href: "/admin/revenue", desc: "Charts, payments, export" },
   { label: "Review Listings", href: "/admin/listings", desc: "Approve, reject, manage" },
   { label: "Analytics", href: "/admin/analytics", desc: "Page views, funnels, geo" },
-  { label: "Owner Dashboard", href: "/dashboard/owner", desc: "View as owner" },
-  { label: "Seeker Dashboard", href: "/dashboard", desc: "View as seeker" },
+  { label: "Owner Dashboard", href: hubFromSite.home(), desc: "View as owner" },
+  { label: "Seeker Dashboard", href: hubFromSite.home(), desc: "View as seeker" },
 ];
 
 export default function AdminOverview() {
@@ -84,7 +85,7 @@ export default function AdminOverview() {
           Dashboard <span className="gradient-text">Overview</span>
         </h1>
         <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-          Welcome back, SuperAdmin. Here&apos;s what&apos;s happening on MigRent.
+          Welcome back, SuperAdmin. Here&apos;s what&apos;s happening on Migrent.
         </p>
       </div>
 

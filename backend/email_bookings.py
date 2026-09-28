@@ -163,7 +163,7 @@ def send_booking_request_to_owner(
         f"Estimated rent: AUD ${total_price:,.2f}\n\n"
         f"Review: {FRONTEND_URL}/dashboard/owner\n\n"
         f"You have 48 hours to respond.\n\n"
-        f"- The MigRent Team"
+        f"- The Migrent Team"
     )
 
     _send_email(owner_email, subject, _email_layout(content, f"New booking from {seeker_name}"), text)
@@ -197,12 +197,12 @@ def send_booking_accepted_to_seeker(
     </p>
 
     {_details_box([
-        ("What you pay MigRent", "AUD $0.00"),
+        ("What you pay Migrent", "AUD $0.00"),
         ("Next step", "The host is confirming now. We will email you the moment it is locked in."),
     ])}
 
     <p style="font-size:14px;line-height:22px;color:#374151;margin:16px 0 0;">
-      Rent and bond are arranged directly between you and your host. MigRent
+      Rent and bond are arranged directly between you and your host. Migrent
       does not collect either, so never send money to anyone claiming to be us.
     </p>
     """
@@ -210,11 +210,11 @@ def send_booking_accepted_to_seeker(
     text = (
         f"Hi {seeker_name},\n\n"
         f"Great news. The host has accepted your booking request for: {listing_title}\n\n"
-        f"What you pay MigRent: $0.00\n"
+        f"What you pay Migrent: $0.00\n"
         f"The host is confirming now. We will email you the moment it is locked in.\n\n"
-        f"Rent and bond are arranged directly between you and your host. MigRent\n"
+        f"Rent and bond are arranged directly between you and your host. Migrent\n"
         f"does not collect either, so never send money to anyone claiming to be us.\n\n"
-        f"- The MigRent Team"
+        f"- The Migrent Team"
     )
 
     _send_email(seeker_email, subject, _email_layout(content, f"Booking approved for {listing_title}"), text)
@@ -257,7 +257,7 @@ def send_owner_fee_request(
         f"Your booking with {seeker_name} for {listing_title} is held and ready.\n"
         f"Pay your one-off $99 host listing fee to confirm it: {checkout_url}\n\n"
         f"No commission on rent. One fee, per property, only when you match.\n\n"
-        f"- The MigRent Team"
+        f"- The Migrent Team"
     )
 
     _send_email(owner_email, subject, _email_layout(content, f"Confirm your booking with {seeker_name}"), text)
@@ -277,7 +277,7 @@ def send_booking_declined_to_seeker(
       Unfortunately, the owner has declined your booking request for <strong>{listing_title}</strong>.
     </p>
     <p style="font-size:15px;line-height:24px;color:#374151;margin:0 0 12px;">
-      Don't worry - there are plenty of other great listings on MigRent!
+      Don't worry - there are plenty of other great listings on Migrent!
     </p>
 
     {_button("Browse More Listings", f"{FRONTEND_URL}/seeker/search")}
@@ -295,7 +295,7 @@ def send_booking_declined_to_seeker(
         f"Hi {seeker_name},\n\n"
         f"Unfortunately, the owner has declined your booking request for: {listing_title}\n\n"
         f"Browse more listings: {FRONTEND_URL}/seeker/search\n\n"
-        f"- The MigRent Team"
+        f"- The Migrent Team"
     )
 
     _send_email(seeker_email, subject, _email_layout(content), text)
@@ -346,7 +346,7 @@ def send_booking_confirmed_to_both(
         f"Guest: {seeker_name}\n"
         f"Dates: {check_in} to {check_out}\n\n"
         f"Dashboard: {FRONTEND_URL}/dashboard/owner\n\n"
-        f"- The MigRent Team"
+        f"- The Migrent Team"
     )
 
     _send_email(owner_email, f"Booking confirmed - {listing_title}", _email_layout(owner_content), owner_text)
@@ -386,7 +386,7 @@ def send_booking_confirmed_to_both(
         f"Check-in: {check_in}\nCheck-out: {check_out}\n\n"
         f"Dashboard: {FRONTEND_URL}/dashboard/seeker\n\n"
         f"Welcome to your new home!\n\n"
-        f"- The MigRent Team"
+        f"- The Migrent Team"
     )
 
     _send_email(seeker_email, f"Booking confirmed - {listing_title}", _email_layout(seeker_content), seeker_text)
@@ -409,7 +409,7 @@ def send_listing_approved_to_owner(
     <p style="font-size:15px;line-height:24px;color:#374151;margin:0 0 12px;">Hi {owner_name},</p>
     <p style="font-size:15px;line-height:24px;color:#374151;margin:0 0 12px;">
       Great news! Your listing <strong>{listing_title}</strong> has been reviewed and approved by our team.
-      It is now visible to seekers on MigRent.
+      It is now visible to seekers on Migrent.
     </p>
 
     {_details_box([
@@ -426,9 +426,9 @@ def send_listing_approved_to_owner(
 
     text = (
         f"Hi {owner_name},\n\n"
-        f"Your listing '{listing_title}' has been approved and is now live on MigRent!\n\n"
+        f"Your listing '{listing_title}' has been approved and is now live on Migrent!\n\n"
         f"View your listings: {FRONTEND_URL}/owner/listings\n\n"
-        f"- The MigRent Team"
+        f"- The Migrent Team"
     )
 
     _send_email(owner_email, subject, _email_layout(content, f"Listing approved: {listing_title}"), text)
@@ -475,7 +475,7 @@ def send_listing_rejected_to_owner(
         f"Your listing '{listing_title}' was not approved.\n\n"
         f"Reason: {reason}\n\n"
         f"You can edit and resubmit: {FRONTEND_URL}/owner/listings\n\n"
-        f"- The MigRent Team"
+        f"- The Migrent Team"
     )
 
     _send_email(owner_email, subject, _email_layout(content), text)
@@ -518,7 +518,7 @@ def send_listing_changes_requested_to_owner(
         f"Your listing '{listing_title}' needs some changes before going live.\n\n"
         f"Changes needed: {changes_needed}\n\n"
         f"Edit your listing: {FRONTEND_URL}/owner/listings\n\n"
-        f"- The MigRent Team"
+        f"- The Migrent Team"
     )
 
     _send_email(owner_email, subject, _email_layout(content, f"Changes needed: {listing_title}"), text)
@@ -563,7 +563,7 @@ def send_listing_under_review_to_owner(
         f"Your listing '{listing_title}' is currently under additional review.\n"
         f"This is routine - our team will review it shortly.\n\n"
         f"View your listings: {FRONTEND_URL}/owner/listings\n\n"
-        f"- The MigRent Team"
+        f"- The Migrent Team"
     )
 
     _send_email(owner_email, subject, _email_layout(content, f"Listing under review: {listing_title}"), text)
@@ -586,7 +586,7 @@ def send_listing_removed_to_owner(
     <h2 style="font-size:24px;font-weight:bold;color:#1a1a1a;margin:0 0 16px;">Listing Update</h2>
     <p style="font-size:15px;line-height:24px;color:#374151;margin:0 0 12px;">Hi {owner_name},</p>
     <p style="font-size:15px;line-height:24px;color:#374151;margin:0 0 12px;">
-      After review, your listing <strong>{listing_title}</strong> has been removed from MigRent.
+      After review, your listing <strong>{listing_title}</strong> has been removed from Migrent.
     </p>
 
     <div style="background:#fef3c7;border-radius:8px;padding:16px 20px;margin:16px 0;border-left:3px solid #f59e0b;">
@@ -610,7 +610,7 @@ def send_listing_removed_to_owner(
         f"Your listing '{listing_title}' has been removed.\n\n"
         f"Reason: {reason}\n\n"
         f"If you believe this was a mistake, contact support: {FRONTEND_URL}/support\n\n"
-        f"- The MigRent Team"
+        f"- The Migrent Team"
     )
 
     _send_email(owner_email, subject, _email_layout(content), text)
@@ -626,7 +626,7 @@ def send_listing_expiring_to_owner(
     """Seven days before a listing's availability ends, ask the owner to
     extend it or let it lapse. Without this, rooms silently vanished from
     search and owners assumed the site had stopped working."""
-    subject = f"Your listing '{listing_title}' comes off MigRent on {available_to}"
+    subject = f"Your listing '{listing_title}' comes off Migrent on {available_to}"
     renew_url = f"{FRONTEND_URL}/owner/listings/edit/{listing_id}"
 
     content = f"""
@@ -647,7 +647,7 @@ def send_listing_expiring_to_owner(
         f"Your listing '{listing_title}' is set as available until {available_to}. "
         f"After that it will come off search.\n\n"
         f"Extend the dates here if it is still free: {renew_url}\n\n"
-        f"- The MigRent Team"
+        f"- The Migrent Team"
     )
 
     _send_email(owner_email, subject, _email_layout(content, f"{listing_title} expires {available_to}"), text)
@@ -662,7 +662,7 @@ def send_listing_paused_to_owner(
     listing_id: str,
 ):
     """An admin has taken a listing offline and needs specific things fixed."""
-    subject = f"Action needed: '{listing_title}' is paused on MigRent"
+    subject = f"Action needed: '{listing_title}' is paused on Migrent"
     edit_url = f"{FRONTEND_URL}/owner/listings/edit/{listing_id}"
     items = "".join(f"<li style='margin:0 0 6px;'>{a}</li>" for a in required_actions)
 
@@ -686,6 +686,6 @@ def send_listing_paused_to_owner(
     text = (
         f"Hi {owner_name},\n\nWe have paused your listing '{listing_title}'.\n\nWhy: {reason}\n\n"
         + "To bring it back:\n" + "\n".join(f"- {a}" for a in required_actions)
-        + f"\n\nUpdate it here: {edit_url}\n\n- The MigRent Team"
+        + f"\n\nUpdate it here: {edit_url}\n\n- The Migrent Team"
     )
     _send_email(owner_email, subject, _email_layout(content, f"{listing_title} is paused"), text)

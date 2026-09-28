@@ -12,7 +12,7 @@
                                          the current section
 
    Each value below names the reference class it came from. Colours go
-   through MigRent's tokens: the two shadcn references are token-driven,
+   through Migrent's tokens: the two shadcn references are token-driven,
    and in their light theme zinc-200 borders and zinc-100 fills are within
    two points of --color-line and --color-surface-muted. Their `primary`
    (zinc-900) becomes the site's navy, and Navbar 1's hard-coded black

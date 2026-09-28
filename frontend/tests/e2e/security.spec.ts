@@ -13,21 +13,49 @@ test("security headers are present on every response", async ({ request }) => {
   expect(h["cross-origin-opener-policy"]).toBe("same-origin-allow-popups");
 });
 
-test("private routes redirect to sign-in and admin is hidden", async ({ request }) => {
-  for (const path of ["/dashboard", "/messages", "/owner/listings", "/account/settings", "/onboarding", "/booking-success"]) {
+test("old signed-in pages redirect into Migrent Hub", async ({ request }) => {
+  const moved: [string, string][] = [
+    ["/dashboard", "/hub"],
+    ["/messages", "/hub/messages"],
+    ["/owner/listings", "/hub/properties"],
+    ["/owner/listings/new", "/hub/properties/new"],
+    ["/account/settings", "/hub/settings"],
+    ["/seeker/wishlist", "/hub/saved"],
+    ["/onboarding", "/hub/welcome"],
+    ["/signin", "/hub/sign-in"],
+  ];
+  for (const [path, to] of moved) {
     const res = await request.get(path, { maxRedirects: 0 });
     expect(res.status(), path).toBe(307);
-    expect(res.headers()["location"]).toContain("/signin?redirect=");
+    expect(new URL(res.headers()["location"], "http://x").pathname, path).toBe(to);
   }
+});
+
+test("private pages need a session, and admin is hidden", async ({ request }) => {
+  // Hub pages go to Hub sign-in and come back to the same page.
+  const hub = await request.get("/hub/applications?tab=shortlisted", { maxRedirects: 0 });
+  expect(hub.status()).toBe(307);
+  const loc = new URL(hub.headers()["location"], "http://x");
+  expect(loc.pathname).toBe("/hub/sign-in");
+  expect(loc.searchParams.get("next")).toBe("/applications?tab=shortlisted");
+  expect(hub.headers()["x-robots-tag"] ?? "").toContain("noindex");
+
+  // Site pages that still need a session return there after Hub sign-in.
+  const site = await request.get("/booking-success", { maxRedirects: 0 });
+  expect(site.status()).toBe(307);
+  const back = new URL(site.headers()["location"], "http://x");
+  expect(back.pathname).toBe("/hub/sign-in");
+  expect(back.searchParams.get("return")).toBe("/booking-success");
+
   const admin = await request.get("/admin/overview", { maxRedirects: 0 });
   expect(admin.status()).toBe(307);
 });
 
-test("redirect parameter cannot leave the origin", async ({ page }) => {
-  await page.goto("/signin?redirect=https://evil.example");
-  // The page keeps the value only if it is a same-origin path.
+test("sign-in destinations cannot leave the origin", async ({ page }) => {
+  await page.goto("/hub/sign-in?next=https://evil.example&return=//evil.example");
   const html = await page.content();
   expect(html).not.toContain('href="https://evil.example');
+  expect(html).not.toContain('href="//evil.example');
 });
 
 test("email relay refuses anonymous callers", async ({ request }) => {

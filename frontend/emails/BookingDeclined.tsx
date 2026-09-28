@@ -31,7 +31,7 @@ export default function BookingDeclined({
       <Text style={paragraph}>
         This can happen for many reasons - the dates might not work, or the room may
         already be spoken for. Don't worry, there are plenty of other great listings
-        on MigRent!
+        on Migrent!
       </Text>
 
       <Section style={{ textAlign: "center", margin: "24px 0" }}>

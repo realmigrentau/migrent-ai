@@ -63,7 +63,7 @@ export default function ConsentCheckboxes({ consents, onChange, error, id = "con
       </div>
 
       <p id={descId} className="text-[12px] text-[var(--color-ink-3)] leading-relaxed">
-        By creating an account you acknowledge that MigRent introduces renters and hosts and is not a real estate agent; that it does not
+        By creating an account you acknowledge that Migrent introduces renters and hosts and is not a real estate agent; that it does not
         collect rent or bonds or manage tenancy agreements; and that you will follow the rental laws of your state or territory. The full
         wording is in the Terms.
       </p>

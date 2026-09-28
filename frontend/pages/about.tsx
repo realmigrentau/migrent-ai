@@ -3,6 +3,7 @@ import SEOHead from "../components/SEOHead";
 import { motion, type Variants } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import PageSubnav from "../components/ui/PageSubnav";
+import { hubFromSite } from "../lib/hub/routes";
 
 const fadeUp: Variants = {
   hidden: { opacity: 0, y: 30 },
@@ -32,7 +33,7 @@ export default function About() {
 
   return (
     <>
-      <SEOHead title="About" description="MigRent - founded in Sydney by an entrepreneur building an AI-powered rental marketplace for migrants and students across Australia." />
+      <SEOHead title="About" description="Migrent - founded in Sydney by an entrepreneur building an AI-powered rental marketplace for migrants and students across Australia." />
 
       <PageSubnav
         title="About"
@@ -160,7 +161,7 @@ export default function About() {
               <div className="grid sm:grid-cols-2 gap-4">
                 <div>
                   <span className="text-xs font-medium uppercase tracking-wider text-[var(--color-ink-3)]">{t("about.businessName")}</span>
-                  <p className="font-semibold text-[var(--color-ink)]">MigRent</p>
+                  <p className="font-semibold text-[var(--color-ink)]">Migrent</p>
                 </div>
                 <div>
                   <span className="text-xs font-medium uppercase tracking-wider text-[var(--color-ink-3)]">{t("about.abn")}</span>
@@ -202,10 +203,10 @@ export default function About() {
             <h2 className="font-serif text-[30px] md:text-[38px] tracking-[-0.02em] text-[var(--color-ink)] mb-3">{t("about.ctaTitle")}</h2>
             <p className="text-sm text-[var(--color-ink-2)] mb-6">{t("about.ctaSubtitle")}</p>
             <div className="flex gap-3 justify-center flex-col sm:flex-row">
-              <Link href="/dashboard" className="inline-block btn-primary text-sm px-8 py-2.5 rounded-[10px]">
+              <Link href={hubFromSite.home()} className="inline-block btn-primary text-sm px-8 py-2.5 rounded-[10px]">
                 {t("about.seekerCta")}
               </Link>
-              <Link href="/dashboard/owner" className="inline-block btn-secondary text-sm px-8 py-2.5 rounded-[10px]">
+              <Link href={hubFromSite.listProperty()} className="inline-block btn-secondary text-sm px-8 py-2.5 rounded-[10px]">
                 {t("about.ownerCta")}
               </Link>
             </div>

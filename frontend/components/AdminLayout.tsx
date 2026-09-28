@@ -228,7 +228,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
             </div>
             <div>
               <h2 className="text-sm font-bold text-slate-900 dark:text-white">Admin Panel</h2>
-              <p className="text-xs text-slate-400 dark:text-slate-500">MigRent SuperAdmin</p>
+              <p className="text-xs text-slate-400 dark:text-slate-500">Migrent SuperAdmin</p>
             </div>
           </div>
         </div>

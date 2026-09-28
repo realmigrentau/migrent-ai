@@ -67,6 +67,8 @@ PUBLIC_LISTING_FIELDS: tuple[str, ...] = (
     "min_stay",
     "min_stay_weeks",
     "max_stay_weeks",
+    "listing_purpose",
+    "unit_label",
     "nearest_transport",
     "station_distance_min",
     "neighbourhood_vibe",

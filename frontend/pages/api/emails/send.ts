@@ -7,7 +7,7 @@ import { sendEmail, renderToHtml, emailTemplates } from "../../../lib/resend-cli
  *
  * Internal email relay. This used to be an open endpoint: anyone on the
  * internet could POST { type: "welcome", to: "victim@example.com" } and
- * MigRent would send branded mail to any address, which is a spam and
+ * Migrent would send branded mail to any address, which is a spam and
  * phishing vector. It now requires the INTERNAL_EMAIL_SECRET header shared
  * with the backend, and refuses when the secret is not configured.
  */
@@ -46,7 +46,7 @@ async function sendEmailByType(type: string, to: string, data: any) {
 
   switch (type) {
     case "welcome":
-      subject = data.day === 1 ? "Welcome to MigRent!" : data.day === 3 ? "Complete your MigRent profile" : "How's your search going?";
+      subject = data.day === 1 ? "Welcome to Migrent!" : data.day === 3 ? "Complete your Migrent profile" : "How's your search going?";
       template = emailTemplates.welcome({ userName: data.userName, userRole: data.userRole || "seeker", day: data.day || 1 });
       break;
     case "new_booking_request":
@@ -74,7 +74,7 @@ async function sendEmailByType(type: string, to: string, data: any) {
       template = emailTemplates.reviewReminder(data);
       break;
     case "password_reset":
-      subject = "Reset your MigRent password";
+      subject = "Reset your Migrent password";
       template = emailTemplates.passwordReset(data);
       break;
     case "account_alert":
@@ -82,7 +82,7 @@ async function sendEmailByType(type: string, to: string, data: any) {
       template = emailTemplates.accountAlert(data);
       break;
     case "legal_reminder":
-      subject = "Review your MigRent terms and policies";
+      subject = "Review your Migrent terms and policies";
       template = emailTemplates.legalReminder({ userName: data.userName || "there" });
       break;
     default:
@@ -105,6 +105,6 @@ function getAlertSubject(alertType: string, data: any): string {
     case "verification_rejected":
       return "Action needed: verification update";
     default:
-      return "Account update from MigRent";
+      return "Account update from Migrent";
   }
 }

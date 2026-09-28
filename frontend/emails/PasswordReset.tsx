@@ -16,7 +16,7 @@ export default function PasswordReset({
   resetUrl = "#",
 }: PasswordResetProps) {
   return (
-    <EmailLayout preview="Reset your MigRent password">
+    <EmailLayout preview="Reset your Migrent password">
       <Text style={heading}>Reset Your Password</Text>
 
       <Text style={paragraph}>

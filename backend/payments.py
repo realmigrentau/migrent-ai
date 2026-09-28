@@ -1,7 +1,7 @@
 """
 Everything Stripe-related that is a fact rather than a route.
 
-What MigRent charges (see frontend/lib/siteIdentity.ts, the single public
+What Migrent charges (see frontend/lib/siteIdentity.ts, the single public
 source for fee copy; the two must agree and tests/test_fee_consistency.py
 checks they do):
 
@@ -10,11 +10,11 @@ checks they do):
                         Subsequent bookings on the same listing do not incur
                         the fee again (FEE_MODEL=per_property). Set
                         FEE_MODEL=per_booking to charge on every confirmation.
-  seeker_platform_fee   AUD 0. Renters never pay MigRent.
+  seeker_platform_fee   AUD 0. Renters never pay Migrent.
   seeker_verification   AUD 19.00, optional. DISABLED (SEEKER_VERIFICATION_
                         ENABLED=false) until it verifies something real; it
                         used to set profiles.verified=true with no check.
-  mentor_session        Paid to the mentor through Stripe Connect; MigRent
+  mentor_session        Paid to the mentor through Stripe Connect; Migrent
                         keeps no rent, bond or deposit and never holds either.
 
 Stripe never receives more than the ids it needs in metadata. Amounts are

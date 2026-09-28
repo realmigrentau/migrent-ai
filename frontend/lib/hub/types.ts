@@ -28,6 +28,8 @@ export interface HubMe {
   email: string | null;
   name: string;
   avatar_url: string | null;
+  /** Public "about" text on the owner card beside listings. */
+  bio: string;
   public_id: string | null;
   role: HubRole | null;
   is_admin: boolean;

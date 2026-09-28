@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 export default function AbnTerms() {
   return (
     <>
-      <SEOHead title="ABN &amp; Business Details" description="MigRent business details, ABN, fee structure, and payment terms." />
+      <SEOHead title="ABN &amp; Business Details" description="Migrent business details, ABN, fee structure, and payment terms." />
 
       <div className="max-w-3xl mx-auto space-y-10">
         {/* Hero */}
@@ -35,7 +35,7 @@ export default function AbnTerms() {
                   <tbody className="divide-y divide-[var(--color-line)] dark:divide-[var(--color-line)]">
                     <tr>
                       <td className="py-3 px-3 font-semibold text-[var(--color-ink)] w-1/3">Business Name</td>
-                      <td className="py-3 px-3">MigRent</td>
+                      <td className="py-3 px-3">Migrent</td>
                     </tr>
                     <tr>
                       <td className="py-3 px-3 font-semibold text-[var(--color-ink)]">ABN</td>
@@ -71,7 +71,7 @@ export default function AbnTerms() {
           <section className="card p-6 rounded-2xl space-y-3">
             <h2 className="text-lg font-bold text-[var(--color-ink)]">Nature of Business</h2>
             <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
-              <p>MigRent operates as an <strong>online introduction service</strong> for accommodation. We are:</p>
+              <p>Migrent operates as an <strong>online introduction service</strong> for accommodation. We are:</p>
               <ul className="list-disc list-inside space-y-1.5">
                 <li>A technology platform that connects room owners with accommodation seekers</li>
                 <li>An AI-powered matching service for short- to medium-term rooms</li>
@@ -85,7 +85,7 @@ export default function AbnTerms() {
           <section className="card p-6 rounded-2xl space-y-3">
             <h2 className="text-lg font-bold text-[var(--color-ink)]">Fee Structure</h2>
             <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
-              <p>MigRent charges flat platform fees only. We do not take a percentage of rent or any ongoing commissions.</p>
+              <p>Migrent charges flat platform fees only. We do not take a percentage of rent or any ongoing commissions.</p>
               <div className="overflow-x-auto">
                 <table className="w-full text-sm border-collapse">
                   <thead>
@@ -143,7 +143,7 @@ export default function AbnTerms() {
                 <li>All prices are in <strong>Australian Dollars (AUD)</strong> and include GST where applicable</li>
                 <li>Stripe receipts are emailed automatically after payment</li>
                 <li>Platform fees are generally <strong>non-refundable</strong> once a deal is confirmed (see <Link href="/terms-of-service" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">Terms of Service</Link> section 6)</li>
-                <li>MigRent does not store full credit card details - all payment data is handled by Stripe</li>
+                <li>Migrent does not store full credit card details - all payment data is handled by Stripe</li>
               </ul>
             </div>
           </section>
@@ -152,7 +152,7 @@ export default function AbnTerms() {
           <section className="card p-6 rounded-2xl space-y-3">
             <h2 className="text-lg font-bold text-[var(--color-ink)]">GST Information</h2>
             <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
-              <p>MigRent is currently not registered for GST as annual turnover is below the $75,000 threshold. If and when MigRent becomes GST registered, fees will be updated to include GST and tax invoices will be provided.</p>
+              <p>Migrent is currently not registered for GST as annual turnover is below the $75,000 threshold. If and when Migrent becomes GST registered, fees will be updated to include GST and tax invoices will be provided.</p>
             </div>
           </section>
 
@@ -160,7 +160,7 @@ export default function AbnTerms() {
           <section className="card p-6 rounded-2xl space-y-3">
             <h2 className="text-lg font-bold text-[var(--color-ink)]">Verify Our ABN</h2>
             <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
-              <p>You can verify MigRent&apos;s ABN on the Australian Business Register:</p>
+              <p>You can verify Migrent&apos;s ABN on the Australian Business Register:</p>
               <a href="https://abr.business.gov.au" target="_blank" rel="noopener noreferrer" className="inline-block text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">abr.business.gov.au</a>
               <p>Search for ABN: <span className="font-mono font-semibold">22 669 566 941</span></p>
             </div>
@@ -168,7 +168,7 @@ export default function AbnTerms() {
 
           {/* Legal Disclaimer */}
           <div className="card-subtle p-4 rounded-xl text-xs text-[var(--color-ink-3)] leading-relaxed">
-            <p>For full terms governing your use of MigRent, see our <Link href="/terms-of-service" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">Terms of Service</Link>. Last reviewed: March 2026.</p>
+            <p>For full terms governing your use of Migrent, see our <Link href="/terms-of-service" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">Terms of Service</Link>. Last reviewed: March 2026.</p>
           </div>
 
           {/* CTA */}

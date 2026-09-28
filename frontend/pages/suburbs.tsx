@@ -279,7 +279,7 @@ export default function SuburbsDirectory({
               Suburb boundaries and names come from the ABS Australian Statistical Geography
               Standard, Suburbs and Localities (Edition {asgsEdition}). Population, rent, community
               and housing figures come from the {censusYear} Census of Population and Housing. Nearby
-              amenities come from OpenStreetMap. Room counts and prices are MigRent&apos;s own
+              amenities come from OpenStreetMap. Room counts and prices are Migrent&apos;s own
               verified listings.
             </p>
             <p>

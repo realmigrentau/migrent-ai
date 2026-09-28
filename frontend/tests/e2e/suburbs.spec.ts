@@ -268,10 +268,10 @@ test.describe("suburb pages", () => {
   test("keeps editorial opinion separate and dated", async ({ page }) => {
     await page.goto("/suburb/nsw/newtown");
     const editorial = page.locator(".sub-editorial");
-    await expect(editorial.getByRole("heading", { name: "From the MigRent team" })).toBeVisible();
+    await expect(editorial.getByRole("heading", { name: "From the Migrent team" })).toBeVisible();
     await expect(editorial).toContainText("What we love");
     await expect(editorial).toContainText("Things to know");
-    await expect(editorial).toContainText(/reviewed by the MigRent team on/i);
+    await expect(editorial).toContainText(/reviewed by the Migrent team on/i);
     await expect(editorial).toContainText("opinion, not data");
   });
 
@@ -385,7 +385,7 @@ test.describe("quality", () => {
   });
 
   /**
-   * MigRent is light only. lib/themeBootstrap.ts removes `.dark` before first
+   * Migrent is light only. lib/themeBootstrap.ts removes `.dark` before first
    * paint and clears any stored preference, because the theme toggle was
    * removed and a visitor whose laptop is dark would otherwise be stranded on
    * a dark site with no way back.

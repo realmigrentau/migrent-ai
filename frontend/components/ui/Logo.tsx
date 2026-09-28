@@ -4,7 +4,7 @@ interface LogoProps {
   title?: string;
 }
 
-export function Logo({ size = 28, className, title = 'MigRent' }: LogoProps) {
+export function Logo({ size = 28, className, title = 'Migrent' }: LogoProps) {
   return (
     <svg
       width={size}
@@ -44,7 +44,7 @@ export function Wordmark({ size = 'md', showAU = false, className }: WordmarkPro
         className="font-serif tracking-[-0.012em]"
         style={{ fontSize, lineHeight: 1 }}
       >
-        MigRent
+        Migrent
       </span>
       {showAU && (
         <span className="eyebrow ml-0.5 mt-0.5">AU</span>

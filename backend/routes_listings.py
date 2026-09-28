@@ -492,7 +492,7 @@ def resume_listing(request: Request, listing_id: str, authorization: str = Heade
     if row["moderation_status"] != STATUS_PAUSED:
         raise HTTPException(status_code=400, detail="This listing is not paused.")
     if row.get("paused_by_admin"):
-        raise HTTPException(status_code=403, detail="This listing was paused by MigRent. Contact support to have it reviewed.")
+        raise HTTPException(status_code=403, detail="This listing was paused by Migrent. Contact support to have it reviewed.")
 
     from routes_owner_verification import check_owner_verified
 

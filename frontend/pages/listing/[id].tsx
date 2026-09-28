@@ -18,6 +18,9 @@ import { API_BASE_URL } from "../../lib/apiBase";
 import { siteIdentity, supportPromise } from "../../lib/siteIdentity";
 
 import type { GetServerSideProps } from "next";
+import { hubFromSite } from "../../lib/hub/routes";
+import HubActions, { hubIntentHref } from "../../components/listings/HubActions";
+import { useMounted } from "../../hooks/useMounted";
 
 /**
  * Server-render the listing.
@@ -64,7 +67,10 @@ function formatDate(value?: string | null) {
 export default function ListingDetailPage({ initialListing }: { initialListing?: PublicListing | null }) {
   const router = useRouter();
   const { id } = router.query;
-  const { session, refreshing } = useAuth();
+  const { session: authSession, refreshing } = useAuth();
+  // The session is browser-only; render the signed-out view until hydrated.
+  const mounted = useMounted();
+  const session = mounted ? authSession : null;
 
   const [listing, setListing] = useState<PublicListing | null>(initialListing ?? null);
   const [loading, setLoading] = useState(!initialListing);
@@ -120,7 +126,7 @@ export default function ListingDetailPage({ initialListing }: { initialListing?:
 
   const handleBooking = async (data: { listing_id: string; check_in: string; check_out: string; guests: number; message_to_owner?: string }) => {
     if (!session) {
-      void router.push(`/signin?redirect=${encodeURIComponent(router.asPath)}`);
+      window.location.assign(hubFromSite.signIn(router.asPath));
       return;
     }
     setBookingLoading(true);
@@ -194,6 +200,8 @@ export default function ListingDetailPage({ initialListing }: { initialListing?:
   const similarListings = listing.similar_listings || [];
   const isInstantBook = Boolean(listing.instant_book_enabled || listing.instant_book);
   const isOwner = Boolean(listing.viewer?.is_owner);
+  // Short stays keep the request-to-book flow; leases go through Migrent Hub.
+  const shortStay = listing.listing_purpose === "short_stay";
   const canModerate = Boolean(listing.viewer?.can_moderate);
   const title = listing.title || listing.display_address;
   const isExpired = listing.public_state === "expired";
@@ -204,7 +212,7 @@ export default function ListingDetailPage({ initialListing }: { initialListing?:
   if (isExpired && !isOwner && !canModerate) {
     return (
       <>
-        <SEOHead title={`${title} (no longer available)`} description={`This room in ${locality} is no longer available on MigRent.`} noIndex />
+        <SEOHead title={`${title} (no longer available)`} description={`This room in ${locality} is no longer available on Migrent.`} noIndex />
         <div className="min-h-screen bg-[var(--color-bg)]">
           <div className="max-w-3xl mx-auto px-4 py-10">
             <div className="rounded-2xl border border-[var(--color-line)] bg-[var(--color-surface)] p-6 md:p-8" role="status">
@@ -285,7 +293,7 @@ export default function ListingDetailPage({ initialListing }: { initialListing?:
               {!isPublished && (
                 <p className="-mt-3 mb-6 text-[13px] text-[var(--color-ink-3)]">
                   {isExpired ? "This listing's availability has ended. Only you can see this page." : "Only you can see this page while it is in review."}{" "}
-                  <Link href={`/owner/listings/edit/${listing.id}`} className="text-[var(--color-primary)] font-semibold hover:underline underline-offset-[3px]">
+                  <Link href={hubFromSite.path(`/listings/${listing.id}/edit`)} className="text-[var(--color-primary)] font-semibold hover:underline underline-offset-[3px]">
                     {isExpired ? "Update the dates to renew it" : "Edit this listing"}
                   </Link>
                 </p>
@@ -371,7 +379,7 @@ export default function ListingDetailPage({ initialListing }: { initialListing?:
                 />
               )}
 
-              {/* What MigRent actually does. No guarantees, no invented support hours. */}
+              {/* What Migrent actually does. No guarantees, no invented support hours. */}
               <div className="border-t border-[var(--color-line)] pt-8 pb-4">
                 <ul className="grid grid-cols-1 sm:grid-cols-3 gap-4 list-none p-0 m-0">
                   <li className="flex items-start gap-3 p-4 rounded-xl bg-[var(--color-surface)]">
@@ -388,7 +396,7 @@ export default function ListingDetailPage({ initialListing }: { initialListing?:
                     <Wallet className="w-7 h-7 text-[var(--color-primary)] shrink-0" aria-hidden="true" />
                     <div>
                       <p className="text-sm font-semibold text-[var(--color-ink)]">Renters pay $0</p>
-                      <p className="text-xs text-[var(--color-ink-3)]">MigRent never holds your rent or bond. Hosts pay a fee to MigRent; renters do not.</p>
+                      <p className="text-xs text-[var(--color-ink-3)]">Migrent never holds your rent or bond. Hosts pay a fee to Migrent; renters do not.</p>
                     </div>
                   </li>
                   <li className="flex items-start gap-3 p-4 rounded-xl bg-[var(--color-surface)]">
@@ -416,31 +424,36 @@ export default function ListingDetailPage({ initialListing }: { initialListing?:
                       <li className="flex gap-2.5"><span className="font-mono text-[11px] text-[var(--color-ink-3)] mt-0.5">3</span><span>Nothing is booked and you owe nothing yet. Keep looking at other rooms in the meantime.</span></li>
                     </ol>
                     <p className="text-[12.5px] text-[var(--color-ink-3)] border-t border-[var(--color-line)] pt-3 mb-4">
-                      MigRent never asks renters for money. If anyone asks you to pay a deposit to hold this room, tell us before you pay.
+                      Migrent never asks renters for money. If anyone asks you to pay a deposit to hold this room, tell us before you pay.
                     </p>
                     <div className="flex flex-wrap gap-3 justify-center">
-                      <Link href="/dashboard/seeker" className="btn-primary h-[44px] px-4 rounded-[10px] text-[13.5px] inline-flex items-center">View your requests</Link>
+                      <Link href={hubFromSite.path("/applications")} className="btn-primary h-[44px] px-4 rounded-[10px] text-[13.5px] inline-flex items-center">View your requests</Link>
                       <Link href="/seeker/search" className="btn-secondary h-[44px] px-4 rounded-[10px] text-[13.5px] inline-flex items-center">Keep looking</Link>
                     </div>
                   </motion.div>
                 ) : isOwner ? (
                   <div className="card p-6 rounded-2xl text-center border border-[var(--color-line)]">
                     <p className="text-sm text-[var(--color-ink-3)]">
-                      This is your listing. Manage it from your{" "}
-                      <Link href="/dashboard/owner" className="text-[var(--color-primary)] font-semibold">owner dashboard</Link>.
+                      This is your listing. Manage it in{" "}
+                      <Link href={hubFromSite.path(`/listings/${listing.id}`)} className="text-[var(--color-primary)] font-semibold">Migrent Hub</Link>.
                     </p>
                   </div>
                 ) : !isPublished ? (
                   <div className="card p-6 rounded-2xl text-center border border-[var(--color-line)]">
                     <p className="text-sm text-[var(--color-ink-3)]">This room is not currently open for booking.</p>
                   </div>
+                ) : !shortStay ? (
+                  <HubActions listingId={listing.id} ownerName={owner?.name} signedIn={Boolean(session)} />
                 ) : !session && !refreshing ? (
-                  <div className="card p-6 rounded-2xl text-center border border-[var(--color-line)] space-y-4">
-                    <p className="text-sm text-[var(--color-ink-2)]">Sign in to request a booking</p>
-                    <Link href={`/signin?redirect=${encodeURIComponent(router.asPath)}`} className="block w-full btn-primary py-3 px-6 rounded-xl text-sm font-semibold text-center">Sign in</Link>
-                    <p className="text-xs text-[var(--color-ink-3)]">
-                      New to MigRent? <Link href="/signup" className="text-[var(--color-primary)] hover:opacity-80">Create an account</Link>
-                    </p>
+                  <div className="space-y-4">
+                    <div className="card p-6 rounded-2xl text-center border border-[var(--color-line)] space-y-4">
+                      <p className="text-sm text-[var(--color-ink-2)]">Sign in to request a stay</p>
+                      <Link href={hubFromSite.signIn(router.asPath)} className="block w-full btn-primary py-3 px-6 rounded-xl text-sm font-semibold text-center">Sign in</Link>
+                      <p className="text-xs text-[var(--color-ink-3)]">
+                        New to Migrent? <Link href={hubFromSite.signUp()} className="text-[var(--color-primary)] hover:opacity-80">Create an account</Link>
+                      </p>
+                    </div>
+                    <HubActions listingId={listing.id} ownerName={owner?.name} signedIn={false} shortStay />
                   </div>
                 ) : (
                   <>
@@ -477,12 +490,14 @@ export default function ListingDetailPage({ initialListing }: { initialListing?:
                 <span className="text-lg font-semibold text-[var(--color-ink)] tabular-nums">${listing.weekly_price}</span>
                 <span className="text-sm text-[var(--color-ink-3)]"> / week</span>
               </div>
-              {session ? (
+              {!shortStay ? (
+                <Link href={hubIntentHref(listing.id, "apply", Boolean(session))} className="btn-primary min-h-[44px] px-6 rounded-xl text-sm font-semibold inline-flex items-center">Apply</Link>
+              ) : session ? (
                 <button type="button" onClick={scrollToBooking} className="btn-primary min-h-[44px] px-6 rounded-xl text-sm font-semibold flex items-center gap-2">
                   {isInstantBook ? <><Zap className="w-4 h-4" aria-hidden="true" />Instant book</> : <><Send className="w-4 h-4" aria-hidden="true" />Request to book</>}
                 </button>
               ) : (
-                <Link href={`/signin?redirect=${encodeURIComponent(router.asPath)}`} className="btn-primary min-h-[44px] px-6 rounded-xl text-sm font-semibold inline-flex items-center">Sign in to book</Link>
+                <Link href={hubFromSite.signIn(router.asPath)} className="btn-primary min-h-[44px] px-6 rounded-xl text-sm font-semibold inline-flex items-center">Sign in to book</Link>
               )}
             </div>
           </div>

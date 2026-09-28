@@ -1,4 +1,4 @@
-# Design - MigRent
+# Design - Migrent
 
 A locked design system for this app. Every page redesign reads this file before
 emitting code. Do not regenerate per page - extend or amend this file when the
@@ -212,7 +212,7 @@ scroll) + Framer Motion.
 - Content pages: typography only.
 
 ## What pages MUST share
-- The wordmark / Logo + "MigRent" in the display face.
+- The wordmark / Logo + "Migrent" in the display face.
 - Deep-forest primary + sage accent + rationed terracotta.
 - Newsreader (headings) + Schibsted Grotesk (body/UI) + Space Mono (meta).
 - One button system (`.btn-primary` / `-secondary` / `-outline` / `-ghost` /

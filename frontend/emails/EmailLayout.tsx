@@ -30,7 +30,7 @@ export default function EmailLayout({ preview, children }: EmailLayoutProps) {
           {/* Header */}
           <Section style={header}>
             <Link href={FRONTEND_URL} style={{ textDecoration: "none" }}>
-              <Text style={logo}>MigRent</Text>
+              <Text style={logo}>Migrent</Text>
             </Link>
           </Section>
 
@@ -43,7 +43,7 @@ export default function EmailLayout({ preview, children }: EmailLayoutProps) {
           <Hr style={hr} />
           <Section style={footer}>
             <Text style={footerText}>
-              MigRent - Find your home in Australia
+              Migrent - Find your home in Australia
             </Text>
             <Text style={footerLinks}>
               <Link href={FRONTEND_URL} style={footerLink}>Website</Link>
@@ -53,7 +53,7 @@ export default function EmailLayout({ preview, children }: EmailLayoutProps) {
               <Link href={`${FRONTEND_URL}/settings`} style={footerLink}>Email Preferences</Link>
             </Text>
             <Text style={footerMuted}>
-              You are receiving this email because you have an account on MigRent.
+              You are receiving this email because you have an account on Migrent.
               You can update your email preferences in your account settings.
             </Text>
           </Section>

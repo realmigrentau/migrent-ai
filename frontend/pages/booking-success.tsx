@@ -2,11 +2,12 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { CheckCircle, ArrowRight, Home, MessageSquare } from "lucide-react";
 import SEOHead from "../components/SEOHead";
+import { hubFromSite } from "../lib/hub/routes";
 
 export default function BookingSuccessPage() {
   return (
     <>
-      <SEOHead title="Booking Confirmed - MigRent" />
+      <SEOHead title="Booking Confirmed - Migrent" />
       <div className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center p-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -50,7 +51,7 @@ export default function BookingSuccessPage() {
 
           <div className="flex flex-col sm:flex-row gap-3">
             <Link
-              href="/dashboard/seeker"
+              href={hubFromSite.path("/applications")}
               className="flex-1 btn-primary py-3 px-6 rounded-xl text-sm font-semibold text-center flex items-center justify-center gap-2"
             >
               View My Bookings

@@ -171,7 +171,7 @@ export default function BecomeMentorPage() {
     return (
       <>
         <Head>
-          <title key="title">Mentor Dashboard - MigRent</title>
+          <title key="title">Mentor Dashboard - Migrent</title>
         </Head>
         <div className="max-w-2xl mx-auto px-4 py-12 text-center space-y-6">
           <div className="w-16 h-16 rounded-2xl bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent)]/20 flex items-center justify-center mx-auto">
@@ -214,7 +214,7 @@ export default function BecomeMentorPage() {
     return (
       <>
         <Head>
-          <title key="title">Welcome, Mentor! - MigRent</title>
+          <title key="title">Welcome, Mentor! - Migrent</title>
         </Head>
         <div className="max-w-2xl mx-auto px-4 py-12 text-center space-y-6">
           <motion.div
@@ -256,7 +256,7 @@ export default function BecomeMentorPage() {
 
   return (
     <>
-      <SEOHead title="Become a Mentor - MigRent" description="Help new arrivals settle into your suburb. Earn $20-30 per session as a MigRent local mentor." />
+      <SEOHead title="Become a Mentor - Migrent" description="Help new arrivals settle into your suburb. Earn $20-30 per session as a Migrent local mentor." />
 
       <div className="max-w-2xl mx-auto px-4 py-8 space-y-8">
         {/* Header */}

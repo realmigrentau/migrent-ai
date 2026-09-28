@@ -5,6 +5,8 @@ import { AnimatePresence, LayoutGroup, MotionConfig, motion } from "framer-motio
 import { ChevronDown, Menu, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../../hooks/useAuth";
+import { useMounted } from "../../hooks/useMounted";
+import { hubAbsoluteUrl, hubFromSite } from "../../lib/hub/routes";
 import {
   groupDropdownItems,
   navItems,
@@ -57,18 +59,19 @@ const ACCOUNT_ICON = {
   settings: "M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065zM15 12a3 3 0 11-6 0 3 3 0 016 0z",
 };
 
+// Signed-in visitors get Migrent Hub, the app where their account lives.
 const ACCOUNT_MENU: NavLinkDropdown = {
   type: "dropdown",
   id: "account",
+  label: "Migrent Hub",
   labelKey: "nav.myAccount",
-  matchPrefixes: ["/dashboard", "/account", "/messages", "/seeker/wishlist"],
+  matchPrefixes: [],
   items: [
-    { href: "/dashboard/seeker", iconPath: ACCOUNT_ICON.search, groupKey: "nav.iAmA", titleKey: "nav.seeker", descKey: "nav.findRoom" },
-    { href: "/dashboard/owner", iconPath: ACCOUNT_ICON.home, groupKey: "nav.iAmA", titleKey: "nav.owner", descKey: "nav.listRoom" },
-    { href: "/messages", iconPath: ACCOUNT_ICON.chat, groupKey: "nav.myAccount", titleKey: "nav.messages" },
-    { href: "/seeker/wishlist", iconPath: ACCOUNT_ICON.heart, groupKey: "nav.myAccount", titleKey: "nav.wishlist" },
+    { href: hubAbsoluteUrl("/"), iconPath: ACCOUNT_ICON.home, groupKey: "nav.myAccount", title: "Open Migrent Hub", desc: "Your homes, applications and inspections" },
+    { href: hubAbsoluteUrl("/messages"), iconPath: ACCOUNT_ICON.chat, groupKey: "nav.myAccount", titleKey: "nav.messages" },
+    { href: hubAbsoluteUrl("/saved"), iconPath: ACCOUNT_ICON.heart, groupKey: "nav.myAccount", title: "Saved homes" },
+    { href: hubAbsoluteUrl("/settings"), iconPath: ACCOUNT_ICON.settings, groupKey: "nav.myAccount", titleKey: "nav.settings" },
     { href: "/resources/help", iconPath: ACCOUNT_ICON.help, groupKey: "nav.myAccount", title: "Help Centre" },
-    { href: "/account/settings", iconPath: ACCOUNT_ICON.settings, groupKey: "nav.myAccount", titleKey: "nav.settings" },
   ],
 };
 
@@ -115,7 +118,12 @@ function ItemIcon({ path }: { path: string }) {
 export default function MegaNavbar({ revealAfterVh = 0 }: { revealAfterVh?: number } = {}) {
   const router = useRouter();
   const { t } = useTranslation();
-  const { session } = useAuth();
+  const { session: authSession } = useAuth();
+  // The session is only known in the browser. Render the signed-out header
+  // on the server and on the first client pass so the two always match,
+  // then switch once mounted.
+  const mounted = useMounted();
+  const session = mounted ? authSession : null;
 
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [hovered, setHovered] = useState<string | null>(null);
@@ -381,7 +389,7 @@ export default function MegaNavbar({ revealAfterVh = 0 }: { revealAfterVh?: numb
           onKeyDown={(e) => onTriggerKeyDown(e, item.id)}
           {...hoverHandlers(item.id)}
         >
-          <span>{t(item.labelKey)}</span>
+          <span>{item.label ?? t(item.labelKey)}</span>
           <ChevronDown className="site-nav__chevron" strokeWidth={2} aria-hidden="true" />
           {active && <Lamp />}
           {(hovered === item.id || open) && <HoverPill />}
@@ -411,7 +419,7 @@ export default function MegaNavbar({ revealAfterVh = 0 }: { revealAfterVh?: numb
                         <ul
                           className="site-nav__list"
                           aria-labelledby={group.titleKey ? titleId : undefined}
-                          aria-label={group.titleKey ? undefined : t(item.labelKey)}
+                          aria-label={group.titleKey ? undefined : item.label ?? t(item.labelKey)}
                         >
                           {group.items.map((entry) => (
                             <li key={entry.href}>
@@ -439,8 +447,9 @@ export default function MegaNavbar({ revealAfterVh = 0 }: { revealAfterVh?: numb
     );
   };
 
-  const listRoomHref = session ? "/owner/listings/new" : "/for-owners";
-  const signInActive = router.pathname === "/signin";
+  const listRoomHref = session ? hubAbsoluteUrl("/properties/new") : hubFromSite.listProperty();
+  const signInHref = hubFromSite.signIn();
+  const signInActive = false;
 
   /* The sheet's rows, flattened so each can take its place in the
      stagger - Navbar 1 brings its links in one after another. */
@@ -502,7 +511,7 @@ export default function MegaNavbar({ revealAfterVh = 0 }: { revealAfterVh?: numb
           key: "account",
           node: (
             <>
-              <p className="site-nav__sheet-title">{t("nav.myAccount")}</p>
+              <p className="site-nav__sheet-title">Migrent Hub</p>
               <ul className="site-nav__sheet-sub">
                 {ACCOUNT_MENU.items.map((entry) => (
                   <li key={entry.href}>
@@ -522,7 +531,7 @@ export default function MegaNavbar({ revealAfterVh = 0 }: { revealAfterVh?: numb
           key: "signin",
           node: (
             <Link
-              href="/signin"
+              href={signInHref}
               className="site-nav__sheet-link"
               aria-current={signInActive ? "page" : undefined}
               onClick={() => setMobileOpen(false)}
@@ -548,11 +557,11 @@ export default function MegaNavbar({ revealAfterVh = 0 }: { revealAfterVh?: numb
       >
         <LayoutGroup id="site-nav">
           <nav className="site-nav__bar" aria-label="Primary">
-            <Link href={session ? "/dashboard" : "/"} className="site-nav__brand">
+            <Link href="/" className="site-nav__brand">
               <span className="site-nav__mark" aria-hidden="true">
                 <Logo size={32} title="" />
               </span>
-              <span className="site-nav__wordmark">MigRent</span>
+              <span className="site-nav__wordmark">Migrent</span>
               <span className="site-nav__au">AU</span>
             </Link>
 
@@ -591,7 +600,7 @@ export default function MegaNavbar({ revealAfterVh = 0 }: { revealAfterVh?: numb
                 ) : (
                   <li onMouseEnter={() => closeDropdown()}>
                     <Link
-                      href="/signin"
+                      href={signInHref}
                       className="site-nav__trigger"
                       data-active={signInActive ? "true" : undefined}
                       aria-current={signInActive ? "page" : undefined}

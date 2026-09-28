@@ -180,7 +180,7 @@ test.describe("phone", () => {
     await page.goto("/pricing");
     // The widget loads after the page is interactive. Wait for it, or this
     // would pass by testing an empty corner.
-    const launcher = page.getByRole("button", { name: "MigRent Support" });
+    const launcher = page.getByRole("button", { name: "Migrent Support" });
     await expect(launcher).toBeVisible();
     const spot = await launcher.boundingBox();
 

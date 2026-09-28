@@ -90,11 +90,11 @@ def complete_onboarding(request: Request, body: ProfileUpdate, authorization: st
             if not getattr(body, field, None):
                 raise HTTPException(status_code=400, detail=f"Missing required field: {field}")
 
-        # MigRent is for adults. The onboarding form must carry the explicit
+        # Migrent is for adults. The onboarding form must carry the explicit
         # over-18 confirmation; nothing can be published without it (see the
         # listings_require_verified_owner trigger and docs/policies).
         if not body.over_18:
-            raise HTTPException(status_code=400, detail="You must confirm you are 18 or older to use MigRent.")
+            raise HTTPException(status_code=400, detail="You must confirm you are 18 or older to use Migrent.")
 
         updates = {k: v for k, v in body.model_dump(exclude_unset=True).items() if v is not None}
         updates.pop("over_18", None)
@@ -158,7 +158,7 @@ def update_my_profile(request: Request, body: ProfileUpdate, authorization: str 
 @router.get("/me/export")
 @limiter.limit("3/hour")
 def export_my_data(request: Request, authorization: str = Header(...)):
-    """Return everything MigRent holds about the caller, as JSON.
+    """Return everything Migrent holds about the caller, as JSON.
 
     Supports the access right under the Australian Privacy Principles. The
     export is built from the caller's own rows only; other people's data

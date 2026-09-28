@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import PageSubnav from "../components/ui/PageSubnav";
 import { reveal, ScrollStatement, ScrollMarquee } from "../components/marketing/motion";
+import { hubFromSite } from "../lib/hub/routes";
 
 /* Hallmark · genre: editorial · design-system: design.md · designed-as-app
  * macrostructure: Marquee Hero family (marketing) · page: for-owners */
@@ -30,7 +31,7 @@ const steps = [
 const benefits = [
   { icon: UsersRound, title: "Tenants you can trust", body: "Seeker profiles show verification status and references up front, so you choose with confidence." },
   { icon: Wallet, title: "Simple, fair pricing", body: "Free to list. A one-time AUD $99 fee per property when you find your tenant - no commissions, no subscriptions." },
-  { icon: Lock, title: "Clean paperwork", body: "Your MigRent fee is paid by card through Stripe. Rent and bond stay between you and your tenant, lodged the way your state requires." },
+  { icon: Lock, title: "Clean paperwork", body: "Your Migrent fee is paid by card through Stripe. Rent and bond stay between you and your tenant, lodged the way your state requires." },
   { icon: ShieldCheck, title: "A safer marketplace", body: "Verification on both sides keeps scammers out - and keeps your enquiries genuine." },
   { icon: MessagesSquare, title: "Everything in one place", body: "Listings, enquiries, bookings, and payments managed from one clean dashboard." },
   { icon: FileCheck2, title: "Help when you need it", body: "Real support and clear dispute guidance, written in plain English." },
@@ -39,16 +40,16 @@ const benefits = [
 export default function ForOwners() {
   return (
     <>
-      <SEOHead title="For Owners - Fill your room with the right tenant" description="List your room on MigRent and reach verified, motivated renters. Free to list, one-time AUD $99 fee per property match. No commission on rent." />
+      <SEOHead title="For Owners - Fill your room with the right tenant" description="List your room on Migrent and reach verified, motivated renters. Free to list, one-time AUD $99 fee per property match. No commission on rent." />
 
       <PageSubnav
         title="For Owners"
         links={[
           { label: "How it works", href: "#how" },
-          { label: "Why MigRent", href: "#why" },
+          { label: "Why Migrent", href: "#why" },
           { label: "Pricing", href: "#pricing" },
         ]}
-        cta={{ label: "Start listing", href: "/dashboard/owner" }}
+        cta={{ label: "Start listing", href: hubFromSite.listProperty() }}
       />
 
       {/* 1 · HERO - owner-dashboard mock split (distinct from homepage + seekers) */}
@@ -66,7 +67,7 @@ export default function ForOwners() {
                 Reach verified, motivated renters across Australia. Free to list, with no commission on the rent you collect.
               </p>
               <div className="flex flex-wrap gap-3 mt-8">
-                <Link href="/dashboard/owner" className="btn-primary h-12 px-7 text-[15px]">Start listing <ArrowRight className="w-4 h-4" /></Link>
+                <Link href={hubFromSite.listProperty()} className="btn-primary h-12 px-7 text-[15px]">Start listing <ArrowRight className="w-4 h-4" /></Link>
                 <Link href="/pricing" className="btn-secondary h-12 px-7 text-[15px]">View pricing</Link>
               </div>
               <div className="mt-7 flex flex-wrap gap-x-5 gap-y-2.5">
@@ -170,10 +171,10 @@ export default function ForOwners() {
         <div className="max-w-[1280px] mx-auto px-6 md:px-10 lg:px-14 py-20 md:py-28">
           <div className="grid lg:grid-cols-[0.85fr_1.15fr] gap-10 lg:gap-16">
             <motion.div {...reveal} className="lg:sticky lg:top-24 lg:self-start">
-              <div className="eyebrow mb-3">Why owners choose MigRent</div>
+              <div className="eyebrow mb-3">Why owners choose Migrent</div>
               <h2 className="font-serif text-[34px] md:text-[52px] leading-[1.0] tracking-[-0.03em] text-[var(--color-ink)]">Your room, in safe hands.</h2>
               <p className="mt-5 text-[16px] text-[var(--color-ink-2)] leading-[1.6] max-w-[42ch]">A marketplace where verification works both ways - so the people in your home are who they say they are.</p>
-              <Link href="/dashboard/owner" className="btn-primary h-11 px-5 text-sm mt-7">List a room <ArrowRight className="w-3.5 h-3.5" /></Link>
+              <Link href={hubFromSite.listProperty()} className="btn-primary h-11 px-5 text-sm mt-7">List a room <ArrowRight className="w-3.5 h-3.5" /></Link>
             </motion.div>
             <div className="grid sm:grid-cols-2 gap-4">
               {benefits.map((o, i) => (
@@ -232,7 +233,7 @@ export default function ForOwners() {
             <h2 className="font-serif text-[40px] md:text-[60px] leading-[0.98] tracking-[-0.03em] text-[var(--color-ink)]">Ready to list your <strong className="type-script">room</strong>?</h2>
             <p className="mt-5 text-[17px] text-[var(--color-ink-2)] leading-[1.55] max-w-[560px]">Join hosts across Australia opening their doors to verified renters - and getting paid safely.</p>
             <div className="flex flex-wrap gap-3 mt-8">
-              <Link href="/dashboard/owner" className="btn-primary h-12 px-7 text-[15px]">Start hosting <ArrowRight className="w-4 h-4" /></Link>
+              <Link href={hubFromSite.listProperty()} className="btn-primary h-12 px-7 text-[15px]">Start hosting <ArrowRight className="w-4 h-4" /></Link>
               <Link href="/contact" className="btn-secondary h-12 px-7 text-[15px]">Talk to us first</Link>
             </div>
           </motion.div>

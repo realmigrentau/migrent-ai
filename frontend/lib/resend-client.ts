@@ -1,5 +1,5 @@
 /**
- * Mailjet email client wrapper for MigRent.
+ * Mailjet email client wrapper for Migrent.
  *
  * Usage from Next.js API routes:
  *   import { sendEmail, emailTemplates } from "@/lib/resend-client";
@@ -26,7 +26,7 @@ import LegalReminderEmail from "../emails/LegalReminderEmail";
 const MAILJET_API_KEY = process.env.MAILJET_API_KEY || "";
 const MAILJET_SECRET_KEY = process.env.MAILJET_SECRET_KEY || "";
 const FROM_EMAIL = process.env.FROM_EMAIL || "migrentau@gmail.com";
-const FROM_NAME = process.env.FROM_NAME || "MigRent";
+const FROM_NAME = process.env.FROM_NAME || "Migrent";
 
 export interface SendEmailOptions {
   to: string | string[];

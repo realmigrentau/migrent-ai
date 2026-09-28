@@ -125,6 +125,7 @@ function ProfileCard({ me }: { me: HubMe }) {
             Save
           </Button>
         </form>
+        {me.role === "owner" && <BioField me={me} />}
         <Row
           title="Email"
           detail={
@@ -141,6 +142,39 @@ function ProfileCard({ me }: { me: HubMe }) {
       </div>
       <ChangeEmailDialog open={emailOpen} onClose={() => setEmailOpen(false)} current={me.email} />
     </Card>
+  );
+}
+
+function BioField({ me }: { me: HubMe }) {
+  const toast = useToast();
+  const [bio, setBio] = useState(me.bio ?? "");
+  const [saving, setSaving] = useState(false);
+  const changed = bio.trim() !== (me.bio ?? "").trim();
+
+  async function save() {
+    setSaving(true);
+    try {
+      const res = await hubApi.patch<HubMe>("/hub/settings", { bio: bio.trim() });
+      setQueryData("/hub/me", res);
+      toast.success("Saved");
+    } catch (e) {
+      toast.error(errMsg(e, "That didn't save."));
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <div className="flex flex-col gap-3">
+      <Field label="About you" optional hint={`Shown to renters beside your listings. A sentence or two about you as an owner or manager. ${bio.length}/1000`}>
+        {({ id, describedBy }) => <Textarea id={id} rows={3} value={bio} maxLength={1000} onChange={(e) => setBio(e.target.value)} aria-describedby={describedBy} />}
+      </Field>
+      {changed && (
+        <Button variant="secondary" size="sm" loading={saving} onClick={() => void save()} className="w-fit">
+          Save
+        </Button>
+      )}
+    </div>
   );
 }
 

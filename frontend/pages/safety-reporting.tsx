@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 export default function SafetyReporting() {
   return (
     <>
-      <SEOHead title="Safety &amp; Reporting" description="Report unsafe listings, scams, or incidents on MigRent. Learn about our safety measures and how to stay safe." />
+      <SEOHead title="Safety &amp; Reporting" description="Report unsafe listings, scams, or incidents on Migrent. Learn about our safety measures and how to stay safe." />
 
       <div className="max-w-3xl mx-auto space-y-10">
         {/* Hero */}
@@ -30,7 +30,7 @@ export default function SafetyReporting() {
           <section className="card p-6 rounded-2xl space-y-3 border-l-4 border-l-red-500">
             <h2 className="text-lg font-bold text-[var(--color-danger-500)] dark:text-[var(--color-danger-500)]">Emergency?</h2>
             <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
-              <p>If you are in <strong>immediate danger</strong>, call <strong>000</strong> (Triple Zero) for Police, Fire, or Ambulance. MigRent is not an emergency service.</p>
+              <p>If you are in <strong>immediate danger</strong>, call <strong>000</strong> (Triple Zero) for Police, Fire, or Ambulance. Migrent is not an emergency service.</p>
               <div className="card-subtle p-4 rounded-xl space-y-1">
                 <p><strong>Emergency:</strong> 000 (Police, Fire, Ambulance)</p>
                 <p><strong>Police non-emergency:</strong> 131 444 (Police Assistance Line)</p>
@@ -41,9 +41,9 @@ export default function SafetyReporting() {
 
           {/* What to Report */}
           <section className="card p-6 rounded-2xl space-y-3">
-            <h2 className="text-lg font-bold text-[var(--color-ink)]">What to Report to MigRent</h2>
+            <h2 className="text-lg font-bold text-[var(--color-ink)]">What to Report to Migrent</h2>
             <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
-              <p>Please report any of the following to MigRent:</p>
+              <p>Please report any of the following to Migrent:</p>
               <ul className="list-disc list-inside space-y-1.5">
                 <li><strong>Scam listings:</strong> Fake properties, requests for advance payment without inspection, stolen photos</li>
                 <li><strong>Fraudulent users:</strong> Fake profiles, identity fraud, impersonation</li>
@@ -127,7 +127,7 @@ export default function SafetyReporting() {
                 <li><strong>Never send money</strong> before viewing a property and meeting the owner</li>
                 <li><strong>Meet in public</strong> for initial meetings when possible</li>
                 <li><strong>Tell someone</strong> where you are going for property inspections</li>
-                <li><strong>Use MigRent messaging</strong> to keep a record of all communications</li>
+                <li><strong>Use Migrent messaging</strong> to keep a record of all communications</li>
                 <li><strong>Verify identity</strong> - check that the person matches their profile</li>
                 <li><strong>Trust your instincts</strong> - if something feels wrong, walk away</li>
                 <li><strong>Get everything in writing</strong> - rental agreements, bond receipts, condition reports</li>
@@ -137,13 +137,13 @@ export default function SafetyReporting() {
 
           {/* Legal Disclaimer */}
           <div className="card-subtle p-4 rounded-xl text-xs text-[var(--color-ink-3)] leading-relaxed">
-            <p>MigRent is an introduction service and does not guarantee user safety. Users are responsible for their own due diligence. For emergencies, always call 000. Last reviewed: March 2026.</p>
+            <p>Migrent is an introduction service and does not guarantee user safety. Users are responsible for their own due diligence. For emergencies, always call 000. Last reviewed: March 2026.</p>
           </div>
 
           {/* CTA */}
           <div className="card p-6 rounded-2xl bg-[var(--color-primary-soft)] from-[var(--color-danger-50)] to-[var(--color-danger-50)] dark:from-[var(--color-danger-500)]/10 dark:to-[var(--color-surface)] border-[var(--color-danger-500)]/30 dark:border-[var(--color-line)] text-center">
             <h3 className="text-lg font-bold text-[var(--color-ink)] mb-2">Report something now</h3>
-            <p className="text-sm text-[var(--color-ink-2)] mb-4">Your reports help keep the MigRent community safe.</p>
+            <p className="text-sm text-[var(--color-ink-2)] mb-4">Your reports help keep the Migrent community safe.</p>
             <a href="mailto:migrentau@gmail.com?subject=Safety%20Report">
               <motion.span whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }} className="inline-block btn-primary text-sm px-6 py-2.5 rounded-xl">
                 Email Safety Report

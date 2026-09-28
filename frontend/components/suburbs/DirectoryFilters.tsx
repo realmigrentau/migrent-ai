@@ -47,7 +47,7 @@ const SORTS: { value: SortOption; label: string }[] = [
  * select or button so it works with a keyboard and a screen reader without
  * any help from us.
  *
- * There is no "weekly room price" filter. It would need enough MigRent
+ * There is no "weekly room price" filter. It would need enough Migrent
  * listings per suburb to compute a median, and with the platform's current
  * listing count it would filter 15,334 suburbs down to none. It belongs here
  * once the data supports it.
