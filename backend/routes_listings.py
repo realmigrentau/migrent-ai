@@ -30,6 +30,8 @@ from matching_engine import calculate_match_score, generate_match_reasons
 from models import ListingCreate, ListingUpdate
 from public_dto import (
     listing_public_state,
+    place_type_spellings,
+    property_type_spellings,
     to_owner_listing,
     to_public_listing,
 )
@@ -603,9 +605,9 @@ def search_listings(
             if cities:
                 q = q.in_("city", cities)
         if property_type:
-            q = q.eq("property_type", property_type)
+            q = q.in_("property_type", property_type_spellings(property_type))
         if place_type:
-            q = q.eq("place_type", place_type)
+            q = q.in_("place_type", place_type_spellings(place_type))
         if furnished is True:
             q = q.eq("furnished", True)
         if bills_included is True:

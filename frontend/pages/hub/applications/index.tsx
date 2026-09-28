@@ -60,7 +60,7 @@ function OwnerApplications({ apps }: { apps: ApplicationSummary[] }) {
   const toast = useToast();
   const tab = (Object.keys(OWNER_TABS).includes(String(router.query.tab)) ? router.query.tab : "new") as OwnerTab;
   const [q, setQ] = useState("");
-  const [home, setHome] = useState("");
+  const [home, setHome] = useState(typeof router.query.listing === "string" ? router.query.listing : "");
   const [selecting, setSelecting] = useState(false);
   const [selected, setSelected] = useState<string[]>([]);
   const [comparing, setComparing] = useState(false);
@@ -74,7 +74,13 @@ function OwnerApplications({ apps }: { apps: ApplicationSummary[] }) {
   const counts = Object.fromEntries((Object.keys(OWNER_TABS) as OwnerTab[]).map((t) => [t, apps.filter((a) => OWNER_TABS[t].includes(a.status)).length])) as Record<OwnerTab, number>;
   const needle = q.trim().toLowerCase();
   const list = apps.filter((a) => OWNER_TABS[tab].includes(a.status) && (!home || a.listing?.id === home) && (!needle || (a.person?.name || "").toLowerCase().includes(needle) || (a.listing?.title || "").toLowerCase().includes(needle)));
-  const setTab = (t: OwnerTab) => void router.replace({ pathname: router.pathname, query: t === "new" ? {} : { tab: t } }, `${router.asPath.split("?")[0]}${t === "new" ? "" : `?tab=${t}`}`, { shallow: true, scroll: false });
+  const setTab = (t: OwnerTab) => {
+    const params = new URLSearchParams();
+    if (t !== "new") params.set("tab", t);
+    if (home) params.set("listing", home);
+    const qs = params.toString();
+    void router.replace({ pathname: router.pathname, query: Object.fromEntries(params) }, `${router.asPath.split("?")[0]}${qs ? `?${qs}` : ""}`, { shallow: true, scroll: false });
+  };
 
   if (!apps.length) {
     return (

@@ -123,3 +123,17 @@ def test_unverified_owner_is_never_shown_as_verified(client):
     assert body["owner"]["verification"]["status"] == "unverified"
     assert body["owner"]["achievement_badges"] == []  # "Verified host" stripped
     assert "verified" not in body["owner"]
+
+
+def test_place_and_property_filters_match_every_stored_spelling(client, db):
+    # Written by the original owner form, which stored labels.
+    row = next(l for l in db.rows("listings") if l["id"] == LISTING_LIVE)
+    row["place_type"] = "Private room"
+    row["property_type"] = "House"
+    for place in ("private_room", "private", "Private room"):
+        ids = [l["id"] for l in client.get(f"/listings/search?limit=50&place_type={place}").json()]
+        assert LISTING_LIVE in ids, place
+    ids = [l["id"] for l in client.get("/listings/search?limit=50&property_type=house").json()]
+    assert LISTING_LIVE in ids
+    ids = [l["id"] for l in client.get("/listings/search?limit=50&place_type=entire_place").json()]
+    assert LISTING_LIVE not in ids

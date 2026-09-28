@@ -25,7 +25,7 @@ export default function AdminHome() {
     { key: "open_reports", label: "Open reports", body: "Listings, people and messages reported by users.", icon: Flag, to: "/admin/reports", internal: true },
     { key: "listings_in_review", label: "Listings to moderate", body: "New and edited listings in the moderation queue.", icon: ListChecks, to: siteUrl("/admin/moderation"), internal: false },
     { key: "id_checks_waiting", label: "ID checks waiting", body: "Owners who uploaded identity documents.", icon: BadgeCheck, to: siteUrl("/admin/verification"), internal: false },
-    { key: "open_emergencies", label: "Open emergency repairs", body: "Emergency maintenance not yet acknowledged by the owner.", icon: Siren, to: "/admin/reports", internal: true },
+    { key: "open_emergencies", label: "Open emergency repairs", body: "Emergency repairs where work has not started yet.", icon: Siren, to: "/admin/reports?tab=emergencies", internal: true },
   ] as const;
   return (
     <div className="flex flex-col">

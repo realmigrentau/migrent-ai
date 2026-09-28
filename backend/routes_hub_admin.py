@@ -171,6 +171,45 @@ def triage_report(report_id: str, request: Request, body: ReportTriage, authoriz
 
 
 # ---------------------------------------------------------------------------
+# Emergency repairs the owner has not picked up yet
+# ---------------------------------------------------------------------------
+
+
+@router.get("/emergencies")
+def emergencies(request: Request, authorization: Optional[str] = Header(None)):
+    actor = hub_actor(request, authorization)
+    require_admin_actor(actor)
+    sb = get_supabase_admin()
+    try:
+        rows = (
+            sb.table("maintenance_requests")
+            .select("id, tenancy_id, listing_id, owner_id, renter_id, category, title, description, urgency, status, created_at, updated_at")
+            .eq("urgency", "emergency")
+            .in_("status", ["submitted", "acknowledged"])
+            .order("created_at")
+            .limit(200)
+            .execute()
+            .data
+            or []
+        )
+    except Exception as e:
+        raise hub_table_error(e)
+    listings = fetch_listings(sb, [r["listing_id"] for r in rows])
+    people = fetch_people(sb, [r["owner_id"] for r in rows] + [r["renter_id"] for r in rows])
+    return {
+        "requests": [
+            {
+                **{k: r.get(k) for k in ("id", "category", "title", "description", "urgency", "status", "created_at", "updated_at")},
+                "listing": listing_card(listings.get(str(r["listing_id"])), viewer_is_owner=True),
+                "owner": people.get(str(r["owner_id"])),
+                "renter": people.get(str(r["renter_id"])),
+            }
+            for r in rows
+        ]
+    }
+
+
+# ---------------------------------------------------------------------------
 # Audit log
 # ---------------------------------------------------------------------------
 

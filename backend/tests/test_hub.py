@@ -422,3 +422,14 @@ def test_account_deletion_blocked_by_a_current_tenancy(client):
     r = client.delete("/account/delete", headers=auth(SEEKER_ID))
     assert r.status_code == 409 and "tenancy" in r.json()["detail"]
     assert client.delete("/account/delete", headers=auth(VERIFIED_OWNER_ID)).status_code == 409
+
+
+def test_admin_sees_unacknowledged_emergencies_only(client):
+    tenancy_id = finalised_tenancy(client)
+    r = client.post(f"/hub/tenancies/{tenancy_id}/maintenance", headers=auth(SEEKER_ID), json={"category": "plumbing", "title": "Burst pipe", "description": "Water everywhere", "urgency": "emergency"})
+    req_id = r.json()["request"]["id"]
+    assert client.get("/hub/admin/emergencies", headers=auth(VERIFIED_OWNER_ID)).status_code == 404
+    listed = client.get("/hub/admin/emergencies", headers=auth(ADMIN_ID)).json()["requests"]
+    assert [x["id"] for x in listed] == [req_id]
+    client.post(f"/hub/maintenance/{req_id}/updates", headers=auth(VERIFIED_OWNER_ID), json={"status_to": "in_progress"})
+    assert client.get("/hub/admin/emergencies", headers=auth(ADMIN_ID)).json()["requests"] == []

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { isWebGLAvailable } from "../../lib/webgl";
+import { bathroomLabel, genderLabel, hasLaundry, laundryLabel, placeTypeLabel, propertyTypeLabel } from "../../lib/hub/format";
 import {
   Wifi,
   Car,
@@ -188,8 +189,8 @@ export default function KeyDetails({ listing }: KeyDetailsProps) {
           {listing.property_type && (
             <div className="flex items-center gap-1.5">
               <Home className="w-4 h-4 text-[var(--color-ink-3)]" />
-              {listing.property_type}
-              {listing.place_type && ` - ${listing.place_type}`}
+              {propertyTypeLabel(listing.property_type)}
+              {listing.place_type && ` - ${placeTypeLabel(listing.place_type)}`}
             </div>
           )}
           {listing.bedrooms != null && (
@@ -202,7 +203,7 @@ export default function KeyDetails({ listing }: KeyDetailsProps) {
             <div className="flex items-center gap-1.5">
               <Bath className="w-4 h-4 text-[var(--color-ink-3)]" />
               {listing.bathrooms} bath
-              {listing.bathroom_type && ` (${listing.bathroom_type})`}
+              {listing.bathroom_type && ` (${bathroomLabel(listing.bathroom_type)})`}
             </div>
           )}
           {listing.max_guests != null && (
@@ -272,8 +273,8 @@ export default function KeyDetails({ listing }: KeyDetailsProps) {
           {listing.laundry && (
             <AmenityItem
               icon={WashingMachine}
-              label={`Laundry (${listing.laundry})`}
-              available={listing.laundry !== "none"}
+              label={`Laundry (${laundryLabel(listing.laundry)})`}
+              available={hasLaundry(listing.laundry)}
             />
           )}
           {listing.dishwasher !== undefined && (
@@ -392,7 +393,7 @@ export default function KeyDetails({ listing }: KeyDetailsProps) {
       {/* House rules */}
       {(listing.quiet_hours ||
         listing.tenant_prefs ||
-        listing.gender_preference ||
+        genderLabel(listing.gender_preference) ||
         listing.security_cameras ||
         listing.other_safety_details) && (
         <GlassCard padding="md">
@@ -405,12 +406,7 @@ export default function KeyDetails({ listing }: KeyDetailsProps) {
               <li>Quiet hours: {listing.quiet_hours}</li>
             )}
             {listing.tenant_prefs && <li>{listing.tenant_prefs}</li>}
-            {listing.gender_preference &&
-              listing.gender_preference !== "any" && (
-                <li>
-                  Gender preference: {listing.gender_preference}
-                </li>
-              )}
+            {genderLabel(listing.gender_preference) && <li>{genderLabel(listing.gender_preference)}</li>}
             {listing.security_cameras !== undefined && (
               <li>
                 <span className="font-medium text-[var(--color-ink)]">Cameras: </span>

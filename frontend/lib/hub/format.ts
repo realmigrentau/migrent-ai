@@ -149,18 +149,25 @@ export function bytes(n: number): string {
 }
 
 export function placeTypeLabel(v: string | null | undefined): string {
-  return (
-    {
-      entire_place: "Entire place",
-      entire_home: "Entire place",
-      private_room: "Private room",
-      shared_room: "Shared room",
-    } as Record<string, string>
-  )[v || ""] || "";
+  // Stored as "Private room" (older listings), "private" or "private_room".
+  const k = (v || "").trim().toLowerCase().replace(/\s+/g, "_");
+  const map: Record<string, string> = {
+    entire_place: "Entire place",
+    entire_home: "Entire place",
+    entire: "Entire place",
+    private_room: "Private room",
+    private: "Private room",
+    shared_room: "Shared room",
+    shared: "Shared room",
+    multiple_rooms: "Multiple rooms",
+    multiple: "Multiple rooms",
+  };
+  return map[k] || (v ? v.replace(/_/g, " ").replace(/^\w/, (c) => c.toUpperCase()) : "");
 }
 
 export function propertyTypeLabel(v: string | null | undefined): string {
   if (!v) return "";
+  const k = v.trim().toLowerCase().replace(/\s+/g, "_");
   const map: Record<string, string> = {
     house: "House",
     apartment: "Apartment",
@@ -172,7 +179,7 @@ export function propertyTypeLabel(v: string | null | undefined): string {
     student_accommodation: "Student accommodation",
     villa: "Villa",
   };
-  return map[v] || v.replace(/_/g, " ").replace(/^\w/, (c) => c.toUpperCase());
+  return map[k] || v.replace(/_/g, " ").replace(/^\w/, (c) => c.toUpperCase());
 }
 
 /** ICS calendar file for an inspection, built in the browser. */
@@ -230,4 +237,25 @@ export function isoToZoned(iso: string, tz: string): { date: string; time: strin
   const parts = new Intl.DateTimeFormat("en-CA", { timeZone: tzOk(tz), hourCycle: "h23", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit" }).formatToParts(new Date(iso));
   const get = (t: string) => parts.find((p) => p.type === t)?.value ?? "00";
   return { date: `${get("year")}-${get("month")}-${get("day")}`, time: `${get("hour")}:${get("minute")}` };
+}
+
+const norm = (v: string | null | undefined) => (v || "").trim().toLowerCase().replace(/[\s-]+/g, "_");
+
+/** Laundry, whichever way it was stored ("In-unit", "in_unit", "None"). */
+export function laundryLabel(v: string | null | undefined): string {
+  const k = norm(v);
+  return ({ in_unit: "In the home", in_home: "In the home", shared: "Shared", none: "None", nearby: "Laundromat nearby" } as Record<string, string>)[k] || (v ?? "");
+}
+export const hasLaundry = (v: string | null | undefined) => Boolean(v) && norm(v) !== "none";
+
+/** Gender preference for a room; null when there is none. */
+export function genderLabel(v: string | null | undefined): string | null {
+  const k = norm(v);
+  if (!k || k === "any" || k === "no_preference") return null;
+  return ({ female: "Women only", female_only: "Women only", women: "Women only", male: "Men only", male_only: "Men only", men: "Men only" } as Record<string, string>)[k] || v || null;
+}
+
+export function bathroomLabel(v: string | null | undefined): string {
+  const k = norm(v);
+  return ({ private: "private", ensuite: "ensuite", shared: "shared" } as Record<string, string>)[k] || (v ?? "");
 }

@@ -26,6 +26,7 @@ from fastapi import APIRouter, File, Header, HTTPException, Request, UploadFile
 from pydantic import BaseModel, Field, ValidationError, field_validator
 
 from db import get_supabase_admin
+from public_dto import canonical_place_type
 from hub_common import (
     CARD_COLUMNS,
     HubActor,
@@ -510,7 +511,7 @@ def _draft_to_listing(data: dict) -> tuple[dict, str, Optional[int]]:
         "images": data.get("images") or [],
         "title": data.get("title"),
         "property_type": data.get("property_type"),
-        "place_type": data.get("place_type"),
+        "place_type": canonical_place_type(data.get("place_type")),
         "max_guests": data.get("max_guests"),
         "bedrooms": data.get("bedrooms"),
         "beds": data.get("beds"),
@@ -546,7 +547,7 @@ def _draft_to_listing(data: dict) -> tuple[dict, str, Optional[int]]:
         "dishwasher": data.get("dishwasher"),
         "nearest_transport": data.get("nearest_transport"),
         "neighbourhood_vibe": data.get("neighbourhood_vibe"),
-        "gender_preference": data.get("gender_preference") if data.get("place_type") in ("private_room", "shared_room") else None,
+        "gender_preference": data.get("gender_preference") if canonical_place_type(data.get("place_type")) in ("private_room", "shared_room") else None,
         "couples_ok": data.get("couples_ok"),
         "latitude": data.get("latitude"),
         "longitude": data.get("longitude"),
@@ -750,6 +751,8 @@ class UnitPatch(BaseModel):
     unit_label: Optional[str] = Field(None, max_length=40)
     listing_purpose: Optional[str] = None
     property_id: Optional[str] = None
+    min_stay_weeks: Optional[int] = Field(None, ge=1, le=104)
+    max_stay_weeks: Optional[int] = Field(None, ge=1, le=260)
 
 
 @router.patch("/listings/{listing_id}/unit")
@@ -763,10 +766,14 @@ def update_unit(listing_id: str, request: Request, body: UnitPatch, authorizatio
         raise HTTPException(status_code=400, detail="Unknown listing type")
     if patch.get("property_id"):
         _own_property(sb, actor, patch["property_id"])
+    lo = patch.get("min_stay_weeks")
+    hi = patch.get("max_stay_weeks")
+    if lo and hi and hi < lo:
+        raise HTTPException(status_code=400, detail="The longest stay must be at least the shortest")
     if not patch:
         raise HTTPException(status_code=400, detail="Nothing to change")
     row = sb.table("listings").update(patch).eq("id", listing_id).execute().data[0]
-    return {"listing_id": listing_id, **{k: row.get(k) for k in ("unit_label", "listing_purpose", "property_id")}}
+    return {"listing_id": listing_id, **{k: row.get(k) for k in ("unit_label", "listing_purpose", "property_id", "min_stay_weeks", "max_stay_weeks")}}
 
 
 # ---------------------------------------------------------------------------

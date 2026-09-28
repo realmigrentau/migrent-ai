@@ -35,6 +35,7 @@ from hub_common import (
 )
 from limiter import limiter
 from listing_lifecycle import public_filter
+from public_dto import place_type_spellings, property_type_spellings
 
 logger = logging.getLogger(__name__)
 
@@ -524,9 +525,9 @@ def query_public_listings(sb, params: dict, *, limit: int = 12, created_after: O
     if p.get("max_price") is not None:
         q = q.lte("weekly_price", p["max_price"])
     if p.get("property_type"):
-        q = q.eq("property_type", p["property_type"])
+        q = q.in_("property_type", property_type_spellings(str(p["property_type"])))
     if p.get("place_type"):
-        q = q.eq("place_type", p["place_type"])
+        q = q.in_("place_type", place_type_spellings(str(p["place_type"])))
     if p.get("bedrooms"):
         q = q.gte("bedrooms", p["bedrooms"])
     for b in BOOL_KEYS:
