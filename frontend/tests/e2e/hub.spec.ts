@@ -72,6 +72,19 @@ test.describe("renter", () => {
     }
   });
 
+  test("sign out is one tap away and really ends the session", async ({ page, isMobile }) => {
+    await signIn(page, "renter@example.test");
+    if (isMobile) {
+      await page.getByRole("navigation", { name: "Migrent Hub" }).last().getByRole("link", { name: "Profile" }).click();
+      await page.getByRole("button", { name: "Sign out" }).click();
+    } else {
+      await page.getByRole("navigation", { name: "Migrent Hub" }).first().getByRole("button", { name: "Sign out" }).click();
+    }
+    await expect(page).toHaveURL(/\/hub\/sign-in/);
+    await page.goto("/hub/saved");
+    await expect(page).toHaveURL(/\/hub\/sign-in\?next=%2Fsaved/);
+  });
+
   test.describe.serial("changes", () => {
     test.skip(({ isMobile }) => isMobile, "journeys that change data run once");
 
