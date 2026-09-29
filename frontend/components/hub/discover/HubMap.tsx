@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-// MapLibre 6 has named exports only.
-import * as maplibregl from "maplibre-gl";
+import maplibregl from "../../../lib/maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { isWebGLAvailable } from "../../../lib/webgl";
 import { reportMapFailure } from "../../MapErrorBoundary";

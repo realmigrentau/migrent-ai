@@ -121,6 +121,20 @@ test.describe("renter", () => {
     }
   });
 
+  test("the Discover map loads its worker and pins the homes", async ({ page, isMobile }) => {
+    test.skip(isMobile, "the map sits beside the list on desktop");
+    // No map tiles offline: a plain local style is enough to start the map.
+    // Grouping homes into pins happens in MapLibre's web worker, so pins
+    // on the map mean the worker (lib/maplibre.ts) loaded.
+    await page.route("https://api.maptiler.com/**", (route) =>
+      route.fulfill({ contentType: "application/json", body: JSON.stringify({ version: 8, sources: {}, layers: [{ id: "bg", type: "background", paint: { "background-color": "#dfe7ee" } }] }) }),
+    );
+    const worker = page.waitForEvent("worker", { predicate: (w) => w.url().includes("/vendor/maplibre-gl/") });
+    await signIn(page, "renter@example.test", "/discover");
+    await worker;
+    await expect(page.locator(".hub-price-marker").first()).toBeVisible({ timeout: 20_000 });
+  });
+
   test("sign out is one tap away and really ends the session", async ({ page, isMobile }) => {
     await signIn(page, "renter@example.test");
     if (isMobile) {

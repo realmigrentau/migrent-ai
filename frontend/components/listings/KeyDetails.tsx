@@ -116,8 +116,8 @@ export default function KeyDetails({ listing }: KeyDetailsProps) {
       return;
     }
     let cancelled = false;
-    import("maplibre-gl")
-      .then((maplibregl) => {
+    import("../../lib/maplibre")
+      .then(({ default: maplibregl }) => {
         if (cancelled || !mapContainer.current) return;
         try {
           const map = new maplibregl.Map({
