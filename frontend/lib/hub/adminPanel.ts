@@ -13,8 +13,13 @@
  *     including across a reload,
  *   - when the server's unlock expires,
  *   - on sign-out, and whenever the server answers 423.
+ *
+ * Locking itself after 30 idle seconds also raises the alarm: red and blue
+ * police lights over the whole screen and a siren (AdminIdleAlarm, which
+ * reads useAdminIdleAlert below).
  */
 import { useSyncExternalStore } from "react";
+import { primeAlarm } from "./alarm";
 
 export const UNLOCK_HEADER = "X-Migrent-Admin-Unlock";
 export const IDLE_LOCK_MS = 30_000;
@@ -22,12 +27,16 @@ export const IDLE_LOCK_MS = 30_000;
 const ACTIVITY_EVENTS = ["pointermove", "pointerdown", "keydown", "wheel", "touchstart", "scroll"] as const;
 const STORE_KEY = "migrent-admin-panel";
 
+/** Why the panel locked. Only "idle" raises the alarm. */
+export type LockReason = "idle" | "manual" | "expired" | "server" | "signout";
+
 let token: string | null = null;
 let expiresAt = 0;
 let lastActivity = 0;
 let lastSaved = 0;
 let expiryTimer: number | undefined;
 let idleTimer: number | undefined;
+let idleAlert = false;
 const listeners = new Set<() => void>();
 const lockHandlers = new Set<() => void>();
 
@@ -75,18 +84,21 @@ function save() {
 
 // Activity is checked before it counts: coming back to a tab after a minute
 // away must lock the panel, not quietly restart the 30 seconds.
-function onActivity() {
+function onActivity(e: Event) {
   if (!token) return;
   if (Date.now() - lastActivity >= IDLE_LOCK_MS) {
-    lockAdminPanel();
+    lockAdminPanel("idle");
     return;
   }
+  // A click or key press lets the page make sound later (after a reload
+  // the Unlock click that allowed it belongs to the previous page).
+  if (e.type === "pointerdown" || e.type === "keydown") primeAlarm();
   lastActivity = Date.now();
   if (lastActivity - lastSaved > 1000) save();
 }
 
 function checkIdle() {
-  if (token && Date.now() - lastActivity >= IDLE_LOCK_MS) lockAdminPanel();
+  if (token && Date.now() - lastActivity >= IDLE_LOCK_MS) lockAdminPanel("idle");
 }
 
 function watchActivity(on: boolean) {
@@ -108,20 +120,22 @@ function open(value: string, until: number, active: number) {
   window.clearTimeout(expiryTimer);
   // A few seconds early, so a request never leaves with an unlock that
   // expires on its way to the server.
-  expiryTimer = window.setTimeout(lockAdminPanel, Math.max(1000, until - Date.now() - 5000));
+  expiryTimer = window.setTimeout(() => lockAdminPanel("expired"), Math.max(1000, until - Date.now() - 5000));
   watchActivity(true);
   save();
   emit();
 }
 
 export function unlockAdminPanel(value: string, expiresInSeconds: number) {
+  idleAlert = false;
   open(value, Date.now() + expiresInSeconds * 1000, Date.now());
 }
 
-export function lockAdminPanel() {
+export function lockAdminPanel(reason: LockReason = "manual") {
   if (token === null) return;
   token = null;
   expiresAt = 0;
+  idleAlert = reason === "idle";
   if (typeof window !== "undefined") {
     window.clearTimeout(expiryTimer);
     save();
@@ -152,4 +166,19 @@ if (typeof window !== "undefined") restore();
 
 export function useAdminPanelUnlocked(): boolean {
   return useSyncExternalStore(subscribe, isAdminPanelUnlocked, () => false);
+}
+
+/** True from an idle lock until the admin dismisses the alarm (or unlocks again). */
+export function adminIdleAlertRaised(): boolean {
+  return idleAlert;
+}
+
+export function dismissAdminIdleAlert() {
+  if (!idleAlert) return;
+  idleAlert = false;
+  emit();
+}
+
+export function useAdminIdleAlert(): boolean {
+  return useSyncExternalStore(subscribe, adminIdleAlertRaised, () => false);
 }

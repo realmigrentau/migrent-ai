@@ -56,7 +56,7 @@ export function HubSessionProvider({ children }: { children: ReactNode }) {
       setSession(s);
       setSessionLoaded(true);
       if (event === "SIGNED_OUT") {
-        lockAdminPanel();
+        lockAdminPanel("signout");
         clearQueryCache();
         setViewAs(null);
         setViewAsState(null);
@@ -100,7 +100,7 @@ export function HubSessionProvider({ children }: { children: ReactNode }) {
   else status = "ready";
 
   const signOut = useCallback(async () => {
-    lockAdminPanel();
+    lockAdminPanel("signout");
     setViewAs(null);
     setViewAsState(null);
     await supabase.auth.signOut();

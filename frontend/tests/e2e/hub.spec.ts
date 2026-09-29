@@ -45,6 +45,37 @@ async function signInToPanel(page: Page, email: string, next: string) {
   await expect(page.getByText("Admin panel open")).toBeVisible();
 }
 
+/**
+ * Count the siren: every oscillator started, and every audio context the
+ * page opens (to check one is actually running, not blocked).
+ */
+async function listenForSiren(page: Page) {
+  await page.addInitScript(() => {
+    const w = window as unknown as { __oscillators: number; __audio: AudioContext[] };
+    w.__oscillators = 0;
+    w.__audio = [];
+    const start = OscillatorNode.prototype.start;
+    OscillatorNode.prototype.start = function (this: OscillatorNode, ...args: Parameters<OscillatorNode["start"]>) {
+      w.__oscillators += 1;
+      return start.apply(this, args);
+    };
+    const Original = window.AudioContext;
+    window.AudioContext = class extends Original {
+      constructor(...args: ConstructorParameters<typeof AudioContext>) {
+        super(...args);
+        w.__audio.push(this);
+      }
+    };
+  });
+}
+
+async function sirenPlaying(page: Page) {
+  return page.evaluate(() => {
+    const w = window as unknown as { __oscillators: number; __audio: AudioContext[] };
+    return w.__oscillators > 0 && w.__audio.some((c) => c.state === "running");
+  });
+}
+
 /** The panel locks after 30 seconds without activity; loops over pages keep the mouse moving. */
 async function stayActive(page: Page, i: number) {
   await page.mouse.move(40 + (i % 7) * 13, 40 + (i % 5) * 11);
@@ -326,6 +357,8 @@ test.describe("admin panel", () => {
     await expect(page.getByText("Entered a wrong Admin panel password").first()).toBeVisible();
     await page.getByRole("button", { name: "Lock now" }).click();
     await expect(page.getByLabel("Admin password")).toBeVisible();
+    // Locking it yourself is quiet.
+    await expect(page.getByRole("alertdialog")).toHaveCount(0);
   });
 
   test("a server without the Admin panel yet says so plainly", async ({ page }) => {
@@ -339,7 +372,8 @@ test.describe("admin panel", () => {
     await expect(page.getByLabel("Admin password")).toBeVisible();
   });
 
-  test("the panel locks itself after 30 seconds without activity", async ({ page }) => {
+  test("the panel locks itself after 30 seconds without activity, with lights and a siren", async ({ page }) => {
+    await listenForSiren(page);
     await page.clock.install();
     await signInToPanel(page, "admin@example.test", "/admin/audit");
     await page.clock.fastForward(20_000);
@@ -348,14 +382,26 @@ test.describe("admin panel", () => {
     await page.clock.fastForward(20_000);
     await expect(page.getByText("Admin panel open")).toBeVisible();
     await page.clock.fastForward(12_000);
-    await expect(page.getByLabel("Admin password")).toBeVisible();
+
+    const alarm = page.getByRole("alertdialog", { name: "Admin panel locked" });
+    await expect(alarm).toBeVisible();
+    await expect(alarm.getByText("No activity for 30 seconds")).toBeVisible();
+    await expect(page.locator(".hub-threat-lights .hub-threat-blue")).toBeAttached();
+    await expect.poll(() => sirenPlaying(page)).toBe(true);
     await expect(page.getByRole("heading", { name: "Audit log", level: 1 })).toHaveCount(0);
+
+    await alarm.getByRole("button", { name: "Silence alarm" }).click();
+    await expect(alarm.getByRole("button", { name: "Silence alarm" })).toHaveCount(0);
+    await alarm.getByRole("button", { name: "Unlock again" }).click();
+    await expect(page.getByRole("alertdialog")).toHaveCount(0);
+    await expect(page.getByLabel("Admin password")).toBeVisible();
     // A reload does not bring it back.
     await page.reload();
     await expect(page.getByLabel("Admin password")).toBeVisible();
   });
 
-  test("three wrong passwords sign you out and alert every admin", async ({ page }) => {
+  test("three wrong passwords sign you out, sound the alarm and alert every admin", async ({ page }) => {
+    await listenForSiren(page);
     await signIn(page, "grace@example.test");
     await page.getByRole("navigation", { name: "Migrent Hub" }).first().getByRole("link", { name: "Admin panel" }).click();
     await unlockPanel(page, "guess one");
@@ -368,6 +414,11 @@ test.describe("admin panel", () => {
     await expect(page.getByRole("heading", { name: "Potential threat" })).toBeVisible();
     await expect(page.getByText("Potential hack")).toBeVisible();
     await expect(page.getByText(/every Migrent admin has been alerted/)).toBeVisible();
+    await expect.poll(() => sirenPlaying(page)).toBe(true);
+    const axe = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"]).analyze();
+    expect(axe.violations.filter((v) => v.impact === "serious" || v.impact === "critical").map((v) => v.id)).toEqual([]);
+    await page.getByRole("button", { name: "Silence alarm" }).click();
+    await expect(page.getByRole("button", { name: "Silence alarm" })).toHaveCount(0);
     // The lights calm down for anyone who asked for less motion.
     const lights = page.locator(".hub-threat-lights .hub-threat-red");
     await expect.poll(() => lights.evaluate((el) => getComputedStyle(el).animationName)).toBe("hub-threat-pulse");

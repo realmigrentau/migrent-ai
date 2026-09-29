@@ -11,6 +11,7 @@ import { hubSignInUrl, hubUrl, siteUrl, toHubPath } from "../../lib/hub/routes";
 import type { HubCounts } from "../../lib/hub/types";
 import HubLink, { useHubNavigate } from "./HubLink";
 import CommandPalette from "./CommandPalette";
+import AdminIdleAlarm from "./admin/AdminIdleAlarm";
 import { ThemeIconButton, ThemeSegmented } from "./ThemeToggle";
 import { navFor, footerNav, isActive, type NavItem } from "./nav";
 import { Avatar } from "./ui/Media";
@@ -368,6 +369,7 @@ export default function HubShell({ children, title, fullBleed, fab, immersive, f
       </nav>
 
       <CommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} />
+      <AdminIdleAlarm />
     </div>
   );
 }
