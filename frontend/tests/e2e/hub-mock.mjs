@@ -35,10 +35,12 @@ const USERS = {
   "aaaa0000-0000-4000-8000-000000000003": { email: "new@example.test", name: "", role: null, onboarded: false, created_at: iso(now()) },
   "aaaa0000-0000-4000-8000-000000000004": { email: "admin@example.test", name: "Ada Admin", role: "superadmin", is_admin: true, onboarded: true, created_at: "2026-01-01T00:00:00Z" },
   "aaaa0000-0000-4000-8000-000000000005": { email: "tenant@example.test", name: "Tom Nguyen", role: "seeker", onboarded: true, created_at: "2026-04-20T00:00:00Z" },
+  "aaaa0000-0000-4000-8000-000000000006": { email: "newowner@example.test", name: "Liam Park", role: "owner", owner_kind: "individual", onboarded: true, created_at: "2026-09-18T00:00:00Z" },
 };
 const RENTER = "aaaa0000-0000-4000-8000-000000000001";
 const OWNER = "aaaa0000-0000-4000-8000-000000000002";
 const TENANT = "aaaa0000-0000-4000-8000-000000000005";
+const NEW_OWNER = "aaaa0000-0000-4000-8000-000000000006";
 
 /* ── Auth ──────────────────────────────────────────────── */
 
@@ -219,6 +221,18 @@ const S = {
   templates: {},
   reports: [{ id: "rep-1", reporter_id: RENTER, item_type: "listing", item_id: "11111111-1111-4111-8111-000000000003", reason: "Looks like a scam", details: "Asked me to pay a deposit before inspecting.", status: "pending", priority: "high", created_at: iso(inDays(-1)) }],
   audit: [],
+  // Hub admin: listings in moderation (kept apart from the public search
+  // fixtures), an owner waiting for an ID check, and support tickets.
+  moderation: [
+    { id: "33333333-3333-4333-8333-000000000001", owner_id: OWNER, title: "Bright room in Castle Hill", suburb: "Castle Hill", postcode: 2154, weekly_price: 330, address: "4 Pennant Street", place_type: "private_room", property_type: "house", description: "A bright upstairs room with a built-in wardrobe, five minutes from the metro.", moderation_status: "pending_approval", spam_score: 4, spam_reasons: [], flagged_at: null, moderation_reason: null, moderation_notes: null, created_at: iso(inDays(-2)), updated_at: iso(inDays(-2)), history: [] },
+    { id: "33333333-3333-4333-8333-000000000002", owner_id: OWNER, title: "CHEAP ROOM pay deposit now", suburb: "Blacktown", postcode: 2148, weekly_price: 90, address: "9 Main Street", place_type: "private_room", property_type: "apartment", description: "Transfer the deposit to secure it before viewing. WhatsApp only.", moderation_status: "flagged", spam_score: 78, spam_reasons: ["Asks for payment before a viewing", "Price far below the suburb median", "Contact details in the description"], flagged_at: iso(inDays(-1)), moderation_reason: null, moderation_notes: null, created_at: iso(inDays(-1)), updated_at: iso(inDays(-1)), history: [] },
+  ],
+  idChecks: [{ user_id: NEW_OWNER, document_type: "passport", submitted_at: iso(inDays(-1)), email_verified: true, phone_verified: false, id_status: "pending" }],
+  tickets: [
+    { id: "tk-1", user_id: OWNER, email: "owner@example.test", name: null, subject: "Photos won't upload on my phone", status: "open", priority: "normal", category: "listings", source: "in_app", created_at: iso(inDays(-1)), updated_at: iso(inDays(-1)), first_response_at: null, resolved_at: null, csat_rating: null, csat_comment: null, messages: [{ id: "tm-1", body: "The upload button spins and nothing happens. I'm on an iPhone.", sender_type: "user", is_internal: false, sender_id: OWNER, created_at: iso(inDays(-1)) }] },
+    { id: "tk-2", user_id: null, email: "gina@example.test", name: "Gina Rossi", subject: "An owner asked me for cash", status: "pending_internal", priority: "urgent", category: "trust_safety", source: "contact_form", created_at: iso(inDays(-3)), updated_at: iso(inDays(-2)), first_response_at: iso(inDays(-3)), resolved_at: null, csat_rating: null, csat_comment: null, messages: [{ id: "tm-2", body: "The owner wants a cash deposit before I can see the room.", sender_type: "user", is_internal: false, sender_id: null, created_at: iso(inDays(-3)) }] },
+    { id: "tk-3", user_id: RENTER, email: "renter@example.test", name: null, subject: "Thanks for the help", status: "resolved", priority: "low", category: "feedback", source: "in_app", created_at: iso(inDays(-9)), updated_at: iso(inDays(-8)), first_response_at: iso(inDays(-9)), resolved_at: iso(inDays(-8)), csat_rating: 5, csat_comment: "Quick and clear.", messages: [] },
+  ],
 };
 
 function ev(app, event, actor_role, note = null, to = null) {
@@ -424,6 +438,177 @@ function ownerHome(uid) {
   };
 }
 
+/* ── Hub admin: listings, ID checks, accounts, support ───── */
+// Mirrors backend/routes_hub_admin.py (LISTING_ACTIONS and friends).
+
+const LISTING_ACTIONS = {
+  pending_approval: ["approve", "request_changes", "reject", "pause"],
+  changes_requested: ["approve", "reject", "pause"],
+  approved: ["pause", "request_removal"],
+  flagged: ["approve", "unflag", "hide", "request_removal", "rescan"],
+  hidden: ["approve", "unflag", "request_removal", "rescan"],
+  delete_requested: ["confirm_removal", "approve", "unflag"],
+  paused: ["unpause", "request_removal"],
+};
+const NEEDS_REASON = ["reject", "request_changes", "pause", "hide", "request_removal"];
+const LISTING_QUEUES = { review: ["pending_approval"], flagged: ["flagged"], hidden: ["hidden"], removal: ["delete_requested"], paused: ["paused"] };
+const idCheckOf = (ownerId) => (ownerId === OWNER ? "verified" : S.idChecks.find((c) => c.user_id === ownerId)?.id_status === "approved" ? "verified" : ownerId === NEW_OWNER ? "pending" : "unverified");
+const firstImage = () => (LISTINGS[0]?.images || []).slice(0, 3);
+
+function moderationItem(l) {
+  return {
+    id: l.id,
+    title: l.title,
+    suburb: l.suburb,
+    city: "Sydney",
+    postcode: l.postcode,
+    state: "NSW",
+    timezone: "Australia/Sydney",
+    display_address: `${l.suburb} ${l.postcode}`,
+    weekly_price: l.weekly_price,
+    image: firstImage()[0] || null,
+    images: firstImage(),
+    property_type: l.property_type,
+    place_type: l.place_type,
+    bedrooms: 1,
+    bathrooms: 1,
+    parking: false,
+    furnished: true,
+    bills_included: true,
+    pets_allowed: false,
+    available_from: dayIso(inDays(7)),
+    available_to: null,
+    public_state: l.moderation_status === "approved" ? "published" : "unavailable",
+    unit_label: null,
+    listing_purpose: "long_term",
+    street_address: l.address,
+    moderation_status: l.moderation_status,
+    moderation_reason: l.moderation_reason,
+    moderation_notes: l.moderation_notes,
+    spam_score: l.spam_score,
+    spam_reasons: l.spam_reasons,
+    flagged_at: l.flagged_at,
+    created_at: l.created_at,
+    updated_at: l.updated_at,
+    owner: { ...person(l.owner_id), email: USERS[l.owner_id]?.email || null, id_check: idCheckOf(l.owner_id) },
+    actions: LISTING_ACTIONS[l.moderation_status] || [],
+  };
+}
+const moderationDetail = (l) => ({ ...moderationItem(l), description: l.description, history: l.history });
+
+function account(id) {
+  const x = USERS[id];
+  return { id, name: x.name || "(no name)", email: x.email, role: x.role === "seeker" ? "renter" : x.role, member_since: x.created_at.slice(0, 10), suspended: Boolean(x.disabled), is_admin: Boolean(x.is_admin) };
+}
+
+function ticketRow(t) {
+  const who = t.user_id ? USERS[t.user_id] : null;
+  const { messages, user_id, email, name, ...rest } = t;
+  void messages;
+  return { ...rest, requester: { id: user_id, name: who?.name || name || email || "Guest", email, avatar_url: null, has_account: Boolean(user_id) } };
+}
+const ticketDetail = (t) => ({ ...ticketRow(t), messages: t.messages.map(({ sender_id, ...m }) => ({ ...m, sender: sender_id ? person(sender_id) : null })) });
+
+function adminExtras(p, url, body, uid, send, req) {
+  const audit = (action, target_type, target_id, reason = null, notes = null) => S.audit.unshift({ id: uuid(), action, target_type, target_id, reason, notes, metadata: {}, created_at: iso(now()), admin: person(uid) });
+  let mm;
+
+  // Listings
+  if (p === "/hub/admin/listings") {
+    const queue = url.searchParams.get("queue") || "review";
+    const q = (url.searchParams.get("q") || "").toLowerCase();
+    let rows = queue === "all" ? S.moderation : S.moderation.filter((l) => (LISTING_QUEUES[queue] || []).includes(l.moderation_status));
+    if (q) rows = rows.filter((l) => `${l.title} ${l.suburb} ${USERS[l.owner_id]?.name || ""} ${USERS[l.owner_id]?.email || ""}`.toLowerCase().includes(q));
+    const counts = Object.fromEntries(Object.entries(LISTING_QUEUES).map(([k, st]) => [k, S.moderation.filter((l) => st.includes(l.moderation_status)).length]));
+    return send(200, { listings: rows.map(moderationItem), counts }), true;
+  }
+  mm = p.match(/^\/hub\/admin\/listings\/([^/]+)(\/action)?$/);
+  if (mm) {
+    const l = S.moderation.find((x) => x.id === mm[1]);
+    if (!l) return send(404, { detail: "Listing not found" }), true;
+    if (!mm[2]) return send(200, { listing: moderationDetail(l) }), true;
+    const action = body.action;
+    if (!(LISTING_ACTIONS[l.moderation_status] || []).includes(action)) return send(409, { detail: "That can't be done to this listing in its current state. Refresh to see where it is now." }), true;
+    const reason = (body.reason || "").trim();
+    if (NEEDS_REASON.includes(action) && reason.length < 5) return send(400, { detail: "Add a reason. It is recorded in the audit log." }), true;
+    if (action === "approve" && idCheckOf(l.owner_id) !== "verified") return send(409, { detail: "The owner has not completed identity verification. Approve their ID first." }), true;
+    const move = { approve: "approved", request_changes: "changes_requested", reject: "rejected", pause: "paused", unpause: body.mode === "restore" ? "approved" : "pending_approval", hide: "hidden", unflag: "pending_approval", request_removal: "delete_requested", confirm_removal: "deleted" };
+    const auditName = { approve: "approve", request_changes: "request_changes", reject: "reject", pause: "pause", unpause: "unpause", hide: "hide", unflag: "unflag", request_removal: "request_delete", confirm_removal: "confirm_delete" };
+    const event = { approve: "approved", request_changes: "changes_requested", reject: "rejected", pause: "paused", unpause: "unpaused", hide: "hidden", unflag: "unflagged", request_removal: "delete_requested", confirm_removal: "delete_approved", rescan: "score_updated" };
+    if (action !== "rescan") {
+      audit(auditName[action], "listing", l.id, reason || null, body.note || null);
+      l.moderation_status = move[action];
+      if (reason && action !== "request_changes") l.moderation_reason = reason;
+      if (action === "request_changes") l.moderation_notes = reason;
+      if (action === "unflag") Object.assign(l, { spam_score: 0, spam_reasons: [] });
+    }
+    l.updated_at = iso(now());
+    l.history.unshift({ id: uuid(), event_type: event[action], old_status: null, new_status: l.moderation_status, spam_score: action === "rescan" ? l.spam_score : null, notes: reason || body.note || null, created_at: iso(now()), actor: action === "rescan" ? null : person(uid), actor_type: action === "rescan" ? "system" : "admin" });
+    return send(200, { listing: moderationDetail(l) }), true;
+  }
+
+  // ID checks
+  if (p === "/hub/admin/id-checks")
+    return send(200, { checks: S.idChecks.filter((c) => c.id_status === "pending").map((c) => ({ user_id: c.user_id, person: person(c.user_id), email: USERS[c.user_id]?.email || null, document_type: c.document_type, submitted_at: c.submitted_at, email_verified: c.email_verified, phone_verified: c.phone_verified, listings_waiting: 1 })) }), true;
+  mm = p.match(/^\/hub\/admin\/id-checks\/([^/]+)(\/document)?$/);
+  if (mm) {
+    const c = S.idChecks.find((x) => x.user_id === mm[1]);
+    if (!c) return send(404, { detail: "Verification record not found" }), true;
+    // A 1x1 image stands in for the document.
+    if (mm[2]) return send(200, { url: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==", kind: "image", expires_in_seconds: 300 }), true;
+    if (c.id_status !== "pending") return send(400, { detail: `ID is not pending review (current: ${c.id_status})` }), true;
+    if (body.action === "reject" && (body.reason || "").trim().length < 5) return send(400, { detail: "Tell the owner what was wrong so they can fix it. It is also recorded in the audit log." }), true;
+    c.id_status = body.action === "approve" ? "approved" : "rejected";
+    audit(body.action === "approve" ? "approve_id" : "reject_id", "owner_verification", c.user_id, body.reason || null, body.action === "approve" ? "Government ID approved" : null);
+    return send(200, { message: body.action === "approve" ? "ID approved" : "ID rejected", fully_verified: body.action === "approve" }), true;
+  }
+
+  // Accounts
+  mm = p.match(/^\/hub\/admin\/users\/([^/]+)\/(suspend|unsuspend)$/);
+  if (mm && req.method === "POST") {
+    const target = USERS[mm[1]];
+    if (!target) return send(404, { detail: "User not found" }), true;
+    if ((body.reason || "").trim().length < 5) return send(400, { detail: "Say why. It is recorded in the audit log." }), true;
+    if (mm[1] === uid) return send(400, { detail: "That is your own account" }), true;
+    if (target.is_admin) return send(400, { detail: "Admin accounts are changed in the database, not here" }), true;
+    const suspend = mm[2] === "suspend";
+    if (Boolean(target.disabled) !== suspend) {
+      audit(suspend ? "suspend_user" : "unsuspend_user", "user", mm[1], body.reason.trim());
+      target.disabled = suspend;
+    }
+    return send(200, { user: account(mm[1]) }), true;
+  }
+
+  // Support
+  if (p === "/hub/admin/support/tickets") {
+    const views = { needs_reply: ["open", "pending_internal"], waiting: ["pending_customer"], done: ["resolved", "closed"] };
+    const view = url.searchParams.get("view") || "needs_reply";
+    const prio = { urgent: 0, high: 1, normal: 2, low: 3 };
+    const rows = (view === "all" ? S.tickets : S.tickets.filter((t) => (views[view] || []).includes(t.status))).slice().sort((a, b) => (view === "needs_reply" ? prio[a.priority] - prio[b.priority] || a.created_at.localeCompare(b.created_at) : b.created_at.localeCompare(a.created_at)));
+    const counts = Object.fromEntries(Object.entries(views).map(([k, st]) => [k, S.tickets.filter((t) => st.includes(t.status)).length]));
+    return send(200, { tickets: rows.map(ticketRow), counts }), true;
+  }
+  mm = p.match(/^\/hub\/admin\/support\/tickets\/([^/]+)(\/reply)?$/);
+  if (mm) {
+    const t = S.tickets.find((x) => x.id === mm[1]);
+    if (!t) return send(404, { detail: "Ticket not found" }), true;
+    if (req.method === "GET") return send(200, { ticket: ticketDetail(t) }), true;
+    if (mm[2]) {
+      if (t.status === "closed") return send(409, { detail: "This ticket is closed. Reopen it to reply." }), true;
+      t.messages.push({ id: uuid(), body: body.body, sender_type: "agent", is_internal: false, sender_id: uid, created_at: iso(now()) });
+      t.status = "pending_customer";
+      t.first_response_at = t.first_response_at || iso(now());
+    } else {
+      for (const k of ["status", "priority", "category"]) if (body[k]) t[k] = body[k];
+      if (body.status === "resolved") t.resolved_at = iso(now());
+      if ((body.internal_note || "").trim()) t.messages.push({ id: uuid(), body: body.internal_note.trim(), sender_type: "agent", is_internal: true, sender_id: uid, created_at: iso(now()) });
+    }
+    t.updated_at = iso(now());
+    return send(200, { ticket: ticketDetail(t) }), true;
+  }
+  return false;
+}
+
 /* ── Router ─────────────────────────────────────────────── */
 
 export function setListings(list) {
@@ -539,6 +724,7 @@ export function handleHub(req, url, body, send) {
     uid = viewAs;
   }
   const u = USERS[uid];
+  if (u.disabled) return send(403, { detail: "This account has been suspended. Contact support if you think this is a mistake." }), true;
   const isOwner = u.role === "owner";
   const m = (re) => p.match(re);
 
@@ -1069,7 +1255,18 @@ export function handleHub(req, url, body, send) {
   // Admin
   if (p.startsWith("/hub/admin/")) {
     if (!u.is_admin) return send(404, { detail: "Not found" }), true;
-    if (p === "/hub/admin/overview") return send(200, { final_reviews: S.applications.filter((a) => a.status === "migrent_review").length, open_reports: S.reports.filter((r) => r.status === "pending").length, listings_in_review: 2, id_checks_waiting: 1, open_emergencies: 0 }), true;
+    if (p === "/hub/admin/overview")
+      return send(200, {
+        final_reviews: S.applications.filter((a) => a.status === "migrent_review").length,
+        open_reports: S.reports.filter((r) => r.status === "pending").length,
+        listings_in_review: S.moderation.filter((l) => ["pending_approval", "flagged"].includes(l.moderation_status)).length,
+        id_checks_waiting: S.idChecks.filter((c) => c.id_status === "pending").length,
+        open_emergencies: 0,
+        tickets_waiting: S.tickets.filter((t) => ["open", "pending_internal"].includes(t.status)).length,
+        accounts: Object.keys(USERS).length,
+        approved_listings: LISTINGS.length,
+      }), true;
+    if (adminExtras(p, url, body, uid, send, req)) return true;
     if (p === "/hub/admin/applications") return send(200, { applications: S.applications.filter((a) => a.status === "migrent_review").map((a) => ({ ...appSummary(a, "owner"), owner: person(a.owner_id), owner_approved_at: a.updated_at })) }), true;
     mm = m(/^\/hub\/admin\/applications\/([^/]+)\/decision$/);
     if (mm) {
@@ -1092,7 +1289,7 @@ export function handleHub(req, url, body, send) {
     if (p === "/hub/admin/emergencies") return send(200, { requests: S.maintenance.filter((x) => x.urgency === "emergency" && ["submitted", "acknowledged"].includes(x.status)).map((x) => ({ id: x.id, category: x.category, title: x.title, description: x.description, urgency: x.urgency, status: x.status, created_at: x.created_at, updated_at: x.updated_at, listing: card(listingById(x.listing_id), true), owner: person(x.owner_id), renter: person(x.renter_id) })) }), true;
     if (p === "/hub/admin/users") {
       const q = (url.searchParams.get("q") || "").toLowerCase();
-      return send(200, { users: Object.entries(USERS).filter(([, x]) => x.email.includes(q) || x.name.toLowerCase().includes(q)).map(([id, x]) => ({ id, name: x.name || "(no name)", email: x.email, role: x.role === "seeker" ? "renter" : x.role, member_since: x.created_at.slice(0, 10), suspended: false })) }), true;
+      return send(200, { users: Object.entries(USERS).filter(([, x]) => x.email.includes(q) || x.name.toLowerCase().includes(q)).map(([id]) => account(id)) }), true;
     }
     if (p === "/hub/admin/view-as") {
       if ((body.reason || "").trim().length < 5) return send(400, { detail: "Say why you need to view this account (recorded in the audit log)" }), true;

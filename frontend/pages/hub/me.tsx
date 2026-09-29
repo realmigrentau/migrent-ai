@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { ArrowLeft, ChevronRight, CircleHelp, LogOut, Plus, Settings, ShieldCheck } from "lucide-react";
+import { ArrowLeft, ChevronRight, CircleHelp, LogOut, Plus, ShieldCheck } from "lucide-react";
 import HubShell from "../../components/hub/HubShell";
 import HubLink from "../../components/hub/HubLink";
 import { ThemeSegmented } from "../../components/hub/ThemeToggle";
@@ -96,12 +96,6 @@ export default function MePage() {
         </Group>
 
         <Group>
-          {role === "admin" && (
-            <a href={siteUrl("/admin")} className="flex h-14 items-center gap-3.5 px-4 text-[15px] font-medium text-[color:var(--color-ink)] hover:bg-[var(--color-surface-hover)]">
-              <Settings className="h-5 w-5 text-[color:var(--color-ink-2)]" strokeWidth={1.75} aria-hidden />
-              <span className="flex-1">Admin console</span>
-            </a>
-          )}
           <a href={siteUrl("/resources/help")} className="flex h-14 items-center gap-3.5 px-4 text-[15px] font-medium text-[color:var(--color-ink)] hover:bg-[var(--color-surface-hover)]">
             <CircleHelp className="h-5 w-5 text-[color:var(--color-ink-2)]" strokeWidth={1.75} aria-hidden />
             <span className="flex-1">Help and safety</span>

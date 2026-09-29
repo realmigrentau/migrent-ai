@@ -133,6 +133,14 @@ const LEGACY_TO_HUB: [RegExp, (m: RegExpMatchArray) => string][] = [
   [/^\/seeker\/wishlist\/?$/, () => "/saved"],
   [/^\/seeker\/search\/?$/, () => "/discover"],
   [/^\/onboarding\/?$/, () => "/welcome"],
+  // The old admin console (retired; see next.config.ts).
+  [/^\/admin(?:\/(?:overview|analytics|revenue))?\/?$/, () => "/"],
+  [/^\/admin\/moderation\/?$/, () => "/admin/listings"],
+  [/^\/admin\/spam-moderation\/?$/, () => "/admin/listings?queue=flagged"],
+  [/^\/admin\/listings\/?$/, () => "/admin/listings?queue=all"],
+  [/^\/admin\/verification\/?$/, () => "/admin/id-checks"],
+  [/^\/admin\/users\/?$/, () => "/admin/people"],
+  [/^\/admin\/([^?#]+?)\/?$/, (m) => `/admin/${m[1]}`],
 ];
 
 /**

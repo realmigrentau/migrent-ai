@@ -66,6 +66,30 @@ backend/migrations/043_migrent_hub.sql
 
 ---
 
+## Admin
+
+Everything the Migrent team does happens in Hub admin. The older `/admin` console is retired and its addresses redirect here (see [Old pages](#old-pages-and-where-they-went)).
+
+| Screen | Hub path | What it is for |
+|---|---|---|
+| Operations | `/` | what is waiting in each queue, plus the number of accounts and approved listings |
+| Listings | `/admin/listings` | tabs: To review, Flagged (spam check), Hidden, Removal pending, Paused, All listings (search by title, suburb, owner name or email). A side panel shows photos, owner, spam reasons and history, and only the actions the listing's state allows |
+| ID checks | `/admin/id-checks` | owners waiting for a government ID check: view the document (a five-minute link), approve, or reject with a reason the owner is emailed |
+| Final reviews | `/admin/reviews` | owner-approved applications waiting for Migrent |
+| Reports | `/admin/reports` | user reports and emergency repairs |
+| Support | `/admin/support` | tickets from the help button: reply (shown on the customer's ticket page), internal notes, status, priority, topic |
+| People | `/admin/people` | find an account, view as them (read-only), suspend or reinstate |
+| Audit log | `/admin/audit` | every consequential admin action, who took it and why |
+
+- **Endpoints** are in `backend/routes_hub_admin.py`. Listing moderation and ID checks call the same functions as the older `/admin` API (`routes_admin`, `routes_spam_moderation`, `routes_owner_verification`), so owner emails, the listing's moderation history and the audit rows are identical either way.
+- **Audit first.** Each action writes `admin_audit_log` before it changes anything; if the write fails, nothing happens. Actions and target types must be in the CHECK constraints of migration 043 (`backend/tests/conftest.py` enforces them in tests, and `frontend/tests/unit/hubAdmin.test.ts` checks every one has a label). Support tickets keep their own history in `support_events`.
+- **Reasons.** Rejecting, asking for changes, pausing, hiding and starting a removal need a written reason; so do rejecting an ID and suspending or reinstating an account.
+- **Removal is two steps**: start it (the listing stays offline in Removal pending), then confirm it. The row is kept (`moderation_status = 'deleted'`).
+- **Suspending** sets `profiles.disabled_at`. Every Hub request from that account is then refused; nothing is deleted and their listings are not changed (pause them in Listings if needed). Admin accounts can only be changed in the database.
+- **Retired without a replacement:** Analytics (its "visited" number was invented), Revenue (it read a `payments` table that does not exist; Stripe is the record of money) and the Help articles form (the public Help Centre reads `lib/helpData.ts`, not that table).
+
+---
+
 ## Journeys
 
 ### Applications
@@ -189,6 +213,11 @@ Off unless `AI_LISTING_ASSIST_ENABLED=true` **and** an Anthropic credential is s
 | `/account/settings` | `/settings` |
 | `/onboarding` | `/welcome` |
 | `/signin`, `/signup`, `/magic-link-*`, `/forgot-password`, `/reset-password` | Hub equivalents |
+| `/admin`, `/admin/overview`, `/admin/analytics`, `/admin/revenue` | `/` (Operations) |
+| `/admin/moderation`, `/admin/spam-moderation`, `/admin/listings` | `/admin/listings` (To review, Flagged, All listings) |
+| `/admin/verification` | `/admin/id-checks` |
+| `/admin/users` | `/admin/people` |
+| `/admin/reports`, `/admin/support`, any other `/admin/...` | the same path in the Hub |
 
 Redirects are temporary (307) and never apply on the Hub's own host. Old notification links are routed the same way in the Activity page.
 
@@ -203,6 +232,6 @@ cd frontend && NEXT_DIST_DIR=.next-e2e npm run build:test          # production 
 cd frontend && NEXT_DIST_DIR=.next-e2e npx playwright test --workers=2
 ```
 
-- `tests/e2e/hub-mock.mjs` is an in-memory Supabase Auth plus every Hub endpoint. Fixture accounts (they exist only in the mock, password `hub-test-pass-1`): `renter@example.test`, `owner@example.test`, `tenant@example.test`, `admin@example.test`, `new@example.test`.
+- `tests/e2e/hub-mock.mjs` is an in-memory Supabase Auth plus every Hub endpoint. Fixture accounts (they exist only in the mock, password `hub-test-pass-1`): `renter@example.test`, `owner@example.test`, `tenant@example.test`, `admin@example.test`, `new@example.test`, `newowner@example.test` (an owner waiting for an ID check). The admin fixtures also include a listing to review, a spam-flagged listing and three support tickets.
 - `npm run dev:mock` runs the site against the mock for local work (http://localhost:3200); `npm run preview:e2e` serves the Playwright build (http://localhost:3100).
-- `tests/e2e/hub.spec.ts` covers the signed-out redirects and intents, renter, tenant, owner and admin journeys, and axe checks in light and dark.
+- `tests/e2e/hub.spec.ts` covers the signed-out redirects and intents, renter, tenant, owner and admin journeys (moderation, ID checks, suspending, support, the old `/admin` redirects), and axe checks in light and dark. `backend/tests/test_hub_admin.py` covers the admin API.

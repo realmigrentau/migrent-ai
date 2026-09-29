@@ -17,7 +17,7 @@ Rules enforced in the database (migration 042):
 - `approved` additionally requires at least one photo and an `available_to` that has not passed.
 - Every transition writes a `moderation_events` row (`old_status`, `new_status`, actor, notes) and admin actions also write `admin_audit_log`.
 
-Owner endpoints: `POST /listings/{id}/submit`, `/renew` (extend dates; an expired listing goes back to review), `/pause`, `/resume`. Admin: `/admin/listings/{id}/approve|reject|request-changes|pause|unpause`.
+Owner endpoints: `POST /listings/{id}/submit`, `/renew` (extend dates; an expired listing goes back to review), `/pause`, `/resume`. Admin: Hub > Listings (`POST /hub/admin/listings/{id}/action`), which runs the same handlers as `/admin/listings/{id}/approve|reject|request-changes|pause|unpause` and `/admin/spam/{id}/*`.
 
 Expiry reminders: `POST /internal/cron/expiry-reminders` emails owners 7 days before `available_to` (once, tracked by `expiry_notified_at`). Schedule both cron endpoints from Render Cron Jobs or GitHub Actions with the `X-Cron-Secret` header.
 

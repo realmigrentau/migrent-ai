@@ -131,6 +131,10 @@ def send_id_rejected_email(to_email: str, owner_name: str, reason: str):
 
 def send_founder_id_review_alert(founder_email: str, owner_name: str, owner_email: str, document_type: str):
     """Alert the founder that a new ID needs review."""
+    from hub_common import hub_path
+
+    review_url = hub_path("/admin/id-checks")
+    review_url = review_url if review_url.startswith("http") else f"{FRONTEND_URL}{review_url}"
     doc_labels = {
         "passport": "Passport",
         "drivers_licence": "Driver's Licence",
@@ -164,7 +168,7 @@ def send_founder_id_review_alert(founder_email: str, owner_name: str, owner_emai
     </div>
 
     <div style="text-align:center;margin:24px 0;">
-      <a href="{FRONTEND_URL}/admin/verification" style="background-color:#2563eb;border-radius:8px;color:#ffffff;font-size:16px;font-weight:600;text-decoration:none;padding:14px 32px;display:inline-block;">Review Now</a>
+      <a href="{review_url}" style="background-color:#2563eb;border-radius:8px;color:#ffffff;font-size:16px;font-weight:600;text-decoration:none;padding:14px 32px;display:inline-block;">Review Now</a>
     </div>
     """
     _send(founder_email, f"New ID submission from {owner_name} - review needed", _email_layout(content))

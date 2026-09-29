@@ -73,14 +73,25 @@ function RailItem({ item, compact, active, count }: { item: NavItem; compact: bo
   );
 }
 
-function AccountMenu({ align = "end" }: { align?: "start" | "end" }) {
-  const { me, signOut, role } = useHub();
-  const navigate = useHubNavigate();
+/** Sign out and land on the Hub sign-in page. */
+function useSignOut() {
+  const { signOut } = useHub();
   const router = useRouter();
+  return async () => {
+    await signOut();
+    void router.replace(hubUrl("/sign-in"));
+  };
+}
+
+function AccountMenu({ align = "end", side = "bottom" }: { align?: "start" | "end"; side?: "top" | "bottom" }) {
+  const { me, role } = useHub();
+  const navigate = useHubNavigate();
+  const signOutNow = useSignOut();
   return (
     <Menu
       label="Account"
       align={align}
+      side={side}
       trigger={(p) => (
         <button {...p} type="button" aria-label="Account menu" className="hub-press rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2">
           <Avatar name={me?.name || me?.email} src={me?.avatar_url} size={36} />
@@ -90,14 +101,7 @@ function AccountMenu({ align = "end" }: { align?: "start" | "end" }) {
         ...(role === "renter" ? [{ label: "Rental Profile", icon: <UserRound className="h-4 w-4" strokeWidth={1.75} />, onSelect: () => void navigate("/profile") }] : []),
         { label: role === "renter" ? "Settings" : "Account and settings", icon: <Settings className="h-4 w-4" strokeWidth={1.75} />, onSelect: () => void navigate("/settings") },
         { label: "Back to Migrent", icon: <ArrowLeft className="h-4 w-4" strokeWidth={1.75} />, onSelect: () => void (window.location.href = siteUrl("/")) },
-        {
-          label: "Sign out",
-          icon: <LogOut className="h-4 w-4" strokeWidth={1.75} />,
-          onSelect: async () => {
-            await signOut();
-            void router.replace(hubUrl("/sign-in"));
-          },
-        },
+        { label: "Sign out", icon: <LogOut className="h-4 w-4" strokeWidth={1.75} />, onSelect: () => void signOutNow() },
       ]}
     />
   );
@@ -163,6 +167,7 @@ interface HubShellProps {
 export default function HubShell({ children, title, fullBleed, fab, immersive, fitDesktop }: HubShellProps) {
   const router = useRouter();
   const { status, role, meError, refreshMe } = useHub();
+  const signOutNow = useSignOut();
   const reduce = useReducedMotion();
   const hubPath = toHubPath(router.asPath);
   const [compact, setCompact] = useState(false);
@@ -273,15 +278,6 @@ export default function HubShell({ children, title, fullBleed, fab, immersive, f
           {footerNav.map((item) => (
             <RailItem key={item.to} item={item} compact={compact} active={isActive(item, hubPath)} count={item.count ? c?.[item.count] : undefined} />
           ))}
-          {role === "admin" && (
-            <a href={siteUrl("/admin")} className={cn("hub-nav-item", compact && "justify-center px-0")} aria-label={compact ? "Admin console" : undefined}>
-              <span className="hub-nav-icon flex h-5 w-5 items-center justify-center">
-                <Settings className="h-[19px] w-[19px]" strokeWidth={1.75} aria-hidden />
-              </span>
-              {!compact && <span className="flex-1">Admin console</span>}
-              {compact && <span className="hub-tip" role="tooltip">Admin console</span>}
-            </a>
-          )}
           <a href={siteUrl("/")} className={cn("hub-nav-item", compact && "justify-center px-0")} aria-label={compact ? "Back to Migrent" : undefined}>
             <span className="hub-nav-icon flex h-5 w-5 items-center justify-center">
               <ArrowLeft className="h-[19px] w-[19px]" strokeWidth={1.75} aria-hidden />
@@ -289,8 +285,16 @@ export default function HubShell({ children, title, fullBleed, fab, immersive, f
             {!compact && <span className="flex-1">Back to Migrent</span>}
             {compact && <span className="hub-tip" role="tooltip">Back to Migrent</span>}
           </a>
+          <button type="button" onClick={() => void signOutNow()} className={cn("hub-nav-item w-full text-left", compact && "justify-center px-0")} aria-label={compact ? "Sign out" : undefined}>
+            <span className="hub-nav-icon flex h-5 w-5 items-center justify-center">
+              <LogOut className="h-[19px] w-[19px]" strokeWidth={1.75} aria-hidden />
+            </span>
+            {!compact && <span className="flex-1">Sign out</span>}
+            {compact && <span className="hub-tip" role="tooltip">Sign out</span>}
+          </button>
           <div className={cn("mt-2 flex items-center gap-2", compact ? "flex-col" : "justify-between px-1")}>
-            <AccountMenu align="start" />
+            {/* At the foot of the rail, so it opens upwards and stays on screen. */}
+            <AccountMenu align="start" side="top" />
             {!compact && <ThemeSegmented compact />}
             {compact && <ThemeIconButton />}
           </div>

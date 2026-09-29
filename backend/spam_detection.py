@@ -491,6 +491,12 @@ def notify_founder_spam(listing_id: str, result: dict, listing_title: str, owner
     import os
     founder_email = os.environ.get("FOUNDER_EMAIL", os.environ.get("SUPPORT_EMAIL", "migrentau@gmail.com"))
 
+    from hub_common import hub_path
+
+    queue = "hidden" if result["action"] == "hide" else "flagged"
+    review_url = hub_path(f"/admin/listings?queue={queue}")
+    review_url = review_url if review_url.startswith("http") else f"{FRONTEND_URL}{review_url}"
+
     severity = "HIDDEN" if result["action"] == "hide" else "FLAGGED"
     subject = f"[Migrent Moderation] Listing {severity} - {listing_title or 'Untitled'}"
 
@@ -526,7 +532,7 @@ def notify_founder_spam(listing_id: str, result: dict, listing_title: str, owner
       Please review this listing and take action. No listing will be deleted without your approval.
     </p>
 
-    {_button("Review in Admin Panel", f"{FRONTEND_URL}/admin/spam-moderation")}
+    {_button("Review in Migrent Hub", review_url)}
 
     <p style="font-size:12px;color:#9ca3af;text-align:center;margin:8px 0 0;">
       This is an automated alert from the Migrent spam detection system.
@@ -538,7 +544,7 @@ def notify_founder_spam(listing_id: str, result: dict, listing_title: str, owner
         f"Owner: {owner_name or 'Unknown'}\n"
         f"Spam Score: {result['spam_score']}/100\n\n"
         f"Reasons:\n" + "\n".join(f"- {r}" for r in result["reasons"][:10]) + "\n\n"
-        f"Review: {FRONTEND_URL}/admin/spam-moderation\n\n"
+        f"Review: {review_url}\n\n"
         f"- Migrent System"
     )
 

@@ -138,7 +138,7 @@ def create_report(
                             </tr>
                         </table>
                         <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 16px 0;">
-                        <p style="color: #94a3b8; font-size: 12px; margin: 0;">This report requires your review. Log into the admin dashboard to take action.</p>
+                        <p style="color: #94a3b8; font-size: 12px; margin: 0;">This report needs a review. Open Reports in Migrent Hub to take action.</p>
                     </div>
                 </div>
                 """,
