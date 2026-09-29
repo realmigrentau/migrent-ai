@@ -210,8 +210,25 @@ interface MenuItem {
   disabled?: boolean;
 }
 
-/** An accessible dropdown menu: arrow keys, Home/End, Escape, click-away. */
-export function Menu({ trigger, items, align = "end", label }: { trigger: (props: { onClick: () => void; "aria-expanded": boolean; "aria-haspopup": "menu"; "aria-controls": string }) => ReactNode; items: MenuItem[]; align?: "start" | "end"; label: string }) {
+/**
+ * An accessible dropdown menu: arrow keys, Home/End, Escape, click-away.
+ * `side="top"` opens it upwards, for triggers near the bottom of the screen
+ * (the account menu at the foot of the navigation rail), where opening
+ * downwards would run off the page.
+ */
+export function Menu({
+  trigger,
+  items,
+  align = "end",
+  side = "bottom",
+  label,
+}: {
+  trigger: (props: { onClick: () => void; "aria-expanded": boolean; "aria-haspopup": "menu"; "aria-controls": string }) => ReactNode;
+  items: MenuItem[];
+  align?: "start" | "end";
+  side?: "top" | "bottom";
+  label: string;
+}) {
   const [open, setOpen] = useState(false);
   const menuId = useId();
   const wrap = useRef<HTMLDivElement>(null);
@@ -261,12 +278,13 @@ export function Menu({ trigger, items, align = "end", label }: { trigger: (props
             role="menu"
             aria-label={label}
             onKeyDown={onKeyDown}
-            initial={reduce ? { opacity: 0 } : { opacity: 0, y: -6, scale: 0.98 }}
+            initial={reduce ? { opacity: 0 } : { opacity: 0, y: side === "top" ? 6 : -6, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={reduce ? { opacity: 0 } : { opacity: 0, y: -4, scale: 0.98 }}
+            exit={reduce ? { opacity: 0 } : { opacity: 0, y: side === "top" ? 4 : -4, scale: 0.98 }}
             transition={{ duration: 0.16, ease: [0.22, 1, 0.36, 1] }}
             className={cn(
-              "absolute z-[70] mt-2 min-w-[220px] origin-top rounded-[16px] border border-[var(--color-line)] bg-[var(--color-surface-2)] p-1.5 shadow-[var(--shadow-pop)]",
+              "absolute z-[70] min-w-[220px] rounded-[16px] border border-[var(--color-line)] bg-[var(--color-surface-2)] p-1.5 shadow-[var(--shadow-pop)]",
+              side === "top" ? "bottom-full mb-2 origin-bottom" : "mt-2 origin-top",
               align === "end" ? "right-0" : "left-0",
             )}
           >

@@ -326,6 +326,17 @@ test.describe("appearance and accessibility", () => {
     }
   });
 
+  test("the account menu at the foot of the rail opens fully on screen", async ({ page, isMobile }) => {
+    test.skip(isMobile, "the rail is a desktop control");
+    await page.setViewportSize({ width: 1280, height: 720 });
+    await signIn(page, "renter@example.test");
+    await page.getByRole("navigation", { name: "Migrent Hub" }).first().getByRole("button", { name: "Account menu" }).click();
+    const menu = page.getByRole("menu", { name: "Account" });
+    for (const item of ["Rental Profile", "Settings", "Back to Migrent", "Sign out"]) {
+      await expect(menu.getByRole("menuitem", { name: item })).toBeInViewport({ ratio: 1 });
+    }
+  });
+
   test("no horizontal overflow on Hub admin screens", async ({ page }) => {
     await signIn(page, "admin@example.test");
     for (const path of ["/", "/admin/listings", "/admin/listings?queue=all", "/admin/id-checks", "/admin/support", "/admin/people", "/admin/audit"]) {

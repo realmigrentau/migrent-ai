@@ -73,7 +73,7 @@ function RailItem({ item, compact, active, count }: { item: NavItem; compact: bo
   );
 }
 
-function AccountMenu({ align = "end" }: { align?: "start" | "end" }) {
+function AccountMenu({ align = "end", side = "bottom" }: { align?: "start" | "end"; side?: "top" | "bottom" }) {
   const { me, signOut, role } = useHub();
   const navigate = useHubNavigate();
   const router = useRouter();
@@ -81,6 +81,7 @@ function AccountMenu({ align = "end" }: { align?: "start" | "end" }) {
     <Menu
       label="Account"
       align={align}
+      side={side}
       trigger={(p) => (
         <button {...p} type="button" aria-label="Account menu" className="hub-press rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2">
           <Avatar name={me?.name || me?.email} src={me?.avatar_url} size={36} />
@@ -281,7 +282,8 @@ export default function HubShell({ children, title, fullBleed, fab, immersive, f
             {compact && <span className="hub-tip" role="tooltip">Back to Migrent</span>}
           </a>
           <div className={cn("mt-2 flex items-center gap-2", compact ? "flex-col" : "justify-between px-1")}>
-            <AccountMenu align="start" />
+            {/* At the foot of the rail, so it opens upwards and stays on screen. */}
+            <AccountMenu align="start" side="top" />
             {!compact && <ThemeSegmented compact />}
             {compact && <ThemeIconButton />}
           </div>
