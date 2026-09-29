@@ -120,6 +120,16 @@ export default function SuburbsDirectory({
     [syncUrl],
   );
   useEffect(() => () => { if (queryTimer.current) clearTimeout(queryTimer.current); }, []);
+  // Leaving the page (picking a suburb and pressing Enter) must win over the
+  // pending URL update: a replace that fires mid-navigation cancels it and
+  // drops the person back on /suburbs?q=. Our own URL updates are shallow.
+  useEffect(() => {
+    const onStart = (_url: string, { shallow }: { shallow: boolean }) => {
+      if (!shallow && queryTimer.current) clearTimeout(queryTimer.current);
+    };
+    router.events.on("routeChangeStart", onStart);
+    return () => router.events.off("routeChangeStart", onStart);
+  }, [router.events]);
 
   const visible = useMemo(() => {
     return regions.filter((r) => {
