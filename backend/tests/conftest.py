@@ -87,9 +87,41 @@ def _listing(**over):
     return base
 
 
+def audit_log_constraints() -> tuple[set[str], set[str]]:
+    """The actions and target types admin_audit_log accepts in production:
+    the CHECK constraints from the latest migration that sets them."""
+    import re
+
+    sql = ""
+    for path in sorted((ROOT / "migrations").glob("*.sql")):
+        text = path.read_text()
+        if "admin_audit_log_action_check" in text:
+            sql = text
+    def values(name: str) -> set[str]:
+        block = sql[sql.rindex(f"ADD CONSTRAINT {name}"):]
+        return set(re.findall(r"'([a-z_]+)'", block[: block.index(");")]))
+
+    return values("admin_audit_log_action_check"), values("admin_audit_log_target_type_check")
+
+
+AUDIT_ACTIONS, AUDIT_TARGET_TYPES = audit_log_constraints()
+
+
+def _enforce_audit_constraints(row: dict, _table: list) -> None:
+    # The fake has no CHECK constraints; without this a new audit action
+    # passes every test and then fails in production.
+    if row.get("action") not in AUDIT_ACTIONS:
+        raise ValueError(f"admin_audit_log_action_check would reject action {row.get('action')!r}")
+    if row.get("target_type") not in AUDIT_TARGET_TYPES:
+        raise ValueError(f"admin_audit_log_target_type_check would reject target_type {row.get('target_type')!r}")
+    if not row.get("target_id") or not row.get("admin_id"):
+        raise ValueError("admin_audit_log needs admin_id and target_id")
+
+
 @pytest.fixture()
 def db(monkeypatch):
     fake = FakeSupabase()
+    fake.insert_hooks.setdefault("admin_audit_log", []).append(_enforce_audit_constraints)
 
     fake.add_user(OWNER_ID, "owner@example.com", user_metadata={"user_type": "owner"})
     fake.add_user(VERIFIED_OWNER_ID, "verified@example.com", user_metadata={"user_type": "owner"})

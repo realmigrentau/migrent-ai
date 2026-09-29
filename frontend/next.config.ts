@@ -58,6 +58,20 @@ const LEGACY_TO_HUB: [string, string][] = [
   ["/magic-link-signup", "/sign-up"],
   ["/forgot-password", "/forgot-password"],
   ["/reset-password", "/reset-password"],
+  // The old admin console. Its screens were rebuilt in Hub admin, or retired
+  // where they showed invented or empty numbers (analytics, revenue).
+  ["/admin", "/"],
+  ["/admin/overview", "/"],
+  ["/admin/analytics", "/"],
+  ["/admin/revenue", "/"],
+  ["/admin/moderation", "/admin/listings"],
+  ["/admin/spam-moderation", "/admin/listings?queue=flagged"],
+  ["/admin/listings", "/admin/listings?queue=all"],
+  ["/admin/verification", "/admin/id-checks"],
+  ["/admin/users", "/admin/people"],
+  // Anything else under /admin (reports, support, and Hub admin paths typed
+  // on the main site) is the same path in the Hub.
+  ["/admin/:path*", "/admin/:path*"],
 ];
 
 const nextConfig: NextConfig = {

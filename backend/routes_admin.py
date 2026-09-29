@@ -71,6 +71,35 @@ def _require_admin(authorization: str):
     return user, profile
 
 
+def publish_blockers(sb, listing_id: str) -> Optional[str]:
+    """Why this listing cannot go live yet, in words a moderator can act on,
+    or None when it can.
+
+    These are the checks the database trigger (migration 042,
+    guard_listing_publish) enforces. Checking first turns a constraint error
+    into a readable reason.
+    """
+    from routes_owner_verification import check_owner_verified
+
+    res = sb.table("listings").select("owner_id, images, available_from, available_to").eq("id", listing_id).execute()
+    if not res.data:
+        return "Listing not found"
+    detail = res.data[0]
+    owner_id = str(detail.get("owner_id") or "")
+    if not owner_id or not check_owner_verified(owner_id):
+        return "The owner has not completed identity verification. Approve their ID first."
+    prof = sb.table("profiles").select("over_18_confirmed_at").eq("id", owner_id).execute()
+    if prof.data and not prof.data[0].get("over_18_confirmed_at"):
+        return "The owner has not confirmed they are 18 or older, so the listing cannot go live."
+    if not (detail.get("images") or []):
+        return "The listing has no photos. Request genuine property photos before approving."
+    try:
+        validate_availability_window(detail.get("available_from"), detail.get("available_to"), allow_past_start=True)
+    except AvailabilityError as e:
+        return f"Availability problem: {e}"
+    return None
+
+
 # -- Models --
 
 class ModerationAction(BaseModel):
@@ -235,21 +264,18 @@ def approve_listing(
     if listing["moderation_status"] not in ("pending_approval", "changes_requested", "paused"):
         raise HTTPException(status_code=400, detail=f"Listing is already {listing['moderation_status']}")
 
-    # Publishing preconditions. These are the same checks the database
-    # trigger enforces; failing early here gives the moderator a readable
-    # reason instead of a constraint error.
-    from routes_owner_verification import check_owner_verified
+    blocker = publish_blockers(sb, listing_id)
+    if blocker:
+        raise HTTPException(status_code=409, detail=blocker)
 
-    if not check_owner_verified(str(listing["owner_id"])):
-        raise HTTPException(status_code=409, detail="The owner has not completed identity verification. Approve their ID first.")
-    full = sb.table("listings").select("images, available_from, available_to, latitude, longitude, suburb, postcode").eq("id", listing_id).execute()
-    detail = full.data[0] if full.data else {}
-    if not (detail.get("images") or []):
-        raise HTTPException(status_code=409, detail="The listing has no photos. Request genuine property photos before approving.")
-    try:
-        validate_availability_window(detail.get("available_from"), detail.get("available_to"), allow_past_start=True)
-    except AvailabilityError as e:
-        raise HTTPException(status_code=409, detail=f"Availability problem: {e}")
+    # Audit first: an action that cannot be recorded must not happen.
+    sb.table("admin_audit_log").insert({
+        "admin_id": admin_id,
+        "action": "approve",
+        "target_type": "listing",
+        "target_id": listing_id,
+        "notes": body.notes,
+    }).execute()
 
     # Update listing status
     sb.table("listings").update({
@@ -261,15 +287,6 @@ def approve_listing(
         "moderator_id": admin_id,
         "moderated_at": datetime.now(timezone.utc).isoformat(),
     }).eq("id", listing_id).execute()
-
-    # Audit log
-    sb.table("admin_audit_log").insert({
-        "admin_id": admin_id,
-        "action": "approve",
-        "target_type": "listing",
-        "target_id": listing_id,
-        "notes": body.notes,
-    }).execute()
     record_event(sb, listing_id=listing_id, actor_id=admin_id, actor_type="admin", event_type="approved",
                  old_status=listing["moderation_status"], new_status="approved", notes=body.notes)
 
@@ -326,16 +343,7 @@ def reject_listing(
 
     listing = listing_res.data[0]
 
-    # Update listing
-    sb.table("listings").update({
-        "moderation_status": "rejected",
-        "moderation_reason": body.reason,
-        "moderation_notes": body.notes,
-        "moderator_id": admin_id,
-        "moderated_at": datetime.now(timezone.utc).isoformat(),
-    }).eq("id", listing_id).execute()
-
-    # Audit log
+    # Audit first: an action that cannot be recorded must not happen.
     sb.table("admin_audit_log").insert({
         "admin_id": admin_id,
         "action": "reject",
@@ -344,6 +352,15 @@ def reject_listing(
         "reason": body.reason,
         "notes": body.notes,
     }).execute()
+
+    # Update listing
+    sb.table("listings").update({
+        "moderation_status": "rejected",
+        "moderation_reason": body.reason,
+        "moderation_notes": body.notes,
+        "moderator_id": admin_id,
+        "moderated_at": datetime.now(timezone.utc).isoformat(),
+    }).eq("id", listing_id).execute()
     record_event(sb, listing_id=listing_id, actor_id=admin_id, actor_type="admin", event_type="rejected",
                  old_status=listing["moderation_status"], new_status="rejected", notes=body.reason)
 
@@ -401,15 +418,7 @@ def request_changes(
 
     listing = listing_res.data[0]
 
-    # Update listing
-    sb.table("listings").update({
-        "moderation_status": "changes_requested",
-        "moderation_notes": body.notes,
-        "moderator_id": admin_id,
-        "moderated_at": datetime.now(timezone.utc).isoformat(),
-    }).eq("id", listing_id).execute()
-
-    # Audit log
+    # Audit first: an action that cannot be recorded must not happen.
     sb.table("admin_audit_log").insert({
         "admin_id": admin_id,
         "action": "request_changes",
@@ -417,6 +426,14 @@ def request_changes(
         "target_id": listing_id,
         "notes": body.notes,
     }).execute()
+
+    # Update listing
+    sb.table("listings").update({
+        "moderation_status": "changes_requested",
+        "moderation_notes": body.notes,
+        "moderator_id": admin_id,
+        "moderated_at": datetime.now(timezone.utc).isoformat(),
+    }).eq("id", listing_id).execute()
     record_event(sb, listing_id=listing_id, actor_id=admin_id, actor_type="admin", event_type="changes_requested",
                  old_status=listing["moderation_status"], new_status="changes_requested", notes=body.notes)
 
@@ -487,16 +504,7 @@ def pause_listing_admin(
     if old_status == "paused":
         return {"message": "Already paused", "listing_id": listing_id}
 
-    sb.table("listings").update({
-        "moderation_status": "paused",
-        "paused_at": datetime.now(timezone.utc).isoformat(),
-        "paused_by_admin": True,
-        "moderation_reason": body.reason,
-        "moderation_notes": "\n".join(body.required_actions) if body.required_actions else None,
-        "moderator_id": admin_id,
-        "moderated_at": datetime.now(timezone.utc).isoformat(),
-    }).eq("id", listing_id).execute()
-
+    # Audit first: an action that cannot be recorded must not happen.
     sb.table("admin_audit_log").insert({
         "admin_id": admin_id,
         "action": "pause",
@@ -506,6 +514,16 @@ def pause_listing_admin(
         "notes": "\n".join(body.required_actions) if body.required_actions else None,
         "metadata": {"previous_status": old_status},
     }).execute()
+
+    sb.table("listings").update({
+        "moderation_status": "paused",
+        "paused_at": datetime.now(timezone.utc).isoformat(),
+        "paused_by_admin": True,
+        "moderation_reason": body.reason,
+        "moderation_notes": "\n".join(body.required_actions) if body.required_actions else None,
+        "moderator_id": admin_id,
+        "moderated_at": datetime.now(timezone.utc).isoformat(),
+    }).eq("id", listing_id).execute()
     record_event(sb, listing_id=listing_id, actor_id=admin_id, actor_type="admin", event_type="paused",
                  old_status=old_status, new_status="paused", notes=body.reason,
                  metadata={"required_actions": body.required_actions})
@@ -570,19 +588,12 @@ def unpause_listing_admin(
     new_status = STATUS_PENDING
     if body.mode == "restore":
         # Restoring straight to live must satisfy the same publish rules.
-        from routes_owner_verification import check_owner_verified
-
-        if not check_owner_verified(str(listing["owner_id"])):
-            raise HTTPException(status_code=409, detail="Owner is not verified; use mode=review instead.")
+        blocker = publish_blockers(sb, listing_id)
+        if blocker:
+            raise HTTPException(status_code=409, detail=f"{blocker} Send it back to review instead.")
         new_status = STATUS_APPROVED
 
-    sb.table("listings").update({
-        "moderation_status": new_status,
-        "paused_at": None,
-        "paused_by_admin": False,
-        "moderator_id": admin_id,
-        "moderated_at": datetime.now(timezone.utc).isoformat(),
-    }).eq("id", listing_id).execute()
+    # Audit first: an action that cannot be recorded must not happen.
     sb.table("admin_audit_log").insert({
         "admin_id": admin_id,
         "action": "unpause",
@@ -591,6 +602,13 @@ def unpause_listing_admin(
         "notes": body.notes,
         "metadata": {"mode": body.mode},
     }).execute()
+    sb.table("listings").update({
+        "moderation_status": new_status,
+        "paused_at": None,
+        "paused_by_admin": False,
+        "moderator_id": admin_id,
+        "moderated_at": datetime.now(timezone.utc).isoformat(),
+    }).eq("id", listing_id).execute()
     record_event(sb, listing_id=listing_id, actor_id=admin_id, actor_type="admin", event_type="unpaused",
                  old_status="paused", new_status=new_status, notes=body.notes)
     return {"message": "Listing unpaused", "listing_id": listing_id, "moderation_status": new_status}

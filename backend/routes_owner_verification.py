@@ -268,6 +268,15 @@ def review_id_submission(
     now = datetime.now(timezone.utc).isoformat()
 
     if body.action == "approve":
+        # Audit first: an action that cannot be recorded must not happen.
+        sb.table("admin_audit_log").insert({
+            "admin_id": str(admin_user.id),
+            "action": "approve_id",
+            "target_type": "owner_verification",
+            "target_id": user_id,
+            "notes": "Government ID approved",
+        }).execute()
+
         sb.table("owner_verification").update({
             "id_status": "approved",
             "id_reviewed_at": now,
@@ -286,18 +295,6 @@ def review_id_submission(
             except Exception as e:
                 logger.error(f"[Verify] Failed to send approval email: {e}")
 
-        # Audit log
-        try:
-            sb.table("admin_audit_log").insert({
-                "admin_id": str(admin_user.id),
-                "action": "approve_id",
-                "target_type": "owner_verification",
-                "target_id": user_id,
-                "notes": "Government ID approved",
-            }).execute()
-        except Exception:
-            pass
-
         # In-app notification
         try:
             notify(
@@ -315,6 +312,15 @@ def review_id_submission(
         return {"message": "ID approved", "fully_verified": is_fully}
 
     else:  # reject
+        # Audit first: an action that cannot be recorded must not happen.
+        sb.table("admin_audit_log").insert({
+            "admin_id": str(admin_user.id),
+            "action": "reject_id",
+            "target_type": "owner_verification",
+            "target_id": user_id,
+            "reason": body.reason,
+        }).execute()
+
         sb.table("owner_verification").update({
             "id_status": "rejected",
             "id_reviewed_at": now,
@@ -328,18 +334,6 @@ def review_id_submission(
                 send_id_rejected_email(owner_email, owner_name, body.reason or "")
             except Exception as e:
                 logger.error(f"[Verify] Failed to send rejection email: {e}")
-
-        # Audit log
-        try:
-            sb.table("admin_audit_log").insert({
-                "admin_id": str(admin_user.id),
-                "action": "reject_id",
-                "target_type": "owner_verification",
-                "target_id": user_id,
-                "reason": body.reason,
-            }).execute()
-        except Exception:
-            pass
 
         # In-app notification
         try:

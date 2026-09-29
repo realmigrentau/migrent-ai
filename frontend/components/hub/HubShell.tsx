@@ -273,15 +273,6 @@ export default function HubShell({ children, title, fullBleed, fab, immersive, f
           {footerNav.map((item) => (
             <RailItem key={item.to} item={item} compact={compact} active={isActive(item, hubPath)} count={item.count ? c?.[item.count] : undefined} />
           ))}
-          {role === "admin" && (
-            <a href={siteUrl("/admin")} className={cn("hub-nav-item", compact && "justify-center px-0")} aria-label={compact ? "Admin console" : undefined}>
-              <span className="hub-nav-icon flex h-5 w-5 items-center justify-center">
-                <Settings className="h-[19px] w-[19px]" strokeWidth={1.75} aria-hidden />
-              </span>
-              {!compact && <span className="flex-1">Admin console</span>}
-              {compact && <span className="hub-tip" role="tooltip">Admin console</span>}
-            </a>
-          )}
           <a href={siteUrl("/")} className={cn("hub-nav-item", compact && "justify-center px-0")} aria-label={compact ? "Back to Migrent" : undefined}>
             <span className="hub-nav-icon flex h-5 w-5 items-center justify-center">
               <ArrowLeft className="h-[19px] w-[19px]" strokeWidth={1.75} aria-hidden />

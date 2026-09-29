@@ -1,5 +1,6 @@
 import {
   Activity,
+  BadgeCheck,
   BarChart3,
   Bell,
   Building2,
@@ -10,8 +11,10 @@ import {
   Flag,
   Heart,
   Home,
+  Inbox,
   KeyRound,
   LayoutGrid,
+  ListChecks,
   MessageCircle,
   ScrollText,
   Search,
@@ -62,8 +65,11 @@ export function navFor(role: HubRole | null, opts: { hasHome?: boolean } = {}) {
   if (role === "admin") {
     const primary: NavItem[] = [
       { label: "Operations", to: "/", icon: LayoutGrid },
+      { label: "Listings", to: "/admin/listings", icon: ListChecks },
+      { label: "ID checks", to: "/admin/id-checks", icon: BadgeCheck },
       { label: "Final reviews", to: "/admin/reviews", icon: ShieldCheck },
       { label: "Reports", to: "/admin/reports", icon: Flag },
+      { label: "Support", to: "/admin/support", icon: Inbox },
       { label: "People", to: "/admin/people", icon: Users },
       { label: "Audit log", to: "/admin/audit", icon: ScrollText },
       { label: "Discover", to: "/discover", icon: Compass, match: ["/homes"] },
@@ -71,10 +77,10 @@ export function navFor(role: HubRole | null, opts: { hasHome?: boolean } = {}) {
     ];
     const tabs: NavItem[] = [
       { label: "Home", to: "/", icon: LayoutGrid },
+      { label: "Listings", to: "/admin/listings", icon: ListChecks },
       { label: "Reviews", to: "/admin/reviews", icon: ShieldCheck },
       { label: "Reports", to: "/admin/reports", icon: Flag },
-      { label: "Activity", to: "/activity", icon: Bell, count: "notifications" },
-      { label: "Profile", to: "/me", icon: UserRound, match: ["/settings", "/admin/people", "/admin/audit"] },
+      { label: "Profile", to: "/me", icon: UserRound, match: ["/settings", "/activity", "/admin/id-checks", "/admin/support", "/admin/people", "/admin/audit"] },
     ];
     return { primary, tabs };
   }

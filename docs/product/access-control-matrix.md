@@ -9,7 +9,8 @@ Roles: **anon** (no session), **seeker**, **owner** (of the resource), **other**
 | Create / edit / pause / renew / delete listing | 401 | 403 | ok | 403 | 403 (use admin endpoints) |
 | Submit for review | 401 | 403 | ok if ID-verified | 403 | n/a |
 | Admin moderation (`/admin/*`, `/owner-verification/admin/*`) | 401 | 403 | 403 | 403 | ok |
-| `/admin/*` pages (edge) | redirect to sign-in | 404 | 404 | 404 | ok (+ AdminGate passphrase) |
+| Hub admin API (`/hub/admin/*`) | 401 | 404 | 404 | 404 | ok (not while viewing as a customer) |
+| `/admin/*` pages (old console) | redirect to the same screen in Hub admin (`/hub/admin/*`), which needs a session | same | same | same | same |
 | Booking create | 401 | ok (published listings only, inside availability) | 400 (own listing) | ok | ok |
 | Booking read | 401 | party only | party only | 403 | via admin tools |
 | Booking respond (accept/decline) | 401 | 403 | ok | 403 | n/a |
@@ -19,7 +20,7 @@ Roles: **anon** (no session), **seeker**, **owner** (of the resource), **other**
 | Messages: send | 401 | as self only; listing context must belong to a party; blocked users refused | same | same | n/a |
 | Message attachments | 401 | upload namespaced to sender; read via 10-min signed URL for participants | same | 403 | n/a |
 | Verification documents | never | own upload only; never readable back | same | never | signed URL, 5 min |
-| Profile private fields | never | own only | own only | never | admin dashboard |
+| Profile private fields | never | own only | own only | never | Hub admin (People, ID checks) |
 | Data export / account delete | 401 | own | own | 403 | n/a |
 | Internal cron | 401 | 401 | 401 | 401 | 401 (secret header only) |
 | Stripe webhook | signature only | signature only | signature only | signature only | signature only |
