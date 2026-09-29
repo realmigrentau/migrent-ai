@@ -16,6 +16,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import type { Session } from "@supabase/supabase-js";
 import { supabase } from "../supabase";
+import { lockAdminPanel } from "./adminPanel";
 import { getViewAs, hubApi, setViewAs } from "./api";
 import { clearQueryCache, invalidate, useHubQuery } from "./query";
 import type { HubMe, HubRole } from "./types";
@@ -55,6 +56,7 @@ export function HubSessionProvider({ children }: { children: ReactNode }) {
       setSession(s);
       setSessionLoaded(true);
       if (event === "SIGNED_OUT") {
+        lockAdminPanel();
         clearQueryCache();
         setViewAs(null);
         setViewAsState(null);
@@ -98,6 +100,7 @@ export function HubSessionProvider({ children }: { children: ReactNode }) {
   else status = "ready";
 
   const signOut = useCallback(async () => {
+    lockAdminPanel();
     setViewAs(null);
     setViewAsState(null);
     await supabase.auth.signOut();

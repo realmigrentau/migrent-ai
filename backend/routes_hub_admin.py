@@ -4,6 +4,9 @@ Migrent Hub - operations for Migrent administrators.
 Everything an administrator does happens here, in the Hub. The older
 /admin console has been retired; its pages redirect to these screens.
 
+    GET  /hub/admin/panel                           Admin panel password attempts left
+    POST /hub/admin/unlock                          the Admin panel password: an unlock token
+    POST /hub/admin/password                        change the Admin panel password
     GET  /hub/admin/overview                        what is waiting, in one call
     GET  /hub/admin/listings                        moderation queues
     GET  /hub/admin/listings/{id}                   one listing, its owner and its history
@@ -35,6 +38,9 @@ routes_owner_verification), so the owner's emails, the listing's
 moderation history and the audit rows are identical whichever way an
 action arrives. Ticket replies share routes_support_tickets the same way.
 
+Everything except /panel, /unlock and /view-as/end also needs the Admin
+panel unlocked (admin_panel.require_admin_panel): 423 without it.
+
 Every consequential action writes admin_audit_log before it changes
 anything, and requires a reason where the action affects a customer.
 Support tickets keep their own history (support_events), as before.
@@ -61,10 +67,25 @@ from hub_common import (
     hub_table_error,
     listing_card,
     load_profile,
+    notify_user,
     now_iso,
     owner_verified_map,
     require_admin_actor,
 )
+from admin_panel import (
+    LOCKOUT_WINDOW,
+    MAX_ATTEMPTS,
+    MIN_PASSWORD_LENGTH,
+    UNLOCK_TTL,
+    attempt_state,
+    hash_password,
+    issue_unlock_token,
+    require_admin_panel,
+    session_id,
+    stored_hash,
+    verify_password,
+)
+from limiter import limiter
 from models_support import TicketUpdate
 
 logger = logging.getLogger(__name__)
@@ -82,10 +103,100 @@ def _count(sb, table: str, **eqs) -> int:
         return 0
 
 
+# ---------------------------------------------------------------------------
+# The Admin panel's password (see admin_panel.py)
+# ---------------------------------------------------------------------------
+
+
+@router.get("/panel")
+def panel_status(request: Request, authorization: Optional[str] = Header(None)):
+    """How many password attempts are left, before the form is shown."""
+    actor = hub_actor(request, authorization)
+    require_admin_actor(actor)
+    state = attempt_state(get_supabase_admin(), actor.id)
+    return {"attempts_left": max(0, MAX_ATTEMPTS - state["failures"]), "locked": bool(state["locked_until"])}
+
+
+class UnlockBody(BaseModel):
+    password: str = Field(..., max_length=200)
+
+
+def _admin_ids(sb) -> list[str]:
+    rows = sb.table("profiles").select("id, is_admin, role").execute().data or []
+    return [str(r["id"]) for r in rows if r.get("is_admin") or r.get("role") in ADMIN_ROLES]
+
+
+def _lock_out(sb, actor, authorization: Optional[str]) -> None:
+    """Third wrong password: record it, end the account's sign-in sessions and
+    alert every admin, including the account's owner in case it wasn't them."""
+    audit(sb, admin_id=actor.id, action="admin_panel_lockout", target_type="user", target_id=actor.id, reason=f"{MAX_ATTEMPTS} wrong admin panel passwords")
+    try:
+        sb.auth.admin.sign_out((authorization or "").split(" ", 1)[-1], "global")
+    except Exception:
+        logger.exception("could not revoke sessions after an admin panel lockout (%s)", actor.id)
+    who = actor.display_name if actor.display_name != "there" else (actor.email or "an admin account")
+    for uid in _admin_ids(sb):
+        notify_user(
+            sb,
+            uid,
+            "admin_security_alert",
+            "Potential threat: admin panel locked",
+            f"{MAX_ATTEMPTS} wrong admin panel passwords were entered on {who}'s account. The panel is locked for "
+            f"{int(LOCKOUT_WINDOW.total_seconds() // 60)} minutes and the account was signed out. If it wasn't them, "
+            "change their Migrent password and the admin panel password.",
+            "/admin/audit",
+            entity_type="user",
+            entity_id=actor.id,
+        )
+
+
+@router.post("/unlock")
+@limiter.limit("30/hour")
+def unlock(request: Request, body: UnlockBody, authorization: Optional[str] = Header(None)):
+    actor = hub_actor(request, authorization)
+    require_admin_actor(actor)
+    sb = get_supabase_admin()
+    state = attempt_state(sb, actor.id)
+    if state["locked_until"]:
+        return {"unlocked": False, "locked": True, "attempts_left": 0}
+    stored = stored_hash(sb)
+    if not stored:
+        raise HTTPException(status_code=503, detail="The admin panel password has not been set up yet.")
+    if verify_password(body.password, stored):
+        audit(sb, admin_id=actor.id, action="admin_panel_unlock", target_type="user", target_id=actor.id)
+        return {"unlocked": True, "token": issue_unlock_token(actor.id, session_id(authorization)), "expires_in_seconds": int(UNLOCK_TTL.total_seconds())}
+    audit(sb, admin_id=actor.id, action="admin_panel_failed", target_type="user", target_id=actor.id)
+    left = MAX_ATTEMPTS - (state["failures"] + 1)
+    if left <= 0:
+        _lock_out(sb, actor, authorization)
+        return {"unlocked": False, "locked": True, "attempts_left": 0}
+    return {"unlocked": False, "locked": False, "attempts_left": left}
+
+
+class PasswordChangeBody(BaseModel):
+    current_password: str = Field(..., max_length=200)
+    new_password: str = Field(..., max_length=200)
+
+
+@router.post("/password")
+@limiter.limit("10/hour")
+def change_panel_password(request: Request, body: PasswordChangeBody, authorization: Optional[str] = Header(None)):
+    actor = hub_actor(request, authorization)
+    require_admin_panel(actor, request, authorization)
+    sb = get_supabase_admin()
+    if not verify_password(body.current_password, stored_hash(sb)):
+        raise HTTPException(status_code=400, detail="The current admin password is not right.")
+    if len(body.new_password) < MIN_PASSWORD_LENGTH:
+        raise HTTPException(status_code=400, detail=f"Use at least {MIN_PASSWORD_LENGTH} characters.")
+    audit(sb, admin_id=actor.id, action="admin_panel_password_changed", target_type="user", target_id=actor.id)
+    sb.table("admin_panel_settings").upsert({"id": 1, "password_hash": hash_password(body.new_password), "updated_at": now_iso(), "updated_by": actor.id}).execute()
+    return {"changed": True}
+
+
 @router.get("/overview")
 def overview(request: Request, authorization: Optional[str] = Header(None)):
     actor = hub_actor(request, authorization)
-    require_admin_actor(actor)
+    require_admin_panel(actor, request, authorization)
     sb = get_supabase_admin()
     return {
         "final_reviews": _count(sb, "applications", status="migrent_review"),
@@ -185,7 +296,7 @@ def _moderation_items(sb, rows: list[dict]) -> list[dict]:
 @router.get("/listings")
 def listing_queue(request: Request, queue: str = "review", q: Optional[str] = None, authorization: Optional[str] = Header(None)):
     actor = hub_actor(request, authorization)
-    require_admin_actor(actor)
+    require_admin_panel(actor, request, authorization)
     if queue not in LISTING_QUEUES and queue != "all":
         raise HTTPException(status_code=400, detail="Unknown queue")
     sb = get_supabase_admin()
@@ -250,7 +361,7 @@ def _listing_detail(sb, listing_id: str) -> dict:
 @router.get("/listings/{listing_id}")
 def listing_detail(listing_id: str, request: Request, authorization: Optional[str] = Header(None)):
     actor = hub_actor(request, authorization)
-    require_admin_actor(actor)
+    require_admin_panel(actor, request, authorization)
     return {"listing": _listing_detail(get_supabase_admin(), listing_id)}
 
 
@@ -278,7 +389,7 @@ def _require_verified_owner(sb, listing_id: str) -> None:
 @router.post("/listings/{listing_id}/action")
 def listing_action(listing_id: str, request: Request, body: ListingActionBody, authorization: Optional[str] = Header(None)):
     actor = hub_actor(request, authorization)
-    require_admin_actor(actor)
+    require_admin_panel(actor, request, authorization)
     sb = get_supabase_admin()
     res = sb.table("listings").select("id, moderation_status").eq("id", listing_id).execute()
     if not res.data:
@@ -336,7 +447,7 @@ def listing_action(listing_id: str, request: Request, body: ListingActionBody, a
 @router.get("/id-checks")
 def id_checks(request: Request, authorization: Optional[str] = Header(None)):
     actor = hub_actor(request, authorization)
-    require_admin_actor(actor)
+    require_admin_panel(actor, request, authorization)
     sb = get_supabase_admin()
     try:
         rows = (
@@ -378,7 +489,7 @@ def id_checks(request: Request, authorization: Optional[str] = Header(None)):
 @router.get("/id-checks/{user_id}/document")
 def id_document(user_id: str, request: Request, authorization: Optional[str] = Header(None)):
     actor = hub_actor(request, authorization)
-    require_admin_actor(actor)
+    require_admin_panel(actor, request, authorization)
     from routes_owner_verification import get_id_document_url
 
     sb = get_supabase_admin()
@@ -403,7 +514,7 @@ class IdDecisionBody(BaseModel):
 @router.post("/id-checks/{user_id}")
 def id_decision(user_id: str, request: Request, body: IdDecisionBody, authorization: Optional[str] = Header(None)):
     actor = hub_actor(request, authorization)
-    require_admin_actor(actor)
+    require_admin_panel(actor, request, authorization)
     reason = (body.reason or "").strip()
     if body.action == "reject" and len(reason) < 5:
         raise HTTPException(status_code=400, detail="Tell the owner what was wrong so they can fix it. It is also recorded in the audit log.")
@@ -423,7 +534,7 @@ def id_decision(user_id: str, request: Request, body: IdDecisionBody, authorizat
 @router.get("/reports")
 def reports(request: Request, status: str = "open", authorization: Optional[str] = Header(None)):
     actor = hub_actor(request, authorization)
-    require_admin_actor(actor)
+    require_admin_panel(actor, request, authorization)
     sb = get_supabase_admin()
     try:
         q = sb.table("reports").select("*").order("created_at", desc=True).limit(200)
@@ -488,7 +599,7 @@ class ReportTriage(BaseModel):
 @router.post("/reports/{report_id}")
 def triage_report(report_id: str, request: Request, body: ReportTriage, authorization: Optional[str] = Header(None)):
     actor = hub_actor(request, authorization)
-    require_admin_actor(actor)
+    require_admin_panel(actor, request, authorization)
     sb = get_supabase_admin()
     res = sb.table("reports").select("*").eq("id", report_id).execute()
     if not res.data:
@@ -526,7 +637,7 @@ def triage_report(report_id: str, request: Request, body: ReportTriage, authoriz
 @router.get("/emergencies")
 def emergencies(request: Request, authorization: Optional[str] = Header(None)):
     actor = hub_actor(request, authorization)
-    require_admin_actor(actor)
+    require_admin_panel(actor, request, authorization)
     sb = get_supabase_admin()
     try:
         rows = (
@@ -618,7 +729,7 @@ def _ticket_detail(sb, ticket_id: str) -> dict:
 @router.get("/support/tickets")
 def support_tickets(request: Request, view: str = "needs_reply", authorization: Optional[str] = Header(None)):
     actor = hub_actor(request, authorization)
-    require_admin_actor(actor)
+    require_admin_panel(actor, request, authorization)
     if view not in TICKET_VIEWS and view != "all":
         raise HTTPException(status_code=400, detail="Unknown view")
     sb = get_supabase_admin()
@@ -640,7 +751,7 @@ def support_tickets(request: Request, view: str = "needs_reply", authorization: 
 @router.get("/support/tickets/{ticket_id}")
 def support_ticket(ticket_id: str, request: Request, authorization: Optional[str] = Header(None)):
     actor = hub_actor(request, authorization)
-    require_admin_actor(actor)
+    require_admin_panel(actor, request, authorization)
     return {"ticket": _ticket_detail(get_supabase_admin(), ticket_id)}
 
 
@@ -651,7 +762,7 @@ class TicketReplyBody(BaseModel):
 @router.post("/support/tickets/{ticket_id}/reply")
 def support_reply(ticket_id: str, request: Request, body: TicketReplyBody, background_tasks: BackgroundTasks, authorization: Optional[str] = Header(None)):
     actor = hub_actor(request, authorization)
-    require_admin_actor(actor)
+    require_admin_panel(actor, request, authorization)
     text = body.body.strip()
     if not text:
         raise HTTPException(status_code=400, detail="Write a reply first")
@@ -671,7 +782,7 @@ def support_reply(ticket_id: str, request: Request, body: TicketReplyBody, backg
 @router.post("/support/tickets/{ticket_id}")
 def support_update(ticket_id: str, request: Request, body: TicketUpdate, background_tasks: BackgroundTasks, authorization: Optional[str] = Header(None)):
     actor = hub_actor(request, authorization)
-    require_admin_actor(actor)
+    require_admin_panel(actor, request, authorization)
     sb = get_supabase_admin()
     ticket = _load_ticket(sb, ticket_id)
     from routes_support_tickets import _fire_webhook, apply_agent_update
@@ -690,7 +801,7 @@ def support_update(ticket_id: str, request: Request, body: TicketUpdate, backgro
 @router.get("/audit")
 def audit_log(request: Request, limit: int = 100, target_type: Optional[str] = None, authorization: Optional[str] = Header(None)):
     actor = hub_actor(request, authorization)
-    require_admin_actor(actor)
+    require_admin_panel(actor, request, authorization)
     sb = get_supabase_admin()
     q = sb.table("admin_audit_log").select("*").order("created_at", desc=True).limit(max(1, min(limit, 500)))
     if target_type:
@@ -713,7 +824,7 @@ def audit_log(request: Request, limit: int = 100, target_type: Optional[str] = N
 @router.get("/users")
 def find_users(request: Request, q: str, authorization: Optional[str] = Header(None)):
     actor = hub_actor(request, authorization)
-    require_admin_actor(actor)
+    require_admin_panel(actor, request, authorization)
     needle = (q or "").strip()
     if len(needle) < 2:
         return {"users": []}
@@ -739,7 +850,7 @@ class ViewAsBody(BaseModel):
 @router.post("/view-as")
 def start_view_as(request: Request, body: ViewAsBody, authorization: Optional[str] = Header(None)):
     actor = hub_actor(request, authorization)
-    require_admin_actor(actor)
+    require_admin_panel(actor, request, authorization)
     if body.user_id == actor.id:
         raise HTTPException(status_code=400, detail="That is your own account")
     reason = (body.reason or "").strip()
@@ -792,7 +903,7 @@ def _account_row(profile: dict) -> dict:
 
 def _account_change(request: Request, authorization: Optional[str], user_id: str, body: AccountActionBody, suspend: bool) -> dict:
     actor = hub_actor(request, authorization)
-    require_admin_actor(actor)
+    require_admin_panel(actor, request, authorization)
     reason = body.reason.strip()
     if len(reason) < 5:
         raise HTTPException(status_code=400, detail="Say why. It is recorded in the audit log.")

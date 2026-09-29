@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import { AlertTriangle, ChevronRight, ExternalLink, ListChecks, Mail, Search } from "lucide-react";
-import HubShell from "../../../components/hub/HubShell";
+import AdminPanelShell from "../../../components/hub/admin/AdminPanel";
 import { Button } from "../../../components/hub/ui/Button";
 import { EmptyState, ErrorState, InlineAlert, RowSkeleton, StatusBadge } from "../../../components/hub/ui/Feedback";
 import { Checkbox, Field, Segmented, Textarea } from "../../../components/hub/ui/Field";
@@ -358,7 +358,7 @@ function ListingDrawer({ id, onClose }: { id: string | null; onClose: () => void
  * Listing moderation: new listings to check, anything the spam check caught,
  * and every listing on Migrent when a report needs one found.
  */
-export default function AdminListingsPage() {
+function AdminListingsContent() {
   const router = useRouter();
   const queue: ListingQueue = LISTING_QUEUES.some((x) => x.value === router.query.queue) ? (router.query.queue as ListingQueue) : "review";
   const selected = typeof router.query.listing === "string" ? router.query.listing : null;
@@ -384,7 +384,7 @@ export default function AdminListingsPage() {
   const counts = data?.counts;
 
   return (
-    <HubShell title="Listings">
+    <>
       <PageHeader
         title="Listings"
         description="Check new listings before they go live and decide on anything the spam check caught. Every decision is recorded in the audit log, and the owner is emailed when it affects them."
@@ -454,6 +454,15 @@ export default function AdminListingsPage() {
       )}
 
       <ListingDrawer id={selected} onClose={() => setParams({ listing: null })} />
-    </HubShell>
+    </>
+  );
+}
+
+/** Inside the Admin panel: nothing here loads until the admin password is entered. */
+export default function AdminListingsPage() {
+  return (
+    <AdminPanelShell title="Listings">
+      <AdminListingsContent />
+    </AdminPanelShell>
   );
 }

@@ -45,7 +45,8 @@ function isMac() {
 
 /** ⌘K / Ctrl+K. A quick way to anywhere - never the only way. */
 export default function CommandPalette({ open, onOpenChange }: { open: boolean; onOpenChange: (v: boolean) => void }) {
-  const { role } = useHub();
+  const { role, me, viewAs } = useHub();
+  const isAdmin = Boolean(me?.is_admin && !viewAs);
   const navigate = useHubNavigate();
   const { toggle } = useTheme();
   const [query, setQuery] = useState("");
@@ -89,7 +90,7 @@ export default function CommandPalette({ open, onOpenChange }: { open: boolean; 
   );
 
   const commands = useMemo<Command[]>(() => {
-    const { primary } = navFor(role, { hasHome: true });
+    const { primary } = navFor(role, { hasHome: true, isAdmin });
     const nav: Command[] = [...primary, ...footerNav, { label: "Profile and account", to: "/me", icon: ArrowRight }].map((n) => ({
       id: `nav-${n.to}`,
       label: n.label,
@@ -125,7 +126,7 @@ export default function CommandPalette({ open, onOpenChange }: { open: boolean; 
       recent = [];
     }
     return [...recent, ...actions, ...nav];
-  }, [role, go, toggle, close]);
+  }, [role, isAdmin, go, toggle, close]);
 
   const results = useMemo(() => {
     const q = query.trim();

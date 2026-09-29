@@ -14,6 +14,7 @@ import {
   Inbox,
   KeyRound,
   LayoutGrid,
+  LockKeyhole,
   ListChecks,
   MessageCircle,
   ScrollText,
@@ -41,8 +42,13 @@ export interface NavItem {
  * Information architecture, per role. Desktop shows `primary` in the rail;
  * phones show `tabs` (five, thumb-reachable) and put the rest under
  * Profile. Every destination is reachable on both.
+ *
+ * Admins use a renter or owner account like anyone else; `isAdmin` adds the
+ * Admin panel (which asks for its own password) to it.
  */
-export function navFor(role: HubRole | null, opts: { hasHome?: boolean } = {}) {
+const ADMIN_PANEL: NavItem = { label: "Admin panel", to: "/admin", icon: LockKeyhole };
+
+export function navFor(role: HubRole | null, opts: { hasHome?: boolean; isAdmin?: boolean } = {}) {
   if (role === "owner") {
     const primary: NavItem[] = [
       { label: "Home", to: "/", icon: Home },
@@ -53,12 +59,13 @@ export function navFor(role: HubRole | null, opts: { hasHome?: boolean } = {}) {
       { label: "Tenancies", to: "/tenancies", icon: KeyRound, match: ["/maintenance"], count: "maintenance" },
       { label: "Insights", to: "/insights", icon: BarChart3 },
     ];
+    if (opts.isAdmin) primary.push(ADMIN_PANEL);
     const tabs: NavItem[] = [
       { label: "Home", to: "/", icon: Home },
       { label: "Properties", to: "/properties", icon: Building2, match: ["/listings"] },
       { label: "Messages", to: "/messages", icon: MessageCircle, count: "messages" },
       { label: "Activity", to: "/activity", icon: Bell, count: "notifications" },
-      { label: "Profile", to: "/me", icon: UserRound, match: ["/settings", "/profile", "/applications", "/inspections", "/tenancies", "/insights", "/maintenance"] },
+      { label: "Profile", to: "/me", icon: UserRound, match: ["/settings", "/profile", "/applications", "/inspections", "/tenancies", "/insights", "/maintenance", "/admin"] },
     ];
     return { primary, tabs };
   }
@@ -94,6 +101,7 @@ export function navFor(role: HubRole | null, opts: { hasHome?: boolean } = {}) {
   ];
   if (opts.hasHome) primary.push({ label: "My home", to: "/my-home", icon: KeyRound, match: ["/tenancies", "/maintenance"] });
   primary.push({ label: "Rental Profile", to: "/profile", icon: UserRound });
+  if (opts.isAdmin) primary.push(ADMIN_PANEL);
   const tabs: NavItem[] = [
     { label: "Home", to: "/", icon: Home },
     { label: "Discover", to: "/discover", icon: Compass, match: ["/homes", "/compare"] },
@@ -103,7 +111,7 @@ export function navFor(role: HubRole | null, opts: { hasHome?: boolean } = {}) {
       label: "Profile",
       to: "/me",
       icon: UserRound,
-      match: ["/profile", "/settings", "/saved", "/applications", "/apply", "/inspections", "/my-home", "/tenancies", "/maintenance"],
+      match: ["/profile", "/settings", "/saved", "/applications", "/apply", "/inspections", "/my-home", "/tenancies", "/maintenance", "/admin"],
     },
   ];
   return { primary, tabs };

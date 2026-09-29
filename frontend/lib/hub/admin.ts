@@ -270,6 +270,10 @@ export const AUDIT_ACTIONS: Record<string, string> = {
   assign_report: "Took a report",
   resolve_report: "Resolved a report",
   dismiss_report: "Dismissed a report",
+  admin_panel_unlock: "Opened the Admin panel",
+  admin_panel_failed: "Entered a wrong Admin panel password",
+  admin_panel_lockout: "Was locked out of the Admin panel after 3 wrong passwords",
+  admin_panel_password_changed: "Changed the Admin panel password",
 };
 
 export const auditAction = (a: string) => AUDIT_ACTIONS[a] ?? a.replace(/_/g, " ").replace(/^\w/, (c) => c.toUpperCase());

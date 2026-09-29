@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { ChevronRight, Inbox, Lock, Mail } from "lucide-react";
-import HubShell from "../../../components/hub/HubShell";
+import AdminPanelShell from "../../../components/hub/admin/AdminPanel";
 import { Button } from "../../../components/hub/ui/Button";
 import { EmptyState, ErrorState, InlineAlert, RowSkeleton, StatusBadge } from "../../../components/hub/ui/Feedback";
 import { Field, Segmented, Select, Textarea } from "../../../components/hub/ui/Field";
@@ -210,7 +210,7 @@ function TicketDrawer({ id, onClose }: { id: string | null; onClose: () => void 
 }
 
 /** Questions and problems people sent from Migrent's help button. */
-export default function AdminSupportPage() {
+function AdminSupportContent() {
   const router = useRouter();
   const view: TicketView = TICKET_VIEWS.some((v) => v.value === router.query.view) ? (router.query.view as TicketView) : "needs_reply";
   const selected = typeof router.query.ticket === "string" ? router.query.ticket : null;
@@ -226,7 +226,7 @@ export default function AdminSupportPage() {
   const { data, error, loading, refetch } = useHubQuery<{ tickets: Ticket[]; counts: Partial<Record<TicketView, number>> }>(`/hub/admin/support/tickets?view=${view}`);
 
   return (
-    <HubShell title="Support">
+    <>
       <PageHeader title="Support" description="Questions and problems people sent from the help button on Migrent. Most urgent first. Replies appear on their ticket page; internal notes are only seen by the team." />
       <Tabs label="Support tickets" value={view} onChange={(v) => setParams({ view: v, ticket: null })} tabs={TICKET_VIEWS.map((t) => ({ value: t.value, label: t.label, count: t.value === "all" ? undefined : data?.counts?.[t.value] }))} className="mb-6" />
       {error ? (
@@ -262,6 +262,15 @@ export default function AdminSupportPage() {
         </ul>
       )}
       <TicketDrawer id={selected} onClose={() => setParams({ ticket: null })} />
-    </HubShell>
+    </>
+  );
+}
+
+/** Inside the Admin panel: nothing here loads until the admin password is entered. */
+export default function AdminSupportPage() {
+  return (
+    <AdminPanelShell title="Support">
+      <AdminSupportContent />
+    </AdminPanelShell>
   );
 }

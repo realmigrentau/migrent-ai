@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
 import { ExternalLink, Flag, Siren, UserRound } from "lucide-react";
-import HubShell from "../../../components/hub/HubShell";
+import AdminPanelShell from "../../../components/hub/admin/AdminPanel";
 import { Button } from "../../../components/hub/ui/Button";
 import { EmptyState, ErrorState, RowSkeleton, StatusBadge } from "../../../components/hub/ui/Feedback";
 import { Field, Input, Segmented, Select, Textarea } from "../../../components/hub/ui/Field";
@@ -244,14 +244,14 @@ function Emergencies() {
   );
 }
 
-export default function AdminReportsPage() {
+function AdminReportsContent() {
   const router = useRouter();
   const tab: Tab = router.query.tab === "all" ? "all" : router.query.tab === "emergencies" ? "emergencies" : "open";
   const setTab = (t: Tab) => void router.replace({ pathname: router.pathname, query: t === "open" ? {} : { tab: t } }, undefined, { shallow: true });
   const overview = useHubQuery<{ open_reports: number; open_emergencies: number }>("/hub/admin/overview");
 
   return (
-    <HubShell title="Reports">
+    <>
       <PageHeader title="Reports" description="Most urgent first. Take a report to show the team you're on it; closing one needs a reason." />
       <Tabs
         label="Reports"
@@ -265,6 +265,15 @@ export default function AdminReportsPage() {
         className="mb-6"
       />
       {tab === "emergencies" ? <Emergencies /> : <ReportsList key={tab} status={tab} />}
-    </HubShell>
+    </>
+  );
+}
+
+/** Inside the Admin panel: nothing here loads until the admin password is entered. */
+export default function AdminReportsPage() {
+  return (
+    <AdminPanelShell title="Reports">
+      <AdminReportsContent />
+    </AdminPanelShell>
   );
 }

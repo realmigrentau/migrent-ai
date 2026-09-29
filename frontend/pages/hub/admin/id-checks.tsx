@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { BadgeCheck, ExternalLink, FileText, Mail } from "lucide-react";
-import HubShell from "../../../components/hub/HubShell";
+import AdminPanelShell from "../../../components/hub/admin/AdminPanel";
 import { Button } from "../../../components/hub/ui/Button";
 import { EmptyState, ErrorState, InlineAlert, RowSkeleton, StatusBadge } from "../../../components/hub/ui/Feedback";
 import { Field, Textarea } from "../../../components/hub/ui/Field";
@@ -123,13 +123,13 @@ function DecisionDialog({ check, action, onClose }: { check: IdCheck | null; act
 }
 
 /** Owners who uploaded a government ID and are waiting for a person to check it. */
-export default function AdminIdChecksPage() {
+function AdminIdChecksContent() {
   const { data, error, loading, refetch } = useHubQuery<{ checks: IdCheck[] }>("/hub/admin/id-checks");
   const [viewing, setViewing] = useState<IdCheck | null>(null);
   const [deciding, setDeciding] = useState<{ check: IdCheck; action: "approve" | "reject" } | null>(null);
 
   return (
-    <HubShell title="ID checks">
+    <>
       <PageHeader title="ID checks" description="Owners can't publish listings until a person has checked their government ID. Look at the document, then approve it or tell the owner what to fix. Oldest first." />
       {error ? (
         <ErrorState message={error.message} offline={error.offline} onRetry={() => void refetch()} />
@@ -182,6 +182,15 @@ export default function AdminIdChecksPage() {
       </InlineAlert>
       <DocumentDialog check={viewing} onClose={() => setViewing(null)} />
       <DecisionDialog check={deciding?.check ?? null} action={deciding?.action ?? "approve"} onClose={() => setDeciding(null)} />
-    </HubShell>
+    </>
+  );
+}
+
+/** Inside the Admin panel: nothing here loads until the admin password is entered. */
+export default function AdminIdChecksPage() {
+  return (
+    <AdminPanelShell title="ID checks">
+      <AdminIdChecksContent />
+    </AdminPanelShell>
   );
 }

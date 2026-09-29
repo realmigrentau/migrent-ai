@@ -8,11 +8,12 @@ Owners must complete both steps before they can list rooms.
 import os
 import logging
 from datetime import datetime, timezone
-from fastapi import APIRouter, HTTPException, Header, UploadFile, File, Form
+from fastapi import APIRouter, Depends, HTTPException, Header, UploadFile, File, Form
 from pydantic import BaseModel
 from typing import Optional
 from db import get_supabase_admin
 from auth_utils import get_current_user
+from admin_panel import admin_panel_unlocked
 from email_verification import (
     send_id_approved_email,
     send_id_rejected_email,
@@ -175,7 +176,7 @@ def upload_government_id(
 
 # ─── ADMIN: Review IDs ───────────────────────────────────────────
 
-@router.get("/admin/pending-ids")
+@router.get("/admin/pending-ids", dependencies=[Depends(admin_panel_unlocked)])
 def get_pending_ids(authorization: str = Header(...)):
     """Get all pending ID submissions for admin review."""
     from routes_admin import _require_admin
@@ -200,7 +201,7 @@ def get_pending_ids(authorization: str = Header(...)):
     return {"submissions": submissions, "total": len(submissions)}
 
 
-@router.get("/admin/id-document-url/{user_id}")
+@router.get("/admin/id-document-url/{user_id}", dependencies=[Depends(admin_panel_unlocked)])
 def get_id_document_url(user_id: str, authorization: str = Header(...)):
     """Get a signed URL for viewing an owner's ID document (admin only)."""
     from routes_admin import _require_admin
@@ -226,7 +227,7 @@ class IDReviewAction(BaseModel):
     reason: Optional[str] = None
 
 
-@router.post("/admin/review-id/{user_id}")
+@router.post("/admin/review-id/{user_id}", dependencies=[Depends(admin_panel_unlocked)])
 def review_id_submission(
     user_id: str,
     body: IDReviewAction,
