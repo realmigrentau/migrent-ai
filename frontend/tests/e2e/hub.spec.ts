@@ -180,6 +180,15 @@ test.describe("owner", () => {
 test.describe("admin", () => {
   test.skip(({ isMobile }) => isMobile, "changes data");
 
+  test("an admin gets the admin Hub even though the account is stored as a renter", async ({ page }) => {
+    await signIn(page, "admin@example.test");
+    const rail = page.getByRole("navigation", { name: "Migrent Hub" }).first();
+    await expect(rail.getByRole("link", { name: "Listings" })).toBeVisible();
+    await expect(rail.getByRole("link", { name: "ID checks" })).toBeVisible();
+    await expect(rail.getByRole("link", { name: "Saved" })).toHaveCount(0);
+    await expect(page.getByText("What is waiting on Migrent right now.")).toBeVisible();
+  });
+
   test("viewing as a customer needs a recorded reason and is read-only", async ({ page }) => {
     await signIn(page, "admin@example.test", "/admin/people");
     await page.getByRole("searchbox", { name: /name or email/i }).fill("sarah");

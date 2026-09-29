@@ -33,7 +33,7 @@ const USERS = {
   "aaaa0000-0000-4000-8000-000000000001": { email: "renter@example.test", name: "Sarah Chen", role: "seeker", onboarded: true, created_at: "2026-05-02T00:00:00Z" },
   "aaaa0000-0000-4000-8000-000000000002": { email: "owner@example.test", name: "Priya Nair", role: "owner", owner_kind: "individual", onboarded: true, created_at: "2026-02-14T00:00:00Z" },
   "aaaa0000-0000-4000-8000-000000000003": { email: "new@example.test", name: "", role: null, onboarded: false, created_at: iso(now()) },
-  "aaaa0000-0000-4000-8000-000000000004": { email: "admin@example.test", name: "Ada Admin", role: "superadmin", is_admin: true, onboarded: true, created_at: "2026-01-01T00:00:00Z" },
+  "aaaa0000-0000-4000-8000-000000000004": { email: "admin@example.test", name: "Ada Admin", role: "seeker", is_admin: true, onboarded: true, created_at: "2026-01-01T00:00:00Z" },
   "aaaa0000-0000-4000-8000-000000000005": { email: "tenant@example.test", name: "Tom Nguyen", role: "seeker", onboarded: true, created_at: "2026-04-20T00:00:00Z" },
   "aaaa0000-0000-4000-8000-000000000006": { email: "newowner@example.test", name: "Liam Park", role: "owner", owner_kind: "individual", onboarded: true, created_at: "2026-09-18T00:00:00Z" },
 };
@@ -363,7 +363,8 @@ function perfTotals(ids) {
 
 function me(uid) {
   const u = USERS[uid];
-  const role = u.role === "seeker" ? "renter" : u.role === "owner" ? "owner" : u.is_admin ? "admin" : null;
+  // As in backend/routes_hub.py public_role: admin rights win over the stored role.
+  const role = u.is_admin ? "admin" : u.role === "seeker" ? "renter" : u.role === "owner" ? "owner" : null;
   return {
     id: uid,
     email: u.email,
@@ -739,6 +740,7 @@ export function handleHub(req, url, body, send) {
     return send(200, me(uid)), true;
   }
   if (p === "/hub/role" && req.method === "POST") {
+    if (u.is_admin) return send(400, { detail: "Admin accounts keep their admin role" }), true;
     if (u.role === "owner" && body.role === "renter" && LISTINGS.some((l) => ownerOf(l.id) === uid)) return send(409, { detail: "You have listings that are live or in review. Pause or archive them before switching to renting." }), true;
     u.role = body.role === "owner" ? "owner" : "seeker";
     return send(200, me(uid)), true;
