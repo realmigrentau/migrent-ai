@@ -1,5 +1,14 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { IDLE_LOCK_MS, adminUnlockToken, isAdminPanelUnlocked, lockAdminPanel, onAdminPanelLock, unlockAdminPanel } from "../../lib/hub/adminPanel";
+import {
+  IDLE_LOCK_MS,
+  adminIdleAlertRaised,
+  adminUnlockToken,
+  dismissAdminIdleAlert,
+  isAdminPanelUnlocked,
+  lockAdminPanel,
+  onAdminPanelLock,
+  unlockAdminPanel,
+} from "../../lib/hub/adminPanel";
 
 /**
  * The Admin panel locks itself: after 30 seconds without activity, when the
@@ -19,6 +28,7 @@ beforeEach(() => {
 
 afterEach(() => {
   lockAdminPanel();
+  dismissAdminIdleAlert();
   vi.unstubAllGlobals();
   vi.useRealTimers();
 });
@@ -61,6 +71,38 @@ describe("admin panel lock", () => {
       move();
     }
     expect(isAdminPanelUnlocked()).toBe(false);
+  });
+
+  it("raises the alarm only when it locks itself for inactivity", () => {
+    unlockAdminPanel("token-1", 1200);
+    lockAdminPanel("manual");
+    expect(adminIdleAlertRaised()).toBe(false);
+
+    unlockAdminPanel("token-2", 1200);
+    vi.advanceTimersByTime(IDLE_LOCK_MS + 1000);
+    expect(adminIdleAlertRaised()).toBe(true);
+    dismissAdminIdleAlert();
+    expect(adminIdleAlertRaised()).toBe(false);
+
+    // Coming back after being away counts as inactivity too.
+    unlockAdminPanel("token-3", 1200);
+    vi.setSystemTime(Date.now() + IDLE_LOCK_MS + 5000);
+    move();
+    expect(adminIdleAlertRaised()).toBe(true);
+
+    // Unlocking again clears it.
+    unlockAdminPanel("token-4", 1200);
+    expect(adminIdleAlertRaised()).toBe(false);
+  });
+
+  it("does not raise the alarm when the unlock simply expires", () => {
+    unlockAdminPanel("token-1", 60);
+    for (let i = 0; i < 6; i++) {
+      vi.advanceTimersByTime(10_000);
+      move();
+    }
+    expect(isAdminPanelUnlocked()).toBe(false);
+    expect(adminIdleAlertRaised()).toBe(false);
   });
 
   it("tells listeners, once, and ignores activity after locking", () => {

@@ -3,12 +3,13 @@ import { useRouter } from "next/router";
 import { BadgeCheck, Flag, Inbox, LayoutGrid, ListChecks, Lock, LockKeyhole, ScrollText, ShieldCheck, Users } from "lucide-react";
 import { cn } from "../../../lib/cn";
 import { IDLE_LOCK_MS, adminIdleRemainingMs, lockAdminPanel, unlockAdminPanel, useAdminPanelUnlocked } from "../../../lib/hub/adminPanel";
+import { primeAlarm } from "../../../lib/hub/alarm";
 import { HubError, hubApi } from "../../../lib/hub/api";
 import { useHubQuery } from "../../../lib/hub/query";
-import { hubUrl, toHubPath } from "../../../lib/hub/routes";
+import { toHubPath } from "../../../lib/hub/routes";
 import { useHub } from "../../../lib/hub/session";
 import HubShell from "../HubShell";
-import HubLink from "../HubLink";
+import HubLink, { useHubNavigate } from "../HubLink";
 import { isActive, type NavItem } from "../nav";
 import { Button } from "../ui/Button";
 import { EmptyState, InlineAlert, Skeleton } from "../ui/Feedback";
@@ -47,11 +48,15 @@ function UnlockForm() {
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
   const input = useRef<HTMLInputElement>(null);
+  const navigate = useHubNavigate();
 
   useEffect(() => input.current?.focus(), []);
 
   const submit = async (e: FormEvent) => {
     e.preventDefault();
+    // This click or key press is what lets the page sound the alarm later
+    // (browsers block sound a page makes on its own).
+    primeAlarm();
     if (!password) {
       setError("Enter the admin password.");
       return;
@@ -67,8 +72,9 @@ function UnlockForm() {
       if (r.locked) {
         // Three strikes. The server has already signed this account out
         // everywhere and alerted every admin; the locked page ends this
-        // tab's session too.
-        window.location.replace(hubUrl("/locked"));
+        // tab's session too. An in-app navigation, not a page load, so the
+        // alarm primed above may still sound.
+        void navigate("/locked", { replace: true });
         return;
       }
       const left = r.attempts_left ?? 0;
@@ -181,7 +187,7 @@ function PanelBar() {
           {soon ? "The Admin panel locks in a few seconds unless you move the mouse or press a key." : ""}
         </span>
       </p>
-      <Button variant="secondary" size="sm" onClick={lockAdminPanel} icon={<Lock className="h-3.5 w-3.5" strokeWidth={2} aria-hidden />}>
+      <Button variant="secondary" size="sm" onClick={() => lockAdminPanel("manual")} icon={<Lock className="h-3.5 w-3.5" strokeWidth={2} aria-hidden />}>
         Lock now
       </Button>
     </div>
