@@ -4,8 +4,8 @@
   "description": "Rooms across Australia for migrants, students and new arrivals. Hosts are ID-checked; renters pay nothing.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#f6f1e9",
-  "theme_color": "#1d6475",
+  "background_color": "#f6f8fc",
+  "theme_color": "#365df3",
   "orientation": "any",
   "icons": [
     { "src": "/favicon.ico", "sizes": "64x64", "type": "image/x-icon" },
