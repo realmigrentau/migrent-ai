@@ -18,9 +18,13 @@ const SITE_KIT = [
   "/", "/how-renting-works", "/for-owners", "/pricing", "/help", "/guides", "/blog", "/legal", "/about", "/contact",
   "/terms-of-service", "/privacy-policy", "/cookie-policy", "/disclaimer", "/abn-terms", "/anti-discrimination",
   "/rules-community-guidelines", "/code-of-conduct", "/safety-reporting", "/support-disputes", "/contact-legal",
+  // One-message pages (components/site/StatusPage)
+  "/404", "/500", "/_error", "/booking-success", "/booking-cancelled", "/verification-success", "/verification-cancelled",
+  "/mentor-session-success",
+  "/mentors", "/become-mentor", "/suburbs",
 ];
-/** Older full-width routes that still sit below the header. */
-const LEGACY_FULL_WIDTH: string[] = [];
+/** Full-width routes that sit below the header rather than drawing a sky. */
+const LEGACY_FULL_WIDTH: string[] = ["/listing/[id]", "/mentor/[id]", "/suburb/[state]", "/suburb/[state]/[slug]"];
 
 const matchesAny = (list: string[], path: string) => list.some((p) => path === p || (p !== "/" && path.startsWith(`${p}/`)));
 

@@ -27,7 +27,7 @@ export default function SimilarListings({
 
   return (
     <div>
-      <h2 className="text-lg font-bold text-[var(--color-ink)] mb-4">
+      <h2 className="site-h3 site-h3--lg mb-4">
         Similar rooms
         {currentSuburb && (
           <span className="text-sm font-normal text-[var(--color-ink-3)] ml-2">
@@ -43,7 +43,7 @@ export default function SimilarListings({
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.1 }}
-              className="group card p-0 overflow-hidden hover:shadow-md transition-shadow cursor-pointer"
+              className="group site-card site-card--link overflow-hidden cursor-pointer"
             >
               {/* Image */}
               <div className="relative aspect-[16/10] bg-[var(--color-surface-muted)] overflow-hidden">

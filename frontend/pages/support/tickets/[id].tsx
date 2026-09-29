@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import Head from "next/head";
+import SEOHead from "../../../components/SEOHead";
+import { hubFromSite } from "../../../lib/hub/routes";
 import Link from "next/link";
 import { useAuth } from "../../../hooks/useAuth";
 import { getTicket, type TicketDetail } from "../../../lib/api";
@@ -29,7 +30,7 @@ export default function TicketPage() {
   useEffect(() => {
     if (authLoading) return;
     if (!session) {
-      router.push("/signin");
+      window.location.assign(hubFromSite.signIn(router.asPath));
       return;
     }
     loadTicket();
@@ -53,12 +54,11 @@ export default function TicketPage() {
 
   if (error || !ticket) {
     return (
-      <div className="text-center py-20">
-        <h1 className="text-xl font-bold text-[var(--color-ink)] mb-2">
-          {error || "Ticket not found"}
-        </h1>
-        <Link href="/support/tickets" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] font-medium text-sm">
-          Back to tickets
+      <div className="py-20 text-center">
+        <h1 className="site-h3 site-h3--lg mb-3">{error ? "We could not open that request" : "Request not found"}</h1>
+        <p className="site-body mb-6">It may belong to another account, or the link may be incomplete.</p>
+        <Link href="/support/tickets" className="btn-secondary">
+          Back to your requests
         </Link>
       </div>
     );
@@ -66,16 +66,19 @@ export default function TicketPage() {
 
   return (
     <>
-      <Head>
-        <title key="title">{ticket.subject} - Migrent Support</title>
-      </Head>
+      <SEOHead title={ticket.subject} noIndex />
 
       <div className="max-w-3xl mx-auto">
         {/* Breadcrumb */}
-        <nav className="flex items-center gap-2 text-sm text-[var(--color-ink-3)] mb-6">
-          <Link href="/support/tickets" className="hover:text-[var(--color-primary)] transition-colors">My Tickets</Link>
-          <span>/</span>
-          <span className="text-[var(--color-ink-2)] font-mono">{ticket.id.slice(0, 8)}</span>
+        <nav aria-label="Breadcrumb" className="mb-6">
+          <ol className="page-hero__crumbs">
+            <li>
+              <Link href="/support/tickets">Your support requests</Link>
+            </li>
+            <li aria-current="page" className="font-mono">
+              {ticket.id.slice(0, 8)}
+            </li>
+          </ol>
         </nav>
 
         <TicketDetailView

@@ -55,7 +55,7 @@ export default function GuidePage({ id }: { id: string }) {
         <div className="flex flex-col gap-12">
           {guide.sections.map((section, i) => (
             <section key={section.id} id={section.id} aria-labelledby={`${section.id}-title`} className="scroll-mt-28">
-              <p className="site-numeral text-[40px] text-[color:var(--color-primary-200)]" aria-hidden="true">
+              <p className="site-numeral text-[40px] text-[color:var(--color-primary-400)]" aria-hidden="true">
                 {String(i + 1).padStart(2, "0")}
               </p>
               <h2 id={`${section.id}-title`} className="site-h2 mt-2 !text-[clamp(1.5rem,2.4vw,2rem)]">

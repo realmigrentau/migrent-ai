@@ -22,12 +22,12 @@ const verifiedOwner = {
   bio: "Long-time host in Kellyville.",
   member_since: "2026-01-10",
   listings_count: 2,
-  achievement_badges: ["Superhost"],
+  achievement_badges: ["Hosts 3+ homes"],
   verification: {
     status: "verified",
     checks: { email_confirmed: true, phone_confirmed: true, government_id: "approved" },
     verified_at: "2026-06-01T00:00:00+00:00",
-    explainer_url: "/safety-verification",
+    explainer_url: "/how-renting-works#checks",
     disclaimer: "Verification confirms documents were checked. It is not a guarantee of safety or suitability.",
   },
 };

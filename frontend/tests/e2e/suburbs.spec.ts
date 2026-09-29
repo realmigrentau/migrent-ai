@@ -385,39 +385,25 @@ test.describe("quality", () => {
   });
 
   /**
-   * Migrent is light only. lib/themeBootstrap.ts removes `.dark` before first
-   * paint and clears any stored preference, because the theme toggle was
-   * removed and a visitor whose laptop is dark would otherwise be stranded on
-   * a dark site with no way back.
-   *
-   * So there are two things to hold: the suburb pages must stay light like
-   * the rest of the site, and their stylesheet must still carry dark values -
-   * every other stylesheet here does - so that reinstating the theme later is
-   * a product decision rather than a redesign of this section.
+   * Since the 2026-09-29 redesign the directory's --sub-* tokens point at the
+   * site's own, so it follows light and dark like every other page instead
+   * of carrying a separate palette.
    */
-  test("stays light, as the whole site does", async ({ page }) => {
+  test("follows the site theme through the shared tokens", async ({ page }) => {
     await page.goto("/suburbs");
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
-    expect(await page.evaluate(() => document.documentElement.classList.contains("dark"))).toBe(false);
-    const bg = await page.locator(".sub-hero").evaluate((el) => getComputedStyle(el).backgroundColor);
-    expect(bg).toBe("rgb(250, 248, 245)");
-  });
-
-  test("carries dark values for if the theme ever returns", async ({ page }) => {
-    await page.goto("/suburbs");
-    const tokens = await page.evaluate(() => {
-      document.documentElement.classList.add("dark");
-      // getComputedStyle returns a live object, so both values have to be
-      // read out as strings before the class comes off again.
-      const sand = getComputedStyle(document.documentElement)
-        .getPropertyValue("--sub-sand")
-        .trim();
-      const hero = getComputedStyle(document.querySelector(".sub-hero")!).backgroundColor;
-      document.documentElement.classList.remove("dark");
-      return { sand, hero };
-    });
-    expect(tokens.sand).toBe("#161a15");
-    expect(tokens.hero).not.toBe("rgb(250, 248, 245)");
+    const read = () =>
+      page.evaluate(() => {
+        const root = getComputedStyle(document.documentElement);
+        return { sand: root.getPropertyValue("--sub-sand").trim(), bg: root.getPropertyValue("--color-bg").trim(), sky: root.getPropertyValue("--sub-sky").trim(), primary: root.getPropertyValue("--color-primary").trim() };
+      });
+    const light = await read();
+    expect(light.sand).toBe(light.bg);
+    expect(light.sky).toBe(light.primary);
+    await page.evaluate(() => document.documentElement.classList.add("dark"));
+    const dark = await read();
+    expect(dark.sand).toBe(dark.bg);
+    expect(dark.sand).not.toBe(light.sand);
   });
 
   /**

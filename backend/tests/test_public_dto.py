@@ -58,9 +58,11 @@ def test_verification_summary_never_trusts_badges_or_paid_flag():
     # A profile with a "Verified host" badge and verified=True but no ID check
     owner = to_public_owner({"id": "o", "public_id": "p", "name": "N", "badges": ["Verified host", "Superhost"], "verified": True}, None)
     assert owner["verification"]["status"] == "unverified"
-    assert owner["achievement_badges"] == ["Superhost"]
+    assert owner["achievement_badges"] == ["Hosts 3+ homes"]
     assert "verified" not in owner
 
 
 def test_public_badges_drop_trust_vocabulary():
-    assert public_badges(["Verified host", "ID checked", "Trusted", "Superhost", "Made up"]) == ["Superhost"]
+    assert public_badges(["Verified host", "ID checked", "Trusted", "Superhost", "Made up"]) == ["Hosts 3+ homes"]
+    # A profile holding both the old and the new name shows it once.
+    assert public_badges(["Superhost", "Hosts 3+ homes", "Mega Host"]) == ["Hosts 3+ homes", "Hosts 10+ homes"]

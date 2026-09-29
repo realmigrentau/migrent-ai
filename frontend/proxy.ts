@@ -40,8 +40,6 @@ const PUBLIC_SEEKER_PATHS = ["/seeker/search"];
 const PRIVATE_PREFIXES = [
   "/support/tickets",
   "/reviews",
-  "/payment-success",
-  "/payment-cancelled",
   "/booking-success",
   "/booking-cancelled",
   "/verification-success",
@@ -184,8 +182,6 @@ export const config = {
     "/support/tickets",
     "/support/tickets/:path*",
     "/reviews/:path*",
-    "/payment-success",
-    "/payment-cancelled",
     "/booking-success",
     "/booking-cancelled",
     "/verification-success",

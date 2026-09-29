@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import type { GetStaticProps } from "next";
 import { useRouter } from "next/router";
@@ -176,11 +177,23 @@ export default function SuburbsDirectory({
       />
 
       <div className="sub-page">
-        <header className="sub-hero">
-          <div className="sub-hero__inner">
-            <p className="sub-hero__eyebrow">Suburb guides</p>
-            <h1 className="sub-hero__title">Where you can live, honestly told.</h1>
-            <p className="sub-hero__lede">
+        <header className="page-hero">
+          <div className="site-shell">
+            <nav aria-label="Breadcrumb">
+              <ol className="page-hero__crumbs">
+                <li>
+                  <Link href="/">Home</Link>
+                </li>
+                <li>
+                  <span aria-current="page">Suburb guides</span>
+                </li>
+              </ol>
+            </nav>
+            <p className="eyebrow mb-4">Suburb guides</p>
+            <h1 className="site-display max-w-[18ch]">
+              Where you can live, <strong>honestly told.</strong>
+            </h1>
+            <p className="site-lead mt-5 max-w-[60ch]">
               Every suburb and locality in Australia, built from the ABS Census and official
               statistical geography. Real figures with their sources attached, and nothing invented
               to fill a gap.

@@ -1,48 +1,40 @@
 import Link from "next/link";
-import { motion } from "framer-motion";
-import { XCircle, ArrowRight } from "lucide-react";
+import { ArrowRight, CircleSlash } from "lucide-react";
 import SEOHead from "../components/SEOHead";
+import StatusPage from "../components/site/StatusPage";
 import { hubFromSite } from "../lib/hub/routes";
 
+/**
+ * Where Stripe sends a host who leaves the host-fee checkout without paying
+ * (backend routes_bookings.py BOOKING_CANCEL_URL). Renters never pay
+ * Migrent, so they never land here.
+ */
 export default function BookingCancelledPage() {
   return (
     <>
-      <SEOHead title="Payment Cancelled - Migrent" />
-      <div className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center p-4">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="max-w-md w-full text-center space-y-6"
-        >
-          <XCircle className="w-16 h-16 mx-auto text-[var(--color-warn-500)]" />
-
-          <div>
-            <h1 className="text-2xl font-semibold tracking-tight text-[var(--color-ink)]">
-              Payment Not Completed
-            </h1>
-            <p className="mt-2 text-sm text-[var(--color-ink-3)]">
-              Your payment was not completed. Your booking request is still active
-              and you can complete payment from your dashboard.
-            </p>
-          </div>
-
-          <div className="flex flex-col sm:flex-row gap-3">
-            <Link
-              href={hubFromSite.path("/applications")}
-              className="flex-1 btn-primary py-3 px-6 rounded-xl text-sm font-semibold text-center flex items-center justify-center gap-2"
-            >
-              Go to Dashboard
-              <ArrowRight className="w-4 h-4" />
+      <SEOHead title="Payment not completed" noIndex />
+      <StatusPage
+        icon={<CircleSlash className="h-6 w-6" strokeWidth={1.9} />}
+        eyebrow="Payment not completed"
+        title={
+          <>
+            No charge <strong>was made.</strong>
+          </>
+        }
+        actions={
+          <>
+            <Link href={hubFromSite.path("/applications")} className="btn-primary btn-lg">
+              Open your requests <ArrowRight className="btn-arrow h-4 w-4" strokeWidth={2.2} aria-hidden="true" />
             </Link>
-            <Link
-              href="/seeker/search"
-              className="flex-1 py-3 px-6 rounded-xl text-sm font-semibold border border-[var(--color-line)] text-[var(--color-ink-2)] text-center hover:bg-[var(--color-surface)]/50"
-            >
-              Browse Listings
+            <Link href="/contact" className="btn-secondary btn-lg">
+              Contact us
             </Link>
-          </div>
-        </motion.div>
-      </div>
+          </>
+        }
+      >
+        <p className="m-0">You left the payment page before paying, so the stay is not confirmed yet.</p>
+        <p className="m-0">If you closed it by mistake, your browser&apos;s Back button usually returns you to it. If that does not work, contact us and we will sort it out.</p>
+      </StatusPage>
     </>
   );
 }

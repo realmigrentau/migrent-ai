@@ -50,7 +50,7 @@ function StepCard({ step, index }: { step: Step; index: number }) {
         <span className="site-icon" aria-hidden="true">
           <step.icon className="h-5 w-5" strokeWidth={1.9} />
         </span>
-        <span aria-hidden="true" className="site-numeral text-[clamp(3rem,5vw,4.5rem)] text-[color:var(--color-primary-200)] dark:text-[color:var(--color-primary-200)]">
+        <span aria-hidden="true" className="site-numeral text-[clamp(3rem,5vw,4.5rem)] text-[color:var(--color-primary-400)]">
           {String(index + 1).padStart(2, "0")}
         </span>
       </div>

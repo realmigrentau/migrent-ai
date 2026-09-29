@@ -362,7 +362,7 @@ function me(uid) {
     owner_kind: u.owner_kind || null,
     onboarded: u.onboarded,
     notification_prefs: u.prefs || {},
-    owner_verification: role === "owner" ? { status: "verified", checks: { email_confirmed: true, phone_confirmed: true, government_id: "approved" }, verified_at: "2026-03-10T00:00:00Z", explainer_url: "/safety-verification", disclaimer: "Verification confirms documents were checked. It is not a guarantee of safety or suitability." } : null,
+    owner_verification: role === "owner" ? { status: "verified", checks: { email_confirmed: true, phone_confirmed: true, government_id: "approved" }, verified_at: "2026-03-10T00:00:00Z", explainer_url: "/how-renting-works#checks", disclaimer: "Verification confirms documents were checked. It is not a guarantee of safety or suitability." } : null,
     member_since: u.created_at.slice(0, 10),
     features: { ai_listing_assist: false, payments: "test", renter_verification: false, fees: { currency: "AUD", host_fee: 99, host_fee_model: "per_property", renter_verification_fee: 19 }, view_as: Boolean(u.is_admin) },
     assurance_level: "aal1",

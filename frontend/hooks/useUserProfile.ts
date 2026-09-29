@@ -54,7 +54,8 @@ export interface UserProfile {
 export interface ProfileBadges {
   isVerified: boolean;
   verifiedDate: string | null;
-  isSuperhost: boolean;
+  /** 4.8 or higher from at least 10 reviews. Shown as "Highly rated". */
+  isHighlyRated: boolean;
   verifiedLabel: string | null;
 }
 
@@ -63,7 +64,10 @@ const PUBLIC_ID_RE = /^[a-z0-9]{6,32}$/;
 
 /** Achievement badges the platform recognises. Anything else (including any
  * string that reads like a trust claim) is not rendered. */
-const ALLOWED_BADGES = new Set(["Booked 1+ rooms", "Frequent Renter", "Seasoned Renter", "Superhost", "Mega Host", "Early member", "Mentor"]);
+const ALLOWED_BADGES = new Set(["Booked 1+ rooms", "Frequent Renter", "Seasoned Renter", "Hosts 3+ homes", "Hosts 10+ homes", "Superhost", "Mega Host", "Early member", "Mentor"]);
+
+/** Older count-based host badges, shown as what they measure. */
+const LEGACY_BADGE_NAMES: Record<string, string> = { Superhost: "Hosts 3+ homes", "Mega Host": "Hosts 10+ homes" };
 
 function computeBadges(profile: UserProfile): ProfileBadges {
   const isVerified = profile.identity_verified === true && profile.verification_status === "verified";
@@ -74,8 +78,8 @@ function computeBadges(profile: UserProfile): ProfileBadges {
   } else if (isVerified) {
     verifiedLabel = "ID checked";
   }
-  const isSuperhost = profile.average_rating >= 4.8 && profile.reviews_count >= 10;
-  return { isVerified, verifiedDate: profile.verified_date, isSuperhost, verifiedLabel };
+  const isHighlyRated = profile.average_rating >= 4.8 && profile.reviews_count >= 10;
+  return { isVerified, verifiedDate: profile.verified_date, isHighlyRated, verifiedLabel };
 }
 
 function computeMonthsOnPlatform(createdAt: string | null): number {
@@ -170,7 +174,7 @@ export function useUserProfile(userId: string | undefined) {
           social_facebook: str("social_facebook"),
           social_linkedin: str("social_linkedin"),
           most_useless_skill: str("most_useless_skill"),
-          badges: arr("badges").filter((b) => ALLOWED_BADGES.has(b)),
+          badges: [...new Set(arr("badges").filter((b) => ALLOWED_BADGES.has(b)).map((b) => LEGACY_BADGE_NAMES[b] ?? b))],
           rooms_owned: num("rooms_owned"),
           properties_owned: num("properties_owned"),
           created_at: createdAt,

@@ -138,7 +138,7 @@ export default function ReviewsSection({
   if (loading && reviews.length === 0) {
     return (
       <div className="space-y-4">
-        <h2 className="text-lg font-bold text-[var(--color-ink)]">
+        <h2 className="site-h3 site-h3--lg">
           Reviews
         </h2>
         <div className="flex items-center gap-3">
@@ -151,7 +151,7 @@ export default function ReviewsSection({
 
   return (
     <div>
-      <h2 className="text-lg font-bold text-[var(--color-ink)] mb-4">
+      <h2 className="site-h3 site-h3--lg mb-4">
         Reviews
       </h2>
 

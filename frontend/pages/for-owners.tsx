@@ -90,7 +90,7 @@ export default function ForOwners() {
           <ol className="m-0 mt-10 grid list-none gap-4 p-0 md:grid-cols-2 lg:grid-cols-4">
             {STEPS.map((s, i) => (
               <Reveal as="li" key={s.title} delay={i * 0.05} className="site-card site-card--pad">
-                <span aria-hidden="true" className="site-numeral text-[44px] text-[color:var(--color-primary-200)]">
+                <span aria-hidden="true" className="site-numeral text-[44px] text-[color:var(--color-primary-400)]">
                   {String(i + 1).padStart(2, "0")}
                 </span>
                 <h3 className="site-h3 site-h3--lg mt-4">

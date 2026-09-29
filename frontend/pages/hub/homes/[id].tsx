@@ -384,7 +384,7 @@ export default function HubHome() {
                       <BadgeCheck className="mt-0.5 h-4 w-4 shrink-0" strokeWidth={1.75} aria-hidden />
                       <span>
                         {l.host_verification?.disclaimer}{" "}
-                        <a href={siteUrl(l.host_verification?.explainer_url || "/safety-verification")} className="font-semibold text-[color:var(--color-primary)] hover:underline">
+                        <a href={siteUrl(l.host_verification?.explainer_url || "/how-renting-works#checks")} className="font-semibold text-[color:var(--color-primary)] hover:underline">
                           What we check
                         </a>
                       </span>

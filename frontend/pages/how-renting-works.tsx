@@ -109,7 +109,7 @@ export default function HowRentingWorks() {
             <ol className="m-0 grid list-none gap-4 p-0 md:grid-cols-2">
               {STEPS.map((s, i) => (
                 <li key={s.title} className="site-card site-card--pad">
-                  <span aria-hidden="true" className="site-numeral text-[44px] text-[color:var(--color-primary-200)]">
+                  <span aria-hidden="true" className="site-numeral text-[44px] text-[color:var(--color-primary-400)]">
                     {String(i + 1).padStart(2, "0")}
                   </span>
                   <h3 className="site-h3 site-h3--lg mt-4">

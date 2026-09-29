@@ -18,8 +18,6 @@ Disallow: /forgot-password
 Disallow: /reset-password
 Disallow: /magic-link-login
 Disallow: /magic-link-signup
-Disallow: /payment-success
-Disallow: /payment-cancelled
 Disallow: /booking-success
 Disallow: /booking-cancelled
 Disallow: /verification-success

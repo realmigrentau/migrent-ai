@@ -24,6 +24,7 @@ import GlassCard from "../ui/GlassCard";
 
 interface KeyDetailsProps {
   listing: {
+    listing_purpose?: string | null;
     weekly_price: number;
     bills_included?: boolean;
     furnished?: boolean;
@@ -163,7 +164,7 @@ export default function KeyDetails({ listing }: KeyDetailsProps) {
           Pricing
         </h3>
         <div className="flex items-baseline gap-1">
-          <span className="text-3xl font-black text-[var(--color-ink)]">
+          <span className="text-3xl font-semibold tracking-[-0.02em] tabular-nums text-[var(--color-ink)]">
             ${weeklyTotal}
           </span>
           <span className="text-sm text-[var(--color-ink-3)]">
@@ -384,7 +385,7 @@ export default function KeyDetails({ listing }: KeyDetailsProps) {
                 <p className="text-sm text-[var(--color-ink-3)]">Map unavailable on this device.</p>
               )}
               <p className="mt-2 text-xs text-[var(--color-ink-3)]">
-                Approximate area only. The exact address is shared once the host accepts your booking.
+                Approximate area only. {listing.listing_purpose === "short_stay" ? "The exact address is shared once the host accepts your booking." : "The exact address is shared when you book an inspection."}
               </p>
             </>
           )}
