@@ -76,24 +76,6 @@ def test_admin_keeps_admin_role_through_onboarding(client, db):
     assert r.json()["role"] == "admin"
 
 
-@pytest.mark.parametrize("stored_role", ["seeker", "owner"])
-def test_admin_flag_gives_the_admin_hub_whatever_the_stored_role(client, db, stored_role):
-    # Production admins have is_admin set and a renter or owner role left on
-    # the row. They must still get the admin Hub, and the welcome screen and
-    # role switch must not take it away.
-    for p in db.rows("profiles"):
-        if p["id"] == OTHER_ID:
-            p.update({"is_admin": True, "role": stored_role})
-    me = client.get("/hub/me", headers=auth(OTHER_ID)).json()
-    assert me["role"] == "admin" and me["onboarded"] is True
-    r = client.post("/hub/onboarding", headers=auth(OTHER_ID), json={"role": "owner", "name": "Olive", "over_18": True, "accept_terms": True})
-    assert r.status_code == 200 and r.json()["role"] == "admin"
-    assert next(p for p in db.rows("profiles") if p["id"] == OTHER_ID)["role"] == stored_role
-    assert client.post("/hub/role", headers=auth(OTHER_ID), json={"role": "renter"}).status_code == 400
-    assert client.get("/hub/home", headers=auth(OTHER_ID)).json() == {"role": "admin"}
-    assert client.get("/hub/admin/overview", headers=auth(OTHER_ID)).status_code == 200
-
-
 def test_owner_with_live_listings_cannot_switch_to_renting(client):
     r = client.post("/hub/role", headers=auth(VERIFIED_OWNER_ID), json={"role": "renter"})
     assert r.status_code == 409

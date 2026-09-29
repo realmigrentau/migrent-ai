@@ -48,17 +48,13 @@ router = APIRouter(prefix="/hub", tags=["hub"])
 
 
 def public_role(profile: dict, is_admin: bool) -> Optional[str]:
-    """Which Hub a person sees. An admin (profiles.is_admin, or an admin
-    role) always gets the admin Hub: a renter or owner role stored on the
-    same account must not hide it, which is what happened to admins whose
-    role was left as 'seeker', or who picked owner on the welcome screen."""
     role = profile.get("role")
-    if is_admin or role in ADMIN_ROLES:
-        return "admin"
     if role == RENTER:
         return "renter"
     if role == OWNER:
         return "owner"
+    if is_admin or role in ADMIN_ROLES:
+        return "admin"
     return None
 
 
@@ -117,8 +113,7 @@ def me(request: Request, authorization: Optional[str] = Header(None)):
         "role": public_role(p, actor.is_admin),
         "is_admin": actor.is_admin,
         "owner_kind": p.get("owner_kind"),
-        # Admins are never asked "renting or listing?": it doesn't apply to them.
-        "onboarded": bool(actor.is_admin or p.get("hub_onboarded_at") or (p.get("onboarding_completed") and p.get("role") in (RENTER, OWNER))),
+        "onboarded": bool(p.get("hub_onboarded_at") or (p.get("onboarding_completed") and p.get("role") in (RENTER, OWNER))),
         "notification_prefs": p.get("notification_prefs") or {},
         "owner_verification": verification,
         "member_since": (p.get("created_at") or "")[:10] or None,
@@ -168,10 +163,10 @@ def onboarding(request: Request, body: OnboardingBody, authorization: Optional[s
         "onboarding_completed_at": now,
     }
     # Admin accounts keep their admin role; the Hub gives them the admin view.
-    if not actor.is_admin:
+    if actor.profile.get("role") not in ADMIN_ROLES:
         patch["role"] = RENTER if body.role == "renter" else OWNER
-        if body.role == "owner":
-            patch["owner_kind"] = body.owner_kind or "individual"
+    if body.role == "owner":
+        patch["owner_kind"] = body.owner_kind or "individual"
     if not actor.profile.get("name"):
         patch["name"] = body.name.strip()
     try:
@@ -208,7 +203,7 @@ def switch_role(request: Request, body: RoleBody, authorization: Optional[str] =
     way that strands live listings or a tenancy without anyone managing them."""
     actor = hub_actor(request, authorization)
     require_writable(actor)
-    if actor.is_admin:
+    if actor.profile.get("role") in ADMIN_ROLES:
         raise HTTPException(status_code=400, detail="Admin accounts keep their admin role")
     target = RENTER if body.role == "renter" else OWNER
     if actor.profile.get("role") == target:

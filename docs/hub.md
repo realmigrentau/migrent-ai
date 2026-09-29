@@ -60,8 +60,6 @@ backend/migrations/043_migrent_hub.sql
 | Property manager | `profiles.role = 'owner'`, `owner_kind = 'property_manager'` | same |
 | Admin | `profiles.is_admin` or an admin role | **never self-selected**; granted in the database |
 
-An admin always gets the admin Hub, whatever renter or owner role is also stored on the account: they skip the welcome question, and the role switch in Settings is refused for them (`public_role` in `backend/routes_hub.py`).
-
 - Every endpoint resolves the caller with `hub_actor()` and checks rights on the server (`require_owner`, `require_admin_actor`, ownership of each record). Hiding a button is never the control.
 - Switching from owner to renter is refused while listings are live or in review, or while a tenancy is active, so nothing is stranded.
 - **View as (admins, for support):** an admin opens it from People with a written reason. It is read-only (every write returns 403), limited to 60 minutes, and the start, the end and the reason are written to `admin_audit_log`. The customer's data is served by the API under the admin's own session plus the `X-Migrent-View-As` header, which the backend checks against the audit log.
