@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Award, IdCard, Mail, Smartphone, Star, type LucideIcon } from "lucide-react";
 import { UserProfile, ProfileBadges } from "../../hooks/useUserProfile";
 
 interface VerificationCarouselProps {
@@ -9,7 +10,7 @@ interface VerificationCarouselProps {
 }
 
 interface VerificationItem {
-  icon: string;
+  icon: LucideIcon;
   label: string;
   verified: boolean;
   detail: string;
@@ -25,14 +26,14 @@ export default function VerificationCarousel({ profile, badges, onVerifyClick }:
   // "Verified Host" (which used to mean "has a listing") is gone.
   const items: VerificationItem[] = [
     {
-      icon: "📧",
+      icon: Mail,
       label: "Email confirmed",
       verified: profile.email_verified,
       detail: profile.email_verified ? "Email address confirmed" : "Email not yet confirmed",
       color: "emerald",
     },
     {
-      icon: "🪪",
+      icon: IdCard,
       label: "Government ID",
       verified: profile.government_id_status === "approved",
       detail:
@@ -46,7 +47,7 @@ export default function VerificationCarousel({ profile, badges, onVerifyClick }:
       color: "rose",
     },
     {
-      icon: "📱",
+      icon: Smartphone,
       label: "Phone confirmed",
       verified: profile.phone_verified,
       detail: profile.phone_verified ? "Phone number confirmed by SMS code" : "Phone not yet confirmed",
@@ -54,12 +55,12 @@ export default function VerificationCarousel({ profile, badges, onVerifyClick }:
     },
   ];
 
-  if (badges.isSuperhost) {
+  if (badges.isHighlyRated) {
     items.push({
-      icon: "⭐",
-      label: "Superhost",
+      icon: Star,
+      label: "Highly rated",
       verified: true,
-      detail: `Superhost status - ${profile.average_rating.toFixed(1)} rating with ${profile.reviews_count}+ reviews`,
+      detail: `${profile.average_rating.toFixed(1)} average from ${profile.reviews_count} reviews`,
       color: "amber",
     });
   }
@@ -69,7 +70,7 @@ export default function VerificationCarousel({ profile, badges, onVerifyClick }:
     profile.badges.forEach(badge => {
       if (!items.some(i => i.label === badge)) {
         items.push({
-          icon: "🏅",
+          icon: Award,
           label: badge,
           verified: true,
           detail: `Earned the ${badge} badge`,
@@ -97,13 +98,14 @@ export default function VerificationCarousel({ profile, badges, onVerifyClick }:
                 setSelectedItem(selectedItem?.label === item.label ? null : item);
               }
             }}
+            type="button"
             className={`shrink-0 flex items-center gap-2.5 px-4 py-3 rounded-2xl border transition-all ${
               item.verified
-                ? "bg-[var(--color-surface-2)]/50 border-[var(--color-line)] hover:shadow-md"
+                ? "bg-[var(--color-surface)] border-[var(--color-line)] hover:border-[var(--color-line-2)]"
                 : "bg-[var(--color-surface)] border-dashed border-[var(--color-line-2)] dark:border-[var(--color-line)] opacity-60"
             }`}
           >
-            <span className="text-xl">{item.icon}</span>
+            <item.icon className="h-5 w-5 shrink-0 text-[var(--color-ink-2)]" strokeWidth={1.9} aria-hidden="true" />
             <div className="text-left">
               <p className={`text-xs font-semibold ${
                 item.verified ? "text-[var(--color-ink)]" : "text-[var(--color-ink-3)]"
@@ -141,7 +143,7 @@ export default function VerificationCarousel({ profile, badges, onVerifyClick }:
           >
             <div className="mt-3 p-4 rounded-xl bg-[var(--color-surface)] border border-[var(--color-line)]">
               <div className="flex items-center gap-2">
-                <span className="text-lg">{selectedItem.icon}</span>
+                <selectedItem.icon className="h-4 w-4 shrink-0 text-[var(--color-ink-3)]" aria-hidden="true" />
                 <p className="text-sm text-[var(--color-ink-2)]">{selectedItem.detail}</p>
               </div>
             </div>

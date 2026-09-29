@@ -1,218 +1,160 @@
 import Link from "next/link";
+import { ArrowRight, BadgeCheck, HandCoins, Languages, Sprout } from "lucide-react";
 import SEOHead from "../components/SEOHead";
-import { motion, type Variants } from "framer-motion";
-import { useTranslation } from "react-i18next";
-import PageSubnav from "../components/ui/PageSubnav";
-import { hubFromSite } from "../lib/hub/routes";
+import { CloseCard, PageHero, Reveal, SectionHead } from "../components/site";
+import { businessDetails, hostFeeSentence, seekerFeeSentence, siteIdentity } from "../lib/siteIdentity";
 
-const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 30 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: { delay: i * 0.1, duration: 0.5, ease: "easeOut" },
-  }),
-};
+/**
+ * About Migrent, with careers and press as sections (/careers and /press
+ * redirect here).
+ *
+ * Written only from what is confirmed: the brand, the ABN, the fee model
+ * and what the product does. The old pages' city count, "AI-powered"
+ * matching, visa checks, milestones and unattributed testimonials are gone;
+ * none of them could be backed up. The founding city is not stated because
+ * lib/siteIdentity.ts records it as unconfirmed.
+ */
+
+const PRINCIPLES = [
+  { icon: Sprout, title: "Built for arriving", body: "A visa, a job offer and no Australian paper trail should not decide where you sleep. Everything here starts from that." },
+  { icon: BadgeCheck, title: "Checked, not promised", body: "We tell you exactly what we check (a host's ID, every listing) and exactly what we do not, so a badge never means more than it says." },
+  { icon: HandCoins, title: "Fair about money", body: "Renters search and apply for free. Hosts pay once per property, only for stays. Nobody pays a commission on rent." },
+  { icon: Languages, title: "Plain words", body: "Much of this site's audience reads English as a second language, so we write short sentences and explain the rules that matter." },
+];
 
 export default function About() {
-  const { t } = useTranslation();
-
-  const stats = [
-    { value: t("about.stat1Value"), label: t("about.stat1Label"), detail: t("about.stat1Detail") },
-    { value: t("about.stat2Value"), label: t("about.stat2Label"), detail: t("about.stat2Detail") },
-    { value: t("about.stat3Value"), label: t("about.stat3Label"), detail: t("about.stat3Detail") },
-    { value: t("about.stat4Value"), label: t("about.stat4Label"), detail: t("about.stat4Detail") },
-  ];
-
-  const values = [
-    { title: t("about.value1Title"), desc: t("about.value1Desc"), icon: "M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" },
-    { title: t("about.value2Title"), desc: t("about.value2Desc"), icon: "M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" },
-    { title: t("about.value3Title"), desc: t("about.value3Desc"), icon: "M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" },
-    { title: t("about.value4Title"), desc: t("about.value4Desc"), icon: "M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" },
-  ];
-
+  const press = siteIdentity.emails.press;
   return (
     <>
-      <SEOHead title="About" description="Migrent - founded in Sydney by an entrepreneur building an AI-powered rental marketplace for migrants and students across Australia." />
-
-      <PageSubnav
+      <SEOHead
         title="About"
-        links={[
-          { label: "Story", href: "#story" },
-          { label: "Mission", href: "#mission" },
-          { label: "Values", href: "#values" },
-          { label: "Business", href: "#business" },
-        ]}
-        cta={{ label: "Sign up", href: "/signup" }}
-        threshold={360}
+        description="Migrent helps migrants, students and new arrivals find a room they can trust in Australia, and helps owners let to them properly."
       />
 
-      <div className="space-y-16">
-        {/* Hero */}
-        <section className="relative text-center py-16 overflow-hidden">
-          <div className="absolute top-10 left-10 w-72 h-72 bg-[var(--color-primary)]/10 dark:bg-[var(--color-primary)]/5 hidden " />
-          <div className="absolute bottom-10 right-10 w-96 h-96 bg-[var(--color-primary)]/10 hidden " style={{ animationDelay: "1s" }} />
-          <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="relative z-10 max-w-3xl mx-auto">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 border border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)] text-xs font-medium text-[var(--color-primary)] dark:text-[var(--color-primary)] mb-6">
-              {t("about.badge")}
-            </div>
-            <h1 className="font-serif text-[42px] sm:text-[56px] font-medium tracking-[-0.025em] leading-[1.0] text-[var(--color-ink)]">
-              {t("about.headline1")} {t("about.headlineAccent")} {t("about.headline2")}
-            </h1>
-            <p className="mt-6 text-lg text-[var(--color-ink-3)] max-w-2xl mx-auto leading-relaxed">
-              {t("about.subtitle")}
-            </p>
-          </motion.div>
-        </section>
+      <PageHero
+        eyebrow="About Migrent"
+        crumbs={[{ label: "Home", href: "/" }, { label: "About" }]}
+        title={
+          <>
+            Renting, for people who have just <strong>arrived.</strong>
+          </>
+        }
+        lead="Migrent helps migrants, students and new arrivals find a room they can trust in Australia, and helps owners let to them properly."
+      />
 
-        {/* Stats */}
-        <section className="max-w-3xl mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {stats.map((stat, i) => (
-              <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="card p-4 rounded-2xl text-center">
-                <p className="font-serif type-heavy text-[32px] leading-none text-[var(--color-primary)]">{stat.value}</p>
-                <p className="text-xs font-bold uppercase tracking-wider text-[var(--color-ink)] mt-1">{stat.label}</p>
-                <p className="text-xs text-[var(--color-ink-3)] mt-0.5">{stat.detail}</p>
-              </motion.div>
+      <section className="site-section site-section--flush" aria-labelledby="story-heading">
+        <div className="site-shell grid gap-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:gap-16">
+          <Reveal>
+            <SectionHead
+              eyebrow="Why Migrent exists"
+              id="story-heading"
+              heading={
+                <>
+                  Finding a room should not be a <strong>full-time job.</strong>
+                </>
+              }
+            />
+          </Reveal>
+          <Reveal delay={0.06} className="site-prose">
+            <p>New arrivals are asked for things they cannot have yet: an Australian rental history, local references, a credit file. They are told to look in social media groups where scams are common, and to hand over a bond without knowing where it should go.</p>
+            <p>Migrent puts the pieces in one place. Hosts show us their ID before their rooms go live. Renters apply once with a Rental Profile that tells their story. Everyone can see where the bond goes (to the state, never to us), and both sides run the tenancy from the same app, Migrent Hub.</p>
+            <p>
+              Migrent is an introduction service, not a real estate agent. <Link href="/how-renting-works#not-an-agent">What that means for you</Link>.
+            </p>
+          </Reveal>
+        </div>
+      </section>
+
+      <section className="site-section" aria-labelledby="principles-heading">
+        <div className="site-shell">
+          <Reveal>
+            <SectionHead
+              eyebrow="How we work"
+              id="principles-heading"
+              heading={
+                <>
+                  Four things we <strong>hold to.</strong>
+                </>
+              }
+            />
+          </Reveal>
+          <ul className="m-0 mt-10 grid list-none gap-3 p-0 sm:grid-cols-2 lg:grid-cols-4">
+            {PRINCIPLES.map((p, i) => (
+              <Reveal as="li" key={p.title} delay={i * 0.05} className="site-card site-card--pad">
+                <span className="site-icon" aria-hidden="true">
+                  <p.icon className="h-5 w-5" strokeWidth={1.9} />
+                </span>
+                <h3 className="site-h3 mt-4">{p.title}</h3>
+                <p className="site-body mt-1.5">{p.body}</p>
+              </Reveal>
             ))}
-          </div>
-        </section>
+          </ul>
+        </div>
+      </section>
 
-        {/* The Story */}
-        <section id="story" className="max-w-3xl mx-auto scroll-mt-[76px]">
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} className="card p-6 md:p-8 rounded-2xl space-y-5">
-            <motion.h2 custom={0} variants={fadeUp} className="font-serif text-[30px] md:text-[38px] tracking-[-0.02em] text-[var(--color-ink)]">
-              {t("about.storyTitle")} {t("about.storyAccent")}
-            </motion.h2>
-            <motion.div custom={1} variants={fadeUp} className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-4">
-              <p>
-                {t("about.storyP1")}
-              </p>
-              <p>
-                {t("about.storyP2")}
-              </p>
-              <p>
-                {t("about.storyP3")}
-              </p>
-              <p>
-                {t("about.storyP4")}
-              </p>
-            </motion.div>
-          </motion.div>
-        </section>
-
-        {/* Mission */}
-        <section id="mission" className="max-w-3xl mx-auto scroll-mt-[76px]">
-          <div className="card p-6 md:p-8 rounded-2xl bg-[var(--color-primary-soft)] from-[var(--color-primary-soft)] to-[var(--color-primary-soft)]/50 dark:from-[var(--color-primary)]/10 dark:to-[var(--color-primary)]/5 border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)] space-y-4">
-            <h2 className="font-serif text-[26px] tracking-[-0.015em] text-[var(--color-ink)]">{t("about.missionTitle")}</h2>
-            <p className="text-sm text-[var(--color-ink-2)] leading-relaxed">
-              {t("about.missionText")}
+      <section id="careers" className="site-section site-section--tight scroll-mt-28" aria-labelledby="careers-heading">
+        <div className="site-shell grid gap-4 lg:grid-cols-2">
+          <Reveal className="site-card site-card--pad flex flex-col">
+            <p className="eyebrow">Careers</p>
+            <h2 id="careers-heading" className="site-h2 mt-3 !text-[clamp(1.6rem,2.6vw,2.1rem)]">
+              Help build it
+            </h2>
+            <p className="site-body mt-3 flex-1">
+              There are no paid roles open right now. If you would like to help as an early contributor (developer, designer, writer or community builder), email us with what you do and why Migrent matters to you.
             </p>
-          </div>
-        </section>
+            <a href={`mailto:${siteIdentity.emails.support}?subject=${encodeURIComponent("Contributing to Migrent")}`} className="site-link mt-6">
+              Email {siteIdentity.emails.support} <ArrowRight className="h-4 w-4" strokeWidth={2} aria-hidden="true" />
+            </a>
+          </Reveal>
 
-        {/* Values */}
-        <section id="values" className="max-w-3xl mx-auto scroll-mt-[76px]">
-          <h2 className="font-serif text-[32px] md:text-[44px] tracking-[-0.02em] text-[var(--color-ink)] mb-8 text-center">
-            {t("about.valuesTitle")} {t("about.valuesAccent")}
-          </h2>
-          <div className="grid sm:grid-cols-2 gap-4">
-            {values.map((item, i) => (
-              <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="card p-5 rounded-2xl">
-                <div className="w-10 h-10 rounded-xl bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 border border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)] flex items-center justify-center mb-3">
-                  <svg className="w-5 h-5 text-[var(--color-primary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d={item.icon} />
-                  </svg>
-                </div>
-                <h3 className="font-semibold text-[var(--color-ink)] text-sm mb-1">{item.title}</h3>
-                <p className="text-sm text-[var(--color-ink-3)] leading-relaxed">{item.desc}</p>
-              </motion.div>
-            ))}
-          </div>
-        </section>
-
-        {/* How It Works Quick */}
-        <section className="max-w-3xl mx-auto">
-          <div className="card p-6 rounded-2xl space-y-4">
-            <h2 className="font-serif text-[26px] tracking-[-0.015em] text-[var(--color-ink)]">{t("about.howTitle")}</h2>
-            <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
-              <p>{t("about.howDesc")}</p>
-              <div className="grid sm:grid-cols-2 gap-3">
-                <div className="card-subtle p-4 rounded-xl border-l-2 border-l-[var(--color-primary)]">
-                  <h3 className="font-semibold text-[var(--color-ink)] text-sm mb-1">{t("about.howSeekerTitle")}</h3>
-                  <p className="text-xs text-[var(--color-ink-3)]">{t("about.howSeekerDesc")}</p>
-                  <Link href="/for-seekers" className="text-xs text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors mt-1 inline-block">{t("about.howSeekerLink")}</Link>
-                </div>
-                <div className="card-subtle p-4 rounded-xl border-l-2 border-l-[var(--color-primary)]">
-                  <h3 className="font-semibold text-[var(--color-ink)] text-sm mb-1">{t("about.howOwnerTitle")}</h3>
-                  <p className="text-xs text-[var(--color-ink-3)]">{t("about.howOwnerDesc")}</p>
-                  <Link href="/for-owners" className="text-xs text-[var(--color-primary)] hover:opacity-80 underline underline-offset-2 transition-colors mt-1 inline-block">{t("about.howOwnerLink")}</Link>
-                </div>
-              </div>
+          <div id="press" className="scroll-mt-28">
+          <Reveal delay={0.06} className="site-card site-card--pad flex h-full flex-col">
+            <p className="eyebrow">Press</p>
+            <h2 id="press-heading" className="site-h2 mt-3 !text-[clamp(1.6rem,2.6vw,2.1rem)]">
+              Writing about Migrent?
+            </h2>
+            <div className="site-body mt-3 flex-1 space-y-3">
+              <p className="m-0">Migrent is an Australian rental platform for migrants, students and new arrivals. {seekerFeeSentence()} {hostFeeSentence()}</p>
+              <p className="m-0">For interviews, logos or screenshots, email us.</p>
             </div>
+            <a href={`mailto:${press}?subject=${encodeURIComponent("Press enquiry")}`} className="site-link mt-6">
+              Email {press} <ArrowRight className="h-4 w-4" strokeWidth={2} aria-hidden="true" />
+            </a>
+          </Reveal>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* Business Details */}
-        <section id="business" className="max-w-3xl mx-auto scroll-mt-[76px]">
-          <div className="card p-6 rounded-2xl space-y-3">
-            <h2 className="font-serif text-[22px] tracking-[-0.01em] text-[var(--color-ink)]">{t("about.businessTitle")}</h2>
-            <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-1">
-              <div className="grid sm:grid-cols-2 gap-4">
-                <div>
-                  <span className="text-xs font-medium uppercase tracking-wider text-[var(--color-ink-3)]">{t("about.businessName")}</span>
-                  <p className="font-semibold text-[var(--color-ink)]">Migrent</p>
+      <section className="site-section site-section--tight" aria-labelledby="business-heading">
+        <div className="site-shell">
+          <Reveal className="site-card site-card--pad">
+            <h2 id="business-heading" className="site-h3 site-h3--lg">
+              Business details
+            </h2>
+            <dl className="m-0 mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+              {businessDetails().map((row) => (
+                <div key={row.label}>
+                  <dt className="site-meta">{row.label}</dt>
+                  <dd className="m-0 text-[15px] font-semibold text-[color:var(--color-ink)] [overflow-wrap:anywhere]">{row.value}</dd>
                 </div>
-                <div>
-                  <span className="text-xs font-medium uppercase tracking-wider text-[var(--color-ink-3)]">{t("about.abn")}</span>
-                  <p className="font-semibold text-[var(--color-ink)]">22 669 566 941</p>
-                </div>
-                <div>
-                  <span className="text-xs font-medium uppercase tracking-wider text-[var(--color-ink-3)]">{t("about.structure")}</span>
-                  <p>{t("about.structureValue")}</p>
-                </div>
-                <div>
-                  <span className="text-xs font-medium uppercase tracking-wider text-[var(--color-ink-3)]">{t("about.location")}</span>
-                  <p>{t("about.locationValue")}</p>
-                </div>
-                <div>
-                  <span className="text-xs font-medium uppercase tracking-wider text-[var(--color-ink-3)]">{t("about.markets")}</span>
-                  <p>{t("about.marketsValue")}</p>
-                </div>
-                <div>
-                  <span className="text-xs font-medium uppercase tracking-wider text-[var(--color-ink-3)]">{t("about.emailLabel")}</span>
-                  <p><a href="https://mail.google.com/mail/?view=cm&fs=1&to=migrentau@gmail.com" target="_blank" rel="noopener noreferrer" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">migrentau@gmail.com</a></p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Disclaimer */}
-        <section className="max-w-3xl mx-auto">
-          <div className="card-subtle p-5 rounded-2xl border-l-2 border-l-[var(--color-warn-500)]">
-            <p className="text-sm text-[var(--color-ink-3)]">
-              <strong className="text-[var(--color-ink-2)]">{t("about.disclaimerLabel")}</strong> {t("about.disclaimerText")}
+              ))}
+            </dl>
+            <p className="site-meta mt-6">
+              Every policy is in the <Link href="/legal" className="underline underline-offset-2">Legal centre</Link>.
             </p>
-          </div>
-        </section>
+          </Reveal>
+        </div>
+      </section>
 
-        {/* CTA */}
-        <section className="max-w-3xl mx-auto pb-8">
-          <div className="card p-8 rounded-2xl bg-[var(--color-primary-soft)] text-center">
-            <h2 className="font-serif text-[30px] md:text-[38px] tracking-[-0.02em] text-[var(--color-ink)] mb-3">{t("about.ctaTitle")}</h2>
-            <p className="text-sm text-[var(--color-ink-2)] mb-6">{t("about.ctaSubtitle")}</p>
-            <div className="flex gap-3 justify-center flex-col sm:flex-row">
-              <Link href={hubFromSite.home()} className="inline-block btn-primary text-sm px-8 py-2.5 rounded-[10px]">
-                {t("about.seekerCta")}
-              </Link>
-              <Link href={hubFromSite.listProperty()} className="inline-block btn-secondary text-sm px-8 py-2.5 rounded-[10px]">
-                {t("about.ownerCta")}
-              </Link>
-            </div>
-          </div>
-        </section>
-      </div>
+      <CloseCard
+        heading={
+          <>
+            Find your <strong className="type-script">place</strong> here.
+          </>
+        }
+        primary={{ label: "Search rooms", href: "/seeker/search" }}
+        secondary={{ label: "List a property", href: "/for-owners" }}
+      />
     </>
   );
 }

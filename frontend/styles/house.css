@@ -1,0 +1,345 @@
+/* Hallmark · component: interactive cut-away house · genre: editorial x modern-minimal · design-system: design.md v4
+ * states: default · hover · focus (via the panel) · active · lit/unlit · on/off per item · reduced-motion
+ * contrast: badges >= 3:1 on every wall tint in both themes
+ */
+
+/* ══════════════════════════════════════════════════════════════
+   THE HOUSE  ·  components/home/house/HouseScene.tsx
+
+   A doll's house on a model plinth. Terracotta roof (the one warm thing
+   on the site, and the colour of an Australian tiled roof), cobalt for
+   anything that means "you chose this", and walls that are warm where a
+   lamp is on and cool where it is off.
+
+   Every colour in the drawing is a token below. Dawn in light mode,
+   night in dark mode - the same house, with the lights doing the work.
+   ══════════════════════════════════════════════════════════════ */
+
+.hs {
+  --hs-frame: #1b2540;
+  --hs-wall: #fbf8f3;
+  --hs-wall-warm: #fdf6ec;
+  --hs-wall-off: #e7ebf2;
+  --hs-wall-lit: #fff1d9;
+  --hs-tile: #eef3f8;
+  --hs-tile-line: #dde5ef;
+  --hs-floor: #e3d3bf;
+  --hs-floor-tile: #d9dfe8;
+  --hs-skirting: #cdb9a0;
+  --hs-side: #c9d2e1;
+  --hs-attic: #efe7dc;
+  --hs-roof: #b96848;
+  --hs-roof-side: #9c5438;
+  --hs-roof-line: #8a4830;
+  --hs-chimney: #a45a3c;
+  --hs-window: #bcd4fb;
+  --hs-window-frame: #ffffff;
+  --hs-window-bar: #ffffff;
+  --hs-star: transparent;
+  --hs-wood: #c49a74;
+  --hs-linen: #ffffff;
+  --hs-blanket-0: #365df3;
+  --hs-blanket-1: #d98b68;
+  --hs-blanket-2: #7f95c9;
+  --hs-metal: #98a2b3;
+  --hs-porcelain: #ffffff;
+  --hs-porcelain-rim: #dfe5ee;
+  --hs-mirror: #d6e4fb;
+  --hs-cabinet: #f3ede4;
+  --hs-cabinet-line: #d9cdbc;
+  --hs-bench: #8f7a66;
+  --hs-oven: #2b3346;
+  --hs-fridge: #eef1f6;
+  --hs-appliance: #f5f7fa;
+  --hs-appliance-line: #c5ccd8;
+  --hs-drum: #c5ccd8;
+  --hs-drum-glass: #9fc0f2;
+  --hs-sofa: #4a66cf;
+  --hs-sofa-back: #3f58b8;
+  --hs-cushion: #f0c9a8;
+  --hs-rug: #e9dccb;
+  --hs-pot: #b96848;
+  --hs-leaf: #5f8a86;
+  --hs-foliage: #7fa3a0;
+  --hs-foliage-2: #93b4b1;
+  --hs-trunk: #8a6f58;
+  --hs-plinth-top: #e9e3da;
+  --hs-plinth-front: #d9d0c3;
+  --hs-plinth-side: #cbc1b3;
+  --hs-shadow: rgb(27 37 64 / 0.10);
+  --hs-carport: #394766;
+  --hs-drive: #d6cec2;
+  --hs-car: #2a3550;
+  --hs-car-glass: #bcd4fb;
+  --hs-car-light: #ffd48a;
+  --hs-wheel: #1b2540;
+  --hs-hub: #c5ccd8;
+  --hs-kennel: #d98b68;
+  --hs-kennel-roof: #9c5438;
+  --hs-kennel-door: #3a2a22;
+  --hs-dog: #c98d5a;
+  --hs-dog-ear: #8f5a34;
+  --hs-dog-eye: #2a1c14;
+  --hs-camera: #f5f7fa;
+  --hs-camera-line: #6b7486;
+  --hs-lens: #1b2540;
+  --hs-rec: #d9444a;
+  --hs-led: #22c55e;
+  --hs-wifi: #365df3;
+  --hs-meter: #e7ebf2;
+  --hs-bottle: #7f95c9;
+  --hs-bottle-2: #d98b68;
+  --hs-glow-core: rgb(255 204 140 / 0.62);
+  --hs-glow-edge: rgb(255 204 140 / 0);
+  --hs-tag: #365df3;
+  --hs-tag-fg: #ffffff;
+  --hs-quiet: #ffffff;
+  --hs-quiet-fg: #1b2540;
+  --hs-quiet-line: rgb(27 37 64 / 0.16);
+
+  --hs-ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html.dark .hs {
+  --hs-frame: #0a0f1d;
+  --hs-wall: #1a2131;
+  --hs-wall-warm: #221f22;
+  --hs-wall-off: #121826;
+  --hs-wall-lit: #3a2c1a;
+  --hs-tile: #172033;
+  --hs-tile-line: #1f2a40;
+  --hs-floor: #2c2620;
+  --hs-floor-tile: #1c2333;
+  --hs-skirting: #3a3128;
+  --hs-side: #111827;
+  --hs-attic: #161d2c;
+  --hs-roof: #9a5236;
+  --hs-roof-side: #7a3f29;
+  --hs-roof-line: #5e2f1e;
+  --hs-chimney: #83462f;
+  --hs-window: #16244a;
+  --hs-window-frame: #2a3653;
+  --hs-window-bar: #2a3653;
+  --hs-star: #fff4d6;
+  --hs-wood: #7a5c44;
+  --hs-linen: #d8dce6;
+  --hs-blanket-0: #4e6fe8;
+  --hs-blanket-1: #b0705a;
+  --hs-blanket-2: #5d6f9e;
+  --hs-metal: #5f6a7d;
+  --hs-porcelain: #c9d0dc;
+  --hs-porcelain-rim: #9aa4b5;
+  --hs-mirror: #22304f;
+  --hs-cabinet: #2a2724;
+  --hs-cabinet-line: #3b3631;
+  --hs-bench: #5c4d40;
+  --hs-oven: #0c111d;
+  --hs-fridge: #2a3142;
+  --hs-appliance: #2a3142;
+  --hs-appliance-line: #3a4458;
+  --hs-drum: #3a4458;
+  --hs-drum-glass: #1f3563;
+  --hs-sofa: #3b52a8;
+  --hs-sofa-back: #324690;
+  --hs-cushion: #a3775c;
+  --hs-rug: #2e2822;
+  --hs-pot: #8a4830;
+  --hs-leaf: #3f5f5c;
+  --hs-foliage: #243a3c;
+  --hs-foliage-2: #2c4547;
+  --hs-trunk: #3b3029;
+  --hs-plinth-top: #1b2130;
+  --hs-plinth-front: #141925;
+  --hs-plinth-side: #10141e;
+  --hs-shadow: rgb(0 0 0 / 0.35);
+  --hs-carport: #0f1524;
+  --hs-drive: #1e2432;
+  --hs-car: #3c4a70;
+  --hs-car-glass: #22345e;
+  --hs-car-light: #ffcf7a;
+  --hs-wheel: #05070c;
+  --hs-hub: #5f6a7d;
+  --hs-kennel: #8a4f3a;
+  --hs-kennel-roof: #5e2f1e;
+  --hs-kennel-door: #0a0706;
+  --hs-dog: #a0703f;
+  --hs-dog-ear: #6b4426;
+  --hs-camera: #c9d0dc;
+  --hs-camera-line: #8993a6;
+  --hs-lens: #05070c;
+  --hs-wifi: #6b8cff;
+  --hs-meter: #1f2738;
+  --hs-bottle: #5d6f9e;
+  --hs-bottle-2: #b0705a;
+  --hs-glow-core: rgb(255 184 104 / 0.55);
+  --hs-glow-edge: rgb(255 184 104 / 0);
+  --hs-tag: #6b8cff;
+  --hs-tag-fg: #0b1020;
+  --hs-quiet: #1f2738;
+  --hs-quiet-fg: #e6eaf2;
+  --hs-quiet-line: rgb(255 255 255 / 0.16);
+}
+
+/* ── Grounds ─────────────────────────────────────────────────── */
+.hs-plinth__top { fill: var(--hs-plinth-top); }
+.hs-plinth__front { fill: var(--hs-plinth-front); }
+.hs-plinth__side { fill: var(--hs-plinth-side); }
+.hs-shadow { fill: var(--hs-shadow); }
+.hs-trunk { stroke: var(--hs-trunk); stroke-width: 6; stroke-linecap: round; }
+.hs-foliage { fill: var(--hs-foliage); }
+.hs-foliage--b { fill: var(--hs-foliage-2); }
+.hs-carport__roof { fill: var(--hs-carport); }
+.hs-carport__post { stroke: var(--hs-carport); stroke-width: 5; stroke-linecap: round; }
+.hs-drive { fill: var(--hs-drive); }
+.hs-car__body { fill: var(--hs-car); }
+.hs-car__glass { fill: var(--hs-car-glass); }
+.hs-car__light { fill: var(--hs-car-light); }
+.hs-wheel { fill: var(--hs-wheel); }
+.hs-hub { fill: var(--hs-hub); }
+.hs-kennel { fill: var(--hs-kennel); }
+.hs-kennel__roof { fill: var(--hs-kennel-roof); }
+.hs-kennel__door { fill: var(--hs-kennel-door); }
+.hs-dog { fill: var(--hs-dog); }
+.hs-dog__ear { fill: var(--hs-dog-ear); }
+.hs-dog__eye { fill: var(--hs-dog-eye); }
+
+/* ── Structure ───────────────────────────────────────────────── */
+.hs-side { fill: var(--hs-side); }
+.hs-meter { fill: var(--hs-meter); stroke: var(--hs-quiet-line); stroke-width: 1; }
+.hs-frame__fill { fill: var(--hs-frame); }
+.hs-frame__wall { stroke: var(--hs-frame); stroke-width: 4; }
+.hs-frame__edge { fill: none; stroke: var(--hs-frame); stroke-width: 6; stroke-linejoin: round; }
+.hs-roof__fascia { fill: var(--hs-roof); stroke: var(--hs-roof-line); stroke-width: 2; stroke-linejoin: round; }
+.hs-roof__side { fill: var(--hs-roof-side); stroke: var(--hs-roof-line); stroke-width: 2; stroke-linejoin: round; }
+.hs-roof__tiles { stroke: var(--hs-roof-line); stroke-width: 1.5; opacity: 0.55; }
+.hs-attic { fill: var(--hs-attic); }
+.hs-chimney { fill: var(--hs-chimney); }
+.hs-chimney--cap { fill: var(--hs-roof-line); }
+
+/* ── Rooms ───────────────────────────────────────────────────── */
+.hs-wall { fill: var(--hs-wall); transition: fill 600ms var(--hs-ease); }
+.hs-wall--warm { fill: var(--hs-wall-warm); }
+.hs-wall--tile { fill: var(--hs-tile); }
+.hs-tile-line { stroke: var(--hs-tile-line); stroke-width: 1; }
+.hs-floor { fill: var(--hs-floor); }
+.hs-floor--tile { fill: var(--hs-floor-tile); }
+.hs-skirting { stroke: var(--hs-skirting); stroke-width: 1.5; }
+.hs-window__glass { fill: var(--hs-window); }
+.hs-window__glass--side { opacity: 0.9; }
+.hs-window__star { fill: var(--hs-star); }
+.hs-window__bar { stroke: var(--hs-window-bar); stroke-width: 2; fill: none; }
+.hs-window__frame { fill: none; stroke: var(--hs-window-frame); stroke-width: 2.5; }
+.hs-window__sill { fill: var(--hs-window-frame); }
+.hs-wood { fill: var(--hs-wood); }
+.hs-linen { fill: var(--hs-linen); }
+.hs-blanket--0 { fill: var(--hs-blanket-0); }
+.hs-blanket--1 { fill: var(--hs-blanket-1); }
+.hs-blanket--2 { fill: var(--hs-blanket-2); }
+.hs-blanket__fold { stroke: var(--hs-linen); stroke-width: 1.2; opacity: 0.45; }
+.hs-metal { fill: var(--hs-metal); }
+.hs-lamp__shade { fill: var(--hs-car-light); }
+.hs-pipe { stroke: var(--hs-metal); stroke-width: 2.5; fill: none; stroke-linecap: round; }
+.hs-porcelain { fill: var(--hs-porcelain); stroke: var(--hs-porcelain-rim); stroke-width: 1.2; }
+.hs-porcelain__rim { stroke: var(--hs-porcelain-rim); stroke-width: 1.2; }
+.hs-mirror { fill: var(--hs-mirror); stroke: var(--hs-porcelain-rim); stroke-width: 1.5; }
+.hs-cabinet { fill: var(--hs-cabinet); stroke: var(--hs-cabinet-line); stroke-width: 1; }
+.hs-cabinet__line { stroke: var(--hs-cabinet-line); stroke-width: 1.2; fill: none; }
+.hs-bench { fill: var(--hs-bench); }
+.hs-oven { fill: var(--hs-oven); }
+.hs-kettle { fill: var(--hs-metal); stroke: var(--hs-metal); stroke-width: 1; }
+.hs-fridge { fill: var(--hs-fridge); stroke: var(--hs-appliance-line); stroke-width: 1.2; }
+.hs-fridge__line { stroke: var(--hs-appliance-line); stroke-width: 1.4; stroke-linecap: round; fill: none; }
+.hs-appliance { fill: var(--hs-appliance); stroke: var(--hs-appliance-line); stroke-width: 1.2; }
+.hs-appliance__line { stroke: var(--hs-appliance-line); stroke-width: 1.2; fill: none; }
+.hs-drum { fill: var(--hs-drum); }
+.hs-drum__glass { fill: var(--hs-drum-glass); }
+.hs-bottle { fill: var(--hs-bottle); }
+.hs-bottle--b { fill: var(--hs-bottle-2); }
+.hs-sofa { fill: var(--hs-sofa); }
+.hs-sofa--back { fill: var(--hs-sofa-back); }
+.hs-cushion { fill: var(--hs-cushion); }
+.hs-leg { stroke: var(--hs-wood); stroke-width: 2.5; stroke-linecap: round; }
+.hs-rug { fill: var(--hs-rug); }
+.hs-pot { fill: var(--hs-pot); }
+.hs-leaf { fill: var(--hs-leaf); }
+.hs-camera { fill: var(--hs-camera); stroke: var(--hs-camera-line); stroke-width: 1.2; }
+.hs-camera__lens { fill: var(--hs-lens); }
+.hs-rec { fill: var(--hs-rec); }
+.hs-led { fill: var(--hs-led); }
+.hs-wifi { stroke: var(--hs-wifi); stroke-width: 2; fill: none; stroke-linecap: round; }
+
+/* ── Light ───────────────────────────────────────────────────── */
+.hs-glow { fill: url(#hs-glow); opacity: 0; transition: opacity 600ms var(--hs-ease); pointer-events: none; }
+.hs-glow--always { opacity: 0.55; }
+.hs-glow__core { stop-color: var(--hs-glow-core); }
+.hs-glow__edge { stop-color: var(--hs-glow-edge); }
+.hs-room--bed[data-lit="true"] .hs-wall { fill: var(--hs-wall-lit); }
+.hs-room--bed[data-lit="true"] .hs-glow { opacity: 1; }
+.hs-room--bed[data-lit="false"] .hs-wall { fill: var(--hs-wall-off); }
+.hs-room--bed[data-lit="false"] .hs-bed,
+.hs-room--bed[data-lit="false"] .hs-lamp { opacity: 0.55; transition: opacity 600ms var(--hs-ease); }
+.hs-room--bed .hs-bed,
+.hs-room--bed .hs-lamp { transition: opacity 600ms var(--hs-ease); }
+
+/* A bedroom is the one thing in the drawing a pointer can press. */
+.hs-hit { fill: transparent; }
+.hs-room--bed { cursor: pointer; }
+@media (hover: hover) and (pointer: fine) {
+  .hs-room--bed:hover .hs-wall { fill: var(--hs-wall-lit); }
+  .hs-room--bed[data-lit="false"]:hover .hs-bed { opacity: 0.8; }
+}
+
+/* ── Badges ──────────────────────────────────────────────────── */
+.hs-badge--tag .hs-badge__disc { fill: var(--hs-tag); }
+.hs-badge--tag .hs-badge__glyph { stroke: var(--hs-tag-fg); }
+.hs-badge--quiet .hs-badge__disc { fill: var(--hs-quiet); stroke: var(--hs-quiet-line); stroke-width: 1; }
+.hs-badge--quiet .hs-badge__glyph { stroke: var(--hs-quiet-fg); }
+
+/* ── Items that come and go ─────────────────────────────────────
+   One entrance for everything: a short rise and a fade, from the item's
+   own base, so a car settles onto the drive and a lamp onto its table.
+   transform-box makes the origin the item's own box, not the SVG's. */
+.hs-item {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  transition:
+    opacity 260ms var(--hs-ease),
+    transform 420ms var(--hs-ease);
+}
+.hs-item[data-on="false"] {
+  opacity: 0;
+  transform: translateY(6px) scale(0.92);
+  pointer-events: none;
+}
+
+/* ── The roof lifts once, on arrival ────────────────────────── */
+.hs-roof {
+  transform: translateY(-12px);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .hs-roof {
+    animation: hs-roof-lift 1400ms var(--hs-ease) 900ms both;
+  }
+  @keyframes hs-roof-lift {
+    from { transform: translateY(0); }
+    to { transform: translateY(-12px); }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hs-item,
+  .hs-wall,
+  .hs-glow,
+  .hs-room--bed .hs-bed,
+  .hs-room--bed .hs-lamp {
+    transition-duration: 120ms;
+  }
+  .hs-item[data-on="false"] { transform: none; }
+}

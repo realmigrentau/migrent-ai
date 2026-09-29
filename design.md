@@ -24,8 +24,10 @@ home-finding marketplace, so trust and clarity lead.
 Pages within a family share the family's shape; they vary only in component
 archetypes and hero treatment.
 
-- Marketing pages: **Marquee Hero** (the sunrise hero) -> trust band ->
-  editorial sections -> sideways-scroll showcase -> statement CTA.
+- Marketing pages: **Marquee Hero** (the sunrise hero with the interactive
+  house) -> trust band -> editorial sections -> sideways-scroll showcase ->
+  statement CTA. Inner public pages use the **page hero** (the same sky,
+  quieter) -> sections -> close card. See "Public site kit" below.
 - **Migrent Hub** (every signed-in screen): floating navigation rail on
   desktop (expanded 248px / compact 76px), five-tab bottom bar on phones,
   a page header (title, one line of description, actions), then sections of
@@ -224,7 +226,7 @@ scroll) + Framer Motion.
   `-danger` / `.btn-text`), one field system, one card system, one radius scale.
 - The deep navy footer (`--color-deep`) as the close on the public site.
 - CTA voice (fill style, radius, padding rhythm).
-- The mono terracotta eyebrow -> display heading rhythm (eyebrow stacked ABOVE heading,
+- The mono cobalt eyebrow -> display heading rhythm (eyebrow stacked ABOVE heading,
   same column - never the tag-left / heading-right two-column pattern).
 - Cool canvas and white surfaces, hairline borders, shadows only on floating things.
 
@@ -241,6 +243,35 @@ scroll) + Framer Motion.
 5. No 4-column link-index footer as the only footer idea (the AI fingerprint).
 6. Eyebrow tags stack above headings; cap 1-2 ordinal tags per page.
 7. Tinted neutrals only - no pure #000 / #fff base surfaces.
+
+## Public site kit (v3.1, 2026-09-29)
+The public site was rebuilt to match the Hub. Every public page is built from
+`components/site` and `styles/site.css`; nothing on the public site hand-rolls
+a card, a heading or a page top any more.
+
+- **One calm canvas.** `--color-bg` everywhere; white `.site-card` surfaces
+  with a 1px line and a 22px radius; no shadows on cards, no glass panels, no
+  coloured bands. Only the footer is navy.
+- **Page tops.** `PageHero` (eyebrow, display title with one `<strong>`
+  phrase, lead, optional crumbs and actions) draws the sunrise sky under the
+  floating header. One-message pages (404, 500, after a checkout) use
+  `StatusPage`, the same sky with the message centred.
+- **Layout routing.** `components/Layout.tsx` lists routes in `SITE_KIT`
+  (full width, draw their own sky, no header spacer) or `LEGACY_FULL_WIDTH`
+  (full width below the header: listing, mentor and suburb detail pages).
+  Anything else still gets the centred container.
+- **Type.** `.site-display` / `.site-h2` are Newsreader at weight 350 with
+  the emphasised phrase in `<strong>`; `.site-h3` is the UI face. Never set a
+  display heading bold as a whole.
+- **Long documents.** `DocLayout` (sticky side menu with scroll-spy) for How
+  renting works and the Legal centre; policy text is styled by `.legal-doc`
+  and never edited as part of a redesign.
+- **Forms.** Public forms use the Hub field components
+  (`components/hub/ui/Field.tsx`), so a field is the same object everywhere.
+- **Icons.** lucide line icons only. No emoji as icons.
+- **Honesty.** `tests/unit/claims.test.ts` fails the build on claims Migrent
+  cannot back (Superhost, proof of property, visa checks, verified renters,
+  AI matching outside the verbatim legal pages, invented scale).
 
 ## Exports
 See globals.css `@theme` for the live hex tokens. tokens.css at project root

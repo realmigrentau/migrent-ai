@@ -16,6 +16,7 @@ import { aud } from "../../../lib/hub/format";
 import { WIZARD_STEPS, draftProblems, stepOf, type Draft, type DraftData, type Problem, type StepKey } from "../../../lib/hub/listingDraft";
 import { invalidate } from "../../../lib/hub/query";
 import { useHub } from "../../../lib/hub/session";
+import { decodePrefill } from "../../../lib/home/houseConfig";
 import { cn } from "../../../lib/cn";
 
 type SaveState = "idle" | "saving" | "saved" | "error";
@@ -90,6 +91,7 @@ export default function NewListingPage() {
   const [showErrors, setShowErrors] = useState<Set<StepKey>>(new Set());
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState<{ listing_id: string; property_id: string | null; needs_verification: boolean } | null>(null);
+  const [fromHouse, setFromHouse] = useState(false);
   const started = useRef(false);
   const timer = useRef<number | null>(null);
   const dirty = useRef(false);
@@ -111,7 +113,17 @@ export default function NewListingPage() {
         if (existing) {
           d = (await hubApi.get<{ draft: Draft }>(`/hub/listing-drafts/${existing}`)).draft;
         } else {
-          d = (await hubApi.post<{ draft: Draft }>("/hub/listing-drafts", { property_id: typeof q.property === "string" ? q.property : undefined, from_listing_id: typeof q.from === "string" ? q.from : undefined })).draft;
+          // A draft started from the homepage house arrives with its answers
+          // in ?prefill=. decodePrefill keeps only known fields and types.
+          const prefill = decodePrefill(typeof q.prefill === "string" ? q.prefill : null);
+          d = (
+            await hubApi.post<{ draft: Draft }>("/hub/listing-drafts", {
+              property_id: typeof q.property === "string" ? q.property : undefined,
+              from_listing_id: typeof q.from === "string" ? q.from : undefined,
+              data: prefill ?? undefined,
+            })
+          ).draft;
+          if (prefill) setFromHouse(true);
           invalidate("/hub/properties");
         }
         setDraft(d);
@@ -317,6 +329,12 @@ export default function NewListingPage() {
           </Button>
         </div>
       </header>
+
+      {fromHouse && (
+        <InlineAlert tone="info" title="Started from the house you set up" className="mb-6">
+          We filled in the rooms and features you chose on the homepage. Check each step: your home may differ from the model house.
+        </InlineAlert>
+      )}
 
       {/* Phone progress */}
       <div className="mb-6 h-1.5 overflow-hidden rounded-full bg-[var(--color-surface-muted)] lg:hidden" role="progressbar" aria-valuemin={1} aria-valuemax={WIZARD_STEPS.length} aria-valuenow={stepIndex + 1} aria-label="Progress">

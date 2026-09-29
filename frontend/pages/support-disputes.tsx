@@ -1,37 +1,21 @@
 import Link from "next/link";
 import SEOHead from "../components/SEOHead";
-import { motion } from "framer-motion";
+import LegalLayout from "../components/site/LegalLayout";
 
 export default function SupportDisputes() {
   return (
     <>
       <SEOHead title="Dispute Resolution" description="Migrent dispute resolution process - how we handle complaints and disputes between users." />
 
-      <div className="max-w-3xl mx-auto space-y-10">
-        {/* Hero */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-xl bg-[var(--color-primary-50)] dark:bg-[var(--color-primary-50)] border border-[var(--color-primary-100)] dark:border-[var(--color-line)] flex items-center justify-center">
-              <svg className="w-5 h-5 text-[var(--color-primary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v17.25m0 0c-1.472 0-2.882.265-4.185.75M12 20.25c1.472 0 2.882.265 4.185.75M18.75 4.97A48.416 48.416 0 0012 4.5c-2.291 0-4.545.16-6.75.47m13.5 0c1.01.143 2.01.317 3 .52m-3-.52l2.62 10.726c.122.499-.106 1.028-.589 1.202a5.988 5.988 0 01-2.031.352 5.988 5.988 0 01-2.031-.352c-.483-.174-.711-.703-.59-1.202L18.75 4.971zm-16.5.52c.99-.203 1.99-.377 3-.52m0 0l2.62 10.726c.122.499-.106 1.028-.589 1.202a5.989 5.989 0 01-2.031.352 5.989 5.989 0 01-2.031-.352c-.483-.174-.711-.703-.59-1.202L5.25 4.971z" />
-              </svg>
-            </div>
-            <div>
-              <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-[var(--color-ink)]">
-                Dispute Resolution
-              </h1>
-              <p className="text-sm text-[var(--color-ink-3)] mt-1">Last updated: March 2026</p>
-            </div>
-          </div>
-        </motion.div>
+      <LegalLayout title="Dispute Resolution" note="Last updated: March 2026">
 
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="space-y-8">
+        <div className="space-y-8">
           {/* Introduction */}
           <section className="card p-6 rounded-2xl space-y-3">
             <h2 className="text-lg font-bold text-[var(--color-ink)]">Our Approach</h2>
             <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
               <p>Migrent is an introduction service and is not a party to any arrangement between users. However, we want all users to have a positive experience. This page outlines the dispute resolution process for issues arising from or related to the Migrent platform.</p>
-              <p>For disputes about tenancy arrangements (rent, bonds, property condition), please contact your state&apos;s Fair Trading or Residential Tenancies authority. See our <Link href="/rental-laws" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">Rental Laws Guide</Link>.</p>
+              <p>For disputes about tenancy arrangements (rent, bonds, property condition), please contact your state&apos;s Fair Trading or Residential Tenancies authority. See our <Link href="/guides/rental-laws" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">Rental Laws Guide</Link>.</p>
             </div>
           </section>
 
@@ -132,18 +116,8 @@ export default function SupportDisputes() {
             <p>This dispute resolution process is part of Migrent&apos;s <Link href="/terms-of-service" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">Terms of Service</Link>. Migrent recommends consulting a qualified lawyer for legal disputes. Last reviewed: March 2026.</p>
           </div>
 
-          {/* CTA */}
-          <div className="card p-6 rounded-2xl bg-[var(--color-primary-soft)] from-[var(--color-primary-50)] to-[var(--color-primary-100)] dark:from-[var(--color-primary)]/10 dark:to-[var(--color-surface)] border-[var(--color-primary-100)] dark:border-[var(--color-line)] text-center">
-            <h3 className="text-lg font-bold text-[var(--color-ink)] mb-2">Need to report an issue?</h3>
-            <p className="text-sm text-[var(--color-ink-2)] mb-4">Contact our team and we&apos;ll help where we can.</p>
-            <Link href="/contact">
-              <motion.span whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }} className="inline-block btn-primary text-sm px-6 py-2.5 rounded-xl">
-                Contact Support
-              </motion.span>
-            </Link>
-          </div>
-        </motion.div>
-      </div>
+        </div>
+      </LegalLayout>
     </>
   );
 }

@@ -1,31 +1,15 @@
 import Link from "next/link";
 import SEOHead from "../components/SEOHead";
-import { motion } from "framer-motion";
+import LegalLayout from "../components/site/LegalLayout";
 
 export default function CodeOfConduct() {
   return (
     <>
       <SEOHead title="NSW STRA Code of Conduct" description="Summary of the NSW Short-Term Rental Accommodation Code of Conduct and how it applies to Migrent users." />
 
-      <div className="max-w-3xl mx-auto space-y-10">
-        {/* Hero */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-xl bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent)]/10 border border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)] flex items-center justify-center">
-              <svg className="w-5 h-5 text-[var(--color-accent)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
-              </svg>
-            </div>
-            <div>
-              <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-[var(--color-ink)]">
-                STRA Code of Conduct
-              </h1>
-              <p className="text-sm text-[var(--color-ink-3)] mt-1">Last updated: March 2026</p>
-            </div>
-          </div>
-        </motion.div>
+      <LegalLayout title="STRA Code of Conduct" note="Last updated: March 2026">
 
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="space-y-8">
+        <div className="space-y-8">
           {/* Introduction */}
           <section className="card p-6 rounded-2xl space-y-3">
             <h2 className="text-lg font-bold text-[var(--color-ink)]">About the NSW STRA Code</h2>
@@ -102,7 +86,7 @@ export default function CodeOfConduct() {
           <section className="card p-6 rounded-2xl space-y-3">
             <h2 className="text-lg font-bold text-[var(--color-ink)]">Other States</h2>
             <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
-              <p>This page focuses on NSW as it has the most comprehensive STRA framework. Other states have varying levels of STRA regulation. See our <Link href="/rental-laws" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">Australian Rental Laws Guide</Link> for an overview of each state.</p>
+              <p>This page focuses on NSW as it has the most comprehensive STRA framework. Other states have varying levels of STRA regulation. See our <Link href="/guides/rental-laws" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">Australian Rental Laws Guide</Link> for an overview of each state.</p>
               <p>Regardless of your state, Migrent expects all users to comply with local laws and our <Link href="/rules-community-guidelines" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">Community Guidelines</Link>.</p>
             </div>
           </section>
@@ -112,18 +96,8 @@ export default function CodeOfConduct() {
             <p>This is a summary of the NSW STRA Code of Conduct for informational purposes only. It does not constitute legal advice. For the official code, visit nsw.gov.au. Laws and regulations may change - always verify current requirements. Last reviewed: March 2026.</p>
           </div>
 
-          {/* CTA */}
-          <div className="card p-6 rounded-2xl bg-[var(--color-primary-soft)] from-[var(--color-accent-50)] to-[var(--color-accent-soft)]/50 dark:from-[var(--color-accent)]/10 dark:to-[var(--color-surface)] border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)] text-center">
-            <h3 className="text-lg font-bold text-[var(--color-ink)] mb-2">Report a code violation?</h3>
-            <p className="text-sm text-[var(--color-ink-2)] mb-4">Help us maintain a safe and compliant community.</p>
-            <Link href="/safety-reporting">
-              <motion.span whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }} className="inline-block btn-primary text-sm px-6 py-2.5 rounded-xl">
-                Report an Issue
-              </motion.span>
-            </Link>
-          </div>
-        </motion.div>
-      </div>
+        </div>
+      </LegalLayout>
     </>
   );
 }

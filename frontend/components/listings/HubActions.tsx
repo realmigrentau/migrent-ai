@@ -19,7 +19,7 @@ export default function HubActions({ listingId, ownerName, signedIn, shortStay }
   const first = (ownerName || "the owner").split(" ")[0];
   const secondary = "flex items-center justify-center gap-2 min-h-[44px] rounded-xl border border-[var(--color-line-2)] px-4 text-[14px] font-semibold text-[var(--color-ink)] hover:bg-[var(--color-surface-muted)] transition-colors";
   return (
-    <div className="card p-6 rounded-2xl border border-[var(--color-line)] space-y-3">
+    <div className="site-card site-card--pad space-y-3">
       {!shortStay && (
         <>
           <p className="text-[15px] font-semibold text-[var(--color-ink)]">Interested in this home?</p>

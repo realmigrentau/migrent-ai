@@ -1,134 +1,91 @@
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import { Logo } from "./ui/Logo";
-import { BadgeCheck, Lock, Wallet, HeartHandshake } from "lucide-react";
 import { copyrightLine } from "../lib/siteIdentity";
+import { hubFromSite } from "../lib/hub/routes";
 
-/* Site footer.
+/* Site footer: the deep-navy close.
  *
- * A full directory of everything Migrent offers, with a brand band and a
- * trust strip on top. Every colour, hairline and radius comes from a token,
- * so on the homepage - where styles/home.css re-points those tokens at the
- * hero's palette - the footer arrives in the same sky without a second
- * component. All links point to real routes. */
+ * One line that says what Migrent is, the two things you can do next, and
+ * a short index of the pages that exist after the 2026-09-29
+ * consolidation. The long legal list lives in the Legal centre, so the
+ * footer carries one link to it plus the three policies people look for
+ * by name. Tokens are re-pointed by .site-footer in globals.css. */
 
 const columns: { heading: string; links: { label: string; href: string }[] }[] = [
   {
-    heading: "For seekers",
+    heading: "Renters",
     links: [
       { label: "Search rooms", href: "/seeker/search" },
-      { label: "How it works", href: "/for-seekers" },
-      { label: "Help centre", href: "/resources/help" },
-      { label: "Guides & articles", href: "/resources/guides" },
-      { label: "Tenant rights", href: "/resources/rental-laws" },
+      { label: "How renting works", href: "/how-renting-works" },
+      { label: "Suburb guides", href: "/suburbs" },
+      { label: "Mentors", href: "/mentors" },
     ],
   },
   {
-    heading: "For owners",
+    heading: "Owners",
     links: [
-      { label: "List a room", href: "/for-owners" },
+      { label: "Why list with Migrent", href: "/for-owners" },
       { label: "Pricing", href: "/pricing" },
-      { label: "Owner dashboard", href: "/dashboard/owner" },
-      { label: "Safety & verification", href: "/safety-verification" },
       { label: "Become a mentor", href: "/become-mentor" },
     ],
   },
   {
-    heading: "Explore",
+    heading: "Help",
     links: [
-      { label: "Features", href: "/features" },
-      { label: "Suburb guides", href: "/suburbs" },
-      { label: "Mentors", href: "/mentors" },
-      { label: "Resources", href: "/resources" },
-      { label: "Tools & checklists", href: "/resources/tools" },
+      { label: "Guides", href: "/guides" },
+      { label: "Help centre", href: "/help" },
+      { label: "Contact us", href: "/contact" },
+      { label: "Report a safety issue", href: "/safety-reporting" },
     ],
   },
   {
-    heading: "Company",
+    heading: "Migrent",
     links: [
       { label: "About", href: "/about" },
-      { label: "Careers", href: "/careers" },
-      { label: "Press", href: "/press" },
-      { label: "Contact", href: "/contact" },
+      { label: "Legal centre", href: "/legal" },
     ],
   },
-  {
-    heading: "Trust & safety",
-    links: [
-      { label: "Bond protection", href: "/safety-reporting" },
-      { label: "Community rules", href: "/rules-community-guidelines" },
-      { label: "Code of conduct", href: "/code-of-conduct" },
-      { label: "Anti-discrimination", href: "/anti-discrimination" },
-      { label: "Support & disputes", href: "/support-disputes" },
-    ],
-  },
-  {
-    heading: "Legal",
-    links: [
-      { label: "Terms of service", href: "/terms-of-service" },
-      { label: "Privacy policy", href: "/privacy-policy" },
-      { label: "Cookie policy", href: "/cookie-policy" },
-      { label: "Disclaimer", href: "/disclaimer" },
-      { label: "ABN terms", href: "/abn-terms" },
-    ],
-  },
-];
-
-const trustChips = [
-  { icon: BadgeCheck, label: "ID-verified hosts" },
-  { icon: Lock, label: "Bond lodged properly" },
-  { icon: Wallet, label: "$0 renter fees" },
-  { icon: HeartHandshake, label: "Mentor network" },
 ];
 
 export default function SiteFooter() {
   return (
     <footer className="site-footer">
-      <div className="max-w-[1280px] mx-auto px-6 md:px-10 lg:px-14 pt-16 md:pt-20 pb-7">
-        {/* Brand band */}
-        <div className="grid lg:grid-cols-[1.1fr_1fr] gap-10 lg:gap-16 pb-12 mb-12 border-b border-[var(--color-line)]">
+      <div className="site-shell pb-8 pt-16 md:pt-20">
+        <div className="grid gap-10 border-b border-[var(--color-line)] pb-12 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] lg:gap-16">
           <div>
-            <Link href="/" className="inline-flex items-center gap-2.5 text-[var(--color-ink)]">
+            <Link href="/" className="inline-flex items-center gap-2.5 text-[color:var(--color-ink)]">
               <Logo size={30} />
-              <span className="font-serif text-[26px] leading-none tracking-[-0.015em]">Migrent</span>
+              <span className="font-[family-name:var(--font-display)] text-[26px] leading-none tracking-[-0.015em]">Migrent</span>
             </Link>
-            <h2 className="site-footer__headline font-serif text-[30px] md:text-[40px] leading-[1.06] tracking-[-0.025em] text-[var(--color-ink)] mt-6 max-w-[16ch]">
+            <p className="site-footer__headline mt-6 max-w-[18ch] font-[family-name:var(--font-display)] text-[clamp(28px,3.4vw,42px)] font-[350] leading-[1.08] tracking-[-0.018em]">
               A real home in Australia, found the right way.
-            </h2>
-            <div className="mt-7 flex flex-wrap gap-x-6 gap-y-3">
-              {trustChips.map((c) => (
-                <span key={c.label} className="inline-flex items-center gap-2 text-[13px] font-medium text-[var(--color-ink-2)]">
-                  <c.icon className="w-4 h-4 text-[var(--color-accent)]" strokeWidth={1.9} aria-hidden="true" /> {c.label}
-                </span>
-              ))}
-            </div>
-          </div>
-          <div className="lg:justify-self-end lg:text-right self-end">
-            <p className="text-[14px] text-[var(--color-ink-2)] leading-[1.55] max-w-[34ch] lg:ml-auto">
-              Verified rooms for migrants, students, and new arrivals - no rental history needed.
             </p>
-            <div className="flex flex-wrap gap-3 mt-6 lg:justify-end">
-              <Link href="/for-seekers" className="btn-primary h-11 px-6 text-sm rounded-[var(--radius-control)]">
-                I&apos;m a Seeker <span aria-hidden="true">→</span>
+          </div>
+          <div className="flex flex-col justify-end gap-6 lg:items-end lg:text-right">
+            <p className="max-w-[40ch] text-[14.5px] leading-[1.6] text-[color:var(--color-ink-2)]">
+              Rooms and homes for migrants, students and new arrivals. Hosts are ID-checked before a room goes live, and searching and applying are free.
+            </p>
+            <div className="flex flex-wrap gap-3 lg:justify-end">
+              <Link href="/seeker/search" className="btn-primary">
+                Find a room
+                <ArrowRight className="btn-arrow h-4 w-4" strokeWidth={2.2} aria-hidden="true" />
               </Link>
-              <Link href="/for-owners" className="btn-secondary h-11 px-6 text-sm rounded-[var(--radius-control)]">
-                I&apos;m an Owner
+              <Link href={hubFromSite.listProperty()} className="btn-secondary">
+                List a property
               </Link>
             </div>
           </div>
         </div>
 
-        {/* Link directory */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-x-6 gap-y-11">
+        <nav aria-label="Footer" className="grid grid-cols-2 gap-x-6 gap-y-10 py-12 sm:grid-cols-4">
           {columns.map((col) => (
             <div key={col.heading}>
-              <h3 className="eyebrow mb-4">{col.heading}</h3>
-              <ul className="space-y-3">
+              <h2 className="eyebrow mb-4">{col.heading}</h2>
+              <ul className="m-0 list-none space-y-3 p-0">
                 {col.links.map((l) => (
                   <li key={l.href}>
-                    <Link
-                      href={l.href}
-                      className="inline-block text-[13.5px] text-[var(--color-ink-2)] hover:text-[var(--color-primary)] transition-colors duration-200"
-                    >
+                    <Link href={l.href} className="text-[14px] text-[color:var(--color-ink-2)] transition-colors duration-200 hover:text-[color:var(--color-ink)]">
                       {l.label}
                     </Link>
                   </li>
@@ -136,18 +93,24 @@ export default function SiteFooter() {
               </ul>
             </div>
           ))}
-        </div>
+        </nav>
 
-        {/* Bottom bar */}
-        <div className="flex flex-col md:flex-row justify-between items-center gap-3 pt-7 mt-14 border-t border-[var(--color-line)]">
-          <div className="font-mono text-[11.5px] text-[var(--color-ink-3)] uppercase tracking-[0.04em]">
-            {copyrightLine()}
-          </div>
-          <div className="flex items-center gap-4 text-[11.5px] text-[var(--color-ink-3)]">
-            <span>Australia (English)</span>
-            <span>AUD $</span>
-            <Link href="/contact" className="hover:text-[var(--color-primary)] transition-colors">Report a problem</Link>
-          </div>
+        <div className="flex flex-col gap-4 border-t border-[var(--color-line)] pt-7 md:flex-row md:items-center md:justify-between">
+          <p className="m-0 font-mono text-[11.5px] uppercase tracking-[0.04em] text-[color:var(--color-ink-3)]">{copyrightLine()}</p>
+          <ul className="m-0 flex list-none flex-wrap gap-x-5 gap-y-2 p-0 text-[13px] text-[color:var(--color-ink-3)]">
+            <li>
+              <Link href="/privacy-policy" className="hover:text-[color:var(--color-ink)]">Privacy</Link>
+            </li>
+            <li>
+              <Link href="/terms-of-service" className="hover:text-[color:var(--color-ink)]">Terms</Link>
+            </li>
+            <li>
+              <Link href="/cookie-policy" className="hover:text-[color:var(--color-ink)]">Cookies</Link>
+            </li>
+            <li>
+              <Link href="/legal" className="hover:text-[color:var(--color-ink)]">All policies</Link>
+            </li>
+          </ul>
         </div>
       </div>
     </footer>

@@ -3,7 +3,7 @@ import { test, expect } from "@playwright/test";
 test("robots.txt blocks private surfaces and points at the sitemap", async ({ request }) => {
   const res = await request.get("/robots.txt");
   const body = await res.text();
-  for (const p of ["/admin", "/hub", "/dashboard", "/messages", "/signin", "/payment-success"]) expect(body).toContain(`Disallow: ${p}`);
+  for (const p of ["/admin", "/hub", "/dashboard", "/messages", "/signin", "/booking-success"]) expect(body).toContain(`Disallow: ${p}`);
   expect(body).toContain("Sitemap: https://migrent.vercel.app/sitemap.xml");
 });
 
@@ -11,10 +11,13 @@ test("sitemap lists only public canonical pages with real dates", async ({ reque
   const res = await request.get("/sitemap.xml");
   expect(res.status()).toBe(200);
   const xml = await res.text();
-  for (const hidden of ["/signin", "/admin", "/dashboard", "/resources/roi-calculator", "/resources/discord", "/press", "/careers"]) {
+  const merged = ["/for-seekers", "/features", "/safety-verification", "/no-agency", "/resources", "/resources/guides", "/resources/help", "/faq", "/blog"];
+  for (const hidden of ["/signin", "/admin", "/dashboard", "/resources/roi-calculator", "/resources/discord", "/press", "/careers", ...merged]) {
     expect(xml, `${hidden} must not be in the sitemap`).not.toContain(`<loc>https://migrent.vercel.app${hidden}</loc>`);
   }
-  expect(xml).toContain("<loc>https://migrent.vercel.app/pricing</loc>");
+  for (const kept of ["/pricing", "/how-renting-works", "/for-owners", "/guides", "/guides/rental-laws", "/help", "/about", "/legal"]) {
+    expect(xml, `${kept} should be in the sitemap`).toContain(`<loc>https://migrent.vercel.app${kept}</loc>`);
+  }
   expect(xml).toContain("<loc>https://migrent.vercel.app/listing/11111111-1111-4111-8111-000000000001</loc>");
   expect(xml).not.toContain("22222222-2222-4222-8222-000000000001");
   // Not every entry stamped with today.
@@ -24,7 +27,7 @@ test("sitemap lists only public canonical pages with real dates", async ({ reque
   expect(lastmods.filter((d) => d !== today).length).toBeGreaterThan(0);
 });
 
-for (const path of ["/", "/pricing", "/for-seekers", "/resources/guides", "/listing/11111111-1111-4111-8111-000000000001"]) {
+for (const path of ["/", "/pricing", "/how-renting-works", "/guides", "/help", "/listing/11111111-1111-4111-8111-000000000001"]) {
   test(`metadata is unique and single on ${path}`, async ({ page }) => {
     await page.goto(path);
     await expect(page.locator("head title")).toHaveCount(1);
@@ -46,10 +49,10 @@ for (const path of ["/hub/sign-in", "/hub/sign-up", "/hub/forgot-password"]) {
 }
 
 test("no unsupported claims on public pages", async ({ page }) => {
-  for (const path of ["/", "/pricing", "/for-seekers", "/features", "/contact", "/listing/11111111-1111-4111-8111-000000000001"]) {
+  for (const path of ["/", "/pricing", "/how-renting-works", "/for-owners", "/about", "/contact", "/help", "/listing/11111111-1111-4111-8111-000000000001"]) {
     await page.goto(path);
     const text = await page.locator("body").innerText();
-    for (const claim of ["24/7", "All systems operational", "Migrent Guarantee", "thousands of", "Migrent AI", "Pty Ltd", "Sole Trader", "Naarm"]) {
+    for (const claim of ["24/7", "All systems operational", "Migrent Guarantee", "thousands of", "Migrent AI", "Pty Ltd", "Sole Trader", "Naarm", "Superhost", "AI-powered", "proof of property", "VEVO"]) {
       expect(text, `${claim} on ${path}`).not.toContain(claim);
     }
   }
@@ -70,23 +73,31 @@ test("structured data is valid JSON and only asserts real facts", async ({ page 
 });
 
 /**
- * The Resources consolidation folded four index pages into three hubs.
- * Only the indexes moved: every article URL underneath them is unchanged,
- * and that is the half of this that is easy to break later.
+ * The 2026-09-29 redesign merged thin pages into a few fuller ones. The old
+ * URLs must keep working (they redirect), and the articles under the merged
+ * indexes must not move.
  */
-test("retired Resources indexes redirect, and their articles do not", async ({ page }) => {
+test("merged pages redirect to their new home, and their articles do not", async ({ page }) => {
   const moved: [string, string][] = [
-    ["/guides", "/resources/guides"],
-    ["/blog", "/resources/guides"],
-    ["/faq", "/resources/help"],
-    ["/help", "/resources/help"],
+    ["/for-seekers", "/how-renting-works"],
+    ["/safety-verification", "/how-renting-works"],
+    ["/no-agency", "/how-renting-works"],
+    ["/features", "/for-owners"],
+    ["/resources", "/guides"],
+    ["/resources/guides", "/guides"],
+    ["/blog", "/guides"],
+    ["/rental-laws", "/guides/rental-laws"],
+    ["/faq", "/help"],
+    ["/resources/help", "/help"],
+    ["/careers", "/about"],
+    ["/press", "/about"],
   ];
   for (const [from, to] of moved) {
     await page.goto(from);
     expect(new URL(page.url()).pathname, `${from} should land on ${to}`).toBe(to);
   }
 
-  const kept = ["/guides/find-fast", "/blog/bond-rights-migrants", "/help/verify-your-identity"];
+  const kept = ["/blog/bond-rights-migrants", "/help/verify-your-identity", "/guides/rental-laws"];
   for (const path of kept) {
     const res = await page.goto(path);
     expect(res?.status(), `${path} should still be served`).toBe(200);
@@ -94,11 +105,11 @@ test("retired Resources indexes redirect, and their articles do not", async ({ p
   }
 });
 
-test("the Resources dropdown offers no more than four destinations", async ({ page, isMobile }) => {
+test("the owners dropdown stays small", async ({ page, isMobile }) => {
   test.skip(isMobile, "the dropdown is an accordion below lg");
   await page.goto("/pricing");
-  await page.getByRole("button", { name: "Resources" }).click();
-  const panel = page.locator("#nav-panel-resources");
+  await page.getByRole("banner").getByRole("button", { name: "For owners", exact: true }).click();
+  const panel = page.locator("#nav-panel-owners");
   await expect(panel).toBeVisible();
   const count = await panel.getByRole("link").count();
   expect(count).toBeGreaterThan(0);

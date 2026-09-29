@@ -374,9 +374,9 @@ def refresh_badges(authorization: str = Header(...)):
         listings = sb.table("listings").select("id").eq("owner_id", uid).eq("moderation_status", "approved").execute()
         n_listings = len(listings.data or [])
         if n_listings >= 3:
-            badges.append("Superhost")
+            badges.append("Hosts 3+ homes")
         if n_listings >= 10:
-            badges.append("Mega Host")
+            badges.append("Hosts 10+ homes")
 
         badges = [b for b in badges if b in ALLOWED_ACHIEVEMENT_BADGES]
         sb.table("profiles").update({"badges": badges}).eq("id", uid).execute()

@@ -34,6 +34,7 @@ import {
 } from "../../lib/search/searchQuery";
 import { hubFromSite } from "../../lib/hub/routes";
 import { hubApi } from "../../lib/hub/api";
+import { placeTypeLabel } from "../../lib/hub/format";
 
 /**
  * /seeker/search
@@ -120,8 +121,7 @@ function FilterSection({ title, children, defaultOpen = true }: { title: string;
   const [open, setOpen] = useState(defaultOpen);
   /* useId, not a module-level counter: a counter desynchronises between the
      server and client renders, which leaves aria-controls pointing at an id
-     that does not exist. (The FAQ hit this first; that page now lives in
-     components/resources/FaqAccordion.tsx.) */
+     that does not exist. */
   const id = `filter-section-${useId()}`;
   return (
     <div className="border-b border-[var(--color-line)] pb-4">
@@ -150,11 +150,7 @@ function TogglePill({ active, onClick, label }: { active: boolean; onClick: () =
       type="button"
       onClick={onClick}
       aria-pressed={active}
-      className={`px-3 min-h-[36px] rounded-lg text-xs font-medium transition-all ${
-        active
-          ? "bg-[var(--color-ink)] text-[var(--color-bg)] shadow-sm"
-          : "bg-[var(--color-surface-sunk)] text-[var(--color-ink-2)] hover:bg-[var(--color-line)]"
-      }`}
+      className="hc-chip !h-9 !w-auto !rounded-[10px] !px-3 !text-[13px]"
     >
       {label}
     </button>
@@ -502,6 +498,7 @@ export default function SeekerSearch({ initialFilters, initialPage, serverToday 
     filters.propertyType, filters.stationName, filters.minStay,
     filters.adults > 1 || filters.children > 0 || filters.infants > 0,
     filters.couplesOk, filters.femaleOnly, filters.verifiedOwner, filters.nearStation,
+    filters.minBedrooms > 0, filters.privateBath, filters.laundryInHome, filters.internet, filters.noCameras, filters.lockable,
   ].filter(Boolean).length;
 
   // ── Active chips ──
@@ -517,9 +514,15 @@ export default function SeekerSearch({ initialFilters, initialPage, serverToday 
   chip(filters.airCon, "Air conditioning", () => update("airCon", false));
   chip(filters.couplesOk, "Couples OK", () => update("couplesOk", false));
   chip(filters.verifiedOwner, "ID-verified hosts", () => update("verifiedOwner", false));
+  chip(filters.minBedrooms > 0, `${filters.minBedrooms}+ bedrooms`, () => update("minBedrooms", 0));
+  chip(filters.privateBath, "Private bathroom", () => update("privateBath", false));
+  chip(filters.laundryInHome, "Laundry at home", () => update("laundryInHome", false));
+  chip(filters.internet, "Internet included", () => update("internet", false));
+  chip(filters.noCameras, "No security cameras", () => update("noCameras", false));
+  chip(filters.lockable, "Bedroom door locks", () => update("lockable", false));
   chip(Boolean(filters.minPrice), `Min $${filters.minPrice}/wk`, () => update("minPrice", ""));
   chip(Boolean(filters.maxPrice), `Max $${filters.maxPrice}/wk`, () => update("maxPrice", ""));
-  chip(Boolean(filters.placeType), filters.placeType, () => update("placeType", ""));
+  chip(Boolean(filters.placeType), placeTypeLabel(filters.placeType) || filters.placeType, () => update("placeType", ""));
   chip(Boolean(filters.propertyType), filters.propertyType, () => update("propertyType", ""));
   chip(Boolean(filters.minStay), `Min stay: ${filters.minStay}`, () => update("minStay", ""));
   chip(Boolean(filters.checkIn), `Move in ${filters.checkIn}`, () => update("checkIn", ""));
@@ -763,6 +766,25 @@ export default function SeekerSearch({ initialFilters, initialPage, serverToday 
           </div>
         </FilterSection>
 
+        <FilterSection
+          title="The home"
+          defaultOpen={filters.minBedrooms > 0 || filters.privateBath || filters.laundryInHome || filters.internet || filters.noCameras || filters.lockable}
+        >
+          <p className="mb-2 text-[12px] font-medium text-[var(--color-ink-3)]">Bedrooms (whole places)</p>
+          <div className="mb-3 flex flex-wrap gap-1.5">
+            {[0, 1, 2, 3, 4].map((n) => (
+              <TogglePill key={n} active={filters.minBedrooms === n} onClick={() => update("minBedrooms", n)} label={n === 0 ? "Any" : `${n}+`} />
+            ))}
+          </div>
+          <div className="flex flex-wrap gap-1.5">
+            <TogglePill active={filters.privateBath} onClick={() => update("privateBath", !filters.privateBath)} label="Private bathroom" />
+            <TogglePill active={filters.laundryInHome} onClick={() => update("laundryInHome", !filters.laundryInHome)} label="Laundry at home" />
+            <TogglePill active={filters.internet} onClick={() => update("internet", !filters.internet)} label="Internet included" />
+            <TogglePill active={filters.noCameras} onClick={() => update("noCameras", !filters.noCameras)} label="No security cameras" />
+            <TogglePill active={filters.lockable} onClick={() => update("lockable", !filters.lockable)} label="Bedroom door locks" />
+          </div>
+        </FilterSection>
+
         <FilterSection title="Preferences" defaultOpen={false}>
           <div className="flex flex-wrap gap-1.5">
             <TogglePill active={filters.femaleOnly} onClick={() => update("femaleOnly", !filters.femaleOnly)} label="Female only" />
@@ -802,8 +824,11 @@ export default function SeekerSearch({ initialFilters, initialPage, serverToday 
   return (
     <div className="space-y-5">
       <div>
-        <h1 className="text-2xl md:text-3xl font-semibold tracking-tight text-[var(--color-ink)]">Find a Room</h1>
-        <p className="text-[15px] text-[var(--color-ink-2)] mt-1.5">Search real listings by location, price, and preferences. Exact addresses are shared once a booking is agreed.</p>
+        <p className="eyebrow mb-3">Search</p>
+        <h1 className="site-h2">
+          Find a <strong>room.</strong>
+        </h1>
+        <p className="site-lead mt-3 max-w-[60ch]">Real listings from ID-checked hosts. Street addresses are shown once you book an inspection.</p>
       </div>
 
       {offline && (
@@ -978,74 +1003,63 @@ export default function SeekerSearch({ initialFilters, initialPage, serverToday 
                       const isSaved = saved.has(listing.id);
                       return (
                         <li key={listing.id}>
-                          <article
-                            data-testid="listing-card"
-                            onClick={(e) => {
-                              if ((e.target as HTMLElement).closest("a,button")) return;
-                              void router.push(`/listing/${listing.id}`);
-                            }}
-                            className="card rounded-2xl overflow-hidden group cursor-pointer h-full flex flex-col"
-                          >
-                            <div className="relative w-full aspect-[16/10] bg-[var(--color-surface-muted)] overflow-hidden">
+                          <article data-testid="listing-card" className="site-card site-card--link group relative flex h-full flex-col p-2">
+                            <div className="relative aspect-[4/3] w-full overflow-hidden rounded-[16px] bg-[var(--color-surface-muted)]">
                               {listing.images && listing.images.length > 0 ? (
-                                <Image src={listing.images[0]} alt={`Photo of ${title}`} fill sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw" className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                                <Image src={listing.images[0]} alt="" fill sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw" className="object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
                               ) : (
-                                <div className="w-full h-full flex items-center justify-center text-xs text-[var(--color-ink-3)]">No photo yet</div>
+                                <div className="hub-photo-fallback flex h-full w-full items-center justify-center text-xs text-[var(--color-ink-3)]">No photo yet</div>
                               )}
-                              <div className="absolute top-3 right-3 px-2.5 py-1 rounded-lg bg-[var(--color-surface-2)]/95 backdrop-blur-sm border border-[var(--color-line)]/70">
-                                <span className="text-[var(--color-ink)] font-semibold text-sm tabular-nums">${price.amount}</span>
-                                <span className="text-[var(--color-ink-3)] text-xs">{price.unit}</span>
-                              </div>
                               <button
                                 type="button"
                                 onClick={(e) => { e.preventDefault(); toggleSave(listing.id); }}
                                 aria-pressed={isSaved}
-                                aria-label={isSaved ? `Remove ${title} from wishlist` : `Save ${title} to wishlist`}
-                                className="absolute top-2 left-2 w-11 h-11 rounded-full bg-[var(--color-surface-2)]/90 backdrop-blur-sm flex items-center justify-center transition-colors hover:bg-[var(--color-surface-2)]"
+                                aria-label={isSaved ? `Remove ${title} from saved` : `Save ${title}`}
+                                className="absolute right-2 top-2 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-[var(--color-surface)]/95 shadow-[var(--shadow-soft)] backdrop-blur-sm transition-colors hover:bg-[var(--color-surface)]"
                               >
-                                <svg className={`w-5 h-5 ${isSaved ? "text-[var(--color-coral-500)] fill-[var(--color-coral-500)]" : "text-[var(--color-ink-2)]"}`} fill={isSaved ? "currentColor" : "none"} viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
+                                <svg className={`h-5 w-5 ${isSaved ? "fill-[var(--color-coral-500)] text-[var(--color-coral-500)]" : "text-[var(--color-ink-2)]"}`} fill={isSaved ? "currentColor" : "none"} viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
                                   <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                                 </svg>
                               </button>
                               {(listing.instant_book_enabled || listing.instant_book) && (
-                                <div className="absolute bottom-3 left-3 px-2 py-1 rounded-md bg-[var(--color-accent)]/90 backdrop-blur-sm text-[color:var(--color-primary-fg)] text-xs font-semibold">Instant book</div>
+                                <span className="absolute bottom-2.5 left-2.5 rounded-full bg-[var(--color-surface)] px-2.5 py-1 text-[12px] font-semibold text-[color:var(--color-ink)] shadow-[var(--shadow-soft)]">Instant book</span>
                               )}
                             </div>
 
-                            <div className="p-4 space-y-2 flex-1 flex flex-col">
-                              <div>
-                                <h2 className="font-bold text-[var(--color-ink)] text-sm truncate">{title}</h2>
-                                <p className="text-xs text-[var(--color-ink-3)]">{listing.display_address}</p>
-                              </div>
-                              <div className="flex flex-wrap gap-1">
-                                {listing.place_type && <span className="px-2 py-0.5 rounded-full text-[11px] bg-[var(--color-surface-muted)] text-[var(--color-ink-2)] capitalize">{listing.place_type}</span>}
-                                {listing.furnished && <span className="px-2 py-0.5 rounded-full text-[11px] bg-[var(--color-primary-50)] text-[var(--color-primary)]">Furnished</span>}
-                                {listing.bills_included && <span className="px-2 py-0.5 rounded-full text-[11px] bg-[var(--color-primary-soft)] text-[var(--color-primary)]">Bills incl.</span>}
+                            <div className="flex flex-1 flex-col gap-2 px-2.5 pb-2.5 pt-3.5">
+                              <p className="site-meta truncate">{listing.display_address}</p>
+                              <h2 className="site-h3 line-clamp-2">
+                                {/* The title is the card's link; its ::after stretches over the
+                                    whole card, so every part of it opens the listing. */}
+                                <Link href={`/listing/${listing.id}`} className="after:absolute after:inset-0 after:rounded-[22px] after:content-[''] focus-visible:outline-none">
+                                  {title}
+                                </Link>
+                              </h2>
+                              <div className="flex flex-wrap gap-1.5">
                                 <VerificationBadge verification={listing.host_verification} />
-                                {listing.gender_preference === "female" && <span className="px-2 py-0.5 rounded-full text-[11px] bg-[var(--color-primary-soft)] text-[var(--color-primary)]">Female only</span>}
-                                {listing.pets_allowed && <span className="px-2 py-0.5 rounded-full text-[11px] bg-[var(--color-warn-50)] text-[var(--color-warn-600)]">Pets OK</span>}
+                                {listing.place_type && <span className="site-chip !h-6 !px-2 !text-[11.5px]">{placeTypeLabel(listing.place_type) || listing.place_type}</span>}
+                                {listing.furnished && <span className="site-chip !h-6 !px-2 !text-[11.5px]">Furnished</span>}
+                                {listing.bills_included && <span className="site-chip !h-6 !px-2 !text-[11.5px]">Bills included</span>}
+                                {listing.pets_allowed && <span className="site-chip !h-6 !px-2 !text-[11.5px]">Pets OK</span>}
+                                {listing.gender_preference === "female" && <span className="site-chip !h-6 !px-2 !text-[11.5px]">Women only</span>}
                               </div>
                               {isBestMatch && typeof listing.match_score === "number" && (
-                                <div className="pt-1 space-y-1.5">
-                                  <div className="flex items-center gap-2">
-                                    <div className="flex-1 h-1.5 rounded-full bg-[var(--color-surface-muted)] overflow-hidden" role="img" aria-label={`Match score ${listing.match_score} out of 100`}>
-                                      <div className="h-full rounded-full bg-[var(--color-accent)]" style={{ width: `${listing.match_score}%` }} />
-                                    </div>
-                                    <span className="text-[11px] font-semibold whitespace-nowrap text-[var(--color-ink-3)]">
-                                      {listing.match_score >= 80 ? "Strong match" : listing.match_score >= 60 ? "Good match" : "Possible match"}
-                                    </span>
+                                <div className="flex items-center gap-2 pt-1">
+                                  <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-[var(--color-surface-muted)]" role="img" aria-label={`Match score ${listing.match_score} out of 100`}>
+                                    <div className="h-full rounded-full bg-[var(--color-primary)]" style={{ width: `${listing.match_score}%` }} />
                                   </div>
+                                  <span className="whitespace-nowrap text-[11.5px] font-semibold text-[color:var(--color-ink-3)]">
+                                    {listing.match_score >= 80 ? "Strong match" : listing.match_score >= 60 ? "Good match" : "Possible match"}
+                                  </span>
                                 </div>
                               )}
-                              {listing.description && <p className="text-xs text-[var(--color-ink-2)] line-clamp-2">{listing.description}</p>}
                               {listing.nearest_transport && listing.station_distance_min != null && (
-                                <p className="text-xs font-medium text-[var(--color-primary)]">{listing.station_distance_min} min to {listing.nearest_transport.split(" - ")[0]}</p>
+                                <p className="site-meta">{listing.station_distance_min} min to {listing.nearest_transport.split(" - ")[0]}</p>
                               )}
-                              <div className="mt-auto pt-1">
-                                <Link href={`/listing/${listing.id}`} className="btn-primary min-h-[40px] px-4 rounded-lg text-xs w-full text-center inline-flex items-center justify-center">
-                                  View details<span className="sr-only"> for {title}</span>
-                                </Link>
-                              </div>
+                              <p className="mt-auto flex items-baseline gap-1 pt-2">
+                                <span className="text-[19px] font-bold tracking-[-0.02em] text-[color:var(--color-ink)] tabular-nums">${price.amount}</span>
+                                <span className="site-meta">{price.unit}</span>
+                              </p>
                             </div>
                           </article>
                         </li>

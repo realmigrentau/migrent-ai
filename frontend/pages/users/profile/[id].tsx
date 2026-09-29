@@ -14,12 +14,13 @@ import ReviewCarousel from "../../../components/profile/ReviewCarousel";
 import HostAbout from "../../../components/profile/HostAbout";
 import VerificationCarousel from "../../../components/profile/VerificationCarousel";
 import { blockUser, unblockUser, isUserBlocked } from "../../../lib/api";
+import { CalendarDays, Clock, Home, MessageSquare, type LucideIcon } from "lucide-react";
 
 const TABS = [
-  { key: "about", label: "About", icon: "🏠" },
-  { key: "listings", label: "Listings", icon: "📊" },
-  { key: "reviews", label: "Reviews", icon: "💬" },
-  { key: "verification", label: "Trust", icon: "🛡️" },
+  { key: "about", label: "About" },
+  { key: "listings", label: "Listings" },
+  { key: "reviews", label: "Reviews" },
+  { key: "verification", label: "Checks" },
 ];
 
 export default function PublicProfilePage() {
@@ -118,15 +119,15 @@ export default function PublicProfilePage() {
   if (error || !profile || !badges) {
     return (
       <div className="max-w-md mx-auto px-4 py-20">
-        <div className="card p-8 rounded-2xl text-center">
+        <div className="site-card site-card--pad text-center">
           <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[var(--color-surface-muted)] flex items-center justify-center">
             <svg className="w-8 h-8 text-[var(--color-ink-3)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
             </svg>
           </div>
-          <h2 className="text-xl font-bold text-[var(--color-ink)] mb-2">Profile not found</h2>
-          <p className="text-sm text-[var(--color-ink-3)] mb-6">This user doesn&apos;t exist or their profile has been removed.</p>
-          <Link href="/" className="btn-primary py-2.5 px-6 rounded-xl text-sm inline-block">Go home</Link>
+          <h1 className="site-h3 site-h3--lg mb-2">Profile not found</h1>
+          <p className="site-body mb-6">This person is not on Migrent, or their profile has been removed.</p>
+          <Link href="/" className="btn-primary">Go to the homepage</Link>
         </div>
       </div>
     );
@@ -148,7 +149,7 @@ export default function PublicProfilePage() {
         />
 
         {/* ═══════ 2. STATS TABS ═══════ */}
-        <div className="mt-6 sticky top-[76px] z-20 bg-[var(--color-surface)]/80 dark:bg-[var(--color-bg)]/80 backdrop-blur-lg py-3 -mx-4 px-4 md:-mx-0 md:px-0">
+        <div className="mt-8 sticky top-[96px] z-20 bg-[var(--color-bg)]/85 backdrop-blur-lg py-3 -mx-4 px-4 md:-mx-0 md:px-0">
           <StatsTabs
             tabs={tabsWithCounts}
             activeTab={activeTab}
@@ -171,21 +172,21 @@ export default function PublicProfilePage() {
           <motion.section
             {...sectionAnim(0.2)}
           >
-            <h3 className="text-lg font-bold text-[var(--color-ink)] mb-4">Host details</h3>
+            <h2 className="site-h3 site-h3--lg mb-4">Host details</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {/* Only shown once measurable. These were invented from account
                   age before, so a brand new host looked like a proven one. */}
               {profile.response_rate !== null && (
-                <StatCard value={`${profile.response_rate}%`} label="Response rate" icon="📩" />
+                <StatCard value={`${profile.response_rate}%`} label="Response rate" icon={MessageSquare} />
               )}
               {profile.response_time !== null && (
-                <StatCard value={profile.response_time} label="Response time" icon="⚡" />
+                <StatCard value={profile.response_time} label="Response time" icon={Clock} />
               )}
-              <StatCard value={`${profile.months_on_platform || "<1"}`} label="Months on Migrent" icon="📅" />
+              <StatCard value={`${profile.months_on_platform || "<1"}`} label="Months on Migrent" icon={CalendarDays} />
               <StatCard
                 value={`${profile.rooms_owned + profile.properties_owned}`}
                 label="Properties"
-                icon="🏠"
+                icon={Home}
               />
             </div>
           </motion.section>
@@ -195,9 +196,9 @@ export default function PublicProfilePage() {
             id="verification"
             {...sectionAnim(0.3)}
           >
-            <h3 className="text-lg font-bold text-[var(--color-ink)] mb-4">
-              {displayName}&apos;s verified information
-            </h3>
+            <h2 className="site-h3 site-h3--lg mb-4">
+              What we have checked
+            </h2>
             <VerificationCarousel
               profile={profile}
               badges={badges}
@@ -210,17 +211,12 @@ export default function PublicProfilePage() {
             <motion.section
               {...sectionAnim(0.35)}
             >
-              <h3 className="text-lg font-bold text-[var(--color-ink)] mb-3">{displayName}&apos;s badges</h3>
+              <h2 className="site-h3 site-h3--lg mb-3">Badges</h2>
               <div className="flex flex-wrap gap-2">
                 {(showAllBadges ? profile.badges : profile.badges.slice(0, 6)).map((badge) => (
-                  <motion.span
-                    key={badge}
-                    whileHover={{ scale: 1.05, y: -1 }}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-500)]/10 text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)] border border-[var(--color-line-2)] dark:border-[var(--color-warn-500)]/20 cursor-default"
-                  >
-                    <svg className="w-3.5 h-3.5 text-[var(--color-warn-500)]" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
+                  <span key={badge} className="site-chip">
                     {badge}
-                  </motion.span>
+                  </span>
                 ))}
               </div>
               {profile.badges.length > 6 && !showAllBadges && (
@@ -236,7 +232,7 @@ export default function PublicProfilePage() {
             id="reviews"
             {...sectionAnim(0.4)}
           >
-            <h3 className="text-lg font-bold text-[var(--color-ink)] mb-4">{displayName}&apos;s reviews</h3>
+            <h2 className="site-h3 site-h3--lg mb-4">Reviews</h2>
             <ReviewCarousel
               reviews={reviews}
               reviewsCount={reviewsCount || profile.reviews_count}
@@ -251,7 +247,7 @@ export default function PublicProfilePage() {
             id="listings"
             {...sectionAnim(0.45)}
           >
-            <h3 className="text-lg font-bold text-[var(--color-ink)] mb-4">{displayName}&apos;s listings</h3>
+            <h2 className="site-h3 site-h3--lg mb-4">Listings</h2>
             <ListingsGrid
               listings={listings}
               loading={listingsLoading}
@@ -266,6 +262,7 @@ export default function PublicProfilePage() {
             <section className="border-t border-[var(--color-line)] pt-6">
               <div className="flex items-center gap-4 flex-wrap">
                 <button
+                  type="button"
                   onClick={() => setReportOpen(true)}
                   className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm text-[var(--color-ink-3)] hover:bg-[var(--color-danger-50)] dark:hover:bg-[var(--color-danger-500)]/10 hover:text-[var(--color-danger-500)] dark:hover:text-[var(--color-danger-500)] transition-all"
                 >
@@ -274,7 +271,8 @@ export default function PublicProfilePage() {
                   </svg>
                   Report this profile
                 </button>
-                <button aria-label="Toggle theme"
+                <button
+                  type="button"
                   onClick={handleToggleBlock}
                   disabled={blockLoading}
                   className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm transition-all disabled:opacity-50 ${
@@ -319,6 +317,8 @@ export default function PublicProfilePage() {
                 </a>
               )}
               <button
+                type="button"
+                aria-label="Share this profile"
                 onClick={() => {
                   if (navigator.share) {
                     navigator.share({
@@ -354,15 +354,14 @@ export default function PublicProfilePage() {
   );
 }
 
-function StatCard({ value, label, icon }: { value: string; label: string; icon: string }) {
+function StatCard({ value, label, icon: Icon }: { value: string; label: string; icon: LucideIcon }) {
   return (
-    <motion.div
-      whileHover={{ y: -2 }}
-      className="card p-4 rounded-xl text-center hover:shadow-md transition-shadow"
-    >
-      <span className="text-2xl">{icon}</span>
-      <div className="text-lg font-black text-[var(--color-ink)] mt-1 capitalize">{value}</div>
-      <div className="text-xs text-[var(--color-ink-3)]">{label}</div>
-    </motion.div>
+    <div className="site-card p-4">
+      <span className="site-icon site-icon--quiet !h-9 !w-9" aria-hidden="true">
+        <Icon className="h-4 w-4" strokeWidth={1.9} />
+      </span>
+      <div className="mt-3 text-[20px] font-semibold tracking-[-0.01em] text-[var(--color-ink)] first-letter:uppercase tabular-nums">{value}</div>
+      <div className="site-meta">{label}</div>
+    </div>
   );
 }

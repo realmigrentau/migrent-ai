@@ -169,7 +169,7 @@ const nextConfig: NextConfig = {
 
       // Deduped pages - permanent redirects preserve old links and bookmarks.
       { source: "/seeker/search-extended", destination: "/seeker/search", permanent: true },
-      { source: "/rental-laws", destination: "/resources/rental-laws", permanent: true },
+      { source: "/rental-laws", destination: "/guides/rental-laws", permanent: true },
       // An App Router prototype at app/[lang]/resources used to serve eight
       // locale copies of /resources. It was client-only, so every one of them
       // shipped English HTML with no canonical - eight duplicates competing
@@ -177,7 +177,7 @@ const nextConfig: NextConfig = {
       // anything already indexed or linked consolidates instead of 404ing.
       {
         source: "/:locale(en|zh|hi|es|ar|fr|ru|pt)/resources",
-        destination: "/resources",
+        destination: "/guides",
         permanent: true,
       },
 
@@ -204,24 +204,45 @@ const nextConfig: NextConfig = {
       // is authoritative.
       { source: "/rules", destination: "/rules-community-guidelines", permanent: true },
 
-      // ── Resources consolidation ──
-      // The Resources dropdown carried eight destinations, two of which were
-      // not resources and four of which were two pairs of the same thing.
-      // Four index pages folded into three hubs. Only the indexes moved:
-      // these sources match exactly, so /guides/host-first, /blog/:slug,
-      // /help/:slug and /help/category/:slug all still resolve to their own
-      // pages and every article URL that was indexed or bookmarked is
-      // unchanged.
+      // ── The 2026-09-29 consolidation ──
+      // About fifty public pages became the set the menu shows. Only whole
+      // pages moved; every article, guide, help and suburb URL still resolves
+      // to its own page. Hash destinations land on the right section.
       //
-      // Guides and Blog were the same job twice - eight step-by-step guides
-      // on one page, six written pieces on the other, both of them "read
-      // this before you rent".
-      { source: "/guides", destination: "/resources/guides", permanent: true },
-      { source: "/blog", destination: "/resources/guides", permanent: true },
-      // FAQ and Help were the other duplicated pair: forty translated
-      // questions on one, twenty articles and a search box on the other.
-      { source: "/faq", destination: "/resources/help", permanent: true },
-      { source: "/help", destination: "/resources/help", permanent: true },
+      // Renters: three pages about how renting works became one.
+      { source: "/for-seekers", destination: "/how-renting-works", permanent: true },
+      { source: "/safety-verification", destination: "/how-renting-works#checks", permanent: true },
+      { source: "/no-agency", destination: "/how-renting-works#not-an-agent", permanent: true },
+      // Owners: Features and the calculator folded into For owners.
+      { source: "/features", destination: "/for-owners", permanent: true },
+      { source: "/resources/roi-calculator", destination: "/for-owners#earnings", permanent: true },
+      // Resources: Guides (reading) and Help (answers). Discord and the
+      // unfinished API page are gone until they exist.
+      { source: "/resources", destination: "/guides", permanent: true },
+      { source: "/resources/guides", destination: "/guides", permanent: true },
+      { source: "/resources/tools", destination: "/guides#checklists", permanent: true },
+      { source: "/resources/rental-laws", destination: "/guides/rental-laws", permanent: true },
+      { source: "/resources/discord", destination: "/guides", permanent: true },
+      { source: "/resources/api-docs", destination: "/guides", permanent: true },
+      { source: "/resources/help", destination: "/help", permanent: true },
+      { source: "/blog", destination: "/guides", permanent: true },
+      { source: "/faq", destination: "/help", permanent: true },
+      // Content withdrawn until it is rewritten (see HIDDEN_GUIDES and
+      // HIDDEN_POSTS in data/resources.ts). Temporary, so the addresses can
+      // come back. Each goes to the accurate page on the same subject.
+      { source: "/guides/host-first", destination: "/help/create-your-first-listing", permanent: false },
+      { source: "/guides/list-property", destination: "/help/create-your-first-listing", permanent: false },
+      { source: "/guides/find-fast", destination: "/help/how-to-search-rooms", permanent: false },
+      { source: "/guides/verify-profile", destination: "/help/verify-your-identity", permanent: false },
+      { source: "/guides/earnings", destination: "/for-owners#earnings", permanent: false },
+      { source: "/guides/visas", destination: "/help/visa-and-housing-rights", permanent: false },
+      { source: "/guides/disputes", destination: "/support-disputes", permanent: false },
+      { source: "/guides/superhost", destination: "/guides", permanent: false },
+      { source: "/blog/superhost-program-launch", destination: "/guides", permanent: false },
+      { source: "/blog/sydney-rental-market-2026", destination: "/guides", permanent: false },
+      // Company: careers and press are sections of About now.
+      { source: "/careers", destination: "/about#careers", permanent: true },
+      { source: "/press", destination: "/about#press", permanent: true },
     ];
   },
 

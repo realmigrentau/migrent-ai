@@ -80,10 +80,12 @@ interface TabsProps<T extends string> {
   tabs: { value: T; label: ReactNode; count?: number }[];
   label: string;
   className?: string;
+  /** When set, tabs get ids and point at one panel, `${idBase}-panel`. */
+  idBase?: string;
 }
 
 /** Underline tabs with a sliding indicator. */
-export function Tabs<T extends string>({ value, onChange, tabs, label, className }: TabsProps<T>) {
+export function Tabs<T extends string>({ value, onChange, tabs, label, className, idBase }: TabsProps<T>) {
   const group = useId();
   const reduce = useReducedMotion();
   return (
@@ -95,12 +97,18 @@ export function Tabs<T extends string>({ value, onChange, tabs, label, className
             key={t.value}
             role="tab"
             type="button"
+            id={idBase ? `${idBase}-tab-${t.value}` : undefined}
+            aria-controls={idBase ? `${idBase}-panel` : undefined}
             aria-selected={selected}
             tabIndex={selected ? 0 : -1}
             onClick={() => onChange(t.value)}
             onKeyDown={(e) => {
-              if (e.key === "ArrowRight") onChange(tabs[(i + 1) % tabs.length].value);
-              if (e.key === "ArrowLeft") onChange(tabs[(i - 1 + tabs.length) % tabs.length].value);
+              const step = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
+              if (!step) return;
+              e.preventDefault();
+              const next = (i + step + tabs.length) % tabs.length;
+              onChange(tabs[next].value);
+              e.currentTarget.parentElement?.querySelectorAll<HTMLButtonElement>('[role="tab"]')[next]?.focus();
             }}
             className={cn(
               "relative flex h-11 shrink-0 items-center gap-2 rounded-t-[8px] px-3 text-[14px] font-semibold transition-colors",

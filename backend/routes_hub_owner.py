@@ -332,7 +332,7 @@ DRAFT_FIELDS = {
     # details
     "title", "description", "highlights", "furnished", "bills_included", "internet_included", "internet_speed",
     "air_conditioning", "laundry", "dishwasher", "pets_allowed", "pet_details", "no_smoking", "quiet_hours",
-    "security_cameras", "security_cameras_location", "weapons_on_property", "weapons_explanation",
+    "security_cameras", "security_cameras_location", "lockable_bedroom", "weapons_on_property", "weapons_explanation",
     "other_safety_details", "nearest_transport", "neighbourhood_vibe", "accessibility_notes",
     # photos
     "images",
@@ -377,7 +377,8 @@ LISTING_TO_DRAFT = {
     "internet_included": "internet_included", "internet_speed": "internet_speed", "air_conditioning": "air_conditioning",
     "laundry": "laundry", "dishwasher": "dishwasher", "pets_allowed": "pets_allowed", "pet_details": "pet_details",
     "no_smoking": "no_smoking", "quiet_hours": "quiet_hours", "security_cameras": "security_cameras",
-    "security_cameras_location": "security_cameras_location", "weapons_on_property": "weapons_on_property",
+    "security_cameras_location": "security_cameras_location", "lockable_bedroom": "lockable_bedroom",
+    "weapons_on_property": "weapons_on_property",
     "weapons_explanation": "weapons_explanation", "other_safety_details": "other_safety_details",
     "nearest_transport": "nearest_transport", "neighbourhood_vibe": "neighbourhood_vibe", "images": "images",
     "weekly_price": "weekly_price", "bond": "bond", "weekly_discount": "weekly_discount", "monthly_discount": "monthly_discount",
@@ -532,6 +533,7 @@ def _draft_to_listing(data: dict) -> tuple[dict, str, Optional[int]]:
         "min_stay": f"{min_stay_weeks} weeks" if min_stay_weeks else None,
         "security_cameras": data.get("security_cameras"),
         "security_cameras_location": data.get("security_cameras_location"),
+        "lockable_bedroom": data.get("lockable_bedroom"),
         "weapons_on_property": data.get("weapons_on_property"),
         "weapons_explanation": data.get("weapons_explanation"),
         "other_safety_details": data.get("other_safety_details"),

@@ -85,7 +85,7 @@ export default function VerificationBadge({ verification, variant = "pill", clas
       </ul>
       <p className="mt-3 text-[12px] leading-[1.5] text-[var(--color-ink-3)]">
         {verification?.disclaimer ?? "Verification confirms documents were checked. It is not a guarantee of safety or suitability."}{" "}
-        <Link href={verification?.explainer_url ?? "/safety-verification"} className="underline underline-offset-2 text-[var(--color-primary)]">
+        <Link href={verification?.explainer_url ?? "/how-renting-works#checks"} className="underline underline-offset-2 text-[var(--color-primary)]">
           How verification works
         </Link>
       </p>

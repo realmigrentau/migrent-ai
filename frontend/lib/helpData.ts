@@ -1,7 +1,19 @@
-// Static Help Center content for Migrent V1.
-// This file is the primary source of truth for help categories, articles, FAQs,
-// and popular searches. All content is hardcoded so the Help Center works
-// immediately without backend seeding.
+/**
+ * The Help centre's content: topics, articles and the common questions.
+ *
+ * Rewritten on 2026-09-29 to describe Migrent as it works today, with
+ * Migrent Hub. The earlier text described a dashboard that no longer
+ * exists and several things that never did (AI match scores, a Superhost
+ * programme, visa checks through VEVO, refund percentages, owners paid
+ * through Stripe). Rules for money and fees come from lib/siteIdentity.ts.
+ *
+ * Every article keeps its original address (/help/<slug>) and topic
+ * address (/help/category/<slug>), so links that were shared still work.
+ * General information about the law is written conservatively and points
+ * to the government authority that decides; it is not legal advice.
+ */
+
+import { siteIdentity } from "./siteIdentity";
 
 export interface StaticHelpCategory {
   id: string;
@@ -9,7 +21,6 @@ export interface StaticHelpCategory {
   name: string;
   description: string;
   icon: string;
-  gradient: string;
   articleCount: number;
 }
 
@@ -29,1199 +40,742 @@ export interface StaticHelpArticle {
   updatedAt: string;
 }
 
-export interface QuickFAQ {
-  question: string;
-  answer: string;
-  category: string;
-}
+const UPDATED = "2026-09-29";
+const FEE = siteIdentity.fees.host.listingFee;
+const SUPPORT = siteIdentity.emails.support;
 
-export const HELP_CATEGORIES: StaticHelpCategory[] = [
-  {
-    id: "cat-1",
-    slug: "getting-started",
-    name: "Getting Started",
-    description: "New to Migrent? Start here to understand how the platform works for seekers and owners.",
-    icon: "Rocket",
-    gradient: "from-blue-500 to-indigo-600",
-    articleCount: 3,
-  },
-  {
-    id: "cat-2",
-    slug: "account-verification",
-    name: "Account & Verification",
-    description: "Manage your profile, verify your identity, and keep your account secure.",
-    icon: "ShieldCheck",
-    gradient: "from-indigo-500 to-purple-600",
-    articleCount: 3,
-  },
-  {
-    id: "cat-3",
-    slug: "search-matching",
-    name: "Search & Matching",
-    description: "Find the right room or tenant faster with smart search and AI matching.",
-    icon: "Search",
-    gradient: "from-emerald-500 to-teal-600",
-    articleCount: 3,
-  },
-  {
-    id: "cat-4",
-    slug: "listings-hosting",
-    name: "Listings & Hosting",
-    description: "Create, manage, and optimise your room listings to attract quality tenants.",
-    icon: "Home",
-    gradient: "from-amber-500 to-orange-600",
-    articleCount: 3,
-  },
-  {
-    id: "cat-5",
-    slug: "bookings-payments",
-    name: "Bookings & Payments",
-    description: "Understand how booking requests, instant book, and Stripe payments work.",
-    icon: "CreditCard",
-    gradient: "from-rose-500 to-pink-600",
-    articleCount: 4,
-  },
-  {
-    id: "cat-6",
-    slug: "safety-reporting",
-    name: "Safety & Reporting",
-    description: "Stay safe on Migrent. Learn how to report issues, block users, and get help.",
-    icon: "AlertTriangle",
-    gradient: "from-orange-500 to-red-600",
-    articleCount: 1,
-  },
-  {
-    id: "cat-7",
-    slug: "legal-policies",
-    name: "Legal & Policies",
-    description: "Rental law basics, bond rules, visa rights, and Migrent's own policies.",
-    icon: "FileText",
-    gradient: "from-purple-500 to-violet-600",
-    articleCount: 2,
-  },
-  {
-    id: "cat-8",
-    slug: "technical-issues",
-    name: "Technical Issues",
-    description: "Can't log in? Page not loading? Fix common technical problems here.",
-    icon: "Wrench",
-    gradient: "from-cyan-500 to-blue-600",
-    articleCount: 1,
-  },
+const CATEGORY_DEFS: Omit<StaticHelpCategory, "articleCount">[] = [
+  { id: "cat-1", slug: "getting-started", name: "Getting started", description: "What Migrent is, creating an account, and renting and hosting with one account.", icon: "Rocket" },
+  { id: "cat-2", slug: "account-verification", name: "Your account and checks", description: "Your Rental Profile, ID checks, and keeping your sign-in secure.", icon: "ShieldCheck" },
+  { id: "cat-3", slug: "search-matching", name: "Searching and applying", description: "Finding rooms, saving them, inspections and applications.", icon: "Search" },
+  { id: "cat-4", slug: "listings-hosting", name: "Listing and hosting", description: "Creating a listing, photos, house rules, rent records and repairs.", icon: "Home" },
+  { id: "cat-5", slug: "bookings-payments", name: "Stays and fees", description: "Stay bookings, instant book, cancelling, and what Migrent charges.", icon: "CreditCard" },
+  { id: "cat-6", slug: "safety-reporting", name: "Safety and reporting", description: "Reporting a person or listing, and what to do if you feel unsafe.", icon: "AlertTriangle" },
+  { id: "cat-7", slug: "legal-policies", name: "Your rights", description: "Bonds and renting rights in Australia, in plain words.", icon: "FileText" },
+  { id: "cat-8", slug: "technical-issues", name: "Signing in", description: "Getting back into your account.", icon: "Wrench" },
 ];
 
-export const POPULAR_SEARCHES = [
-  "verify identity",
-  "cancel booking",
-  "how to list a room",
-  "payment not received",
-  "bond deposit",
-  "instant book",
-  "report a user",
-  "visa rights",
-  "change email",
-  "photos upload",
-];
+type ArticleInput = Omit<StaticHelpArticle, "categoryName" | "updatedAt">;
 
-export const QUICK_FAQS: QuickFAQ[] = [
-  {
-    question: "How does Migrent work?",
-    answer:
-      "Migrent connects migrants and students in Australia with verified room owners. Seekers browse listings, request bookings, and pay securely through the platform. Owners list their rooms, review applicants, and receive payments directly to their bank account via Stripe.",
-    category: "getting-started",
-  },
-  {
-    question: "Is Migrent free to use?",
-    answer:
-      "Creating an account and browsing listings is completely free. A small service fee applies when a booking is confirmed. Owners do not pay to list - the fee is charged to the platform on successful bookings.",
-    category: "getting-started",
-  },
-  {
-    question: "How do I verify my identity?",
-    answer:
-      "Go to your profile settings and select Verification. You can upload a government-issued ID (passport, driver's licence) and optionally complete a selfie check. Verified profiles get a blue badge and are shown higher in search results.",
-    category: "account-verification",
-  },
-  {
-    question: "What happens if I need to cancel a booking?",
-    answer:
-      "Cancellation policies vary by listing. Most listings follow a standard policy: cancel 48 hours before move-in for a full refund, 24 hours for 50%, and no refund within 24 hours. Always check the listing's cancellation terms before booking.",
-    category: "bookings-payments",
-  },
-  {
-    question: "How do payments work?",
-    answer:
-      "All payments are processed securely through Stripe. When a booking is confirmed, your card is charged. Owners receive payment directly to their Stripe-connected bank account, typically within 2-5 business days.",
-    category: "bookings-payments",
-  },
-  {
-    question: "Can I use Migrent on any visa?",
-    answer:
-      "Yes. Migrent is designed for migrants and students on any visa type - student, skilled worker, working holiday, partner, and more. Listings are Australia-wide and do not discriminate by visa status.",
-    category: "legal-policies",
-  },
-];
-
-export const HELP_ARTICLES: StaticHelpArticle[] = [
-  // GETTING STARTED
+const ARTICLES: ArticleInput[] = [
+  // ── Getting started ───────────────────────────────────────────────
   {
     id: "art-1",
     slug: "how-migrent-works",
     title: "How Migrent works",
     category: "getting-started",
-    categoryName: "Getting Started",
     audience: "both",
-    tags: ["overview", "platform", "how-it-works"],
+    tags: ["overview", "platform", "how it works", "hub"],
     readingTime: 3,
     featured: true,
     type: "guide",
-    summary: "A complete overview of the Migrent platform - how seekers find rooms and owners list properties.",
-    body: `## Welcome to Migrent
+    summary: "Where you search, where you apply and host, and what Migrent does and does not do.",
+    body: `## Two places, one account
 
-Migrent is Australia's rental marketplace built specifically for migrants, international students, and newcomers. We connect people looking for rooms with owners who welcome tenants from all backgrounds.
+**This website** is where you look: search rooms, read suburb guides and learn how renting works. You do not need an account to search.
 
-## For seekers
+**Migrent Hub** is where you act, once you sign in. Renters save homes, build a Rental Profile, book inspections, apply and message hosts. Hosts list properties, publish inspection times, review applicants and keep a record of rent and repairs.
 
-As a seeker, you can browse room listings across Australia from hosts whose ID has been checked. Use our smart search to filter by suburb, price, move-in date, and room type. When you find a listing you like, you can either request a booking (the owner reviews and approves) or use Instant Book (confirm immediately without waiting).
+## If you are renting
 
-Once your booking is confirmed, payment is processed securely via Stripe. You'll receive a digital booking confirmation you can show at move-in.
+1. Search by suburb, budget and move-in date, then by what matters to you.
+2. Build one Rental Profile in Migrent Hub instead of filling in a new form for every room.
+3. Book an inspection time the host has published, and message them with questions.
+4. Apply. The host reviews your application, and if they approve it, Migrent does a final review before the tenancy is set up.
 
-## For owners
+## If you are hosting
 
-As an owner, you create a listing for your room or property. You set your own price, availability, house rules, and whether to allow Instant Book. When a seeker requests a booking, you'll receive a notification and have 24 hours to accept or decline. Payment goes straight to your Stripe account.
+1. List a room or a whole home with the listing wizard. It saves as you go.
+2. A person at Migrent reviews your government ID once. Each listing is read before it is published.
+3. Publish inspection times, answer messages and review applications.
+4. After move-in, record rent as it is paid and handle repair requests.
 
-## Verification and trust
+## What Migrent does not do
 
-Both seekers and owners can verify their identity through our verification system. Verified profiles get a blue badge and appear higher in search results. This creates a safer, more trusted community for everyone.
-
-## Support
-
-If you ever need help, you're in the right place. Browse the Help Center for articles, or contact our support team directly from the Contact Support page.`,
-    updatedAt: "2026-04-01",
+Migrent is not a real estate agent. It does not collect rent, hold bonds, inspect properties or write tenancy agreements. You agree terms directly with each other. Read more in [How renting works](/how-renting-works).`,
   },
   {
     id: "art-2",
     slug: "create-your-account",
     title: "How to create your account",
     category: "getting-started",
-    categoryName: "Getting Started",
     audience: "both",
-    tags: ["signup", "registration", "account"],
+    tags: ["sign up", "register", "account", "google"],
     readingTime: 2,
     featured: false,
     type: "guide",
-    summary: "Step-by-step guide to signing up for Migrent as a seeker or owner.",
-    body: `## Creating your Migrent account
+    summary: "Sign up with your email or Google, and tell us whether you are renting, hosting or both.",
+    body: `## Create your account
 
-Getting started on Migrent takes less than two minutes. Here's how:
+1. Choose **Sign in** in the menu, then **Create an account**.
+2. Sign up with your email address and a password, or with Google.
+3. Confirm your email address from the message we send you.
 
-## Step 1 - Sign up
+## Tell us what you are here for
 
-Go to migrent.com.au and click Sign Up. Enter your email address and create a secure password. You can also sign up with Google for faster access.
+When you first open Migrent Hub, choose whether you are renting, hosting, or managing properties for someone else. This decides what you see first. You can change it later in **Settings**.
 
-## Step 2 - Choose your role
+## What to do next
 
-After signing up, you'll be asked whether you're a Seeker (looking for a room) or an Owner (listing a property). You can switch roles later from your dashboard at any time.
-
-## Step 3 - Complete your profile
-
-Fill in your name, a profile photo, a short bio, and your move-in preferences (if you're a seeker) or property details (if you're an owner). A complete profile gets 3x more responses.
-
-## Step 4 - Verify your identity
-
-Head to Settings > Verification to upload your ID. This is optional but strongly recommended - verified users get a trust badge and appear higher in search results.
-
-## Step 5 - Start using Migrent
-
-Seekers can now browse listings and send booking requests. Owners can post their first room listing. Check your dashboard for personalised recommendations and next steps.`,
-    updatedAt: "2026-04-01",
+- **Renting:** start your Rental Profile, then save homes and book inspections.
+- **Hosting:** choose **List a property** and follow the listing wizard. You can save and finish later.`,
   },
   {
     id: "art-3",
     slug: "seeker-vs-owner",
-    title: "Seeker vs Owner - what's the difference?",
+    title: "Renting and hosting with one account",
     category: "getting-started",
-    categoryName: "Getting Started",
     audience: "both",
-    tags: ["role", "seeker", "owner"],
+    tags: ["renter", "owner", "host", "role", "switch", "property manager"],
     readingTime: 2,
     featured: false,
     type: "faq",
-    summary: "Understand the difference between a Seeker and Owner account on Migrent.",
-    body: `## What is a Seeker?
+    summary: "How to switch between renting and hosting, and when you cannot.",
+    body: `## One account, your choice
 
-A Seeker is someone looking for a room to rent. As a seeker you can:
+Your account is set up for renting, for hosting as an owner, or for hosting as a property manager. You chose this when you first opened Migrent Hub, and you can change it in **Settings**.
 
-- Browse all available listings
-- Search by suburb, price, room type, and dates
-- Save listings to your wishlist
-- Send booking requests or use Instant Book
-- Message owners directly
-- Leave reviews after your stay
+## When you cannot switch away from hosting
 
-## What is an Owner?
+To make sure nothing is left stranded, you cannot switch from hosting to renting while:
 
-An Owner is someone who has a room or property to rent out. As an owner you can:
+- one of your listings is live or waiting for review, or
+- one of your tenancies is active.
 
-- Create and manage room listings
-- Set your own price, availability, and house rules
-- Review and accept or decline booking requests
-- Enable Instant Book for faster bookings
-- Receive payments via Stripe
-- View analytics on your listing performance
+Pause or archive the listing, or end the tenancy, first.
 
-## Can I be both?
+## Property managers
 
-Yes. You can switch between Seeker and Owner roles from your dashboard at any time. Your profile, messages, and booking history are linked to your account, not just one role.
-
-## Which role should I choose?
-
-Choose Seeker if you are looking for a place to rent. Choose Owner if you have a room available and want to find a tenant. If you're not sure yet, start as a Seeker - you can always add a listing later.`,
-    updatedAt: "2026-04-01",
+If you list homes for someone else, choose property manager. When you add a property, you tell us your relationship to it.`,
   },
 
-  // ACCOUNT & VERIFICATION
+  // ── Your account and checks ─────────────────────────────────────────
   {
     id: "art-4",
     slug: "complete-your-profile",
-    title: "How to complete your profile",
+    title: "Your Rental Profile",
     category: "account-verification",
-    categoryName: "Account & Verification",
-    audience: "both",
-    tags: ["profile", "setup", "photo"],
-    readingTime: 2,
-    featured: false,
+    audience: "seeker",
+    tags: ["rental profile", "application", "references", "documents", "income"],
+    readingTime: 3,
+    featured: true,
     type: "guide",
-    summary: "A complete profile increases your chances of getting bookings or responses by 3x.",
-    body: `## Why your profile matters
+    summary: "One profile that goes with every application, and exactly what a host can see.",
+    body: `## What it is
 
-Your profile is how owners and seekers decide whether to trust you. A complete profile with a real photo and bio gets 3x more responses than an incomplete one.
+Your Rental Profile is one place in Migrent Hub for what hosts usually ask for: your work or study, your household, pets, your rental history if you have one, and your references. You fill it in once and use it for every application.
 
-## What to include
+You do not need an Australian rental history. If you are renting here for the first time, say so, and let your work, study and references tell your story.
 
-### Profile photo
+## What a host sees
 
-Use a clear, recent photo of your face. Listings and messages with profile photos get significantly more engagement. Avoid using logos, cartoons, or group photos.
+When you apply, the host sees a **snapshot** of your profile taken at that moment, not your live profile. If you update your profile later, it does not change applications you have already sent.
 
-### Display name
+- Your income is only included if you tick **share my income** on that application.
+- Documents are shared per application, and the links to them expire.
 
-Use your real first name, or first name and last initial. This builds trust with the other party.
+## Keeping it up to date
 
-### Bio
-
-Write 2-4 sentences about yourself. If you're a seeker, mention your occupation or studies, lifestyle (quiet, social, etc), and what you're looking for. If you're an owner, mention what makes your place great and what kind of tenant you're looking for.
-
-### Verification badge
-
-Upload your ID in Settings > Verification. Verified users appear with a blue badge on their profile and in search results.
-
-## How to edit your profile
-
-- Go to Dashboard > Profile
-- Click Edit Profile
-- Update your photo, name, bio, and preferences
-- Click Save Changes
-
-Changes are reflected immediately across the platform.`,
-    updatedAt: "2026-04-01",
+Open **Profile** in Migrent Hub. The progress bar shows what is still missing.`,
   },
   {
     id: "art-5",
     slug: "verify-your-identity",
-    title: "How to verify your identity",
+    title: "How ID checks work",
     category: "account-verification",
-    categoryName: "Account & Verification",
     audience: "both",
-    tags: ["verification", "ID", "trust badge", "identity"],
-    readingTime: 3,
-    featured: true,
+    tags: ["verify", "identity", "id", "badge", "host"],
+    readingTime: 2,
+    featured: false,
     type: "guide",
-    summary: "Verify your identity to get a trust badge and appear higher in search results.",
-    body: `## Why verify?
+    summary: "What hosts are checked for, what the badge means, and what it does not mean.",
+    body: `## Hosts
 
-Verified users get a blue trust badge on their profile. This signals to other users that you are who you say you are. Verified seekers are more likely to get their booking requests accepted. Verified owners get more inquiries.
+Before any of a host's rooms can be published, a person at Migrent reviews the host's government ID: a passport, driver's licence, visa or national ID. The host also confirms their email address. You can start a listing before the check is done; it waits as a draft until it is.
 
-Verification is optional but strongly recommended.
+Hosts upload their ID in Migrent Hub under **Settings**.
 
-## What you'll need
+## What the badge means
 
-- A government-issued photo ID (passport, Australian driver's licence, or national ID card)
-- A clear selfie (taken at time of verification)
-- A device with a camera
+"ID-checked host" means Migrent has seen and approved that person's identity document.
 
-## Step-by-step
+## What it does not mean
 
-### Step 1 - Go to Verification
+Migrent has not inspected the property and does not certify that a room is safe, legal or as described. Always inspect before you pay anything.
 
-Open your Dashboard and go to Settings > Verification, or click the Verification tab in your profile.
+## Renters
 
-### Step 2 - Upload your ID
-
-Click Upload ID and take a clear photo of the front of your document. Make sure all four corners are visible and the text is legible. Accepted documents:
-
-- Australian or international passport
-- Australian driver's licence
-- National identity card
-
-### Step 3 - Take a selfie
-
-After uploading your ID, you'll be prompted to take a selfie. Hold your phone at eye level and make sure your face is fully visible. This is used to confirm the photo on your ID matches you.
-
-### Step 4 - Wait for review
-
-Verification is usually processed within 24 hours. You'll receive an email and in-app notification when your badge is approved.
-
-## Privacy note
-
-Your ID documents are encrypted and stored securely. They are used only for identity verification and are not shared with other users or third parties.`,
-    updatedAt: "2026-04-01",
+There is no paid ID check for renters at the moment. Your Rental Profile and references are what hosts look at.`,
   },
   {
     id: "art-6",
     slug: "change-email-or-password",
-    title: "How to change your email or password",
+    title: "Change your email, password or two-step sign-in",
     category: "account-verification",
-    categoryName: "Account & Verification",
     audience: "both",
-    tags: ["email", "password", "security", "account settings"],
+    tags: ["email", "password", "security", "two-step", "mfa", "authenticator"],
     readingTime: 2,
     featured: false,
     type: "guide",
-    summary: "Update your login email or password from your account settings.",
-    body: `## Changing your email
+    summary: "Where to change your sign-in details in Migrent Hub.",
+    body: `## Your email address
 
-To update the email address on your account:
+In Migrent Hub, open **Settings** and choose **Change email**. We send a confirmation to the new address; the change applies once you confirm it.
 
-- Go to Settings > Account Security
-- Click Change Email
-- Enter your new email address and confirm with your current password
-- Check your new email inbox for a verification link
-- Click the link to confirm the change
+## Your password
 
-Your old email will remain active until you confirm the new one.
+In **Settings**, under security, choose **Change password**.
 
-## Changing your password
+## Two-step sign-in
 
-- Go to Settings > Account Security
-- Click Change Password
-- Enter your current password, then your new password twice
-- Your new password must be at least 8 characters and include a number or symbol
-- Click Save - you'll be logged out and asked to sign in again with your new password
+Also under security, you can turn on two-step sign-in with an authenticator app. After that, signing in asks for a six-digit code as well as your password.
 
-## Forgot your password?
+## Forgotten your password?
 
-If you've forgotten your password, go to the sign-in page and click Forgot password. Enter your email address and we'll send you a reset link within a few minutes.
-
-If you don't receive the email within 10 minutes, check your spam folder or contact support.
-
-## Account security tips
-
-- Use a unique password not used on any other site
-- Enable two-factor authentication when it becomes available
-- Never share your login credentials with anyone, including Migrent staff`,
-    updatedAt: "2026-04-01",
+On the sign-in page, choose **Forgot password** and follow the link we email you.`,
   },
 
-  // SEARCH & MATCHING
+  // ── Searching and applying ─────────────────────────────────────────
   {
     id: "art-7",
     slug: "how-to-search-rooms",
     title: "How to search for rooms",
     category: "search-matching",
-    categoryName: "Search & Matching",
     audience: "seeker",
-    tags: ["search", "filter", "find room", "suburb"],
-    readingTime: 3,
+    tags: ["search", "filters", "suburb", "budget", "map"],
+    readingTime: 2,
     featured: true,
     type: "guide",
-    summary: "Use smart filters, map view, and suburb pages to find your ideal room in Australia.",
-    body: `## Starting your search
+    summary: "Search by place, budget and dates, then narrow it down by what matters to you.",
+    body: `## Start with the basics
 
-From your Seeker Hub or the Search page, you can browse all available listings across Australia. Here's how to search effectively:
+Choose **Search rooms**. Enter a suburb, city or postcode, your weekly budget, and when you want to move in. You do not need an account to search.
 
-## Using filters
+## Narrow it down
 
-Click the Filter button to narrow results by:
+Open **More filters** for the things that decide whether a place works for you:
 
-- Location - suburb, city, or postcode
-- Price - set a minimum and maximum weekly rent
-- Room type - private room, studio, shared room, or entire place
-- Move-in date - set when you need to move in
-- Features - ensuite, furnished, bills included, pet-friendly, and more
+- whole place or a room, and how many bedrooms
+- private bathroom, laundry at home, internet included
+- no security cameras, a bedroom door that locks
+- furnished, bills included, parking, air-con, pets allowed
+- near a station
 
-## Map view
+Every filter you set is shown above the results, and you can remove any of them with one tap.
 
-Toggle to Map View to see listings on a map. This is helpful for understanding commute distances and neighbourhood context. Click any pin to see a preview of the listing.
+## Try the house on the homepage
 
-## Suburb pages
+The house on the homepage is another way in: switch rooms and features on or off and choose **Show matching rooms**. It opens this search with those filters already set.
 
-Browse suburb-specific pages (e.g. /suburb/kellyville) for a curated overview of average rents, nearby transport, and available rooms in that area.
+## Map and list
 
-## Saved searches
-
-Not ready to book yet? Save your search filters and get notified by email when new listings match your criteria. Look for the Save Search button at the top of the results page.
-
-## AI recommendations
-
-The platform suggests listings based on your preferences, move-in date, and budget. Check the Recommended section in your Seeker Hub for personalised picks.
-
-## Tips for better results
-
-- Be flexible on move-in date to see more listings
-- Start broad with suburb and narrow down later
-- Save listings you like to your wishlist to compare later
-- Check the verified badge on listings - these have been reviewed by our team`,
-    updatedAt: "2026-04-01",
+On a larger screen, results appear on a map beside the list. Addresses are shown as a suburb until you book an inspection.`,
   },
   {
     id: "art-8",
     slug: "save-and-compare-listings",
-    title: "How to save and compare listings",
+    title: "Save homes and searches",
     category: "search-matching",
-    categoryName: "Search & Matching",
     audience: "seeker",
-    tags: ["wishlist", "save", "compare", "favourites"],
+    tags: ["save", "saved", "heart", "alerts", "saved search"],
     readingTime: 2,
     featured: false,
     type: "guide",
-    summary: "Save listings to your wishlist and compare them side-by-side before booking.",
-    body: `## Saving a listing
+    summary: "Keep homes you like, and hear about new ones that match a search.",
+    body: `## Saving a home
 
-On any listing page, click the heart icon (top right of the listing card) to save it to your wishlist. You can save as many listings as you like - there's no limit.
+Tap the heart on any listing. You need to be signed in; saved homes are kept in Migrent Hub under **Saved**, on every device you use.
 
-## Viewing your wishlist
+If you saved homes before signing in, they are added to your account when you sign in on the same device.
 
-Go to Dashboard > Saved (or click the heart icon in the sidebar) to see all your saved listings. They're shown with current availability and price so you always see up-to-date information.
+## Saving a search
 
-## Removing a listing from your wishlist
-
-Click the heart icon again on a saved listing, or open your Saved page and click the remove button. The listing will be removed from your wishlist immediately.
-
-## Tips for comparing listings
-
-When comparing two or more listings, consider:
-
-- Total weekly cost (including bills if not included)
-- Distance to your workplace or university
-- Move-in date flexibility
-- House rules (guests, pets, quiet hours)
-- Reviews from previous tenants
-- Whether the owner has a verified badge
-
-## What happens when a saved listing is booked?
-
-If a listing you've saved gets taken before you book, it will show as Unavailable in your wishlist with the dates it was booked. You'll get a notification so you can continue your search.`,
-    updatedAt: "2026-04-01",
+In Migrent Hub, open **Discover**, search for a suburb and a budget, and choose **Save search**. Under **Saved**, you can choose how often to hear about new rooms that match it, or turn the alerts off.`,
   },
   {
     id: "art-9",
     slug: "how-matching-works",
-    title: "How AI matching works",
+    title: "How \"Best match\" ordering works",
     category: "search-matching",
-    categoryName: "Search & Matching",
     audience: "seeker",
-    tags: ["AI", "matching", "recommendations", "smart search"],
+    tags: ["best match", "ranking", "order", "matching"],
+    readingTime: 2,
+    featured: false,
+    type: "faq",
+    summary: "A plain set of rules that puts the rooms closest to what you asked for first.",
+    body: `## What it is
+
+When you are signed in, you can sort search results by **Best match**. It orders rooms by how closely they fit what you have told us: mainly location and budget, then move-in date, furnishing, bills, and a few other preferences.
+
+## What it is not
+
+It is not AI and it does not guess. It is a fixed set of rules applied to the information in your profile and in the listing. If a listing is missing information, it simply scores lower on that point.
+
+## Why a room is shown
+
+Where there is a clear reason a room fits, such as being in a suburb you chose or under your budget, the result says so.`,
+  },
+  {
+    id: "art-21",
+    slug: "apply-for-a-home",
+    title: "Applying for a home",
+    category: "search-matching",
+    audience: "seeker",
+    tags: ["apply", "application", "status", "approved", "final review"],
+    readingTime: 3,
+    featured: true,
+    type: "guide",
+    summary: "How to apply, what each status means, and what happens after a host says yes.",
+    body: `## Sending an application
+
+Open the room and choose **Apply**. Check your Rental Profile, add a note to the host if you like, choose which documents to share, and send it. Applying is free.
+
+## What the statuses mean
+
+- **Submitted:** the host has it.
+- **Under review:** the host has opened it.
+- **Shortlisted:** you are on the host's shortlist.
+- **Changes requested:** the host or Migrent has asked you to add or fix something.
+- **Approved by the host:** Migrent now does a final review.
+- **Finalised:** the tenancy has been set up in Migrent Hub.
+- **Declined** or **not proceeding:** it did not go ahead this time.
+
+You can withdraw an application at any time before it is finalised.
+
+## After it is finalised
+
+You agree the tenancy terms directly with the host and lodge your bond with the bond authority in your state or territory. Your rent record and any repair requests then live in Migrent Hub.`,
+  },
+  {
+    id: "art-22",
+    slug: "book-an-inspection",
+    title: "Booking an inspection",
+    category: "search-matching",
+    audience: "both",
+    tags: ["inspection", "viewing", "open home", "calendar"],
     readingTime: 2,
     featured: false,
     type: "guide",
-    summary: "Understand how Migrent's AI matching engine finds the best listings for your needs.",
-    body: `## What is AI matching?
+    summary: "Pick a time the host has published, and when you get the address.",
+    body: `## For renters
 
-Migrent uses an AI-powered matching engine to suggest the most relevant listings for each seeker. Rather than just showing all available listings, we rank and surface the ones most likely to be a great fit for you.
+On a listing, choose **Book an inspection** and pick one of the times the host has published. Times are shown in the property's own time zone.
 
-## How it works
+Once you have booked, you can see the street address and add the inspection to your calendar. You can change or cancel your booking in Migrent Hub under **Inspections**.
 
-The matching engine considers:
+## For hosts
 
-- Your preferred suburbs and distance to work or university
-- Your budget and preferred room type
-- Your move-in date and minimum stay duration
-- Your lifestyle preferences (quiet vs social, pets, etc)
-- Owner response rates and listing quality scores
-- Reviews and ratings from previous tenants
-
-## Where matches appear
-
-Your personalised matches appear in:
-
-- The Seeker Hub homepage under Recommended for You
-- Search results (matched listings are ranked higher for you)
-- Email digests when new matching listings are posted
-
-## Improving your matches
-
-The more complete your profile, the better your matches. Make sure you've set:
-
-- Your preferred move-in date
-- Your maximum budget
-- Your preferred suburbs (up to 5)
-- Your lifestyle preferences in Settings > Preferences
-
-## AI matching vs regular search
-
-Regular search returns all listings matching your filter criteria. AI matching re-ranks those results based on your personal profile and behaviour on the platform. Use both together for the best results.`,
-    updatedAt: "2026-04-01",
+In Migrent Hub, open the listing and add inspection times, with how many people can come to each. If you need to move a time, everyone booked on it is told. After the inspection you can mark who came.`,
   },
 
-  // LISTINGS & HOSTING
+  // ── Listing and hosting ───────────────────────────────────────────
   {
     id: "art-10",
     slug: "create-your-first-listing",
     title: "How to create your first listing",
     category: "listings-hosting",
-    categoryName: "Listings & Hosting",
     audience: "owner",
-    tags: ["listing", "post room", "create", "publish"],
-    readingTime: 4,
+    tags: ["listing", "create", "wizard", "publish", "review"],
+    readingTime: 3,
     featured: true,
     type: "guide",
-    summary: "Step-by-step guide to creating and publishing your first room listing on Migrent.",
-    body: `## Before you start
+    summary: "The six steps of the listing wizard, and what happens before a listing goes live.",
+    body: `## The listing wizard
 
-Make sure you have the following ready before creating your listing:
+Choose **List a property**. The wizard has six steps, and it saves as you go, so you can stop and come back:
 
-- At least 5 clear photos of the room and common areas
-- The weekly rent amount and bond amount
-- Move-in availability date
-- Any house rules you want to set
+1. **The property:** address, type and size.
+2. **The space:** the whole place, a private room or a shared room, bedrooms and bathrooms.
+3. **Details:** title, description, features, house rules and safety disclosures.
+4. **Photos:** at least one; the first is the cover.
+5. **Rent and dates:** weekly rent, bond, and when it is available.
+6. **Review:** everything that is still missing is listed here, with a link to fix it.
 
-## Step 1 - Go to Post Room
+If you started from the house on the homepage, the wizard is already filled in with what you chose. Check each step: your home may differ from the model.
 
-From your Owner Hub or the sidebar, click Post Room. This opens the listing creation form.
+## Before it goes live
 
-## Step 2 - Add basic details
+Your government ID is reviewed once, and each listing is read by Migrent before it is published. Until then it waits safely as a draft or in review.
 
-Enter:
+## More than one room
 
-- Room title (e.g. "Bright private room with ensuite in Chatswood")
-- Property type (room, studio, or entire place)
-- Address (shown only as suburb to seekers for privacy)
-- Room size and features (ensuite, furnished, air conditioning, etc)
-
-## Step 3 - Set your price
-
-Enter your weekly rent. You can also set:
-
-- Bond amount (typically 4 weeks rent)
-- Whether bills are included
-- Minimum stay duration
-- Maximum stay duration
-
-## Step 4 - Upload photos
-
-Upload at least 5 photos. Include:
-
-- The bedroom from two angles
-- Any ensuite or shared bathroom
-- Common areas (kitchen, living room)
-- Outdoor space if available
-
-Good photos get 2x more inquiries. Use natural light and tidy the room before shooting.
-
-## Step 5 - Set house rules
-
-Set clear house rules to attract the right tenants. Common rules include:
-
-- No smoking inside
-- No pets
-- Quiet hours (e.g. 10pm - 8am)
-- Couples welcome or not
-- Maximum guests overnight
-
-## Step 6 - Set availability
-
-Choose your move-in date and whether to enable Instant Book. Instant Book allows seekers to confirm bookings immediately without waiting for your approval.
-
-## Step 7 - Publish
-
-Review your listing and click Publish. Your listing will be live within a few minutes and visible to seekers across Australia.`,
-    updatedAt: "2026-04-01",
+List each room on its own, or the whole home as one listing. Rooms in the same property are grouped together, and you can copy a listing when you have another room just like it.`,
   },
   {
     id: "art-11",
     slug: "add-photos-to-listing",
-    title: "How to add great photos to your listing",
+    title: "Photos that help renters decide",
     category: "listings-hosting",
-    categoryName: "Listings & Hosting",
     audience: "owner",
-    tags: ["photos", "listing", "images", "upload"],
+    tags: ["photos", "images", "upload", "cover"],
     readingTime: 2,
     featured: false,
     type: "guide",
-    summary: "Great photos are the biggest factor in getting more inquiries. Here's how to take and upload them.",
-    body: `## Why photos matter
+    summary: "What to photograph, and how to order your photos.",
+    body: `## What to show
 
-Listings with 5 or more high-quality photos receive 2x more inquiries than listings with fewer or lower-quality photos. Your photos are the first thing seekers see.
+- The room itself, in daylight, from the doorway and from the far corner.
+- The bathroom the renter will use.
+- The kitchen and living areas they will share.
+- Anything the listing promises: a desk, a wardrobe, parking, outdoor space.
 
-## What photos to include
+## Good habits
 
-At minimum, include:
+- Tidy up, open the blinds and turn the lights on.
+- Take photos in landscape, holding the phone level.
+- Show the home as it is. Photos that do not match what renters see at the inspection waste everyone's time.
 
-- The bedroom (at least 2 angles)
-- The bathroom (shared or ensuite)
-- The kitchen
-- The living or common area
+## Ordering
 
-Bonus photos that help:
-
-- The front of the building or house
-- The backyard or balcony
-- The neighbourhood or street
-
-## Tips for great photos
-
-- Shoot in daylight - open blinds and turn on all lights
-- Tidy and clean the room before shooting
-- Remove personal items and clutter
-- Shoot from corners to show the full room
-- Use landscape orientation (horizontal)
-- Minimum resolution: 1200 x 900 pixels
-
-## How to upload photos
-
-- Go to Owner Hub > Listings > [Your listing] > Edit
-- Scroll to the Photos section
-- Click Add Photos and select your files
-- Drag to reorder - the first photo is the cover image
-
-## Photo requirements
-
-- File types: JPG, PNG, WEBP
-- Maximum file size: 10MB per photo
-- Minimum: 5 photos to publish
-- Maximum: 30 photos per listing
-
-## Can I use stock photos?
-
-No. All photos must be real photos of your actual property. Listings with stock or misleading photos may be removed and your account may be suspended.`,
-    updatedAt: "2026-04-01",
+The first photo is the cover shown in search. Drag photos in the wizard's **Photos** step to change the order. You can add up to twenty.`,
   },
   {
     id: "art-12",
     slug: "set-your-room-rules",
-    title: "How to set your house rules",
+    title: "House rules and safety disclosures",
     category: "listings-hosting",
-    categoryName: "Listings & Hosting",
     audience: "owner",
-    tags: ["house rules", "rules", "owner", "tenant rules"],
+    tags: ["rules", "house rules", "cameras", "safety", "disclosure", "lock"],
     readingTime: 2,
     featured: false,
     type: "guide",
-    summary: "Set clear house rules to attract the right tenants and avoid misunderstandings.",
-    body: `## Why house rules matter
+    summary: "What to tell renters up front, including the questions every listing must answer.",
+    body: `## House rules
 
-Clear house rules set expectations before a tenant moves in. They reduce disputes and help you attract tenants who are a good fit for your household.
+In the **Details** step you can set smoking, quiet hours and who the home suits. Clear rules up front save awkward conversations later.
 
-## Common house rules to consider
+## Safety disclosures
 
-- Smoking policy (no smoking inside, outdoor smoking only, or no smoking)
-- Pet policy (no pets, cats only, pets allowed with approval)
-- Guest policy (no overnight guests, guests allowed, couples welcome)
-- Quiet hours (e.g. 10pm to 8am on weekdays)
-- Cleaning responsibilities (shared common areas, individual rooms)
-- Kitchen usage (no cooking after 10pm, etc)
-- Parking (one car bay available, no visitor parking)
+Every listing answers these, and renters see the answers before they apply:
 
-## Rules that are not allowed
+- **Security cameras:** whether there are any, and where. Cameras must never cover bedrooms or bathrooms.
+- **Bedroom doors:** whether each rented bedroom has a lock the renter controls.
+- **Firearms or weapons** on the property, with an explanation if there are.
 
-House rules must not discriminate on the basis of:
+Renters can search for homes with no cameras and with lockable doors, so accurate answers bring you the right people.`,
+  },
+  {
+    id: "art-23",
+    slug: "rent-record-and-repairs",
+    title: "Rent records and repairs",
+    category: "listings-hosting",
+    audience: "both",
+    tags: ["rent", "tenancy", "repairs", "maintenance", "emergency"],
+    readingTime: 3,
+    featured: false,
+    type: "guide",
+    summary: "Keeping track of rent, and handling repairs, including emergencies.",
+    body: `## A record, not a payment
 
-- Race, nationality, or ethnicity
-- Religion or religious dress
-- Visa type or country of origin
-- Gender or gender identity
-- Disability
+Migrent does not collect rent. The host sets up the rent dates from the lease in Migrent Hub and records each payment as it arrives. The renter sees the same record, so there is one shared view of what was due and what was paid.
 
-These are prohibited under Australian anti-discrimination law. Listings with discriminatory rules will be removed.
+## Asking for a repair
 
-## How to set house rules
+Renters choose **Request a repair** under **My home**, say what is wrong and how urgent it is, and can add photos.
 
-- Go to Owner Hub > Listings > [Your listing] > Edit
-- Scroll to House Rules
-- Toggle on/off the preset options
-- Add any custom rules in the text field
+- **Emergency** repairs (for example a burst pipe, a gas leak, no power or a serious security problem) show safety advice first, including when to call 000, and the contact for your state tenancy authority.
+- The host moves the request from reported to scheduled to fixed, and both of you can add updates.
 
-## Communicating rules to tenants
+## For hosts
 
-Even if your rules are set in the listing, we recommend:
-
-- Confirming them in your welcome message when accepting a booking
-- Posting a printed copy in the common area
-- Discussing them in person on move-in day`,
-    updatedAt: "2026-04-01",
+Emergencies are listed first. You can add private notes to a request that the renter never sees.`,
   },
 
-  // BOOKINGS & PAYMENTS
+  // ── Stays and fees ────────────────────────────────────────────────
   {
     id: "art-13",
     slug: "request-to-book",
-    title: "How to request a booking",
+    title: "Requesting a stay",
     category: "bookings-payments",
-    categoryName: "Bookings & Payments",
     audience: "seeker",
-    tags: ["booking", "request", "apply", "rent"],
-    readingTime: 3,
-    featured: true,
+    tags: ["booking", "stay", "request", "dates", "short stay"],
+    readingTime: 2,
+    featured: false,
     type: "guide",
-    summary: "Learn how to send a booking request and what happens after the owner responds.",
-    body: `## What is a booking request?
+    summary: "How stay bookings work for listings that offer them.",
+    body: `## Stays and tenancies
 
-A booking request is how you tell an owner you want to rent their room. The owner then has 24 hours to accept or decline. If accepted, your payment is processed and the booking is confirmed.
+Some listings are offered for **stays** of a set number of weeks. For those, you can request dates instead of applying.
 
-## Before you request
+## Requesting dates
 
-Make sure you have:
+Choose your check-in and check-out dates and the number of guests. The listing's minimum and maximum stay, and how many guests it allows, are shown before you send the request.
 
-- Completed your profile (photo, bio, preferences)
-- Verified your identity (recommended)
-- Read the listing's house rules
-- Confirmed the move-in date and duration work for you
+## What happens next
 
-## How to send a request
-
-- Open the listing you want to book
-- Click Request to Book
-- Choose your move-in date and how long you'd like to stay
-- Add a personalised message to the owner (recommended)
-- Review the total cost including the service fee
-- Enter your payment details and click Send Request
-
-Your card will not be charged until the owner accepts.
-
-## Writing a good intro message
-
-A personalised message to the owner dramatically increases your acceptance rate. Include:
-
-- A brief intro about yourself (who you are, what you do or study)
-- Why you're moving to the area
-- Your lifestyle (quiet, respectful, clean)
-- Any questions about the property
-
-Example: "Hi, I'm Priya, a grad student at UNSW starting in February. I'm quiet, clean, and looking for a safe, welcoming home. Your listing looks perfect - could you tell me more about the parking situation?"
-
-## What happens next?
-
-- The owner reviews your request and has 24 hours to respond
-- You'll receive a notification when they accept or decline
-- If accepted, your payment is processed automatically
-- If declined or no response after 24 hours, you are not charged
-
-## Instant Book
-
-If the listing has Instant Book enabled, your booking is confirmed immediately without waiting. Payment is processed right away.`,
-    updatedAt: "2026-04-01",
+The host accepts or declines your request, and you can follow it in Migrent Hub. Once the host has accepted and confirmed it, the booking is confirmed. Renters do not pay Migrent anything for a stay; how and when you pay the host is between you and them, so agree it in writing first.`,
   },
   {
     id: "art-14",
     slug: "instant-book-explained",
-    title: "Instant Book explained",
+    title: "Instant book",
     category: "bookings-payments",
-    categoryName: "Bookings & Payments",
     audience: "both",
-    tags: ["instant book", "booking", "confirm"],
-    readingTime: 2,
+    tags: ["instant book", "booking", "stay"],
+    readingTime: 1,
     featured: false,
     type: "faq",
-    summary: "Instant Book lets seekers confirm bookings immediately without owner approval.",
-    body: `## What is Instant Book?
+    summary: "Stay listings that can be booked without waiting for the host to accept.",
+    body: `## What it means
 
-Instant Book is a feature that lets seekers confirm a booking immediately, without waiting for the owner to manually accept. When you book an Instant Book listing, the booking is confirmed and payment is processed right away.
+Some stay listings are marked **Instant book**: dates that fit the listing's rules can be booked without waiting for the host to accept each request. You can filter search to show only these.
 
-## For seekers
+## Before you book
 
-Listings with Instant Book have a lightning bolt icon. When you book one:
-
-- Your card is charged immediately on confirmation
-- You receive a booking confirmation email and in-app notification
-- There is no waiting period - the room is yours from the agreed move-in date
-
-Instant Book listings tend to go faster. If you find a listing you love with Instant Book, act quickly.
-
-## For owners
-
-You can enable Instant Book on any of your listings in Listings > [Your listing] > Edit > Booking Settings.
-
-When Instant Book is on:
-
-- Seekers can confirm bookings without your approval
-- You are notified immediately when a booking is made
-- The booking is binding - cancellations follow the standard policy
-- You can set requirements (e.g. verified ID only) before Instant Book becomes available
-
-## Can I turn off Instant Book?
-
-Yes. Owners can turn off Instant Book at any time from their listing settings. All pending requests will still need manual approval.
-
-## Is Instant Book safer?
-
-Instant Book does not bypass identity checks. Seekers still need a complete profile and can be required to have verified ID before Instant Book is available. Contact support if you have a concern about a confirmed Instant Book guest.`,
-    updatedAt: "2026-04-01",
+Read the listing's minimum and maximum stay and its house rules, and message the host if anything is unclear.`,
   },
   {
     id: "art-15",
     slug: "how-payments-work",
-    title: "How payments work on Migrent",
+    title: "What Migrent charges, and how",
     category: "bookings-payments",
-    categoryName: "Bookings & Payments",
     audience: "both",
-    tags: ["payment", "stripe", "money", "bank", "payout"],
-    readingTime: 3,
-    featured: false,
-    type: "guide",
-    summary: "Understand how Migrent handles payments securely for both seekers and owners.",
-    body: `## Payment processing
+    tags: ["fees", "payment", "stripe", "cost", "price", "refund"],
+    readingTime: 2,
+    featured: true,
+    type: "faq",
+    summary: `Renters search and apply for free. Hosts pay AUD $${FEE} once per property, and only for stays.`,
+    body: `## Renters
 
-All payments on Migrent are processed by Stripe, one of the world's most trusted payment platforms. Your card details are never stored on Migrent's servers.
+Searching, messaging hosts, booking inspections and applying are free. Migrent never handles your rent or your bond.
 
-## For seekers
+The only thing a renter can pay Migrent for is a session with a mentor, if you choose to book one. Each mentor sets their own price, which is shown before you pay.
 
-When you confirm a booking:
+## Hosts
 
-- Your card is authorised at the time of request
-- Payment is only captured when the owner accepts (or immediately for Instant Book)
-- You receive a payment receipt via email
-- The weekly rent is charged according to the payment schedule set in the booking
+- Listing, editing and receiving applications are free.
+- Taking a long-term tenant through an application: no fee.
+- **Stay bookings:** a one-off fee of AUD $${FEE} per property, charged when the first stay booking at that property is confirmed. Later bookings at the same property are not charged again.
 
-Accepted payment methods:
+There is no subscription and no commission on rent.
 
-- Visa and Mastercard (credit and debit)
-- Apple Pay and Google Pay
+## How the fee is paid
 
-## For owners
+By card, through Stripe. Card details never reach Migrent's own servers, and Stripe emails a receipt.
 
-To receive payments, you need to connect your bank account via Stripe:
+## A question about a charge
 
-- Go to Settings > Payments > Connect Bank Account
-- Follow the Stripe onboarding steps
-- Enter your bank BSB and account number
-- Verify your identity with Stripe (required by Australian law)
-
-Once connected, payouts are typically transferred within 2-5 business days after a booking payment is processed.
-
-## Service fees
-
-Migrent charges a small service fee on successful bookings. This fee is shown transparently at checkout before you confirm. The fee covers platform costs, payment processing, and support.
-
-## Payment disputes
-
-If you believe you've been charged incorrectly, contact support within 7 days of the charge. Include your booking ID and a description of the issue. We aim to resolve all payment disputes within 3-5 business days.`,
-    updatedAt: "2026-04-01",
+Email ${SUPPORT}. See the [Terms of Service](/terms-of-service) for how refunds are handled.`,
   },
   {
     id: "art-16",
     slug: "cancel-a-booking",
-    title: "How to cancel a booking",
+    title: "Cancelling a stay request",
     category: "bookings-payments",
-    categoryName: "Bookings & Payments",
-    audience: "both",
-    tags: ["cancel", "cancellation", "refund", "booking"],
-    readingTime: 3,
+    audience: "seeker",
+    tags: ["cancel", "cancellation", "booking", "stay"],
+    readingTime: 1,
     featured: false,
-    type: "guide",
-    summary: "Learn how to cancel a booking and understand the refund policy.",
-    body: `## Cancellation policy
+    type: "faq",
+    summary: "When you can cancel in Migrent Hub, and what to do after a stay is confirmed.",
+    body: `## Before it is confirmed
 
-Cancellation policies vary by listing. The policy is always shown on the listing page and at checkout before you confirm. Standard policies on Migrent:
+While a request is waiting for the host, or has been accepted but not yet confirmed, you can cancel it yourself in Migrent Hub.
 
-### Flexible
+## After it is confirmed
 
-- Cancel up to 48 hours before move-in: full refund
-- Cancel within 48 hours: 50% refund
-- Cancel within 24 hours: no refund
-
-### Moderate
-
-- Cancel up to 5 days before move-in: full refund
-- Cancel 2-5 days before move-in: 50% refund
-- Cancel within 48 hours: no refund
-
-### Strict
-
-- Cancel 7 or more days before move-in: 50% refund
-- Cancel within 7 days: no refund
-
-## How to cancel - seekers
-
-- Go to Dashboard > Bookings
-- Find the booking and click Cancel Booking
-- Select your reason for cancellation
-- Review the refund amount based on the policy
-- Confirm the cancellation
-
-Your refund (if applicable) will be returned to your original payment method within 5-10 business days.
-
-## How to cancel - owners
-
-- Go to Owner Hub > Bookings
-- Find the booking and click Cancel Booking
-- Select your reason for cancellation
-
-Owner cancellations are penalised under our Reliable Host Policy. Excessive cancellations may result in your listing being demoted or removed. If you must cancel due to an emergency, contact support before cancelling.
-
-## What if a booking was fraudulent?
-
-If you believe a booking was made fraudulently, do not cancel it yourself. Contact support immediately with your booking ID and details.`,
-    updatedAt: "2026-04-01",
+Talk to the host first: any arrangement about money is between you and them. If you cannot sort it out, see [Dispute resolution](/support-disputes) or email ${SUPPORT}.`,
   },
 
-  // SAFETY & REPORTING
+  // ── Safety and reporting ───────────────────────────────────────────
   {
     id: "art-17",
     slug: "report-a-user",
-    title: "How to report a user or listing",
+    title: "Reporting a person or a listing",
     category: "safety-reporting",
-    categoryName: "Safety & Reporting",
     audience: "both",
-    tags: ["report", "safety", "block", "scam", "abuse"],
-    readingTime: 3,
-    featured: false,
+    tags: ["report", "safety", "scam", "block", "unsafe"],
+    readingTime: 2,
+    featured: true,
     type: "safety",
-    summary: "Report suspicious users, scam listings, or abusive behaviour directly from Migrent.",
-    body: `## Your safety is our priority
+    summary: "How to report something wrong, and what to do first if you feel unsafe.",
+    body: `## If you feel unsafe
 
-Migrent has a zero-tolerance policy for scams, harassment, discrimination, and fraudulent listings. We take all reports seriously and investigate within 24 hours.
+Call **000** first. Then tell us.
 
-## How to report a listing
+## Reporting
 
-If you see a listing that looks suspicious, misleading, or discriminatory:
+- **A listing:** use **Report** on the listing page.
+- **A person or a conversation:** open the conversation in Migrent Hub and choose **Report**.
+- **Anything else:** email ${SUPPORT}.
 
-- Open the listing page
-- Scroll to the bottom and click Report this listing
-- Choose a reason (scam, misleading photos, discriminatory rules, other)
-- Add any details that might help our team
-- Submit the report
+Say what happened and when. Screenshots help.
 
-Reported listings are reviewed by our moderation team within 24 hours. If the listing violates our policies, it will be removed.
+## Warning signs
 
-## How to report a user
+- Being asked to pay a bond or rent before you have inspected the home or signed anything.
+- Being asked to move the conversation to another app straight away.
+- A price far below similar rooms nearby.
+- A host who cannot show you the room.
 
-If a user has sent you an abusive, threatening, or suspicious message:
-
-- Open the message thread
-- Click the three-dot menu at the top right
-- Select Report User
-- Choose a reason and add details
-- Submit
-
-You can also block a user from the same menu. Blocking prevents them from messaging you or seeing your profile.
-
-## Emergency situations
-
-If you are in immediate danger, contact Australian emergency services: call 000.
-
-If you have been scammed financially, report to:
-
-- Australian Cyber Security Centre: cyber.gov.au
-- Scamwatch: scamwatch.gov.au
-- Your bank's fraud line
-
-Then contact Migrent support with your case reference number.
-
-## What we do with reports
-
-All reports are reviewed by a human moderator. We may:
-
-- Remove the listing or account
-- Warn the user
-- Permanently ban the user
-- Share information with law enforcement if required
-
-We do not share your identity with the person you report.`,
-    updatedAt: "2026-04-01",
+Read more in [Safety and reporting](/safety-reporting).`,
   },
 
-  // LEGAL & POLICIES
+  // ── Your rights ─────────────────────────────────────────────────
   {
     id: "art-18",
     slug: "bond-and-deposit-rules",
-    title: "Bond and deposit rules in Australia",
+    title: "Bonds in Australia",
     category: "legal-policies",
-    categoryName: "Legal & Policies",
     audience: "both",
-    tags: ["bond", "deposit", "legal", "tenancy", "rental"],
+    tags: ["bond", "deposit", "rights", "tenancy", "authority"],
     readingTime: 3,
     featured: false,
     type: "policy",
-    summary: "Understand how bonds work in Australia and what rights you have as a tenant or owner.",
-    body: `## What is a bond?
+    summary: "What a bond is, who holds it, and how you get it back.",
+    body: `## What a bond is
 
-A bond (also called a security deposit) is money paid by a tenant at the start of a tenancy. It protects the owner against damage, unpaid rent, or cleaning costs. In most Australian states, the bond is lodged with a government authority - not held by the owner.
+A bond is money paid at the start of a tenancy as security against unpaid rent or damage beyond normal wear and tear. Each state and territory limits how much it can be and says how it must be held.
 
-## Bond limits by state
+## Who holds it
 
-Maximum bond amounts vary by state. Common limits:
+In every state and in the ACT, the bond is lodged with a government bond authority, not kept by the host. In the Northern Territory, the landlord holds the security deposit under the territory's tenancy law. Either way, **Migrent never holds your bond**.
 
-- NSW: 4 weeks rent (for rent above a threshold: no limit)
-- VIC: 1 month rent
-- QLD: 4 weeks rent
-- WA: 4 weeks rent
-- SA: 4 weeks rent
-- TAS: 4 weeks rent
+Ask for a receipt or a lodgement number, and check it with the authority.
 
-Always check the current rules with your state's tenancy authority, as laws can change.
+## Getting it back
 
-## Bond lodgement
+At the end of a tenancy, the bond is returned or a claim is made against it through the authority's process. If you disagree with a claim, your state or territory tenancy tribunal can decide.
 
-In most states, the owner must lodge your bond with the relevant authority within a set number of days. You should receive a receipt. If you don't receive one, contact your state tenancy authority.
+## Check the rules where you live
 
-- NSW: NSW Fair Trading
-- VIC: Residential Tenancies Bond Authority (RTBA)
-- QLD: Residential Tenancies Authority (RTA)
-- WA: Bond Administrator
-- SA: Consumer and Business Services
-
-## Getting your bond back
-
-At the end of your tenancy, the owner has a set period to either return your bond or make a claim for deductions. Common reasons for deductions:
-
-- Damage beyond normal wear and tear
-- Unpaid rent
-- Excessive cleaning costs
-- Removal of items left by the tenant
-
-If you disagree with a deduction, you can apply to your state's tenancy tribunal for a bond dispute resolution.
-
-## Migrent and bonds
-
-Migrent does not hold bonds on behalf of owners or seekers. Bond payments should be made directly between tenant and owner and lodged as required by law. Always get a receipt.`,
-    updatedAt: "2026-04-01",
+Limits and time frames differ by state and change from time to time. The [rental laws guide](/guides/rental-laws) links to each state's authority. This is general information, not legal advice.`,
   },
   {
     id: "art-19",
     slug: "visa-and-housing-rights",
-    title: "Visa types and your housing rights",
+    title: "Your visa and your rights as a renter",
     category: "legal-policies",
-    categoryName: "Legal & Policies",
     audience: "seeker",
-    tags: ["visa", "rights", "student visa", "housing", "discrimination"],
+    tags: ["visa", "rights", "discrimination", "student", "working holiday"],
     readingTime: 3,
     featured: false,
     type: "policy",
-    summary: "Know your housing rights in Australia regardless of your visa status.",
-    body: `## Your rights as a tenant in Australia
+    summary: "Tenancy law protects renters whatever their visa, and some kinds of discrimination are against the law.",
+    body: `## Tenancy law applies to you
 
-All tenants in Australia - regardless of visa status - have legal rights under residential tenancy law. Landlords cannot discriminate against you based on your visa type, nationality, or country of origin.
+The residential tenancy laws in each state and territory protect renters regardless of their visa. A landlord has to follow the proper legal process to end a tenancy.
 
-## Common visa types and renting
+## Discrimination
 
-### Student visa (subclass 500)
+Under Australian law it is unlawful to refuse to rent to someone, or to treat them less favourably, because of their race, colour, nationality or ethnic origin. State and territory laws protect other attributes too, such as religion in some places. Asking about your ability to pay rent is generally allowed.
 
-Students on a student visa can rent privately. You have full tenancy rights. Some landlords may ask for a larger bond or a guarantor letter from your institution - this is legal if applied equally to all applicants.
+If you think you have been treated unfairly, the Australian Human Rights Commission (humanrights.gov.au) or your state's anti-discrimination body can help. Migrent's own rules are in the [Fair housing policy](/anti-discrimination).
 
-### Working holiday visa (subclass 417 / 462)
+## Practical tips
 
-Working holiday makers can rent privately. Given the temporary nature of the visa, you may prefer shorter-term rentals. Migrent has many listings with flexible durations of 1-6 months.
+- Keep your visa grant notice handy; some hosts will ask about the length of your stay.
+- A student visa does not stop you signing a lease; check that the lease length suits your course.
+- Tenancy advice services in each state are free: see the [rental laws guide](/guides/rental-laws).
 
-### Skilled and employer-sponsored visas
-
-Visa holders in this category have the same rights as permanent residents for tenancy purposes.
-
-### Partner and family visas
-
-Full tenancy rights apply. If your visa is bridging while you wait for a decision, you still have housing rights.
-
-### Undocumented or visa-expired residents
-
-Even if your visa has expired, you have basic housing rights. Landlords cannot evict you without going through the proper legal process.
-
-## Discrimination is illegal
-
-Under Australian law, it is illegal for a landlord to refuse to rent to you based on:
-
-- Race, nationality, or ethnicity
-- Religion
-- Visa status or country of origin
-
-If you believe you have been discriminated against, you can lodge a complaint with the Australian Human Rights Commission (humanrights.gov.au) or your state anti-discrimination body.
-
-## Resources
-
-- Fair Work Australia: fairwork.gov.au
-- Australian Human Rights Commission: humanrights.gov.au
-- Tenants Union of NSW: tenants.org.au
-- Tenants Victoria: tenantsvic.org.au`,
-    updatedAt: "2026-04-01",
+This is general information, not legal advice.`,
   },
 
-  // TECHNICAL ISSUES
+  // ── Signing in ─────────────────────────────────────────────────
   {
     id: "art-20",
     slug: "troubleshoot-login-issues",
-    title: "Troubleshoot login and account access issues",
+    title: "Can't sign in?",
     category: "technical-issues",
-    categoryName: "Technical Issues",
     audience: "both",
-    tags: ["login", "password", "access", "technical", "sign in"],
-    readingTime: 3,
+    tags: ["login", "sign in", "password", "google", "code", "locked"],
+    readingTime: 2,
     featured: false,
     type: "troubleshoot",
-    summary: "Can't sign in? Use this guide to diagnose and fix the most common login problems.",
-    body: `## Can't sign in?
+    summary: "The usual reasons, and what to try.",
+    body: `## Try these first
 
-Start with these common fixes before contacting support:
+- **Wrong password:** choose **Forgot password** on the sign-in page and follow the emailed link.
+- **You signed up with Google:** choose **Continue with Google** instead of typing a password.
+- **Two-step sign-in code not accepted:** check the time on your phone is set automatically; codes depend on it.
+- **No confirmation email:** check your spam folder, then ask for it again from the sign-in page.
 
-## Check your email and password
+## Still stuck?
 
-- Make sure you're using the email address you signed up with
-- Passwords are case-sensitive - check Caps Lock is off
-- If you signed up with Google, use Sign in with Google instead of email/password
-
-## Reset your password
-
-If you've forgotten your password:
-
-- Go to the sign-in page and click Forgot password
-- Enter your email address
-- Check your inbox (and spam folder) for a reset link
-- The link expires after 1 hour - request a new one if needed
-
-## Account not found
-
-If you see "no account with this email", you may have signed up with a different email address. Try:
-
-- Your work or university email
-- A Gmail or Outlook alternative
-- Signing in with Google if you originally used that
-
-## Email verification required
-
-If you signed up recently and haven't verified your email, check your inbox for a verification email from no-reply@migrent.com.au. Click the link inside to activate your account.
-
-If you can't find it, contact support and we can resend the verification.
-
-## Two-factor authentication
-
-If you have 2FA enabled and can't access your authentication app:
-
-- Use one of your backup codes (saved when you set up 2FA)
-- If you don't have backup codes, contact support - we'll need to verify your identity before resetting 2FA
-
-## Still can't get in?
-
-Contact support with:
-
-- The email address on your account
-- A brief description of what happens when you try to sign in
-- Any error messages you see
-
-We typically respond within 4 business hours.`,
-    updatedAt: "2026-04-01",
+Email ${SUPPORT} from the address you signed up with, and tell us what you see. ${siteIdentity.support.hours.charAt(0).toUpperCase()}${siteIdentity.support.hours.slice(1)}; we aim to reply ${siteIdentity.support.responseTarget}.`,
   },
 ];
 
-// Seeker-featured articles (3 shown on help homepage for seekers)
-export const SEEKER_FEATURED_SLUGS = [
-  "how-migrent-works",
-  "how-to-search-rooms",
-  "request-to-book",
+const categoryName = (slug: string) => CATEGORY_DEFS.find((c) => c.slug === slug)?.name ?? "Help";
+
+export const HELP_ARTICLES: StaticHelpArticle[] = ARTICLES.map((a) => ({
+  ...a,
+  categoryName: categoryName(a.category),
+  updatedAt: UPDATED,
+}));
+
+export const HELP_CATEGORIES: StaticHelpCategory[] = CATEGORY_DEFS.map((c) => ({
+  ...c,
+  articleCount: HELP_ARTICLES.filter((a) => a.category === c.slug).length,
+}));
+
+/* ── Common questions, shown on /help ─────────────────────────────── */
+
+export interface HelpFaq {
+  id: string;
+  q: string;
+  a: string;
+}
+
+export interface HelpFaqGroup {
+  id: string;
+  title: string;
+  items: HelpFaq[];
+}
+
+export const HELP_FAQ: HelpFaqGroup[] = [
+  {
+    id: "start",
+    title: "Getting started",
+    items: [
+      { id: "what", q: "What is Migrent?", a: "Migrent helps migrants, students and new arrivals find rooms and homes in Australia, and helps owners and property managers let them. You search on this site; everything you do with an account happens in Migrent Hub." },
+      { id: "agent", q: "Is Migrent a real estate agent?", a: "No. Migrent is an online introduction service. You deal directly with the host or renter, and Migrent does not collect rent, hold bonds or write tenancy agreements." },
+      { id: "where", q: "Where can I rent through Migrent?", a: "Hosts can list anywhere in Australia, and the suburb guides cover every suburb. How many rooms there are depends on the area; search shows exactly what is available now." },
+      { id: "both", q: "Can I rent and host with the same account?", a: "Yes. Change it in Settings in Migrent Hub. You cannot switch away from hosting while a listing is live or in review, or while a tenancy is active." },
+    ],
+  },
+  {
+    id: "renting",
+    title: "Renting",
+    items: [
+      { id: "save", q: "How do I hear about new rooms?", a: "In Migrent Hub, search in Discover and choose Save search. Under Saved you choose how often we tell you about new matches." },
+      { id: "history", q: "Do I need an Australian rental history?", a: "No. You apply with your Rental Profile: your work or study, your household and your references. A local rental ledger is not required." },
+      { id: "cost", q: "What does it cost to rent through Migrent?", a: "Nothing to search, message hosts, book inspections or apply. The only paid option is a session with a mentor, if you choose one; the mentor sets the price." },
+      { id: "address", q: "When do I see the street address?", a: "Once you book an inspection. Until then, listings show the suburb." },
+      { id: "after", q: "What happens after a host approves my application?", a: "Migrent does a final review. Once it is finalised, you agree the terms with the host, lodge your bond with the bond authority, and your rent record and repairs live in Migrent Hub." },
+    ],
+  },
+  {
+    id: "hosting",
+    title: "Hosting",
+    items: [
+      { id: "free", q: "Is listing free?", a: `Yes. Listing, editing and receiving applications are free, and long-term tenancies through applications have no fee. Stay bookings cost a one-off AUD $${FEE} per property, when the first one is confirmed.` },
+      { id: "live", q: "How long until my listing is live?", a: "Your government ID is reviewed once, and each listing is read before it is published. You can save your listing as a draft while you wait." },
+      { id: "choose", q: "How do I choose a renter?", a: "Review applications in Migrent Hub: each one shows a snapshot of the renter's profile, and you can keep private notes and a shortlist. When you approve someone, Migrent does a final review before the tenancy is set up." },
+      { id: "rent", q: "Does Migrent collect the rent for me?", a: "No. Rent is paid to you the way you agree with your tenant. Migrent Hub keeps a shared record of what was due and what was paid." },
+    ],
+  },
+  {
+    id: "money",
+    title: "Bonds and safety",
+    items: [
+      { id: "bond", q: "Who holds my bond?", a: "In every state and the ACT, a government bond authority. In the Northern Territory, the landlord holds the security deposit under territory law. Migrent never holds bonds." },
+      { id: "checked", q: "What does \"ID-checked host\" mean?", a: "A person at Migrent has reviewed that host's government ID. It does not mean Migrent has inspected the property, so always inspect before you pay anything." },
+      { id: "unsafe", q: "What should I do if I feel unsafe?", a: "Call 000 first. Then report it: use Report on the listing or conversation, or email us." },
+    ],
+  },
+  {
+    id: "account",
+    title: "Your account",
+    items: [
+      { id: "delete", q: "How do I delete my account?", a: "In Migrent Hub, open Settings and go to your data. If you have a live listing or an active tenancy, you will be asked to close those first. The Privacy Policy explains what is kept and why." },
+      { id: "email", q: "How do I change my email address?", a: "In Migrent Hub, open Settings and choose Change email. The change applies once you confirm the new address." },
+      { id: "support", q: "How do I contact support?", a: `Email ${SUPPORT}, or use the contact form. ${siteIdentity.support.hours.charAt(0).toUpperCase()}${siteIdentity.support.hours.slice(1)}; we aim to reply ${siteIdentity.support.responseTarget}.` },
+    ],
+  },
 ];
 
-// Owner-featured articles (3 shown on help homepage for owners)
-export const OWNER_FEATURED_SLUGS = [
-  "how-migrent-works",
-  "create-your-first-listing",
-  "how-payments-work",
-];
+/* ── Lookups ──────────────────────────────────────────────────────── */
 
 export function getArticleBySlug(slug: string): StaticHelpArticle | undefined {
   return HELP_ARTICLES.find((a) => a.slug === slug);
@@ -1235,28 +789,12 @@ export function getCategoryBySlug(slug: string): StaticHelpCategory | undefined 
   return HELP_CATEGORIES.find((c) => c.slug === slug);
 }
 
-export function searchArticles(query: string): StaticHelpArticle[] {
-  const q = query.toLowerCase().trim();
-  if (!q) return HELP_ARTICLES;
-  return HELP_ARTICLES.filter(
-    (a) =>
-      a.title.toLowerCase().includes(q) ||
-      a.summary.toLowerCase().includes(q) ||
-      a.tags.some((t) => t.toLowerCase().includes(q)) ||
-      a.categoryName.toLowerCase().includes(q)
-  );
-}
-
-export function getFeaturedArticles(role: "seeker" | "owner" | null): StaticHelpArticle[] {
-  const slugs = role === "owner" ? OWNER_FEATURED_SLUGS : SEEKER_FEATURED_SLUGS;
-  return slugs.map((s) => getArticleBySlug(s)).filter(Boolean) as StaticHelpArticle[];
+export function getFeaturedArticles(): StaticHelpArticle[] {
+  return HELP_ARTICLES.filter((a) => a.featured);
 }
 
 export function getRelatedArticles(article: StaticHelpArticle, limit = 3): StaticHelpArticle[] {
   return HELP_ARTICLES.filter(
-    (a) =>
-      a.slug !== article.slug &&
-      (a.category === article.category ||
-        a.tags.some((t) => article.tags.includes(t)))
+    (a) => a.slug !== article.slug && (a.category === article.category || a.tags.some((t) => article.tags.includes(t))),
   ).slice(0, limit);
 }

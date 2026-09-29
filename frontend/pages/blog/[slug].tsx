@@ -1,56 +1,34 @@
 import Link from "next/link";
-import { motion } from "framer-motion";
-import SEOHead from "../../components/SEOHead";
-import Breadcrumb from "../../components/content/Breadcrumb";
-import { getPostBySlug, getAllPosts, type BlogCategory } from "../../data/blogPosts";
 import type { GetStaticPaths, GetStaticProps } from "next";
+import { AlertTriangle, ArrowRight } from "lucide-react";
+import SEOHead from "../../components/SEOHead";
+import { CloseCard, PageHero, Reveal } from "../../components/site";
+import { getAllPosts, getPostBySlug } from "../../data/blogPosts";
+import { HIDDEN_POSTS } from "../../data/resources";
 
 /**
- * Statically render each post.
- *
- * This page read the slug from router.query, which is empty during prerender,
- * so every blog URL shipped HTML saying "Post not found" while still being
- * listed in the sitemap. The content is local static data, so there is no
- * reason for it not to be in the HTML.
+ * One article from the Guides index, statically rendered. Posts that are
+ * withdrawn for fact-checking (HIDDEN_POSTS) are not built; their URLs
+ * redirect to /guides from next.config.ts.
  */
+
+const visiblePosts = () => getAllPosts().filter((p) => !HIDDEN_POSTS.has(p.slug));
+
 export const getStaticPaths: GetStaticPaths = async () => ({
-  paths: getAllPosts().map((p) => ({ params: { slug: p.slug } })),
+  paths: visiblePosts().map((p) => ({ params: { slug: p.slug } })),
   fallback: false,
 });
 
-export const getStaticProps: GetStaticProps = async ({ params }) => {
+export const getStaticProps: GetStaticProps<{ slug: string }> = async ({ params }) => {
   const slug = typeof params?.slug === "string" ? params.slug : "";
-  const post = getPostBySlug(slug);
-  if (!post) return { notFound: true };
+  if (!getPostBySlug(slug) || HIDDEN_POSTS.has(slug)) return { notFound: true };
   return { props: { slug } };
-};
-
-const categoryColors: Record<BlogCategory, string> = {
-  Guide: "bg-[var(--color-primary-50)] dark:bg-[var(--color-primary)]/10 text-[var(--color-primary)] dark:text-[var(--color-primary)]",
-  Market: "bg-[var(--color-accent-50)] dark:bg-[var(--color-accent)]/10 text-[var(--color-accent)] dark:text-[var(--color-accent)]",
-  Safety: "bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-500)]/10 text-[var(--color-danger-500)] dark:text-[var(--color-danger-500)]",
-  News: "bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 text-[var(--color-primary)] dark:text-[var(--color-primary)]",
-  Tips: "bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-500)]/10 text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)]",
 };
 
 export default function BlogPost({ slug }: { slug: string }) {
   const post = getPostBySlug(slug);
-  const allPosts = getAllPosts();
-
-  if (!post) {
-    return (
-      <div className="text-center py-20">
-        <h1 className="text-2xl font-bold text-[var(--color-ink)] mb-4">Post not found</h1>
-        <Link href="/resources/guides" className="btn-primary px-6 py-2.5 rounded-xl inline-block">
-          Back to Blog
-        </Link>
-      </div>
-    );
-  }
-
-  const relatedPosts = allPosts
-    .filter((p) => p.slug !== post.slug)
-    .slice(0, 3);
+  if (!post) return null;
+  const more = visiblePosts().filter((p) => p.slug !== post.slug).slice(0, 3);
 
   return (
     <>
@@ -58,138 +36,73 @@ export default function BlogPost({ slug }: { slug: string }) {
         title={post.title}
         description={post.excerpt}
         ogType="article"
-        breadcrumbs={[{ name: "Home", path: "/" }, { name: "Resources", path: "/resources" }, { name: "Guides & Articles", path: "/resources/guides" }, { name: post.title, path: `/blog/${post.slug}` }]}
+        breadcrumbs={[
+          { name: "Home", path: "/" },
+          { name: "Guides", path: "/guides" },
+          { name: post.title, path: `/blog/${post.slug}` },
+        ]}
       />
 
-      <div className="max-w-4xl mx-auto">
-        <Breadcrumb
-          items={[
-            { label: "Resources", href: "/resources" },
-            { label: "Guides & Articles", href: "/resources/guides" },
-            { label: post.title },
-          ]}
-        />
+      <PageHero
+        narrow
+        eyebrow={`${post.category} · ${post.readTime}`}
+        crumbs={[{ label: "Home", href: "/" }, { label: "Guides", href: "/guides" }, { label: post.title }]}
+        title={post.title}
+        lead={post.excerpt}
+      >
+        <p className="site-meta mt-6">
+          {post.author} · {post.date}
+        </p>
+      </PageHero>
 
-        {/* Hero */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="mb-10"
-        >
-          <div className="flex items-center gap-3 mb-4">
-            <span className={`text-[10px] font-semibold px-2.5 py-1 rounded-full ${categoryColors[post.category]}`}>
-              {post.category}
-            </span>
-            <span className="text-xs text-[var(--color-ink-3)]">{post.date}</span>
-            <span className="text-xs text-[var(--color-ink-3)]">&middot;</span>
-            <span className="text-xs text-[var(--color-ink-3)]">{post.readTime}</span>
-          </div>
-
-          <h1 className="text-3xl md:text-4xl font-black tracking-tight text-[var(--color-ink)] leading-tight">
-            {post.title}
-          </h1>
-
-          <div className="flex items-center gap-3 mt-6">
-            <div className="w-10 h-10 rounded-full bg-[var(--color-primary-soft)] from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center text-white text-sm font-bold">
-              {post.author.charAt(0)}
-            </div>
-            <div>
-              <div className="text-sm font-medium text-[var(--color-ink)]">{post.author}</div>
-              <div className="text-xs text-[var(--color-ink-3)]">{post.authorRole}</div>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Divider */}
-        <div className="h-px bg-[var(--color-surface-muted)] dark:bg-[var(--color-surface-muted)] mb-10" />
-
-        {/* Content */}
-        <motion.article
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2, duration: 0.5 }}
-          className="space-y-6"
-        >
-          {post.content.map((block, i) => {
-            switch (block.type) {
-              case "heading":
+      <article className="site-section site-section--flush">
+        <div className="site-shell site-shell--narrow">
+          <div className="site-prose">
+            {post.content.map((block, i) => {
+              if (block.type === "heading") return <h2 key={i}>{block.content}</h2>;
+              if (block.type === "list")
                 return (
-                  <h2 key={i} className="text-2xl font-bold text-[var(--color-ink)] mt-10 mb-4">
-                    {block.content}
-                  </h2>
-                );
-              case "paragraph":
-                return (
-                  <p key={i} className="text-[var(--color-ink-2)] leading-relaxed text-base">
-                    {block.content}
-                  </p>
-                );
-              case "list":
-                return (
-                  <ul key={i} className="space-y-2 pl-1">
-                    {block.content.split("\n").map((item, li) => (
-                      <li key={li} className="flex items-start gap-3 text-sm text-[var(--color-ink-2)]">
-                        <span className="w-5 h-5 rounded-full bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 flex items-center justify-center shrink-0 mt-0.5">
-                          <svg className="w-3 h-3 text-[var(--color-primary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                          </svg>
-                        </span>
-                        {item}
-                      </li>
+                  <ul key={i}>
+                    {block.content.split("\n").map((item, j) => (
+                      <li key={j}>{item}</li>
                     ))}
                   </ul>
                 );
-              case "callout":
+              if (block.type === "callout")
                 return (
-                  <div key={i} className="rounded-xl border border-[var(--color-line)] bg-[var(--color-surface)] p-5">
-                    <div className="flex items-center gap-2 mb-2">
-                      <svg className="w-4 h-4 text-[var(--color-warn-500)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.268 16.5c-.77.833.192 2.5 1.732 2.5z" />
-                      </svg>
-                      <span className="text-sm font-semibold text-[var(--color-ink-2)]">Important</span>
-                    </div>
-                    <p className="text-sm text-[var(--color-ink-3)]">{block.content}</p>
-                  </div>
+                  <aside key={i} className="site-card site-card--muted site-card--pad flex gap-3">
+                    <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-[color:var(--color-warn-500)]" strokeWidth={1.9} aria-hidden="true" />
+                    <p className="site-body m-0">{block.content}</p>
+                  </aside>
                 );
-              default:
-                return null;
-            }
-          })}
-        </motion.article>
-
-        {/* Tags */}
-        {post.tags.length > 0 && (
-          <div className="flex flex-wrap gap-2 mt-10 pt-6 border-t border-[var(--color-line)]">
-            {post.tags.map((tag) => (
-              <span key={tag} className="text-[10px] font-medium text-[var(--color-ink-3)] bg-[var(--color-surface-muted)] dark:bg-white/5 px-3 py-1 rounded-full">
-                #{tag}
-              </span>
-            ))}
+              return <p key={i}>{block.content}</p>;
+            })}
           </div>
-        )}
 
-        {/* Related posts */}
-        <section className="mt-16 pt-8 border-t border-[var(--color-line)]">
-          <h3 className="text-lg font-bold text-[var(--color-ink)] mb-6">More from the blog</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {relatedPosts.map((rp) => (
-              <Link key={rp.slug} href={`/blog/${rp.slug}`}>
-                <motion.div
-                  whileHover={{ y: -4 }}
-                  className="card p-4 rounded-xl cursor-pointer hover:shadow-md transition-shadow h-full"
-                >
-                  <span className={`text-[9px] font-semibold px-2 py-0.5 rounded-full ${categoryColors[rp.category]}`}>
-                    {rp.category}
-                  </span>
-                  <h4 className="text-sm font-semibold text-[var(--color-ink)] mt-2">{rp.title}</h4>
-                  <p className="text-xs text-[var(--color-ink-3)] mt-1">{rp.date}</p>
-                </motion.div>
-              </Link>
-            ))}
-          </div>
-        </section>
-      </div>
+          {more.length > 0 && (
+            <nav aria-labelledby="more-heading" className="mt-16 border-t border-[var(--color-line)] pt-10">
+              <h2 id="more-heading" className="eyebrow mb-5">
+                Keep reading
+              </h2>
+              <ul className="m-0 grid list-none gap-3 p-0 sm:grid-cols-3">
+                {more.map((p, i) => (
+                  <Reveal as="li" key={p.slug} delay={i * 0.04}>
+                    <Link href={`/blog/${p.slug}`} className="site-card site-card--pad flex h-full flex-col">
+                      <p className="site-meta">{p.category}</p>
+                      <h3 className="site-h3 mt-2 flex-1">{p.title}</h3>
+                      <span className="site-link mt-4 text-[14px]">
+                        Read <ArrowRight className="h-4 w-4" strokeWidth={2} aria-hidden="true" />
+                      </span>
+                    </Link>
+                  </Reveal>
+                ))}
+              </ul>
+            </nav>
+          )}
+        </div>
+      </article>
+
+      <CloseCard heading="Looking for a room?" primary={{ label: "Search rooms", href: "/seeker/search" }} secondary={{ label: "All guides", href: "/guides" }} />
     </>
   );
 }

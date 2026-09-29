@@ -384,7 +384,7 @@ export default function HubHome() {
                       <BadgeCheck className="mt-0.5 h-4 w-4 shrink-0" strokeWidth={1.75} aria-hidden />
                       <span>
                         {l.host_verification?.disclaimer}{" "}
-                        <a href={siteUrl(l.host_verification?.explainer_url || "/safety-verification")} className="font-semibold text-[color:var(--color-primary)] hover:underline">
+                        <a href={siteUrl(l.host_verification?.explainer_url || "/how-renting-works#checks")} className="font-semibold text-[color:var(--color-primary)] hover:underline">
                           What we check
                         </a>
                       </span>
@@ -420,7 +420,7 @@ export default function HubHome() {
                 </div>
               </dl>
               {actions}
-              <p className="text-[12.5px] leading-snug text-[color:var(--color-ink-3)]">Renters pay Migrent nothing. Never pay rent or a deposit before you have inspected and signed.</p>
+              <p className="text-[12.5px] leading-snug text-[color:var(--color-ink-3)]">Searching, messaging and applying are free. Never pay rent or a deposit before you have inspected and signed.</p>
             </div>
           </aside>
         </div>

@@ -137,3 +137,29 @@ def test_place_and_property_filters_match_every_stored_spelling(client, db):
     assert LISTING_LIVE in ids
     ids = [l["id"] for l in client.get("/listings/search?limit=50&place_type=entire_place").json()]
     assert LISTING_LIVE not in ids
+
+
+def _ids(client, qs: str) -> list:
+    return [l["id"] for l in client.get(f"/listings/search?limit=50&{qs}").json()]
+
+
+def test_house_filters_read_real_listing_fields(client, db):
+    """The homepage house's filters: each one narrows by a field the host set."""
+    live = next(l for l in db.rows("listings") if l["id"] == LISTING_LIVE)
+    future = next(l for l in db.rows("listings") if l["id"] == LISTING_FUTURE)
+    live.update(bedrooms=3, bathroom_type="Ensuite", laundry="in-unit", internet_included=True, security_cameras=False, lockable_bedroom=True)
+    future.update(bedrooms=1, bathroom_type="shared", laundry="shared", internet_included=False, security_cameras=True, lockable_bedroom=None)
+
+    # Without a filter both are public; each filter keeps only the room that fits.
+    assert {LISTING_LIVE, LISTING_FUTURE} <= set(_ids(client, ""))
+
+    for qs in ("min_bedrooms=2", "private_bathroom=true", "laundry=in_unit", "internet_included=true", "no_cameras=true", "lockable_bedroom=true"):
+        ids = _ids(client, qs)
+        assert LISTING_LIVE in ids, qs
+        assert LISTING_FUTURE not in ids, qs
+
+
+def test_no_cameras_keeps_listings_that_never_answered(client, db):
+    live = next(l for l in db.rows("listings") if l["id"] == LISTING_LIVE)
+    live.pop("security_cameras", None)
+    assert LISTING_LIVE in _ids(client, "no_cameras=true")

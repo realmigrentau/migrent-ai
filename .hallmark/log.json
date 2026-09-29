@@ -27,6 +27,16 @@
     "theme_axes": "light / roman-serif / cool (ocean-teal ~218)",
     "vibe": "warm coastal Australian, bold, joyful, not minimal",
     "enrichment": "video hero (kept) + sideways-scroll showcase + mood-field",
-    "brief": "MigRent \u00b7 whole-site redesign \u00b7 Sand & Ocean system (design.md). Batch 1: foundation tokens/fonts/motion, homepage, global footer."
+    "brief": "MigRent · whole-site redesign · Sand & Ocean system (design.md). Batch 1: foundation tokens/fonts/motion, homepage, global footer."
+  },
+  {
+    "date": "2026-09-29",
+    "scope": "app",
+    "macrostructure": "Marquee Hero (home) + Page Hero / Long Document (inner pages)",
+    "theme": "custom",
+    "theme_axes": "light + dark (system) / roman-serif Newsreader 350 / cool cobalt ~228",
+    "vibe": "calm, editorial, matches Migrent Hub",
+    "enrichment": "CSS sunrise + interactive cut-away house hero, Lenis, sideways-scroll how-it-works",
+    "brief": "Public-site redesign to match the Hub: new homepage with an interactive house, one calm canvas, site kit (components/site), merged pages (How renting works, For owners, Guides, Help, Legal centre, About), restyled listing, mentor, suburb, profile, support and status pages. design.md v3.1."
   }
 ]
