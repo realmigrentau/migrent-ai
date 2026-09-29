@@ -328,6 +328,17 @@ test.describe("admin panel", () => {
     await expect(page.getByLabel("Admin password")).toBeVisible();
   });
 
+  test("a server without the Admin panel yet says so plainly", async ({ page }) => {
+    // The site can go live before the API it talks to has been updated.
+    await page.route("**/hub/admin/panel", (route) => route.fulfill({ status: 404, contentType: "application/json", body: JSON.stringify({ detail: "Not Found" }) }));
+    await signIn(page, "admin@example.test", "/admin");
+    await expect(page.getByText("The Admin panel isn't switched on yet")).toBeVisible();
+    await expect(page.getByText("Not Found", { exact: true })).toHaveCount(0);
+    await page.unroute("**/hub/admin/panel");
+    await page.getByRole("button", { name: "Try again" }).click();
+    await expect(page.getByLabel("Admin password")).toBeVisible();
+  });
+
   test("the panel locks itself after 30 seconds without activity", async ({ page }) => {
     await page.clock.install();
     await signInToPanel(page, "admin@example.test", "/admin/audit");

@@ -84,7 +84,37 @@ function UnlockForm() {
   };
 
   if (state.error) {
-    return <InlineAlert tone="danger" title="The Admin panel could not load">{state.error.message}</InlineAlert>;
+    // Only an admin reaches this form, so a 404 means the server has not
+    // been updated to a version with the Admin panel yet (the site can go
+    // live before the API does).
+    if (state.error.status === 404) {
+      return (
+        <InlineAlert
+          tone="warning"
+          title="The Admin panel isn't switched on yet"
+          action={
+            <Button variant="secondary" size="sm" onClick={() => void state.refetch().catch(() => {})}>
+              Try again
+            </Button>
+          }
+        >
+          The website has the Admin panel, but the Migrent server hasn&apos;t been updated to include it yet. It works as soon as that update is live, usually a few minutes after it is released.
+        </InlineAlert>
+      );
+    }
+    return (
+      <InlineAlert
+        tone="danger"
+        title="The Admin panel could not load"
+        action={
+          <Button variant="secondary" size="sm" onClick={() => void state.refetch().catch(() => {})}>
+            Try again
+          </Button>
+        }
+      >
+        {state.error.message}
+      </InlineAlert>
+    );
   }
   if (!state.data) return <Skeleton className="mx-auto h-[320px] w-full max-w-[440px] rounded-[22px]" />;
 
