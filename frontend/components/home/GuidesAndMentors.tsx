@@ -61,7 +61,7 @@ export default function GuidesAndMentors({ articles = [] }: { articles?: Article
             </span>
             <h3 className="site-h3 site-h3--lg mt-5">Talk to someone who has made the move</h3>
             <p className="site-body mt-2">
-              Mentors are people who arrived in Australia too. Ask them about suburbs, leases and settling in.
+              Mentors are people who arrived in Australia too. Book a paid session to ask about suburbs, leases and settling in.
             </p>
             <div className="mt-auto flex flex-wrap gap-x-5 gap-y-2 pt-6">
               <Link href="/mentors" className="site-link">

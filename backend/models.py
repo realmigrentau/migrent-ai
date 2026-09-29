@@ -59,6 +59,7 @@ class ListingCreate(BaseModel):
     min_stay: Optional[str] = None
     security_cameras: Optional[bool] = None
     security_cameras_location: Optional[str] = None
+    lockable_bedroom: Optional[bool] = None
     weapons_on_property: Optional[bool] = None
     weapons_explanation: Optional[str] = None
     other_safety_details: Optional[str] = None
@@ -114,6 +115,7 @@ class ListingUpdate(BaseModel):
     min_stay: Optional[str] = None
     security_cameras: Optional[bool] = None
     security_cameras_location: Optional[str] = None
+    lockable_bedroom: Optional[bool] = None
     weapons_on_property: Optional[bool] = None
     weapons_explanation: Optional[str] = None
     other_safety_details: Optional[str] = None

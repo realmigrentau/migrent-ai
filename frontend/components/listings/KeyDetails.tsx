@@ -55,6 +55,7 @@ interface KeyDetailsProps {
     gender_preference?: string;
     security_cameras?: boolean;
     security_cameras_location?: string;
+    lockable_bedroom?: boolean | null;
     other_safety_details?: string;
     highlights?: string[];
   };
@@ -395,6 +396,7 @@ export default function KeyDetails({ listing }: KeyDetailsProps) {
         listing.tenant_prefs ||
         genderLabel(listing.gender_preference) ||
         listing.security_cameras ||
+        listing.lockable_bedroom ||
         listing.other_safety_details) && (
         <GlassCard padding="md">
           <h3 className="text-sm font-semibold text-[var(--color-ink-3)] uppercase tracking-wide mb-3">
@@ -415,6 +417,12 @@ export default function KeyDetails({ listing }: KeyDetailsProps) {
                     ? `Yes. Where: ${listing.security_cameras_location}. Never in bedrooms or bathrooms.`
                     : "Yes, location not specified by the host. Ask before you book."
                   : "The host says there are no cameras on the property."}
+              </li>
+            )}
+            {listing.lockable_bedroom && (
+              <li>
+                <span className="font-medium text-[var(--color-ink)]">Bedroom door: </span>
+                locks, and the renter controls the lock.
               </li>
             )}
             {listing.other_safety_details && (

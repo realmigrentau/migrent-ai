@@ -64,7 +64,7 @@ export default function SiteFooter() {
           </div>
           <div className="flex flex-col justify-end gap-6 lg:items-end lg:text-right">
             <p className="max-w-[40ch] text-[14.5px] leading-[1.6] text-[color:var(--color-ink-2)]">
-              Rooms and homes for migrants, students and new arrivals. Hosts are ID-checked before a room goes live, and renters pay nothing.
+              Rooms and homes for migrants, students and new arrivals. Hosts are ID-checked before a room goes live, and searching and applying are free.
             </p>
             <div className="flex flex-wrap gap-3 lg:justify-end">
               <Link href="/seeker/search" className="btn-primary">

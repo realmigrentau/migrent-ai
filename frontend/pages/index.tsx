@@ -43,7 +43,7 @@ const FAQS: FaqEntry[] = [
   },
   {
     q: "What does Migrent cost renters?",
-    a: "Nothing. Searching, messaging hosts, booking inspections and applying are free.",
+    a: "Nothing to search, message hosts, book inspections or apply. The only paid option is a session with a mentor, if you choose to book one; the mentor sets the price.",
   },
   {
     q: "Who holds my bond?",
@@ -72,7 +72,7 @@ export default function Home({ suburbs, articles }: HomeProps) {
     <>
       <SEOHead
         title="A real home in Australia, found the right way"
-        description="Rooms and homes across Australia for migrants, students and new arrivals. Every host is ID-checked before a room goes live. Renters pay nothing."
+        description="Rooms and homes across Australia for migrants, students and new arrivals. Every host is ID-checked before a room goes live. Searching and applying are free."
       />
 
       <MigrentHero />
@@ -137,7 +137,7 @@ const FEATURED: { state: string; slug: string; city: string }[] = [
 const ARTICLES: { kind: "blog" | "guide"; id: string }[] = [
   { kind: "blog", id: "spot-rental-scams" },
   { kind: "blog", id: "bond-rights-migrants" },
-  { kind: "guide", id: "visas" },
+  { kind: "blog", id: "5-tips-first-time-migrants" },
 ];
 
 export const getStaticProps: GetStaticProps<HomeProps> = async () => {

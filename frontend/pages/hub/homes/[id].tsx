@@ -420,7 +420,7 @@ export default function HubHome() {
                 </div>
               </dl>
               {actions}
-              <p className="text-[12.5px] leading-snug text-[color:var(--color-ink-3)]">Renters pay Migrent nothing. Never pay rent or a deposit before you have inspected and signed.</p>
+              <p className="text-[12.5px] leading-snug text-[color:var(--color-ink-3)]">Searching, messaging and applying are free. Never pay rent or a deposit before you have inspected and signed.</p>
             </div>
           </aside>
         </div>

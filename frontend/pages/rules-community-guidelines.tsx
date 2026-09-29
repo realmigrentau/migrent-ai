@@ -1,32 +1,14 @@
-import Link from "next/link";
 import SEOHead from "../components/SEOHead";
-import { motion } from "framer-motion";
-import { hubFromSite } from "../lib/hub/routes";
+import LegalLayout from "../components/site/LegalLayout";
 
 export default function RulesCommunityGuidelines() {
   return (
     <>
       <SEOHead title="Community Guidelines" description="Migrent community rules - listing standards, guest expectations, dispute resolution, and platform conduct." />
 
-      <div className="max-w-3xl mx-auto space-y-10">
-        {/* Hero */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-xl bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 border border-violet-100 dark:border-[var(--color-primary)]/20 flex items-center justify-center">
-              <svg className="w-5 h-5 text-[var(--color-primary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-              </svg>
-            </div>
-            <div>
-              <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-[var(--color-ink)]">
-                Community Guidelines
-              </h1>
-              <p className="text-sm text-[var(--color-ink-3)] mt-1">Rules for a safe and fair community</p>
-            </div>
-          </div>
-        </motion.div>
+      <LegalLayout title="Community Guidelines" note="Rules for a safe and fair community">
 
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="space-y-8">
+        <div className="space-y-8">
           {/* Intro */}
           <section className="card p-6 rounded-2xl space-y-3">
             <h2 className="text-lg font-bold text-[var(--color-ink)]">Our Community Standards</h2>
@@ -145,25 +127,8 @@ export default function RulesCommunityGuidelines() {
             </div>
           </section>
 
-          {/* CTA */}
-          <div className="card p-6 rounded-2xl bg-[var(--color-primary-soft)] from-violet-50 to-violet-100/50 dark:from-[var(--color-primary)]/10 dark:to-[var(--color-primary)]/5 border-[var(--color-primary-soft)] dark:border-[var(--color-primary)]/20 text-center">
-            <h3 className="text-lg font-bold text-[var(--color-ink)] mb-2">Join a trusted community</h3>
-            <p className="text-sm text-[var(--color-ink-2)] mb-4">Sign up and start connecting with verified users.</p>
-            <div className="flex gap-3 justify-center">
-              <Link href={hubFromSite.signUp()}>
-                <motion.span whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }} className="inline-block btn-primary text-sm px-6 py-2.5 rounded-xl">
-                  Sign Up Free
-                </motion.span>
-              </Link>
-              <Link href="/safety-verification">
-                <motion.span whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }} className="inline-block btn-secondary text-sm px-6 py-2.5 rounded-xl">
-                  Learn About Safety
-                </motion.span>
-              </Link>
-            </div>
-          </div>
-        </motion.div>
-      </div>
+        </div>
+      </LegalLayout>
     </>
   );
 }

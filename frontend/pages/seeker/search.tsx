@@ -34,6 +34,7 @@ import {
 } from "../../lib/search/searchQuery";
 import { hubFromSite } from "../../lib/hub/routes";
 import { hubApi } from "../../lib/hub/api";
+import { placeTypeLabel } from "../../lib/hub/format";
 
 /**
  * /seeker/search
@@ -502,6 +503,7 @@ export default function SeekerSearch({ initialFilters, initialPage, serverToday 
     filters.propertyType, filters.stationName, filters.minStay,
     filters.adults > 1 || filters.children > 0 || filters.infants > 0,
     filters.couplesOk, filters.femaleOnly, filters.verifiedOwner, filters.nearStation,
+    filters.minBedrooms > 0, filters.privateBath, filters.laundryInHome, filters.internet, filters.noCameras, filters.lockable,
   ].filter(Boolean).length;
 
   // ── Active chips ──
@@ -517,9 +519,15 @@ export default function SeekerSearch({ initialFilters, initialPage, serverToday 
   chip(filters.airCon, "Air conditioning", () => update("airCon", false));
   chip(filters.couplesOk, "Couples OK", () => update("couplesOk", false));
   chip(filters.verifiedOwner, "ID-verified hosts", () => update("verifiedOwner", false));
+  chip(filters.minBedrooms > 0, `${filters.minBedrooms}+ bedrooms`, () => update("minBedrooms", 0));
+  chip(filters.privateBath, "Private bathroom", () => update("privateBath", false));
+  chip(filters.laundryInHome, "Laundry at home", () => update("laundryInHome", false));
+  chip(filters.internet, "Internet included", () => update("internet", false));
+  chip(filters.noCameras, "No security cameras", () => update("noCameras", false));
+  chip(filters.lockable, "Bedroom door locks", () => update("lockable", false));
   chip(Boolean(filters.minPrice), `Min $${filters.minPrice}/wk`, () => update("minPrice", ""));
   chip(Boolean(filters.maxPrice), `Max $${filters.maxPrice}/wk`, () => update("maxPrice", ""));
-  chip(Boolean(filters.placeType), filters.placeType, () => update("placeType", ""));
+  chip(Boolean(filters.placeType), placeTypeLabel(filters.placeType) || filters.placeType, () => update("placeType", ""));
   chip(Boolean(filters.propertyType), filters.propertyType, () => update("propertyType", ""));
   chip(Boolean(filters.minStay), `Min stay: ${filters.minStay}`, () => update("minStay", ""));
   chip(Boolean(filters.checkIn), `Move in ${filters.checkIn}`, () => update("checkIn", ""));
@@ -760,6 +768,25 @@ export default function SeekerSearch({ initialFilters, initialPage, serverToday 
             ].map((opt) => (
               <TogglePill key={opt.value} active={filters.minStay === opt.value} onClick={() => update("minStay", filters.minStay === opt.value ? "" : opt.value)} label={opt.label} />
             ))}
+          </div>
+        </FilterSection>
+
+        <FilterSection
+          title="The home"
+          defaultOpen={filters.minBedrooms > 0 || filters.privateBath || filters.laundryInHome || filters.internet || filters.noCameras || filters.lockable}
+        >
+          <p className="mb-2 text-[12px] font-medium text-[var(--color-ink-3)]">Bedrooms (whole places)</p>
+          <div className="mb-3 flex flex-wrap gap-1.5">
+            {[0, 1, 2, 3, 4].map((n) => (
+              <TogglePill key={n} active={filters.minBedrooms === n} onClick={() => update("minBedrooms", n)} label={n === 0 ? "Any" : `${n}+`} />
+            ))}
+          </div>
+          <div className="flex flex-wrap gap-1.5">
+            <TogglePill active={filters.privateBath} onClick={() => update("privateBath", !filters.privateBath)} label="Private bathroom" />
+            <TogglePill active={filters.laundryInHome} onClick={() => update("laundryInHome", !filters.laundryInHome)} label="Laundry at home" />
+            <TogglePill active={filters.internet} onClick={() => update("internet", !filters.internet)} label="Internet included" />
+            <TogglePill active={filters.noCameras} onClick={() => update("noCameras", !filters.noCameras)} label="No security cameras" />
+            <TogglePill active={filters.lockable} onClick={() => update("lockable", !filters.lockable)} label="Bedroom door locks" />
           </div>
         </FilterSection>
 

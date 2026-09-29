@@ -1,31 +1,15 @@
 import Link from "next/link";
 import SEOHead from "../components/SEOHead";
-import { motion } from "framer-motion";
+import LegalLayout from "../components/site/LegalLayout";
 
 export default function AbnTerms() {
   return (
     <>
       <SEOHead title="ABN &amp; Business Details" description="Migrent business details, ABN, fee structure, and payment terms." />
 
-      <div className="max-w-3xl mx-auto space-y-10">
-        {/* Hero */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-xl bg-[var(--color-surface-muted)] dark:bg-[var(--color-ink-3)]/10 border border-[var(--color-line)] dark:border-[var(--color-line)] flex items-center justify-center">
-              <svg className="w-5 h-5 text-[var(--color-ink-3)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3H21m-3.75 3H21" />
-              </svg>
-            </div>
-            <div>
-              <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-[var(--color-ink)]">
-                ABN &amp; Business Details
-              </h1>
-              <p className="text-sm text-[var(--color-ink-3)] mt-1">Last updated: March 2026</p>
-            </div>
-          </div>
-        </motion.div>
+      <LegalLayout title="ABN & Business Details" note="Last updated: March 2026">
 
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="space-y-8">
+        <div className="space-y-8">
           {/* Business Details */}
           <section className="card p-6 rounded-2xl space-y-3">
             <h2 className="text-lg font-bold text-[var(--color-ink)]">Business Information</h2>
@@ -77,7 +61,7 @@ export default function AbnTerms() {
                 <li>An AI-powered matching service for short- to medium-term rooms</li>
                 <li>A facilitator of introductions - not a real estate agent or property manager</li>
               </ul>
-              <p>We do not hold a real estate licence, as we do not perform real estate agent activities (see <Link href="/no-agency" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">No Agency Disclosure</Link>). We do not collect rent, bonds, or manage tenancy agreements.</p>
+              <p>We do not hold a real estate licence, as we do not perform real estate agent activities (see <Link href="/how-renting-works#not-an-agent" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">No Agency Disclosure</Link>). We do not collect rent, bonds, or manage tenancy agreements.</p>
             </div>
           </section>
 
@@ -171,18 +155,8 @@ export default function AbnTerms() {
             <p>For full terms governing your use of Migrent, see our <Link href="/terms-of-service" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">Terms of Service</Link>. Last reviewed: March 2026.</p>
           </div>
 
-          {/* CTA */}
-          <div className="card p-6 rounded-2xl bg-[var(--color-primary-soft)] from-[var(--color-surface)] to-[var(--color-surface-muted)] dark:from-[var(--color-ink-3)]/10 dark:to-[var(--color-surface)] border-[var(--color-line)] dark:border-[var(--color-line)] text-center">
-            <h3 className="text-lg font-bold text-[var(--color-ink)] mb-2">Business enquiries?</h3>
-            <p className="text-sm text-[var(--color-ink-2)] mb-4">Get in touch with our team.</p>
-            <Link href="/contact">
-              <motion.span whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }} className="inline-block btn-primary text-sm px-6 py-2.5 rounded-xl">
-                Contact Us
-              </motion.span>
-            </Link>
-          </div>
-        </motion.div>
-      </div>
+        </div>
+      </LegalLayout>
     </>
   );
 }

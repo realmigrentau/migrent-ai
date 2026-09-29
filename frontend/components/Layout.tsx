@@ -14,9 +14,13 @@ const SmoothScroll = dynamic(() => import("./SmoothScroll"), { ssr: false });
 
 /** Routes built from the public-site kit (components/site): full width, and
  *  they draw their own sky under the floating header. */
-const SITE_KIT = ["/"];
+const SITE_KIT = [
+  "/", "/how-renting-works", "/for-owners", "/pricing", "/help", "/guides", "/blog", "/legal", "/about", "/contact",
+  "/terms-of-service", "/privacy-policy", "/cookie-policy", "/disclaimer", "/abn-terms", "/anti-discrimination",
+  "/rules-community-guidelines", "/code-of-conduct", "/safety-reporting", "/support-disputes", "/contact-legal",
+];
 /** Older full-width routes that still sit below the header. */
-const LEGACY_FULL_WIDTH = ["/pricing", "/for-seekers", "/for-owners", "/about", "/features", "/resources", "/resources/guides", "/resources/tools", "/resources/help"];
+const LEGACY_FULL_WIDTH: string[] = [];
 
 const matchesAny = (list: string[], path: string) => list.some((p) => path === p || (p !== "/" && path.startsWith(`${p}/`)));
 

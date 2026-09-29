@@ -32,15 +32,20 @@ class _Result:
     count: Optional[int] = None
 
 
+def _norm(v: Any) -> str:
+    """PostgREST sends booleans as `true`/`false`; Python stores True/False."""
+    return str(v).lower() if isinstance(v, bool) else str(v)
+
+
 _OPS: dict[str, Callable[[Any, Any], bool]] = {
-    "eq": lambda a, b: str(a) == str(b) if a is not None else b is None,
+    "eq": lambda a, b: _norm(a) == _norm(b) if a is not None else b is None,
     "neq": lambda a, b: str(a) != str(b),
     "gt": lambda a, b: a is not None and _cmp(a, b) > 0,
     "gte": lambda a, b: a is not None and _cmp(a, b) >= 0,
     "lt": lambda a, b: a is not None and _cmp(a, b) < 0,
     "lte": lambda a, b: a is not None and _cmp(a, b) <= 0,
     "ilike": lambda a, b: a is not None and re.fullmatch(_like_to_regex(b), str(a), re.IGNORECASE) is not None,
-    "is": lambda a, b: (a is None) if str(b).lower() == "null" else (a == b),
+    "is": lambda a, b: (a is None) if str(b).lower() == "null" else (a == b or (a is not None and _norm(a) == _norm(b))),
     "in": lambda a, b: a in b,
 }
 

@@ -48,7 +48,7 @@ export default function MigrentHero() {
               Feel at <strong className="type-script">home</strong>.
             </span>
           </h1>
-          <p className="hero__sub">Every host is ID-checked before a room goes live. Renters pay nothing.</p>
+          <p className="hero__sub">Every host is ID-checked before a room goes live. Searching and applying are free.</p>
         </div>
         <HouseConfigurator />
       </div>

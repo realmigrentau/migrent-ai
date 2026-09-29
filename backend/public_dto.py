@@ -78,6 +78,7 @@ PUBLIC_LISTING_FIELDS: tuple[str, ...] = (
     "tenant_prefs",
     "security_cameras",
     "security_cameras_location",
+    "lockable_bedroom",
     "other_safety_details",
     "who_else_lives_here",
     "total_other_people",

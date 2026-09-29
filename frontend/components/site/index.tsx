@@ -268,6 +268,28 @@ export function DocLayout({
   current?: string;
   children: ReactNode;
 }) {
+  const onPage = nav.every((l) => l.href.startsWith("#"));
+  const [spy, setSpy] = useState<string | undefined>(onPage ? nav[0]?.href : undefined);
+
+  // For an on-page menu, mark the section you are reading.
+  useEffect(() => {
+    if (!onPage) return;
+    const targets = nav
+      .map((l) => document.getElementById(l.href.slice(1)))
+      .filter((el): el is HTMLElement => Boolean(el));
+    if (targets.length === 0) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        const visible = entries.filter((e) => e.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+        if (visible[0]) setSpy(`#${visible[0].target.id}`);
+      },
+      { rootMargin: "-20% 0px -65% 0px" },
+    );
+    targets.forEach((t) => io.observe(t));
+    return () => io.disconnect();
+  }, [nav, onPage]);
+
+  const active = current ?? spy;
   return (
     <div className="site-section site-section--flush">
       <div className="site-shell site-doc">
@@ -275,7 +297,11 @@ export function DocLayout({
           <ul className="site-doc__navlist">
             {nav.map((l) => (
               <li key={l.href}>
-                <Link href={l.href} className="site-doc__navlink" aria-current={current === l.href ? "page" : undefined}>
+                <Link
+                  href={l.href}
+                  className="site-doc__navlink"
+                  aria-current={active === l.href ? (onPage ? "true" : "page") : undefined}
+                >
                   {l.label}
                 </Link>
               </li>

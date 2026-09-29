@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowRight, BadgeCheck, BellRing, CalendarDays } from "lucide-react";
 import { searchListings } from "../../lib/api";
 import { HomeImage } from "../hub/ui/Media";
+import { hubAbsoluteUrl } from "../../lib/hub/routes";
 import { placeTypeLabel } from "../../lib/hub/format";
 import { Reveal, SectionHead, Strip } from "../site";
 
@@ -89,11 +90,11 @@ function AlertCard({ empty }: { empty: boolean }) {
         </span>
         <h3 className="site-h3 site-h3--lg mt-5">{empty ? "New rooms are added every week" : "More rooms every week"}</h3>
         <p className="site-body mt-2">
-          Save a search for where you want to live and choose how often you hear about new rooms.
+          Save a search in Migrent Hub for where you want to live, and choose how often you hear about new rooms.
         </p>
       </div>
-      <Link href="/seeker/search" className="btn-secondary self-start">
-        Search and save
+      <Link href={hubAbsoluteUrl("/discover")} className="btn-secondary self-start">
+        Save a search
         <ArrowRight className="btn-arrow h-4 w-4" strokeWidth={2.2} aria-hidden="true" />
       </Link>
     </div>

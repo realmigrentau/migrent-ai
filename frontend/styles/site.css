@@ -209,6 +209,41 @@ html.dark {
   }
   .site-rows > * + * { border-top: 1px solid var(--color-line); }
 
+  /* ── A search field, drawn like the Hub's inputs ───────────────── */
+
+  .site-search {
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: 52px;
+    border-radius: 14px;
+    border: 1px solid var(--color-line-2);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-soft);
+    transition: border-color var(--duration-fast) var(--ease-out), box-shadow var(--duration-fast) var(--ease-out);
+  }
+  .site-search:hover { border-color: var(--color-ink-4); }
+  .site-search:focus-within {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 18%, transparent);
+  }
+  .site-search__icon { flex: none; width: 18px; height: 18px; margin-left: 16px; color: var(--color-ink-3); }
+  .site-search input {
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    padding: 0 16px 0 10px;
+    border: 0;
+    outline: none;
+    background: transparent;
+    color: var(--color-ink);
+    font: inherit;
+    font-size: 15.5px;
+    font-weight: 500;
+  }
+  .site-search input::placeholder { color: var(--color-ink-4); }
+  .site-search input:focus-visible { box-shadow: none; }
+
   /* ── Page hero for inner pages ────────────────────────────────────
      Every page opens under the same sky the homepage ends on: a dawn wash
      that fades into the canvas. Light mode is morning, dark mode is the
@@ -445,3 +480,39 @@ html.dark {
     to { opacity: 1; transform: none; }
   }
 }
+
+/* ══════════════════════════════════════════════════════════════
+   LEGAL DOCUMENTS  ·  components/site/LegalLayout.tsx
+
+   The policies keep their original markup (their wording is not ours to
+   restyle into new components), so this block redraws it from outside.
+   Deliberately unlayered: it has to beat the Tailwind size and border
+   utilities written on those elements (design.md, trap 1).
+   ══════════════════════════════════════════════════════════════ */
+
+.legal-doc .card,
+.legal-doc .card-subtle {
+  border-radius: 22px;
+  border: 1px solid var(--color-line);
+  background: var(--color-surface);
+  padding: clamp(20px, 2.4vw, 30px);
+}
+.legal-doc .card-subtle { background: var(--color-surface-muted); border-color: transparent; }
+/* Coloured side stripes were the one decorative move on these pages. */
+.legal-doc [class*="border-l-"] { border-left-width: 1px; border-left-color: var(--color-line); }
+.legal-doc h2 {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  font-size: clamp(1.25rem, 1.8vw, 1.5rem);
+  font-weight: 450;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: var(--color-ink);
+}
+.legal-doc h3 { font-size: 16px; font-weight: 600; color: var(--color-ink); }
+.legal-doc .text-sm { font-size: 15px; line-height: 1.7; }
+.legal-doc .text-xs { font-size: 13.5px; line-height: 1.65; }
+.legal-doc a { color: var(--color-primary); text-decoration: underline; text-underline-offset: 3px; }
+html:not(.dark) .legal-doc a { color: var(--color-primary-600); }
+.legal-doc strong { color: var(--color-ink); font-weight: 600; }
+.legal-doc table { font-size: 14px; }

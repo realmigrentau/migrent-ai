@@ -139,5 +139,5 @@ export function hostFeeSentence(): string {
 }
 
 export function seekerFeeSentence(): string {
-  return "Renters pay Migrent nothing. Browsing, messaging and applying are free, and Migrent never handles your rent or bond.";
+  return "Browsing, messaging, inspections and applying are free for renters, and Migrent never handles your rent or bond. Mentor sessions are optional and priced by each mentor.";
 }

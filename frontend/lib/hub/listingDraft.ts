@@ -47,6 +47,7 @@ export interface DraftData {
   neighbourhood_vibe?: string;
   security_cameras?: boolean;
   security_cameras_location?: string;
+  lockable_bedroom?: boolean;
   weapons_on_property?: boolean;
   weapons_explanation?: string;
   other_safety_details?: string;

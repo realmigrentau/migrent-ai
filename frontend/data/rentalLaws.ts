@@ -40,7 +40,7 @@ const states: StateRentalLaw[] = [
     ],
     migrantInfo: [
       "You have the same tenancy rights regardless of your visa status.",
-      "Agents cannot discriminate based on your nationality, ethnicity, or visa type.",
+      "It is against the law to refuse you, or treat you less favourably, because of your race, nationality or ethnic origin.",
       "Interpreting services are available free of charge through NSW Fair Trading (call 13 14 50 for TIS).",
       "You do not need an Australian rental history to apply; overseas references and employment letters are acceptable.",
       "Be cautious of rental scams targeting new arrivals. Never pay money before inspecting the property in person.",
