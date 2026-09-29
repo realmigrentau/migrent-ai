@@ -30,7 +30,9 @@ import { createMiddlewareSupabaseClient } from "./lib/supabase-middleware";
  * fail closed to sign-in rather than rendering a protected shell.
  */
 const HUB_HOST = (process.env.NEXT_PUBLIC_HUB_HOST || "").trim().toLowerCase();
-const HUB_PUBLIC = ["/hub/sign-in", "/hub/sign-up", "/hub/forgot-password", "/hub/reset-password", "/hub/auth/callback"];
+// /hub/locked is where three wrong Admin panel passwords end up, after the
+// account has been signed out.
+const HUB_PUBLIC = ["/hub/sign-in", "/hub/sign-up", "/hub/forgot-password", "/hub/reset-password", "/hub/auth/callback", "/hub/locked"];
 
 const PUBLIC_SEEKER_PATHS = ["/seeker/search"];
 

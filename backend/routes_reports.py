@@ -3,9 +3,10 @@ import logging
 import resend
 from pydantic import BaseModel, Field
 from typing import Optional
-from fastapi import APIRouter, HTTPException, Request, Header
+from fastapi import APIRouter, Depends, HTTPException, Request, Header
 from db import get_supabase_admin
 from limiter import limiter
+from admin_panel import admin_panel_unlocked
 
 logger = logging.getLogger(__name__)
 
@@ -149,7 +150,7 @@ def create_report(
     return {"status": "ok", "message": "Report submitted. Our team will review it shortly."}
 
 
-@router.get("")
+@router.get("", dependencies=[Depends(admin_panel_unlocked)])
 @limiter.limit("30/minute")
 def list_reports(
     request: Request,
@@ -171,7 +172,7 @@ def list_reports(
     return {"reports": result.data}
 
 
-@router.patch("/{report_id}")
+@router.patch("/{report_id}", dependencies=[Depends(admin_panel_unlocked)])
 @limiter.limit("30/minute")
 async def update_report(
     report_id: str,

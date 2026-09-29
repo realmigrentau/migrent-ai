@@ -3,6 +3,7 @@ import HubShell from "../../components/hub/HubShell";
 import RenterHome from "../../components/hub/home/RenterHome";
 import OwnerHome from "../../components/hub/home/OwnerHome";
 import AdminHome from "../../components/hub/home/AdminHome";
+import { AdminPanelGate } from "../../components/hub/admin/AdminPanel";
 import { ButtonLink } from "../../components/hub/ui/Button";
 import { useHub } from "../../lib/hub/session";
 
@@ -19,7 +20,11 @@ export default function HubHome() {
         ) : undefined
       }
     >
-      {role === "owner" ? <OwnerHome /> : role === "admin" ? <AdminHome /> : <RenterHome />}
+      {role === "owner" ? <OwnerHome /> : role === "admin" ? (
+        <AdminPanelGate>
+          <AdminHome />
+        </AdminPanelGate>
+      ) : <RenterHome />}
     </HubShell>
   );
 }

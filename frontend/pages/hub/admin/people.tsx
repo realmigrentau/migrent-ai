@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Ban, Eye, RotateCcw, Search, Users } from "lucide-react";
-import HubShell from "../../../components/hub/HubShell";
+import AdminPanelShell from "../../../components/hub/admin/AdminPanel";
 import { useHubNavigate } from "../../../components/hub/HubLink";
 import { Button } from "../../../components/hub/ui/Button";
 import { EmptyState, ErrorState, InlineAlert, RowSkeleton, StatusBadge } from "../../../components/hub/ui/Feedback";
@@ -80,7 +80,7 @@ function SuspendDialog({ account, onClose }: { account: Account | null; onClose:
 }
 
 /** Find an account, and (with a recorded reason) see Migrent Hub as they do, read-only. */
-export default function AdminPeoplePage() {
+function AdminPeopleContent() {
   const { me, startViewAs } = useHub();
   const navigate = useHubNavigate();
   const toast = useToast();
@@ -111,7 +111,7 @@ export default function AdminPeoplePage() {
   }
 
   return (
-    <HubShell title="People">
+    <>
       <PageHeader title="People" description="Find a customer to help them: see Migrent Hub as they do, or suspend an account that is breaking the rules. Both need a reason, which goes in the audit log." />
       <div className="relative mb-6 max-w-[520px]">
         <label htmlFor="people-q" className="sr-only">
@@ -202,6 +202,15 @@ export default function AdminPeoplePage() {
           </Field>
         </div>
       </Dialog>
-    </HubShell>
+    </>
+  );
+}
+
+/** Inside the Admin panel: nothing here loads until the admin password is entered. */
+export default function AdminPeoplePage() {
+  return (
+    <AdminPanelShell title="People">
+      <AdminPeopleContent />
+    </AdminPanelShell>
   );
 }

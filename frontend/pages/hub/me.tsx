@@ -37,11 +37,11 @@ function Group({ title, children }: { title?: string; children: React.ReactNode 
  * tabs, so every Hub destination is two taps away. Works on desktop too.
  */
 export default function MePage() {
-  const { me, role, signOut } = useHub();
+  const { me, role, viewAs, signOut } = useHub();
   const router = useRouter();
   const counts = useHubQuery<HubCounts>("/hub/counts");
   const c = counts.data;
-  const { primary, tabs } = navFor(role, { hasHome: (c?.tenancies ?? 0) > 0 });
+  const { primary, tabs } = navFor(role, { hasHome: (c?.tenancies ?? 0) > 0, isAdmin: Boolean(me?.is_admin && !viewAs) });
   const tabPaths = new Set(tabs.map((t) => t.to));
   const rest = [...primary.filter((p) => !tabPaths.has(p.to)), ...footerNav.filter((f) => !tabPaths.has(f.to))];
   const roleLabel = role === "owner" ? (me?.owner_kind === "property_manager" ? "Property manager" : "Owner") : role === "admin" ? "Migrent administrator" : "Renter";

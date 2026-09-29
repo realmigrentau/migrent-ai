@@ -37,6 +37,7 @@ VERIFIED_OWNER_ID = "22222222-2222-4222-8222-222222222222"
 SEEKER_ID = "33333333-3333-4333-8333-333333333333"
 OTHER_ID = "44444444-4444-4444-8444-444444444444"
 ADMIN_ID = "55555555-5555-4555-8555-555555555555"
+ADMIN_PANEL_PASSWORD = "panel-test-password"
 
 LISTING_LIVE = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa1"
 LISTING_EXPIRED = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa2"
@@ -89,15 +90,13 @@ def _listing(**over):
 
 def audit_log_constraints() -> tuple[set[str], set[str]]:
     """The actions and target types admin_audit_log accepts in production:
-    the CHECK constraints from the latest migration that sets them."""
+    each CHECK constraint as the latest migration that sets it left it."""
     import re
 
-    sql = ""
-    for path in sorted((ROOT / "migrations").glob("*.sql")):
-        text = path.read_text()
-        if "admin_audit_log_action_check" in text:
-            sql = text
+    migrations = [p.read_text() for p in sorted((ROOT / "migrations").glob("*.sql"))]
+
     def values(name: str) -> set[str]:
+        sql = [text for text in migrations if f"ADD CONSTRAINT {name}" in text][-1]
         block = sql[sql.rindex(f"ADD CONSTRAINT {name}"):]
         return set(re.findall(r"'([a-z_]+)'", block[: block.index(");")]))
 
@@ -148,6 +147,10 @@ def db(monkeypatch):
              "is_admin": True, "role": "superadmin", "email": "admin@example.com", "badges": []},
         ],
     )
+    from admin_panel import hash_password
+
+    # The Admin panel password (a few iterations: tests only need it to match).
+    fake.seed("admin_panel_settings", [{"id": 1, "password_hash": hash_password(ADMIN_PANEL_PASSWORD, iterations=1000)}])
     fake.seed(
         "owner_verification",
         [
@@ -200,5 +203,13 @@ def client(db):
     return TestClient(main.app)
 
 
-def auth(user_id: str) -> dict:
-    return {"Authorization": f"Bearer tok-{user_id}"}
+def auth(user_id: str, *, unlocked: bool = True) -> dict:
+    """Sign-in headers. By default they also carry an Admin panel unlock
+    for that account (it only matters for admins); unlocked=False leaves it
+    out, as when the panel is locked."""
+    headers = {"Authorization": f"Bearer tok-{user_id}"}
+    if unlocked:
+        from admin_panel import UNLOCK_HEADER, issue_unlock_token
+
+        headers[UNLOCK_HEADER] = issue_unlock_token(user_id, "")
+    return headers

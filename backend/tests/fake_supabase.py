@@ -322,6 +322,9 @@ class _FakeAuthAdmin:
     def delete_user(self, user_id: str):
         self._db.users.pop(str(user_id), None)
 
+    def sign_out(self, jwt: str, scope: str = "global"):
+        self._db.signed_out.append((jwt, scope))
+
 
 class _FakeAuth:
     def __init__(self, db: "FakeSupabase"):
@@ -343,6 +346,7 @@ class FakeSupabase:
     storage_objects: dict[str, dict[str, bytes]] = field(default_factory=dict)
     insert_hooks: dict[str, list[Callable]] = field(default_factory=dict)
     update_hooks: dict[str, list[Callable]] = field(default_factory=dict)
+    signed_out: list[tuple[str, str]] = field(default_factory=list)
 
     def __post_init__(self):
         self.auth = _FakeAuth(self)

@@ -7,12 +7,13 @@ Uses service role key to bypass RLS for admin operations.
 
 import logging
 from datetime import datetime, timedelta, timezone
-from fastapi import APIRouter, HTTPException, Header, Query
+from fastapi import APIRouter, Depends, HTTPException, Header, Query
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from typing import Optional
 from db import get_supabase_admin
 from auth_utils import get_current_user
+from admin_panel import admin_panel_unlocked
 from email_bookings import (
     send_listing_approved_to_owner,
     send_listing_rejected_to_owner,
@@ -31,7 +32,8 @@ from notification_service import notify
 
 logger = logging.getLogger(__name__)
 
-router = APIRouter(prefix="/admin", tags=["admin"])
+# The Admin panel password is needed here too (admin_panel.py).
+router = APIRouter(prefix="/admin", tags=["admin"], dependencies=[Depends(admin_panel_unlocked)])
 
 
 def _require_admin(authorization: str):

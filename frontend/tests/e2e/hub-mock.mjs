@@ -10,13 +10,19 @@
  *   new@example.test     a new account that has not onboarded
  *   admin@example.test   a Migrent administrator
  *   tenant@example.test  Tom Nguyen, renting Room 2 from Priya (a tenancy)
- * Password for all of them: TEST_PASSWORD below.
+ *   boss@example.test    Omar Haddad, an owner who is also an admin (the
+ *                        Admin panel link in a normal account)
+ *   grace@example.test   Grace, a renter who is also an admin (the lockout
+ *                        test uses her, so no other test is locked out)
+ * Password for all of them: TEST_PASSWORD below. The Admin panel's own
+ * password is ADMIN_PANEL_PASSWORD.
  *
  * Shapes mirror backend/routes_hub*.py. Keep them in step.
  */
 import crypto from "node:crypto";
 
 export const TEST_PASSWORD = "hub-test-pass-1";
+export const ADMIN_PANEL_PASSWORD = "panel-test-pass-1";
 
 const now = () => new Date();
 const iso = (d) => d.toISOString();
@@ -36,6 +42,8 @@ const USERS = {
   "aaaa0000-0000-4000-8000-000000000004": { email: "admin@example.test", name: "Ada Admin", role: "superadmin", is_admin: true, onboarded: true, created_at: "2026-01-01T00:00:00Z" },
   "aaaa0000-0000-4000-8000-000000000005": { email: "tenant@example.test", name: "Tom Nguyen", role: "seeker", onboarded: true, created_at: "2026-04-20T00:00:00Z" },
   "aaaa0000-0000-4000-8000-000000000006": { email: "newowner@example.test", name: "Liam Park", role: "owner", owner_kind: "individual", onboarded: true, created_at: "2026-09-18T00:00:00Z" },
+  "aaaa0000-0000-4000-8000-000000000007": { email: "boss@example.test", name: "Omar Haddad", role: "owner", owner_kind: "individual", is_admin: true, onboarded: true, created_at: "2026-01-05T00:00:00Z" },
+  "aaaa0000-0000-4000-8000-000000000008": { email: "grace@example.test", name: "Grace Admin", role: "seeker", is_admin: true, onboarded: true, created_at: "2026-01-06T00:00:00Z" },
 };
 const RENTER = "aaaa0000-0000-4000-8000-000000000001";
 const OWNER = "aaaa0000-0000-4000-8000-000000000002";
@@ -609,6 +617,17 @@ function adminExtras(p, url, body, uid, send, req) {
   return false;
 }
 
+/* ── Admin panel ────────────────────────────────────────── */
+
+const PANEL = {
+  password: ADMIN_PANEL_PASSWORD,
+  tokens: new Map(),
+  byUser: {},
+  state(uid) {
+    return (this.byUser[uid] ||= { failures: 0, lockedUntil: 0 });
+  },
+};
+
 /* ── Router ─────────────────────────────────────────────── */
 
 export function setListings(list) {
@@ -750,7 +769,7 @@ export function handleHub(req, url, body, send) {
     if (body.notification_prefs) u.prefs = body.notification_prefs;
     return send(200, me(uid)), true;
   }
-  if (p === "/hub/home") return send(200, u.is_admin ? { role: "admin" } : isOwner ? ownerHome(uid) : renterHome(uid)), true;
+  if (p === "/hub/home") return send(200, isOwner ? ownerHome(uid) : u.role !== "seeker" && u.is_admin ? { role: "admin" } : renterHome(uid)), true;
   if (p === "/hub/counts") {
     const unread = threads(uid).filter((t) => !t.muted && !t.archived).reduce((s, t) => s + t.unread_count, 0);
     const notes = (S.notifications[uid] || []).filter((n) => !n.is_read).length;
@@ -1255,6 +1274,42 @@ export function handleHub(req, url, body, send) {
   // Admin
   if (p.startsWith("/hub/admin/")) {
     if (!u.is_admin) return send(404, { detail: "Not found" }), true;
+    // The Admin panel's second password. Mirrors backend/admin_panel.py and
+    // routes_hub_admin.py (/panel, /unlock, /password).
+    const panel = PANEL.state(uid);
+    if (p === "/hub/admin/panel") return send(200, { attempts_left: Math.max(0, 3 - panel.failures), locked: panel.lockedUntil > Date.now() }), true;
+    if (p === "/hub/admin/unlock" && req.method === "POST") {
+      if (panel.lockedUntil > Date.now()) return send(200, { unlocked: false, locked: true, attempts_left: 0 }), true;
+      if (body?.password === PANEL.password) {
+        panel.failures = 0;
+        S.audit.unshift({ id: uuid(), action: "admin_panel_unlock", target_type: "user", target_id: uid, reason: null, metadata: {}, created_at: iso(now()), admin: person(uid) });
+        const tok = crypto.randomBytes(18).toString("base64url");
+        PANEL.tokens.set(tok, { uid, exp: Date.now() + 20 * 60_000 });
+        return send(200, { unlocked: true, token: tok, expires_in_seconds: 1200 }), true;
+      }
+      panel.failures += 1;
+      S.audit.unshift({ id: uuid(), action: "admin_panel_failed", target_type: "user", target_id: uid, reason: null, metadata: {}, created_at: iso(now()), admin: person(uid) });
+      if (panel.failures >= 3) {
+        panel.lockedUntil = Date.now() + 15 * 60_000;
+        S.audit.unshift({ id: uuid(), action: "admin_panel_lockout", target_type: "user", target_id: uid, reason: "3 wrong admin panel passwords", metadata: {}, created_at: iso(now()), admin: person(uid) });
+        for (const [id, x] of Object.entries(USERS)) {
+          if (x.is_admin) (S.notifications[id] ||= []).unshift({ id: uuid(), type: "admin_security_alert", title: "Potential threat: admin panel locked", body: `3 wrong admin panel passwords were entered on ${u.name}'s account.`, cta_url: "/hub/admin/audit", entity_type: "user", entity_id: uid, is_read: false, created_at: iso(now()) });
+        }
+        return send(200, { unlocked: false, locked: true, attempts_left: 0 }), true;
+      }
+      return send(200, { unlocked: false, locked: false, attempts_left: 3 - panel.failures }), true;
+    }
+    if (p !== "/hub/admin/view-as/end") {
+      const unlock = PANEL.tokens.get(String(req.headers["x-migrent-admin-unlock"] || ""));
+      if (!unlock || unlock.uid !== uid || unlock.exp < Date.now()) return send(423, { detail: "The admin panel is locked. Enter the admin password to open it." }), true;
+    }
+    if (p === "/hub/admin/password" && req.method === "POST") {
+      if (body.current_password !== PANEL.password) return send(400, { detail: "The current admin password is not right." }), true;
+      if ((body.new_password || "").length < 8) return send(400, { detail: "Use at least 8 characters." }), true;
+      PANEL.password = body.new_password;
+      S.audit.unshift({ id: uuid(), action: "admin_panel_password_changed", target_type: "user", target_id: uid, reason: null, metadata: {}, created_at: iso(now()), admin: person(uid) });
+      return send(200, { changed: true }), true;
+    }
     if (p === "/hub/admin/overview")
       return send(200, {
         final_reviews: S.applications.filter((a) => a.status === "migrent_review").length,

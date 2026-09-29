@@ -166,7 +166,7 @@ interface HubShellProps {
  */
 export default function HubShell({ children, title, fullBleed, fab, immersive, fitDesktop }: HubShellProps) {
   const router = useRouter();
-  const { status, role, meError, refreshMe } = useHub();
+  const { status, role, me, viewAs, meError, refreshMe } = useHub();
   const signOutNow = useSignOut();
   const reduce = useReducedMotion();
   const hubPath = toHubPath(router.asPath);
@@ -209,7 +209,8 @@ export default function HubShell({ children, title, fullBleed, fab, immersive, f
 
   const c = counts.data;
   const hasHome = (c?.tenancies ?? 0) > 0;
-  const { primary, tabs } = useMemo(() => navFor(role, { hasHome }), [role, hasHome]);
+  const isAdmin = Boolean(me?.is_admin && !viewAs);
+  const { primary, tabs } = useMemo(() => navFor(role, { hasHome, isAdmin }), [role, hasHome, isAdmin]);
 
   const pageTitle = `${title} · Migrent Hub`;
   const head = (

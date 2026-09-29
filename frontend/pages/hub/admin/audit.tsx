@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { ScrollText } from "lucide-react";
-import HubShell from "../../../components/hub/HubShell";
+import AdminPanelShell from "../../../components/hub/admin/AdminPanel";
 import HubLink from "../../../components/hub/HubLink";
 import { EmptyState, ErrorState, RowSkeleton } from "../../../components/hub/ui/Feedback";
 import { Select } from "../../../components/hub/ui/Field";
@@ -32,12 +32,12 @@ function targetLink(e: Entry): string | null {
 }
 
 /** Every consequential admin action, who took it, and why. Read-only. */
-export default function AdminAuditPage() {
+function AdminAuditContent() {
   const [type, setType] = useState("");
   const { data, error, loading, refetch } = useHubQuery<{ entries: Entry[] }>(`/hub/admin/audit?limit=200${type ? `&target_type=${type}` : ""}`);
 
   return (
-    <HubShell title="Audit log">
+    <>
       <PageHeader
         title="Audit log"
         description="Every listing decision, ID check, account suspension, final review, report decision and every time someone viewed a customer's account. Entries can't be edited or removed."
@@ -94,6 +94,15 @@ export default function AdminAuditPage() {
           })}
         </ol>
       )}
-    </HubShell>
+    </>
+  );
+}
+
+/** Inside the Admin panel: nothing here loads until the admin password is entered. */
+export default function AdminAuditPage() {
+  return (
+    <AdminPanelShell title="Audit log">
+      <AdminAuditContent />
+    </AdminPanelShell>
   );
 }

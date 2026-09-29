@@ -42,9 +42,9 @@ from hub_common import (
     now_iso,
     parse_day,
     record_listing_event,
-    require_admin_actor,
     require_writable,
 )
+from admin_panel import panel_unlocked, require_admin_panel
 from limiter import limiter
 
 logger = logging.getLogger(__name__)
@@ -113,14 +113,15 @@ def _load(sb, application_id: str) -> dict:
     return res.data[0]
 
 
-def _viewer_kind(actor: HubActor, app: dict) -> str:
+def _viewer_kind(actor: HubActor, app: dict, admin_unlocked: bool = False) -> str:
     """'renter' | 'owner' | 'admin', or 404 - never reveal that an
-    application exists to someone who is not party to it."""
+    application exists to someone who is not party to it. An admin sees
+    other people's applications only with the Admin panel unlocked."""
     if str(app["renter_id"]) == actor.id:
         return "renter"
     if str(app["owner_id"]) == actor.id and app["status"] in OWNER_VISIBLE:
         return "owner"
-    if actor.is_admin and not actor.read_only:
+    if actor.is_admin and not actor.read_only and admin_unlocked:
         return "admin"
     raise HTTPException(status_code=404, detail="Application not found")
 
@@ -456,7 +457,7 @@ def get_application(application_id: str, request: Request, authorization: Option
     actor = hub_actor(request, authorization)
     sb = get_supabase_admin()
     app = _load(sb, application_id)
-    viewer = _viewer_kind(actor, app)
+    viewer = _viewer_kind(actor, app, admin_unlocked=panel_unlocked(actor.id, request, authorization))
 
     # The owner opening a new application is itself a step the renter can see.
     if viewer == "owner" and not actor.read_only and app["status"] == "submitted" and not app.get("owner_viewed_at"):
@@ -642,7 +643,7 @@ def add_owner_note(application_id: str, request: Request, body: NoteBody, author
 @router.get("/admin/applications")
 def admin_queue(request: Request, status: str = "migrent_review", authorization: Optional[str] = Header(None)):
     actor = hub_actor(request, authorization)
-    require_admin_actor(actor)
+    require_admin_panel(actor, request, authorization)
     sb = get_supabase_admin()
     try:
         rows = sb.table("applications").select("*").eq("status", status).order("owner_approved_at").limit(200).execute().data or []
@@ -703,7 +704,7 @@ def create_tenancy_for(sb, app: dict, *, start: Optional[date] = None) -> dict:
 @limiter.limit("120/hour")
 def admin_decision(application_id: str, request: Request, body: AdminDecisionBody, authorization: Optional[str] = Header(None)):
     actor = hub_actor(request, authorization)
-    require_admin_actor(actor)
+    require_admin_panel(actor, request, authorization)
     sb = get_supabase_admin()
     app = _load(sb, application_id)
     to = can_transition("admin", body.action, app["status"])

@@ -13,12 +13,13 @@ Provides endpoints to:
 
 import logging
 from datetime import datetime, timezone
-from fastapi import APIRouter, HTTPException, Header, Query
+from fastapi import APIRouter, Depends, HTTPException, Header, Query
 from pydantic import BaseModel
 from typing import Optional
 from db import get_supabase_admin
 from auth_utils import get_current_user
 from routes_admin import _require_admin, publish_blockers
+from admin_panel import admin_panel_unlocked
 from email_bookings import (
     send_listing_approved_to_owner,
     send_listing_under_review_to_owner,
@@ -29,7 +30,8 @@ from spam_detection import calculate_spam_score, apply_spam_result
 
 logger = logging.getLogger(__name__)
 
-router = APIRouter(prefix="/admin/spam", tags=["spam-moderation"])
+# The Admin panel password is needed here too (admin_panel.py).
+router = APIRouter(prefix="/admin/spam", tags=["spam-moderation"], dependencies=[Depends(admin_panel_unlocked)])
 
 
 # -- Models --

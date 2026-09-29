@@ -58,12 +58,13 @@ const LEGACY_TO_HUB: [string, string][] = [
   ["/magic-link-signup", "/sign-up"],
   ["/forgot-password", "/forgot-password"],
   ["/reset-password", "/reset-password"],
-  // The old admin console. Its screens were rebuilt in Hub admin, or retired
-  // where they showed invented or empty numbers (analytics, revenue).
-  ["/admin", "/"],
-  ["/admin/overview", "/"],
-  ["/admin/analytics", "/"],
-  ["/admin/revenue", "/"],
+  // The old admin console. Its screens were rebuilt in the Hub's Admin panel,
+  // or retired where they showed invented or empty numbers (analytics,
+  // revenue).
+  ["/admin", "/admin"],
+  ["/admin/overview", "/admin"],
+  ["/admin/analytics", "/admin"],
+  ["/admin/revenue", "/admin"],
   ["/admin/moderation", "/admin/listings"],
   ["/admin/spam-moderation", "/admin/listings?queue=flagged"],
   ["/admin/listings", "/admin/listings?queue=all"],

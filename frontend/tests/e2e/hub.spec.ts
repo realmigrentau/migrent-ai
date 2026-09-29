@@ -8,6 +8,7 @@ import AxeBuilder from "@axe-core/playwright";
  * desktop project, in order.
  */
 const PASSWORD = "hub-test-pass-1";
+const PANEL_PASSWORD = "panel-test-pass-1";
 const ROOM_1 = "11111111-1111-4111-8111-000000000001";
 const STUDIO = "11111111-1111-4111-8111-000000000002";
 
@@ -30,6 +31,23 @@ async function signIn(page: Page, email: string, next = "/") {
   await page.goto(`/hub/sign-in${next !== "/" ? `?next=${encodeURIComponent(next)}` : ""}`);
   await fillSignIn(page, email);
   await expect(page).not.toHaveURL(/sign-in/, { timeout: 20_000 });
+}
+
+/** Enter the Admin panel's own password on the page that asks for it. */
+async function unlockPanel(page: Page, password = PANEL_PASSWORD) {
+  await page.getByLabel("Admin password").fill(password);
+  await page.getByRole("button", { name: "Unlock" }).click();
+}
+
+async function signInToPanel(page: Page, email: string, next: string) {
+  await signIn(page, email, next);
+  await unlockPanel(page);
+  await expect(page.getByText("Admin panel open")).toBeVisible();
+}
+
+/** The panel locks after 30 seconds without activity; loops over pages keep the mouse moving. */
+async function stayActive(page: Page, i: number) {
+  await page.mouse.move(40 + (i % 7) * 13, 40 + (i % 5) * 11);
 }
 
 test.describe("signed out", () => {
@@ -181,7 +199,7 @@ test.describe("admin", () => {
   test.skip(({ isMobile }) => isMobile, "changes data");
 
   test("viewing as a customer needs a recorded reason and is read-only", async ({ page }) => {
-    await signIn(page, "admin@example.test", "/admin/people");
+    await signInToPanel(page, "admin@example.test", "/admin/people");
     await page.getByRole("searchbox", { name: /name or email/i }).fill("sarah");
     await page.getByRole("button", { name: "View as" }).first().click();
     const dialog = page.getByRole("dialog");
@@ -196,7 +214,7 @@ test.describe("admin", () => {
   });
 
   test("approve a new listing from the review queue, and it is audited", async ({ page }) => {
-    await signIn(page, "admin@example.test", "/admin/listings");
+    await signInToPanel(page, "admin@example.test", "/admin/listings");
     await expect(page.getByRole("heading", { name: "Listings", level: 1 })).toBeVisible();
     await page.getByRole("button", { name: /Bright room in Castle Hill/ }).click();
     const drawer = page.getByRole("dialog", { name: "Bright room in Castle Hill" });
@@ -211,7 +229,7 @@ test.describe("admin", () => {
   });
 
   test("a flagged listing needs a reason to hide, and removal takes two steps", async ({ page }) => {
-    await signIn(page, "admin@example.test", "/admin/listings?queue=flagged");
+    await signInToPanel(page, "admin@example.test", "/admin/listings?queue=flagged");
     await page.getByRole("button", { name: /CHEAP ROOM pay deposit now/ }).click();
     const drawer = page.getByRole("dialog", { name: "CHEAP ROOM pay deposit now" });
     await expect(drawer.getByText("Asks for payment before a viewing")).toBeVisible();
@@ -232,7 +250,7 @@ test.describe("admin", () => {
   });
 
   test("check an owner's ID: see the document, reject with a reason", async ({ page }) => {
-    await signIn(page, "admin@example.test", "/admin/id-checks");
+    await signInToPanel(page, "admin@example.test", "/admin/id-checks");
     await expect(page.getByText("Liam Park")).toBeVisible();
     await page.getByRole("button", { name: "View document" }).click();
     const doc = page.getByRole("dialog", { name: /Liam Park: Passport/ });
@@ -249,7 +267,7 @@ test.describe("admin", () => {
   });
 
   test("suspend an account with a reason, then reinstate it", async ({ page }) => {
-    await signIn(page, "admin@example.test", "/admin/people");
+    await signInToPanel(page, "admin@example.test", "/admin/people");
     await page.getByRole("searchbox", { name: /name or email/i }).fill("liam");
     await page.getByRole("button", { name: "Suspend" }).click();
     const dialog = page.getByRole("dialog", { name: /Suspend Liam Park/ });
@@ -265,7 +283,7 @@ test.describe("admin", () => {
   });
 
   test("answer a support ticket and leave an internal note", async ({ page }) => {
-    await signIn(page, "admin@example.test", "/admin/support");
+    await signInToPanel(page, "admin@example.test", "/admin/support");
     // Most urgent first.
     const first = page.locator("main li button").first();
     await expect(first).toContainText("An owner asked me for cash");
@@ -282,13 +300,99 @@ test.describe("admin", () => {
   });
 });
 
+test.describe("admin panel", () => {
+  test.skip(({ isMobile }) => isMobile, "changes data");
+
+  test("an admin's normal account has an Admin panel with its own password", async ({ page }) => {
+    await signIn(page, "boss@example.test");
+    // A normal owner account, with the Admin panel as one more place to go.
+    const rail = page.getByRole("navigation", { name: "Migrent Hub" }).first();
+    await expect(rail.getByRole("link", { name: "Properties" })).toBeVisible();
+    await expect(page.getByText("Listings to moderate")).toHaveCount(0);
+    await rail.getByRole("link", { name: "Admin panel" }).click();
+    await expect(page).toHaveURL(/\/hub\/admin$/);
+    await expect(page.getByText("You have 3 tries.")).toBeVisible();
+    await unlockPanel(page, "not the password");
+    await expect(page.getByRole("alert").filter({ hasText: "2 tries left" })).toBeVisible();
+    await unlockPanel(page);
+    await expect(page.getByText("Admin panel open")).toBeVisible();
+    const sections = page.getByRole("navigation", { name: "Admin panel" });
+    for (const name of ["Overview", "Listings", "ID checks", "Final reviews", "Reports", "Support", "People", "Audit log"]) {
+      await expect(sections.getByRole("link", { name })).toBeVisible();
+    }
+    await expect(page.getByText("Listings to moderate")).toBeVisible();
+    await sections.getByRole("link", { name: "Audit log" }).click();
+    await expect(page.getByText("Opened the Admin panel").first()).toBeVisible();
+    await expect(page.getByText("Entered a wrong Admin panel password").first()).toBeVisible();
+    await page.getByRole("button", { name: "Lock now" }).click();
+    await expect(page.getByLabel("Admin password")).toBeVisible();
+  });
+
+  test("a server without the Admin panel yet says so plainly", async ({ page }) => {
+    // The site can go live before the API it talks to has been updated.
+    await page.route("**/hub/admin/panel", (route) => route.fulfill({ status: 404, contentType: "application/json", body: JSON.stringify({ detail: "Not Found" }) }));
+    await signIn(page, "admin@example.test", "/admin");
+    await expect(page.getByText("The Admin panel isn't switched on yet")).toBeVisible();
+    await expect(page.getByText("Not Found", { exact: true })).toHaveCount(0);
+    await page.unroute("**/hub/admin/panel");
+    await page.getByRole("button", { name: "Try again" }).click();
+    await expect(page.getByLabel("Admin password")).toBeVisible();
+  });
+
+  test("the panel locks itself after 30 seconds without activity", async ({ page }) => {
+    await page.clock.install();
+    await signInToPanel(page, "admin@example.test", "/admin/audit");
+    await page.clock.fastForward(20_000);
+    await expect(page.getByText(/Locking in \d+s/)).toBeVisible();
+    await page.mouse.move(200, 200);
+    await page.clock.fastForward(20_000);
+    await expect(page.getByText("Admin panel open")).toBeVisible();
+    await page.clock.fastForward(12_000);
+    await expect(page.getByLabel("Admin password")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Audit log", level: 1 })).toHaveCount(0);
+    // A reload does not bring it back.
+    await page.reload();
+    await expect(page.getByLabel("Admin password")).toBeVisible();
+  });
+
+  test("three wrong passwords sign you out and alert every admin", async ({ page }) => {
+    await signIn(page, "grace@example.test");
+    await page.getByRole("navigation", { name: "Migrent Hub" }).first().getByRole("link", { name: "Admin panel" }).click();
+    await unlockPanel(page, "guess one");
+    await expect(page.getByRole("alert").filter({ hasText: "2 tries left" })).toBeVisible();
+    await unlockPanel(page, "guess two");
+    await expect(page.getByRole("alert").filter({ hasText: "1 try left" })).toBeVisible();
+    await unlockPanel(page, "guess three");
+
+    await expect(page).toHaveURL(/\/hub\/locked$/);
+    await expect(page.getByRole("heading", { name: "Potential threat" })).toBeVisible();
+    await expect(page.getByText("Potential hack")).toBeVisible();
+    await expect(page.getByText(/every Migrent admin has been alerted/)).toBeVisible();
+    // The lights calm down for anyone who asked for less motion.
+    const lights = page.locator(".hub-threat-lights .hub-threat-red");
+    await expect.poll(() => lights.evaluate((el) => getComputedStyle(el).animationName)).toBe("hub-threat-pulse");
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await expect.poll(() => lights.evaluate((el) => getComputedStyle(el).animationName)).toBe("none");
+
+    // Signed out here too.
+    await page.waitForLoadState("networkidle");
+    await page.goto("/hub");
+    await expect(page).toHaveURL(/\/hub\/sign-in/);
+
+    // Every admin has the alert.
+    await fillSignIn(page, "boss@example.test");
+    await page.goto("/hub/activity");
+    await expect(page.getByText("Potential threat: admin panel locked").first()).toBeVisible();
+  });
+});
+
 test.describe("old admin console", () => {
   test("every old admin address goes to its Hub screen", async ({ request }) => {
     const cases: [string, string][] = [
-      ["/admin", "/hub"],
-      ["/admin/overview", "/hub"],
-      ["/admin/analytics", "/hub"],
-      ["/admin/revenue", "/hub"],
+      ["/admin", "/hub/admin"],
+      ["/admin/overview", "/hub/admin"],
+      ["/admin/analytics", "/hub/admin"],
+      ["/admin/revenue", "/hub/admin"],
       ["/admin/moderation", "/hub/admin/listings"],
       ["/admin/spam-moderation", "/hub/admin/listings?queue=flagged"],
       ["/admin/listings", "/hub/admin/listings?queue=all"],
@@ -325,10 +429,13 @@ test.describe("appearance and accessibility", () => {
   }
 
   test("axe: Hub admin screens in light and dark", async ({ page }) => {
-    await signIn(page, "admin@example.test", "/admin/listings");
-    for (const path of ["/", "/admin/listings", "/admin/id-checks", "/admin/support", "/admin/people", "/admin/audit"]) {
+    await signInToPanel(page, "admin@example.test", "/admin/listings");
+    let i = 0;
+    for (const path of ["/", "/admin", "/admin/listings", "/admin/id-checks", "/admin/support", "/admin/people", "/admin/audit"]) {
+      await stayActive(page, i++);
       await page.goto(`/hub${path === "/" ? "" : path}`);
       for (const theme of ["light", "dark"] as const) {
+        await stayActive(page, i++);
         await page.evaluate((t) => localStorage.setItem("migrent-theme", t), theme);
         await page.reload();
         await page.waitForLoadState("networkidle");
@@ -351,9 +458,12 @@ test.describe("appearance and accessibility", () => {
   });
 
   test("no horizontal overflow on Hub admin screens", async ({ page }) => {
-    await signIn(page, "admin@example.test");
-    for (const path of ["/", "/admin/listings", "/admin/listings?queue=all", "/admin/id-checks", "/admin/support", "/admin/people", "/admin/audit"]) {
+    await signInToPanel(page, "admin@example.test", "/admin");
+    let i = 0;
+    for (const path of ["/", "/admin", "/admin/listings", "/admin/listings?queue=all", "/admin/id-checks", "/admin/support", "/admin/people", "/admin/audit"]) {
+      await stayActive(page, i++);
       await page.goto(`/hub${path === "/" ? "" : path}`);
+      await expect(page.getByText("Admin panel open")).toBeVisible();
       await page.waitForLoadState("networkidle");
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
       expect(overflow, `${path} overflows by ${overflow}px`).toBeLessThanOrEqual(1);
