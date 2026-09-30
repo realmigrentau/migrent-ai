@@ -38,6 +38,9 @@ logger = logging.getLogger(__name__)
 # What this changes: a token that was signed out stays usable until it
 # expires (at most an hour), which is how Supabase's own getClaims works.
 # Disabled accounts are still refused by the profile checks in the Hub.
+# Admins are the exception: require_live_session() asks Supabase on every
+# admin request, uncached, so signing an admin out everywhere (the Admin
+# panel lockout does this) takes effect at once.
 # ---------------------------------------------------------------------------
 
 ISSUER = f"{SUPABASE_URL}/auth/v1"
@@ -125,6 +128,23 @@ def _verify_remotely(token: str):
     return res.user
 
 
+def require_live_session(authorization: str, user_id: str) -> None:
+    """Ask Supabase, uncached, whether this token's session still exists.
+
+    For admin requests only: local verification cannot see a session that
+    was revoked, and an admin session is the one worth revoking instantly.
+    """
+    token = (authorization or "").removeprefix("Bearer ").strip()
+    if not token:
+        raise HTTPException(status_code=401, detail="Invalid authorization header")
+    try:
+        res = get_supabase().auth.get_user(token)
+    except Exception:
+        raise HTTPException(status_code=401, detail="Your session has ended. Sign in again.")
+    if res is None or res.user is None or str(res.user.id) != str(user_id):
+        raise HTTPException(status_code=401, detail="Your session has ended. Sign in again.")
+
+
 def get_current_user(authorization: str):
     """Validate the Bearer token and return the user."""
     if not authorization or not authorization.startswith("Bearer "):
@@ -176,4 +196,5 @@ def require_admin(authorization: str):
     user = get_current_user(authorization)
     if not is_admin_user(user):
         raise HTTPException(status_code=403, detail="Admin access required")
+    require_live_session(authorization, str(user.id))
     return user

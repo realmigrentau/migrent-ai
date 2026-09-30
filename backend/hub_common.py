@@ -22,7 +22,7 @@ from typing import Any, Iterable, Optional
 
 from fastapi import HTTPException, Request
 
-from auth_utils import get_current_user
+from auth_utils import get_current_user, require_live_session
 from db import get_supabase_admin
 
 logger = logging.getLogger(__name__)
@@ -135,6 +135,10 @@ def hub_actor(request: Request, authorization: Optional[str]) -> HubActor:
     if profile.get("disabled_at"):
         raise HTTPException(status_code=403, detail="This account has been suspended. Contact support if you think this is a mistake.")
     actor = HubActor(id=str(user.id), email=getattr(user, "email", None), profile=profile, is_admin=_profile_is_admin(profile))
+    if actor.is_admin:
+        # Admin sessions are checked live, so a revoked one stops at once
+        # (auth_utils: local token checks cannot see revocation).
+        require_live_session(authorization, actor.id)
 
     target = request.headers.get(VIEW_AS_HEADER)
     if not target or target == actor.id:

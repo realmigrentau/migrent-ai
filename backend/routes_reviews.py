@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, Header, Query
 from pydantic import BaseModel, Field
 from typing import Optional
 from db import get_supabase_admin
-from auth_utils import get_current_user, is_admin_user
+from auth_utils import get_current_user, is_admin_user, require_live_session
 
 router = APIRouter(prefix="/reviews", tags=["reviews"])
 
@@ -343,6 +343,7 @@ def moderate_review(
     # set on themselves, so anyone could unflag or remove any review.
     if not is_admin_user(user):
         raise HTTPException(status_code=403, detail="Admin access required")
+    require_live_session(authorization, user_id)
 
     update_data = {
         "moderated": True,

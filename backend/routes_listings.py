@@ -6,7 +6,7 @@ from fastapi import APIRouter, Header, HTTPException, Request, Response
 from pydantic import BaseModel, Field
 from supabase import create_client
 
-from auth_utils import get_current_user, is_admin_user
+from auth_utils import get_current_user, is_admin_user, require_live_session
 from concurrency import run_parallel
 from db import SUPABASE_ANON_KEY, SUPABASE_URL, get_supabase_admin
 from limiter import limiter
@@ -783,6 +783,9 @@ def get_listing_by_id(
     if viewer is not None and not is_owner:
         try:
             is_admin = is_admin_user(viewer)
+            if is_admin:
+                # Admin sessions are checked live (auth_utils.require_live_session).
+                require_live_session(authorization, viewer_id)
         except HTTPException:
             is_admin = False
 

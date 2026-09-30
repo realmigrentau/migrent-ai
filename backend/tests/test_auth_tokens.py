@@ -99,3 +99,30 @@ def test_a_missing_or_malformed_header_is_refused():
         with pytest.raises(HTTPException) as err:
             auth_utils.get_current_user(header)
         assert err.value.status_code == 401
+
+
+def test_a_revoked_admin_session_is_refused_even_with_a_valid_token(monkeypatch):
+    """Admins are checked live: if Supabase says the session is gone (the
+    Admin panel lockout signs the account out everywhere), the request stops
+    even though the token itself still verifies."""
+
+    class RevokedAuth:
+        def get_user(self, token):
+            raise RuntimeError("session not found")
+
+    monkeypatch.setattr(auth_utils, "get_supabase", lambda: SimpleNamespace(auth=RevokedAuth()))
+    header = f"Bearer {_token()}"
+    assert auth_utils.get_current_user(header).id == USER_ID
+    with pytest.raises(HTTPException) as err:
+        auth_utils.require_live_session(header, USER_ID)
+    assert err.value.status_code == 401
+
+
+def test_a_live_session_for_someone_else_is_refused(monkeypatch):
+    class OtherUser:
+        def get_user(self, token):
+            return SimpleNamespace(user=SimpleNamespace(id="99999999-0000-4000-8000-000000000000"))
+
+    monkeypatch.setattr(auth_utils, "get_supabase", lambda: SimpleNamespace(auth=OtherUser()))
+    with pytest.raises(HTTPException):
+        auth_utils.require_live_session(f"Bearer {_token()}", USER_ID)

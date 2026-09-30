@@ -150,11 +150,12 @@ def admin_panel_unlocked(request: Request, authorization: Optional[str] = Header
     directly. Anyone else passes through to the endpoint's own check, so
     what they see is unchanged. (Hub admin endpoints call those handlers as
     functions after their own check, which does not pass through here.)"""
-    from auth_utils import get_optional_user, is_admin_user
+    from auth_utils import get_optional_user, is_admin_user, require_live_session
 
     user = get_optional_user(authorization)
     if user is None or not is_admin_user(user):
         return
+    require_live_session(authorization, str(user.id))
     if not panel_unlocked(str(user.id), request, authorization):
         raise HTTPException(status_code=423, detail=LOCKED_DETAIL)
 
