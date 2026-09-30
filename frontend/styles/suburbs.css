@@ -23,41 +23,20 @@
    ══════════════════════════════════════════════════════════════ */
 
 :root {
-  /* Sky - search, discovery, focus. --color-info, the hero's sky,
-     which the palette keeps "a narrow line back to". */
-  --sub-sky: #1f6a8c;
-  --sub-sky-deep: #17536e;
-  --sub-sky-soft: #e7f1f6;
-
-  /* Sand - the one warm ground, for the hero and the editorial panel.
-     Matches --color-surface-cool so the bands line up site-wide. */
-  --sub-sand: #faf8f5;
-  --sub-sand-2: #f4ede1;
-
-  /* Data - provenance. The brand navy, same as --color-trust. */
-  --sub-data: #1a2540;
-  --sub-data-soft: #dfe4ef;
-
-  --sub-terracotta: #a0563a;
-  --sub-terracotta-soft: #f4ded3;
-
+  /* Since the 2026-09-29 redesign these point at the site's own Cobalt
+     tokens instead of carrying a separate Dawn palette, so the suburb
+     pages match the rest of the site and follow dark mode for free.
+     The names are kept so the rules below did not have to change. */
+  --sub-sky: var(--color-primary);
+  --sub-sky-deep: var(--color-primary-700);
+  --sub-sky-soft: var(--color-primary-soft);
+  --sub-sand: var(--color-bg);
+  --sub-sand-2: var(--color-surface-muted);
+  --sub-data: var(--color-ink);
+  --sub-data-soft: var(--color-surface-muted);
+  --sub-terracotta: var(--color-primary);
+  --sub-terracotta-soft: var(--color-primary-soft);
   --sub-lift: 3px;
-}
-
-/* Dark mode is retired site-wide (see lib/themeBootstrap.ts), so nothing
-   below is reachable today. It is kept because globals.css still carries
-   its own .dark block, and a section that quietly dropped its dark values
-   would be the one thing broken if the theme ever came back. */
-.dark {
-  --sub-sky: #7bb8d4;
-  --sub-sky-deep: #a5d0e4;
-  --sub-sky-soft: rgb(123 184 212 / 0.14);
-  --sub-sand: #161a15;
-  --sub-sand-2: #19211b;
-  --sub-data: #bcc5dc;
-  --sub-data-soft: rgb(188 197 220 / 0.14);
-  --sub-terracotta: #d9906e;
-  --sub-terracotta-soft: rgb(217 144 110 / 0.14);
 }
 
 .sub-page {
@@ -91,6 +70,8 @@
 }
 
 .sub-hero__title {
+  font-weight: 350;
+  font-optical-sizing: auto;
   font-family: var(--font-display);
   font-size: clamp(38px, 6vw, 62px);
   line-height: 1.02;
@@ -273,6 +254,8 @@
 .sub-section-head { margin-bottom: 26px; }
 
 .sub-section-title {
+  font-weight: 350;
+  font-optical-sizing: auto;
   font-family: var(--font-display);
   font-size: clamp(24px, 3vw, 34px);
   line-height: 1.12;
@@ -423,10 +406,12 @@
 }
 
 .sub-accordion__dot--capital { background: var(--sub-terracotta); }
-.sub-accordion__dot--urban { background: var(--sub-sky); }
-.sub-accordion__dot--rest { background: var(--sub-data); }
+.sub-accordion__dot--urban { background: color-mix(in srgb, var(--color-primary) 45%, var(--color-surface)); }
+.sub-accordion__dot--rest { background: var(--color-ink-4); }
 
 .sub-accordion__title {
+  font-weight: 350;
+  font-optical-sizing: auto;
   font-family: var(--font-display);
   font-size: clamp(18px, 2vw, 22px);
   letter-spacing: -0.015em;
@@ -543,6 +528,8 @@
 .sub-card__head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
 
 .sub-card__name {
+  font-weight: 350;
+  font-optical-sizing: auto;
   font-family: var(--font-display);
   font-size: 20px;
   letter-spacing: -0.015em;
@@ -722,6 +709,8 @@
 }
 
 .sub-detail__title {
+  font-weight: 350;
+  font-optical-sizing: auto;
   font-family: var(--font-display);
   font-size: clamp(34px, 5.5vw, 56px);
   line-height: 1.04;
@@ -1197,6 +1186,8 @@
 }
 
 .sub-cta h2 {
+  font-weight: 350;
+  font-optical-sizing: auto;
   font-family: var(--font-display);
   font-size: clamp(24px, 3vw, 34px);
   letter-spacing: -0.02em;
@@ -1247,7 +1238,7 @@
 
 .sub-disambig__list a:hover { border-color: var(--sub-sky); transform: translateY(-2px); }
 .sub-disambig__list a:focus-visible { outline: 2px solid var(--sub-sky); outline-offset: 2px; }
-.sub-disambig__name { font-family: var(--font-display); font-size: 19px; color: var(--color-ink); }
+.sub-disambig__name { font-family: var(--font-display); font-weight: 400; font-size: 19px; color: var(--color-ink); }
 .sub-disambig__meta { font-size: 12.5px; color: var(--color-ink-muted); }
 .sub-disambig__back { margin-top: 26px; font-size: 14px; }
 .sub-disambig__back a { color: var(--sub-sky); text-decoration: underline; text-underline-offset: 2px; }

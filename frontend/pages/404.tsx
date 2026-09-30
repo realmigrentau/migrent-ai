@@ -1,51 +1,35 @@
 import Link from "next/link";
-import Head from "next/head";
-import { motion } from "framer-motion";
-import { Home, Search, ArrowLeft } from "lucide-react";
+import { ArrowRight, Compass } from "lucide-react";
+import SEOHead from "../components/SEOHead";
+import StatusPage from "../components/site/StatusPage";
 
 export default function NotFound() {
   return (
     <>
-      <Head>
-        <title key="title">Page Not Found | Migrent</title>
-      </Head>
-
-      <div className="min-h-[60vh] flex items-center justify-center px-4">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="text-center max-w-md"
-        >
-          <div className="w-20 h-20 rounded-2xl bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 border border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)] flex items-center justify-center mx-auto mb-6">
-            <span className="text-4xl font-bold text-[var(--color-primary)]">404</span>
-          </div>
-
-          <h1 className="text-2xl font-semibold tracking-tight text-[var(--color-ink)] mb-3">
-            Page not found
-          </h1>
-          <p className="text-[var(--color-ink-3)] mb-8">
-            The page you are looking for does not exist or has been moved.
-          </p>
-
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Link
-              href="/"
-              className="inline-flex items-center gap-2 btn-primary px-6 py-2.5 rounded-[10px] text-sm"
-            >
-              <Home className="w-4 h-4" />
-              Back to Home
+      <SEOHead title="Page not found" noIndex />
+      <StatusPage
+        icon={<Compass className="h-6 w-6" strokeWidth={1.9} />}
+        eyebrow="Page not found"
+        title={
+          <>
+            We could not find <strong>that page.</strong>
+          </>
+        }
+        actions={
+          <>
+            <Link href="/" className="btn-primary btn-lg">
+              Go to the homepage <ArrowRight className="btn-arrow h-4 w-4" strokeWidth={2.2} aria-hidden="true" />
             </Link>
-            <Link
-              href="/seeker/search"
-              className="inline-flex items-center gap-2 btn-secondary px-6 py-2.5 rounded-[10px] text-sm"
-            >
-              <Search className="w-4 h-4" />
-              Search Rooms
+            <Link href="/seeker/search" className="btn-secondary btn-lg">
+              Search rooms
             </Link>
-          </div>
-        </motion.div>
-      </div>
+          </>
+        }
+      >
+        <p className="m-0">
+          It may have moved when we tidied up the site, or the link may have a typo. <Link href="/help" className="underline underline-offset-2">Help</Link> has the answers most people are looking for.
+        </p>
+      </StatusPage>
     </>
   );
 }

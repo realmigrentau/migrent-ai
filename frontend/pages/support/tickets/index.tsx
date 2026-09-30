@@ -1,6 +1,10 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import Head from "next/head";
+import { Plus } from "lucide-react";
+import SEOHead from "../../../components/SEOHead";
+import { Field, Input, Select, Textarea } from "../../../components/hub/ui/Field";
+import { hubFromSite } from "../../../lib/hub/routes";
+import { supportPromise } from "../../../lib/siteIdentity";
 import Link from "next/link";
 import { useAuth } from "../../../hooks/useAuth";
 import { listTickets, createTicket, type Ticket } from "../../../lib/api";
@@ -22,7 +26,7 @@ export default function MyTickets() {
   useEffect(() => {
     if (authLoading) return;
     if (!session) {
-      router.push("/signin");
+      window.location.assign(hubFromSite.signIn(router.asPath));
       return;
     }
     loadTickets();
@@ -58,99 +62,68 @@ export default function MyTickets() {
 
   return (
     <>
-      <Head>
-        <title key="title">My Tickets - Migrent Support</title>
-      </Head>
+      <SEOHead title="Your support requests" noIndex />
 
-      <div className="max-w-3xl mx-auto">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-6">
+      <div className="mx-auto max-w-3xl">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--color-ink)]">My Support Tickets</h1>
-            <p className="text-sm text-[var(--color-ink-3)] mt-1">Track your support requests</p>
+            <p className="eyebrow">Support</p>
+            <h1 className="site-h2 mt-2 !text-[clamp(1.9rem,3.4vw,2.6rem)]">Your support requests</h1>
+            <p className="site-body mt-2">{supportPromise()}</p>
           </div>
-          <button
-            onClick={() => setShowForm(!showForm)}
-            className="px-4 py-2 bg-[var(--color-primary)] hover:bg-[var(--color-primary)] text-[color:var(--color-primary-fg)] rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
-          >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-            </svg>
-            New Ticket
+          <button type="button" onClick={() => setShowForm(!showForm)} aria-expanded={showForm} aria-controls="new-ticket" className="btn-primary shrink-0">
+            <Plus className="h-4 w-4" strokeWidth={2.2} aria-hidden="true" /> New request
           </button>
         </div>
 
-        {/* New ticket form */}
         {showForm && (
-          <form onSubmit={handleSubmit} className="mb-6 p-5 rounded-xl border border-[var(--color-line)] bg-[var(--color-surface-2)] space-y-3">
-            <h3 className="font-semibold text-sm text-[var(--color-ink)]">Submit a new request</h3>
-            <select
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg border border-[var(--color-line)] bg-[var(--color-surface)] text-sm"
-            >
-              <option value="feedback">General Feedback</option>
-              <option value="billing">Billing / Payments</option>
-              <option value="onboarding">Onboarding</option>
-              <option value="verification">Verification</option>
-              <option value="listings">Listings</option>
-              <option value="trust_safety">Trust & Safety</option>
-              <option value="bug">Bug Report</option>
-            </select>
-            <input
-              type="text"
-              value={subject}
-              onChange={(e) => setSubject(e.target.value)}
-              placeholder="Subject"
-              required
-              minLength={3}
-              className="w-full px-3 py-2 rounded-lg border border-[var(--color-line)] bg-[var(--color-surface)] text-sm"
-            />
-            <textarea
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              placeholder="Describe your issue in detail..."
-              required
-              minLength={10}
-              rows={4}
-              className="w-full px-3 py-2 rounded-lg border border-[var(--color-line)] bg-[var(--color-surface)] text-sm resize-none"
-            />
-            <div className="flex gap-2">
-              <button
-                type="submit"
-                disabled={submitting}
-                className="px-4 py-2 bg-[var(--color-primary)] hover:bg-[var(--color-primary)] disabled:bg-[var(--color-primary-soft)] text-[color:var(--color-primary-fg)] rounded-lg text-sm font-medium transition-colors"
-              >
-                {submitting ? "Submitting..." : "Submit"}
+          <form id="new-ticket" onSubmit={handleSubmit} className="site-card site-card--pad mt-6 space-y-4">
+            <h2 className="site-h3">Send a new request</h2>
+            <Field label="What is it about?">
+              {({ id }) => (
+                <Select id={id} value={category} onChange={(e) => setCategory(e.target.value)}>
+                  <option value="feedback">General feedback</option>
+                  <option value="billing">Fees and payments</option>
+                  <option value="onboarding">Getting started</option>
+                  <option value="verification">ID checks</option>
+                  <option value="listings">Listings</option>
+                  <option value="trust_safety">Safety</option>
+                  <option value="bug">Something is broken</option>
+                </Select>
+              )}
+            </Field>
+            <Field label="Subject">
+              {({ id }) => <Input id={id} value={subject} onChange={(e) => setSubject(e.target.value)} required minLength={3} maxLength={140} />}
+            </Field>
+            <Field label="Message" hint="Tell us what happened and what you expected.">
+              {({ id, describedBy }) => <Textarea id={id} value={message} onChange={(e) => setMessage(e.target.value)} required minLength={10} rows={5} aria-describedby={describedBy} />}
+            </Field>
+            <div className="flex flex-wrap gap-3">
+              <button type="submit" disabled={submitting} data-state={submitting ? "loading" : undefined} className="btn-primary">
+                {submitting ? "Sending" : "Send request"}
               </button>
-              <button
-                type="button"
-                onClick={() => setShowForm(false)}
-                className="px-4 py-2 border border-[var(--color-line)] rounded-lg text-sm text-[var(--color-ink-2)] hover:bg-[var(--color-surface)] transition-colors"
-              >
+              <button type="button" onClick={() => setShowForm(false)} className="btn-secondary">
                 Cancel
               </button>
             </div>
           </form>
         )}
 
-        {/* Tickets list */}
-        {loading ? (
-          <div className="space-y-3">
-            {[...Array(4)].map((_, i) => (
-              <div key={i} className="h-16 rounded-xl bg-[var(--color-surface-muted)] animate-pulse" />
-            ))}
-          </div>
-        ) : (
-          <TicketList tickets={tickets} basePath="/support/tickets" />
-        )}
-
-        {/* Help center link */}
-        <div className="mt-8 text-center">
-          <Link href="/resources/help" className="text-sm text-[var(--color-primary)] hover:text-[var(--color-primary)] font-medium">
-            Browse Help Center
-          </Link>
+        <div className="mt-8">
+          {loading ? (
+            <div className="space-y-3" aria-busy="true">
+              {[0, 1, 2, 3].map((i) => (
+                <div key={i} className="h-16 animate-pulse rounded-2xl bg-[var(--color-surface-muted)]" />
+              ))}
+            </div>
+          ) : (
+            <TicketList tickets={tickets} basePath="/support/tickets" />
+          )}
         </div>
+
+        <p className="site-meta mt-8 text-center">
+          Quick answers are in <Link href="/help" className="underline underline-offset-2">Help</Link>.
+        </p>
       </div>
     </>
   );

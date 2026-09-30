@@ -11,49 +11,24 @@ interface GlassCardProps {
   onClick?: () => void;
 }
 
-const gradientBorders: Record<string, string> = {
-  none: "",
-  rose: "border-[var(--color-primary-soft)]/50 dark:border-[var(--color-primary-soft)]",
-  indigo: "border-[var(--color-primary-soft)]/50 dark:border-[var(--color-primary-soft)]",
-  emerald: "border-[var(--color-accent-soft)]/50 dark:border-[var(--color-accent-soft)]",
-  amber: "border-[var(--color-line-2)]/50 dark:border-[var(--color-warn-500)]/20",
-  "pink-indigo": "border-[var(--color-primary-soft)]/50 dark:border-[var(--color-primary-soft)]",
-};
-
 const paddingMap: Record<string, string> = {
   none: "",
   sm: "p-4",
-  md: "p-6",
+  md: "p-[clamp(20px,2.4vw,28px)]",
   lg: "p-8",
 };
 
-export default function GlassCard({
-  children,
-  className = "",
-  hover = true,
-  delay = 0,
-  gradient = "none",
-  padding = "md",
-  onClick,
-}: GlassCardProps) {
+/**
+ * A plain card on the site's one calm surface (.site-card): a 1px line, no
+ * glass, no shadow, no hover lift. The 2026-09-29 redesign flattened it to
+ * match Migrent Hub; `gradient`, `hover` and `delay` are kept so callers do
+ * not break, but no longer change how it looks.
+ */
+export default function GlassCard({ children, className = "", padding = "md", onClick }: GlassCardProps) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 16 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay, ease: [0.25, 0.46, 0.45, 0.94] }}
-      onClick={onClick}
-      className={`
-        backdrop-blur-xl bg-white/90 dark:bg-[var(--color-surface)]/90
-        border ${gradientBorders[gradient] || "border-white/20 dark:border-[var(--color-line)]/50"}
-        rounded-2xl shadow-lg dark:shadow-2xl
-        ${hover ? "transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5 hover:bg-white dark:hover:bg-[var(--color-ink)]" : ""}
-        ${onClick ? "cursor-pointer" : ""}
-        ${paddingMap[padding]}
-        ${className}
-      `}
-    >
+    <div onClick={onClick} className={`site-card ${onClick ? "cursor-pointer" : ""} ${paddingMap[padding]} ${className}`}>
       {children}
-    </motion.div>
+    </div>
   );
 }
 

@@ -27,8 +27,8 @@ const blogPosts: BlogPost[] = [
     category: "Guide",
     date: "Feb 2026",
     readTime: "7 min read",
-    author: "Priya Sharma",
-    authorRole: "Housing Expert",
+    author: "Migrent Team",
+    authorRole: "Migrent Editorial",
     content: [
       {
         type: "paragraph",
@@ -42,7 +42,7 @@ const blogPosts: BlogPost[] = [
       {
         type: "paragraph",
         content:
-          "One of the biggest mistakes first-time migrants make is waiting until they land in Australia to begin looking for accommodation. Ideally, you should start researching suburbs, average rents, and transport links at least four to six weeks before your arrival date. Platforms like Migrent let you browse verified listings, connect with migrant-friendly hosts, and even arrange virtual inspections from overseas so you can hit the ground running.",
+          "One of the biggest mistakes first-time migrants make is waiting until they land in Australia to begin looking for accommodation. Ideally, you should start researching suburbs, average rents, and transport links at least four to six weeks before your arrival date. Platforms like Migrent let you browse listings from ID-checked hosts, message them before you arrive, and ask for a video walkthrough so you can hit the ground running.",
       },
       {
         type: "heading",
@@ -88,7 +88,7 @@ const blogPosts: BlogPost[] = [
       {
         type: "paragraph",
         content:
-          "General listing sites can be overwhelming and they do not always cater to the unique needs of newcomers. Migrant-focused platforms like Migrent verify hosts, offer multilingual support, and connect you with a community of people who understand exactly what you are going through. Local migrant resource centres, Facebook groups for your nationality, and university housing offices are also excellent sources of leads and advice.",
+          "General listing sites can be overwhelming and they do not always cater to the unique needs of newcomers. Migrant-focused platforms like Migrent check hosts' ID, offer the site in several languages, and connect you with mentors who understand exactly what you are going through. Local migrant resource centres, Facebook groups for your nationality, and university housing offices are also excellent sources of leads and advice.",
       },
       {
         type: "paragraph",
@@ -112,8 +112,8 @@ const blogPosts: BlogPost[] = [
     category: "Market",
     date: "Jan 2026",
     readTime: "8 min read",
-    author: "David Chen",
-    authorRole: "Property Analyst",
+    author: "Migrent Team",
+    authorRole: "Migrent Editorial",
     content: [
       {
         type: "paragraph",
@@ -394,8 +394,8 @@ const blogPosts: BlogPost[] = [
     category: "Tips",
     date: "Nov 2025",
     readTime: "10 min read",
-    author: "Priya Sharma",
-    authorRole: "Housing Expert",
+    author: "Migrent Team",
+    authorRole: "Migrent Editorial",
     content: [
       {
         type: "paragraph",
@@ -488,8 +488,8 @@ const blogPosts: BlogPost[] = [
     category: "Guide",
     date: "Oct 2025",
     readTime: "8 min read",
-    author: "David Chen",
-    authorRole: "Property Analyst",
+    author: "Migrent Team",
+    authorRole: "Migrent Editorial",
     content: [
       {
         type: "paragraph",

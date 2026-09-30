@@ -43,6 +43,17 @@ export interface SearchFilters {
   airCon: boolean;
   couplesOk: boolean;
   verifiedOwner: boolean;
+  /** Whole places with at least this many bedrooms; 0 means any. */
+  minBedrooms: number;
+  /** Private bathroom or ensuite. */
+  privateBath: boolean;
+  /** Laundry in the home rather than shared or none. */
+  laundryInHome: boolean;
+  internet: boolean;
+  /** Hide listings that disclose security cameras. */
+  noCameras: boolean;
+  /** Bedroom doors that lock. */
+  lockable: boolean;
   minStay: string;
   stationName: string;
   stationDistance: StationDistance;
@@ -79,6 +90,12 @@ export const DEFAULT_FILTERS: SearchFilters = {
   airCon: false,
   couplesOk: false,
   verifiedOwner: false,
+  minBedrooms: 0,
+  privateBath: false,
+  laundryInHome: false,
+  internet: false,
+  noCameras: false,
+  lockable: false,
   minStay: "",
   stationName: "",
   stationDistance: "any",
@@ -234,6 +251,12 @@ export function parseSearchQuery(q: QueryLike, today: string = isoToday()): Sear
   f.airCon = bool(q.airCon);
   f.couplesOk = bool(q.couplesOk);
   f.verifiedOwner = bool(q.verified) || bool(q.verifiedOwner);
+  f.minBedrooms = int(q.bedrooms, 0, 0, 10);
+  f.privateBath = bool(q.privateBath);
+  f.laundryInHome = first(q.laundry) === "in_unit" || bool(q.laundryInHome);
+  f.internet = bool(q.internet);
+  f.noCameras = bool(q.noCameras);
+  f.lockable = bool(q.lockable);
   f.minStay = first(q.minStay).slice(0, 20);
   f.stationName = first(q.station).slice(0, 80);
   const sd = first(q.stationDistance);
@@ -278,6 +301,12 @@ export function serializeSearchFilters(f: SearchFilters): URLSearchParams {
   set("airCon", f.airCon);
   set("couplesOk", f.couplesOk);
   set("verifiedOwner", f.verifiedOwner);
+  set("bedrooms", f.minBedrooms || "");
+  set("privateBath", f.privateBath);
+  if (f.laundryInHome) set("laundry", "in_unit");
+  set("internet", f.internet);
+  set("noCameras", f.noCameras);
+  set("lockable", f.lockable);
   set("minStay", f.minStay);
   set("station", f.stationName);
   if (f.stationDistance !== "any") set("stationDistance", f.stationDistance);
@@ -319,6 +348,12 @@ export function filtersToApiParams(f: SearchFilters, offset = (f.page - 1) * PAG
   if (f.airCon) params.air_conditioning = "true";
   if (f.couplesOk) params.couples_ok = "true";
   if (f.verifiedOwner) params.verified_owner = "true";
+  if (f.minBedrooms > 0) params.min_bedrooms = String(f.minBedrooms);
+  if (f.privateBath) params.private_bathroom = "true";
+  if (f.laundryInHome) params.laundry = "in_unit";
+  if (f.internet) params.internet_included = "true";
+  if (f.noCameras) params.no_cameras = "true";
+  if (f.lockable) params.lockable_bedroom = "true";
   if (f.minStay) params.min_stay = f.minStay;
   if (f.sortBy !== "newest") params.sort = f.sortBy;
   if (f.stationName) params.station_name = f.stationName;

@@ -1,31 +1,14 @@
-import Link from "next/link";
 import SEOHead from "../components/SEOHead";
-import { motion } from "framer-motion";
+import LegalLayout from "../components/site/LegalLayout";
 
 export default function SafetyReporting() {
   return (
     <>
       <SEOHead title="Safety &amp; Reporting" description="Report unsafe listings, scams, or incidents on Migrent. Learn about our safety measures and how to stay safe." />
 
-      <div className="max-w-3xl mx-auto space-y-10">
-        {/* Hero */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-xl bg-[var(--color-danger-50)] dark:bg-[var(--color-danger-500)]/10 border border-[var(--color-danger-500)]/20 dark:border-[var(--color-line)] flex items-center justify-center">
-              <svg className="w-5 h-5 text-[var(--color-danger-500)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m0-10.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.75c0 5.592 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.57-.598-3.75h-.152c-3.196 0-6.1-1.249-8.25-3.286zm0 13.036h.008v.008H12v-.008z" />
-              </svg>
-            </div>
-            <div>
-              <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-[var(--color-ink)]">
-                Safety &amp; Reporting
-              </h1>
-              <p className="text-sm text-[var(--color-ink-3)] mt-1">Last updated: March 2026</p>
-            </div>
-          </div>
-        </motion.div>
+      <LegalLayout title="Safety & Reporting" note="Last updated: March 2026">
 
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="space-y-8">
+        <div className="space-y-8">
           {/* Emergency */}
           <section className="card p-6 rounded-2xl space-y-3 border-l-4 border-l-red-500">
             <h2 className="text-lg font-bold text-[var(--color-danger-500)] dark:text-[var(--color-danger-500)]">Emergency?</h2>
@@ -140,18 +123,8 @@ export default function SafetyReporting() {
             <p>Migrent is an introduction service and does not guarantee user safety. Users are responsible for their own due diligence. For emergencies, always call 000. Last reviewed: March 2026.</p>
           </div>
 
-          {/* CTA */}
-          <div className="card p-6 rounded-2xl bg-[var(--color-primary-soft)] from-[var(--color-danger-50)] to-[var(--color-danger-50)] dark:from-[var(--color-danger-500)]/10 dark:to-[var(--color-surface)] border-[var(--color-danger-500)]/30 dark:border-[var(--color-line)] text-center">
-            <h3 className="text-lg font-bold text-[var(--color-ink)] mb-2">Report something now</h3>
-            <p className="text-sm text-[var(--color-ink-2)] mb-4">Your reports help keep the Migrent community safe.</p>
-            <a href="mailto:migrentau@gmail.com?subject=Safety%20Report">
-              <motion.span whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }} className="inline-block btn-primary text-sm px-6 py-2.5 rounded-xl">
-                Email Safety Report
-              </motion.span>
-            </a>
-          </div>
-        </motion.div>
-      </div>
+        </div>
+      </LegalLayout>
     </>
   );
 }

@@ -71,7 +71,7 @@ const ACCOUNT_MENU: NavLinkDropdown = {
     { href: hubAbsoluteUrl("/messages"), iconPath: ACCOUNT_ICON.chat, groupKey: "nav.myAccount", titleKey: "nav.messages" },
     { href: hubAbsoluteUrl("/saved"), iconPath: ACCOUNT_ICON.heart, groupKey: "nav.myAccount", title: "Saved homes" },
     { href: hubAbsoluteUrl("/settings"), iconPath: ACCOUNT_ICON.settings, groupKey: "nav.myAccount", titleKey: "nav.settings" },
-    { href: "/resources/help", iconPath: ACCOUNT_ICON.help, groupKey: "nav.myAccount", title: "Help Centre" },
+    { href: "/help", iconPath: ACCOUNT_ICON.help, groupKey: "nav.myAccount", title: "Help" },
   ],
 };
 

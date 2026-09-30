@@ -54,17 +54,21 @@ test.describe("search survives without WebGL", () => {
 });
 
 test.describe("move-in date", () => {
-  test("homepage move-in date reaches the search URL and filters results", async ({ page, isMobile }) => {
+  /* The homepage hero is the house configurator now (no date field), so the
+     move-in date is exercised from where people set it: the search page. */
+  test("the homepage house search reaches the search page", async ({ page }) => {
     await page.goto("/");
+    await page.getByLabel("Where do you want to live?").fill("Kellyville");
+    await page.getByRole("button", { name: "Show matching rooms" }).click();
+    await expect(page).toHaveURL(/\/seeker\/search\?.*suburb=Kellyville/);
+    await expect(page.getByTestId("listing-card").first()).toBeVisible();
+  });
+
+  test("a move-in date in the URL filters results, and moving it earlier updates them", async ({ page, isMobile }) => {
     const nextMonth = new Date();
     nextMonth.setDate(nextMonth.getDate() + 45);
     const iso = nextMonth.toISOString().slice(0, 10);
-    await page.getByLabel("City or suburb").fill("Kellyville");
-    await page.getByLabel("Move-in from").fill(iso);
-    await page.getByRole("button", { name: /Search rooms up to/ }).click();
-    await expect(page).toHaveURL(new RegExp(`/seeker/search\\?.*checkIn=${iso}`));
-    // The page canonicalises legacy `city` to `suburb`.
-    await expect(page).toHaveURL(/suburb=Kellyville/);
+    await page.goto(`/seeker/search?suburb=Kellyville&checkIn=${iso}`);
     await expect(page.getByTestId("listing-card").filter({ hasText: "Available next month" })).toHaveCount(1);
     // Move the date earlier: the not-yet-available room disappears.
     if (isMobile) await page.getByRole("button", { name: /^Filters/ }).click();
@@ -144,6 +148,6 @@ test.describe("verification and listing state", () => {
       expect(html, `${forbidden} leaked into the public page`).not.toContain(forbidden);
     }
     expect(html).toContain('"precision":"approximate"');
-    expect(html).toContain("Street address is shared once a booking is agreed");
+    expect(html).toContain("The street address is shared when you book an inspection");
   });
 });

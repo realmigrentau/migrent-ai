@@ -1,3 +1,4 @@
+import { Home } from "lucide-react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { ProfileListing } from "../../hooks/useProfileData";
@@ -61,7 +62,6 @@ export default function ListingsGrid({ listings, loading, hasMore, onLoadMore, o
 
 function ListingItem({ listing, index }: { listing: ProfileListing; index: number }) {
   const photo = listing.photos[0];
-  const typeIcon = listing.property_type === "Apartment" ? "🏢" : listing.property_type === "Studio" ? "🏠" : "🏡";
 
   return (
     <motion.div
@@ -69,8 +69,8 @@ function ListingItem({ listing, index }: { listing: ProfileListing; index: numbe
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.05, duration: 0.3 }}
     >
-      <Link href={`/owner/listings/${listing.id}`} className="block group">
-        <div className="card rounded-2xl overflow-hidden hover:shadow-lg dark:hover:shadow-2xl transition-all">
+      <Link href={`/listing/${listing.id}`} className="block group">
+        <div className="site-card site-card--link overflow-hidden">
           {/* Photo */}
           <div className="aspect-[4/3] bg-[var(--color-surface-muted)] relative overflow-hidden">
             {photo ? (
@@ -82,7 +82,7 @@ function ListingItem({ listing, index }: { listing: ProfileListing; index: numbe
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center">
-                <span className="text-4xl">{typeIcon}</span>
+                <Home className="h-10 w-10 text-[var(--color-ink-4)]" strokeWidth={1.5} aria-hidden="true" />
               </div>
             )}
             {/* Price badge */}

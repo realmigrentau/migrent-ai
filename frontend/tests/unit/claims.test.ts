@@ -23,7 +23,13 @@ function walk(dir: string, out: string[] = []): string[] {
   return out;
 }
 
-const FORBIDDEN: { pattern: RegExp; why: string }[] = [
+// Legal text is published word for word until a lawyer reviews it (the
+// 2026-09-29 redesign moved it without editing it). These files may still
+// carry the old product wording for patterns marked `legal: true`; every
+// other file may not.
+const LEGAL_VERBATIM = ["pages/abn-terms.tsx", "pages/privacy-policy.tsx", "pages/how-renting-works.tsx"];
+
+const FORBIDDEN: { pattern: RegExp; why: string; legal?: boolean }[] = [
   { pattern: /Migrent AI/, why: "brand is Migrent" },
   { pattern: /Pty Ltd/, why: "entity type unconfirmed" },
   { pattern: /Sole Trader/, why: "entity type unconfirmed" },
@@ -35,13 +41,19 @@ const FORBIDDEN: { pattern: RegExp; why: string }[] = [
   { pattern: /escrow/i, why: "Migrent holds no bond" },
   { pattern: /migrent-ai\.vercel\.app/, why: "old domain" },
   { pattern: /support@migrent\.com\.au|legal@migrent\.com\.au|privacy@migrent\.com\.au/, why: "mailbox does not exist" },
+  { pattern: /Superhost/, why: "no such programme; count badges read 'Hosts 3+ homes'" },
+  { pattern: /proof of property/i, why: "hosts show government ID only" },
+  { pattern: /\bVEVO\b/, why: "Migrent does not check visas" },
+  { pattern: /verified (seekers?|renters?|tenants?)/i, why: "renters are not verified" },
+  { pattern: /\bAI[- ](powered|matching|match)/i, why: "matching is rules-based", legal: true },
 ];
 
 describe("public copy carries no unsupported claims", () => {
   const files = SCAN_DIRS.flatMap((d) => walk(path.join(ROOT, d)));
-  for (const { pattern, why } of FORBIDDEN) {
+  for (const { pattern, why, legal } of FORBIDDEN) {
     it(`${pattern} (${why})`, () => {
       const hits = files.filter((f) => {
+        if (legal && LEGAL_VERBATIM.includes(path.relative(ROOT, f))) return false;
         const text = readFileSync(f, "utf8");
         // Comments explaining a removed claim are fine; rendered text is not.
         return text.split("\n").some((line) => pattern.test(line) && !/^\s*(\/\/|\*|\/\*)/.test(line) && !/removedClaims/.test(line));

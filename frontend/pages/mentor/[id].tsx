@@ -1,25 +1,20 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import Head from "next/head";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { Globe, MapPin, MessageCircle, Star, Users as UsersIcon, Video } from "lucide-react";
 import { useAuth } from "../../hooks/useAuth";
 import { useToast } from "../../components/ui/Toast";
-import {
-  MapPin,
-  Globe,
-  Star,
-  Clock,
-  MessageCircle,
-  Video,
-  Users as UsersIcon,
-  ChevronLeft,
-  Calendar,
-  DollarSign,
-  Shield,
-} from "lucide-react";
-
+import SEOHead from "../../components/SEOHead";
+import { Segmented } from "../../components/hub/ui/Field";
+import { hubFromSite } from "../../lib/hub/routes";
 import { API_BASE_URL as BASE_URL } from "../../lib/apiBase";
+
+/**
+ * One mentor, and the form to book a paid session with them. The old page's
+ * "Verified" tag read profiles.verified, a flag a paid badge set without
+ * checking any document, so it is gone (see components/mentors/MentorCard).
+ */
+
 interface MentorData {
   id: string;
   user_id: string;
@@ -74,7 +69,7 @@ export default function MentorProfilePage() {
 
   const handleBook = async () => {
     if (!session?.access_token) {
-      router.push(`/signin?redirect=/mentor/${id}`);
+      window.location.assign(hubFromSite.signIn(router.asPath));
       return;
     }
 
@@ -114,22 +109,27 @@ export default function MentorProfilePage() {
 
   if (loading) {
     return (
-      <div className="max-w-3xl mx-auto px-4 py-8 space-y-4">
-        <div className="shimmer rounded-2xl h-48" />
-        <div className="shimmer rounded-2xl h-32" />
-        <div className="shimmer rounded-2xl h-64" />
+      <div className="site-shell pt-6 pb-16" aria-busy="true">
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_380px]">
+          <div className="site-card h-72 animate-pulse bg-[var(--color-surface-muted)]" />
+          <div className="site-card h-96 animate-pulse bg-[var(--color-surface-muted)]" />
+        </div>
       </div>
     );
   }
 
   if (!mentor) {
     return (
-      <div className="max-w-3xl mx-auto px-4 py-12 text-center">
-        <h1 className="text-xl font-bold text-[var(--color-ink)] mb-2">Mentor not found</h1>
-        <Link href="/mentors" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] text-sm font-medium">
-          Back to directory
-        </Link>
-      </div>
+      <>
+        <SEOHead title="Mentor not found" noIndex />
+        <div className="site-shell site-shell--text flex min-h-[60vh] flex-col items-center justify-center text-center">
+          <h1 className="site-h2 !text-[clamp(1.8rem,3.2vw,2.4rem)]">This mentor is not listed</h1>
+          <p className="site-body mt-3">They may have paused their sessions.</p>
+          <Link href="/mentors" className="btn-secondary mt-6">
+            See all mentors
+          </Link>
+        </div>
+      </>
     );
   }
 
@@ -139,266 +139,169 @@ export default function MentorProfilePage() {
 
   return (
     <>
-      <Head>
-        <title key="title">{name} - Local Mentor in {mentor.suburb} - Migrent</title>
-        <meta key="description" name="description" content={`Book a session with ${name}, a local mentor in ${mentor.suburb}. ${mentor.languages.join(", ")} speaker.`} />
-      </Head>
+      <SEOHead
+        title={`${name}, local mentor in ${mentor.suburb}`}
+        description={`Book a session with ${name}, a local mentor in ${mentor.suburb}.${mentor.languages.length ? ` Speaks ${mentor.languages.join(", ")}.` : ""}`}
+      />
 
-      <div className="max-w-3xl mx-auto px-4 py-8 space-y-6">
-        {/* Back */}
-        <Link href="/mentors" className="inline-flex items-center gap-1 text-sm text-[var(--color-ink-3)] hover:text-[var(--color-primary)] transition-colors">
-          <ChevronLeft className="w-4 h-4" />
-          Back to mentors
-        </Link>
+      <div className="site-shell pt-4 pb-20">
+        <nav aria-label="Breadcrumb">
+          <ol className="page-hero__crumbs">
+            <li>
+              <Link href="/">Home</Link>
+            </li>
+            <li>
+              <Link href="/mentors">Local mentors</Link>
+            </li>
+            <li aria-current="page">{name}</li>
+          </ol>
+        </nav>
 
-        {/* Profile header */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="card p-6"
-        >
-          <div className="flex flex-col sm:flex-row items-start gap-5">
-            {/* Avatar */}
-            <div className="w-20 h-20 rounded-2xl overflow-hidden shrink-0 bg-[var(--color-primary-soft)] from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center">
-              {photo ? (
-                <img src={photo} alt={name} className="w-full h-full object-cover" />
-              ) : (
-                <span className="text-white font-bold text-2xl">
-                  {name.charAt(0).toUpperCase()}
-                </span>
-              )}
-            </div>
-
-            <div className="flex-1 space-y-2">
-              <div className="flex items-center gap-2 flex-wrap">
-                <h1 className="text-xl font-bold text-[var(--color-ink)]">{name}</h1>
-                {mentor.profiles?.verified && (
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent)]/20 text-[var(--color-accent)] dark:text-[var(--color-accent)]">
-                    <Shield className="w-3 h-3" />
-                    Verified
+        <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_380px] lg:gap-12">
+          <div className="min-w-0 space-y-6">
+            <header className="flex flex-col gap-5 sm:flex-row sm:items-center">
+              <div className="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-[28px] bg-[var(--color-primary-soft)]">
+                {photo ? (
+                  <img src={photo} alt="" className="h-full w-full object-cover" />
+                ) : (
+                  <span className="text-3xl font-semibold text-[color:var(--color-primary-700)]" aria-hidden="true">
+                    {name.charAt(0).toUpperCase()}
                   </span>
                 )}
               </div>
-
-              <div className="flex items-center gap-3 text-sm text-[var(--color-ink-3)] flex-wrap">
-                <span className="flex items-center gap-1">
-                  <MapPin className="w-4 h-4" />
-                  {mentor.suburb}{mentor.postcode ? ` (${mentor.postcode})` : ""}
-                </span>
-                {mentor.rating > 0 && (
-                  <span className="flex items-center gap-1">
-                    <Star className="w-4 h-4 text-[var(--color-warn-500)] fill-amber-500" />
-                    {mentor.rating.toFixed(1)} ({mentor.review_count} review{mentor.review_count !== 1 ? "s" : ""})
+              <div className="min-w-0">
+                <p className="eyebrow">Local mentor</p>
+                <h1 className="site-h2 mt-2 !text-[clamp(2rem,4vw,3rem)]">{name}</h1>
+                <p className="site-meta mt-2 flex flex-wrap items-center gap-x-4 gap-y-1">
+                  <span className="inline-flex items-center gap-1.5">
+                    <MapPin className="h-4 w-4" aria-hidden="true" />
+                    {mentor.suburb}
+                    {mentor.postcode ? ` ${mentor.postcode}` : ""}
                   </span>
-                )}
-              </div>
-
-              {/* Languages */}
-              <div className="flex flex-wrap gap-2 mt-2">
-                {mentor.languages.map((lang) => (
-                  <span
-                    key={lang}
-                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 text-[var(--color-primary)] dark:text-[var(--color-primary)] border border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)]"
-                  >
-                    <Globe className="w-3 h-3" />
-                    {lang}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            {/* Price */}
-            <div className="sm:text-right shrink-0">
-              <div className="bg-[var(--color-primary)] text-[color:var(--color-primary-fg)] font-bold text-xl px-5 py-2 rounded-xl inline-block">
-                {priceDisplay}
-              </div>
-              <p className="text-xs text-[var(--color-ink-3)] mt-1">per session</p>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Bio */}
-        {mentor.bio && (
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="card p-6"
-          >
-            <h2 className="text-base font-bold text-[var(--color-ink)] mb-3">About {name}</h2>
-            <p className="text-sm text-[var(--color-ink-2)] whitespace-pre-line leading-relaxed">
-              {mentor.bio}
-            </p>
-          </motion.div>
-        )}
-
-        {/* Specialties */}
-        {mentor.specialties.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.15 }}
-            className="card p-6"
-          >
-            <h2 className="text-base font-bold text-[var(--color-ink)] mb-3">Can Help With</h2>
-            <div className="flex flex-wrap gap-2">
-              {mentor.specialties.map((spec) => (
-                <span
-                  key={spec}
-                  className="px-3 py-1.5 rounded-full text-xs font-medium bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent)]/10 text-[var(--color-accent)] dark:text-[var(--color-accent)] border border-[var(--color-accent-soft)] dark:border-[var(--color-accent-soft)]"
-                >
-                  {spec}
-                </span>
-              ))}
-            </div>
-          </motion.div>
-        )}
-
-        {/* Book a session */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="card p-6 space-y-4"
-        >
-          <h2 className="text-base font-bold text-[var(--color-ink)] flex items-center gap-2">
-            <Calendar className="w-5 h-5 text-[var(--color-primary)]" />
-            Book a Session
-          </h2>
-
-          {/* Session type */}
-          <div>
-            <label className="block text-sm font-medium text-[var(--color-ink-2)] mb-2">
-              Session Type
-            </label>
-            <div className="grid grid-cols-3 gap-2">
-              {[
-                { value: "video_call", label: "Video Call", icon: <Video className="w-4 h-4" /> },
-                { value: "in_person", label: "In Person", icon: <UsersIcon className="w-4 h-4" /> },
-                { value: "chat", label: "Chat", icon: <MessageCircle className="w-4 h-4" /> },
-              ].map((type) => (
-                <button
-                  key={type.value}
-                  onClick={() => setSessionType(type.value)}
-                  className={`flex flex-col items-center gap-1.5 p-3 rounded-xl text-xs font-medium transition-colors ${
-                    sessionType === type.value
-                      ? "bg-[var(--color-primary)] text-[color:var(--color-primary-fg)]"
-                      : "bg-[var(--color-surface-muted)] text-[var(--color-ink-2)] hover:bg-[var(--color-surface-muted)]"
-                  }`}
-                >
-                  {type.icon}
-                  {type.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Schedule */}
-          <div>
-            <label className="block text-sm font-medium text-[var(--color-ink-2)] mb-1">
-              Preferred Date & Time (optional)
-            </label>
-            <input
-              type="datetime-local"
-              value={scheduledAt}
-              onChange={(e) => setScheduledAt(e.target.value)}
-              className="w-full px-4 py-2.5 bg-[var(--color-surface)] border border-[var(--color-line)] rounded-xl text-sm focus:ring-2 focus:ring-[var(--color-ink)]/30 focus:border-transparent outline-none"
-            />
-          </div>
-
-          {/* Notes */}
-          <div>
-            <label className="block text-sm font-medium text-[var(--color-ink-2)] mb-1">
-              Message for {name} (optional)
-            </label>
-            <textarea
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              placeholder="e.g. I just arrived from India and need help finding groceries and setting up Medicare..."
-              rows={3}
-              maxLength={1000}
-              className="w-full px-4 py-2.5 bg-[var(--color-surface)] border border-[var(--color-line)] rounded-xl text-sm focus:ring-2 focus:ring-[var(--color-ink)]/30 focus:border-transparent outline-none resize-none"
-            />
-          </div>
-
-          {/* Price summary */}
-          <div className="bg-[var(--color-surface)] rounded-xl p-4 flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-[var(--color-ink-2)]">Session total</p>
-              <p className="text-xs text-[var(--color-ink-3)]">Secure payment via Stripe</p>
-            </div>
-            <div className="text-right">
-              <p className="text-xl font-bold text-[var(--color-ink)]">{priceDisplay} AUD</p>
-            </div>
-          </div>
-
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={handleBook}
-            disabled={booking}
-            className="w-full bg-[var(--color-primary)] from-[var(--color-primary)] to-[var(--color-primary)] hover:from-primary-700 hover:to-pink-700 text-[color:var(--color-primary-fg)] font-semibold py-3 rounded-xl text-sm transition-all disabled:opacity-50 flex items-center justify-center gap-2"
-          >
-            {booking ? (
-              <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-            ) : (
-              <>
-                <DollarSign className="w-4 h-4" />
-                Book & Pay {priceDisplay}
-              </>
-            )}
-          </motion.button>
-        </motion.div>
-
-        {/* Reviews */}
-        {mentor.reviews && mentor.reviews.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.25 }}
-            className="card p-6"
-          >
-            <h2 className="text-base font-bold text-[var(--color-ink)] mb-4 flex items-center gap-2">
-              <Star className="w-5 h-5 text-[var(--color-warn-500)]" />
-              Reviews ({mentor.review_count})
-            </h2>
-            <div className="space-y-4">
-              {mentor.reviews.map((review) => (
-                <div key={review.id} className="border-b border-[var(--color-line)] last:border-0 pb-4 last:pb-0">
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="w-7 h-7 rounded-full bg-[var(--color-primary-soft)] from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center overflow-hidden">
-                      {review.profiles?.custom_pfp ? (
-                        <img src={review.profiles.custom_pfp} alt={`${review.profiles?.name || "Reviewer"} profile photo`} className="w-full h-full object-cover" />
-                      ) : (
-                        <span className="text-white text-xs font-bold">
-                          {review.profiles?.name?.charAt(0) || "?"}
-                        </span>
-                      )}
-                    </div>
-                    <span className="text-sm font-medium text-[var(--color-ink)]">
-                      {review.profiles?.name || "Anonymous"}
+                  {mentor.rating > 0 && (
+                    <span className="inline-flex items-center gap-1">
+                      <Star className="h-4 w-4 fill-[var(--color-warn-500)] text-[var(--color-warn-500)]" aria-hidden="true" />
+                      {mentor.rating.toFixed(1)} from {mentor.review_count} review{mentor.review_count === 1 ? "" : "s"}
                     </span>
-                    <div className="flex items-center gap-0.5">
-                      {[...Array(5)].map((_, i) => (
-                        <Star
-                          key={i}
-                          className={`w-3 h-3 ${
-                            i < review.rating
-                              ? "text-[var(--color-warn-500)] fill-amber-500"
-                              : "text-[var(--color-ink-4)]"
-                          }`}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                  {review.comment && (
-                    <p className="text-sm text-[var(--color-ink-2)]">{review.comment}</p>
                   )}
-                </div>
-              ))}
+                </p>
+              </div>
+            </header>
+
+            {mentor.languages.length > 0 && (
+              <ul className="m-0 flex list-none flex-wrap gap-2 p-0" aria-label="Languages">
+                {mentor.languages.map((lang) => (
+                  <li key={lang} className="site-chip">
+                    <Globe className="h-3.5 w-3.5" aria-hidden="true" />
+                    {lang}
+                  </li>
+                ))}
+              </ul>
+            )}
+
+            {mentor.bio && (
+              <section className="site-card site-card--pad" aria-labelledby="about-mentor">
+                <h2 id="about-mentor" className="site-h3 site-h3--lg">
+                  About {name}
+                </h2>
+                <p className="site-body mt-3 whitespace-pre-line">{mentor.bio}</p>
+              </section>
+            )}
+
+            {mentor.specialties.length > 0 && (
+              <section className="site-card site-card--pad" aria-labelledby="mentor-help">
+                <h2 id="mentor-help" className="site-h3 site-h3--lg">
+                  Can help with
+                </h2>
+                <ul className="m-0 mt-4 flex list-none flex-wrap gap-2 p-0">
+                  {mentor.specialties.map((spec) => (
+                    <li key={spec} className="site-chip">
+                      {spec}
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
+
+            {mentor.reviews && mentor.reviews.length > 0 && (
+              <section className="site-card site-card--pad" aria-labelledby="mentor-reviews">
+                <h2 id="mentor-reviews" className="site-h3 site-h3--lg">
+                  Reviews ({mentor.review_count})
+                </h2>
+                <ul className="m-0 mt-4 list-none space-y-4 p-0">
+                  {mentor.reviews.map((review) => (
+                    <li key={review.id} className="border-b border-[var(--color-line)] pb-4 last:border-0 last:pb-0">
+                      <div className="flex items-center gap-2">
+                        <span className="text-[14px] font-semibold text-[var(--color-ink)]">{review.profiles?.name || "A Migrent member"}</span>
+                        <span className="inline-flex items-center gap-0.5" aria-label={`${review.rating} out of 5`}>
+                          {[0, 1, 2, 3, 4].map((i) => (
+                            <Star key={i} className={`h-3.5 w-3.5 ${i < review.rating ? "fill-[var(--color-warn-500)] text-[var(--color-warn-500)]" : "text-[var(--color-ink-4)]"}`} aria-hidden="true" />
+                          ))}
+                        </span>
+                      </div>
+                      {review.comment && <p className="site-body mt-1.5">{review.comment}</p>}
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
+          </div>
+
+          <aside className="lg:sticky lg:top-28 lg:self-start" aria-labelledby="book-heading">
+            <div className="site-card site-card--pad space-y-5">
+              <div className="flex items-baseline justify-between gap-4">
+                <h2 id="book-heading" className="site-h3 site-h3--lg">
+                  Book a session
+                </h2>
+                <p className="m-0 text-[22px] font-semibold tracking-[-0.01em] text-[var(--color-ink)] tabular-nums">
+                  {priceDisplay}
+                  <span className="text-[13px] font-normal text-[var(--color-ink-3)]"> AUD</span>
+                </p>
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <span className="field-label !mb-0">How you would like to meet</span>
+                <Segmented<string>
+                  label="How you would like to meet"
+                  value={sessionType}
+                  onChange={setSessionType}
+                  options={[
+                    { value: "video_call", label: "Video", icon: <Video className="h-4 w-4" aria-hidden="true" /> },
+                    { value: "in_person", label: "In person", icon: <UsersIcon className="h-4 w-4" aria-hidden="true" /> },
+                    { value: "chat", label: "Chat", icon: <MessageCircle className="h-4 w-4" aria-hidden="true" /> },
+                  ]}
+                />
+              </div>
+
+              <div>
+                <label htmlFor="m-when" className="field-label">
+                  A time that suits you <span className="font-normal text-[color:var(--color-ink-3)]">(optional)</span>
+                </label>
+                <input id="m-when" type="datetime-local" value={scheduledAt} onChange={(e) => setScheduledAt(e.target.value)} className="input-field" />
+              </div>
+
+              <div>
+                <label htmlFor="m-notes" className="field-label">
+                  A note for {name} <span className="font-normal text-[color:var(--color-ink-3)]">(optional)</span>
+                </label>
+                <textarea
+                  id="m-notes"
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  placeholder="For example: I have just arrived and want help with transport and groceries."
+                  rows={3}
+                  maxLength={1000}
+                  className="input-field min-h-[96px] resize-none"
+                />
+              </div>
+
+              <button type="button" onClick={handleBook} disabled={booking} data-state={booking ? "loading" : undefined} className="btn-primary btn-lg w-full">
+                {booking ? "Opening checkout" : `Book and pay ${priceDisplay}`}
+              </button>
+              <p className="site-meta m-0">You pay by card through Stripe. Your mentor confirms the time with you in Migrent messages.</p>
             </div>
-          </motion.div>
-        )}
+          </aside>
+        </div>
       </div>
     </>
   );

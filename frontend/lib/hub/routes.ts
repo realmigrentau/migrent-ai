@@ -179,6 +179,9 @@ export const hubFromSite = {
   home: () => hubAbsoluteUrl("/"),
   signIn: (returnTo?: string) => hubAbsoluteUrl(`/sign-in${returnTo ? `?return=${encodeURIComponent(returnTo)}` : ""}`),
   signUp: () => hubAbsoluteUrl("/sign-up"),
-  listProperty: () => hubAbsoluteUrl(`/sign-up?intent=list&next=${encodeURIComponent("/properties/new")}`),
+  /** Sign up as a host, landing in the listing wizard - optionally pre-filled
+   *  from the homepage house (an encoded ?prefill= value). */
+  listProperty: (prefill?: string) =>
+    hubAbsoluteUrl(`/sign-up?intent=list&next=${encodeURIComponent(prefill ? `/properties/new?prefill=${prefill}` : "/properties/new")}`),
   path: (hubPath: string) => hubAbsoluteUrl(hubPath),
 };

@@ -1,6 +1,5 @@
-import { motion } from "framer-motion";
 import Link from "next/link";
-import { Star, MapPin, MessageCircle, Globe, ChevronRight } from "lucide-react";
+import { ArrowRight, Globe, MapPin, Star } from "lucide-react";
 
 interface MentorCardProps {
   id: string;
@@ -13,110 +12,72 @@ interface MentorCardProps {
   hourlyRate: number; // cents
   rating: number;
   reviewCount: number;
-  verified: boolean;
-  index?: number;
 }
 
-export default function MentorCard({
-  id,
-  name,
-  photo,
-  suburb,
-  languages,
-  bio,
-  specialties,
-  hourlyRate,
-  rating,
-  reviewCount,
-  verified,
-  index = 0,
-}: MentorCardProps) {
-  const priceDisplay = `$${(hourlyRate / 100).toFixed(0)}`;
-
+/**
+ * One mentor in the /mentors list. There is no "Verified" tag: the flag the
+ * old card read (profiles.verified) was set by a paid badge that checked no
+ * documents, so it said more than it meant.
+ */
+export default function MentorCard({ id, name, photo, suburb, languages, bio, specialties, hourlyRate, rating, reviewCount }: MentorCardProps) {
+  const price = `$${(hourlyRate / 100).toFixed(0)}`;
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.05 }}
-    >
-      <Link href={`/mentor/${id}`}>
-        <div className="card p-5 hover:shadow-lg transition-all cursor-pointer group">
-          <div className="flex items-start gap-4">
-            {/* Avatar */}
-            <div className="w-14 h-14 rounded-2xl overflow-hidden shrink-0 bg-[var(--color-primary-soft)] from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center">
-              {photo ? (
-                <img src={photo} alt={name} className="w-full h-full object-cover" />
-              ) : (
-                <span className="text-white font-bold text-lg">
-                  {name?.charAt(0).toUpperCase() || "M"}
-                </span>
-              )}
-            </div>
+    <article className="site-card site-card--link flex gap-4 p-5 sm:gap-5 sm:p-6">
+      <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-[var(--color-primary-soft)]">
+        {photo ? (
+          <img src={photo} alt="" className="h-full w-full object-cover" />
+        ) : (
+          <span className="text-lg font-semibold text-[color:var(--color-primary-700)]" aria-hidden="true">
+            {name?.charAt(0).toUpperCase() || "M"}
+          </span>
+        )}
+      </div>
 
-            {/* Info */}
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 mb-1">
-                <h3 className="font-bold text-[var(--color-ink)] text-sm truncate">
-                  {name}
-                </h3>
-                {verified && (
-                  <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-semibold bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent)]/20 text-[var(--color-accent)] dark:text-[var(--color-accent)]">
-                    Verified
-                  </span>
-                )}
-              </div>
+      <div className="min-w-0 flex-1">
+        <h3 className="site-h3">
+          <Link href={`/mentor/${id}`} className="after:absolute after:inset-0 after:rounded-[22px] focus-visible:outline-none">
+            {name}
+          </Link>
+        </h3>
+        <p className="site-meta mt-1 flex flex-wrap items-center gap-x-3 gap-y-1">
+          <span className="inline-flex items-center gap-1">
+            <MapPin className="h-3.5 w-3.5" aria-hidden="true" />
+            {suburb}
+          </span>
+          {rating > 0 && (
+            <span className="inline-flex items-center gap-1">
+              <Star className="h-3.5 w-3.5 fill-[var(--color-warn-500)] text-[var(--color-warn-500)]" aria-hidden="true" />
+              {rating.toFixed(1)}
+              <span className="sr-only"> out of 5 from</span> ({reviewCount}
+              <span className="sr-only"> reviews</span>)
+            </span>
+          )}
+        </p>
+        {bio && <p className="site-body mt-2 line-clamp-2">{bio}</p>}
+        {(languages.length > 0 || specialties.length > 0) && (
+          <ul className="m-0 mt-3 flex list-none flex-wrap gap-1.5 p-0">
+            {languages.slice(0, 3).map((lang) => (
+              <li key={lang} className="site-chip !h-7 !text-[12px]">
+                <Globe className="h-3 w-3" aria-hidden="true" />
+                {lang}
+              </li>
+            ))}
+            {specialties.slice(0, 2).map((spec) => (
+              <li key={spec} className="site-chip !h-7 !text-[12px]">
+                {spec}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
 
-              <div className="flex items-center gap-1.5 text-xs text-[var(--color-ink-3)] mb-2">
-                <MapPin className="w-3 h-3" />
-                <span>{suburb}</span>
-                {rating > 0 && (
-                  <>
-                    <span className="mx-1">-</span>
-                    <Star className="w-3 h-3 text-[var(--color-warn-500)] fill-amber-500" />
-                    <span>{rating.toFixed(1)} ({reviewCount})</span>
-                  </>
-                )}
-              </div>
-
-              {bio && (
-                <p className="text-xs text-[var(--color-ink-2)] line-clamp-2 mb-2">
-                  {bio}
-                </p>
-              )}
-
-              {/* Tags */}
-              <div className="flex flex-wrap gap-1.5">
-                {languages.slice(0, 3).map((lang) => (
-                  <span
-                    key={lang}
-                    className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 text-[var(--color-primary)] dark:text-[var(--color-primary)] border border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)]"
-                  >
-                    <Globe className="w-2.5 h-2.5" />
-                    {lang}
-                  </span>
-                ))}
-                {specialties.slice(0, 2).map((spec) => (
-                  <span
-                    key={spec}
-                    className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-[var(--color-surface-muted)] text-[var(--color-ink-2)] border border-[var(--color-line)]"
-                  >
-                    {spec}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            {/* Price + CTA */}
-            <div className="shrink-0 text-right flex flex-col items-end gap-2">
-              <div className="bg-[var(--color-primary)] text-[color:var(--color-primary-fg)] font-bold text-sm px-3 py-1 rounded-xl">
-                {priceDisplay}
-              </div>
-              <span className="text-[10px] text-[var(--color-ink-3)]">per session</span>
-              <ChevronRight className="w-4 h-4 text-[var(--color-ink-4)] group-hover:text-[var(--color-primary)] transition-colors mt-1" />
-            </div>
-          </div>
-        </div>
-      </Link>
-    </motion.div>
+      <div className="flex shrink-0 flex-col items-end justify-between gap-2 text-right">
+        <p className="m-0 text-[20px] font-semibold tracking-[-0.01em] text-[var(--color-ink)] tabular-nums">
+          {price}
+          <span className="block text-[12px] font-normal text-[var(--color-ink-3)]">a session</span>
+        </p>
+        <ArrowRight className="h-4 w-4 text-[var(--color-ink-4)]" aria-hidden="true" />
+      </div>
+    </article>
   );
 }

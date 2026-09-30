@@ -1,9 +1,9 @@
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
-// /resources/* are the consolidated Resources hubs; they replaced /faq,
-// /guides, /blog and /help, whose URLs are 301s now.
-const PAGES = ["/", "/seeker/search?suburb=Kellyville", "/hub/sign-in", "/hub/sign-up", "/contact", "/pricing", "/resources", "/resources/guides", "/resources/tools", "/resources/help", "/listing/11111111-1111-4111-8111-000000000001"];
+// Every page of the public site after the 2026-09-29 redesign, plus the
+// sign-in pages and a listing.
+const PAGES = ["/", "/seeker/search?suburb=Kellyville", "/hub/sign-in", "/hub/sign-up", "/contact", "/pricing", "/how-renting-works", "/for-owners", "/guides", "/guides/rental-laws", "/help", "/about", "/legal", "/privacy-policy", "/listing/11111111-1111-4111-8111-000000000001"];
 
 for (const path of PAGES) {
   test(`axe: ${path} has no serious or critical violations`, async ({ page }) => {
@@ -46,10 +46,9 @@ test("empty sign-in submission announces field errors", async ({ page }) => {
   await expect(page.getByRole("alert").filter({ hasText: /do not match/i })).toBeVisible();
 });
 
-/* Dark mode was retired (lib/themeBootstrap.ts), and with it the header's
-   theme toggle. These two tests were written against that toggle and had
-   been failing since it went; what each was for still holds, so they now
-   exercise controls the header does have.
+/* These two tests were first written against a header theme toggle that
+   no longer exists; what each was for still holds, so they exercise
+   controls the header does have.
 
    The first is the disclosure contract on the header's dropdowns: a
    button that says whether its panel is open. Asserted on /pricing
@@ -57,7 +56,7 @@ test("empty sign-in submission announces field errors", async ({ page }) => {
 test("header dropdowns expose their state", async ({ page, isMobile }) => {
   test.skip(isMobile, "below lg the dropdowns live in the phone menu");
   await page.goto("/pricing");
-  const trigger = page.getByRole("banner").getByRole("button", { name: "Resources" });
+  const trigger = page.getByRole("banner").getByRole("button", { name: "For owners", exact: true });
   await expect(trigger).toHaveAttribute("aria-expanded", "false");
   await trigger.focus();
   await page.keyboard.press("Enter");
@@ -84,14 +83,17 @@ test("homepage header is reachable by keyboard over the hero", async ({ page, is
   await expect(control).toBeInViewport();
 });
 
+/* The site FAQ is native <details>/<summary>, so the browser supplies the
+   keyboard handling and the expanded state. This pins that it stays so. */
 test("FAQ accordion is keyboard operable and announces state", async ({ page }) => {
-  await page.goto("/resources/help");
-  const first = page.locator("main h3 > button[aria-expanded]").first();
-  await first.focus();
+  await page.goto("/help");
+  const item = page.locator("main details.site-faq__item").nth(1);
+  const summary = item.locator("summary");
+  await expect(item).not.toHaveAttribute("open", "");
+  await summary.focus();
   await page.keyboard.press("Enter");
-  await expect(first).toHaveAttribute("aria-expanded", "true");
-  const controls = await first.getAttribute("aria-controls");
-  await expect(page.locator(`#${controls}`)).toBeVisible();
+  await expect(item).toHaveAttribute("open", "");
+  await expect(item.locator(".site-faq__a")).toBeVisible();
 });
 
 test("search filters are reachable by keyboard and the results region is announced", async ({ page, isMobile }) => {

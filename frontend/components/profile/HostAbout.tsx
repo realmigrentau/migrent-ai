@@ -1,23 +1,10 @@
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { Briefcase, CalendarDays, Globe, MapPin, type LucideIcon } from "lucide-react";
 import { UserProfile } from "../../hooks/useUserProfile";
 
 interface HostAboutProps {
   profile: UserProfile;
 }
-
-const lifestyleIcons: Record<string, string> = {
-  "Quiet": "🤫", "Non-smoker": "🚭", "Early riser": "🌅", "Night owl": "🦉",
-  "Clean & tidy": "✨", "Social": "🎉", "Student": "📚", "Professional": "💼",
-  "No pets": "🚫", "Pet-friendly": "🐾", "Vegetarian/Vegan": "🥗", "LGBTQ+ friendly": "🏳️‍🌈",
-};
-
-const interestIcons: Record<string, string> = {
-  "Cooking": "🍳", "Gaming": "🎮", "Fitness": "💪", "Reading": "📖",
-  "Music": "🎵", "Photography": "📷", "Travel": "✈️", "Art": "🎨",
-  "Hiking": "🥾", "Movies": "🎬", "Coding": "💻", "Yoga": "🧘",
-  "Sports": "⚽", "Dancing": "💃", "Gardening": "🌱", "Coffee": "☕",
-};
 
 export default function HostAbout({ profile }: HostAboutProps) {
   const [expanded, setExpanded] = useState(false);
@@ -30,9 +17,9 @@ export default function HostAbout({ profile }: HostAboutProps) {
       {/* Greeting + Bio */}
       {bio && (
         <div>
-          <h3 className="text-lg font-bold text-[var(--color-ink)] mb-3">
+          <h2 className="site-h3 site-h3--lg mb-3">
             About {displayName}
-          </h3>
+          </h2>
           <div className="relative">
             <p className={`text-[15px] text-[var(--color-ink-2)] leading-relaxed whitespace-pre-line ${
               !expanded && isLongBio ? "line-clamp-4" : ""
@@ -54,31 +41,25 @@ export default function HostAbout({ profile }: HostAboutProps) {
       {/* Quick info pills */}
       <div className="flex flex-wrap gap-2">
         {profile.occupation && (
-          <InfoPill icon="💼" label={`My work: ${profile.occupation}`} />
+          <InfoPill icon={Briefcase} label={`My work: ${profile.occupation}`} />
         )}
         {profile.languages.length > 0 && (
-          <InfoPill icon="🌐" label={`Speaks ${profile.languages.join(", ")}`} />
+          <InfoPill icon={Globe} label={`Speaks ${profile.languages.join(", ")}`} />
         )}
         {profile.location && (
-          <InfoPill icon="📍" label={`Lives in ${profile.location}`} />
+          <InfoPill icon={MapPin} label={`Lives in ${profile.location}`} />
         )}
         {profile.member_since_label && (
-          <InfoPill icon="📅" label={`Joined ${profile.member_since_label}`} />
+          <InfoPill icon={CalendarDays} label={`Joined ${profile.member_since_label}`} />
         )}
       </div>
 
       {/* Useless skill */}
       {profile.most_useless_skill && (
-        <motion.div
-          whileHover={{ scale: 1.01 }}
-          className="flex items-start gap-3 p-4 rounded-2xl bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 border border-purple-100 dark:border-[var(--color-primary)]/20"
-        >
-          <span className="text-2xl">🎯</span>
-          <div>
-            <p className="text-xs font-semibold text-[var(--color-primary)] dark:text-[var(--color-primary)] uppercase tracking-wider">Most useless skill</p>
-            <p className="text-sm text-primary-700 dark:text-purple-300 mt-0.5">{profile.most_useless_skill}</p>
-          </div>
-        </motion.div>
+        <div className="site-card site-card--muted p-4">
+          <p className="eyebrow">Most useless skill</p>
+          <p className="site-body mt-1">{profile.most_useless_skill}</p>
+        </div>
       )}
 
       {/* Lifestyle */}
@@ -87,8 +68,7 @@ export default function HostAbout({ profile }: HostAboutProps) {
           <h4 className="text-sm font-bold text-[var(--color-ink)] mb-2.5">Lifestyle</h4>
           <div className="flex flex-wrap gap-2">
             {profile.lifestyle.map((item) => (
-              <span key={item} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm bg-[var(--color-surface-muted)] text-[var(--color-ink-2)] border border-[var(--color-line)]">
-                <span>{lifestyleIcons[item] || "•"}</span>
+              <span key={item} className="site-chip">
                 {item}
               </span>
             ))}
@@ -102,14 +82,9 @@ export default function HostAbout({ profile }: HostAboutProps) {
           <h4 className="text-sm font-bold text-[var(--color-ink)] mb-2.5">Interests</h4>
           <div className="flex flex-wrap gap-2">
             {profile.interests.map((item) => (
-              <motion.span
-                key={item}
-                whileHover={{ scale: 1.05, y: -1 }}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 text-[var(--color-primary)] dark:text-[var(--color-primary)] border border-[var(--color-primary-soft)] dark:border-[var(--color-primary-soft)] cursor-default"
-              >
-                <span>{interestIcons[item] || "•"}</span>
+              <span key={item} className="site-chip">
                 {item}
-              </motion.span>
+              </span>
             ))}
           </div>
         </div>
@@ -145,10 +120,10 @@ export default function HostAbout({ profile }: HostAboutProps) {
   );
 }
 
-function InfoPill({ icon, label }: { icon: string; label: string }) {
+function InfoPill({ icon: Icon, label }: { icon: LucideIcon; label: string }) {
   return (
-    <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-[var(--color-surface)] border border-[var(--color-line)]">
-      <span className="text-base">{icon}</span>
+    <div className="flex items-center gap-2 rounded-xl border border-[var(--color-line)] bg-[var(--color-surface)] px-3 py-2">
+      <Icon className="h-4 w-4 text-[var(--color-ink-3)]" aria-hidden="true" />
       <span className="text-sm text-[var(--color-ink-2)]">{label}</span>
     </div>
   );

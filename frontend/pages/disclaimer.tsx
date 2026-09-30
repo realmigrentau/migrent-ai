@@ -1,31 +1,15 @@
 import Link from "next/link";
 import SEOHead from "../components/SEOHead";
-import { motion } from "framer-motion";
+import LegalLayout from "../components/site/LegalLayout";
 
 export default function Disclaimer() {
   return (
     <>
       <SEOHead title="Platform Disclaimer" description="Migrent Platform Disclaimer - understand the limitations of our service and your responsibilities as a user." />
 
-      <div className="max-w-3xl mx-auto space-y-10">
-        {/* Hero */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-xl bg-[var(--color-warn-50)] dark:bg-[var(--color-warn-500)]/10 border border-[var(--color-line-2)] dark:border-[var(--color-line)] flex items-center justify-center">
-              <svg className="w-5 h-5 text-[var(--color-warn-500)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
-              </svg>
-            </div>
-            <div>
-              <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-[var(--color-ink)]">
-                Platform Disclaimer
-              </h1>
-              <p className="text-sm text-[var(--color-ink-3)] mt-1">Last updated: March 2026</p>
-            </div>
-          </div>
-        </motion.div>
+      <LegalLayout title="Platform Disclaimer" note="Last updated: March 2026">
 
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="space-y-8">
+        <div className="space-y-8">
           {/* Key Disclaimer */}
           <section className="card p-6 rounded-2xl space-y-3 border-l-4 border-l-amber-500">
             <h2 className="text-lg font-bold text-[var(--color-ink)]">Important Notice</h2>
@@ -97,7 +81,7 @@ export default function Disclaimer() {
           <section className="card p-6 rounded-2xl space-y-3">
             <h2 className="text-lg font-bold text-[var(--color-ink)]">4. No Legal Advice</h2>
             <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
-              <p>Information provided on Migrent, including our <Link href="/rental-laws" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">rental laws guide</Link> and <Link href="/code-of-conduct" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">STRA code of conduct</Link>, is for general informational purposes only. It does not constitute legal advice. You should seek independent legal advice for your specific circumstances.</p>
+              <p>Information provided on Migrent, including our <Link href="/guides/rental-laws" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">rental laws guide</Link> and <Link href="/code-of-conduct" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">STRA code of conduct</Link>, is for general informational purposes only. It does not constitute legal advice. You should seek independent legal advice for your specific circumstances.</p>
             </div>
           </section>
 
@@ -135,18 +119,8 @@ export default function Disclaimer() {
             <p>This disclaimer is part of Migrent&apos;s <Link href="/terms-of-service" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">Terms of Service</Link>. For full legal terms, please refer to our Terms of Service. Migrent recommends consulting a qualified Australian lawyer for specific legal advice. Last reviewed: March 2026.</p>
           </div>
 
-          {/* CTA */}
-          <div className="card p-6 rounded-2xl bg-[var(--color-primary-soft)] from-[var(--color-warn-50)] to-[var(--color-warn-50)] dark:from-[var(--color-warn-500)]/10 dark:to-[var(--color-surface)] border-[var(--color-line-2)] dark:border-[var(--color-line)] text-center">
-            <h3 className="text-lg font-bold text-[var(--color-ink)] mb-2">Have questions?</h3>
-            <p className="text-sm text-[var(--color-ink-2)] mb-4">Our team can help clarify our platform policies.</p>
-            <Link href="/contact">
-              <motion.span whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }} className="inline-block btn-primary text-sm px-6 py-2.5 rounded-xl">
-                Contact Us
-              </motion.span>
-            </Link>
-          </div>
-        </motion.div>
-      </div>
+        </div>
+      </LegalLayout>
     </>
   );
 }

@@ -78,6 +78,7 @@ PUBLIC_LISTING_FIELDS: tuple[str, ...] = (
     "tenant_prefs",
     "security_cameras",
     "security_cameras_location",
+    "lockable_bedroom",
     "other_safety_details",
     "who_else_lives_here",
     "total_other_people",
@@ -164,6 +165,8 @@ ALLOWED_ACHIEVEMENT_BADGES: frozenset[str] = frozenset(
         "Booked 1+ rooms",
         "Frequent Renter",
         "Seasoned Renter",
+        "Hosts 3+ homes",
+        "Hosts 10+ homes",
         "Superhost",
         "Mega Host",
         "Early member",
@@ -171,7 +174,7 @@ ALLOWED_ACHIEVEMENT_BADGES: frozenset[str] = frozenset(
     }
 )
 
-VERIFICATION_EXPLAINER_URL = "/safety-verification"
+VERIFICATION_EXPLAINER_URL = "/how-renting-works#checks"
 
 
 def _today() -> date:
@@ -290,6 +293,15 @@ def verification_summary(verification_row: Optional[dict]) -> dict:
     }
 
 
+# Older profiles stored count-based host badges under names that sounded
+# like a quality programme. Migrent has no such programme, so they are shown
+# as what they measure: approved listings.
+LEGACY_BADGE_NAMES: dict[str, str] = {
+    "Superhost": "Hosts 3+ homes",
+    "Mega Host": "Hosts 10+ homes",
+}
+
+
 def public_badges(badges: Optional[Iterable[str]]) -> list[str]:
     """Drop any badge that reads as a trust claim, keep known achievements."""
     out: list[str] = []
@@ -300,7 +312,9 @@ def public_badges(badges: Optional[Iterable[str]]) -> list[str]:
         if any(word in lowered for word in TRUST_VOCABULARY):
             continue
         if b in ALLOWED_ACHIEVEMENT_BADGES:
-            out.append(b)
+            label = LEGACY_BADGE_NAMES.get(b, b)
+            if label not in out:
+                out.append(label)
     return out
 
 

@@ -30,6 +30,7 @@ from models_support import (
     HelpArticleCreate, HelpArticleOut, HelpCategoryOut, HelpVote, CSATSubmit,
 )
 
+FRONTEND_URL = os.environ.get("FRONTEND_URL", "https://migrent.vercel.app")
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/support", tags=["support-system"])
@@ -160,10 +161,10 @@ async def create_ticket(body: TicketCreate, authorization: Optional[str] = Heade
                 "subject": f"We received your request: {body.subject}",
                 "html": f"""
                 <h2>Thanks for contacting Migrent Support</h2>
-                <p>We've received your request and will get back to you within 24 hours.</p>
+                <p>We have received your request. We reply on weekdays, in Australian business hours, usually within one business day.</p>
                 <p><strong>Ticket ID:</strong> {ticket_id[:8]}</p>
                 <p><strong>Subject:</strong> {body.subject}</p>
-                <p>You can view your ticket status in your <a href="https://migrent-ai.vercel.app/support/tickets">support dashboard</a>.</p>
+                <p>You can view your ticket status in your <a href="{FRONTEND_URL}/support/tickets">support requests</a>.</p>
                 <br/>
                 <p>- The Migrent Team</p>
                 """,

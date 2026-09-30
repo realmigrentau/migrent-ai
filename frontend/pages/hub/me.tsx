@@ -96,7 +96,7 @@ export default function MePage() {
         </Group>
 
         <Group>
-          <a href={siteUrl("/resources/help")} className="flex h-14 items-center gap-3.5 px-4 text-[15px] font-medium text-[color:var(--color-ink)] hover:bg-[var(--color-surface-hover)]">
+          <a href={siteUrl("/help")} className="flex h-14 items-center gap-3.5 px-4 text-[15px] font-medium text-[color:var(--color-ink)] hover:bg-[var(--color-surface-hover)]">
             <CircleHelp className="h-5 w-5 text-[color:var(--color-ink-2)]" strokeWidth={1.75} aria-hidden />
             <span className="flex-1">Help and safety</span>
           </a>

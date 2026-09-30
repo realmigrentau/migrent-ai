@@ -294,6 +294,12 @@ export function DetailsStep({ d, set, err, ai }: StepProps & { ai: boolean }) {
             {({ id, describedBy }) => <Input id={id} value={d.security_cameras_location ?? ""} maxLength={200} onChange={(e) => set({ security_cameras_location: e.target.value })} aria-describedby={describedBy} />}
           </Field>
         )}
+        <Switch
+          checked={Boolean(d.lockable_bedroom)}
+          onChange={(v) => set({ lockable_bedroom: v })}
+          label="Bedroom doors lock"
+          description="Each bedroom you rent out has a lock the renter controls. Renters can search for this."
+        />
         <Switch checked={Boolean(d.weapons_on_property)} onChange={(v) => set({ weapons_on_property: v })} label="There are firearms or weapons on the property" />
         {d.weapons_on_property && (
           <Field label="Please explain" error={err("weapons_explanation")}>

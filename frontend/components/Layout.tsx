@@ -12,37 +12,37 @@ import SiteFooter from "./SiteFooter";
 
 const SmoothScroll = dynamic(() => import("./SmoothScroll"), { ssr: false });
 
+/** Routes built from the public-site kit (components/site): full width, and
+ *  they draw their own sky under the floating header. */
+const SITE_KIT = [
+  "/", "/how-renting-works", "/for-owners", "/pricing", "/help", "/guides", "/blog", "/legal", "/about", "/contact",
+  "/terms-of-service", "/privacy-policy", "/cookie-policy", "/disclaimer", "/abn-terms", "/anti-discrimination",
+  "/rules-community-guidelines", "/code-of-conduct", "/safety-reporting", "/support-disputes", "/contact-legal",
+  // One-message pages (components/site/StatusPage)
+  "/404", "/500", "/_error", "/booking-success", "/booking-cancelled", "/verification-success", "/verification-cancelled",
+  "/mentor-session-success",
+  "/mentors", "/become-mentor", "/suburbs",
+];
+/** Full-width routes that sit below the header rather than drawing a sky. */
+const LEGACY_FULL_WIDTH: string[] = ["/listing/[id]", "/mentor/[id]", "/suburb/[state]", "/suburb/[state]/[slug]"];
+
+const matchesAny = (list: string[], path: string) => list.some((p) => path === p || (p !== "/" && path.startsWith(`${p}/`)));
+
 export default function Layout({ children }: { children: ReactNode }) {
   const router = useRouter();
   const { t } = useTranslation();
 
   const adminPath = process.env.NEXT_PUBLIC_ADMIN_PATH || "/admin";
   const isAdminRoute = router.pathname.startsWith(adminPath);
-  const isHomePage = router.pathname === "/";
   const isDashboard = router.pathname.startsWith("/dashboard");
-  const isPricing = router.pathname === "/pricing";
-  const isMarketing = ["/for-seekers", "/for-owners", "/about", "/features"].includes(router.pathname);
-  /* The Resources hubs lay out their own bands, including the deep-forest
-     close, so they need the full width rather than the centred article
-     container. Listed explicitly: /resources/rental-laws and
-     /resources/roi-calculator are built for the narrow container and keep
-     it. */
-  const isResourceHub = [
-    "/resources",
-    "/resources/guides",
-    "/resources/tools",
-    "/resources/help",
-  ].includes(router.pathname);
-  const isFullWidth = isAdminRoute || isHomePage || isPricing || isMarketing || isResourceHub;
+  /* Pages built from components/site lay out their own full-width sections
+     (the sky at the top, the closing card at the bottom), so they skip the
+     centred container. Everything else still gets it. */
+  const drawsOwnSky = matchesAny(SITE_KIT, router.pathname);
+  const isFullWidth = isAdminRoute || drawsOwnSky || LEGACY_FULL_WIDTH.includes(router.pathname);
 
   return (
-    /* data-home scopes styles/home.css: the homepage's tokens are taken from
-       the cinematic hero, so the header, the page and the footer all re-tint
-       together and no other route is touched. */
-    <div
-      data-home={isHomePage ? "" : undefined}
-      className="min-h-screen flex flex-col bg-[var(--color-bg)] text-[var(--color-ink)]"
-    >
+    <div className="min-h-screen flex flex-col bg-[var(--color-bg)] text-[var(--color-ink)]">
       {/* Keyboard users land here first. Visible on focus only. */}
       <a
         href="#main-content"
@@ -57,16 +57,13 @@ export default function Layout({ children }: { children: ReactNode }) {
       {/* Backend status banner - sits above the nav when API is unreachable */}
       <BackendStatusBanner />
 
-      {/* The homepage opens on a full-bleed hero with its own navigation,
-          so the site header waits until you have scrolled past it - the
-          account and language controls are one screen away rather than
-          gone, and focus brings the header in straight away. */}
-      <MegaNavbar revealAfterVh={isHomePage ? 0.86 : 0} />
+      {/* The same floating header on every page, the homepage included. */}
+      <MegaNavbar />
 
       {/* Room for the floating header: its 24px gap above the pill, the
-          60px pill, and the status banner when there is one. The homepage
-          hero sits under the header instead. */}
-      {!isHomePage && <div className="site-nav-spacer" aria-hidden="true" />}
+          60px pill, and the status banner when there is one. Full-width
+          pages draw their own sky under the header instead. */}
+      {!drawsOwnSky && <div className="site-nav-spacer" aria-hidden="true" />}
 
       {/* Page content */}
       <main id="main-content" tabIndex={-1} className={`flex-1 outline-none ${isFullWidth ? "w-full" : "max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8"}`}>

@@ -22,7 +22,7 @@ test("mobile filters open as a dialog and apply", async ({ page, isMobile }) => 
 
 test("touch targets on the search card are at least 44px", async ({ page }) => {
   await page.goto("/seeker/search?suburb=Kellyville");
-  const save = page.getByRole("button", { name: /Save .* to wishlist/ }).first();
+  const save = page.getByRole("button", { name: /^Save / }).first();
   const box = await save.boundingBox();
   expect(box?.width ?? 0).toBeGreaterThanOrEqual(44);
   expect(box?.height ?? 0).toBeGreaterThanOrEqual(44);

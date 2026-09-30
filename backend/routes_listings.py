@@ -218,6 +218,7 @@ async def create_listing(
         "min_stay": listing.min_stay,
         "security_cameras": listing.security_cameras,
         "security_cameras_location": listing.security_cameras_location,
+        "lockable_bedroom": listing.lockable_bedroom,
         "weapons_on_property": listing.weapons_on_property,
         "weapons_explanation": listing.weapons_explanation,
         "other_safety_details": listing.other_safety_details,
@@ -515,6 +516,11 @@ def resume_listing(request: Request, listing_id: str, authorization: str = Heade
 # ---------------------------------------------------------------------------
 
 
+# Listings written by older forms spelled these values several ways.
+PRIVATE_BATHROOM_SPELLINGS = ["private", "ensuite", "Private", "Ensuite", "private_bathroom"]
+LAUNDRY_IN_HOME_SPELLINGS = ["in_unit", "in-unit", "in unit", "In unit", "In-unit", "internal"]
+
+
 @router.get("/search")
 @limiter.limit("60/minute")
 def search_listings(
@@ -548,6 +554,12 @@ def search_listings(
     parking: Optional[bool] = None,
     air_conditioning: Optional[bool] = None,
     couples_ok: Optional[bool] = None,
+    min_bedrooms: Optional[int] = None,
+    private_bathroom: Optional[bool] = None,
+    laundry: Optional[str] = None,
+    internet_included: Optional[bool] = None,
+    no_cameras: Optional[bool] = None,
+    lockable_bedroom: Optional[bool] = None,
     sort: Optional[str] = None,
     limit: int = 20,
     offset: int = 0,
@@ -622,6 +634,21 @@ def search_listings(
             q = q.eq("air_conditioning", True)
         if couples_ok is True:
             q = q.eq("couples_ok", True)
+        # The homepage house's filters. Each reads a field the host sets in
+        # the listing wizard; "no cameras" hides only listings that declare
+        # cameras, so a listing that never answered is not treated as a yes.
+        if min_bedrooms is not None and min_bedrooms > 0:
+            q = q.gte("bedrooms", min(min_bedrooms, 20))
+        if private_bathroom is True:
+            q = q.in_("bathroom_type", PRIVATE_BATHROOM_SPELLINGS)
+        if laundry == "in_unit":
+            q = q.in_("laundry", LAUNDRY_IN_HOME_SPELLINGS)
+        if internet_included is True:
+            q = q.eq("internet_included", True)
+        if no_cameras is True:
+            q = q.or_("security_cameras.is.null,security_cameras.is.false")
+        if lockable_bedroom is True:
+            q = q.eq("lockable_bedroom", True)
         if gender_preference == "female":
             q = q.eq("gender_preference", "female")
         if min_stay:

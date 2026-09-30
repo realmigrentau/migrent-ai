@@ -1,994 +1,457 @@
-/* Hallmark · macrostructure: Marquee Hero · H1 hero knobs: alignment=centred, capture=clipped-by-fold, cta=single
- * theme: studied-DNA (source: https://www.dayflow.so/) · studied: yes · DNA-source: url + live render
- * observed-fonts: Instrument Serif + Figtree · rebuilt with: Newsreader + Schibsted Grotesk (project stack)
- * observed-sky: #77aeff · observed-accent: #ff8133 · paper: night #071131 → dawn #ffb084 → ground #fff
- * nav: N1b minus right cluster · footer: unchanged (page-level)
- * pre-emit critique: P5 H5 E4 S5 R4 V4
+/* Hallmark · genre: editorial x modern-minimal · macrostructure: Marquee Hero · design-system: design.md v4 · designed-as-app
+ * H1 knobs: alignment=centred head, product below (interactive house + panel), capture=none
+ * enrichment: Tier B hand-built SVG house (styles/house.css) over a Tier A CSS sunrise
+ * sky: night #04091f -> dawn #ffb084 (sampled, see git history of this file) · ground: --color-canvas
+ * pre-emit critique: P5 H4 E5 S5 R4 V5
  */
 
 /* ══════════════════════════════════════════════════════════════
-   MIGRENT hero  ·  the sunrise
+   HOMEPAGE HERO  ·  components/home/MigrentHero.tsx
 
-   Built to the shape of the dayflow.so hero. The page opens at night and
-   walks to dawn once, over five seconds, then holds there for good. The
-   sections below live in the morning it arrives at, so the hero explains
-   the palette it hands them rather than sitting on top of it.
+   The page opens at night and walks to dawn once, over eight seconds,
+   then holds. The type starts white on the dark and walks to ink as the
+   sky brightens. In dark mode the walk stops before sunrise: the sky
+   stays deep blue with its stars, and the house's lit windows carry it.
 
-   The layer order, back to front:
+   Layer order, back to front:
+       night -> stars -> dusk -> dawn -> bloom -> sun -> foot -> content
 
-       night plate → dusk plate → dawn plate → bloom → sun → foot → UI
-
-   The three plates are static gradients that cross-fade forward. Only
-   opacity and transform are animated, so nothing leaves the compositor,
-   and every layer ends at its final opacity - the rest state is just where
-   the animation stopped, held by animation-fill-mode: forwards.
-
-   Colour is measured, not invented: each plate below is a frame of the
-   reference sampled at three heights. See components/home/HeroSunrise.tsx
-   for the sample table.
-
-   Two deliberate departures from the reference, both noted at their rule:
-   the type walks from white to ink as the sky brightens (the reference
-   leaves its headline white and lands at 1.7:1), and the foot resolves to
-   the page ground rather than the reference's warm white.
+   Only opacity and transform animate. Every layer ends where its
+   animation stops (fill-mode both), so the rest state is a real paint.
    ══════════════════════════════════════════════════════════════ */
 
-.mg-hero {
-  /* Where the hero hands off. Declared here rather than read from
-     --color-bg because a token referenced only from hand-written CSS can be
-     tree-shaken out of the Tailwind build (see design.md, trap 2). */
-  --mg-ground: #ffffff;
-
-  /* One clock for the whole sunrise. Everything below is a share of it. */
-  --mg-sunrise: 5s;
-  --mg-sunrise-ease: cubic-bezier(0.33, 1, 0.68, 1);
-
-  /* The reference's entrance: .9s, easeOutCubic, staggered by ~120ms. */
-  --mg-rise: 0.9s;
-  --mg-rise-ease: cubic-bezier(0.215, 0.61, 0.355, 1);
-
-  --mg-nav-top: clamp(14px, 2.6svh, 30px);
+.hero {
+  --hero-ground: var(--color-canvas);
+  --hero-sunrise: 8s;
+  --hero-sunrise-ease: cubic-bezier(0.33, 1, 0.68, 1);
+  --hero-rise: 900ms;
+  --hero-rise-ease: cubic-bezier(0.215, 0.61, 0.355, 1);
+  --hero-ink-title: #12213d;
+  --hero-ink-sub: #1c2942;
+  --hero-sun-x: 50%;
 
   position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
   isolation: isolate;
   overflow: hidden;
-  padding: clamp(74px, 12svh, 116px) clamp(20px, 5vw, 80px) clamp(36px, 6svh, 64px);
-  /* Tall enough that the card's lower edge runs past a typical fold. The
-     cut is the point: it says there is more underneath without a scroll
-     cue to say it. */
-  min-height: min(1245px, 112svh);
   background: #04091f;
+  padding: calc(84px + clamp(28px, 6svh, 64px) + var(--site-banner-h, 0px)) var(--space-gutter) clamp(40px, 6svh, 72px);
 }
 
-:where(.dark) .mg-hero {
-  --mg-ground: #10150f;
+@media (min-width: 1024px) {
+  .hero { --hero-sun-x: 36%; }
 }
 
 /* ══════════════ the sky ══════════════ */
 
-.mg-hero__sky {
+.hero__sky {
   position: absolute;
   inset: 0;
   z-index: 0;
   pointer-events: none;
 }
 
-/* In dark mode the same walk arrives somewhere dimmer, because a full dawn
-   handing off to a near-black page is a wall rather than a horizon. */
-:where(.dark) .mg-hero__sky {
-  filter: brightness(0.66) saturate(0.94);
+.hero__plate { position: absolute; inset: 0; }
+
+/* t = 0s  ·  sky #071131 · horizon #073669 · low #04305f */
+.hero__plate--night {
+  background: linear-gradient(180deg, #04091f 0%, #071131 18%, #05173c 40%, #082f5d 64%, #073669 76%, #05305f 89%, #04294f 100%);
 }
 
-.mg-hero__plate {
-  position: absolute;
-  inset: 0;
-}
-
-/* t = 0.00s. sky #071131 · horizon #073669 · low #04305f */
-.mg-hero__plate--night {
-  background: linear-gradient(
-    180deg,
-    #04091f 0%,
-    #071131 18%,
-    #05173c 40%,
-    #082f5d 64%,
-    #073669 76%,
-    #05305f 89%,
-    #04294f 100%
-  );
-}
-
-/* t = 2.90s. sky #4b79ce · horizon #cfb4ca · low #ffdabb */
-.mg-hero__plate--dusk {
+/* t = 2.9s of the sampled five  ·  sky #4b79ce · horizon #cfb4ca · low #ffdabb */
+.hero__plate--dusk {
   opacity: 0;
-  background: linear-gradient(
-    180deg,
-    #1e3f86 0%,
-    #2f5cb4 16%,
-    #4b79ce 30%,
-    #7c88c6 46%,
-    #9a95c8 58%,
-    #cfb4ca 74%,
-    #f0cfc2 87%,
-    #ffdabb 100%
-  );
+  background: linear-gradient(180deg, #1e3f86 0%, #2f5cb4 16%, #4b79ce 30%, #7c88c6 46%, #9a95c8 58%, #cfb4ca 74%, #f0cfc2 87%, #ffdabb 100%);
 }
 
-/* t = 4.94s, the rest state.
-   These are the reference's own numbers, sampled off its frames and then
-   checked a second time against a screen recording of the live page:
-   top #93bbf8 · behind the headline #b8c6eb · mid #f6dcd4 · low #ffb084.
-   The whole frame ends up bright and warm, not just the bottom of it.
-
-   An earlier pass here held a deep navy band across the top third to keep
-   white type legible. It did keep the type legible, and it also stopped
-   the hero looking like a sunrise - it read as a blue page with a warm
-   strip along the bottom. The sky is the thing being copied, so the sky
-   gets copied; legibility is solved on the type instead, in mgTypeInk
-   below, which walks the words from white to ink over the same clock. */
-.mg-hero__plate--dawn {
+/* The rest state in light mode: bright, warm at the horizon. */
+.hero__plate--dawn {
   opacity: 0;
-  background: linear-gradient(
-    180deg,
-    #8ab8fd 0%,
-    #93bbf8 8%,
-    #a9c3f0 18%,
-    #b8c6eb 26%,
-    #c8cce5 34%,
-    #d6d0e0 42%,
-    #e8d6d8 49%,
-    #f6dcd4 56%,
-    #ffe2be 68%,
-    #ffcfa0 79%,
-    #ffb98c 86%,
-    #ffb084 90%,
-    #ffcba6 96%,
-    #fff1e7 100%
-  );
+  background: linear-gradient(180deg, #8ab8fd 0%, #93bbf8 8%, #a9c3f0 18%, #b8c6eb 26%, #c8cce5 34%, #d6d0e0 42%, #e8d6d8 49%, #f6dcd4 56%, #ffe2be 68%, #ffcfa0 79%, #ffb98c 86%, #ffb084 92%, #ffcba6 97%, #fff1e7 100%);
 }
 
-/* The halo is its own layer and much wider than the disc, so the light
-   reaches further up the sky than the sun is big.
-   Both this and the disc are sized to stay clear of .mg-hero__head. An
-   earlier pass had the bloom spanning the whole hero, which put a warm
-   white wash directly behind the small print and took it to 3.5:1. The
-   light belongs under the type, not behind it. */
-.mg-hero__bloom {
+.hero__stars {
   position: absolute;
-  left: 50%;
-  bottom: -18%;
-  width: min(1900px, 132%);
+  inset: 0 0 45% 0;
+  fill: #fff4d6;
+}
+
+.hero__bloom {
+  position: absolute;
+  left: var(--hero-sun-x);
+  bottom: -20%;
+  width: min(1900px, 140%);
   aspect-ratio: 1.9;
   opacity: 0;
   transform: translate(-50%, 18%) scale(0.86);
-  background: radial-gradient(
-    ellipse at 50% 50%,
-    rgba(255, 219, 168, 0.6) 0%,
-    rgba(255, 190, 137, 0.32) 32%,
-    rgba(255, 168, 120, 0.13) 56%,
-    rgba(255, 162, 116, 0) 76%
-  );
+  background: radial-gradient(ellipse at 50% 50%, rgb(255 219 168 / 0.62) 0%, rgb(255 190 137 / 0.32) 32%, rgb(255 168 120 / 0.13) 56%, rgb(255 162 116 / 0) 76%);
 }
 
-.mg-hero__sun {
+.hero__sun {
   position: absolute;
-  left: 50%;
-  bottom: 2%;
-  width: min(980px, 48%);
+  left: var(--hero-sun-x);
+  bottom: 14%;
+  width: min(760px, 56%);
   aspect-ratio: 1;
   border-radius: 50%;
-  opacity: 0.3;
-  transform: translate(-50%, 62%);
-  /* Fades the whole way out rather than holding near-opaque to 91% and
-     dropping off a cliff. The old stops drew a flat disc with a visible
-     rim - an orange ball sitting in front of the sky instead of light
-     coming through it. Every stop now carries its own alpha, so the edge
-     dissolves into the plate underneath. */
-  background: radial-gradient(
-    circle at 50% 50%,
-    rgba(255, 252, 241, 0.98) 0%,
-    rgba(255, 247, 226, 0.93) 16%,
-    rgba(255, 236, 198, 0.82) 31%,
-    rgba(255, 219, 168, 0.62) 45%,
-    rgba(255, 199, 143, 0.4) 58%,
-    rgba(255, 183, 128, 0.22) 70%,
-    rgba(255, 173, 120, 0.09) 82%,
-    rgba(255, 168, 116, 0) 93%
-  );
+  opacity: 0.25;
+  transform: translate(-50%, 70%);
+  /* A soft edge: light coming through the sky, not a disc in front of it. */
+  filter: blur(18px);
+  background: radial-gradient(circle at 50% 50%, rgb(255 252 241 / 0.98) 0%, rgb(255 247 226 / 0.93) 16%, rgb(255 236 198 / 0.82) 31%, rgb(255 219 168 / 0.62) 45%, rgb(255 199 143 / 0.4) 58%, rgb(255 183 128 / 0.22) 70%, rgb(255 173 120 / 0.09) 82%, rgb(255 168 116 / 0) 93%);
 }
 
-/* Closes the last stretch to the page ground, so the hero ends on the
-   colour the next section starts on instead of meeting it at a line. */
-.mg-hero__foot {
+/* The hand-off to the page: the last stretch resolves to the canvas the
+   sections below sit on, in either theme. */
+.hero__foot {
   position: absolute;
   left: 0;
   right: 0;
   bottom: -1px;
-  height: 16%;
+  height: clamp(90px, 14svh, 160px);
   background: linear-gradient(
     to bottom,
     transparent 0%,
-    color-mix(in oklab, var(--mg-ground) 16%, transparent) 44%,
-    color-mix(in oklab, var(--mg-ground) 58%, transparent) 74%,
-    color-mix(in oklab, var(--mg-ground) 88%, transparent) 91%,
-    var(--mg-ground) 100%
+    color-mix(in oklab, var(--hero-ground) 30%, transparent) 40%,
+    color-mix(in oklab, var(--hero-ground) 78%, transparent) 72%,
+    var(--hero-ground) 100%
   );
 }
 
-/* ══════════════ the sunrise ══════════════
-   One shot. No loop, no reverse, no scroll binding. A loop would nag; this
-   resolves and stays resolved, which is the only reason the genre change at
-   the fold reads as a journey rather than an inconsistency. */
+/* ══════════════ the sunrise, once ══════════════ */
 
-@keyframes mgSkyDusk {
-  0%,
-  6% {
-    opacity: 0;
-  }
-  52%,
-  100% {
-    opacity: 1;
-  }
+@keyframes heroDusk {
+  0%, 8% { opacity: 0; }
+  55%, 100% { opacity: 1; }
+}
+@keyframes heroDawn {
+  0%, 46% { opacity: 0; }
+  100% { opacity: 1; }
+}
+@keyframes heroStarsOut {
+  0%, 20% { opacity: 1; }
+  60%, 100% { opacity: 0; }
+}
+@keyframes heroSun {
+  0% { opacity: 0.25; transform: translate(-50%, 70%); }
+  25% { opacity: 0.9; }
+  100% { opacity: 1; transform: translate(-50%, 8%); }
+}
+@keyframes heroBloom {
+  0% { opacity: 0; transform: translate(-50%, 18%) scale(0.86); }
+  100% { opacity: 1; transform: translate(-50%, 0) scale(1); }
+}
+@keyframes heroInk {
+  0%, 52% { color: #fff; }
+  68%, 100% { color: var(--hero-ink, #fff); }
+}
+@keyframes heroRise {
+  0% { opacity: 0.01; transform: translateY(18px); filter: blur(8px); }
+  100% { opacity: 1; transform: none; filter: blur(0); }
 }
 
-@keyframes mgSkyDawn {
-  0%,
-  44% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
+/* Night, held: in dark mode the walk stops before dawn. */
+@keyframes heroDuskNight {
+  0%, 8% { opacity: 0; }
+  100% { opacity: 0.34; }
+}
+@keyframes heroSunNight {
+  0% { opacity: 0.15; transform: translate(-50%, 70%); }
+  100% { opacity: 0.32; transform: translate(-50%, 52%); }
+}
+@keyframes heroBloomNight {
+  0% { opacity: 0; transform: translate(-50%, 18%) scale(0.86); }
+  100% { opacity: 0.55; transform: translate(-50%, 6%) scale(0.95); }
 }
 
-@keyframes mgSunRise {
-  0% {
-    opacity: 0.3;
-    transform: translate(-50%, 62%);
-  }
-  22% {
-    opacity: 0.92;
-  }
-  100% {
-    opacity: 1;
-    transform: translate(-50%, 0);
-  }
-}
+.hero__title { --hero-ink: var(--hero-ink-title); }
+.hero__sub { --hero-ink: var(--hero-ink-sub); }
 
-@keyframes mgBloomIn {
-  0% {
-    opacity: 0;
-    transform: translate(-50%, 18%) scale(0.86);
+@media (prefers-reduced-motion: no-preference) {
+  .hero__plate--dusk { animation: heroDusk var(--hero-sunrise) var(--hero-sunrise-ease) both; }
+  .hero__plate--dawn { animation: heroDawn var(--hero-sunrise) var(--hero-sunrise-ease) both; }
+  .hero__stars { animation: heroStarsOut var(--hero-sunrise) var(--hero-sunrise-ease) both; }
+  .hero__sun { animation: heroSun var(--hero-sunrise) var(--hero-sunrise-ease) both; }
+  .hero__bloom { animation: heroBloom var(--hero-sunrise) var(--hero-sunrise-ease) both; }
+
+  .hero__head > * {
+    animation:
+      heroRise var(--hero-rise) var(--hero-rise-ease) both,
+      heroInk var(--hero-sunrise) var(--hero-sunrise-ease) both;
   }
-  100% {
-    opacity: 1;
-    transform: translate(-50%, 0) scale(1);
-  }
-}
+  .hero__head > :nth-child(2) { animation-delay: 0.14s, 0s; }
+  .hc { animation: heroRise 1100ms var(--hero-rise-ease) 0.3s both; }
 
-/* ══════════════ the type, as the sky brightens ══════════════
-   The sky this copies ends bright: #93bbf8 at the top, #b8c6eb behind the
-   headline. White type on that is 1.7:1, which is what the reference
-   actually ships - it opens legible on night and walks itself into being
-   hard to read. Copying the sky and not that is the whole point of
-   rebuilding it rather than screenshotting it.
-
-   So the words travel too. They start white against the night and arrive
-   at an ink drawn from the same blue, which lands the headline at about
-   9:1 on the sky behind it. The swap is deliberately quick and late -
-   between 52% and 66% of the clock - so it happens while the sky is
-   passing through its mid lavender, where both white and ink still read,
-   rather than dragging a grey midpoint across the whole five seconds. */
-
-.mg-hero__title { --mg-ink-rest: #12213d; }
-.mg-hero__sub { --mg-ink-rest: #1c2942; }
-.mg-hero__micro { --mg-ink-rest: #2b3550; }
-.mg-navlink { --mg-ink-rest: #14233f; }
-.mg-nav__brand { --mg-ink-rest: #12213d; }
-
-@keyframes mgTypeInk {
-  0%,
-  52% {
+  html.dark .hero__plate--dusk { animation-name: heroDuskNight; }
+  html.dark .hero__plate--dawn { animation: none; opacity: 0; }
+  html.dark .hero__stars { animation: none; opacity: 1; }
+  html.dark .hero__sun { animation-name: heroSunNight; }
+  html.dark .hero__bloom { animation-name: heroBloomNight; }
+  html.dark .hero__head > * {
+    animation: heroRise var(--hero-rise) var(--hero-rise-ease) both;
     color: #fff;
   }
-  66%,
-  100% {
-    color: var(--mg-ink-rest);
-  }
+  html.dark .hero__head > :nth-child(2) { animation-delay: 0.14s; }
 }
 
-/* ══════════════ the entrance ══════════════
-   The reference's own numbers: .9s, easeOutCubic, opacity from a hair above
-   zero, an 18px rise and an 8px blur that clears. Staggered 120ms apart. */
-
-@keyframes mgHeroRise {
-  0% {
-    opacity: 0.011;
-    transform: translateY(18px);
-    filter: blur(8px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-    filter: blur(0);
-  }
-}
-
-/* Opt in, never override: with no-preference as the gate, a reader who has
-   asked for less motion never has an animation applied that a later rule
-   has to undo. Everything below is decoration on a page that is already
-   fully painted and readable without it. */
-@media (prefers-reduced-motion: no-preference) {
-  .mg-hero__plate--dusk {
-    animation: mgSkyDusk var(--mg-sunrise) var(--mg-sunrise-ease) both;
-  }
-
-  .mg-hero__plate--dawn {
-    animation: mgSkyDawn var(--mg-sunrise) var(--mg-sunrise-ease) both;
-  }
-
-  .mg-hero__sun {
-    animation: mgSunRise var(--mg-sunrise) var(--mg-sunrise-ease) both;
-  }
-
-  .mg-hero__bloom {
-    animation: mgBloomIn var(--mg-sunrise) var(--mg-sunrise-ease) both;
-  }
-
-  .mg-hero__cardwrap,
-  .mg-hero__trustitem {
-    animation: mgHeroRise var(--mg-rise) var(--mg-rise-ease) both;
-  }
-
-  /* Two animations on one element, so every delay below is a pair: the
-     entrance is staggered, the ink never is - it has to stay in step with
-     the sky no matter which line it is painting. */
-  .mg-hero__head > * {
-    animation:
-      mgHeroRise var(--mg-rise) var(--mg-rise-ease) both,
-      mgTypeInk var(--mg-sunrise) var(--mg-sunrise-ease) both;
-  }
-
-  .mg-navlink,
-  .mg-nav__brand {
-    animation: mgTypeInk var(--mg-sunrise) var(--mg-sunrise-ease) both;
-  }
-
-  .mg-hero__head > :nth-child(2) {
-    animation-delay: 0.12s, 0s;
-  }
-
-  .mg-hero__head > :nth-child(3) {
-    animation-delay: 0.24s, 0s;
-  }
-
-  .mg-hero__head > :nth-child(4) {
-    animation-delay: 0.32s, 0s;
-  }
-
-  .mg-hero__cardwrap {
-    animation-delay: 0.35s;
-  }
-
-  .mg-hero__trustitem {
-    animation-duration: 0.7s;
-    animation-delay: 0.55s;
-  }
-
-  .mg-hero__trustitem + .mg-hero__trustitem {
-    animation-delay: 0.65s;
-  }
-}
-
-/* With reduced motion the sky is simply already at dawn. Same picture, no
-   journey - which is the honest translation of a five-second sunrise. */
+/* Reduced motion: the picture without the journey. */
 @media (prefers-reduced-motion: reduce) {
-  .mg-hero__plate--dusk,
-  .mg-hero__plate--dawn,
-  .mg-hero__bloom {
-    opacity: 1;
-  }
+  .hero__plate--dusk,
+  .hero__plate--dawn,
+  .hero__bloom { opacity: 1; }
+  .hero__stars { opacity: 0; }
+  .hero__sun { opacity: 1; transform: translate(-50%, 8%); }
+  .hero__title,
+  .hero__sub { color: var(--hero-ink); }
 
-  .mg-hero__sun {
-    opacity: 1;
-    transform: translate(-50%, 0);
-  }
-
-  /* No walk, so the words are simply already ink on the already-bright sky. */
-  .mg-hero__title,
-  .mg-hero__sub,
-  .mg-hero__micro,
-  .mg-navlink,
-  .mg-nav__brand {
-    color: var(--mg-ink-rest);
-  }
+  html.dark .hero__plate--dusk { opacity: 0.34; }
+  html.dark .hero__plate--dawn { opacity: 0; }
+  html.dark .hero__stars { opacity: 1; }
+  html.dark .hero__sun { opacity: 0.32; transform: translate(-50%, 52%); }
+  html.dark .hero__bloom { opacity: 0.55; transform: translate(-50%, 6%) scale(0.95); }
+  html.dark .hero__title,
+  html.dark .hero__sub { color: #fff; }
 }
 
-/* ══════════════ the head ══════════════ */
+/* ══════════════ the words ══════════════ */
 
-.mg-hero__head {
+.hero__inner {
   position: relative;
-  z-index: 5;
+  z-index: 2;
+  width: 100%;
+  max-width: var(--space-max);
+  margin-inline: auto;
+}
+
+.hero__head {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: clamp(14px, 1.8svh, 20px);
-  width: 100%;
-  max-width: 760px;
+  gap: clamp(12px, 1.8svh, 20px);
+  text-align: center;
+  margin-bottom: clamp(20px, 4svh, 44px);
 }
 
-.mg-hero__title {
+.hero__title {
   margin: 0;
-  max-width: 17ch;
-  font-family: var(--font-display), ui-serif, Georgia, "Times New Roman", serif;
+  font-family: var(--font-display);
   font-optical-sizing: auto;
-  /* The reference sets 44px at a 1180px window and does not chase the
-     viewport much past it. A display line this short does not need to. */
-  font-size: clamp(31px, 4.5vw, 54px);
-  font-weight: 400;
-  line-height: 1.1;
-  letter-spacing: -0.014em;
+  font-size: clamp(2.5rem, 5.6vw, 4.75rem);
+  font-weight: 350;
+  line-height: 1.04;
+  letter-spacing: -0.018em;
   color: #fff;
   text-wrap: balance;
-  /* A display size against a 320px screen will overflow on one long word
-     unless it is allowed to break inside it. */
   overflow-wrap: anywhere;
   min-width: 0;
 }
 
-.mg-hero__sub {
+.hero__line { display: inline-block; }
+
+.hero__title .type-script {
+  font-size: 1.12em;
+  line-height: 0.9;
+}
+
+.hero__sub {
   margin: 0;
-  max-width: 34ch;
-  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
-  font-size: clamp(15.5px, 1.5vw, 21px);
-  font-weight: 400;
-  line-height: 1.3;
-  color: rgba(255, 255, 255, 0.94);
+  max-width: 36ch;
+  font-family: var(--font-sans);
+  font-size: clamp(1rem, 1.35vw, 1.2rem);
+  line-height: 1.45;
+  color: #fff;
   text-wrap: balance;
 }
 
-/* The one thing on the screen that looks pressable. */
-.mg-hero__cta {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 4px;
-  min-height: 52px;
-  padding: 0 clamp(26px, 3vw, 38px);
-  border-radius: 999px;
-  border: 1px solid #fff;
-  background: #fff;
-  color: #10233f;
-  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
-  font-size: clamp(15px, 1.15vw, 17px);
-  font-weight: 600;
-  letter-spacing: -0.004em;
-  line-height: 1;
-  text-decoration: none;
-  white-space: nowrap;
-  transition:
-    background-color 200ms var(--mg-rise-ease),
-    border-color 200ms var(--mg-rise-ease),
-    transform 200ms var(--mg-rise-ease);
-}
+/* ══════════════ the house and its panel ══════════════ */
 
-.mg-hero__cta:hover {
-  background: rgba(255, 255, 255, 0.91);
-  border-color: rgba(255, 255, 255, 0.91);
-}
-
-.mg-hero__cta:active {
-  transform: translateY(1px);
-}
-
-.mg-hero__micro {
-  margin: 0;
-  max-width: 44ch;
-  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
-  font-size: clamp(12.5px, 0.95vw, 14px);
-  line-height: 1.5;
-  color: rgba(255, 255, 255, 0.92);
-  text-wrap: balance;
-}
-
-/* Drawn on a sky that runs from near-black to mid-blue, so it needs both a
-   light ring and a dark one to survive either end. Never animated: focus
-   has to be instant. */
-.mg-hero__cta:focus-visible,
-.mg-navlink:focus-visible,
-.mg-nav__brand:focus-visible,
-.mg-nav__toggle:focus-visible {
-  outline: 2px solid #fff;
-  outline-offset: 3px;
-  box-shadow: 0 0 0 5px rgba(9, 29, 62, 0.5);
-}
-
-/* ══════════════ the product card ══════════════ */
-
-.mg-hero__cardwrap {
-  position: relative;
-  z-index: 5;
-  display: flex;
-  justify-content: center;
-  width: 100%;
-  margin-top: clamp(22px, 4svh, 46px);
-}
-
-.mg-hero__card {
-  width: min(636px, 100%);
-  padding: 10px;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.92);
-  background: linear-gradient(
-    215.5deg,
-    rgba(235, 243, 253, 0.8) 8%,
-    rgba(255, 255, 255, 0.72) 38%,
-    rgba(240, 241, 248, 0.8) 67%,
-    rgba(255, 250, 248, 0.8) 96%
-  );
-  -webkit-backdrop-filter: blur(135px);
-  backdrop-filter: blur(135px);
-  box-shadow:
-    0 -3px 12px 3px rgba(255, 255, 255, 0.25),
-    0 7px 14px rgba(168, 121, 84, 0.2);
-  text-align: left;
-}
-
-.mg-hero__cardface {
-  border-radius: 7px;
-  background: rgba(255, 255, 255, 0.72);
-  padding: clamp(16px, 2.4vw, 22px);
-}
-
-.mg-hero__cardhead {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 12px;
-  padding-bottom: 14px;
-  border-bottom: 1px solid rgba(23, 26, 23, 0.09);
-}
-
-.mg-hero__cardtitle {
-  font-family: var(--font-display), ui-serif, Georgia, serif;
-  font-optical-sizing: auto;
-  font-size: clamp(17px, 1.5vw, 20px);
-  font-weight: 400;
-  color: #16201f;
-}
-
-.mg-hero__cardmeta {
-  font-family: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 10.5px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: #6c7a6f;
-}
-
-.mg-hero__cardgrid {
+.hc {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
-  margin-top: 16px;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(16px, 3vw, 28px);
+  align-items: center;
 }
 
-.mg-hero__field {
+@media (min-width: 1024px) {
+  .hc {
+    grid-template-columns: minmax(0, 1.35fr) minmax(360px, 400px);
+    gap: clamp(24px, 3vw, 48px);
+  }
+}
+
+.hc__scene {
+  position: relative;
+  width: 100%;
+  max-width: 760px;
+  margin-inline: auto;
+}
+
+.hc__tip {
+  margin: 10px 0 0;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-ink-3);
+}
+
+html.dark .hc__tip { color: var(--color-ink-3); }
+
+/* On a pointer that cannot hover, the tip is the only hint the rooms
+   are tappable; on a mouse, the rooms light on hover and say it. */
+@media (hover: hover) and (pointer: fine) {
+  .hc__tip { opacity: 0.9; }
+}
+
+.hc__panel {
+  width: 100%;
+  max-width: 560px;
+  margin-inline: auto;
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 14px;
+  padding: clamp(16px, 2.2vw, 22px);
+  border-radius: 24px;
+  border: 1px solid var(--color-glass-line);
+  background: color-mix(in oklab, var(--color-surface) 90%, transparent);
+  box-shadow: var(--shadow-pop);
+  -webkit-backdrop-filter: saturate(160%) blur(18px);
+  backdrop-filter: saturate(160%) blur(18px);
+  color: var(--color-ink);
+}
+
+.hc__mode { width: 100%; }
+.hc__mode > button { flex: 1 1 0; }
+
+.hc__where {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 48px;
+  border-radius: 14px;
+  border: 1px solid var(--color-line-2);
+  background: var(--color-surface);
+  transition: border-color var(--duration-fast) var(--ease-out), box-shadow var(--duration-fast) var(--ease-out);
+}
+.hc__where:hover { border-color: var(--color-ink-4); }
+.hc__where:focus-within {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 18%, transparent);
+}
+.hc__where-icon {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  margin-left: 14px;
+  color: var(--color-ink-3);
+}
+.hc__where input {
+  flex: 1;
   min-width: 0;
-  padding: 10px 12px;
-  border-radius: 8px;
-  border: 1px solid rgba(23, 26, 23, 0.1);
-  background: rgba(255, 255, 255, 0.86);
+  height: 100%;
+  padding: 0 14px 0 10px;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--color-ink);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+}
+.hc__where input::placeholder { color: var(--color-ink-4); font-weight: 500; }
+/* The wrapper draws the focus; the input's own ring would double it. */
+.hc__where input:focus-visible { box-shadow: none; }
+
+.hc__tabs { margin-top: 2px; }
+
+.hc__tabpanel {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  min-height: 150px;
 }
 
-.mg-hero__fieldlabel {
-  font-family: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 9.5px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: #6c7a6f;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.mg-hero__fieldvalue {
-  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
-  font-size: clamp(13px, 1.1vw, 15px);
-  line-height: 1.2;
-  color: #16201f;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* These read as placeholders because they are drawn as placeholders. A
-   filled-in suburb and a weekly rent would read as stock we can show. */
-.mg-hero__fieldvalue--ghost {
-  color: #9aa69c;
-}
-
-.mg-hero__cardbar {
+.hc-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  margin-top: 16px;
+  gap: 14px;
+  padding: 8px 0;
+}
+.hc-row__text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.hc-row__label { font-size: 14.5px; font-weight: 600; color: var(--color-ink); }
+.hc-row__hint { font-size: 13px; line-height: 1.35; color: var(--color-ink-3); }
+
+.hc__note {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: var(--color-ink-3);
 }
 
-.mg-hero__chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  min-width: 0;
-  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
-  font-size: clamp(11.5px, 1vw, 13px);
-  color: #3f4740;
-}
-
-.mg-hero__chipdot {
-  flex: none;
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: #2f6b4f;
-  box-shadow: 0 0 0 3px rgba(47, 107, 79, 0.15);
-}
-
-.mg-hero__cardbtn {
-  flex: none;
-  display: inline-flex;
-  align-items: center;
-  padding: 9px 18px;
-  border-radius: 999px;
-  background: #132720;
-  color: #fff;
-  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
-  font-size: clamp(12.5px, 1vw, 14px);
-  font-weight: 600;
-  line-height: 1;
-}
-
-.mg-hero__results {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-top: 18px;
-  padding-top: 18px;
-  border-top: 1px solid rgba(23, 26, 23, 0.09);
-}
-
-.mg-hero__row {
-  height: clamp(58px, 8vw, 74px);
-  border-radius: 8px;
-  border: 1px solid rgba(23, 26, 23, 0.07);
-  border-left-width: 3px;
-  background: rgba(255, 255, 255, 0.72);
-}
-
-.mg-hero__row--a {
-  border-left-color: #3f6b57;
-}
-
-.mg-hero__row--b {
-  border-left-color: #1f6a8c;
-}
-
-.mg-hero__row--c {
-  border-left-color: #b96848;
-}
-
-/* ══════════════ the trust line ══════════════ */
-
-.mg-hero__trust {
-  position: relative;
-  z-index: 5;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 12px;
-  width: 100%;
-  margin-top: clamp(20px, 3.4svh, 34px);
-}
-
-.mg-hero__trustitem {
-  display: inline-flex;
-  align-items: center;
-  min-height: 46px;
-  padding: 0 20px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.34);
-  background: linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.1));
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
-  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
-  font-size: clamp(12.5px, 1vw, 14px);
-  font-weight: 500;
-  line-height: 1;
-  color: #15243d;
-  white-space: nowrap;
-}
-
-/* ══════════════ navigation ══════════════
-   Wordmark left, links centred, phone toggle right. No pills and no action:
-   the reference keeps the top of the page quiet so the one button under the
-   headline is the only thing that looks pressable. */
-
-.mg-nav {
-  position: absolute;
-  top: var(--mg-nav-top);
-  left: 0;
-  right: 0;
-  z-index: 10;
+.hc__extras {
   display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items: center;
-  gap: 16px;
-  padding: 0 clamp(14px, 1.4vw, 26px);
-}
-
-.mg-nav__brand {
-  justify-self: start;
-  display: inline-flex;
-  align-items: center;
-  font-family: var(--font-condensed), "Archivo Narrow", "Roboto Condensed", ui-sans-serif, sans-serif;
-  font-size: clamp(21px, 2vw, 30px);
-  font-weight: 700;
-  font-variation-settings: "wdth" 72;
-  letter-spacing: 0.012em;
-  line-height: 1;
-  color: #fff;
-  text-decoration: none;
-}
-
-.mg-nav__links {
-  justify-self: center;
-  display: flex;
-  align-items: center;
-  gap: clamp(14px, 1.9vw, 30px);
-  list-style: none;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
   margin: 0;
   padding: 0;
+  list-style: none;
 }
 
-.mg-nav__actions {
-  justify-self: end;
-  display: flex;
-  align-items: center;
-}
-
-.mg-navlink {
+.hc-chip {
   display: inline-flex;
   align-items: center;
-  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
-  font-size: clamp(13.5px, 1.05vw, 15.5px);
-  font-weight: 500;
-  letter-spacing: -0.004em;
-  line-height: 1;
-  white-space: nowrap;
-  text-decoration: none;
-  color: rgba(255, 255, 255, 0.86);
-  transition: color 180ms var(--mg-rise-ease);
-}
-
-.mg-navlink:hover,
-.mg-navlink[aria-current="page"] {
-  color: #fff;
-}
-
-.mg-nav__toggle {
-  display: none;
-  align-items: center;
-  justify-content: center;
-  width: 42px;
+  gap: 8px;
+  width: 100%;
   height: 42px;
-  border-radius: 999px;
-  color: #fff;
-  background: rgba(255, 255, 255, 0.13);
-  border: 1px solid rgba(255, 255, 255, 0.28);
-  -webkit-backdrop-filter: blur(14px) saturate(1.25);
-  backdrop-filter: blur(14px) saturate(1.25);
+  padding: 0 14px;
+  border-radius: 12px;
+  border: 1px solid var(--color-line-2);
+  background: var(--color-surface);
+  color: var(--color-ink-2);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
   cursor: pointer;
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out),
+    transform var(--duration-micro) var(--ease-out);
+}
+.hc-chip:hover { border-color: var(--color-ink-4); color: var(--color-ink); }
+.hc-chip:active { transform: scale(0.98); }
+.hc-chip[aria-pressed="true"] {
+  background: var(--color-primary-soft);
+  border-color: var(--color-primary);
+  color: var(--color-primary-700);
+}
+html.dark .hc-chip[aria-pressed="true"] { color: var(--color-primary); }
+
+.hc__summary {
+  margin: 0;
+  min-height: 2.9em;
+  padding-top: 12px;
+  border-top: 1px solid var(--color-line);
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--color-ink-2);
 }
 
-/* The sheet's blur would otherwise show the nav ghosting through behind its
-   own header. */
-.mg-nav--hidden {
-  visibility: hidden;
-}
+.hc__go { gap: 10px; }
 
-/* ── phone menu sheet ── */
-.mg-nav__sheet {
-  position: fixed;
-  inset: 0;
-  z-index: 60;
-  display: flex;
-  flex-direction: column;
-  padding: 20px;
-  gap: 4px;
-  background: rgba(7, 26, 62, 0.78);
-  -webkit-backdrop-filter: blur(22px) saturate(1.3);
-  backdrop-filter: blur(22px) saturate(1.3);
-}
-
-.mg-nav__sheet-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 12px;
-}
-
-.mg-navlink--sheet {
-  min-height: 52px;
-  padding: 0 4px;
-  font-size: 17px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-}
-
-/* ══════════════ editorial section under the hero ══════════════ */
-
-.mg-intro {
-  position: relative;
-  background: #fff;
-  /* No top border, no shadow: the hero's fog has already reached solid white
-     by the time it gets here, so the join has to be invisible. */
-  padding: clamp(88px, 15svh, 190px) 24px clamp(104px, 18svh, 220px);
+.hc__small {
+  margin: -4px 0 0;
   text-align: center;
+  font-size: 12.5px;
+  color: var(--color-ink-3);
 }
 
-.mg-intro__eyebrow {
-  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
-  font-size: clamp(10.5px, 0.86vw, 12.5px);
-  font-weight: 500;
-  letter-spacing: 0.17em;
-  text-transform: uppercase;
-  color: #7a7672;
-  margin: 0 0 clamp(22px, 3.4svh, 40px);
+@media (max-width: 380px) {
+  .hc__extras { grid-template-columns: minmax(0, 1fr); }
+  .hc-row { flex-wrap: wrap; }
 }
 
-.mg-intro__headline {
-  margin: 0 auto;
-  max-width: 18ch;
-  font-family: var(--font-display), ui-serif, Georgia, 'Times New Roman', serif;
-  font-optical-sizing: auto;
-  font-size: clamp(30px, 3.4vw, 58px);
-  font-weight: 350;
-  line-height: 1.12;
-  letter-spacing: -0.012em;
-  color: #16201f;
-  text-wrap: balance;
-}
-
-/* This line is the page's type specimen - the first thing under the
-   photograph and the only heading on the homepage that gets both halves of
-   the system in one breath: the serif, and the script on the last word. */
-.mg-intro__headline strong {
-  font-weight: 700;
-  letter-spacing: -0.022em;
-}
-
-/* ── dark theme ──
-   The hero is a bright photograph and the editorial line under it is white on
-   white; that is the design, and dimming it would only muddy the picture. So
-   in dark mode the section keeps its light ground and hands off with a long
-   dusk gradient into the page background, instead of meeting it at a hard
-   white-to-espresso line. */
-:where(.dark) .mg-intro {
-  padding-bottom: clamp(190px, 30svh, 380px);
-}
-
-:where(.dark) .mg-intro::after {
-  content: "";
-  position: absolute;
-  inset: auto 0 0 0;
-  height: clamp(180px, 32svh, 400px);
-  /* Two layers: the tonal ramp, plus a dune-amber wash through the middle so
-     the white does not pass through grey on its way to espresso. */
-  background:
-    linear-gradient(
-      to bottom,
-      rgba(184, 107, 33, 0) 0%,
-      rgba(184, 107, 33, 0.13) 48%,
-      rgba(184, 107, 33, 0) 88%
-    ),
-    linear-gradient(
-      to bottom,
-      #fff 0%,
-      #fff 16%,
-      color-mix(in oklab, var(--color-bg) 20%, #fff) 42%,
-      color-mix(in oklab, var(--color-bg) 58%, #fff) 68%,
-      color-mix(in oklab, var(--color-bg) 87%, #fff) 88%,
-      var(--color-bg) 100%
-    );
-  pointer-events: none;
-}
-
-/* ══════════════ breakpoints ══════════════ */
-
-/* Tablet and below: the centred link row will not fit beside a wordmark, so
-   it becomes the sheet. */
-@media (max-width: 1023px) {
-  .mg-nav__links {
-    display: none;
-  }
-
-  .mg-nav__toggle {
-    display: inline-flex;
-  }
-
-  .mg-hero {
-    min-height: min(1100px, 108svh);
-  }
-
-  .mg-hero__sun {
-    width: min(820px, 74%);
-  }
-
-  .mg-hero__bloom {
-    width: min(1600px, 180%);
-  }
-}
-
-/* Phone. The three search cells stack: at this width they would each be
-   about 90px wide, which turns every label into two lines. */
-@media (max-width: 767px) {
-  .mg-hero {
-    padding-top: clamp(64px, 11svh, 92px);
-    min-height: auto;
-  }
-
-  .mg-hero__cardgrid {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .mg-hero__cardbar {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 10px;
-  }
-
-  .mg-hero__cardbtn {
-    justify-content: center;
-  }
-
-  .mg-hero__trust {
-    gap: 8px;
-  }
-
-  .mg-hero__trustitem {
-    padding: 0 15px;
-  }
-
-  .mg-hero__sun {
-    width: min(700px, 104%);
-  }
-}
-
-/* Small phones. The trust pills are the first thing that has to give: two
-   of them side by side at 320px is four lines of text in two pills. */
-@media (max-width: 400px) {
-  .mg-hero__trust {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .mg-hero__trustitem {
-    width: 100%;
-    justify-content: center;
-  }
-}
-
-/* Landscape phones: a 112svh hero on a 380px-tall window is four screens of
-   sky before anything happens. */
+/* Landscape phones: do not make the sky four screens tall. */
 @media (max-height: 560px) and (orientation: landscape) {
-  .mg-hero {
-    min-height: auto;
-    padding-top: clamp(56px, 14svh, 84px);
-  }
+  .hero { padding-top: calc(84px + 16px); }
 }

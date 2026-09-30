@@ -3,7 +3,8 @@ import { SITE_URL } from "../lib/site";
 import { API_BASE_URL } from "../lib/apiBase";
 import { getAllPosts } from "../data/blogPosts";
 import guidesContent from "../data/guidesContent";
-import { HELP_ARTICLES } from "../lib/helpData";
+import { HELP_ARTICLES, HELP_CATEGORIES } from "../lib/helpData";
+import { HIDDEN_GUIDES, HIDDEN_POSTS } from "../data/resources";
 import contentLastmod from "../data/contentLastmod.json";
 
 // Dates come from git history via scripts/content-lastmod.mjs, committed as
@@ -17,30 +18,27 @@ type Entry = { path: string; priority: string; changefreq: string };
 // noindex and intentionally excluded.
 const STATIC_PAGES: Entry[] = [
   { path: "/", priority: "1.0", changefreq: "daily" },
-  { path: "/for-seekers", priority: "0.9", changefreq: "weekly" },
-  { path: "/for-owners", priority: "0.9", changefreq: "weekly" },
+  // The public site after the 2026-09-29 redesign. The pages it merged
+  // (/for-seekers, /features, /safety-verification, /no-agency, /resources/*,
+  // /faq, /blog, /careers, /press) redirect now (see next.config.ts), and a
+  // redirect must not be submitted for indexing.
+  { path: "/how-renting-works", priority: "0.9", changefreq: "monthly" },
+  { path: "/for-owners", priority: "0.9", changefreq: "monthly" },
   { path: "/pricing", priority: "0.8", changefreq: "monthly" },
-  { path: "/features", priority: "0.8", changefreq: "monthly" },
-  { path: "/about", priority: "0.7", changefreq: "monthly" },
-  { path: "/mentors", priority: "0.6", changefreq: "monthly" },
-  { path: "/become-mentor", priority: "0.5", changefreq: "monthly" },
-  // Resources: the three consolidated hubs. /guides, /blog, /faq and /help
-  // are 301s now (see next.config.ts) and a redirect must not be submitted
-  // for indexing, so they are gone from here rather than merely reordered.
-  { path: "/resources", priority: "0.7", changefreq: "monthly" },
-  { path: "/resources/guides", priority: "0.8", changefreq: "weekly" },
-  { path: "/resources/tools", priority: "0.7", changefreq: "monthly" },
-  { path: "/resources/help", priority: "0.7", changefreq: "monthly" },
-  { path: "/resources/rental-laws", priority: "0.5", changefreq: "monthly" },
+  { path: "/guides", priority: "0.8", changefreq: "weekly" },
+  { path: "/guides/rental-laws", priority: "0.6", changefreq: "monthly" },
+  { path: "/help", priority: "0.7", changefreq: "monthly" },
+  { path: "/about", priority: "0.6", changefreq: "monthly" },
+  { path: "/contact", priority: "0.5", changefreq: "yearly" },
+  { path: "/mentors", priority: "0.5", changefreq: "monthly" },
+  { path: "/become-mentor", priority: "0.4", changefreq: "monthly" },
   // The 15,334 individual suburb pages are in /sitemap-suburbs.xml, which
   // is a sitemap index over 5,000-URL chunks. Only the directory itself is here.
   { path: "/suburbs", priority: "0.8", changefreq: "weekly" },
-  { path: "/contact", priority: "0.5", changefreq: "yearly" },
-  { path: "/safety-verification", priority: "0.5", changefreq: "monthly" },
+  // Legal centre
+  { path: "/legal", priority: "0.4", changefreq: "yearly" },
   { path: "/safety-reporting", priority: "0.4", changefreq: "yearly" },
   { path: "/support-disputes", priority: "0.4", changefreq: "yearly" },
-  { path: "/no-agency", priority: "0.3", changefreq: "yearly" },
-  // Legal
   { path: "/terms-of-service", priority: "0.3", changefreq: "yearly" },
   { path: "/privacy-policy", priority: "0.3", changefreq: "yearly" },
   { path: "/cookie-policy", priority: "0.3", changefreq: "yearly" },
@@ -69,14 +67,19 @@ function generateSitemap(
     const loc = page.path === "/" ? `${SITE_URL}/` : `${SITE_URL}${page.path}`;
     tags.push(urlTag(loc, page.changefreq, page.priority, LASTMOD[page.path]));
   }
-  for (const post of getAllPosts()) {
+  // Hidden guides and posts are off the site until they are rewritten, and
+  // their URLs redirect, so they are left out here too.
+  for (const post of getAllPosts().filter((p) => !HIDDEN_POSTS.has(p.slug))) {
     tags.push(urlTag(`${SITE_URL}/blog/${post.slug}`, "monthly", "0.6", LASTMOD["data:blogPosts"]));
   }
-  for (const guide of guidesContent) {
+  for (const guide of guidesContent.filter((g) => !HIDDEN_GUIDES.has(g.id))) {
     tags.push(urlTag(`${SITE_URL}/guides/${guide.id}`, "monthly", "0.6", LASTMOD["data:guidesContent"]));
   }
   for (const article of HELP_ARTICLES) {
     tags.push(urlTag(`${SITE_URL}/help/${article.slug}`, "monthly", "0.5", LASTMOD["data:helpData"]));
+  }
+  for (const category of HELP_CATEGORIES) {
+    tags.push(urlTag(`${SITE_URL}/help/category/${category.slug}`, "monthly", "0.4", LASTMOD["data:helpData"]));
   }
   // Listing pages: only published, still-available listings come back from
   // the search endpoint, so expired and unmoderated rooms never appear here.

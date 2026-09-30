@@ -25,7 +25,7 @@ export default function OwnerCard({ owner, listingId }: OwnerCardProps) {
 
   return (
     <GlassCard gradient="rose" padding="md">
-      <h2 className="text-lg font-bold text-[var(--color-ink)] mb-4">Your host</h2>
+      <h2 className="site-h3 site-h3--lg mb-4">Your host</h2>
 
       <div className="flex items-start gap-4">
         {owner.avatar_url ? (

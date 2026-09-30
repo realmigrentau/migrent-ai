@@ -29,6 +29,8 @@ const eslintConfig = defineConfig([
     "build/**",
     "next-env.d.ts",
     "public/service-worker.js",
+    // MapLibre's worker, copied from node_modules on install.
+    "public/vendor/**",
     "tests/e2e/**/*.mjs",
     "scripts/**/*.mjs",
     "playwright-report/**",

@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowLeft, MapPin, Star, CheckCircle, Send, Zap, BadgeCheck, Wallet, Mail } from "lucide-react";
+import { MapPin, Star, CheckCircle, Send, Zap, BadgeCheck, Wallet, Mail } from "lucide-react";
 import { useAuth } from "../../hooks/useAuth";
 import { getListingDetail, createBooking, type PublicListing } from "../../lib/api";
 import RequestToBookForm from "../../components/bookings/RequestToBookForm";
@@ -147,8 +147,8 @@ export default function ListingDetailPage({ initialListing }: { initialListing?:
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[var(--color-bg)]" aria-busy="true">
-        <div className="max-w-7xl mx-auto px-4 py-6">
+      <div className="min-h-screen" aria-busy="true">
+        <div className="site-shell pt-6 pb-16">
           <div className="aspect-[16/9] md:aspect-[2/1] rounded-2xl bg-[var(--color-surface-muted)] animate-pulse" />
           <div className="grid lg:grid-cols-3 gap-8 mt-8">
             <div className="lg:col-span-2 space-y-6">
@@ -168,23 +168,23 @@ export default function ListingDetailPage({ initialListing }: { initialListing?:
     return (
       <>
         <SEOHead title={isNetwork ? "Could not load this room" : "Room no longer listed"} noIndex />
-        <div className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center px-4">
+        <div className="min-h-[70vh] flex items-center justify-center px-4">
           <div className="text-center max-w-[42ch]">
-            <h1 className="font-serif text-[28px] tracking-[-0.015em] text-[var(--color-ink)] mb-2">
+            <h1 className="site-h2 !text-[clamp(1.8rem,3.2vw,2.4rem)] mb-3">
               {isNetwork ? "We could not load this room" : "This room is no longer listed"}
             </h1>
-            <p className="text-[14.5px] text-[var(--color-ink-2)] leading-[1.6] mb-6">
+            <p className="site-body mb-6">
               {isNetwork
                 ? "Something went wrong on our side, not yours. The listing is probably still there."
                 : "It may have been rented, or the host may have taken it down."}
             </p>
             <div className="flex flex-wrap gap-3 justify-center">
               {isNetwork && (
-                <button type="button" onClick={() => setRetryCount((n) => n + 1)} className="btn-primary h-[44px] px-5 rounded-[10px] text-[14px]">
+                <button type="button" onClick={() => setRetryCount((n) => n + 1)} className="btn-primary">
                   Try again
                 </button>
               )}
-              <Link href="/seeker/search" className="btn-secondary h-[44px] px-5 rounded-[10px] text-[14px] inline-flex items-center">
+              <Link href="/seeker/search" className="btn-secondary">
                 Browse other rooms
               </Link>
             </div>
@@ -213,21 +213,21 @@ export default function ListingDetailPage({ initialListing }: { initialListing?:
     return (
       <>
         <SEOHead title={`${title} (no longer available)`} description={`This room in ${locality} is no longer available on Migrent.`} noIndex />
-        <div className="min-h-screen bg-[var(--color-bg)]">
-          <div className="max-w-3xl mx-auto px-4 py-10">
-            <div className="rounded-2xl border border-[var(--color-line)] bg-[var(--color-surface)] p-6 md:p-8" role="status">
-              <p className="eyebrow mb-2">No longer available</p>
-              <h1 className="font-serif text-[28px] md:text-[36px] tracking-[-0.02em] leading-[1.05] text-[var(--color-ink)]">{title}</h1>
-              <p className="mt-3 text-[15px] text-[var(--color-ink-2)] leading-[1.6]">
+        <div className="min-h-[70vh]">
+          <div className="site-shell site-shell--text pt-10 pb-20">
+            <div className="site-card site-card--pad" role="status">
+              <p className="eyebrow mb-3">No longer available</p>
+              <h1 className="site-h2 !text-[clamp(1.8rem,3.4vw,2.6rem)]">{title}</h1>
+              <p className="site-body mt-3">
                 The host listed this room in {locality} as available until{" "}
                 <strong className="text-[var(--color-ink)]">{formatDate(listing.available_to)}</strong>. That date has passed, so it cannot be booked
                 and no longer appears in search. If the host renews it, it will be reviewed before it comes back.
               </p>
               <div className="mt-6 flex flex-wrap gap-3">
-                <Link href={`/seeker/search?suburb=${encodeURIComponent(listing.suburb || listing.city || "")}`} className="btn-primary h-[44px] px-5 rounded-[10px] text-[14px] inline-flex items-center">
+                <Link href={`/seeker/search?suburb=${encodeURIComponent(listing.suburb || listing.city || "")}`} className="btn-primary">
                   See rooms in {locality}
                 </Link>
-                <Link href="/seeker/search" className="btn-secondary h-[44px] px-5 rounded-[10px] text-[14px] inline-flex items-center">
+                <Link href="/seeker/search" className="btn-secondary">
                   Search everywhere
                 </Link>
               </div>
@@ -257,36 +257,27 @@ export default function ListingDetailPage({ initialListing }: { initialListing?:
         }}
       />
 
-      <div className="min-h-screen bg-[var(--color-bg)]">
-        <div className="sticky top-0 z-30 bg-[var(--color-surface)]/80 backdrop-blur-lg border-b border-[var(--color-line)]">
-          <div className="max-w-7xl mx-auto px-4 py-2 flex items-center gap-3">
-            <button type="button" onClick={() => router.back()} aria-label="Go back" className="w-11 h-11 inline-flex items-center justify-center rounded-full hover:bg-[var(--color-surface-muted)] transition-colors">
-              <ArrowLeft className="w-5 h-5 text-[var(--color-ink-2)]" aria-hidden="true" />
-            </button>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-[var(--color-ink)] truncate">{title}</p>
-              <div className="flex items-center gap-2 text-xs text-[var(--color-ink-3)]">
-                <span>{locality}</span>
-                {reviewStats && reviewStats.review_count > 0 && (
-                  <span className="flex items-center gap-0.5">
-                    <Star className="w-3 h-3 text-[var(--color-warn-500)] fill-[var(--color-warn-500)]" aria-hidden="true" />
-                    {Number(reviewStats.avg_rating).toFixed(1)}
-                    <span className="sr-only"> out of 5 from </span>
-                    <span className="text-[var(--color-ink-3)]">({reviewStats.review_count}<span className="sr-only"> reviews</span>)</span>
-                  </span>
-                )}
-              </div>
-            </div>
-            <div className="hidden sm:block">
-              <span className="text-lg font-semibold text-[var(--color-ink)] tabular-nums">
-                ${listing.weekly_price}
-                <span className="text-xs font-normal text-[var(--color-ink-3)]">/wk</span>
-              </span>
-            </div>
-          </div>
-        </div>
+      <div className="min-h-screen">
+        <div className="site-shell pt-6 pb-16">
+          <nav aria-label="Breadcrumb">
+            <ol className="page-hero__crumbs">
+              <li>
+                <Link href="/">Home</Link>
+              </li>
+              <li>
+                <Link href="/seeker/search">Search</Link>
+              </li>
+              {listing.suburb && (
+                <li>
+                  <Link href={`/seeker/search?suburb=${encodeURIComponent(listing.suburb)}`}>{listing.suburb}</Link>
+                </li>
+              )}
+              <li aria-current="page" className="max-w-[40ch] truncate">
+                {title}
+              </li>
+            </ol>
+          </nav>
 
-        <div className="max-w-7xl mx-auto px-4 py-6">
           {(isOwner || canModerate) && (
             <>
               <ModerationStatusBanner status={listing.moderation_status ?? "pending_approval"} moderationNotes={listing.moderation_notes ?? undefined} moderationReason={listing.moderation_reason ?? undefined} />
@@ -303,20 +294,44 @@ export default function ListingDetailPage({ initialListing }: { initialListing?:
 
           <ListingHero images={images} title={title} instantBook={isInstantBook} verification={listing.host_verification} />
 
-          <div className="mt-6">
-            <h1 className="font-serif text-[28px] md:text-[40px] tracking-[-0.02em] leading-[1.05] text-[var(--color-ink)]">{title}</h1>
-            <div className="flex items-center gap-2 mt-2 text-sm text-[var(--color-ink-3)]">
-              <MapPin className="w-4 h-4" aria-hidden="true" />
-              <span>{isOwner && listing.street_address ? `${listing.street_address}, ` : ""}{listing.display_address}</span>
+          <div className="mt-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+            <div className="min-w-0">
+              <h1 className="site-h2 !text-[clamp(2rem,4vw,3rem)]">{title}</h1>
+              <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-[14px] text-[var(--color-ink-2)]">
+                <span className="inline-flex items-center gap-1.5">
+                  <MapPin className="h-4 w-4 text-[var(--color-ink-3)]" aria-hidden="true" />
+                  {isOwner && listing.street_address ? `${listing.street_address}, ` : ""}
+                  {listing.display_address}
+                </span>
+                {reviewStats && reviewStats.review_count > 0 && (
+                  <span className="inline-flex items-center gap-1">
+                    <Star className="h-4 w-4 fill-[var(--color-warn-500)] text-[var(--color-warn-500)]" aria-hidden="true" />
+                    {Number(reviewStats.avg_rating).toFixed(1)}
+                    <span className="sr-only"> out of 5 from</span>
+                    <span className="text-[var(--color-ink-3)]">
+                      ({reviewStats.review_count}
+                      <span className="sr-only"> reviews</span>)
+                    </span>
+                  </span>
+                )}
+              </div>
+              {!isOwner && (
+                <p className="site-meta mt-2">
+                  {shortStay ? "The street address is shared once the host accepts your booking." : "The street address is shared when you book an inspection."}
+                </p>
+              )}
             </div>
-            {!isOwner && <p className="mt-1 text-xs text-[var(--color-ink-3)]">Street address is shared once a booking is agreed.</p>}
+            <p className="m-0 shrink-0 text-[28px] font-semibold tracking-[-0.02em] text-[var(--color-ink)] tabular-nums">
+              ${listing.weekly_price}
+              <span className="text-[14px] font-normal text-[var(--color-ink-3)]"> / week</span>
+            </p>
           </div>
 
-          <div className="grid lg:grid-cols-3 gap-8 mt-8">
+          <div className="mt-10 grid gap-8 lg:grid-cols-3 lg:gap-12">
             <div className="lg:col-span-2 space-y-8">
               <section aria-labelledby="about-heading">
-                <h2 id="about-heading" className="font-serif text-[22px] tracking-[-0.01em] text-[var(--color-ink)] mb-2">About this place</h2>
-                <p className="text-sm text-[var(--color-ink-2)] leading-relaxed whitespace-pre-line">{listing.description}</p>
+                <h2 id="about-heading" className="site-h3 site-h3--lg mb-3">About this place</h2>
+                <p className="site-body whitespace-pre-line">{listing.description}</p>
               </section>
 
               <TrueCostBadge weeklyRent={listing.weekly_price} billsIncluded={Boolean(listing.bills_included)} listingLat={listing.location?.approx_lat} listingLng={listing.location?.approx_lng} />
@@ -380,44 +395,47 @@ export default function ListingDetailPage({ initialListing }: { initialListing?:
               )}
 
               {/* What Migrent actually does. No guarantees, no invented support hours. */}
-              <div className="border-t border-[var(--color-line)] pt-8 pb-4">
-                <ul className="grid grid-cols-1 sm:grid-cols-3 gap-4 list-none p-0 m-0">
-                  <li className="flex items-start gap-3 p-4 rounded-xl bg-[var(--color-surface)]">
-                    <BadgeCheck className="w-7 h-7 text-[var(--color-accent)] shrink-0" aria-hidden="true" />
-                    <div>
-                      <p className="text-sm font-semibold text-[var(--color-ink)]">Host verification</p>
-                      <p className="text-xs text-[var(--color-ink-3)]">
-                        Government ID checked before a room goes live.{" "}
-                        <Link href="/safety-verification" className="underline underline-offset-2">What that does and does not mean</Link>
-                      </p>
-                    </div>
-                  </li>
-                  <li className="flex items-start gap-3 p-4 rounded-xl bg-[var(--color-surface)]">
-                    <Wallet className="w-7 h-7 text-[var(--color-primary)] shrink-0" aria-hidden="true" />
-                    <div>
-                      <p className="text-sm font-semibold text-[var(--color-ink)]">Renters pay $0</p>
-                      <p className="text-xs text-[var(--color-ink-3)]">Migrent never holds your rent or bond. Hosts pay a fee to Migrent; renters do not.</p>
-                    </div>
-                  </li>
-                  <li className="flex items-start gap-3 p-4 rounded-xl bg-[var(--color-surface)]">
-                    <Mail className="w-7 h-7 text-[var(--color-accent)] shrink-0" aria-hidden="true" />
-                    <div>
-                      <p className="text-sm font-semibold text-[var(--color-ink)]">Support by email</p>
-                      <p className="text-xs text-[var(--color-ink-3)]">
-                        {supportPromise()} <a href={`mailto:${siteIdentity.emails.support}`} className="underline underline-offset-2">{siteIdentity.emails.support}</a>
-                      </p>
-                    </div>
-                  </li>
-                </ul>
-              </div>
+              <ul className="m-0 grid list-none gap-3 border-t border-[var(--color-line)] p-0 pt-8 sm:grid-cols-3">
+                <li className="site-card site-card--pad">
+                  <span className="site-icon" aria-hidden="true">
+                    <BadgeCheck className="h-5 w-5" strokeWidth={1.9} />
+                  </span>
+                  <p className="site-h3 mt-4">Host ID checked</p>
+                  <p className="site-meta mt-1">
+                    A person reviews the host&apos;s government ID before a room goes live.{" "}
+                    <Link href="/how-renting-works#checks" className="underline underline-offset-2">
+                      What that does and does not mean
+                    </Link>
+                  </p>
+                </li>
+                <li className="site-card site-card--pad">
+                  <span className="site-icon" aria-hidden="true">
+                    <Wallet className="h-5 w-5" strokeWidth={1.9} />
+                  </span>
+                  <p className="site-h3 mt-4">Free to apply</p>
+                  <p className="site-meta mt-1">Searching, messaging and applying cost renters nothing. Migrent never holds your rent or bond.</p>
+                </li>
+                <li className="site-card site-card--pad">
+                  <span className="site-icon" aria-hidden="true">
+                    <Mail className="h-5 w-5" strokeWidth={1.9} />
+                  </span>
+                  <p className="site-h3 mt-4">Help by email</p>
+                  <p className="site-meta mt-1">
+                    {supportPromise()}{" "}
+                    <a href={`mailto:${siteIdentity.emails.support}`} className="underline underline-offset-2 [overflow-wrap:anywhere]">
+                      {siteIdentity.emails.support}
+                    </a>
+                  </p>
+                </li>
+              </ul>
             </div>
 
             <div className="lg:col-span-1" ref={bookingFormRef}>
-              <div className="sticky top-20">
+              <div className="sticky top-28">
                 {bookingSuccess ? (
-                  <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="card p-6 text-center border-[var(--color-accent)]" role="status">
-                    <CheckCircle className="w-12 h-12 mx-auto text-[var(--color-accent)] mb-3" aria-hidden="true" />
-                    <h3 className="font-serif text-[22px] tracking-[-0.01em] text-[var(--color-ink)] mb-2">Request sent</h3>
+                  <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="site-card site-card--pad text-center" role="status">
+                    <CheckCircle className="w-12 h-12 mx-auto text-[var(--color-success-500)] mb-3" aria-hidden="true" />
+                    <h3 className="site-h3 site-h3--lg mb-2">Request sent</h3>
                     <ol className="text-left text-[13.5px] text-[var(--color-ink-2)] leading-[1.6] space-y-2 mb-4">
                       <li className="flex gap-2.5"><span className="font-mono text-[11px] text-[var(--color-ink-3)] mt-0.5">1</span><span>The host has been emailed. Most reply within a day or two.</span></li>
                       <li className="flex gap-2.5"><span className="font-mono text-[11px] text-[var(--color-ink-3)] mt-0.5">2</span><span>We will email you either way, and it will show up under your bookings.</span></li>
@@ -427,28 +445,28 @@ export default function ListingDetailPage({ initialListing }: { initialListing?:
                       Migrent never asks renters for money. If anyone asks you to pay a deposit to hold this room, tell us before you pay.
                     </p>
                     <div className="flex flex-wrap gap-3 justify-center">
-                      <Link href={hubFromSite.path("/applications")} className="btn-primary h-[44px] px-4 rounded-[10px] text-[13.5px] inline-flex items-center">View your requests</Link>
-                      <Link href="/seeker/search" className="btn-secondary h-[44px] px-4 rounded-[10px] text-[13.5px] inline-flex items-center">Keep looking</Link>
+                      <Link href={hubFromSite.path("/applications")} className="btn-primary">View your requests</Link>
+                      <Link href="/seeker/search" className="btn-secondary">Keep looking</Link>
                     </div>
                   </motion.div>
                 ) : isOwner ? (
-                  <div className="card p-6 rounded-2xl text-center border border-[var(--color-line)]">
-                    <p className="text-sm text-[var(--color-ink-3)]">
+                  <div className="site-card site-card--pad text-center">
+                    <p className="site-body">
                       This is your listing. Manage it in{" "}
                       <Link href={hubFromSite.path(`/listings/${listing.id}`)} className="text-[var(--color-primary)] font-semibold">Migrent Hub</Link>.
                     </p>
                   </div>
                 ) : !isPublished ? (
-                  <div className="card p-6 rounded-2xl text-center border border-[var(--color-line)]">
-                    <p className="text-sm text-[var(--color-ink-3)]">This room is not currently open for booking.</p>
+                  <div className="site-card site-card--pad text-center">
+                    <p className="site-body">This room is not currently open for booking.</p>
                   </div>
                 ) : !shortStay ? (
                   <HubActions listingId={listing.id} ownerName={owner?.name} signedIn={Boolean(session)} />
                 ) : !session && !refreshing ? (
                   <div className="space-y-4">
-                    <div className="card p-6 rounded-2xl text-center border border-[var(--color-line)] space-y-4">
-                      <p className="text-sm text-[var(--color-ink-2)]">Sign in to request a stay</p>
-                      <Link href={hubFromSite.signIn(router.asPath)} className="block w-full btn-primary py-3 px-6 rounded-xl text-sm font-semibold text-center">Sign in</Link>
+                    <div className="site-card site-card--pad text-center space-y-4">
+                      <p className="site-h3">Sign in to request a stay</p>
+                      <Link href={hubFromSite.signIn(router.asPath)} className="btn-primary w-full">Sign in</Link>
                       <p className="text-xs text-[var(--color-ink-3)]">
                         New to Migrent? <Link href={hubFromSite.signUp()} className="text-[var(--color-primary)] hover:opacity-80">Create an account</Link>
                       </p>

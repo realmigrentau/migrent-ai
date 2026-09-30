@@ -1,31 +1,15 @@
 import Link from "next/link";
 import SEOHead from "../components/SEOHead";
-import { motion } from "framer-motion";
+import LegalLayout from "../components/site/LegalLayout";
 
 export default function ContactLegal() {
   return (
     <>
       <SEOHead title="Legal Contact &amp; Arbitration" description="Contact Migrent for legal inquiries, arbitration details, and governing law information." />
 
-      <div className="max-w-3xl mx-auto space-y-10">
-        {/* Hero */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-xl bg-[var(--color-primary-50)] dark:bg-[var(--color-primary-50)] border border-[var(--color-primary-100)] dark:border-[var(--color-line)] flex items-center justify-center">
-              <svg className="w-5 h-5 text-[var(--color-primary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
-              </svg>
-            </div>
-            <div>
-              <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-[var(--color-ink)]">
-                Legal Contact &amp; Arbitration
-              </h1>
-              <p className="text-sm text-[var(--color-ink-3)] mt-1">Last updated: March 2026</p>
-            </div>
-          </div>
-        </motion.div>
+      <LegalLayout title="Legal Contact & Arbitration" note="Last updated: March 2026">
 
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="space-y-8">
+        <div className="space-y-8">
           {/* Contact Details */}
           <section className="card p-6 rounded-2xl space-y-3">
             <h2 className="text-lg font-bold text-[var(--color-ink)]">Legal Contact Information</h2>
@@ -145,7 +129,7 @@ export default function ContactLegal() {
                 <li><Link href="/terms-of-service" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">Terms of Service</Link></li>
                 <li><Link href="/privacy-policy" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">Privacy Policy</Link></li>
                 <li><Link href="/disclaimer" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">Platform Disclaimer</Link></li>
-                <li><Link href="/no-agency" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">No Agency Disclosure</Link></li>
+                <li><Link href="/how-renting-works#not-an-agent" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">No Agency Disclosure</Link></li>
                 <li><Link href="/anti-discrimination" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">Fair Housing Policy</Link></li>
                 <li><Link href="/cookie-policy" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">Cookie Policy</Link></li>
                 <li><Link href="/abn-terms" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">ABN &amp; Business Details</Link></li>
@@ -158,18 +142,8 @@ export default function ContactLegal() {
             <p>Migrent does not provide legal advice. For legal matters, seek independent advice from a qualified Australian lawyer. Last reviewed: March 2026.</p>
           </div>
 
-          {/* CTA */}
-          <div className="card p-6 rounded-2xl bg-[var(--color-primary-soft)] from-[var(--color-primary-50)] to-[var(--color-primary-100)] dark:from-[var(--color-primary)]/10 dark:to-[var(--color-surface)] border-[var(--color-primary-100)] dark:border-[var(--color-line)] text-center">
-            <h3 className="text-lg font-bold text-[var(--color-ink)] mb-2">Need to reach our legal team?</h3>
-            <p className="text-sm text-[var(--color-ink-2)] mb-4">Email us with the appropriate subject line for faster routing.</p>
-            <a href="mailto:migrentau@gmail.com?subject=Legal%20Inquiry">
-              <motion.span whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }} className="inline-block btn-primary text-sm px-6 py-2.5 rounded-xl">
-                Email Legal Team
-              </motion.span>
-            </a>
-          </div>
-        </motion.div>
-      </div>
+        </div>
+      </LegalLayout>
     </>
   );
 }

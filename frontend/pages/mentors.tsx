@@ -1,11 +1,18 @@
-import { useState, useEffect, useCallback } from "react";
+import { useCallback, useEffect, useState, type FormEvent } from "react";
 import Link from "next/link";
+import { ArrowRight, MapPin, Search, Users } from "lucide-react";
 import SEOHead from "../components/SEOHead";
-import { motion } from "framer-motion";
-import { Search, MapPin, Globe, Users, ChevronRight, Sparkles, Heart } from "lucide-react";
 import MentorCard from "../components/mentors/MentorCard";
-
+import { CloseCard, PageHero, Reveal, SectionHead } from "../components/site";
 import { API_BASE_URL as BASE_URL } from "../lib/apiBase";
+
+/**
+ * Local mentors: paid one-on-one sessions with someone who lives in the
+ * suburb. Kept smaller since the 2026-09-29 redesign (it sits under
+ * "Find a stay"). Each mentor sets their own price per session; Migrent
+ * keeps a platform fee from it (backend routes_mentors.py).
+ */
+
 interface Mentor {
   id: string;
   user_id: string;
@@ -16,13 +23,17 @@ interface Mentor {
   hourly_rate: number;
   rating: number;
   review_count: number;
-  verified: boolean;
-  profiles?: {
-    name: string;
-    custom_pfp: string;
-    verified: boolean;
-  };
+  profiles?: { name: string; custom_pfp: string };
 }
+
+const SUBURBS = ["Parramatta", "Kellyville", "Chatswood", "Hurstville", "Burwood", "Strathfield"];
+const LANGUAGES = ["Mandarin", "Hindi", "Arabic", "Korean", "Vietnamese", "Tagalog", "English", "Spanish", "Japanese"];
+
+const STEPS = [
+  { n: "01", title: "Pick a mentor", body: "Search by suburb and the language you are most comfortable in." },
+  { n: "02", title: "Book and pay", body: "Choose a video call, a chat or meeting in person. You see the price before you pay." },
+  { n: "03", title: "Agree a time", body: "Suggest a time when you book. Your mentor confirms it with you in Migrent messages." },
+];
 
 export default function MentorsPage() {
   const [mentors, setMentors] = useState<Mentor[]>([]);
@@ -46,11 +57,8 @@ export default function MentorsPage() {
       } else {
         setLoadFailed(true);
       }
-    } catch (err) {
-      /* A failed request is not the same as "no mentors here yet".
-         Falling through to the empty state told people the suburb had no
-         mentors when in fact we never managed to ask. */
-      console.error("Failed to fetch mentors:", err);
+    } catch {
+      /* A failed request is not the same as "no mentors here yet". */
       setLoadFailed(true);
     } finally {
       setLoading(false);
@@ -61,207 +69,173 @@ export default function MentorsPage() {
     fetchMentors();
   }, [fetchMentors]);
 
-  const handleSearch = (e: React.FormEvent) => {
+  const onSearch = (e: FormEvent) => {
     e.preventDefault();
-    setSearchSuburb(suburb);
+    setSearchSuburb(suburb.trim());
   };
 
-  const popularSuburbs = ["Kellyville", "Parramatta", "Chatswood", "Hurstville", "Burwood", "Strathfield"];
-  const popularLanguages = ["Mandarin", "Hindi", "Arabic", "Korean", "Vietnamese", "Tagalog"];
+  const clear = () => {
+    setSuburb("");
+    setSearchSuburb("");
+    setLanguage("");
+  };
 
   return (
     <>
-      <SEOHead title="Find a Local Mentor - Migrent" description="Connect with verified local mentors who help new arrivals settle into their suburb. Video calls, suburb walks, and local tips." />
+      <SEOHead
+        title="Local mentors"
+        description="Book a paid one-on-one session with a local who can help you settle into your suburb. Each mentor sets their own price."
+      />
 
-      <div className="max-w-4xl mx-auto px-4 py-8 space-y-8">
-        {/* Hero */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center space-y-4"
-        >
-          <div className="w-16 h-16 rounded-2xl bg-[var(--color-primary-soft)] from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center mx-auto">
-            <Users className="w-8 h-8 text-white" />
-          </div>
-          <h1 className="text-3xl font-bold text-[var(--color-ink)]">
-            Find a Local Mentor
-          </h1>
-          <p className="text-[var(--color-ink-2)] max-w-lg mx-auto">
-            Connect with verified locals who know your suburb inside out.
-            Get help with settling in, local tips, and navigating your new neighbourhood.
-          </p>
-          <Link href="/become-mentor">
-            <span className="btn-primary btn-compact mt-2">
-              <Heart className="w-4 h-4" aria-hidden="true" />
-              Become a mentor
-            </span>
-          </Link>
-        </motion.div>
-
-        {/* Search */}
-        <form onSubmit={handleSearch} className="card p-4">
-          <div className="flex flex-col sm:flex-row gap-3">
-            <div className="flex-1 relative">
-              <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-ink-3)]" />
-              <input
-                type="text"
-                value={suburb}
-                onChange={(e) => setSuburb(e.target.value)}
-                placeholder="Search by suburb (e.g. Kellyville)"
-                className="w-full pl-10 pr-4 py-2.5 bg-[var(--color-surface)] border border-[var(--color-line)] rounded-xl text-sm focus:ring-2 focus:ring-[var(--color-ink)]/30 focus:border-transparent outline-none"
-              />
-            </div>
-            <select
-              value={language}
-              onChange={(e) => setLanguage(e.target.value)}
-              aria-label="Filter mentors by language"
-              className="px-4 py-2.5 bg-[var(--color-surface)] border border-[var(--color-line)] rounded-xl text-sm focus:ring-2 focus:ring-[var(--color-ink)]/30 focus:border-transparent outline-none"
-            >
-              <option value="">All Languages</option>
-              {popularLanguages.map((lang) => (
-                <option key={lang} value={lang}>{lang}</option>
-              ))}
-              <option value="English">English</option>
-              <option value="Spanish">Spanish</option>
-              <option value="Japanese">Japanese</option>
-            </select>
-            <motion.button
-              type="submit"
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
-              className="bg-[var(--color-primary)] hover:bg-[var(--color-primary-500)] text-[color:var(--color-primary-fg)] font-semibold px-6 py-2.5 rounded-xl text-sm transition-colors flex items-center gap-2 justify-center"
-            >
-              <Search className="w-4 h-4" />
-              Search
-            </motion.button>
-          </div>
+      <PageHero
+        eyebrow="Local mentors"
+        crumbs={[{ label: "Home", href: "/" }, { label: "Local mentors" }]}
+        title={
+          <>
+            Ask someone who <strong>lives there.</strong>
+          </>
+        }
+        lead="Book a one-on-one session with a local who can show you the suburb, the transport and the shops. Sessions are optional and paid; each mentor sets their own price."
+      >
+        <form onSubmit={onSearch} role="search" aria-label="Find a mentor" className="mt-8 flex max-w-[720px] flex-col gap-3 sm:flex-row">
+          <label className="site-search flex-1">
+            <MapPin className="site-search__icon h-4 w-4" aria-hidden="true" />
+            <span className="sr-only">Suburb</span>
+            <input value={suburb} onChange={(e) => setSuburb(e.target.value)} placeholder="Suburb, e.g. Parramatta" autoComplete="address-level2" />
+          </label>
+          <select value={language} onChange={(e) => setLanguage(e.target.value)} aria-label="Language" className="input-field !h-[52px] sm:!w-[200px]">
+            <option value="">Any language</option>
+            {LANGUAGES.map((l) => (
+              <option key={l} value={l}>
+                {l}
+              </option>
+            ))}
+          </select>
+          <button type="submit" className="btn-primary btn-lg">
+            <Search className="h-4 w-4" strokeWidth={2.2} aria-hidden="true" /> Search
+          </button>
         </form>
-
-        {/* Quick suburb filters */}
-        <div className="flex flex-wrap gap-2">
-          {popularSuburbs.map((s) => (
-            <motion.button
+        <div className="mt-4 flex flex-wrap gap-2" aria-label="Popular suburbs">
+          {SUBURBS.map((s) => (
+            <button
               key={s}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => { setSuburb(s); setSearchSuburb(s); }}
-              className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
-                searchSuburb === s
-                  ? "bg-[var(--color-primary)] text-[color:var(--color-primary-fg)]"
-                  : "bg-[var(--color-surface-muted)] text-[var(--color-ink-2)] hover:bg-[var(--color-surface-muted)]"
-              }`}
+              type="button"
+              aria-pressed={searchSuburb === s}
+              onClick={() => {
+                setSuburb(s);
+                setSearchSuburb(s);
+              }}
+              className="hc-chip !h-9 !w-auto !rounded-[10px] !px-3 !text-[13px]"
             >
               {s}
-            </motion.button>
+            </button>
           ))}
-          {searchSuburb && (
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => { setSuburb(""); setSearchSuburb(""); setLanguage(""); }}
-              className="px-3 py-1.5 rounded-full text-xs font-medium bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/10 text-[var(--color-primary)] dark:text-[var(--color-primary)]"
-            >
-              Clear filters
-            </motion.button>
+          {(searchSuburb || language) && (
+            <button type="button" onClick={clear} className="site-link px-2 text-[13px]">
+              Clear
+            </button>
           )}
         </div>
+      </PageHero>
 
-        {/* Results */}
-        {loading ? (
-          <div className="space-y-4">
-            {[...Array(3)].map((_, i) => (
-              <div key={i} className="shimmer rounded-2xl h-32" />
-            ))}
-          </div>
-        ) : loadFailed ? (
-          <div className="card p-8 text-center">
-            <div className="w-14 h-14 rounded-[var(--radius-lg)] bg-[var(--color-surface-muted)] flex items-center justify-center mx-auto mb-4">
-              <Users className="w-7 h-7 text-[var(--color-ink-3)]" aria-hidden="true" />
-            </div>
-            <h3 className="font-serif text-[22px] text-[var(--color-ink)] mb-2">
-              We could not load mentors right now
-            </h3>
-            <p className="text-sm text-[var(--color-ink-3)] mb-5 max-w-[46ch] mx-auto">
-              Something went wrong on our side, not yours. Your search is kept -
-              try again in a moment.
-            </p>
-            <button type="button" onClick={fetchMentors} className="btn-primary btn-compact">
-              Try again
-            </button>
-          </div>
-        ) : mentors.length > 0 ? (
-          <div className="space-y-3">
-            <p className="text-sm text-[var(--color-ink-3)]">
-              {mentors.length} mentor{mentors.length !== 1 ? "s" : ""} found
-              {searchSuburb ? ` in ${searchSuburb}` : ""}
-            </p>
-            {mentors.map((mentor, i) => (
-              <MentorCard
-                key={mentor.id}
-                id={mentor.id}
-                name={mentor.profiles?.name || "Mentor"}
-                photo={mentor.profiles?.custom_pfp}
-                suburb={mentor.suburb}
-                languages={mentor.languages}
-                bio={mentor.bio}
-                specialties={mentor.specialties}
-                hourlyRate={mentor.hourly_rate}
-                rating={mentor.rating}
-                reviewCount={mentor.review_count}
-                verified={mentor.profiles?.verified || false}
-                index={i}
-              />
-            ))}
-          </div>
-        ) : (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="card p-8 text-center"
-          >
-            <div className="w-14 h-14 rounded-2xl bg-[var(--color-surface-muted)] flex items-center justify-center mx-auto mb-4">
-              <Users className="w-7 h-7 text-[var(--color-ink-3)]" />
-            </div>
-            <h3 className="font-bold text-[var(--color-ink)] mb-2">
-              No mentors found
-            </h3>
-            <p className="text-sm text-[var(--color-ink-3)] mb-4">
-              {searchSuburb
-                ? `No mentors available in ${searchSuburb} yet. Be the first!`
-                : "No mentors available yet. Be the first to help newcomers!"}
-            </p>
-            <Link href="/become-mentor">
-              <span className="btn-primary btn-compact">
-                Become a mentor
-                <ChevronRight className="w-4 h-4 btn-arrow" aria-hidden="true" />
-              </span>
-            </Link>
-          </motion.div>
-        )}
-
-        {/* How it works */}
-        <div className="card p-6">
-          <h2 className="text-lg font-bold text-[var(--color-ink)] mb-4 flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-[var(--color-primary)]" />
-            How It Works
+      <section className="site-section site-section--flush" aria-labelledby="mentor-results">
+        <div className="site-shell site-shell--narrow">
+          <h2 id="mentor-results" className="sr-only">
+            Mentors
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {[
-              { step: "1", title: "Find Your Mentor", desc: "Browse local mentors by suburb and language" },
-              { step: "2", title: "Book a Session", desc: "Schedule a 30-min video call or in-person meetup" },
-              { step: "3", title: "Settle In Faster", desc: "Get local tips, suburb walks, and community connections" },
-            ].map((item) => (
-              <div key={item.step} className="text-center space-y-2">
-                <div className="w-10 h-10 rounded-full bg-[var(--color-primary-soft)] dark:bg-[var(--color-primary)]/20 text-[var(--color-primary)] dark:text-[var(--color-primary)] flex items-center justify-center mx-auto font-bold text-sm">
-                  {item.step}
-                </div>
-                <h3 className="font-semibold text-sm text-[var(--color-ink)]">{item.title}</h3>
-                <p className="text-xs text-[var(--color-ink-3)]">{item.desc}</p>
+          <p className="site-card site-card--muted site-card--pad site-body mb-6">
+            Mentors are Migrent members who sign up to help. Unlike hosts, they are not ID-checked, so meet somewhere public the first time.
+          </p>
+          <div aria-live="polite">
+            {loading ? (
+              <div className="space-y-3" aria-busy="true">
+                {[0, 1, 2].map((i) => (
+                  <div key={i} className="site-card h-32 animate-pulse bg-[var(--color-surface-muted)]" />
+                ))}
               </div>
-            ))}
+            ) : loadFailed ? (
+              <div className="site-card site-card--pad text-center">
+                <p className="site-h3 site-h3--lg">We could not load mentors right now</p>
+                <p className="site-body mx-auto mt-2 max-w-[46ch]">Something went wrong on our side, not yours. Your search is kept. Try again in a moment.</p>
+                <button type="button" onClick={fetchMentors} className="btn-primary mt-5">
+                  Try again
+                </button>
+              </div>
+            ) : mentors.length > 0 ? (
+              <>
+                <p className="site-meta mb-4">
+                  {mentors.length} mentor{mentors.length === 1 ? "" : "s"}
+                  {searchSuburb ? ` in ${searchSuburb}` : ""}
+                </p>
+                <ul className="m-0 list-none space-y-3 p-0">
+                  {mentors.map((m) => (
+                    <li key={m.id}>
+                      <MentorCard
+                        id={m.id}
+                        name={m.profiles?.name || "Mentor"}
+                        photo={m.profiles?.custom_pfp}
+                        suburb={m.suburb}
+                        languages={m.languages || []}
+                        bio={m.bio}
+                        specialties={m.specialties || []}
+                        hourlyRate={m.hourly_rate}
+                        rating={m.rating}
+                        reviewCount={m.review_count}
+                      />
+                    </li>
+                  ))}
+                </ul>
+              </>
+            ) : (
+              <div className="site-card site-card--pad flex flex-col items-center text-center">
+                <span className="site-icon site-icon--quiet" aria-hidden="true">
+                  <Users className="h-5 w-5" strokeWidth={1.9} />
+                </span>
+                <p className="site-h3 site-h3--lg mt-4">No mentors {searchSuburb ? `in ${searchSuburb} ` : ""}yet</p>
+                <p className="site-body mt-2 max-w-[46ch]">Mentors are locals who sign up to help. Try a nearby suburb, or be the first here.</p>
+                <Link href="/become-mentor" className="btn-secondary mt-5">
+                  Become a mentor <ArrowRight className="btn-arrow h-4 w-4" strokeWidth={2.2} aria-hidden="true" />
+                </Link>
+              </div>
+            )}
           </div>
         </div>
-      </div>
+      </section>
+
+      <section className="site-section" aria-labelledby="mentor-steps">
+        <div className="site-shell">
+          <Reveal>
+            <SectionHead
+              eyebrow="How sessions work"
+              id="mentor-steps"
+              heading={
+                <>
+                  Three steps, <strong>no subscription.</strong>
+                </>
+              }
+            />
+          </Reveal>
+          <ol className="m-0 mt-10 grid list-none gap-3 p-0 md:grid-cols-3">
+            {STEPS.map((s, i) => (
+              <Reveal as="li" key={s.n} delay={i * 0.05} className="site-card site-card--pad">
+                <span aria-hidden="true" className="site-numeral text-[44px] text-[color:var(--color-primary-400)]">{s.n}</span>
+                <h3 className="site-h3 mt-4">{s.title}</h3>
+                <p className="site-body mt-1.5">{s.body}</p>
+              </Reveal>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      <CloseCard
+        heading={
+          <>
+            Know your suburb <strong className="type-script">well?</strong>
+          </>
+        }
+        primary={{ label: "Become a mentor", href: "/become-mentor" }}
+        secondary={{ label: "Search rooms", href: "/seeker/search" }}
+      />
     </>
   );
 }

@@ -1,24 +1,25 @@
-import { useState, useEffect } from "react";
-import SEOHead from "../components/SEOHead";
+import { useEffect, useState, type FormEvent } from "react";
+import Link from "next/link";
 import { useRouter } from "next/router";
-import Head from "next/head";
-import { motion } from "framer-motion";
+import { ArrowRight, CheckCircle2, Wallet } from "lucide-react";
+import SEOHead from "../components/SEOHead";
+import { PageHero } from "../components/site";
+import StatusPage from "../components/site/StatusPage";
+import { Field, Input, Textarea } from "../components/hub/ui/Field";
 import { useAuth } from "../hooks/useAuth";
 import { useToast } from "../components/ui/Toast";
-import {
-  Heart,
-  MapPin,
-  Globe,
-  DollarSign,
-  CheckCircle2,
-  ArrowRight,
-  Sparkles,
-  Users,
-  Star,
-  Shield,
-} from "lucide-react";
-
+import { hubFromSite } from "../lib/hub/routes";
 import { API_BASE_URL as BASE_URL } from "../lib/apiBase";
+
+/**
+ * Sign up as a local mentor. One form instead of the old three steps.
+ * The numbers are the backend's (routes_mentors.py): a price per session
+ * from $15 to $100, and Migrent keeps 30%. New profiles are listed straight
+ * away; payouts go through Stripe once the mentor sets them up.
+ */
+
+const PLATFORM_SHARE = 0.3;
+
 const SPECIALTIES = [
   "Suburb orientation",
   "Public transport",
@@ -32,104 +33,96 @@ const SPECIALTIES = [
   "Cultural guidance",
 ];
 
-const LANGUAGES = [
-  "English", "Mandarin", "Hindi", "Arabic", "Korean",
-  "Vietnamese", "Tagalog", "Spanish", "Japanese", "Cantonese",
-  "Tamil", "Urdu", "Thai", "Indonesian", "Nepali",
-];
+const LANGUAGES = ["English", "Mandarin", "Hindi", "Arabic", "Korean", "Vietnamese", "Tagalog", "Spanish", "Japanese", "Cantonese", "Tamil", "Urdu", "Thai", "Indonesian", "Nepali"];
+
+type MentorProfile = { suburb: string; hourly_rate: number; stripe_onboarding_complete?: boolean };
+
+function Chips({ label, options, selected, onToggle }: { label: string; options: string[]; selected: string[]; onToggle: (v: string) => void }) {
+  return (
+    <fieldset className="m-0 border-0 p-0">
+      <legend className="mb-2 text-[13.5px] font-semibold text-[color:var(--color-ink)]">{label}</legend>
+      <div className="flex flex-wrap gap-2">
+        {options.map((o) => (
+          <button key={o} type="button" aria-pressed={selected.includes(o)} onClick={() => onToggle(o)} className="hc-chip !h-9 !w-auto !rounded-[10px] !px-3 !text-[13px]">
+            {o}
+          </button>
+        ))}
+      </div>
+    </fieldset>
+  );
+}
 
 export default function BecomeMentorPage() {
   const router = useRouter();
   const { session } = useAuth();
   const toast = useToast();
 
-  const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [existingMentor, setExistingMentor] = useState<any>(null);
-  const [checkingExisting, setCheckingExisting] = useState(true);
-  const [success, setSuccess] = useState(false);
+  const [existing, setExisting] = useState<MentorProfile | null>(null);
+  const [checking, setChecking] = useState(true);
+  const [created, setCreated] = useState(false);
 
-  // Form state
   const [suburb, setSuburb] = useState("");
   const [postcode, setPostcode] = useState("");
   const [languages, setLanguages] = useState<string[]>(["English"]);
-  const [bio, setBio] = useState("");
   const [specialties, setSpecialties] = useState<string[]>([]);
-  const [hourlyRate, setHourlyRate] = useState(25); // dollars
+  const [bio, setBio] = useState("");
+  const [rate, setRate] = useState(25);
+  const [touched, setTouched] = useState(false);
 
-  // Check if already a mentor
   useEffect(() => {
     if (!session?.access_token) {
-      setCheckingExisting(false);
+      setChecking(false);
       return;
     }
-
-    fetch(`${BASE_URL}/mentors/me/profile`, {
-      headers: { Authorization: `Bearer ${session.access_token}` },
-    })
+    fetch(`${BASE_URL}/mentors/me/profile`, { headers: { Authorization: `Bearer ${session.access_token}` } })
       .then((res) => res.json())
       .then((data) => {
-        if (data.mentor) setExistingMentor(data.mentor);
+        if (data.mentor) setExisting(data.mentor);
       })
       .catch(() => {})
-      .finally(() => setCheckingExisting(false));
+      .finally(() => setChecking(false));
   }, [session]);
 
-  // Handle Stripe return
+  // Back from Stripe's payout setup.
   useEffect(() => {
-    if (router.query.stripe === "complete") {
-      setSuccess(true);
-    }
+    if (router.query.stripe === "complete") setCreated(true);
   }, [router.query]);
 
-  const toggleLanguage = (lang: string) => {
-    setLanguages((prev) =>
-      prev.includes(lang) ? prev.filter((l) => l !== lang) : [...prev, lang]
-    );
-  };
+  const toggle = (list: string[], set: (v: string[]) => void) => (v: string) => set(list.includes(v) ? list.filter((x) => x !== v) : [...list, v]);
 
-  const toggleSpecialty = (spec: string) => {
-    setSpecialties((prev) =>
-      prev.includes(spec) ? prev.filter((s) => s !== spec) : [...prev, spec]
-    );
-  };
+  const suburbError = touched && suburb.trim().length < 2 ? "Enter the suburb you know best." : null;
+  const postcodeError = touched && postcode && !/^\d{3,4}$/.test(postcode) ? "A postcode is 4 digits." : null;
+  const languageError = touched && languages.length === 0 ? "Pick at least one language." : null;
 
-  const handleSubmit = async (e?: React.FormEvent) => {
-    e?.preventDefault();
+  const submit = async (e: FormEvent) => {
+    e.preventDefault();
+    setTouched(true);
     if (!session?.access_token) {
-      router.push("/signin?redirect=/become-mentor");
+      window.location.assign(hubFromSite.signIn(router.asPath));
       return;
     }
-    if (!suburb.trim()) {
-      setStep(1);
-      return;
-    }
-
+    if (suburb.trim().length < 2 || languages.length === 0 || (postcode && !/^\d{3,4}$/.test(postcode))) return;
     setLoading(true);
     try {
       const res = await fetch(`${BASE_URL}/mentors`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${session.access_token}`,
-        },
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${session.access_token}` },
         body: JSON.stringify({
-          suburb,
-          postcode: postcode ? parseInt(postcode) : null,
+          suburb: suburb.trim(),
+          postcode: postcode ? parseInt(postcode, 10) : null,
           languages,
-          bio,
+          bio: bio.trim() || null,
           specialties,
-          hourly_rate: hourlyRate * 100, // convert to cents
+          hourly_rate: rate * 100,
         }),
       });
-
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
-        toast.error(err.detail || "We couldn't create your mentor profile. Please try again.");
+        toast.error(err.detail || "We could not create your mentor profile. Please try again.");
         return;
       }
-
-      setSuccess(true);
+      setCreated(true);
     } catch {
       toast.error("Something went wrong. Please try again.");
     } finally {
@@ -137,20 +130,14 @@ export default function BecomeMentorPage() {
     }
   };
 
-  const startStripeOnboarding = async () => {
+  const startPayouts = async () => {
     if (!session?.access_token) return;
     setLoading(true);
     try {
-      const res = await fetch(`${BASE_URL}/mentors/stripe-onboard`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${session.access_token}` },
-      });
-      if (res.ok) {
-        const data = await res.json();
-        if (data.url) window.location.href = data.url;
-      } else {
-        toast.error("We couldn't start payment setup. Please try again.");
-      }
+      const res = await fetch(`${BASE_URL}/mentors/stripe-onboard`, { method: "POST", headers: { Authorization: `Bearer ${session.access_token}` } });
+      const data = res.ok ? await res.json() : null;
+      if (data?.url) window.location.href = data.url;
+      else toast.error("We could not start payout setup. Please try again.");
     } catch {
       toast.error("Something went wrong.");
     } finally {
@@ -158,383 +145,147 @@ export default function BecomeMentorPage() {
     }
   };
 
-  if (checkingExisting) {
-    return (
-      <div className="min-h-[60vh] flex items-center justify-center">
-        <div className="w-10 h-10 border-2 border-[var(--color-line-2)] border-t-[var(--color-ink)] rounded-full animate-spin" />
-      </div>
-    );
+  if (checking) {
+    return <div className="min-h-[70vh]" aria-busy="true" />;
   }
 
-  // Already a mentor
-  if (existingMentor && !success) {
+  if (created || existing) {
+    const needsPayouts = created || !existing?.stripe_onboarding_complete;
     return (
       <>
-        <Head>
-          <title key="title">Mentor Dashboard - Migrent</title>
-        </Head>
-        <div className="max-w-2xl mx-auto px-4 py-12 text-center space-y-6">
-          <div className="w-16 h-16 rounded-2xl bg-[var(--color-accent-soft)] dark:bg-[var(--color-accent)]/20 flex items-center justify-center mx-auto">
-            <CheckCircle2 className="w-8 h-8 text-[var(--color-accent)] dark:text-[var(--color-accent)]" />
-          </div>
-          <h1 className="text-2xl font-bold text-[var(--color-ink)]">
-            You are a registered mentor
-          </h1>
-          <p className="text-[var(--color-ink-2)]">
-            Suburb: {existingMentor.suburb} - Rate: ${(existingMentor.hourly_rate / 100).toFixed(0)}/session
-          </p>
-          <div className="flex flex-wrap gap-3 justify-center">
-            {!existingMentor.stripe_onboarding_complete && (
-              <motion.button
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
-                onClick={startStripeOnboarding}
-                disabled={loading}
-                className="bg-[var(--color-primary)] hover:bg-[var(--color-primary-500)] text-[color:var(--color-primary-fg)] font-semibold px-6 py-2.5 rounded-xl text-sm transition-colors disabled:opacity-50"
-              >
-                <DollarSign className="w-4 h-4 inline mr-1" />
-                {loading ? "Loading..." : "Set Up Payouts"}
-              </motion.button>
-            )}
-            <motion.button
-              whileHover={{ scale: 1.03 }}
-              onClick={() => router.push("/mentors")}
-              className="bg-[var(--color-surface-muted)] text-[var(--color-ink-2)] font-semibold px-6 py-2.5 rounded-xl text-sm"
-            >
-              View Mentor Directory
-            </motion.button>
-          </div>
-        </div>
+        <SEOHead title={created ? "You are a mentor" : "Your mentor profile"} noIndex />
+        <StatusPage
+          icon={<CheckCircle2 className="h-6 w-6" strokeWidth={1.9} />}
+          tone="success"
+          eyebrow="Local mentor"
+          title={
+            created ? (
+              <>
+                Your profile is <strong>listed.</strong>
+              </>
+            ) : (
+              <>
+                You are already <strong>a mentor.</strong>
+              </>
+            )
+          }
+          actions={
+            <>
+              {needsPayouts && (
+                <button type="button" onClick={startPayouts} disabled={loading} data-state={loading ? "loading" : undefined} className="btn-primary btn-lg">
+                  <Wallet className="h-4 w-4" strokeWidth={2.2} aria-hidden="true" /> Set up payouts
+                </button>
+              )}
+              <Link href="/mentors" className="btn-secondary btn-lg">
+                See the mentor list
+              </Link>
+            </>
+          }
+        >
+          {existing && !created ? (
+            <p className="m-0">
+              {existing.suburb}, ${(existing.hourly_rate / 100).toFixed(0)} a session.
+            </p>
+          ) : (
+            <p className="m-0">New arrivals looking in your suburb can now find you and book a session.</p>
+          )}
+          {needsPayouts && <p className="m-0">To be paid, connect a bank account through Stripe. It takes a few minutes.</p>}
+        </StatusPage>
       </>
     );
   }
 
-  // Success state
-  if (success) {
-    return (
-      <>
-        <Head>
-          <title key="title">Welcome, Mentor! - Migrent</title>
-        </Head>
-        <div className="max-w-2xl mx-auto px-4 py-12 text-center space-y-6">
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ type: "spring", stiffness: 200 }}
-            className="w-20 h-20 rounded-2xl bg-[var(--color-primary-soft)] from-[var(--color-accent)] to-[var(--color-primary)] flex items-center justify-center mx-auto"
-          >
-            <CheckCircle2 className="w-10 h-10 text-white" />
-          </motion.div>
-          <h1 className="text-2xl font-bold text-[var(--color-ink)]">
-            Welcome to the Mentor Network!
-          </h1>
-          <p className="text-[var(--color-ink-2)] max-w-md mx-auto">
-            Your mentor profile is live. New arrivals in your suburb can now find and book sessions with you.
-          </p>
-          <div className="flex flex-wrap gap-3 justify-center">
-            <motion.button
-              whileHover={{ scale: 1.03 }}
-              onClick={startStripeOnboarding}
-              disabled={loading}
-              className="bg-[var(--color-primary)] hover:bg-[var(--color-primary-500)] text-[color:var(--color-primary-fg)] font-semibold px-6 py-2.5 rounded-xl text-sm transition-colors disabled:opacity-50"
-            >
-              <DollarSign className="w-4 h-4 inline mr-1" />
-              {loading ? "Loading..." : "Set Up Payouts (Stripe)"}
-            </motion.button>
-            <motion.button
-              whileHover={{ scale: 1.03 }}
-              onClick={() => router.push("/mentors")}
-              className="bg-[var(--color-surface-muted)] text-[var(--color-ink-2)] font-semibold px-6 py-2.5 rounded-xl text-sm"
-            >
-              View Directory
-            </motion.button>
-          </div>
-        </div>
-      </>
-    );
-  }
+  const keep = Math.round(rate * (1 - PLATFORM_SHARE));
 
   return (
     <>
-      <SEOHead title="Become a Mentor - Migrent" description="Help new arrivals settle into your suburb. Earn $20-30 per session as a Migrent local mentor." />
+      <SEOHead title="Become a mentor" description="Help new arrivals settle into your suburb. You set your price per session; Migrent keeps 30%." />
 
-      <div className="max-w-2xl mx-auto px-4 py-8 space-y-8">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center space-y-3"
-        >
-          <div className="w-16 h-16 rounded-2xl bg-[var(--color-primary-soft)] from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center mx-auto">
-            <Heart className="w-8 h-8 text-white" />
-          </div>
-          <h1 className="text-3xl font-bold text-[var(--color-ink)]">
-            Become a Local Mentor
-          </h1>
-          <p className="text-[var(--color-ink-2)]">
-            Help newcomers settle in. Earn $20-$30 per session. Make a difference.
-          </p>
-        </motion.div>
+      <PageHero
+        eyebrow="Local mentors"
+        crumbs={[{ label: "Home", href: "/" }, { label: "Local mentors", href: "/mentors" }, { label: "Become a mentor" }]}
+        title={
+          <>
+            Help someone find <strong>their feet.</strong>
+          </>
+        }
+        lead="Show a new arrival your suburb: the train, the shops, the doctor who speaks their language. You set your price per session, and Migrent keeps 30% of it."
+        narrow
+      />
 
-        {/* Benefits */}
-        <div className="grid grid-cols-3 gap-3">
-          {[
-            { icon: <DollarSign className="w-5 h-5" />, label: "Earn $20-30/session", color: "text-[var(--color-accent)]" },
-            { icon: <Users className="w-5 h-5" />, label: "Help your community", color: "text-[var(--color-primary)]" },
-            { icon: <Star className="w-5 h-5" />, label: "Build your reputation", color: "text-[var(--color-warn-500)]" },
-          ].map((item) => (
-            <div key={item.label} className="card p-3 text-center">
-              <div className={`${item.color} mx-auto mb-1`}>{item.icon}</div>
-              <p className="text-xs font-medium text-[var(--color-ink-2)]">{item.label}</p>
+      <section className="site-section site-section--flush" aria-label="Mentor sign-up">
+        <div className="site-shell site-shell--narrow">
+          <form onSubmit={submit} noValidate className="site-card grid gap-10 p-[clamp(20px,3vw,40px)] lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-12">
+            <div>
+              <p className="eyebrow">01</p>
+              <h2 className="site-h3 site-h3--lg mt-2">Where you live</h2>
             </div>
-          ))}
-        </div>
+            <div className="grid gap-5 sm:grid-cols-[minmax(0,1fr)_160px]">
+              <Field label="Suburb" error={suburbError}>
+                {({ id, describedBy, invalid }) => (
+                  <Input id={id} value={suburb} onChange={(e) => setSuburb(e.target.value)} placeholder="Parramatta" autoComplete="address-level2" aria-describedby={describedBy} aria-invalid={invalid} />
+                )}
+              </Field>
+              <Field label="Postcode" optional error={postcodeError}>
+                {({ id, describedBy, invalid }) => (
+                  <Input id={id} value={postcode} onChange={(e) => setPostcode(e.target.value.replace(/\D/g, "").slice(0, 4))} inputMode="numeric" placeholder="2150" autoComplete="postal-code" aria-describedby={describedBy} aria-invalid={invalid} />
+                )}
+              </Field>
+            </div>
 
-        {/* Progress */}
-        <div className="flex items-center gap-2">
-          {[1, 2, 3].map((s) => (
-            <div key={s} className="flex-1 flex items-center gap-2">
-              <div
-                className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${
-                  step >= s
-                    ? "bg-[var(--color-primary)] text-[color:var(--color-primary-fg)]"
-                    : "bg-[var(--color-line)] text-[var(--color-ink-3)]"
-                }`}
-              >
-                {step > s ? <CheckCircle2 className="w-4 h-4" /> : s}
+            <div className="border-t border-[var(--color-line)] pt-8 lg:col-span-2 lg:grid lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-12">
+              <div className="mb-6 lg:mb-0">
+                <p className="eyebrow">02</p>
+                <h2 className="site-h3 site-h3--lg mt-2">What you can help with</h2>
               </div>
-              {s < 3 && (
-                <div className={`flex-1 h-0.5 rounded ${step > s ? "bg-[var(--color-primary)]" : "bg-[var(--color-line)]"}`} />
-              )}
-            </div>
-          ))}
-        </div>
-
-        {/* Step 1: Location */}
-        {step === 1 && (
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="card p-6 space-y-4"
-          >
-            <h2 className="text-lg font-bold text-[var(--color-ink)] flex items-center gap-2">
-              <MapPin className="w-5 h-5 text-[var(--color-primary)]" />
-              Your Location
-            </h2>
-
-            <div>
-              <label htmlFor="mentor-suburb" className="block text-sm font-medium text-[var(--color-ink-2)] mb-1">
-                Suburb <span aria-hidden="true">*</span><span className="sr-only">(required)</span>
-              </label>
-              <input
-                id="mentor-suburb"
-                name="suburb"
-                type="text"
-                required
-                autoComplete="address-level2"
-                value={suburb}
-                onChange={(e) => setSuburb(e.target.value)}
-                placeholder="e.g. Kellyville"
-                className="w-full px-4 py-2.5 bg-[var(--color-surface)] border border-[var(--color-line)] rounded-xl text-sm focus:ring-2 focus:ring-[var(--color-ink)]/30 focus:border-transparent outline-none"
-              />
+              <div className="space-y-6">
+                <Chips label="Languages you speak" options={LANGUAGES} selected={languages} onToggle={toggle(languages, setLanguages)} />
+                {languageError && (
+                  <p role="alert" className="-mt-3 text-[13px] text-[color:var(--color-danger-500)]">
+                    {languageError}
+                  </p>
+                )}
+                <Chips label="Things you know well" options={SPECIALTIES} selected={specialties} onToggle={toggle(specialties, setSpecialties)} />
+              </div>
             </div>
 
-            <div>
-              <label htmlFor="mentor-postcode" className="block text-sm font-medium text-[var(--color-ink-2)] mb-1">
-                Postcode
-              </label>
-              <input
-                id="mentor-postcode"
-                name="postcode"
-                type="text"
-                inputMode="numeric"
-                pattern="[0-9]{4}"
-                autoComplete="postal-code"
-                value={postcode}
-                onChange={(e) => setPostcode(e.target.value)}
-                placeholder="e.g. 2155"
-                maxLength={4}
-                className="w-full px-4 py-2.5 bg-[var(--color-surface)] border border-[var(--color-line)] rounded-xl text-sm focus:ring-2 focus:ring-[var(--color-ink)]/30 focus:border-transparent outline-none"
-              />
-            </div>
+            <div className="border-t border-[var(--color-line)] pt-8 lg:col-span-2 lg:grid lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-12">
+              <div className="mb-6 lg:mb-0">
+                <p className="eyebrow">03</p>
+                <h2 className="site-h3 site-h3--lg mt-2">About you and your price</h2>
+              </div>
+              <div className="space-y-6">
+                <Field label="A short introduction" optional hint="How long you have lived there, and what you would show someone new.">
+                  {({ id, describedBy }) => (
+                    <Textarea id={id} value={bio} onChange={(e) => setBio(e.target.value)} rows={4} maxLength={2000} placeholder="I have lived in Parramatta for ten years and I speak Hindi and English..." aria-describedby={describedBy} />
+                  )}
+                </Field>
 
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={() => {
-                if (!suburb.trim()) { toast.warning("Please enter your suburb to continue."); return; }
-                setStep(2);
-              }}
-              className="w-full bg-[var(--color-primary)] hover:bg-[var(--color-primary-500)] text-[color:var(--color-primary-fg)] font-semibold py-3 rounded-xl text-sm transition-colors flex items-center justify-center gap-2"
-            >
-              Continue
-              <ArrowRight className="w-4 h-4" />
-            </motion.button>
-          </motion.div>
-        )}
+                <div>
+                  <label htmlFor="mentor-rate" className="text-[13.5px] font-semibold text-[color:var(--color-ink)]">
+                    Price per session
+                  </label>
+                  <div className="mt-2 flex items-center gap-4">
+                    <input id="mentor-rate" type="range" min={15} max={100} value={rate} onChange={(e) => setRate(parseInt(e.target.value, 10))} aria-valuetext={`$${rate} a session`} className="flex-1 accent-[var(--color-primary)]" />
+                    <span className="min-w-[72px] text-right text-[22px] font-semibold tracking-[-0.01em] text-[var(--color-ink)] tabular-nums">${rate}</span>
+                  </div>
+                  <p className="site-meta mt-2">
+                    You receive about ${keep}. Migrent keeps ${rate - keep} (30%).
+                  </p>
+                </div>
 
-        {/* Step 2: Languages & Specialties */}
-        {step === 2 && (
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="card p-6 space-y-5"
-          >
-            <h2 className="text-lg font-bold text-[var(--color-ink)] flex items-center gap-2">
-              <Globe className="w-5 h-5 text-[var(--color-primary)]" />
-              Languages & Expertise
-            </h2>
-
-            <div>
-              <label className="block text-sm font-medium text-[var(--color-ink-2)] mb-2">
-                Languages you speak *
-              </label>
-              <div className="flex flex-wrap gap-2">
-                {LANGUAGES.map((lang) => (
-                  <button
-                    key={lang}
-                    onClick={() => toggleLanguage(lang)}
-                    className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
-                      languages.includes(lang)
-                        ? "bg-[var(--color-primary)] text-[color:var(--color-primary-fg)]"
-                        : "bg-[var(--color-surface-muted)] text-[var(--color-ink-2)] hover:bg-[var(--color-surface-muted)]"
-                    }`}
-                  >
-                    {lang}
+                <div className="flex flex-col items-start gap-3">
+                  <button type="submit" disabled={loading} data-state={loading ? "loading" : undefined} className="btn-primary btn-lg">
+                    {session ? "Create my mentor profile" : "Sign in to continue"}
+                    <ArrowRight className="btn-arrow h-4 w-4" strokeWidth={2.2} aria-hidden="true" />
                   </button>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-[var(--color-ink-2)] mb-2">
-                What can you help with?
-              </label>
-              <div className="flex flex-wrap gap-2">
-                {SPECIALTIES.map((spec) => (
-                  <button
-                    key={spec}
-                    onClick={() => toggleSpecialty(spec)}
-                    className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
-                      specialties.includes(spec)
-                        ? "bg-[var(--color-accent)] text-white"
-                        : "bg-[var(--color-surface-muted)] text-[var(--color-ink-2)] hover:bg-[var(--color-surface-muted)]"
-                    }`}
-                  >
-                    {spec}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="flex gap-3">
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                onClick={() => setStep(1)}
-                className="flex-1 bg-[var(--color-surface-muted)] text-[var(--color-ink-2)] font-semibold py-3 rounded-xl text-sm"
-              >
-                Back
-              </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => {
-                  if (languages.length === 0) { toast.warning("Pick at least one language so we can match you."); return; }
-                  setStep(3);
-                }}
-                className="flex-1 bg-[var(--color-primary)] hover:bg-[var(--color-primary-500)] text-[color:var(--color-primary-fg)] font-semibold py-3 rounded-xl text-sm transition-colors flex items-center justify-center gap-2"
-              >
-                Continue
-                <ArrowRight className="w-4 h-4" />
-              </motion.button>
-            </div>
-          </motion.div>
-        )}
-
-        {/* Step 3: Bio & Rate */}
-        {step === 3 && (
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="card p-6 space-y-4"
-          >
-            <h2 className="text-lg font-bold text-[var(--color-ink)] flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-[var(--color-primary)]" />
-              About You & Pricing
-            </h2>
-
-            <div>
-              <label htmlFor="mentor-bio" className="block text-sm font-medium text-[var(--color-ink-2)] mb-1">
-                Bio - tell new arrivals about yourself
-              </label>
-              <textarea
-                id="mentor-bio"
-                name="bio"
-                value={bio}
-                onChange={(e) => setBio(e.target.value)}
-                placeholder="e.g. I've lived in Kellyville for 10 years. I know every cafe, park, and shortcut. Originally from India, I speak Hindi and English fluently."
-                rows={4}
-                maxLength={2000}
-                className="w-full px-4 py-2.5 bg-[var(--color-surface)] border border-[var(--color-line)] rounded-xl text-sm focus:ring-2 focus:ring-[var(--color-ink)]/30 focus:border-transparent outline-none resize-none"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="mentor-rate" className="block text-sm font-medium text-[var(--color-ink-2)] mb-1">
-                Session rate (AUD) - you keep 70%
-              </label>
-              <div className="flex items-center gap-4">
-                <input
-                  id="mentor-rate"
-                  name="hourly_rate"
-                  aria-valuetext={`$${hourlyRate} per session`}
-                  type="range"
-                  min={15}
-                  max={100}
-                  value={hourlyRate}
-                  onChange={(e) => setHourlyRate(parseInt(e.target.value))}
-                  className="flex-1 accent-[var(--color-primary)]"
-                />
-                <div className="bg-[var(--color-primary)] text-[color:var(--color-primary-fg)] font-bold text-lg px-4 py-1.5 rounded-xl min-w-[80px] text-center">
-                  ${hourlyRate}
+                  <p className="site-meta m-0">Your profile is listed straight away. To be paid, you then connect a bank account through Stripe.</p>
                 </div>
               </div>
-              <div className="flex justify-between text-xs text-[var(--color-ink-3)] mt-1">
-                <span>You earn: ${Math.round(hourlyRate * 0.7)}</span>
-                <span>Platform fee: ${Math.round(hourlyRate * 0.3)}</span>
-              </div>
             </div>
-
-            <div className="flex gap-3">
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                onClick={() => setStep(2)}
-                className="flex-1 bg-[var(--color-surface-muted)] text-[var(--color-ink-2)] font-semibold py-3 rounded-xl text-sm"
-              >
-                Back
-              </motion.button>
-              <motion.button
-                type="submit"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={handleSubmit}
-                disabled={loading}
-                aria-busy={loading}
-                className="flex-1 bg-[var(--color-primary)] text-[color:var(--color-primary-fg)] font-semibold py-3 rounded-xl text-sm transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
-              >
-                {loading ? (
-                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                ) : (
-                  <>
-                    <Heart className="w-4 h-4" />
-                    Create Mentor Profile
-                  </>
-                )}
-              </motion.button>
-            </div>
-          </motion.div>
-        )}
-      </div>
+          </form>
+        </div>
+      </section>
     </>
   );
 }

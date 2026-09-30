@@ -84,23 +84,16 @@ export interface ResourceHub {
 export const RESOURCE_HUBS: ResourceHub[] = [
   {
     id: "guides",
-    href: "/resources/guides",
-    title: "Guides & Articles",
-    description: "Practical advice for moving, living and settling in Australia.",
+    href: "/guides",
+    title: "Guides",
+    description: "Practical advice for moving, renting and settling in Australia.",
     icon: "book",
   },
   {
-    id: "tools",
-    href: "/resources/tools",
-    title: "Tools & Checklists",
-    description: "Planners, calculators and lookups for your move.",
-    icon: "clipboard",
-  },
-  {
     id: "help",
-    href: "/resources/help",
-    title: "Help Centre",
-    description: "Quick answers to common questions about Migrent.",
+    href: "/help",
+    title: "Help",
+    description: "Answers about renting and hosting with Migrent.",
     icon: "lifebuoy",
   },
 ];
@@ -158,7 +151,28 @@ function minutesFrom(readTime: string): number {
   return Number.isFinite(n) && n > 0 ? n : 5;
 }
 
-const guideArticles: ResourceArticle[] = guidesContent.map((g) => ({
+/**
+ * Content kept out of every index until someone checks it. Their addresses
+ * redirect to /guides (temporarily, in next.config.ts) so nothing 404s.
+ *
+ *   the eight step-by-step guides         described features Migrent does
+ *                                         not have (trust badges, selfie
+ *                                         checks, a Superhost programme,
+ *                                         Migrent holding bonds in a trust
+ *                                         account) and quoted "Migrent data"
+ *                                         that does not exist. Their
+ *                                         accurate replacements are the Help
+ *                                         articles they now redirect to.
+ *   superhost-program-launch              announces a programme Migrent
+ *                                         does not run
+ *   sydney-rental-market-2026             quotes market figures attributed
+ *                                         to a named source that nobody has
+ *                                         verified
+ */
+export const HIDDEN_GUIDES = new Set(["host-first", "find-fast", "verify-profile", "list-property", "superhost", "earnings", "visas", "disputes"]);
+export const HIDDEN_POSTS = new Set(["superhost-program-launch", "sydney-rental-market-2026"]);
+
+const guideArticles: ResourceArticle[] = guidesContent.filter((g) => !HIDDEN_GUIDES.has(g.id)).map((g) => ({
   key: `guide:${g.id}`,
   href: `/guides/${g.id}`,
   kind: "Guide" as const,
@@ -169,7 +183,7 @@ const guideArticles: ResourceArticle[] = guidesContent.map((g) => ({
   keywords: [g.difficulty, g.category, ...g.sections.map((s) => s.title)],
 }));
 
-const postArticles: ResourceArticle[] = getAllPosts().map((p) => ({
+const postArticles: ResourceArticle[] = getAllPosts().filter((p) => !HIDDEN_POSTS.has(p.slug)).map((p) => ({
   key: `post:${p.slug}`,
   href: `/blog/${p.slug}`,
   kind: POST_KIND[p.slug] ?? "Article",
@@ -188,9 +202,9 @@ const postArticles: ResourceArticle[] = getAllPosts().map((p) => ({
  */
 export const RESOURCE_ARTICLES: ResourceArticle[] = [...guideArticles, ...postArticles];
 
-/** The one piece the hub leads with. "Find Rentals Fast" is the shortest
- *  path to the thing a first-time visitor came for. */
-export const FEATURED_ARTICLE_KEY = "guide:find-fast";
+/** The one piece the index leads with: spotting a rental scam is the
+ *  thing a new arrival most needs to know before paying anyone. */
+export const FEATURED_ARTICLE_KEY = "post:spot-rental-scams";
 
 export function getFeaturedArticle(): ResourceArticle {
   return (
@@ -235,10 +249,9 @@ export interface ResourceTool {
 export const RESOURCE_TOOLS: ResourceTool[] = [
   {
     id: "rental-laws",
-    href: "/resources/rental-laws",
+    href: "/guides/rental-laws",
     title: "Rental law by state",
-    summary:
-      "Bond limits, tenant rights and the dispute process, for every state and territory.",
+    summary: "Bond rules, renters' rights and how disputes are settled, for every state and territory.",
     category: "Visas & rights",
     action: "Look up your state",
     icon: "scales",
@@ -247,39 +260,24 @@ export const RESOURCE_TOOLS: ResourceTool[] = [
   {
     id: "suburbs",
     href: "/suburbs",
-    title: "Suburb comparison",
-    summary:
-      "Compare rent, transport and communities suburb by suburb before you commit to an area.",
+    title: "Suburb guides",
+    summary: "Census figures for every suburb in Australia: rent, who lives there and how people get to work.",
     category: "Housing",
-    action: "Compare suburbs",
+    action: "Explore suburbs",
     icon: "compass",
-    keywords: ["suburb", "rent", "transport", "commute", "neighbourhood", "compare"],
+    keywords: ["suburb", "rent", "transport", "commute", "neighbourhood", "census"],
   },
   {
-    id: "roi-calculator",
-    href: "/resources/roi-calculator",
-    title: "Room earnings calculator",
-    summary:
-      "Estimate what a spare room could earn, by suburb, room type and occupancy.",
+    id: "earnings",
+    href: "/for-owners#earnings",
+    title: "Earnings estimate",
+    summary: "Put in your own rent and see a year's income, and exactly what Migrent would charge.",
     category: "Money",
     action: "Estimate earnings",
     icon: "calculator",
     audience: "For hosts",
-    keywords: ["roi", "yield", "income", "earnings", "rent", "calculator", "owner"],
+    keywords: ["income", "earnings", "rent", "calculator", "owner", "host", "fee"],
   },
-];
-
-/* ── In-development pages, named honestly ──────────────────────────── */
-
-/**
- * Two routes that exist but have nothing behind them yet. They stay
- * reachable so old links and bookmarks keep working, and they are listed
- * as one line of text rather than as cards, because a card promises a
- * destination.
- */
-export const RESOURCES_IN_PROGRESS = [
-  { href: "/resources/api-docs", label: "Developer API" },
-  { href: "/resources/discord", label: "Community chat" },
 ];
 
 /* ── Search ────────────────────────────────────────────────────────── */

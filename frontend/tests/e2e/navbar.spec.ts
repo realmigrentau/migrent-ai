@@ -26,8 +26,11 @@ test.describe("desktop", () => {
     const box = await bar.boundingBox();
     expect(box?.y).toBe(24);
     expect(box?.height).toBe(60);
+    // Since the 2026-09-29 redesign the pill is the Hub's glass: a 1px ring
+    // plus the soft --shadow-nav drop, not Navbar 1's shadow-lg.
     const shadow = await bar.evaluate((el) => getComputedStyle(el).boxShadow);
-    expect(shadow).toContain("0px 10px 15px -3px");
+    expect(shadow).toContain("0px 0px 0px 1px");
+    expect(shadow).toContain("0px 12px 32px -16px");
   });
 
   test("fits on one line at the narrowest desktop width", async ({ page }) => {
@@ -54,7 +57,7 @@ test.describe("desktop", () => {
     await expect(trigger(page, "Find a stay")).not.toHaveAttribute("data-active", "true");
 
     await page.goto("/mentors");
-    await expect(banner(page).getByRole("link", { name: "Mentors" })).toHaveAttribute("aria-current", "page");
+    await expect(trigger(page, "Find a stay")).toHaveAttribute("data-active", "true");
   });
 
   test("hover opens a panel of titled icon columns", async ({ page }) => {
@@ -72,20 +75,20 @@ test.describe("desktop", () => {
 
   test("a click after a hover leaves the panel open", async ({ page }) => {
     await page.goto("/pricing");
-    const resources = trigger(page, "Resources");
+    const owners = trigger(page, "For owners");
     // Playwright's click moves the pointer onto the button first, which is
     // exactly the hover-then-click that used to close it straight away.
-    await resources.click();
-    await expect(resources).toHaveAttribute("aria-expanded", "true");
-    await expect(page.locator("#nav-panel-resources")).toBeVisible();
-    await resources.click();
-    await expect(resources).toHaveAttribute("aria-expanded", "false");
+    await owners.click();
+    await expect(owners).toHaveAttribute("aria-expanded", "true");
+    await expect(page.locator("#nav-panel-owners")).toBeVisible();
+    await owners.click();
+    await expect(owners).toHaveAttribute("aria-expanded", "false");
   });
 
   test("every panel stays inside the window", async ({ page }) => {
     await page.setViewportSize({ width: 1024, height: 800 });
     await page.goto("/pricing");
-    for (const [name, id] of [["Find a stay", "stay"], ["For owners", "owners"], ["Resources", "resources"]]) {
+    for (const [name, id] of [["Find a stay", "stay"], ["For owners", "owners"]]) {
       await trigger(page, name).hover();
       const box = await page.locator(`#nav-panel-${id}`).boundingBox();
       expect(box, name).not.toBeNull();
@@ -96,6 +99,8 @@ test.describe("desktop", () => {
 
   test("is fully operable from the keyboard", async ({ page }) => {
     await page.goto("/pricing");
+    // Keyboard input before hydration reaches a button with no handler yet.
+    await page.waitForLoadState("networkidle");
     const stay = trigger(page, "Find a stay");
     await stay.focus();
     await page.keyboard.press("Enter");

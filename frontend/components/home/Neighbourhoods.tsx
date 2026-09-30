@@ -1,133 +1,119 @@
 import { useRef } from "react";
 import Link from "next/link";
-import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { ArrowRight } from "lucide-react";
-import { Reveal, SectionHead } from "./primitives";
+import { Reveal, SectionHead } from "../site";
 
 /**
- * Where you can live.
+ * Where you could live, with real numbers.
  *
- * The page used to answer this twice - a four-tile city grid, then a
- * separate suburb gallery eight sections later. They are one section now:
- * the cities are capsules under the heading, and the suburbs pass in two
- * rows drifting against each other as you scroll. Every link that existed
- * in either section still exists here.
+ * Two rows of suburb cards drift past each other as the page scrolls. Every
+ * figure on them comes from the ABS 2021 Census through the suburb
+ * directory (data/suburbs, loaded in getStaticProps), and every card links
+ * to that suburb's guide. The repeat that keeps a row from running out is
+ * decoration: hidden from assistive tech and out of the tab order.
  */
 
-const CITIES = [
-  { city: "Sydney", note: "Surry Hills to Parramatta" },
-  { city: "Melbourne", note: "Carlton to Footscray" },
-  { city: "Brisbane", note: "West End to South Bank" },
-  { city: "More soon", note: "Perth & Adelaide next" },
-];
+export interface FeaturedSuburb {
+  name: string;
+  city: string;
+  href: string;
+  medianRent: number | null;
+  overseasBornPct: number | null;
+}
 
-/**
- * Paths are the canonical two-segment form, /suburb/<state>/<slug>, because
- * a bare name is ambiguous nationally - there are two West Ends in Queensland
- * alone, and the single-segment URL now only exists to redirect.
- *
- * Six of these had no `slug` and rendered as dead tiles, because only sixteen
- * suburbs had pages. Every Australian suburb has one now, so they link.
- * South Bank is the exception and stays unlinked on purpose: it is a precinct
- * within South Brisbane, not a suburb the ABS publishes.
- */
-const SUBURBS: { s: string; c: string; href?: string }[] = [
-  { s: "Marrickville", c: "Sydney", href: "/suburb/nsw/marrickville" },
-  { s: "Carlton", c: "Melbourne", href: "/suburb/vic/carlton" },
-  { s: "West End", c: "Brisbane", href: "/suburb/qld/west-end-brisbane" },
-  { s: "Newtown", c: "Sydney", href: "/suburb/nsw/newtown" },
-  { s: "Brunswick", c: "Melbourne", href: "/suburb/vic/brunswick" },
-  { s: "South Bank", c: "Brisbane" },
-  { s: "Footscray", c: "Melbourne", href: "/suburb/vic/footscray" },
-  { s: "Surry Hills", c: "Sydney", href: "/suburb/nsw/surry-hills" },
-  { s: "Fitzroy", c: "Melbourne", href: "/suburb/vic/fitzroy" },
-  { s: "Glebe", c: "Sydney", href: "/suburb/nsw/glebe" },
-  { s: "St Kilda", c: "Melbourne", href: "/suburb/vic/st-kilda" },
-  { s: "Paddington", c: "Brisbane", href: "/suburb/qld/paddington" },
-];
-
-function Tile({ s, c, href, muted }: { s: string; c: string; href?: string; muted?: boolean }) {
-  const face = (
-    <div className="mg-tile__body">
-      <div className="text-[21px] font-medium tracking-[-0.02em] leading-none">{s}</div>
-      <div className="text-[11px] tracking-[0.14em] uppercase mt-2 text-white/85">
-        {c}
-        {href && !muted && <span className="text-white"> · Guide</span>}
-      </div>
-    </div>
+function SuburbCard({ s, repeat }: { s: FeaturedSuburb; repeat?: boolean }) {
+  const body = (
+    <>
+      <p className="site-meta">{s.city}</p>
+      <p className="mt-1 font-[family-name:var(--font-display)] text-[25px] font-normal leading-[1.1] tracking-[-0.014em] text-[color:var(--color-ink)]">
+        {s.name}
+      </p>
+      <dl className="mt-5 grid grid-cols-2 gap-3">
+        <div>
+          <dt className="site-meta">Median rent</dt>
+          <dd className="m-0 text-[16px] font-bold tabular-nums text-[color:var(--color-ink)]">{s.medianRent ? `$${s.medianRent}/wk` : "Not published"}</dd>
+        </div>
+        <div>
+          <dt className="site-meta">Born overseas</dt>
+          <dd className="m-0 text-[16px] font-bold tabular-nums text-[color:var(--color-ink)]">
+            {s.overseasBornPct != null ? `${Math.round(s.overseasBornPct)}%` : "Not published"}
+          </dd>
+        </div>
+      </dl>
+    </>
   );
-
-  // The rows repeat so the drift never runs out of tiles. The repeat is
-  // decoration: it is hidden from assistive tech and kept out of the tab
-  // order, so no link on this page is announced twice.
-  if (muted || !href) {
+  if (repeat) {
     return (
-      <div className="mg-tile" aria-hidden="true">
-        {face}
+      <div className="site-card site-card--pad w-[clamp(240px,24vw,290px)] shrink-0" aria-hidden="true">
+        {body}
       </div>
     );
   }
-
   return (
-    <Link href={href} className="mg-tile" aria-label={`${s}, ${c} suburb guide`}>
-      {face}
+    <Link href={s.href} className="site-card site-card--pad w-[clamp(240px,24vw,290px)] shrink-0" aria-label={`${s.name}, ${s.city}: suburb guide`}>
+      {body}
     </Link>
   );
 }
 
-export default function Neighbourhoods() {
+export default function Neighbourhoods({ suburbs = [] }: { suburbs?: FeaturedSuburb[] }) {
   const ref = useRef<HTMLElement>(null);
   const reduced = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
-  const xA = useTransform(scrollYProgress, [0, 1], reduced ? ["0%", "0%"] : ["-12%", "2%"]);
-  const xB = useTransform(scrollYProgress, [0, 1], reduced ? ["0%", "0%"] : ["2%", "-12%"]);
+  const xA = useTransform(scrollYProgress, [0, 1], reduced ? ["0%", "0%"] : ["-14%", "2%"]);
+  const xB = useTransform(scrollYProgress, [0, 1], reduced ? ["0%", "0%"] : ["2%", "-14%"]);
 
-  const rowA = SUBURBS.slice(0, 6);
-  const rowB = SUBURBS.slice(6);
+  if (suburbs.length === 0) return null;
+  const half = Math.ceil(suburbs.length / 2);
+  const rowA = suburbs.slice(0, half);
+  const rowB = suburbs.slice(half);
 
   return (
-    <section ref={ref} className="mg-section mg-band--sand overflow-hidden" aria-labelledby="places-heading">
-      <div className="mg-shell">
+    <section ref={ref} className="site-section overflow-hidden" aria-labelledby="places-heading">
+      <div className="site-shell">
         <Reveal>
           <SectionHead
-            eyebrow="Where you can live"
-            heading="Real rooms, in real"
-            emphasis="neighbourhoods."
-            headingId="places-heading"
+            eyebrow="Where you could live"
+            id="places-heading"
+            heading={
+              <>
+                Real suburbs, <strong>real numbers.</strong>
+              </>
+            }
+            lead="Rent and community figures for every suburb in Australia, from the 2021 Census."
             aside={
-              <Link href="/suburbs" className="mg-link">
-                All suburb guides <ArrowRight className="w-4 h-4" aria-hidden="true" />
+              <Link href="/suburbs" className="site-link">
+                All suburb guides <ArrowRight className="h-4 w-4" strokeWidth={2} aria-hidden="true" />
               </Link>
             }
           />
         </Reveal>
+      </div>
 
-        <Reveal delay={0.06}>
-          <ul className="list-none m-0 p-0 mt-8 flex flex-wrap gap-2.5">
-            {CITIES.map((c) => (
-              <li key={c.city}>
-                <Link href="/suburbs" className="mg-chip h-11 px-5">
-                  <span className="text-[14px] font-semibold text-[var(--color-ink)]">{c.city}</span>
-                  <span className="text-[12.5px] text-[var(--color-ink-3)] hidden sm:inline">{c.note}</span>
-                </Link>
-              </li>
+      {reduced ? (
+        <ul className="site-shell m-0 mt-10 grid list-none grid-cols-1 gap-4 p-0 sm:grid-cols-2 lg:grid-cols-4">
+          {suburbs.map((s) => (
+            <li key={s.href} className="[&>*]:w-full">
+              <SuburbCard s={s} />
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <div className="mt-10 space-y-4">
+          <motion.div style={{ x: xA }} className="flex w-max gap-4">
+            {[...rowA, ...rowA].map((s, i) => (
+              <SuburbCard key={`a${i}`} s={s} repeat={i >= rowA.length} />
             ))}
-          </ul>
-        </Reveal>
-      </div>
-
-      <div className="mt-11 space-y-4">
-        <motion.div style={{ x: xA }} className="mg-drift">
-          {[...rowA, ...rowA].map((t, i) => (
-            <Tile key={`a${i}`} s={t.s} c={t.c} href={t.href} muted={i >= rowA.length} />
-          ))}
-        </motion.div>
-        <motion.div style={{ x: xB }} className="mg-drift">
-          {[...rowB, ...rowB].map((t, i) => (
-            <Tile key={`b${i}`} s={t.s} c={t.c} href={t.href} muted={i >= rowB.length} />
-          ))}
-        </motion.div>
-      </div>
+          </motion.div>
+          <motion.div style={{ x: xB }} className="flex w-max gap-4">
+            {[...rowB, ...rowB].map((s, i) => (
+              <SuburbCard key={`b${i}`} s={s} repeat={i >= rowB.length} />
+            ))}
+          </motion.div>
+        </div>
+      )}
+      <p className="site-shell site-meta mt-6">Source: Australian Bureau of Statistics, Census of Population and Housing 2021.</p>
     </section>
   );
 }
