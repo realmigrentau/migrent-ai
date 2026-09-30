@@ -58,11 +58,46 @@ backend/migrations/043_migrent_hub.sql
 | Renter | `profiles.role = 'seeker'` | chosen at onboarding, or switched in Settings |
 | Owner | `profiles.role = 'owner'`, `owner_kind = 'individual'` | chosen at onboarding or in Settings |
 | Property manager | `profiles.role = 'owner'`, `owner_kind = 'property_manager'` | same |
-| Admin | `profiles.is_admin` or an admin role | **never self-selected**; granted in the database |
+| Admin | `profiles.is_admin` or an admin role | **never self-selected**; granted in the database. An admin with a renter or owner role uses the Hub as that role, with an **Admin panel** added to their navigation |
 
 - Every endpoint resolves the caller with `hub_actor()` and checks rights on the server (`require_owner`, `require_admin_actor`, ownership of each record). Hiding a button is never the control.
 - Switching from owner to renter is refused while listings are live or in review, or while a tenancy is active, so nothing is stranded.
 - **View as (admins, for support):** an admin opens it from People with a written reason. It is read-only (every write returns 403), limited to 60 minutes, and the start, the end and the reason are written to `admin_audit_log`. The customer's data is served by the API under the admin's own session plus the `X-Migrent-View-As` header, which the backend checks against the audit log.
+
+---
+
+## Admin
+
+Everything the Migrent team does happens in the Hub's **Admin panel**. The older `/admin` console is retired and its addresses redirect here (see [Old pages](#old-pages-and-where-they-went)).
+
+### The Admin panel password
+
+Admins sign in like anyone else. The admin tools sit behind a second password, the Admin panel password, checked by the server (`backend/admin_panel.py`):
+
+- It is stored only as a salted PBKDF2 hash in `admin_panel_settings` (migration 044), never in the code. Change it inside the panel (Overview, "Admin password"); the change is audited.
+- The right password returns an unlock token, valid for 20 minutes, tied to that admin and that sign-in. The Hub sends it as `X-Migrent-Admin-Unlock`. Every `/hub/admin/*` endpoint, the final review endpoints, admin access to other people's applications, and the older `/admin`, `/admin/spam`, owner ID review and reports-queue endpoints answer **423** to an admin without it. People who are not admins see exactly what they saw before.
+- **30 seconds without activity** (mouse, keyboard, touch or scroll) locks the panel in the browser and raises the alarm: red and blue police lights over the whole screen, an "Admin panel locked" banner and a siren, until the admin chooses "Unlock again" (`lib/hub/adminPanel.ts`, `components/hub/admin/AdminIdleAlarm.tsx`). "Lock now", signing out, closing the tab, the unlock expiring and any 423 lock it quietly. A reload inside the 30 seconds keeps it open.
+- **Three wrong passwords** within 15 minutes lock the panel for that account for 15 minutes, end the account's sign-in sessions everywhere, send every admin a "Potential threat" alert (in the Hub, by email and push), and show the full-screen police lights, "Potential threat / Potential hack" banner and siren at `/locked`.
+- **The alarm** (`lib/hub/alarm.ts`, `components/hub/admin/PoliceAlert.tsx`): the siren is made in the browser with Web Audio, wails once a second in step with the lights, can be silenced, and stops by itself after 30 seconds. Browsers only allow sound after a click or key press, so the Unlock button primes it; without that (for example after a fresh page load) the lights show silently. The lights pulse once a second per colour (under the 3-per-second seizure threshold) and stand still with reduced motion.
+- Unlocks, wrong passwords, lockouts and password changes are in the audit log; the attempt count is read from it.
+
+| Screen | Hub path | What it is for |
+|---|---|---|
+| Overview | `/admin` | what is waiting in each queue, the number of accounts and approved listings, and the Admin panel password. Accounts whose only role is admin also see this on `/` |
+| Listings | `/admin/listings` | tabs: To review, Flagged (spam check), Hidden, Removal pending, Paused, All listings (search by title, suburb, owner name or email). A side panel shows photos, owner, spam reasons and history, and only the actions the listing's state allows |
+| ID checks | `/admin/id-checks` | owners waiting for a government ID check: view the document (a five-minute link), approve, or reject with a reason the owner is emailed |
+| Final reviews | `/admin/reviews` | owner-approved applications waiting for Migrent |
+| Reports | `/admin/reports` | user reports and emergency repairs |
+| Support | `/admin/support` | tickets from the help button: reply (shown on the customer's ticket page), internal notes, status, priority, topic |
+| People | `/admin/people` | find an account, view as them (read-only), suspend or reinstate |
+| Audit log | `/admin/audit` | every consequential admin action, who took it and why |
+
+- **Endpoints** are in `backend/routes_hub_admin.py`. Listing moderation and ID checks call the same functions as the older `/admin` API (`routes_admin`, `routes_spam_moderation`, `routes_owner_verification`), so owner emails, the listing's moderation history and the audit rows are identical either way.
+- **Audit first.** Each action writes `admin_audit_log` before it changes anything; if the write fails, nothing happens. Actions and target types must be in the CHECK constraints (migration 043, actions extended in 044) (`backend/tests/conftest.py` enforces them in tests, and `frontend/tests/unit/hubAdmin.test.ts` checks every one has a label). Support tickets keep their own history in `support_events`.
+- **Reasons.** Rejecting, asking for changes, pausing, hiding and starting a removal need a written reason; so do rejecting an ID and suspending or reinstating an account.
+- **Removal is two steps**: start it (the listing stays offline in Removal pending), then confirm it. The row is kept (`moderation_status = 'deleted'`).
+- **Suspending** sets `profiles.disabled_at`. Every Hub request from that account is then refused; nothing is deleted and their listings are not changed (pause them in Listings if needed). Admin accounts can only be changed in the database.
+- **Retired without a replacement:** Analytics (its "visited" number was invented), Revenue (it read a `payments` table that does not exist; Stripe is the record of money) and the Help articles form (the public Help Centre reads `lib/helpData.ts`, not that table).
 
 ---
 
@@ -189,6 +224,11 @@ Off unless `AI_LISTING_ASSIST_ENABLED=true` **and** an Anthropic credential is s
 | `/account/settings` | `/settings` |
 | `/onboarding` | `/welcome` |
 | `/signin`, `/signup`, `/magic-link-*`, `/forgot-password`, `/reset-password` | Hub equivalents |
+| `/admin`, `/admin/overview`, `/admin/analytics`, `/admin/revenue` | `/admin` (Admin panel overview) |
+| `/admin/moderation`, `/admin/spam-moderation`, `/admin/listings` | `/admin/listings` (To review, Flagged, All listings) |
+| `/admin/verification` | `/admin/id-checks` |
+| `/admin/users` | `/admin/people` |
+| `/admin/reports`, `/admin/support`, any other `/admin/...` | the same path in the Hub |
 
 Redirects are temporary (307) and never apply on the Hub's own host. Old notification links are routed the same way in the Activity page.
 
@@ -203,6 +243,6 @@ cd frontend && NEXT_DIST_DIR=.next-e2e npm run build:test          # production 
 cd frontend && NEXT_DIST_DIR=.next-e2e npx playwright test --workers=2
 ```
 
-- `tests/e2e/hub-mock.mjs` is an in-memory Supabase Auth plus every Hub endpoint. Fixture accounts (they exist only in the mock, password `hub-test-pass-1`): `renter@example.test`, `owner@example.test`, `tenant@example.test`, `admin@example.test`, `new@example.test`.
+- `tests/e2e/hub-mock.mjs` is an in-memory Supabase Auth plus every Hub endpoint. Fixture accounts (they exist only in the mock, password `hub-test-pass-1`): `renter@example.test`, `owner@example.test`, `tenant@example.test`, `admin@example.test`, `new@example.test`, `newowner@example.test` (an owner waiting for an ID check), `boss@example.test` (an owner who is also an admin) and `grace@example.test` (a renter who is also an admin; the lockout test uses her). The mock's Admin panel password is `panel-test-pass-1`. The admin fixtures also include a listing to review, a spam-flagged listing and three support tickets.
 - `npm run dev:mock` runs the site against the mock for local work (http://localhost:3200); `npm run preview:e2e` serves the Playwright build (http://localhost:3100).
-- `tests/e2e/hub.spec.ts` covers the signed-out redirects and intents, renter, tenant, owner and admin journeys, and axe checks in light and dark.
+- `tests/e2e/hub.spec.ts` covers the signed-out redirects and intents, renter, tenant, owner and admin journeys (the Admin panel password, the 30-second lock and the three-strike lockout, moderation, ID checks, suspending, support, the old `/admin` redirects), and axe checks in light and dark. `backend/tests/test_hub_admin.py` covers the admin API and `backend/tests/test_admin_panel.py` the panel password.

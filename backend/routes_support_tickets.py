@@ -21,7 +21,8 @@ import logging
 import resend
 import httpx
 from typing import Optional
-from fastapi import APIRouter, HTTPException, Header, Query
+from datetime import datetime, timezone
+from fastapi import APIRouter, BackgroundTasks, HTTPException, Header, Query
 from db import get_supabase_admin
 from auth_utils import get_current_user
 from models_support import (
@@ -248,6 +249,66 @@ def get_ticket(ticket_id: str, authorization: str = Header(...)):
     return ticket
 
 
+def post_agent_reply(sb, ticket: dict, agent_id: str, text: str) -> str:
+    """A reply from Migrent to the customer; the ticket then waits on them.
+    Logged in support_events. Returns the new status."""
+    sb.table("ticket_messages").insert({
+        "ticket_id": ticket["id"],
+        "sender_id": agent_id,
+        "sender_type": "agent",
+        "body": text,
+        "is_internal": False,
+    }).execute()
+    new_status = "pending_customer"
+    update_data = {"status": new_status}
+    # Track first response time
+    if not ticket.get("first_response_at"):
+        update_data["first_response_at"] = datetime.now(timezone.utc).isoformat()
+    sb.table("tickets").update(update_data).eq("id", ticket["id"]).execute()
+    _log_event(ticket["id"], agent_id, "reply", old_value=ticket.get("status"), new_value=new_status)
+    return new_status
+
+
+def apply_agent_update(sb, ticket: dict, agent_id: str, body: TicketUpdate) -> dict:
+    """Status, priority, category and an internal note. Each change is logged
+    in support_events. Returns the ticket fields that changed."""
+    ticket_id = ticket["id"]
+    update_data = {}
+
+    if body.status and body.status != ticket.get("status"):
+        _log_event(ticket_id, agent_id, "status_change",
+                    old_value=ticket.get("status"), new_value=body.status)
+        update_data["status"] = body.status
+        if body.status == "resolved":
+            update_data["resolved_at"] = datetime.now(timezone.utc).isoformat()
+
+    if body.priority and body.priority != ticket.get("priority"):
+        _log_event(ticket_id, agent_id, "priority_change",
+                    old_value=ticket.get("priority"), new_value=body.priority)
+        update_data["priority"] = body.priority
+
+    if body.category and body.category != ticket.get("category"):
+        _log_event(ticket_id, agent_id, "category_change",
+                    old_value=ticket.get("category"), new_value=body.category)
+        update_data["category"] = body.category
+
+    if update_data:
+        sb.table("tickets").update(update_data).eq("id", ticket_id).execute()
+
+    # Add internal note as a message
+    if body.internal_note and body.internal_note.strip():
+        sb.table("ticket_messages").insert({
+            "ticket_id": ticket_id,
+            "sender_id": agent_id,
+            "sender_type": "agent",
+            "body": body.internal_note.strip(),
+            "is_internal": True,
+        }).execute()
+        _log_event(ticket_id, agent_id, "internal_note")
+
+    return update_data
+
+
 @router.post("/tickets/{ticket_id}/reply")
 async def reply_to_ticket(ticket_id: str, body: TicketReply, authorization: str = Header(...)):
     """Add a reply to a ticket. Users and agents can both reply."""
@@ -265,44 +326,37 @@ async def reply_to_ticket(ticket_id: str, body: TicketReply, authorization: str 
     if not agent and ticket.get("user_id") != uid:
         raise HTTPException(status_code=403, detail="Not authorized")
 
-    sender_type = "agent" if agent else "user"
+    if agent:
+        post_agent_reply(sb, ticket, uid, body.body)
+        # Fire webhook for agent reply (to notify customer)
+        if ticket.get("email"):
+            await _fire_webhook("agent-reply", {
+                "ticket_id": ticket_id,
+                "subject": ticket.get("subject"),
+                "email": ticket.get("email"),
+                "reply": body.body,
+            })
+        return {"status": "ok"}
 
     sb.table("ticket_messages").insert({
         "ticket_id": ticket_id,
         "sender_id": uid,
-        "sender_type": sender_type,
+        "sender_type": "user",
         "body": body.body,
         "is_internal": False,
     }).execute()
 
-    # Update ticket status based on who replied
-    new_status = "pending_customer" if agent else "pending_internal"
+    # The customer replied, so the ticket is back with Migrent
+    new_status = "pending_internal"
     old_status = ticket.get("status")
-
-    update_data = {"status": new_status}
-
-    # Track first response time for agents
-    if agent and not ticket.get("first_response_at"):
-        update_data["first_response_at"] = "now()"
-
-    sb.table("tickets").update(update_data).eq("id", ticket_id).execute()
-
+    sb.table("tickets").update({"status": new_status}).eq("id", ticket_id).execute()
     _log_event(ticket_id, uid, "reply", old_value=old_status, new_value=new_status)
-
-    # Fire webhook for agent reply (to notify customer)
-    if agent and ticket.get("email"):
-        await _fire_webhook("agent-reply", {
-            "ticket_id": ticket_id,
-            "subject": ticket.get("subject"),
-            "email": ticket.get("email"),
-            "reply": body.body,
-        })
 
     return {"status": "ok"}
 
 
 @router.patch("/tickets/{ticket_id}")
-def update_ticket(ticket_id: str, body: TicketUpdate, authorization: str = Header(...)):
+def update_ticket(ticket_id: str, body: TicketUpdate, background_tasks: BackgroundTasks, authorization: str = Header(...)):
     """Agent-only: update ticket status, priority, category. Add internal notes."""
     user = get_current_user(authorization)
     if not _is_agent(user):
@@ -316,51 +370,15 @@ def update_ticket(ticket_id: str, body: TicketUpdate, authorization: str = Heade
         raise HTTPException(status_code=404, detail="Ticket not found")
 
     ticket = res.data[0]
-    update_data = {}
-
-    if body.status:
-        _log_event(ticket_id, uid, "status_change",
-                    old_value=ticket.get("status"), new_value=body.status)
-        update_data["status"] = body.status
-        if body.status == "resolved":
-            update_data["resolved_at"] = "now()"
-
-    if body.priority:
-        _log_event(ticket_id, uid, "priority_change",
-                    old_value=ticket.get("priority"), new_value=body.priority)
-        update_data["priority"] = body.priority
-
-    if body.category:
-        _log_event(ticket_id, uid, "category_change",
-                    old_value=ticket.get("category"), new_value=body.category)
-        update_data["category"] = body.category
-
-    if update_data:
-        sb.table("tickets").update(update_data).eq("id", ticket_id).execute()
-
-    # Add internal note as a message
-    if body.internal_note:
-        sb.table("ticket_messages").insert({
-            "ticket_id": ticket_id,
-            "sender_id": uid,
-            "sender_type": "agent",
-            "body": body.internal_note,
-            "is_internal": True,
-        }).execute()
-        _log_event(ticket_id, uid, "internal_note")
+    changed = apply_agent_update(sb, ticket, uid, body)
 
     # Fire resolved webhook for CSAT
-    if body.status == "resolved":
-        import asyncio
-        try:
-            loop = asyncio.get_event_loop()
-            loop.create_task(_fire_webhook("ticket-resolved", {
-                "ticket_id": ticket_id,
-                "subject": ticket.get("subject"),
-                "email": ticket.get("email"),
-            }))
-        except Exception:
-            pass
+    if changed.get("status") == "resolved":
+        background_tasks.add_task(_fire_webhook, "ticket-resolved", {
+            "ticket_id": ticket_id,
+            "subject": ticket.get("subject"),
+            "email": ticket.get("email"),
+        })
 
     return {"status": "ok"}
 

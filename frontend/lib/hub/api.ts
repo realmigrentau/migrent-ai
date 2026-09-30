@@ -9,6 +9,7 @@
  */
 import { API_BASE_URL } from "../apiBase";
 import { loadSupabase } from "../supabaseLazy";
+import { UNLOCK_HEADER, adminUnlockToken, lockAdminPanel } from "./adminPanel";
 
 const VIEW_AS_KEY = "migrent-view-as";
 
@@ -79,6 +80,9 @@ export async function hubFetch<T>(path: string, init: { method?: string; body?: 
     if (!path.startsWith("/hub/")) throw new HubError("This isn't shown while viewing as a customer.", 403);
     headers["X-Migrent-View-As"] = viewAs.id;
   }
+  // The Admin panel's unlock (lib/hub/adminPanel.ts), while it is open.
+  const unlock = adminUnlockToken();
+  if (unlock && path.startsWith("/hub/")) headers[UNLOCK_HEADER] = unlock;
 
   let body: BodyInit | undefined;
   if (init.body instanceof FormData) body = init.body;
@@ -124,6 +128,7 @@ export async function hubFetch<T>(path: string, init: { method?: string; body?: 
       message = first?.msg ? `${first.msg.replace(/^Value error, /, "")}${field ? ` (${String(field).replace(/_/g, " ")})` : ""}` : message;
     }
     if (res.status === 401) message = "Your session has ended. Sign in again to continue.";
+    if (res.status === 423) lockAdminPanel("server");
     if (res.status === 429) message = "That was a lot of requests in a short time. Wait a moment and try again.";
     if (res.status >= 500 && res.status !== 503) message = "Something went wrong on our side. Please try again.";
     throw new HubError(message, res.status, problems);

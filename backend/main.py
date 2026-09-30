@@ -125,7 +125,7 @@ app.add_middleware(
     allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allow_headers=["Authorization", "Content-Type", "X-Cron-Secret", "X-Migrent-View-As"],
+    allow_headers=["Authorization", "Content-Type", "X-Cron-Secret", "X-Migrent-View-As", "X-Migrent-Admin-Unlock"],
     expose_headers=["X-Total-Count", "X-Has-More"],
 )
 

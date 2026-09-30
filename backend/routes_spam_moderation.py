@@ -13,12 +13,13 @@ Provides endpoints to:
 
 import logging
 from datetime import datetime, timezone
-from fastapi import APIRouter, HTTPException, Header, Query
+from fastapi import APIRouter, Depends, HTTPException, Header, Query
 from pydantic import BaseModel
 from typing import Optional
 from db import get_supabase_admin
 from auth_utils import get_current_user
-from routes_admin import _require_admin
+from routes_admin import _require_admin, publish_blockers
+from admin_panel import admin_panel_unlocked
 from email_bookings import (
     send_listing_approved_to_owner,
     send_listing_under_review_to_owner,
@@ -29,7 +30,8 @@ from spam_detection import calculate_spam_score, apply_spam_result
 
 logger = logging.getLogger(__name__)
 
-router = APIRouter(prefix="/admin/spam", tags=["spam-moderation"])
+# The Admin panel password is needed here too (admin_panel.py).
+router = APIRouter(prefix="/admin/spam", tags=["spam-moderation"], dependencies=[Depends(admin_panel_unlocked)])
 
 
 # -- Models --
@@ -173,6 +175,20 @@ def approve_flagged_listing(
 
     old_status = listing["moderation_status"]
 
+    # Going live has the same rules whichever queue the listing came from.
+    blocker = publish_blockers(sb, listing_id)
+    if blocker:
+        raise HTTPException(status_code=409, detail=blocker)
+
+    # Audit first: an action that cannot be recorded must not happen.
+    sb.table("admin_audit_log").insert({
+        "admin_id": admin_id,
+        "action": "approve",
+        "target_type": "listing",
+        "target_id": listing_id,
+        "notes": body.notes or f"Approved from {old_status} status",
+    }).execute()
+
     # Approve the listing
     sb.table("listings").update({
         "moderation_status": "approved",
@@ -192,14 +208,6 @@ def approve_flagged_listing(
         "old_status": old_status,
         "new_status": "approved",
         "notes": body.notes,
-    }).execute()
-
-    sb.table("admin_audit_log").insert({
-        "admin_id": admin_id,
-        "action": "approve",
-        "target_type": "listing",
-        "target_id": listing_id,
-        "notes": body.notes or f"Approved from {old_status} status",
     }).execute()
 
     # Notify owner
@@ -256,6 +264,16 @@ def hide_listing(
     listing = listing_res.data[0]
     old_status = listing["moderation_status"]
 
+    # Audit first: an action that cannot be recorded must not happen.
+    sb.table("admin_audit_log").insert({
+        "admin_id": admin_id,
+        "action": "hide",
+        "target_type": "listing",
+        "target_id": listing_id,
+        "reason": body.reason,
+        "notes": body.notes,
+    }).execute()
+
     sb.table("listings").update({
         "moderation_status": "hidden",
         "hidden_at": now,
@@ -271,15 +289,6 @@ def hide_listing(
         "event_type": "hidden",
         "old_status": old_status,
         "new_status": "hidden",
-        "notes": body.notes,
-    }).execute()
-
-    sb.table("admin_audit_log").insert({
-        "admin_id": admin_id,
-        "action": "hide",
-        "target_type": "listing",
-        "target_id": listing_id,
-        "reason": body.reason,
         "notes": body.notes,
     }).execute()
 
@@ -331,6 +340,16 @@ def request_delete_listing(
     listing = listing_res.data[0]
     old_status = listing["moderation_status"]
 
+    # Audit first: an action that cannot be recorded must not happen.
+    sb.table("admin_audit_log").insert({
+        "admin_id": admin_id,
+        "action": "request_delete",
+        "target_type": "listing",
+        "target_id": listing_id,
+        "reason": body.reason,
+        "notes": body.notes,
+    }).execute()
+
     sb.table("listings").update({
         "moderation_status": "delete_requested",
         "delete_requested_at": now,
@@ -349,15 +368,6 @@ def request_delete_listing(
         "new_status": "delete_requested",
         "notes": body.notes,
         "reasons": [body.reason],
-    }).execute()
-
-    sb.table("admin_audit_log").insert({
-        "admin_id": admin_id,
-        "action": "request_delete",
-        "target_type": "listing",
-        "target_id": listing_id,
-        "reason": body.reason,
-        "notes": body.notes,
     }).execute()
 
     return {
@@ -399,6 +409,16 @@ def confirm_delete_listing(
             detail="Listing must be in 'delete_requested' status before deletion can be confirmed"
         )
 
+    # Audit first: an action that cannot be recorded must not happen.
+    sb.table("admin_audit_log").insert({
+        "admin_id": admin_id,
+        "action": "confirm_delete",
+        "target_type": "listing",
+        "target_id": listing_id,
+        "reason": listing.get("moderation_reason") or "Spam/policy violation",
+        "notes": body.notes,
+    }).execute()
+
     # Mark as deleted (soft delete - row stays for audit)
     sb.table("listings").update({
         "moderation_status": "deleted",
@@ -415,15 +435,6 @@ def confirm_delete_listing(
         "old_status": "delete_requested",
         "new_status": "deleted",
         "notes": body.notes or "Deletion confirmed by founder",
-    }).execute()
-
-    sb.table("admin_audit_log").insert({
-        "admin_id": admin_id,
-        "action": "confirm_delete",
-        "target_type": "listing",
-        "target_id": listing_id,
-        "reason": listing.get("moderation_reason") or "Spam/policy violation",
-        "notes": body.notes,
     }).execute()
 
     # Notify owner
@@ -482,6 +493,15 @@ def unflag_listing(
     listing = listing_res.data[0]
     old_status = listing["moderation_status"]
 
+    # Audit first: an action that cannot be recorded must not happen.
+    sb.table("admin_audit_log").insert({
+        "admin_id": admin_id,
+        "action": "unflag",
+        "target_type": "listing",
+        "target_id": listing_id,
+        "notes": body.notes,
+    }).execute()
+
     sb.table("listings").update({
         "moderation_status": "pending_approval",
         "spam_score": 0,
@@ -499,14 +519,6 @@ def unflag_listing(
         "old_status": old_status,
         "new_status": "pending_approval",
         "notes": body.notes or "Flag removed - returned to normal review",
-    }).execute()
-
-    sb.table("admin_audit_log").insert({
-        "admin_id": admin_id,
-        "action": "unflag",
-        "target_type": "listing",
-        "target_id": listing_id,
-        "notes": body.notes,
     }).execute()
 
     return {"message": "Listing unflagged and returned to pending review", "listing_id": listing_id}

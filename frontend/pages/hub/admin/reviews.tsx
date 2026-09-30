@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { ChevronRight, ShieldCheck } from "lucide-react";
-import HubShell from "../../../components/hub/HubShell";
+import AdminPanelShell from "../../../components/hub/admin/AdminPanel";
 import HubLink from "../../../components/hub/HubLink";
 import { EmptyState, ErrorState, RowSkeleton, StatusBadge } from "../../../components/hub/ui/Feedback";
 import { PageHeader } from "../../../components/hub/ui/Layout";
@@ -10,12 +10,12 @@ import { useHubQuery } from "../../../lib/hub/query";
 import type { ApplicationSummary } from "../../../lib/hub/types";
 
 /** Owner-approved applications waiting for Migrent's final review, oldest first. */
-export default function AdminReviewsPage() {
+function AdminReviewsContent() {
   const { data, error, loading, refetch } = useHubQuery<{ applications: ApplicationSummary[] }>("/hub/admin/applications");
   const [now] = useState(() => Date.now());
 
   return (
-    <HubShell title="Final reviews">
+    <>
       <PageHeader title="Final reviews" description="The owner has chosen these renters. Check the application, then finalise it, ask the renter for corrections, or stop it. Every decision is recorded in the audit log." />
       {error ? (
         <ErrorState message={error.message} offline={error.offline} onRetry={() => void refetch()} />
@@ -57,6 +57,15 @@ export default function AdminReviewsPage() {
           })}
         </ul>
       )}
-    </HubShell>
+    </>
+  );
+}
+
+/** Inside the Admin panel: nothing here loads until the admin password is entered. */
+export default function AdminReviewsPage() {
+  return (
+    <AdminPanelShell title="Final reviews">
+      <AdminReviewsContent />
+    </AdminPanelShell>
   );
 }

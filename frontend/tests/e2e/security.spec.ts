@@ -47,8 +47,11 @@ test("private pages need a session, and admin is hidden", async ({ request }) =>
   expect(back.pathname).toBe("/hub/sign-in");
   expect(back.searchParams.get("return")).toBe("/booking-success");
 
+  // The old admin console is retired: its addresses go to the Hub's Admin
+  // panel, which needs a session like every other Hub page.
   const admin = await request.get("/admin/overview", { maxRedirects: 0 });
   expect(admin.status()).toBe(307);
+  expect(new URL(admin.headers()["location"], "http://x").pathname).toBe("/hub/admin");
 });
 
 test("sign-in destinations cannot leave the origin", async ({ page }) => {

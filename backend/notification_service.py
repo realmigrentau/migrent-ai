@@ -66,6 +66,9 @@ DELIVERY_RULES = {
     "maintenance_updated":          {"in_app": True, "email": True,  "push": False},
     "tenancy_created":              {"in_app": True, "email": True,  "push": False},
     "listing_submitted":            {"in_app": True, "email": False, "push": False},
+    # Three wrong Admin panel passwords (routes_hub_admin._lock_out). A
+    # security notice, so it has no email switch.
+    "admin_security_alert":         {"in_app": True, "email": True,  "push": True},
 }
 
 # Which preference switch (Hub > Settings > Notifications) governs the
@@ -143,6 +146,7 @@ NOTIFICATION_TYPE_LABELS = {
     "maintenance_updated": "Maintenance",
     "tenancy_created": "Home",
     "listing_submitted": "Listings",
+    "admin_security_alert": "Security",
 }
 
 
@@ -276,6 +280,7 @@ def _send_notification_email(
         "maintenance_created": "View request",
         "maintenance_updated": "View request",
         "tenancy_created": "View your home",
+        "admin_security_alert": "Open the audit log",
     }
     btn_text = button_labels.get(event, "Open Migrent Hub")
 

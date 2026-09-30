@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import maplibregl from "maplibre-gl";
+import maplibregl from "../lib/maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { isWebGLAvailable } from "../lib/webgl";
 import { reportMapFailure } from "./MapErrorBoundary";

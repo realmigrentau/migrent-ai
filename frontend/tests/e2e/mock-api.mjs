@@ -141,7 +141,7 @@ const server = http.createServer(async (req, res) => {
   };
   if (req.method === "OPTIONS")
     return send(204, {}, {
-      "access-control-allow-headers": "authorization, content-type, apikey, x-client-info, x-supabase-api-version, x-migrent-view-as",
+      "access-control-allow-headers": "authorization, content-type, apikey, x-client-info, x-supabase-api-version, x-migrent-view-as, x-migrent-admin-unlock",
       "access-control-allow-methods": "GET,POST,PUT,PATCH,DELETE",
     });
   if (url.pathname === "/health" || url.pathname === "/") return send(200, { status: "ok" });

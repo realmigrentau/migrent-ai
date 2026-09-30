@@ -118,11 +118,11 @@ export default function KeyDetails({ listing }: KeyDetailsProps) {
       return;
     }
     let cancelled = false;
-    import("maplibre-gl")
-      .then((maplibregl) => {
+    import("../../lib/maplibre")
+      .then(({ default: maplibregl }) => {
         if (cancelled || !mapContainer.current) return;
         try {
-          const map = new maplibregl.default.Map({
+          const map = new maplibregl.Map({
             container: mapContainer.current,
             style: `https://api.maptiler.com/maps/streets-v2/style.json?key=${mapTilerKey}`,
             center: [approxLng, approxLat],
@@ -133,7 +133,7 @@ export default function KeyDetails({ listing }: KeyDetailsProps) {
           const el = document.createElement("div");
           el.setAttribute("aria-hidden", "true");
           el.style.cssText = "width:88px;height:88px;border-radius:50%;background:rgba(29,100,117,0.2);border:2px solid rgba(29,100,117,0.75)";
-          new maplibregl.default.Marker({ element: el }).setLngLat([approxLng, approxLat]).addTo(map);
+          new maplibregl.Marker({ element: el }).setLngLat([approxLng, approxLat]).addTo(map);
           map.on("error", () => setMapFailed(true));
           mapRef.current = map;
         } catch {

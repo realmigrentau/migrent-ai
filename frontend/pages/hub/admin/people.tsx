@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { Eye, Search, Users } from "lucide-react";
-import HubShell from "../../../components/hub/HubShell";
+import { Ban, Eye, RotateCcw, Search, Users } from "lucide-react";
+import AdminPanelShell from "../../../components/hub/admin/AdminPanel";
 import { useHubNavigate } from "../../../components/hub/HubLink";
 import { Button } from "../../../components/hub/ui/Button";
 import { EmptyState, ErrorState, InlineAlert, RowSkeleton, StatusBadge } from "../../../components/hub/ui/Feedback";
@@ -9,10 +9,9 @@ import { PageHeader } from "../../../components/hub/ui/Layout";
 import { Avatar } from "../../../components/hub/ui/Media";
 import { Dialog } from "../../../components/hub/ui/Overlay";
 import { useToast } from "../../../components/ui/Toast";
-import { HubError } from "../../../lib/hub/api";
+import { hubApi, HubError } from "../../../lib/hub/api";
 import { day } from "../../../lib/hub/format";
-import { useHubQuery } from "../../../lib/hub/query";
-import { siteUrl } from "../../../lib/hub/routes";
+import { invalidate, useHubQuery } from "../../../lib/hub/query";
 import { useHub } from "../../../lib/hub/session";
 
 interface Account {
@@ -22,16 +21,73 @@ interface Account {
   role: string | null;
   member_since: string;
   suspended: boolean;
+  is_admin: boolean;
+}
+
+/** Suspend or reinstate an account, with a reason for the audit log. */
+function SuspendDialog({ account, onClose }: { account: Account | null; onClose: () => void }) {
+  const toast = useToast();
+  const [reason, setReason] = useState("");
+  const [busy, setBusy] = useState(false);
+  const reinstating = Boolean(account?.suspended);
+
+  async function save() {
+    if (!account) return;
+    setBusy(true);
+    try {
+      await hubApi.post(`/hub/admin/users/${account.id}/${reinstating ? "unsuspend" : "suspend"}`, { reason: reason.trim() });
+      invalidate("/hub/admin/users");
+      toast.success(reinstating ? `${account.name} can use Migrent Hub again.` : `${account.name} is suspended.`);
+      setReason("");
+      onClose();
+    } catch (e) {
+      toast.error(e instanceof HubError ? e.message : "That didn't save.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <Dialog
+      open={Boolean(account)}
+      onClose={() => {
+        setReason("");
+        onClose();
+      }}
+      title={account ? (reinstating ? `Reinstate ${account.name}?` : `Suspend ${account.name}?`) : ""}
+      description={
+        reinstating
+          ? "They'll be able to use Migrent Hub again straight away. Any listing you paused stays paused until you unpause it in Listings."
+          : "They won't be able to use Migrent Hub until they are reinstated: no messages, applications or listing changes. Nothing is deleted. Their listings stay as they are, so pause any that shouldn't be seen from Listings."
+      }
+      footer={
+        <>
+          <Button variant="ghost" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button variant={reinstating ? "primary" : "danger"} loading={busy} disabled={reason.trim().length < 5} onClick={() => void save()}>
+            {reinstating ? "Reinstate" : "Suspend account"}
+          </Button>
+        </>
+      }
+    >
+      <Field label="Why?" hint={reinstating ? "e.g. Appeal accepted after a phone call." : "e.g. Asked renters to pay a deposit outside Migrent (report 3f2a)."}>
+        {({ id, describedBy }) => <Textarea id={id} rows={3} value={reason} maxLength={500} onChange={(e) => setReason(e.target.value)} aria-describedby={describedBy} autoFocus />}
+      </Field>
+      <p className="mt-3 text-[13px] text-[color:var(--color-ink-3)]">The reason and the time are recorded in the audit log.</p>
+    </Dialog>
+  );
 }
 
 /** Find an account, and (with a recorded reason) see Migrent Hub as they do, read-only. */
-export default function AdminPeoplePage() {
+function AdminPeopleContent() {
   const { me, startViewAs } = useHub();
   const navigate = useHubNavigate();
   const toast = useToast();
   const [q, setQ] = useState("");
   const [needle, setNeedle] = useState("");
   const [viewing, setViewing] = useState<Account | null>(null);
+  const [suspending, setSuspending] = useState<Account | null>(null);
   const [reason, setReason] = useState("");
   const [busy, setBusy] = useState(false);
 
@@ -55,8 +111,8 @@ export default function AdminPeoplePage() {
   }
 
   return (
-    <HubShell title="People">
-      <PageHeader title="People" description="Find a customer to help them. Account changes (suspending, deleting) stay in the admin console." />
+    <>
+      <PageHeader title="People" description="Find a customer to help them: see Migrent Hub as they do, or suspend an account that is breaking the rules. Both need a reason, which goes in the audit log." />
       <div className="relative mb-6 max-w-[520px]">
         <label htmlFor="people-q" className="sr-only">
           Search by name or email
@@ -92,20 +148,33 @@ export default function AdminPeoplePage() {
                 </p>
               </div>
               {u.suspended && <StatusBadge tone="danger">Suspended</StatusBadge>}
-              <Button variant="secondary" size="sm" icon={<Eye className="h-4 w-4" strokeWidth={1.75} />} disabled={u.id === me?.id} onClick={() => setViewing(u)}>
-                View as
-              </Button>
+              {u.is_admin && (
+                <StatusBadge tone="neutral" icon={false}>
+                  Admin
+                </StatusBadge>
+              )}
+              <div className="flex gap-2">
+                <Button variant="secondary" size="sm" icon={<Eye className="h-4 w-4" strokeWidth={1.75} />} disabled={u.id === me?.id} onClick={() => setViewing(u)}>
+                  View as
+                </Button>
+                {!u.is_admin && u.id !== me?.id && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    icon={u.suspended ? <RotateCcw className="h-4 w-4" strokeWidth={1.75} /> : <Ban className="h-4 w-4" strokeWidth={1.75} />}
+                    className={u.suspended ? undefined : "text-[color:var(--color-danger-500)]"}
+                    onClick={() => setSuspending(u)}
+                  >
+                    {u.suspended ? "Reinstate" : "Suspend"}
+                  </Button>
+                )}
+              </div>
             </li>
           ))}
         </ul>
       )}
-      <p className="mt-6 text-[13.5px] text-[color:var(--color-ink-3)]">
-        Need to change an account?{" "}
-        <a href={siteUrl("/admin/users")} className="font-semibold text-[color:var(--color-primary)] hover:underline">
-          Open the admin console
-        </a>
-        .
-      </p>
+      <p className="mt-6 text-[13.5px] text-[color:var(--color-ink-3)]">Admin accounts are changed in the database, never from here.</p>
+      <SuspendDialog account={suspending} onClose={() => setSuspending(null)} />
 
       <Dialog
         open={!!viewing}
@@ -133,6 +202,15 @@ export default function AdminPeoplePage() {
           </Field>
         </div>
       </Dialog>
-    </HubShell>
+    </>
+  );
+}
+
+/** Inside the Admin panel: nothing here loads until the admin password is entered. */
+export default function AdminPeoplePage() {
+  return (
+    <AdminPanelShell title="People">
+      <AdminPeopleContent />
+    </AdminPanelShell>
   );
 }

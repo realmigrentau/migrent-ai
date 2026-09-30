@@ -97,12 +97,12 @@ export function safeHubPath(input: unknown, fallback = "/"): string {
   if (/^\/[^/?#]*:/.test(value)) return fallback;
   value = toHubPath(value);
   const bare = value.split("?")[0].split("#")[0];
-  if (/^\/(sign-in|sign-up|forgot-password|reset-password|auth|verify-mfa)(\/|$)/.test(bare)) return fallback;
+  if (/^\/(sign-in|sign-up|forgot-password|reset-password|auth|verify-mfa|locked)(\/|$)/.test(bare)) return fallback;
   return value;
 }
 
 /** Hub pages that do not need a session. */
-export const HUB_PUBLIC_PATHS = ["/sign-in", "/sign-up", "/forgot-password", "/reset-password", "/auth/callback"];
+export const HUB_PUBLIC_PATHS = ["/sign-in", "/sign-up", "/forgot-password", "/reset-password", "/auth/callback", "/locked"];
 
 export function isHubPublicPath(hubPath: string): boolean {
   const bare = hubPath.split("?")[0];
@@ -133,6 +133,14 @@ const LEGACY_TO_HUB: [RegExp, (m: RegExpMatchArray) => string][] = [
   [/^\/seeker\/wishlist\/?$/, () => "/saved"],
   [/^\/seeker\/search\/?$/, () => "/discover"],
   [/^\/onboarding\/?$/, () => "/welcome"],
+  // The old admin console (retired; see next.config.ts).
+  [/^\/admin(?:\/(?:overview|analytics|revenue))?\/?$/, () => "/admin"],
+  [/^\/admin\/moderation\/?$/, () => "/admin/listings"],
+  [/^\/admin\/spam-moderation\/?$/, () => "/admin/listings?queue=flagged"],
+  [/^\/admin\/listings\/?$/, () => "/admin/listings?queue=all"],
+  [/^\/admin\/verification\/?$/, () => "/admin/id-checks"],
+  [/^\/admin\/users\/?$/, () => "/admin/people"],
+  [/^\/admin\/([^?#]+?)\/?$/, (m) => `/admin/${m[1]}`],
 ];
 
 /**

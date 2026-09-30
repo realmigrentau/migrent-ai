@@ -9,6 +9,7 @@
  */
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { HubError, hubApi } from "./api";
+import { onAdminPanelLock } from "./adminPanel";
 
 type Entry = { data?: unknown; error?: HubError; at: number; promise?: Promise<unknown> };
 
@@ -68,6 +69,22 @@ export function invalidate(prefix: string) {
     }
   }
 }
+
+/** Drop every key starting with `prefix`; mounted readers load it again. */
+export function forgetQueries(prefix: string) {
+  for (const key of Array.from(cache.keys())) {
+    if (key.startsWith(prefix)) {
+      cache.delete(key);
+      emit(key);
+    }
+  }
+}
+
+// Nothing the Admin panel showed stays in memory once it locks.
+onAdminPanelLock(() => {
+  forgetQueries("/hub/admin");
+  forgetQueries("/hub/applications/");
+});
 
 /**
  * Forget everything (the viewer changed: sign-out, or an admin starting or
