@@ -16,7 +16,10 @@ const checks = [
   ["x-frame-options", (v) => v.toUpperCase() === "SAMEORIGIN"],
 ];
 let failed = 0;
-for (const path of ["/", "/seeker/search", "/signin"]) {
+// A home page, a search page and the sign-in page. (The sign-in page moved to
+// /hub/sign-in; /signin is now a redirect, and Next.js sends redirects from
+// next.config.ts without the configured headers when self-hosted.)
+for (const path of ["/", "/seeker/search", "/hub/sign-in"]) {
   const res = await fetch(base + path, { redirect: "manual" });
   for (const [name, ok] of checks) {
     const v = res.headers.get(name) || "";

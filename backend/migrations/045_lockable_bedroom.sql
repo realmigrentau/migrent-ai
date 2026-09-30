@@ -1,4 +1,4 @@
--- 044_lockable_bedroom.sql
+-- 045_lockable_bedroom.sql
 --
 -- One new listing answer: does the renter's bedroom door lock?
 --
