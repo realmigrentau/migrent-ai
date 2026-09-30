@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { supabase } from "../lib/supabase";
+import { loadSupabase } from "../lib/supabaseLazy";
 import { UserProfile, ProfileBadges } from "./useUserProfile";
 
 export interface ProfileListing {
@@ -47,6 +47,7 @@ export function useProfileListings(userId: string | undefined) {
       const from = pageNum * LISTINGS_PER_PAGE;
       const to = from + LISTINGS_PER_PAGE - 1;
 
+      const supabase = await loadSupabase();
       const { data, error } = await supabase
         .from("public_listings")
         .select("id, title, display_address, postcode, weekly_price, description, property_type, place_type, bedrooms, bathrooms, images, created_at")

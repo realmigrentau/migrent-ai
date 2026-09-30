@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { supabase } from "../lib/supabase";
+import { loadSupabase } from "../lib/supabaseLazy";
 
 /**
  * Another user's public profile.
@@ -100,6 +100,7 @@ function formatReplyTime(hours: number | null | undefined): string | null {
 
 async function fetchPublicProfile(idOrPublicId: string): Promise<Record<string, unknown> | null> {
   try {
+    const supabase = await loadSupabase();
     let query = supabase.from("public_profiles").select("*");
     if (UUID_RE.test(idOrPublicId)) query = query.eq("id", idOrPublicId);
     else if (PUBLIC_ID_RE.test(idOrPublicId)) query = query.eq("public_id", idOrPublicId);

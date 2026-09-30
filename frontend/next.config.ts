@@ -320,10 +320,12 @@ const nextConfig: NextConfig = {
   },
 };
 
-// Sentry's build plugin only does work when SENTRY_AUTH_TOKEN and an org/project
-// are configured. Without them it passes the config through untouched, so the
-// build behaves exactly as before until error tracking is switched on.
-export default withSentryConfig(nextConfig, {
+// Sentry is wrapped in only when a DSN is configured. Without one the SDK
+// would still be injected into every page and do nothing; the site is
+// lighter without it, and adding a DSN in Vercel turns it back on.
+const sentryEnabled = Boolean(process.env.NEXT_PUBLIC_SENTRY_DSN || process.env.SENTRY_DSN);
+
+export default sentryEnabled ? withSentryConfig(nextConfig, {
   org: process.env.SENTRY_ORG,
   project: process.env.SENTRY_PROJECT,
   // Keep CI output readable; the plugin is noisy by default.
@@ -331,4 +333,4 @@ export default withSentryConfig(nextConfig, {
   // Source maps are uploaded to Sentry and stripped from the public bundle, so
   // stack traces stay readable for us without publishing our source.
   widenClientFileUpload: true,
-});
+}) : nextConfig;

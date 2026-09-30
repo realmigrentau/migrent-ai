@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { submitReport } from "../lib/api";
-import { supabase } from "../lib/supabase";
+import { loadSupabase } from "../lib/supabaseLazy";
 
 interface ReportModalProps {
   listingId?: string;
@@ -57,6 +57,7 @@ export default function ReportModal({ listingId, itemType, itemId, isOpen, onClo
     setLoading(true);
     setError("");
     try {
+      const supabase = await loadSupabase();
       const { data: { session } } = await supabase.auth.getSession();
       const token = session?.access_token || "";
 

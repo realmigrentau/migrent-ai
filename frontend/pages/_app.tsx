@@ -1,7 +1,7 @@
 import { useEffect } from "react";
+import dynamic from "next/dynamic";
 import type { AppProps } from "next/app";
 import { AnimatePresence, motion } from "framer-motion";
-import { HCaptchaProvider } from "@hcaptcha/react-hcaptcha/hooks";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import Layout from "../components/Layout";
@@ -9,11 +9,15 @@ import SEOHead from "../components/SEOHead";
 import { ToastProvider } from "../components/ui/Toast";
 import { ConfirmProvider } from "../components/ui/ConfirmDialog";
 import { HCAPTCHA_SITE_KEY } from "../lib/recaptcha";
-import { HubSessionProvider } from "../lib/hub/session";
 import { getPageMeta } from "../lib/pageMeta";
 import { fontClassName, fontRootCss } from "../lib/fonts";
 import "../lib/i18n";
 import "../styles/globals.css";
+
+// Loaded only where they are used, so the public site does not download the
+// Hub's session code (and the Supabase client behind it) or the captcha.
+const HubSessionProvider = dynamic(() => import("../lib/hub/session").then((m) => m.HubSessionProvider));
+const HCaptchaProvider = dynamic(() => import("@hcaptcha/react-hcaptcha/hooks").then((m) => m.HCaptchaProvider));
 
 const ADMIN_PATH = process.env.NEXT_PUBLIC_ADMIN_PATH || "/admin";
 

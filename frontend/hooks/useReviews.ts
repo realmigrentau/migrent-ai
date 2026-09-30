@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { supabase } from "../lib/supabase";
+import { loadSupabase } from "../lib/supabaseLazy";
 
 import { API_BASE_URL as BASE_URL } from "../lib/apiBase";
 export interface Review {
@@ -58,6 +58,7 @@ export interface DealReviewContext {
 }
 
 async function getToken(): Promise<string | null> {
+  const supabase = await loadSupabase();
   const { data } = await supabase.auth.getSession();
   return data.session?.access_token ?? null;
 }

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "../lib/supabase";
+import { loadSupabase } from "../lib/supabaseLazy";
 
 export interface MarqueeListing {
   id: string;
@@ -28,6 +28,7 @@ export function useTopListings() {
       try {
         // public_listings is the allow-listed, approved-and-available view;
         // anon has no grant on the listings table itself.
+        const supabase = await loadSupabase();
         const { data, error } = await supabase
           .from("public_listings")
           .select("id, title, suburb, city, weekly_price, beds, images, nearest_transport, created_at")

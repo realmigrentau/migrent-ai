@@ -8,7 +8,7 @@
  * toast.
  */
 import { API_BASE_URL } from "../apiBase";
-import { supabase } from "../supabase";
+import { loadSupabase } from "../supabaseLazy";
 
 const VIEW_AS_KEY = "migrent-view-as";
 
@@ -53,6 +53,7 @@ export function setViewAs(value: { id: string; name: string } | null) {
 }
 
 export async function accessToken(): Promise<string | null> {
+  const supabase = await loadSupabase();
   const { data } = await supabase.auth.getSession();
   return data.session?.access_token ?? null;
 }

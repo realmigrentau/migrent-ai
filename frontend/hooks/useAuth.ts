@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { supabase } from "../lib/supabase";
+import { loadSupabase } from "../lib/supabaseLazy";
 import type { Session, User } from "@supabase/supabase-js";
 
 const SESSION_CACHE_KEY = "migrent_session_cache";
@@ -55,34 +55,45 @@ export function useAuth(redirectTo?: string) {
   const [refreshing, setRefreshing] = useState(true);
 
   useEffect(() => {
-    // Get fresh session from Supabase (refreshes expired access tokens)
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      setCachedSession(session, session?.user ?? null);
-      setLoading(false);
-      setRefreshing(false);
-    });
+    // The client is loaded on first use (lib/supabaseLazy.ts); until then
+    // the cached session above drives the UI.
+    let cancelled = false;
+    let unsubscribe: (() => void) | null = null;
+    loadSupabase().then((supabase) => {
+      if (cancelled) return;
+      // Get fresh session from Supabase (refreshes expired access tokens)
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        if (cancelled) return;
+        setSession(session);
+        setUser(session?.user ?? null);
+        setCachedSession(session, session?.user ?? null);
+        setLoading(false);
+        setRefreshing(false);
+      });
 
-    // Listen for changes
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      setCachedSession(session, session?.user ?? null);
-      setLoading(false);
-      if (session && redirectTo) {
-        router.push(redirectTo);
-      }
+      // Listen for changes
+      const {
+        data: { subscription },
+      } = supabase.auth.onAuthStateChange((_event, session) => {
+        setSession(session);
+        setUser(session?.user ?? null);
+        setCachedSession(session, session?.user ?? null);
+        setLoading(false);
+        if (session && redirectTo) {
+          router.push(redirectTo);
+        }
+      });
+      unsubscribe = () => subscription.unsubscribe();
     });
 
     return () => {
-      subscription.unsubscribe();
+      cancelled = true;
+      unsubscribe?.();
     };
   }, [redirectTo, router]);
 
   const signOut = async () => {
+    const supabase = await loadSupabase();
     await supabase.auth.signOut();
     setSession(null);
     setUser(null);
