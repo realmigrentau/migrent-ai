@@ -349,7 +349,7 @@ export async function getListings(token: string, ownerOnly = false) {
 export async function searchListings(params: Record<string, string>, token?: string) {
   try {
     const queryString = new URLSearchParams(params).toString();
-    const headers: Record<string, string> = { "Content-Type": "application/json" };
+    const headers: Record<string, string> = { Accept: "application/json" };
     if (token) headers["Authorization"] = `Bearer ${token}`;
     const res = await fetch(`${BASE_URL}/listings/search?${queryString}`, {
       method: "GET",
@@ -576,7 +576,7 @@ export async function getPublicProfile(userId: string) {
   try {
     const res = await fetch(`${BASE_URL}/profiles/${userId}`, {
       method: "GET",
-      headers: { "Content-Type": "application/json" },
+      headers: { Accept: "application/json" },
     });
     if (!res.ok) throw new Error(`getPublicProfile failed: ${res.status}`);
     return await res.json();
@@ -695,7 +695,7 @@ export async function getFeaturedProfiles() {
   try {
     const res = await fetch(`${BASE_URL}/profiles/featured/community`, {
       method: "GET",
-      headers: { "Content-Type": "application/json" },
+      headers: { Accept: "application/json" },
     });
     if (!res.ok) throw new Error(`getFeaturedProfiles failed: ${res.status}`);
     return await res.json();
@@ -1131,7 +1131,7 @@ export async function getNearestStation(suburbCity: string): Promise<{
   try {
     const res = await fetch(
       `${BASE_URL}/utils/nearest-station?suburb_city=${encodeURIComponent(suburbCity)}`,
-      { method: "GET", headers: { "Content-Type": "application/json" } }
+      { method: "GET", headers: { Accept: "application/json" } }
     );
     if (!res.ok) throw new Error(`getNearestStation failed: ${res.status}`);
     return await res.json();
@@ -1608,7 +1608,7 @@ export async function cancelBooking(token: string, bookingId: string) {
 export async function getListingById(listingId: string) {
   try {
     const res = await fetch(`${BASE_URL}/listings/${listingId}`, {
-      headers: { "Content-Type": "application/json" },
+      headers: { Accept: "application/json" },
     });
     if (!res.ok) throw new Error(`getListingById failed: ${res.status}`);
     return await res.json();
@@ -1680,7 +1680,7 @@ export async function getListingDetail(
   listingId: string,
   token?: string
 ): Promise<ListingDetailResult> {
-  const headers: Record<string, string> = { "Content-Type": "application/json" };
+  const headers: Record<string, string> = { Accept: "application/json" };
   if (token) headers["Authorization"] = `Bearer ${token}`;
 
   let res: Response;

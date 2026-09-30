@@ -76,7 +76,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ query, res
   let initialPage: SearchPage | null = null;
   if (API_BASE_URL) {
     const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 4000);
+    const timer = setTimeout(() => controller.abort(), 1500);
     try {
       initialPage = await searchListingsPage(filtersToApiParams(filters, 0), undefined, {
         signal: controller.signal,
@@ -91,7 +91,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ query, res
   }
 
   // No cookies are read here, so the response can be shared briefly at the edge.
-  res.setHeader("Cache-Control", "public, s-maxage=30, stale-while-revalidate=120");
+  res.setHeader("Cache-Control", "public, s-maxage=60, stale-while-revalidate=600");
   return { props: { initialFilters: filters, initialPage, serverToday } };
 };
 

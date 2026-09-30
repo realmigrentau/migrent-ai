@@ -3,7 +3,7 @@ import Link from "next/link";
 import SEOHead from "../components/SEOHead";
 import MigrentHero from "../components/home/MigrentHero";
 import TrustStrip from "../components/home/TrustStrip";
-import RoomsNow from "../components/home/RoomsNow";
+import RoomsNow, { type RoomListing } from "../components/home/RoomsNow";
 import HowItWorks from "../components/home/HowItWorks";
 import TrustSection from "../components/home/TrustSection";
 import OwnersTeaser from "../components/home/OwnersTeaser";
@@ -13,6 +13,7 @@ import { CloseCard, Faq, Reveal, SectionHead, type FaqEntry } from "../component
 import { findPlace, getPlaceDetail } from "../lib/suburbs/data.server";
 import { getPostBySlug } from "../data/blogPosts";
 import { getGuideById } from "../data/guidesContent";
+import { API_BASE_URL } from "../lib/apiBase";
 
 /**
  * The homepage, in running order:
@@ -34,6 +35,8 @@ import { getGuideById } from "../data/guidesContent";
 interface HomeProps {
   suburbs: FeaturedSuburb[];
   articles: ArticleCard[];
+  /** Rooms fetched when the page was last built; null if the API did not answer. */
+  rooms: RoomListing[] | null;
 }
 
 const FAQS: FaqEntry[] = [
@@ -67,7 +70,7 @@ const FAQS: FaqEntry[] = [
   },
 ];
 
-export default function Home({ suburbs, articles }: HomeProps) {
+export default function Home({ suburbs, articles, rooms }: HomeProps) {
   return (
     <>
       <SEOHead
@@ -77,7 +80,7 @@ export default function Home({ suburbs, articles }: HomeProps) {
 
       <MigrentHero />
       <TrustStrip />
-      <RoomsNow />
+      <RoomsNow initial={rooms} />
       <HowItWorks />
       <TrustSection />
       <OwnersTeaser />
@@ -167,5 +170,26 @@ export const getStaticProps: GetStaticProps<HomeProps> = async () => {
     }
   }
 
-  return { props: { suburbs, articles } };
+  // The rooms strip ships inside the page instead of loading after it. The
+  // page is rebuilt in the background at most every five minutes (ISR), so
+  // a new room shows up within minutes without anyone waiting on the API.
+  let rooms: RoomListing[] | null = null;
+  if (API_BASE_URL) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 4000);
+    try {
+      const r = await fetch(`${API_BASE_URL}/listings/search?limit=8`, { headers: { Accept: "application/json" }, signal: controller.signal });
+      if (r.ok) {
+        const data = await r.json();
+        const rows = Array.isArray(data) ? data : Array.isArray(data?.listings) ? data.listings : [];
+        rooms = rows.slice(0, 8);
+      }
+    } catch {
+      rooms = null;
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+
+  return { props: { suburbs, articles, rooms }, revalidate: 300 };
 };

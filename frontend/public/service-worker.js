@@ -1,36 +1,25 @@
-// Migrent Service Worker - Push Notifications + Basic Offline Caching
+// Migrent Service Worker - push notifications only.
+//
+// It used to precache "/" and two old dashboard pages (which now redirect,
+// so the install could fail and retry on every visit) and to intercept every
+// page navigation just to pass it through. A fetch handler makes the browser
+// start this worker before each navigation, which slows every page for an
+// offline fallback almost nobody saw. It now handles push and nothing else,
+// and clears the caches the old version left behind.
 
-const CACHE_NAME = "migrent-v1";
-const OFFLINE_URLS = ["/", "/dashboard/seeker", "/dashboard/owner"];
-
-// Install - cache basic shell pages
-self.addEventListener("install", (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(OFFLINE_URLS))
-  );
+self.addEventListener("install", () => {
   self.skipWaiting();
 });
 
-// Activate - clean old caches
 self.addEventListener("activate", (event) => {
   event.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k)))
-    )
+    caches
+      .keys()
+      .then((keys) => Promise.all(keys.map((k) => caches.delete(k))))
+      .then(() => self.clients.claim())
   );
-  self.clients.claim();
 });
 
-// Fetch - network first, fall back to cache for navigation
-self.addEventListener("fetch", (event) => {
-  if (event.request.mode === "navigate") {
-    event.respondWith(
-      fetch(event.request).catch(() => caches.match(event.request).then((r) => r || caches.match("/")))
-    );
-  }
-});
-
-// Push - show notification from FCM payload
 self.addEventListener("push", (event) => {
   let data = { title: "Migrent", body: "You have a new update", url: "/" };
 

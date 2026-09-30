@@ -55,6 +55,17 @@ export function setQueryData<T>(key: string, updater: T | ((prev: T | undefined)
   emit(key);
 }
 
+/**
+ * Start loading a key before any component asks for it (no-op when it is
+ * already fresh or in flight). Used to fetch a screen's data alongside
+ * /hub/me instead of after it.
+ */
+export function prefetchQuery(key: string) {
+  const e = cache.get(key);
+  if (e?.promise || (e && Date.now() - e.at <= STALE_MS)) return;
+  void load(key, () => hubApi.get(key)).catch(() => {});
+}
+
 export function getQueryData<T>(key: string): T | undefined {
   return cache.get(key)?.data as T | undefined;
 }

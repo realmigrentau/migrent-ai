@@ -127,6 +127,11 @@ app.add_middleware(
     allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allow_headers=["Authorization", "Content-Type", "X-Cron-Secret", "X-Migrent-View-As", "X-Migrent-Admin-Unlock"],
     expose_headers=["X-Total-Count", "X-Has-More"],
+    # Browsers ask permission (a preflight) before any request that carries
+    # a token. The answer never changes, so let them remember it for two
+    # hours (Chrome's maximum) instead of the default ten minutes: every
+    # preflight is a full round trip to the API.
+    max_age=7200,
 )
 
 app.include_router(auth_router)

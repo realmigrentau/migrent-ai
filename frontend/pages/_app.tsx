@@ -22,13 +22,17 @@ const HCaptchaProvider = dynamic(() => import("@hcaptcha/react-hcaptcha/hooks").
 const ADMIN_PATH = process.env.NEXT_PUBLIC_ADMIN_PATH || "/admin";
 
 export default function App({ Component, pageProps, router }: AppProps) {
-  // Register service worker for PWA + push notifications
+  // Register the service worker (push notifications) once the page is idle,
+  // so it never competes with the first load.
   useEffect(() => {
-    if ("serviceWorker" in navigator) {
+    if (!("serviceWorker" in navigator)) return;
+    const register = () =>
       navigator.serviceWorker.register("/service-worker.js").catch((err) => {
         console.warn("Service worker registration failed:", err);
       });
-    }
+    const idle = (window as Window & { requestIdleCallback?: (cb: () => void) => number }).requestIdleCallback;
+    if (idle) idle(register);
+    else setTimeout(register, 2000);
   }, []);
 
   const isAdmin = router.pathname.startsWith(ADMIN_PATH);

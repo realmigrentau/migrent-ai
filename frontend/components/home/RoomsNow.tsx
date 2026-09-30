@@ -15,6 +15,8 @@ import { Reveal, SectionHead, Strip } from "../site";
  * the next one, never a padded grid of placeholders.
  */
 
+export type RoomListing = Listing;
+
 type Listing = {
   id: string;
   title?: string;
@@ -101,10 +103,14 @@ function AlertCard({ empty }: { empty: boolean }) {
   );
 }
 
-export default function RoomsNow() {
-  const [listings, setListings] = useState<Listing[] | null>(null);
+export default function RoomsNow({ initial = null }: { initial?: Listing[] | null }) {
+  const [listings, setListings] = useState<Listing[] | null>(initial);
 
+  // The homepage normally arrives with the rooms already in it (built with
+  // the page, see pages/index.tsx). Only when that build could not reach the
+  // API does the browser ask for them.
   useEffect(() => {
+    if (initial) return;
     let cancelled = false;
     searchListings({ limit: "8" })
       .then((data) => {
@@ -118,7 +124,7 @@ export default function RoomsNow() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [initial]);
 
   return (
     <section id="rooms" className="site-section pb-8 scroll-mt-[96px]" aria-labelledby="rooms-heading">

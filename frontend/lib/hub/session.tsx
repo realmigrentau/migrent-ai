@@ -14,11 +14,12 @@
  * onboarding and MFA and keeps the page from flashing protected chrome.
  */
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { useRouter } from "next/router";
 import type { Session } from "@supabase/supabase-js";
 import { supabase } from "../supabase";
 import { lockAdminPanel } from "./adminPanel";
 import { getViewAs, hubApi, setViewAs } from "./api";
-import { clearQueryCache, invalidate, useHubQuery } from "./query";
+import { clearQueryCache, invalidate, prefetchQuery, useHubQuery } from "./query";
 import type { HubMe, HubRole } from "./types";
 
 export type HubStatus = "loading" | "signed-out" | "needs-mfa" | "needs-onboarding" | "ready" | "error";
@@ -37,6 +38,17 @@ interface HubContextValue {
 }
 
 const HubContext = createContext<HubContextValue | null>(null);
+
+/** The main read of each Hub screen, keyed by route. Must match the key the
+ *  screen itself passes to useHubQuery, or the prefetch is wasted. */
+const SCREEN_QUERIES: Record<string, string[]> = {
+  "/hub": ["/hub/home"],
+  "/hub/applications": ["/hub/applications"],
+  "/hub/inspections": ["/hub/inspections"],
+  "/hub/saved": ["/hub/saved", "/hub/searches"],
+  "/hub/properties": ["/hub/properties"],
+  "/hub/my-home": ["/hub/tenancies"],
+};
 
 export function HubSessionProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
@@ -87,6 +99,18 @@ export function HubSessionProvider({ children }: { children: ReactNode }) {
 
   const needsMfa = Boolean(aal && aal.next === "aal2" && aal.current !== "aal2");
   const meQuery = useHubQuery<HubMe>(session && !needsMfa ? "/hub/me" : null);
+
+  // Fetch the screen's own data at the same time as /hub/me rather than
+  // after it: the screen only mounts once /hub/me has answered, so without
+  // this every Hub page waited for two round trips in a row.
+  const router = useRouter();
+  const pathname = router?.pathname;
+  const canFetch = Boolean(session && aal && !needsMfa);
+  useEffect(() => {
+    if (!canFetch || getViewAs()) return;
+    prefetchQuery("/hub/counts");
+    for (const key of SCREEN_QUERIES[pathname ?? ""] ?? []) prefetchQuery(key);
+  }, [canFetch, pathname]);
   const me = meQuery.data;
 
   let status: HubStatus = "loading";

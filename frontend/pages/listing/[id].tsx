@@ -35,9 +35,15 @@ export const getServerSideProps: GetServerSideProps = async ({ params, res }) =>
   const id = typeof params?.id === "string" ? params.id : null;
   if (!id || !/^[0-9a-f-]{20,40}$/i.test(id)) return { notFound: true };
 
+  // A slow API must not hold the page: after 3s the page is sent without
+  // the listing and the browser fetches it (the component does that when
+  // initialListing is null). The failure is not cached.
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 3000);
   try {
     const r = await fetch(`${API_BASE_URL}/listings/${encodeURIComponent(id)}?include=reviews,similar`, {
       headers: { Accept: "application/json" },
+      signal: controller.signal,
     });
     if (r.status === 404) return { notFound: true };
     if (r.status === 410) {
@@ -55,6 +61,8 @@ export const getServerSideProps: GetServerSideProps = async ({ params, res }) =>
     return { props: { initialListing } };
   } catch {
     return { props: { initialListing: null } };
+  } finally {
+    clearTimeout(timer);
   }
 };
 

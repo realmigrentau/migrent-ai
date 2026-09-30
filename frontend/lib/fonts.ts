@@ -75,6 +75,9 @@ export const styleScript = Style_Script({
   weight: "400",
   display: "swap",
   variable: "--font-style-script",
+  // Not preloaded: only the body and heading faces are needed for the first
+  // paint. This one arrives right after, swapped in without a layout jump.
+  preload: false,
   fallback: ["Snell Roundhand", "Segoe Script", "cursive"],
 });
 
@@ -94,6 +97,9 @@ export const archivo = Archivo({
   axes: ["wdth"],
   display: "swap",
   variable: "--font-display-condensed",
+  // Not preloaded: only the body and heading faces are needed for the first
+  // paint. This one arrives right after, swapped in without a layout jump.
+  preload: false,
   fallback: ["Archivo Narrow", "Roboto Condensed", "ui-sans-serif", "system-ui", "sans-serif"],
 });
 
@@ -102,6 +108,9 @@ export const spaceMono = Space_Mono({
   weight: ["400", "700"],
   display: "swap",
   variable: "--font-space-mono",
+  // Not preloaded: only the body and heading faces are needed for the first
+  // paint. This one arrives right after, swapped in without a layout jump.
+  preload: false,
   fallback: ["JetBrains Mono", "ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
 });
 
