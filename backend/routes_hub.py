@@ -26,6 +26,7 @@ from fastapi import APIRouter, Header, HTTPException, Request
 from pydantic import BaseModel, Field, field_validator
 
 from db import get_supabase_admin
+from concurrency import run_parallel
 from hub_common import (
     ADMIN_ROLES,
     OWNER,
@@ -285,17 +286,26 @@ def _renter_home(sb, actor: HubActor) -> dict:
     from routes_inspections import renter_inspections
     from routes_tenancies import tenancy_summaries
 
-    rp, exists = get_renter_profile(sb, actor.id)
-    completion = profile_completion(actor.profile, rp, exists, list_documents(sb, actor.id))
-    apps = renter_applications(sb, actor.id, active_only=True)
-    inspections = renter_inspections(sb, actor.id, limit=4)
-    saved = saved_cards(sb, actor.id, limit=8)
-    threads = [t for t in build_threads(sb, actor, limit_messages=400) if not t["archived"]]
-    tenancies = tenancy_summaries(sb, actor)
-    try:
-        recommended = recommend(sb, actor, 6)
-    except Exception:
-        recommended = []
+    def _recommended():
+        try:
+            return recommend(sb, actor, 6)
+        except Exception:
+            return []
+
+    # Independent reads, fetched together (concurrency.py).
+    (rp, exists), documents, apps, inspections, saved, all_threads, tenancies, recommended, verification = run_parallel(
+        lambda: get_renter_profile(sb, actor.id),
+        lambda: list_documents(sb, actor.id),
+        lambda: renter_applications(sb, actor.id, active_only=True),
+        lambda: renter_inspections(sb, actor.id, limit=4),
+        lambda: saved_cards(sb, actor.id, limit=8),
+        lambda: build_threads(sb, actor, limit_messages=400),
+        lambda: tenancy_summaries(sb, actor),
+        _recommended,
+        lambda: renter_verification_status(sb, actor.id),
+    )
+    completion = profile_completion(actor.profile, rp, exists, documents)
+    threads = [t for t in all_threads if not t["archived"]]
 
     actions = []
     soon = now_utc() + timedelta(hours=48)
@@ -328,7 +338,7 @@ def _renter_home(sb, actor: HubActor) -> dict:
         "messages": threads[:3],
         "completion": completion,
         "tenancy": tenancies[0] if tenancies else None,
-        "verification": renter_verification_status(sb, actor.id),
+        "verification": verification,
         "has_activity": bool(apps or inspections or saved or threads),
     }
 
@@ -341,17 +351,32 @@ def _owner_home(sb, actor: HubActor) -> dict:
     from routes_owner_verification import check_owner_verified
     from routes_tenancies import tenancy_summaries
 
-    folio = portfolio(sb, actor.id)
-    try:
-        drafts = sb.table("listing_drafts").select("id, data, step, updated_at").eq("owner_id", actor.id).is_("submitted_at", "null").order("updated_at", desc=True).execute().data or []
-    except Exception:
-        drafts = []
-    new_apps = owner_applications(sb, actor.id, limit=6)
-    inspections = owner_inspections(sb, actor.id, limit=5)
-    threads = [t for t in build_threads(sb, actor, limit_messages=400) if not t["archived"]]
-    tenancies = tenancy_summaries(sb, actor)
+    def _drafts():
+        try:
+            return sb.table("listing_drafts").select("id, data, step, updated_at").eq("owner_id", actor.id).is_("submitted_at", "null").order("updated_at", desc=True).execute().data or []
+        except Exception:
+            return []
+
+    def _maintenance():
+        try:
+            return sb.table("maintenance_requests").select("id, title, urgency, status").eq("owner_id", actor.id).in_("status", ["submitted", "acknowledged"]).execute().data or []
+        except Exception:
+            return []
+
+    # Independent reads, fetched together (concurrency.py).
+    folio, drafts, new_apps, inspections, all_threads, tenancies, verified_row, maint = run_parallel(
+        lambda: portfolio(sb, actor.id),
+        _drafts,
+        lambda: owner_applications(sb, actor.id, limit=6),
+        lambda: owner_inspections(sb, actor.id, limit=5),
+        lambda: build_threads(sb, actor, limit_messages=400),
+        lambda: tenancy_summaries(sb, actor),
+        lambda: check_owner_verified(actor.id),
+        _maintenance,
+    )
+    threads = [t for t in all_threads if not t["archived"]]
     all_units = [u for p in folio["properties"] for u in p["units"]] + folio["unassigned"]
-    verified = bool(check_owner_verified(actor.id))
+    verified = bool(verified_row)
 
     attention = []
     if not verified and (all_units or drafts):
@@ -362,10 +387,6 @@ def _owner_home(sb, actor: HubActor) -> dict:
     unseen = [a for a in new_apps if a.get("unread_by_owner")]
     if unseen:
         attention.append({"kind": "applications", "tone": "info", "title": f"{len(unseen)} new application{'s' if len(unseen) != 1 else ''}", "body": "Review them while the home is fresh.", "href": "/applications"})
-    try:
-        maint = sb.table("maintenance_requests").select("id, title, urgency, status").eq("owner_id", actor.id).in_("status", ["submitted", "acknowledged"]).execute().data or []
-    except Exception:
-        maint = []
     for m in sorted(maint, key=lambda m: {"emergency": 0, "urgent": 1}.get(m["urgency"], 2))[:2]:
         attention.append({"kind": "maintenance", "tone": "danger" if m["urgency"] == "emergency" else "warning" if m["urgency"] == "urgent" else "neutral", "title": f"Maintenance: {m['title']}", "body": {"emergency": "Emergency", "urgent": "Urgent"}.get(m["urgency"], "Routine"), "href": f"/maintenance/{m['id']}"})
     for t in tenancies:
@@ -419,25 +440,27 @@ def counts(request: Request, authorization: Optional[str] = Header(None)):
     sb = get_supabase_admin()
     from routes_hub_messages import unread_total
 
-    out = {"messages": unread_total(sb, actor), "notifications": 0, "applications": 0, "maintenance": 0, "tenancies": 0}
-    try:
-        n = sb.table("notifications").select("id", count="exact").eq("user_id", actor.id).eq("is_read", False).execute()
-        out["notifications"] = n.count or 0
-    except Exception:
-        pass
-    try:
-        if actor.is_owner:
-            a = sb.table("applications").select("id", count="exact").eq("owner_id", actor.id).eq("status", "submitted").is_("owner_viewed_at", "null").execute()
-            out["applications"] = a.count or 0
-            m = sb.table("maintenance_requests").select("id", count="exact").eq("owner_id", actor.id).eq("status", "submitted").execute()
-            out["maintenance"] = m.count or 0
-        else:
-            a = sb.table("applications").select("id", count="exact").eq("renter_id", actor.id).eq("status", "changes_requested").execute()
-            out["applications"] = a.count or 0
-            t = sb.table("tenancies").select("id", count="exact").eq("renter_id", actor.id).in_("status", ["upcoming", "active"]).execute()
-            out["tenancies"] = t.count or 0
-    except Exception:
-        pass
+    def _count(query) -> int:
+        try:
+            return query.execute().count or 0
+        except Exception:
+            return 0
+
+    if actor.is_owner:
+        second = ("maintenance", lambda: _count(sb.table("maintenance_requests").select("id", count="exact").eq("owner_id", actor.id).eq("status", "submitted")))
+        apps_query = lambda: _count(sb.table("applications").select("id", count="exact").eq("owner_id", actor.id).eq("status", "submitted").is_("owner_viewed_at", "null"))
+    else:
+        second = ("tenancies", lambda: _count(sb.table("tenancies").select("id", count="exact").eq("renter_id", actor.id).in_("status", ["upcoming", "active"])))
+        apps_query = lambda: _count(sb.table("applications").select("id", count="exact").eq("renter_id", actor.id).eq("status", "changes_requested"))
+
+    messages, notifications, applications, other = run_parallel(
+        lambda: unread_total(sb, actor),
+        lambda: _count(sb.table("notifications").select("id", count="exact").eq("user_id", actor.id).eq("is_read", False)),
+        apps_query,
+        second[1],
+    )
+    out = {"messages": messages, "notifications": notifications, "applications": applications, "maintenance": 0, "tenancies": 0}
+    out[second[0]] = other
     return out
 
 

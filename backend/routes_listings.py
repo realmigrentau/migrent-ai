@@ -7,6 +7,7 @@ from pydantic import BaseModel, Field
 from supabase import create_client
 
 from auth_utils import get_current_user, is_admin_user
+from concurrency import run_parallel
 from db import SUPABASE_ANON_KEY, SUPABASE_URL, get_supabase_admin
 from limiter import limiter
 from listing_lifecycle import (
@@ -676,7 +677,15 @@ def search_listings(
     else:
         query = query.range(offset, offset + limit - 1)
 
-    res = query.execute()
+    def _count_all():
+        try:
+            return ("ok", base_query("id", count="exact").execute().count)
+        except Exception:
+            return ("failed", None)
+
+    needs_count = not (best_match_sort or verified_owner)
+    # The page of results and the total are independent: fetch them together.
+    res, counted = run_parallel(query.execute, _count_all if needs_count else (lambda: None))
     results = res.data or []
 
     # Verified-owner filter reads the authoritative table, never the paid
@@ -699,11 +708,8 @@ def search_listings(
     if best_match_sort or verified_owner:
         total = len(results)
     else:
-        try:
-            count_res = base_query("id", count="exact").execute()
-            total = count_res.count if count_res.count is not None else len(results)
-        except Exception:
-            total = None
+        status, count = counted
+        total = None if status == "failed" else (count if count is not None else len(results))
 
     if best_match_sort:
         seeker_profile = {}
@@ -794,10 +800,11 @@ def get_listing_by_id(
             raise HTTPException(status_code=404, detail="Listing not found")
 
     owner_id = str(listing.get("owner_id")) if listing.get("owner_id") else None
-    profiles, verifications = _load_owner_context(sb, [owner_id] if owner_id else [])
-    owner_profile = profiles.get(owner_id) if owner_id else None
-    owner_verification = verifications.get(owner_id) if owner_id else None
-    if owner_profile is not None:
+    includes = set((include or "").split(","))
+
+    def _owner_listing_count():
+        if not owner_id:
+            return None
         try:
             count_res = (
                 sb.table("listings")
@@ -806,26 +813,19 @@ def get_listing_by_id(
                 .eq("moderation_status", STATUS_APPROVED)
                 .execute()
             )
-            owner_profile["listings_count"] = count_res.count if count_res.count is not None else 0
+            return count_res.count if count_res.count is not None else 0
         except Exception:
-            owner_profile["listings_count"] = None
+            return None
 
-    if is_owner or is_admin:
-        out = to_owner_listing(listing, owner_profile=owner_profile, owner_verification=owner_verification, today=today)
-    else:
-        out = to_public_listing(listing, owner_profile=owner_profile, owner_verification=owner_verification, today=today)
-
-    out["viewer"] = {"is_owner": is_owner, "can_moderate": is_admin}
-
-    includes = set((include or "").split(","))
-
-    if "reviews" in includes:
+    def _review_stats():
         empty = {"review_count": 0, "avg_rating": 0, "avg_migrant_friendliness": None, "positive_count": 0}
         try:
             stats_res = sb.table("listing_review_stats").select("*").eq("listing_id", listing_id).execute()
-            out["review_stats"] = stats_res.data[0] if stats_res.data else empty
+            return stats_res.data[0] if stats_res.data else empty
         except Exception:
-            out["review_stats"] = empty
+            return empty
+
+    def _recent_reviews():
         try:
             reviews_res = (
                 sb.table("reviews")
@@ -857,11 +857,11 @@ def get_listing_by_id(
                         "reviewer_photo": p.get("custom_pfp"),
                     }
                 )
-            out["recent_reviews"] = public_reviews
+            return public_reviews
         except Exception:
-            out["recent_reviews"] = []
+            return []
 
-    if "similar" in includes and state == "published":
+    def _similar():
         similar_rows: list[dict] = []
         try:
             price = float(listing.get("weekly_price") or 0)
@@ -883,9 +883,36 @@ def get_listing_by_id(
                         existing.add(row["id"])
         except Exception:
             similar_rows = []
-        out["similar_listings"] = _public_rows(sb, similar_rows, today)
-    elif "similar" in includes:
-        out["similar_listings"] = []
+        return _public_rows(sb, similar_rows, today)
+
+    want_reviews = "reviews" in includes
+    want_similar = "similar" in includes and state == "published"
+    # Everything below depends only on the listing row, so it is fetched
+    # together rather than one query after another (concurrency.py).
+    (profiles, verifications), listings_count, review_stats, recent_reviews, similar = run_parallel(
+        lambda: _load_owner_context(sb, [owner_id] if owner_id else []),
+        _owner_listing_count,
+        _review_stats if want_reviews else (lambda: None),
+        _recent_reviews if want_reviews else (lambda: None),
+        _similar if want_similar else (lambda: []),
+    )
+    owner_profile = profiles.get(owner_id) if owner_id else None
+    owner_verification = verifications.get(owner_id) if owner_id else None
+    if owner_profile is not None:
+        owner_profile["listings_count"] = listings_count
+
+    if is_owner or is_admin:
+        out = to_owner_listing(listing, owner_profile=owner_profile, owner_verification=owner_verification, today=today)
+    else:
+        out = to_public_listing(listing, owner_profile=owner_profile, owner_verification=owner_verification, today=today)
+
+    out["viewer"] = {"is_owner": is_owner, "can_moderate": is_admin}
+
+    if want_reviews:
+        out["review_stats"] = review_stats
+        out["recent_reviews"] = recent_reviews
+    if "similar" in includes:
+        out["similar_listings"] = similar
 
     if state == "published":
         response.headers["Cache-Control"] = "public, max-age=60, s-maxage=300, stale-while-revalidate=3600" if not (is_owner or is_admin) else "private, no-store"

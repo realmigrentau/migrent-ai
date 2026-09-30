@@ -140,6 +140,12 @@ def db(monkeypatch):
     import db as dbmod
 
     monkeypatch.setattr(dbmod, "create_client", lambda *a, **k: fake)
+    # The service-role client is shared per process, and verified tokens are
+    # remembered briefly; start every test from a clean slate.
+    monkeypatch.setattr(dbmod, "_admin_client", None)
+    import auth_utils
+
+    auth_utils._remote_cache.clear()
 
     from limiter import limiter
 
