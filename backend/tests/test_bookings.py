@@ -74,3 +74,68 @@ def test_second_booking_on_paid_property_waives_fee(client, no_stripe, db):
     assert r.status_code == 200
     assert r.json()["checkout_url"] is None and r.json()["fee_waived"] is True
     assert r.json()["status"] == "PAID"
+
+
+@pytest.fixture()
+def stripe_sessions(monkeypatch):
+    """Record which old checkouts pay-fee looks up and expires."""
+    import routes_bookings
+
+    calls = {"expired": [], "status": "open"}
+
+    class Old(dict):
+        pass
+
+    monkeypatch.setattr(routes_bookings.stripe.checkout.Session, "retrieve", staticmethod(lambda sid: Old(id=sid, status=calls["status"])))
+    monkeypatch.setattr(routes_bookings.stripe.checkout.Session, "expire", staticmethod(lambda sid: calls["expired"].append(sid)))
+    return calls
+
+
+def _accepted_booking(client):
+    ci, co = _dates()
+    r = client.post("/bookings", json={"listing_id": LISTING_LIVE, "check_in": ci, "check_out": co, "guests": 1}, headers=auth(SEEKER_ID))
+    booking_id = r.json()["booking"]["id"]
+    r = client.post(f"/bookings/{booking_id}/respond", json={"action": "accept"}, headers=auth(VERIFIED_OWNER_ID))
+    assert r.json()["status"] == "OWNER_ACCEPTED"
+    return booking_id
+
+
+def test_host_can_get_a_fresh_checkout_and_the_old_one_is_expired(client, no_stripe, stripe_sessions, db, monkeypatch):
+    import routes_bookings
+
+    booking_id = _accepted_booking(client)
+
+    class Fresh:
+        id = "cs_test_fresh"
+        url = "https://checkout.stripe.test/cs_test_fresh"
+
+    monkeypatch.setattr(routes_bookings, "create_owner_fee_checkout", lambda booking_id: Fresh())
+    r = client.post(f"/bookings/{booking_id}/pay-fee", headers=auth(VERIFIED_OWNER_ID))
+    assert r.status_code == 200, r.text
+    assert r.json()["checkout_url"] == Fresh.url
+    assert stripe_sessions["expired"] == ["cs_test_new"]
+    booking = next(b for b in db.rows("bookings") if b["id"] == booking_id)
+    # The webhook only honours this id, so it must be the new one.
+    assert booking["stripe_session_id"] == "cs_test_fresh"
+
+
+def test_only_the_host_can_pay_the_fee(client, no_stripe, stripe_sessions):
+    booking_id = _accepted_booking(client)
+    r = client.post(f"/bookings/{booking_id}/pay-fee", headers=auth(SEEKER_ID))
+    assert r.status_code == 403
+
+
+def test_pay_fee_refuses_a_stay_that_is_not_awaiting_payment(client, no_stripe, stripe_sessions):
+    ci, co = _dates()
+    r = client.post("/bookings", json={"listing_id": LISTING_LIVE, "check_in": ci, "check_out": co, "guests": 1}, headers=auth(SEEKER_ID))
+    booking_id = r.json()["booking"]["id"]
+    r = client.post(f"/bookings/{booking_id}/pay-fee", headers=auth(VERIFIED_OWNER_ID))
+    assert r.status_code == 400
+
+
+def test_pay_fee_does_not_charge_twice_when_the_old_checkout_was_paid(client, no_stripe, stripe_sessions):
+    booking_id = _accepted_booking(client)
+    stripe_sessions["status"] = "complete"
+    r = client.post(f"/bookings/{booking_id}/pay-fee", headers=auth(VERIFIED_OWNER_ID))
+    assert r.status_code == 409
+    assert stripe_sessions["expired"] == []

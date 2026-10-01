@@ -33,7 +33,7 @@ export default function BookingCancelledPage() {
         }
       >
         <p className="m-0">You left the payment page before paying, so the stay is not confirmed yet.</p>
-        <p className="m-0">If you closed it by mistake, your browser&apos;s Back button usually returns you to it. If that does not work, contact us and we will sort it out.</p>
+        <p className="m-0">To finish, open your requests and press &ldquo;Pay to confirm&rdquo; on the stay. It opens a fresh payment page each time.</p>
       </StatusPage>
     </>
   );

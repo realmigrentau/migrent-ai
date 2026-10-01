@@ -638,6 +638,67 @@ def cancel_booking(
     return {"booking_id": booking_id, "status": BookingStatus.seeker_cancelled.value}
 
 
+# -- POST /bookings/{id}/pay-fee - Host pays (or retries paying) the fee --
+
+
+@router.post("/{booking_id}/pay-fee")
+@limiter.limit("20/minute")
+def pay_owner_fee(
+    request: Request,
+    booking_id: str,
+    authorization: str = Header(...),
+):
+    """A fresh checkout for an accepted stay the host has not paid for yet.
+
+    The link from accepting (or the instant-book email) dies after 24 hours,
+    or the host may have closed the Stripe tab. This is the "Pay to confirm"
+    button in the Hub. Any earlier open session is expired first, because the
+    webhook only honours the session stored on the booking: paying an old
+    link would otherwise take the money without confirming the stay.
+    """
+    user = get_current_user(authorization)
+    user_id = str(user.id)
+    sb = get_supabase_admin()
+
+    res = sb.table("bookings").select("*").eq("id", booking_id).execute()
+    if not res.data:
+        raise HTTPException(status_code=404, detail="Booking not found")
+    booking = res.data[0]
+
+    if user_id != str(booking["owner_id"]):
+        raise HTTPException(status_code=403, detail="Only the listing owner can pay the host fee")
+    if booking["status"] != BookingStatus.owner_accepted.value:
+        raise HTTPException(status_code=400, detail="This stay is not waiting for payment")
+
+    listing_row = sb.table("listings").select("id, listing_fee_paid_at").eq("id", booking["listing_id"]).execute()
+    if not listing_fee_due(listing_row.data[0] if listing_row.data else {}):
+        confirm_booking_without_charge(sb, booking_id)
+        return {"booking_id": booking_id, "status": BookingStatus.paid.value, "checkout_url": None, "fee_waived": True}
+
+    old_session_id = booking.get("stripe_session_id")
+    if old_session_id:
+        try:
+            old = stripe.checkout.Session.retrieve(old_session_id)
+            if old.get("status") == "complete":
+                # Paid already; the webhook is about to (or did) confirm it.
+                raise HTTPException(status_code=409, detail="This fee is already paid. The stay will show as confirmed shortly.")
+            if old.get("status") == "open":
+                stripe.checkout.Session.expire(old_session_id)
+        except HTTPException:
+            raise
+        except Exception:
+            logger.warning("Could not check or expire old checkout %s for booking %s", old_session_id, booking_id)
+
+    try:
+        session = create_owner_fee_checkout(booking_id)
+    except Exception:
+        logger.exception("Failed to create host fee checkout for booking %s", booking_id)
+        raise HTTPException(status_code=500, detail="Payment processing failed")
+
+    sb.table("bookings").update({"stripe_session_id": session.id}).eq("id", booking_id).execute()
+    return {"booking_id": booking_id, "status": BookingStatus.owner_accepted.value, "checkout_url": session.url}
+
+
 # -- GET /bookings/checkout-status - What the webhook has confirmed --
 
 

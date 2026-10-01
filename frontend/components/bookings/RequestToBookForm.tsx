@@ -58,6 +58,8 @@ export default function RequestToBookForm({
   const totalRent = weeksEstimate
     ? listing.weekly_price * weeksEstimate
     : null;
+  // The row below says "typically 4 weeks", so the figure has to be 4 weeks.
+  const bondEstimate = listing.weekly_price * 4;
 
   const today = new Date().toISOString().split("T")[0];
   // The host's availability window bounds the date pickers; the API enforces
@@ -226,7 +228,7 @@ export default function RequestToBookForm({
           </div>
           <div className="flex justify-between py-1.5 text-[13px]">
             <span className="text-[var(--color-ink-2)]">Bond (typically 4 weeks, refundable)</span>
-            <span className="text-[var(--color-ink)] tabular-nums">${listing.weekly_price.toLocaleString()}</span>
+            <span className="text-[var(--color-ink)] tabular-nums">${bondEstimate.toLocaleString()}</span>
           </div>
           <div className="flex justify-between py-1.5 text-[13px]">
             <span className="text-[var(--color-ink-2)]">Migrent renter fee</span>
@@ -235,7 +237,7 @@ export default function RequestToBookForm({
           <div className="h-px bg-[var(--color-line)] my-2" />
           <div className="flex justify-between text-[14px] font-bold text-[var(--color-ink)]">
             <span>Move-in total</span>
-            <span className="tabular-nums">${(totalRent + listing.weekly_price).toLocaleString()}</span>
+            <span className="tabular-nums">${(totalRent + bondEstimate).toLocaleString()}</span>
           </div>
           <p className="text-[11.5px] text-[var(--color-ink-3)] leading-relaxed mt-2">
             Rent and bond are paid directly to your host, not to Migrent.
@@ -282,7 +284,7 @@ export default function RequestToBookForm({
         ) : isInstantBook ? (
           <>
             <Zap className="w-4 h-4" />
-            Instant book - pay $118
+            Book instantly
           </>
         ) : (
           <>
@@ -294,7 +296,7 @@ export default function RequestToBookForm({
 
       <p className="text-center text-[11.5px] text-[var(--color-ink-3)]">
         {isInstantBook
-          ? "Your booking is confirmed after payment."
+          ? "Free for renters. The room is held for you straight away."
           : "You won't be charged until the host accepts."}
       </p>
     </form>

@@ -86,6 +86,8 @@ const LISTINGS = [
   listing("11111111-1111-4111-8111-000000000003", { title: "Room with unverified host", owner: unverifiedOwner, host_verification: unverifiedOwner.verification, weekly_price: 250 }),
   listing("11111111-1111-4111-8111-000000000004", { title: "Available next month", available_from: plus(30), weekly_price: 290 }),
 ];
+// Detail page only, so search counts in search.spec.ts stay the same.
+const SHORT_STAY = listing("11111111-1111-4111-8111-000000000099", { title: "Short stay room in Ryde", suburb: "Ryde", postcode: 2112, weekly_price: 380, listing_purpose: "short_stay", instant_book_enabled: true, display_address: "Ryde 2112" });
 for (let i = 5; i <= 26; i++) {
   LISTINGS.push(listing(`11111111-1111-4111-8111-0000000000${String(i).padStart(2, "0")}`, { title: `Room ${i} in Blacktown`, suburb: "Blacktown", postcode: 2148, weekly_price: 200 + i * 5, display_address: "Blacktown 2148" }));
 }
@@ -163,7 +165,7 @@ const server = http.createServer(async (req, res) => {
   if (detail) {
     const id = detail[1];
     if (id === EXPIRED.id) return send(410, { ...EXPIRED, viewer: { is_owner: false, can_moderate: false } });
-    const found = LISTINGS.find((l) => l.id === id);
+    const found = [...LISTINGS, SHORT_STAY].find((l) => l.id === id);
     if (!found) return send(404, { detail: "Listing not found" });
     return send(200, { ...found, viewer: { is_owner: false, can_moderate: false }, review_stats: { review_count: 0, avg_rating: 0, avg_migrant_friendliness: null, positive_count: 0 }, recent_reviews: [], similar_listings: LISTINGS.slice(1, 3) });
   }

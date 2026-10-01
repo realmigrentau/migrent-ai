@@ -19,6 +19,40 @@ FRONTEND_URL = os.environ.get("FRONTEND_URL", "https://migrent.vercel.app")
 PLATFORM_FEE_PERCENT = 30  # Migrent takes 30%
 
 
+# Stripe account fields stay server-side; the public only learns whether
+# the mentor can take a booking.
+PRIVATE_MENTOR_FIELDS = ("stripe_account_id", "stripe_onboarding_complete")
+
+
+def public_mentor(mentor: dict) -> dict:
+    out = {k: v for k, v in mentor.items() if k not in PRIVATE_MENTOR_FIELDS}
+    out["accepting_bookings"] = bool(mentor.get("active") and mentor.get("stripe_onboarding_complete"))
+    return out
+
+
+def payouts_ready(sb, mentor: dict, *, refresh: bool = False) -> bool:
+    """Can Stripe send this mentor their share? Sessions are destination
+    charges, so the mentor's connected account must accept transfers and
+    pay out to a bank. The answer is cached on the row and re-asked of
+    Stripe when it is not yet true (or when refresh is asked for)."""
+    account_id = mentor.get("stripe_account_id")
+    if not account_id:
+        return False
+    if mentor.get("stripe_onboarding_complete") and not refresh:
+        return True
+    try:
+        account = stripe.Account.retrieve(account_id)
+    except Exception:
+        logger.warning("Could not read Stripe account for mentor %s", mentor.get("id"))
+        return bool(mentor.get("stripe_onboarding_complete"))
+    capabilities = account.get("capabilities") or {}
+    ready = bool(account.get("payouts_enabled")) and capabilities.get("transfers") == "active"
+    if ready != bool(mentor.get("stripe_onboarding_complete")):
+        sb.table("mentors").update({"stripe_onboarding_complete": ready}).eq("id", mentor["id"]).execute()
+        mentor["stripe_onboarding_complete"] = ready
+    return ready
+
+
 # -- Models --
 
 class MentorCreate(BaseModel):
@@ -106,7 +140,7 @@ def list_mentors(
         query = query.range(offset, offset + limit - 1)
         res = query.execute()
 
-        mentors = enrich_mentors_with_profiles(sb, res.data or [])
+        mentors = [public_mentor(m) for m in enrich_mentors_with_profiles(sb, res.data or [])]
         return {"mentors": mentors, "count": len(mentors)}
     except Exception as e:
         logger.error(f"Failed to list mentors: {e}")
@@ -167,6 +201,21 @@ def get_my_mentor_profile(
     return {"mentor": res.data[0]}
 
 
+# -- GET /mentors/me/payout-status - Asked on the way back from Stripe --
+
+@router.get("/me/payout-status")
+def get_payout_status(
+    authorization: str = Header(...),
+):
+    user = get_current_user(authorization)
+    sb = get_supabase_admin()
+    res = sb.table("mentors").select("*").eq("user_id", str(user.id)).execute()
+    if not res.data:
+        raise HTTPException(status_code=404, detail="Mentor profile not found")
+    mentor = res.data[0]
+    return {"has_account": bool(mentor.get("stripe_account_id")), "ready": payouts_ready(sb, mentor, refresh=True)}
+
+
 # -- PATCH /mentors/me - Update mentor profile --
 
 @router.patch("/me")
@@ -212,6 +261,8 @@ def create_session(
 
     if not mentor["active"]:
         raise HTTPException(status_code=400, detail="This mentor is not currently available")
+    if not payouts_ready(sb, mentor):
+        raise HTTPException(status_code=400, detail="This mentor is still setting up payouts, so they cannot take bookings yet.")
 
     amount = mentor["hourly_rate"]
     platform_fee = int(amount * PLATFORM_FEE_PERCENT / 100)
@@ -259,35 +310,52 @@ def create_session(
                 "mentor_session_id": session_data["id"],
                 "fee_type": "mentor_session",
             },
+            # A destination charge: Stripe moves the mentor's share to their
+            # connected account and Migrent keeps the platform fee. The
+            # metadata rides on the charge, so a refund can find the session.
+            payment_intent_data={
+                "application_fee_amount": platform_fee,
+                "transfer_data": {"destination": mentor["stripe_account_id"]},
+                "metadata": {"mentor_session_id": session_data["id"], "fee_type": "mentor_session"},
+            },
             success_url=f"{FRONTEND_URL}/mentor-session-success?session_id={{CHECKOUT_SESSION_ID}}",
             cancel_url=f"{FRONTEND_URL}/mentors",
         )
 
+        # Stays PENDING until the Stripe webhook confirms the payment
+        # (routes_deals._handle_mentor_session_paid). This used to be set to
+        # PAID here, before the person had paid anything.
         sb.table("mentor_sessions").update({
             "stripe_session_id": checkout.id,
-            "status": "PAID",
         }).eq("id", session_data["id"]).execute()
 
+        session_data["stripe_session_id"] = checkout.id
         session_data["checkout_url"] = checkout.url
 
     except Exception as e:
         logger.error(f"Stripe checkout failed: {e}")
         raise HTTPException(status_code=500, detail="Payment processing failed")
 
-    # Push notification to mentor
+    return {"session": session_data}
+
+
+def notify_mentor_of_paid_session(sb, session_row: dict) -> None:
+    """Tell the mentor once the session is actually paid. Called by the
+    Stripe webhook, never at checkout creation."""
     try:
-        seeker_profile = sb.table("profiles").select("name").eq("id", user_id).execute()
+        mentor_res = sb.table("mentors").select("user_id").eq("id", session_row["mentor_id"]).execute()
+        if not mentor_res.data:
+            return
+        seeker_profile = sb.table("profiles").select("name").eq("id", session_row["seeker_id"]).execute()
         seeker_name = seeker_profile.data[0]["name"] if seeker_profile.data else "Someone"
         send_push_to_user(
-            user_id=mentor["user_id"],
+            user_id=mentor_res.data[0]["user_id"],
             title="New mentor session booked!",
-            body=f"{seeker_name} wants a {body.session_type.replace('_', ' ')} in {body.suburb}",
-            url=f"{FRONTEND_URL}/dashboard",
+            body=f"{seeker_name} wants a {(session_row.get('session_type') or 'session').replace('_', ' ')} in {session_row.get('suburb') or 'your area'}",
+            url=f"{FRONTEND_URL}/hub",
         )
     except Exception:
-        pass
-
-    return {"session": session_data}
+        logger.exception("Could not notify mentor about paid session %s", session_row.get("id"))
 
 
 # -- GET /mentors/sessions/me - Get my sessions --
@@ -401,6 +469,9 @@ def stripe_onboard(
                 "stripe_account_id": account_id,
             }).eq("id", mentor["id"]).execute()
         except Exception:
+            # Most often: Stripe Connect is not switched on for the platform
+            # account yet (Stripe dashboard > Connect > Get started).
+            logger.exception("Stripe Connect account creation failed for mentor %s", mentor["id"])
             raise HTTPException(status_code=500, detail="Failed to create Stripe account")
 
     try:
@@ -412,6 +483,7 @@ def stripe_onboard(
         )
         return {"url": link.url}
     except Exception:
+        logger.exception("Stripe onboarding link failed for mentor %s", mentor["id"])
         raise HTTPException(status_code=500, detail="Failed to create onboarding link")
 
 
@@ -455,4 +527,4 @@ def get_mentor(mentor_id: str):
 
     mentor["reviews"] = review_list
 
-    return mentor
+    return public_mentor(mentor)

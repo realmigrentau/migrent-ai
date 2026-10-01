@@ -61,6 +61,8 @@ export default function BecomeMentorPage() {
   const [existing, setExisting] = useState<MentorProfile | null>(null);
   const [checking, setChecking] = useState(true);
   const [created, setCreated] = useState(false);
+  // null until asked: whether Stripe can pay this mentor yet.
+  const [payoutsReady, setPayoutsReady] = useState<boolean | null>(null);
 
   const [suburb, setSuburb] = useState("");
   const [postcode, setPostcode] = useState("");
@@ -78,16 +80,30 @@ export default function BecomeMentorPage() {
     fetch(`${BASE_URL}/mentors/me/profile`, { headers: { Authorization: `Bearer ${session.access_token}` } })
       .then((res) => res.json())
       .then((data) => {
-        if (data.mentor) setExisting(data.mentor);
+        if (data.mentor) {
+          setExisting(data.mentor);
+          setPayoutsReady(Boolean(data.mentor.stripe_onboarding_complete));
+        }
       })
       .catch(() => {})
       .finally(() => setChecking(false));
   }, [session]);
 
-  // Back from Stripe's payout setup.
+  // Back from Stripe's payout setup. Stripe sends people here whether or not
+  // they finished, so ask the API what Stripe actually has on file.
+  const stripeReturn = typeof router.query.stripe === "string" ? router.query.stripe : "";
   useEffect(() => {
-    if (router.query.stripe === "complete") setCreated(true);
-  }, [router.query]);
+    if (!stripeReturn || !session?.access_token) return;
+    fetch(`${BASE_URL}/mentors/me/payout-status`, { headers: { Authorization: `Bearer ${session.access_token}` } })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (!data) return;
+        setPayoutsReady(Boolean(data.ready));
+        if (data.ready) toast.success("Payouts are set up. People can now book you.");
+        else toast.info("Payout setup is not finished yet. Pick up where you left off.");
+      })
+      .catch(() => {});
+  }, [stripeReturn, session?.access_token, toast]);
 
   const toggle = (list: string[], set: (v: string[]) => void) => (v: string) => set(list.includes(v) ? list.filter((x) => x !== v) : [...list, v]);
 
@@ -150,7 +166,7 @@ export default function BecomeMentorPage() {
   }
 
   if (created || existing) {
-    const needsPayouts = created || !existing?.stripe_onboarding_complete;
+    const needsPayouts = !payoutsReady;
     return (
       <>
         <SEOHead title={created ? "You are a mentor" : "Your mentor profile"} noIndex />
@@ -187,9 +203,13 @@ export default function BecomeMentorPage() {
               {existing.suburb}, ${(existing.hourly_rate / 100).toFixed(0)} a session.
             </p>
           ) : (
-            <p className="m-0">New arrivals looking in your suburb can now find you and book a session.</p>
+            <p className="m-0">New arrivals looking in your suburb can now find you.</p>
           )}
-          {needsPayouts && <p className="m-0">To be paid, connect a bank account through Stripe. It takes a few minutes.</p>}
+          {needsPayouts ? (
+            <p className="m-0">People can book you once you connect a bank account through Stripe. It takes a few minutes, and your 70% of each session is paid straight to you.</p>
+          ) : (
+            <p className="m-0">Payouts are set up. Your 70% of each session goes straight to your bank account through Stripe.</p>
+          )}
         </StatusPage>
       </>
     );

@@ -76,6 +76,26 @@ export default function StayRequests() {
     }
   }
 
+  // The host's link from accepting (or the instant-book email) lasts 24
+  // hours, and they may have closed the Stripe tab. This always issues a
+  // fresh checkout and retires the old one (routes_bookings.pay_owner_fee).
+  async function payFee(b: Booking) {
+    setPending(b.id);
+    try {
+      const res = await hubApi.post<{ checkout_url?: string | null; fee_waived?: boolean }>(`/bookings/${b.id}/pay-fee`);
+      if (res.checkout_url) {
+        window.location.href = res.checkout_url;
+        return;
+      }
+      toast.success(res.fee_waived ? "Stay confirmed. Your fee for this property is already paid." : "Stay confirmed");
+      void refetch();
+    } catch (e) {
+      toast.error(e instanceof HubError ? e.message : "That did not go through.");
+    } finally {
+      setPending(null);
+    }
+  }
+
   async function cancel(b: Booking) {
     const ok = await confirm({ title: "Cancel this request?", description: "The owner will be told.", confirmLabel: "Cancel request", tone: "danger" });
     if (!ok) return;
@@ -96,7 +116,10 @@ export default function StayRequests() {
       {me?.features.payments === "test" && role === "owner" && <InlineAlert tone="neutral">Payments are in test mode. Accepting takes you to a test checkout; no real money is charged.</InlineAlert>}
       <ul className="flex flex-col gap-3">
         {bookings.map((b) => {
-          const c = COPY[b.status] ?? { label: b.status.toLowerCase(), tone: "neutral" as const };
+          const awaitingFee = role === "owner" && b.status === "OWNER_ACCEPTED";
+          const c = awaitingFee
+            ? { label: "Waiting for your payment", tone: "warning" as const }
+            : COPY[b.status] ?? { label: b.status.toLowerCase(), tone: "neutral" as const };
           return (
             <li key={b.id} className="flex flex-col gap-4 rounded-[20px] border border-[var(--color-line)] bg-[var(--color-surface)] p-4 sm:flex-row sm:items-center">
               <HomeImage src={b.listing?.images?.[0]} alt="" className="h-16 w-20 shrink-0" rounded="rounded-[14px]" sizes="96px" />
@@ -119,6 +142,11 @@ export default function StayRequests() {
                       Accept
                     </Button>
                   </>
+                )}
+                {awaitingFee && (
+                  <Button size="sm" loading={pending === b.id} onClick={() => void payFee(b)}>
+                    Pay AUD {me?.features.fees.host_fee ?? 99} to confirm
+                  </Button>
                 )}
                 {role !== "owner" && ["PENDING_OWNER", "OWNER_ACCEPTED"].includes(b.status) && (
                   <Button size="sm" variant="ghost" loading={pending === b.id} onClick={() => void cancel(b)}>

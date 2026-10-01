@@ -47,6 +47,13 @@ const USERS = {
 };
 const RENTER = "aaaa0000-0000-4000-8000-000000000001";
 const OWNER = "aaaa0000-0000-4000-8000-000000000002";
+
+// Short stays: one accepted and waiting for the host's fee, one new request.
+const STAY_LISTING = { id: "11111111-1111-4111-8111-000000000099", title: "Short stay room in Ryde", city: "Sydney", images: ["https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=1200"] };
+const STAYS = [
+  { id: "bbbb0000-0000-4000-8000-000000000001", listing_id: STAY_LISTING.id, owner_id: OWNER, seeker_id: RENTER, status: "OWNER_ACCEPTED", check_in_date: "2026-11-02", check_out_date: "2026-11-30", guests: 1, total_price: 1520, message_to_owner: null, listing: STAY_LISTING, created_at: "2026-09-30T00:00:00Z" },
+  { id: "bbbb0000-0000-4000-8000-000000000002", listing_id: STAY_LISTING.id, owner_id: OWNER, seeker_id: "aaaa0000-0000-4000-8000-000000000005", status: "PENDING_OWNER", check_in_date: "2026-12-07", check_out_date: "2026-12-21", guests: 1, total_price: 760, message_to_owner: "Hi!", listing: STAY_LISTING, created_at: "2026-09-30T00:00:00Z" },
+];
 const TENANT = "aaaa0000-0000-4000-8000-000000000005";
 const NEW_OWNER = "aaaa0000-0000-4000-8000-000000000006";
 
@@ -666,6 +673,45 @@ export function handleHub(req, url, body, send) {
 
   if (p === "/hub/features") return send(200, me(RENTER).features), true;
   if (p === "/hub/listing-events") return send(200, { ok: true }), true;
+
+  // Short stays (routes_bookings.py). "Stripe" is the local cancel page.
+  if (p === "/bookings/me" && req.method === "GET") {
+    const uid = uidFromAuth(req);
+    if (!uid) return send(401, { detail: "Not signed in" }), true;
+    const side = url.searchParams.get("role") === "owner" ? "owner_id" : "seeker_id";
+    const rows = STAYS.filter((b) => b[side] === uid).map((b) => ({ ...b, other_party: { name: USERS[side === "owner_id" ? b.seeker_id : b.owner_id]?.name || null } }));
+    return send(200, { bookings: rows }), true;
+  }
+  if (p === "/bookings" && req.method === "POST") {
+    const uid = uidFromAuth(req);
+    if (!uid) return send(401, { detail: "Not signed in" }), true;
+    const l = body?.listing_id === STAY_LISTING.id ? { ...STAY_LISTING, weekly_price: 380, instant_book_enabled: true } : LISTINGS.find((x) => x.id === body?.listing_id);
+    if (!l) return send(404, { detail: "Listing not found" }), true;
+    const b = { id: uuid(), listing_id: l.id, owner_id: OWNER, seeker_id: uid, status: l.instant_book_enabled ? "OWNER_ACCEPTED" : "PENDING_OWNER", check_in_date: body.check_in, check_out_date: body.check_out, guests: body.guests || 1, total_price: l.weekly_price * 4, message_to_owner: body.message_to_owner || null, seeker_fee: 0, listing: { id: l.id, title: l.title, city: l.city, images: l.images }, created_at: new Date().toISOString() };
+    STAYS.push(b);
+    return send(200, { booking: b, checkout_url: null }), true;
+  }
+  const stay = p.match(/^\/bookings\/([0-9a-f-]+)\/(respond|pay-fee|cancel)$/i);
+  if (stay && req.method === "POST") {
+    const uid = uidFromAuth(req);
+    const b = STAYS.find((x) => x.id === stay[1]);
+    if (!b) return send(404, { detail: "Booking not found" }), true;
+    const checkout = `${req.headers.origin || ""}/booking-cancelled`;
+    if (stay[2] === "cancel") {
+      if (uid !== b.seeker_id) return send(403, { detail: "Only the seeker can cancel" }), true;
+      b.status = "SEEKER_CANCELLED";
+      return send(200, { booking_id: b.id, status: b.status }), true;
+    }
+    if (uid !== b.owner_id) return send(403, { detail: "Only the listing owner can do that" }), true;
+    if (stay[2] === "respond") {
+      if (b.status !== "PENDING_OWNER") return send(400, { detail: "This booking is not awaiting a response" }), true;
+      if (body?.action === "decline") return (b.status = "OWNER_DECLINED"), send(200, { booking_id: b.id, status: b.status }), true;
+      b.status = "OWNER_ACCEPTED";
+      return send(200, { booking_id: b.id, status: b.status, checkout_url: checkout }), true;
+    }
+    if (b.status !== "OWNER_ACCEPTED") return send(400, { detail: "This stay is not waiting for payment" }), true;
+    return send(200, { booking_id: b.id, status: b.status, checkout_url: checkout }), true;
+  }
   if (p === "/auth/store-legal-acceptance") return send(200, { status: "accepted" }), true;
   if (p === "/reports" && req.method === "POST") {
     const rid = uidFromAuth(req);

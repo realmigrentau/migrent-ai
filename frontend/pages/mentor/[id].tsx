@@ -28,6 +28,8 @@ interface MentorData {
   review_count: number;
   verified: boolean;
   active: boolean;
+  // From the API: active and able to receive their share through Stripe.
+  accepting_bookings?: boolean;
   profiles?: {
     name: string;
     custom_pfp: string;
@@ -99,7 +101,9 @@ export default function MentorProfilePage() {
       const data = await res.json();
       if (data.session?.checkout_url) {
         window.location.href = data.session.checkout_url;
+        return;
       }
+      toast.error("We couldn't open the payment page. Please try again.");
     } catch {
       toast.error("Something went wrong. Please try again.");
     } finally {
@@ -136,6 +140,7 @@ export default function MentorProfilePage() {
   const name = mentor.profiles?.name || "Mentor";
   const photo = mentor.profiles?.custom_pfp;
   const priceDisplay = `$${(mentor.hourly_rate / 100).toFixed(0)}`;
+  const accepting = Boolean(mentor.accepting_bookings);
 
   return (
     <>
@@ -295,10 +300,14 @@ export default function MentorProfilePage() {
                 />
               </div>
 
-              <button type="button" onClick={handleBook} disabled={booking} data-state={booking ? "loading" : undefined} className="btn-primary btn-lg w-full">
-                {booking ? "Opening checkout" : `Book and pay ${priceDisplay}`}
+              <button type="button" onClick={handleBook} disabled={booking || !accepting} data-state={booking ? "loading" : undefined} className="btn-primary btn-lg w-full">
+                {booking ? "Opening checkout" : accepting ? `Book and pay ${priceDisplay}` : "Not taking bookings yet"}
               </button>
-              <p className="site-meta m-0">You pay by card through Stripe. Your mentor confirms the time with you in Migrent messages.</p>
+              <p className="site-meta m-0">
+                {accepting
+                  ? "You pay by card through Stripe. Your mentor confirms the time with you in Migrent messages."
+                  : `${name} is still setting up how they get paid. Check back soon, or see other mentors.`}
+              </p>
             </div>
           </aside>
         </div>

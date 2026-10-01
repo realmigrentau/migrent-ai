@@ -86,7 +86,9 @@ export default function ListingDetailPage({ initialListing }: { initialListing?:
   const [retryCount, setRetryCount] = useState(0);
   const [bookingLoading, setBookingLoading] = useState(false);
   const [bookingSuccess, setBookingSuccess] = useState(false);
-  const [bookingError, setBookingError] = useState("");
+  // Instant book holds the room at once (OWNER_ACCEPTED, or PAID when the
+  // host's fee is already settled); request-to-book waits for the host.
+  const [bookingHeld, setBookingHeld] = useState(false);
 
   const bookingFormRef = useRef<HTMLDivElement>(null);
   const [showMobileCTA, setShowMobileCTA] = useState(false);
@@ -138,15 +140,13 @@ export default function ListingDetailPage({ initialListing }: { initialListing?:
       return;
     }
     setBookingLoading(true);
-    setBookingError("");
     try {
       // Renters are never sent to Stripe. The host is invoiced separately.
-      await createBooking(session.access_token, data);
+      const res = await createBooking(session.access_token, data);
+      setBookingHeld(["OWNER_ACCEPTED", "PAID"].includes(res?.booking?.status));
       setBookingSuccess(true);
-    } catch (err) {
-      setBookingError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
-      throw err;
     } finally {
+      // Errors are shown by RequestToBookForm, which rethrows them here.
       setBookingLoading(false);
     }
   };
@@ -443,12 +443,20 @@ export default function ListingDetailPage({ initialListing }: { initialListing?:
                 {bookingSuccess ? (
                   <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="site-card site-card--pad text-center" role="status">
                     <CheckCircle className="w-12 h-12 mx-auto text-[var(--color-success-500)] mb-3" aria-hidden="true" />
-                    <h3 className="site-h3 site-h3--lg mb-2">Request sent</h3>
-                    <ol className="text-left text-[13.5px] text-[var(--color-ink-2)] leading-[1.6] space-y-2 mb-4">
-                      <li className="flex gap-2.5"><span className="font-mono text-[11px] text-[var(--color-ink-3)] mt-0.5">1</span><span>The host has been emailed. Most reply within a day or two.</span></li>
-                      <li className="flex gap-2.5"><span className="font-mono text-[11px] text-[var(--color-ink-3)] mt-0.5">2</span><span>We will email you either way, and it will show up under your bookings.</span></li>
-                      <li className="flex gap-2.5"><span className="font-mono text-[11px] text-[var(--color-ink-3)] mt-0.5">3</span><span>Nothing is booked and you owe nothing yet. Keep looking at other rooms in the meantime.</span></li>
-                    </ol>
+                    <h3 className="site-h3 site-h3--lg mb-2">{bookingHeld ? "Room held for you" : "Request sent"}</h3>
+                    {bookingHeld ? (
+                      <ol className="text-left text-[13.5px] text-[var(--color-ink-2)] leading-[1.6] space-y-2 mb-4">
+                        <li className="flex gap-2.5"><span className="font-mono text-[11px] text-[var(--color-ink-3)] mt-0.5">1</span><span>This room is held for your dates. The host has been told.</span></li>
+                        <li className="flex gap-2.5"><span className="font-mono text-[11px] text-[var(--color-ink-3)] mt-0.5">2</span><span>We will email you when the host confirms, and it will show up under your bookings.</span></li>
+                        <li className="flex gap-2.5"><span className="font-mono text-[11px] text-[var(--color-ink-3)] mt-0.5">3</span><span>You owe Migrent nothing. Rent and bond are arranged with the host directly.</span></li>
+                      </ol>
+                    ) : (
+                      <ol className="text-left text-[13.5px] text-[var(--color-ink-2)] leading-[1.6] space-y-2 mb-4">
+                        <li className="flex gap-2.5"><span className="font-mono text-[11px] text-[var(--color-ink-3)] mt-0.5">1</span><span>The host has been emailed. Most reply within a day or two.</span></li>
+                        <li className="flex gap-2.5"><span className="font-mono text-[11px] text-[var(--color-ink-3)] mt-0.5">2</span><span>We will email you either way, and it will show up under your bookings.</span></li>
+                        <li className="flex gap-2.5"><span className="font-mono text-[11px] text-[var(--color-ink-3)] mt-0.5">3</span><span>Nothing is booked and you owe nothing yet. Keep looking at other rooms in the meantime.</span></li>
+                      </ol>
+                    )}
                     <p className="text-[12.5px] text-[var(--color-ink-3)] border-t border-[var(--color-line)] pt-3 mb-4">
                       Migrent never asks renters for money. If anyone asks you to pay a deposit to hold this room, tell us before you pay.
                     </p>
@@ -501,7 +509,6 @@ export default function ListingDetailPage({ initialListing }: { initialListing?:
                       loading={bookingLoading}
                       disabled={refreshing}
                     />
-                    {bookingError && <p role="alert" className="mt-2 text-sm text-[var(--color-danger-500)]">{bookingError}</p>}
                   </>
                 )}
               </div>

@@ -219,6 +219,40 @@ def _handle_booking_paid(sb, event: dict, session: dict) -> dict:
     return {"status": "ok", "booking": True}
 
 
+def _handle_mentor_session_paid(sb, event: dict, session: dict) -> dict:
+    """The only place a mentor session becomes PAID. The price varies per
+    mentor, so the amount is checked against the row created at checkout."""
+    metadata = session.get("metadata") or {}
+    mentor_session_id = metadata.get("mentor_session_id")
+    if not mentor_session_id:
+        raise WebhookRejected("mentor session checkout without mentor_session_id")
+    if session.get("payment_status") != "paid":
+        raise WebhookRejected(f"payment_status {session.get('payment_status')!r} is not paid")
+    if (session.get("currency") or "").lower() != CURRENCY:
+        raise WebhookRejected(f"currency {session.get('currency')!r} is not {CURRENCY}")
+
+    res = sb.table("mentor_sessions").select("*").eq("id", mentor_session_id).execute()
+    if not res.data:
+        raise WebhookRejected(f"mentor session {mentor_session_id} not found")
+    row = res.data[0]
+    if row.get("stripe_session_id") != session.get("id"):
+        raise WebhookRejected("session does not belong to this mentor session (stale or forged)")
+    if session.get("amount_total") != row.get("amount"):
+        raise WebhookRejected(f"amount_total {session.get('amount_total')!r} does not match expected {row.get('amount')}")
+
+    if not _record_event(sb, event, session, fee_type="mentor_session", status="accepted"):
+        return {"status": "duplicate"}
+    if row.get("status") == "PAID":
+        return {"status": "ok", "mentor_session": True, "already_paid": True}
+
+    sb.table("mentor_sessions").update({"status": "PAID"}).eq("id", mentor_session_id).execute()
+
+    from routes_mentors import notify_mentor_of_paid_session
+
+    notify_mentor_of_paid_session(sb, row)
+    return {"status": "ok", "mentor_session": True}
+
+
 def _handle_verification_paid(sb, event: dict, session: dict) -> dict:
     from payments import SEEKER_VERIFICATION_ENABLED
 
@@ -276,9 +310,40 @@ def _handle_refund(sb, event: dict, charge: dict) -> dict:
     pseudo_session = {"id": None, "amount_total": charge.get("amount_refunded"), "currency": charge.get("currency"), "payment_intent": payment_intent, "metadata": {}}
     if not _record_event(sb, event, pseudo_session, fee_type="refund", status="refunded", note=f"charge {charge.get('id')}"):
         return {"status": "duplicate"}
+    mentor_session_id = (charge.get("metadata") or {}).get("mentor_session_id")
+    if mentor_session_id:
+        return _handle_mentor_refund(sb, charge, mentor_session_id)
     if payment_intent:
         sb.table("bookings").update({"status": "REFUNDED", "refunded_at": datetime.now(timezone.utc).isoformat()}).eq("stripe_payment_intent", payment_intent).execute()
     return {"status": "ok", "refund": True}
+
+
+def _handle_mentor_refund(sb, charge: dict, mentor_session_id: str) -> dict:
+    """A refunded mentor session takes the mentor's share back too.
+
+    Refunding a destination charge in the Stripe dashboard only pulls the
+    mentor's share back if "Reverse transfer" is ticked; without it Migrent
+    pays the whole refund out of its own balance. So reverse whatever part of
+    the transfer the refund covers and has not been reversed already.
+    """
+    sb.table("mentor_sessions").update({"status": "REFUNDED"}).eq("id", mentor_session_id).execute()
+    transfer_id = charge.get("transfer") if isinstance(charge.get("transfer"), str) else None
+    amount = charge.get("amount") or 0
+    refunded = charge.get("amount_refunded") or 0
+    if not transfer_id or amount <= 0:
+        return {"status": "ok", "refund": True, "mentor_session": True}
+    try:
+        transfer = stripe.Transfer.retrieve(transfer_id)
+        owed_back = round(transfer["amount"] * min(refunded, amount) / amount)
+        to_reverse = owed_back - (transfer.get("amount_reversed") or 0)
+        if to_reverse > 0:
+            stripe.Transfer.create_reversal(transfer_id, amount=to_reverse, metadata={"mentor_session_id": mentor_session_id})
+    except Exception:
+        # Do not make Stripe retry the whole event: the refund is recorded.
+        # The reversal can be done by hand (Stripe > the payment > Transfer).
+        logger.exception("Could not reverse mentor transfer %s for session %s", transfer_id, mentor_session_id)
+        return {"status": "ok", "refund": True, "mentor_session": True, "transfer_reversed": False}
+    return {"status": "ok", "refund": True, "mentor_session": True, "transfer_reversed": True}
 
 
 @webhook_router.post("/webhooks/stripe")
@@ -309,11 +374,7 @@ async def stripe_webhook(request: Request):
             if metadata.get("purpose") == "verification":
                 return _handle_verification_paid(sb, event, obj)
             if metadata.get("fee_type") == "mentor_session":
-                # Mentor sessions are settled by routes_mentors' own handler
-                # through Stripe Connect; nothing to do here beyond recording.
-                if not _record_event(sb, event, obj, fee_type="mentor_session", status="accepted"):
-                    return {"status": "duplicate"}
-                return {"status": "ok", "mentor_session": True}
+                return _handle_mentor_session_paid(sb, event, obj)
             return _handle_legacy_deal_paid(sb, event, obj)
         if event_type == "checkout.session.expired":
             return _handle_session_expired(sb, event, obj)
