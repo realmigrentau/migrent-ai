@@ -199,3 +199,8 @@ def test_listing_photos_must_be_uploaded_to_migrent():
 
 def test_the_paid_geocoder_needs_a_sign_in(client):
     assert client.post("/geocode/address", json={"address": "1 George Street Sydney"}).status_code == 401
+
+
+def test_responses_say_how_long_the_api_took(client):
+    r = client.get("/health")
+    assert r.headers["server-timing"].startswith("app;dur=")

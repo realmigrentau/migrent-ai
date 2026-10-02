@@ -240,10 +240,25 @@ ATTACHMENT_URL_TTL = 600  # seconds
 
 def _sign_attachments(sb, messages: list[dict]) -> list[dict]:
     """Replace attachment_path with a short-lived signed URL for the
-    participants reading the thread. The path itself is not returned."""
-    for m in messages:
-        path = m.pop("attachment_path", None)
+    participants reading the thread. The path itself is not returned.
+
+    Every attachment in the thread is signed in one request (each one used to
+    be its own round trip); if that fails they are signed one by one."""
+    paths = [m.pop("attachment_path", None) for m in messages]
+    wanted = sorted({p for p in paths if p})
+    batch: dict[str, Optional[str]] = {}
+    if len(wanted) > 1:
+        try:
+            for item in sb.storage.from_(ATTACHMENT_BUCKET).create_signed_urls(wanted, ATTACHMENT_URL_TTL):
+                if item.get("path") and not item.get("error"):
+                    batch[item["path"]] = item.get("signedURL") or item.get("signedUrl")
+        except Exception:
+            batch = {}
+    for m, path in zip(messages, paths):
         if path:
+            if batch.get(path):
+                m["attachment_url"] = batch[path]
+                continue
             try:
                 signed = sb.storage.from_(ATTACHMENT_BUCKET).create_signed_url(path, ATTACHMENT_URL_TTL)
                 m["attachment_url"] = signed.get("signedURL") or signed.get("signedUrl") if isinstance(signed, dict) else signed

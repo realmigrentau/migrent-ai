@@ -184,6 +184,9 @@ def db(monkeypatch):
     auth_utils._remote_cache.clear()
     auth_utils._active_cache.clear()
     auth_utils._mfa_cache.clear()
+    import hub_common
+
+    hub_common._known_admins.clear()
     import listing_lifecycle
 
     listing_lifecycle._suspended_cache.update(until=0.0, ids=[])

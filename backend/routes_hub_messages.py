@@ -22,6 +22,7 @@ from typing import Optional
 from fastapi import APIRouter, Header, HTTPException, Request
 from pydantic import BaseModel, Field
 
+from concurrency import run_parallel
 from db import get_supabase_admin
 from hub_common import (
     HubActor,
@@ -131,14 +132,13 @@ def build_threads(sb, actor: HubActor, *, limit_messages: int = 2000) -> list[di
     if not threads:
         return []
     listing_ids = [t["listing_id"] for t in threads.values() if t["listing_id"]]
-    listings = fetch_listings(sb, listing_ids)
-    people = fetch_people(sb, [t["other_user_id"] for t in threads.values()])
-    states = _states(sb, uid)
 
     # Application context: the one live application between these two people
     # about this home, whichever side the viewer is on.
-    apps: dict[tuple[str, str], dict] = {}
-    if listing_ids:
+    def _apps() -> dict[tuple[str, str], dict]:
+        apps: dict[tuple[str, str], dict] = {}
+        if not listing_ids:
+            return apps
         try:
             rows = sb.table("applications").select("id, listing_id, renter_id, owner_id, status").in_("listing_id", listing_ids).neq("status", "draft").execute().data or []
             for a in rows:
@@ -147,6 +147,15 @@ def build_threads(sb, actor: HubActor, *, limit_messages: int = 2000) -> list[di
                     apps[(str(a["listing_id"]), other)] = {"id": a["id"], "status": a["status"]}
         except Exception:
             pass
+        return apps
+
+    # Independent reads, fetched together (concurrency.py).
+    listings, people, states, apps = run_parallel(
+        lambda: fetch_listings(sb, listing_ids),
+        lambda: fetch_people(sb, [t["other_user_id"] for t in threads.values()]),
+        lambda: _states(sb, uid),
+        _apps,
+    )
 
     out = []
     for t in threads.values():
@@ -191,11 +200,16 @@ def inbox(request: Request, filter: str = "all", q: Optional[str] = None, author
 
 
 def unread_total(sb, actor: HubActor) -> int:
-    try:
-        rows = sb.table("messages").select("id, sender_id, listing_id").eq("receiver_id", actor.id).is_("read_at", "null").limit(500).execute().data or []
-    except Exception:
+    def _unread():
+        try:
+            return sb.table("messages").select("id, sender_id, listing_id").eq("receiver_id", actor.id).is_("read_at", "null").limit(500).execute().data or []
+        except Exception:
+            return None
+
+    # Independent reads, fetched together (concurrency.py).
+    rows, states = run_parallel(_unread, lambda: _states(sb, actor.id))
+    if rows is None:
         return 0
-    states = _states(sb, actor.id)
     muted = {k for k, v in states.items() if v.get("muted") or v.get("archived_at")}
     return sum(1 for r in rows if make_key(str(r["listing_id"]) if r.get("listing_id") else None, str(r["sender_id"])) not in muted)
 
@@ -211,58 +225,45 @@ def conversation(key: str, request: Request, before: Optional[str] = None, limit
     q = q.eq("listing_id", listing_id) if listing_id else q.is_("listing_id", "null")
     if before:
         q = q.lt("created_at", before)
-    rows = q.order("created_at", desc=True).limit(limit + 1).execute().data or []
+    # The page of messages and the home are independent reads.
+    rows, listing = run_parallel(
+        lambda: q.order("created_at", desc=True).limit(limit + 1).execute().data or [],
+        lambda: fetch_listings(sb, [listing_id]).get(listing_id) if listing_id else None,
+    )
     has_more = len(rows) > limit
     rows = list(reversed(rows[:limit]))
 
-    listing = fetch_listings(sb, [listing_id]).get(listing_id) if listing_id else None
     if not rows and not listing:
         raise HTTPException(status_code=404, detail="Conversation not found")
     if not rows and listing and uid not in (str(listing.get("owner_id")), ) and other != str(listing.get("owner_id")):
         # A new conversation is only ever renter -> the listing's owner.
         raise HTTPException(status_code=404, detail="Conversation not found")
 
-    if not actor.read_only:
-        unread = [m["id"] for m in rows if str(m["receiver_id"]) == uid and not m.get("read_at")]
+    unread = [m["id"] for m in rows if str(m["receiver_id"]) == uid and not m.get("read_at")] if not actor.read_only else []
+
+    def _mark_read():
         if unread:
             sb.table("messages").update({"read_at": now_iso()}).in_("id", unread).eq("receiver_id", uid).execute()
 
     from routes_messages import _sign_attachments
     from message_safety import RISK_LABELS, message_risks
-
-    messages = _sign_attachments(
-        sb,
-        [
-            {
-                "id": m["id"],
-                "from_me": str(m["sender_id"]) == uid,
-                "text": m.get("message_text") or "",
-                "attachment_path": m.get("attachment_path"),
-                "attachment_url": None,
-                "attachment_name": m.get("attachment_name"),
-                "attachment_type": m.get("attachment_type"),
-                "read_at": m.get("read_at"),
-                "created_at": m["created_at"],
-                # Scam signs, shown to the person receiving the message.
-                "risks": [RISK_LABELS[r] for r in message_risks(m.get("message_text"))] if str(m["sender_id"]) != uid else [],
-            }
-            for m in rows
-        ],
-    )
-    people = fetch_people(sb, [other])
-    state = _states(sb, uid).get(key, {})
     from blocks import block_state
 
-    try:
-        blocked = block_state(sb, uid, other)
-    except Exception:
-        blocked = {"by_me": False, "by_them": False}
+    def _blocked():
+        try:
+            return block_state(sb, uid, other)
+        except Exception:
+            return {"by_me": False, "by_them": False}
+
     my_side = "owner" if listing and str(listing.get("owner_id")) == uid else "renter"
 
-    context: dict = {"application": None, "inspection": None}
-    if listing_id:
-        try:
-            renter_id = other if my_side == "owner" else uid
+    def _context() -> dict:
+        context: dict = {"application": None, "inspection": None}
+        if not listing_id:
+            return context
+        renter_id = other if my_side == "owner" else uid
+
+        def _application():
             app = (
                 sb.table("applications")
                 .select("id, status, updated_at")
@@ -274,17 +275,57 @@ def conversation(key: str, request: Request, before: Optional[str] = None, limit
                 .execute()
                 .data
             )
-            context["application"] = app[0] if app else None
+            return app[0] if app else None
+
+        def _inspection():
             bookings = (
                 sb.table("inspection_bookings").select("id, slot_id, status").eq("listing_id", listing_id).eq("renter_id", renter_id).eq("status", "booked").execute().data
                 or []
             )
-            if bookings:
-                slots = sb.table("inspection_slots").select("id, starts_at, ends_at, status").in_("id", [b["slot_id"] for b in bookings]).gte("starts_at", now_iso()).order("starts_at").limit(1).execute().data or []
-                if slots:
-                    context["inspection"] = {"booking_id": next(b["id"] for b in bookings if str(b["slot_id"]) == str(slots[0]["id"])), **slots[0]}
+            if not bookings:
+                return None
+            slots = sb.table("inspection_slots").select("id, starts_at, ends_at, status").in_("id", [b["slot_id"] for b in bookings]).gte("starts_at", now_iso()).order("starts_at").limit(1).execute().data or []
+            if not slots:
+                return None
+            return {"booking_id": next(b["id"] for b in bookings if str(b["slot_id"]) == str(slots[0]["id"])), **slots[0]}
+
+        try:
+            context["application"], context["inspection"] = run_parallel(_application, _inspection)
         except Exception:
             pass
+        return context
+
+    def _messages():
+        return _sign_attachments(
+            sb,
+            [
+                {
+                    "id": m["id"],
+                    "from_me": str(m["sender_id"]) == uid,
+                    "text": m.get("message_text") or "",
+                    "attachment_path": m.get("attachment_path"),
+                    "attachment_url": None,
+                    "attachment_name": m.get("attachment_name"),
+                    "attachment_type": m.get("attachment_type"),
+                    "read_at": m.get("read_at"),
+                    "created_at": m["created_at"],
+                    # Scam signs, shown to the person receiving the message.
+                    "risks": [RISK_LABELS[r] for r in message_risks(m.get("message_text"))] if str(m["sender_id"]) != uid else [],
+                }
+                for m in rows
+            ],
+        )
+
+    # Everything else the screen needs is independent: fetch it together.
+    _, messages, people, states, blocked, context = run_parallel(
+        _mark_read,
+        _messages,
+        lambda: fetch_people(sb, [other]),
+        lambda: _states(sb, uid),
+        _blocked,
+        _context,
+    )
+    state = states.get(key, {})
 
     return {
         "key": key,

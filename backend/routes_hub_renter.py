@@ -22,6 +22,7 @@ from typing import Any, Optional
 from fastapi import APIRouter, File, Form, Header, HTTPException, Request, UploadFile
 from pydantic import BaseModel, Field, field_validator
 
+from concurrency import run_parallel
 from db import get_supabase_admin
 from hub_common import (
     HubActor,
@@ -241,8 +242,12 @@ def get_rental_profile(request: Request, authorization: Optional[str] = Header(N
     actor = hub_actor(request, authorization)
     sb = get_supabase_admin()
     try:
-        rp, exists = get_renter_profile(sb, actor.id)
-        docs = list_documents(sb, actor.id)
+        # Independent reads, fetched together (concurrency.py).
+        (rp, exists), docs, verification = run_parallel(
+            lambda: get_renter_profile(sb, actor.id),
+            lambda: list_documents(sb, actor.id),
+            lambda: renter_verification_status(sb, actor.id),
+        )
     except HTTPException:
         raise
     except Exception as e:
@@ -254,7 +259,7 @@ def get_rental_profile(request: Request, authorization: Optional[str] = Header(N
         "avatar_url": actor.profile.get("custom_pfp"),
         "documents": docs,
         "completion": profile_completion(actor.profile, rp, exists, docs),
-        "verification": renter_verification_status(sb, actor.id),
+        "verification": verification,
     }
 
 
@@ -779,12 +784,20 @@ def _upcoming_slot_counts(sb, listing_ids: list[str]) -> dict[str, int]:
 def recommend(sb, actor: HubActor, limit: int = 6) -> list[dict]:
     """Rules, not a model. Scores each available home against what the
     renter told us, and returns the reasons alongside the home."""
-    rp, _ = get_renter_profile(sb, actor.id)
-    try:
-        searches = sb.table("saved_searches").select("params").eq("user_id", actor.id).limit(5).execute().data or []
-    except Exception:
-        searches = []
-    saved_ids = {str(r.get("listing_id")) for r in saved_rows(sb, actor.id)}
+    def _searches():
+        try:
+            return sb.table("saved_searches").select("params").eq("user_id", actor.id).limit(5).execute().data or []
+        except Exception:
+            return []
+
+    # Four independent reads: fetch them together (concurrency.py).
+    (rp, _), searches, saved, pool = run_parallel(
+        lambda: get_renter_profile(sb, actor.id),
+        _searches,
+        lambda: saved_rows(sb, actor.id),
+        lambda: query_public_listings(sb, {}, limit=80),
+    )
+    saved_ids = {str(r.get("listing_id")) for r in saved}
 
     suburbs = [s.lower() for s in (rp.get("preferred_suburbs") or [])]
     for s in searches:
@@ -799,7 +812,6 @@ def recommend(sb, actor: HubActor, limit: int = 6) -> list[dict]:
     beds = rp.get("bedrooms_min")
     move = rp.get("preferred_move_date")
 
-    pool = query_public_listings(sb, {}, limit=80)
     scored = []
     for row in pool:
         lid = str(row.get("id"))

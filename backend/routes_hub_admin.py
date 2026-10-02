@@ -57,6 +57,7 @@ from fastapi import APIRouter, BackgroundTasks, Header, HTTPException, Request
 from pydantic import BaseModel, Field, field_validator
 
 from auth_utils import forget_account_status
+from concurrency import run_parallel
 from db import get_supabase_admin
 from listing_lifecycle import forget_suspended_owners
 from hub_common import (
@@ -213,18 +214,23 @@ def overview(request: Request, authorization: Optional[str] = Header(None)):
     actor = hub_actor(request, authorization)
     require_admin_panel(actor, request, authorization)
     sb = get_supabase_admin()
-    return {
-        "final_reviews": _count(sb, "applications", status="migrent_review"),
-        "open_reports": _count(sb, "reports", status=["pending", "reviewing"]),
-        "listings_in_review": _count(sb, "listings", moderation_status=["pending_approval", "flagged"]),
-        "id_checks_waiting": _count(sb, "owner_verification", id_status="pending"),
-        "mentors_waiting": _count(sb, "mentors", review_status="pending"),
-        "open_emergencies": _count(sb, "maintenance_requests", urgency="emergency", status=["submitted", "acknowledged"]),
-        "tickets_waiting": _count(sb, "tickets", status=list(TICKET_VIEWS["needs_reply"])),
+    return _gather(
+        final_reviews=lambda: _count(sb, "applications", status="migrent_review"),
+        open_reports=lambda: _count(sb, "reports", status=["pending", "reviewing"]),
+        listings_in_review=lambda: _count(sb, "listings", moderation_status=["pending_approval", "flagged"]),
+        id_checks_waiting=lambda: _count(sb, "owner_verification", id_status="pending"),
+        mentors_waiting=lambda: _count(sb, "mentors", review_status="pending"),
+        open_emergencies=lambda: _count(sb, "maintenance_requests", urgency="emergency", status=["submitted", "acknowledged"]),
+        tickets_waiting=lambda: _count(sb, "tickets", status=list(TICKET_VIEWS["needs_reply"])),
         # Two plain facts, counted, never estimated.
-        "accounts": _count(sb, "profiles"),
-        "approved_listings": _count(sb, "listings", moderation_status="approved"),
-    }
+        accounts=lambda: _count(sb, "profiles"),
+        approved_listings=lambda: _count(sb, "listings", moderation_status="approved"),
+    )
+
+
+def _gather(**reads):
+    """Run independent reads together (concurrency.py); results by name."""
+    return dict(zip(reads.keys(), run_parallel(*reads.values())))
 
 
 def _count_since(sb, table: str, column: str, since: str, **eqs) -> int:
@@ -261,54 +267,64 @@ def metrics(request: Request, authorization: Optional[str] = Header(None)):
 
     # Hours from a listing being sent for review to the decision, for
     # decisions made in the last 30 days.
-    review_pairs: list[tuple[Optional[str], Optional[str]]] = []
-    try:
-        decided = sb.table("moderation_events").select("listing_id, created_at").in_("event_type", ["approved", "rejected", "changes_requested"]).gte("created_at", d30).limit(200).execute().data or []
-        if decided:
-            submitted = sb.table("moderation_events").select("listing_id, created_at").eq("event_type", "submitted").in_("listing_id", list({str(d["listing_id"]) for d in decided})).execute().data or []
-            for d in decided:
-                before = [s["created_at"] for s in submitted if str(s["listing_id"]) == str(d["listing_id"]) and str(s["created_at"]) <= str(d["created_at"])]
-                if before:
-                    review_pairs.append((max(before), d["created_at"]))
-    except Exception:
-        pass
-    try:
-        tickets = sb.table("tickets").select("created_at, first_response_at").gte("created_at", d30).not_.is_("first_response_at", "null").limit(500).execute().data or []
-    except Exception:
-        tickets = []
+    def _review_pairs() -> list[tuple[Optional[str], Optional[str]]]:
+        review_pairs: list[tuple[Optional[str], Optional[str]]] = []
+        try:
+            decided = sb.table("moderation_events").select("listing_id, created_at").in_("event_type", ["approved", "rejected", "changes_requested"]).gte("created_at", d30).limit(200).execute().data or []
+            if decided:
+                submitted = sb.table("moderation_events").select("listing_id, created_at").eq("event_type", "submitted").in_("listing_id", list({str(d["listing_id"]) for d in decided})).execute().data or []
+                for d in decided:
+                    before = [s["created_at"] for s in submitted if str(s["listing_id"]) == str(d["listing_id"]) and str(s["created_at"]) <= str(d["created_at"])]
+                    if before:
+                        review_pairs.append((max(before), d["created_at"]))
+        except Exception:
+            pass
+        return review_pairs
+
+    def _tickets() -> list[dict]:
+        try:
+            return sb.table("tickets").select("created_at, first_response_at").gte("created_at", d30).not_.is_("first_response_at", "null").limit(500).execute().data or []
+        except Exception:
+            return []
+
+    # About two dozen independent counts: ask for them all at once.
+    n = _gather(
+        review_pairs=_review_pairs,
+        tickets=_tickets,
+        accounts=lambda: _count(sb, "profiles"),
+        renters=lambda: _count(sb, "profiles", role=["seeker", "renter"]),
+        owners=lambda: _count(sb, "profiles", role="owner"),
+        joined_7_days=lambda: _count_since(sb, "profiles", "created_at", d7),
+        joined_30_days=lambda: _count_since(sb, "profiles", "created_at", d30),
+        id_checked_owners=lambda: _count(sb, "owner_verification", id_status="approved"),
+        live=lambda: _count(sb, "listings", moderation_status="approved"),
+        in_review=lambda: _count(sb, "listings", moderation_status=["pending_approval", "flagged"]),
+        paused=lambda: _count(sb, "listings", moderation_status="paused"),
+        drafts=lambda: _count(sb, "listings", moderation_status="draft"),
+        listed_30_days=lambda: _count_since(sb, "listings", "created_at", d30),
+        messages_7_days=lambda: _count_since(sb, "messages", "created_at", d7),
+        applications_30_days=lambda: _count_since(sb, "applications", "created_at", d30),
+        inspections_booked_30_days=lambda: _count_since(sb, "inspection_bookings", "created_at", d30),
+        stay_requests_30_days=lambda: _count_since(sb, "bookings", "created_at", d30),
+        active_tenancies=lambda: _count(sb, "tenancies", status="active"),
+        open_reports=lambda: _count(sb, "reports", status=["pending", "reviewing"]),
+        reports_30_days=lambda: _count_since(sb, "reports", "created_at", d30),
+        scam_flags_30_days=lambda: _count_since(sb, "reports", "created_at", d30, source="system"),
+        suspended_accounts=lambda: _count_suspended(sb),
+        open_tickets=lambda: _count(sb, "tickets", status=list(TICKET_VIEWS["needs_reply"])),
+    )
 
     return {
         "generated_at": now.isoformat(),
-        "people": {
-            "accounts": _count(sb, "profiles"),
-            "renters": _count(sb, "profiles", role=["seeker", "renter"]),
-            "owners": _count(sb, "profiles", role="owner"),
-            "joined_7_days": _count_since(sb, "profiles", "created_at", d7),
-            "joined_30_days": _count_since(sb, "profiles", "created_at", d30),
-            "id_checked_owners": _count(sb, "owner_verification", id_status="approved"),
-        },
+        "people": {k: n[k] for k in ("accounts", "renters", "owners", "joined_7_days", "joined_30_days", "id_checked_owners")},
         "homes": {
-            "live": _count(sb, "listings", moderation_status="approved"),
-            "in_review": _count(sb, "listings", moderation_status=["pending_approval", "flagged"]),
-            "paused": _count(sb, "listings", moderation_status="paused"),
-            "drafts": _count(sb, "listings", moderation_status="draft"),
-            "listed_30_days": _count_since(sb, "listings", "created_at", d30),
-            "median_review_hours": _median_hours(review_pairs),
+            **{k: n[k] for k in ("live", "in_review", "paused", "drafts", "listed_30_days")},
+            "median_review_hours": _median_hours(n["review_pairs"]),
         },
-        "activity": {
-            "messages_7_days": _count_since(sb, "messages", "created_at", d7),
-            "applications_30_days": _count_since(sb, "applications", "created_at", d30),
-            "inspections_booked_30_days": _count_since(sb, "inspection_bookings", "created_at", d30),
-            "stay_requests_30_days": _count_since(sb, "bookings", "created_at", d30),
-            "active_tenancies": _count(sb, "tenancies", status="active"),
-        },
+        "activity": {k: n[k] for k in ("messages_7_days", "applications_30_days", "inspections_booked_30_days", "stay_requests_30_days", "active_tenancies")},
         "safety": {
-            "open_reports": _count(sb, "reports", status=["pending", "reviewing"]),
-            "reports_30_days": _count_since(sb, "reports", "created_at", d30),
-            "scam_flags_30_days": _count_since(sb, "reports", "created_at", d30, source="system"),
-            "suspended_accounts": _count_suspended(sb),
-            "open_tickets": _count(sb, "tickets", status=list(TICKET_VIEWS["needs_reply"])),
-            "median_first_reply_hours": _median_hours([(t.get("created_at"), t.get("first_response_at")) for t in tickets]),
+            **{k: n[k] for k in ("open_reports", "reports_30_days", "scam_flags_30_days", "suspended_accounts", "open_tickets")},
+            "median_first_reply_hours": _median_hours([(t.get("created_at"), t.get("first_response_at")) for t in n["tickets"]]),
         },
     }
 
@@ -377,9 +393,11 @@ def _listing_rows(sb, build) -> list[dict]:
 
 def _moderation_items(sb, rows: list[dict]) -> list[dict]:
     owner_ids = [r.get("owner_id") for r in rows]
-    people = fetch_people(sb, owner_ids)
-    emails = _emails(sb, owner_ids)
-    checks = owner_verified_map(sb, owner_ids)
+    people, emails, checks = run_parallel(
+        lambda: fetch_people(sb, owner_ids),
+        lambda: _emails(sb, owner_ids),
+        lambda: owner_verified_map(sb, owner_ids),
+    )
     out = []
     for r in rows:
         oid = str(r.get("owner_id") or "")
@@ -438,9 +456,12 @@ def listing_queue(request: Request, queue: str = "review", q: Optional[str] = No
             query = query.order("updated_at", desc=True)
         return query.limit(100)
 
-    rows = _listing_rows(sb, build)
-    counts = {name: _count(sb, "listings", moderation_status=list(states)) for name, states in LISTING_QUEUES.items()}
-    return {"listings": _moderation_items(sb, rows), "counts": counts}
+    # The queue and its five tab counts are independent: fetch them together.
+    out = _gather(
+        listings=lambda: _moderation_items(sb, _listing_rows(sb, build)),
+        **{name: (lambda states=states: _count(sb, "listings", moderation_status=list(states))) for name, states in LISTING_QUEUES.items()},
+    )
+    return {"listings": out.pop("listings"), "counts": out}
 
 
 def _listing_detail(sb, listing_id: str) -> dict:
@@ -1003,19 +1024,27 @@ def support_tickets(request: Request, view: str = "needs_reply", authorization: 
     if view not in TICKET_VIEWS and view != "all":
         raise HTTPException(status_code=400, detail="Unknown view")
     sb = get_supabase_admin()
-    try:
+
+    def _tickets():
         q = sb.table("tickets").select("*")
         if view != "all":
             q = q.in_("status", list(TICKET_VIEWS[view]))
         rows = q.order("created_at", desc=view != "needs_reply").limit(200).execute().data or []
+        if view == "needs_reply":
+            # Most urgent first, then whoever has waited longest.
+            rows.sort(key=lambda r: TICKET_PRIORITY.get(r.get("priority") or "normal", 2))
+        return rows, fetch_people(sb, [r.get("user_id") for r in rows])
+
+    # The list and its tab counts are independent: fetch them together.
+    try:
+        out = _gather(
+            tickets=_tickets,
+            **{name: (lambda states=states: _count(sb, "tickets", status=list(states))) for name, states in TICKET_VIEWS.items()},
+        )
     except Exception as e:
         raise hub_table_error(e)
-    if view == "needs_reply":
-        # Most urgent first, then whoever has waited longest.
-        rows.sort(key=lambda r: TICKET_PRIORITY.get(r.get("priority") or "normal", 2))
-    people = fetch_people(sb, [r.get("user_id") for r in rows])
-    counts = {name: _count(sb, "tickets", status=list(states)) for name, states in TICKET_VIEWS.items()}
-    return {"tickets": [_ticket_row(r, people) for r in rows], "counts": counts}
+    rows, people = out.pop("tickets")
+    return {"tickets": [_ticket_row(r, people) for r in rows], "counts": out}
 
 
 @router.get("/support/tickets/{ticket_id}")

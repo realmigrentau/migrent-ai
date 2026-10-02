@@ -25,6 +25,7 @@ from typing import Any, Optional
 from fastapi import APIRouter, File, Header, HTTPException, Request, UploadFile
 from pydantic import BaseModel, Field, ValidationError, field_validator
 
+from concurrency import run_parallel
 from db import get_supabase_admin
 from public_dto import canonical_place_type
 from hub_common import (
@@ -138,22 +139,29 @@ def unit_status(row: dict, pending_apps: int = 0) -> dict:
 
 
 def _counts_by_listing(sb, owner_id: str) -> tuple[dict[str, int], dict[str, int]]:
-    apps: dict[str, int] = {}
-    slots: dict[str, int] = {}
-    try:
-        for a in sb.table("applications").select("listing_id, status").eq("owner_id", owner_id).in_("status", ["submitted", "under_review", "shortlisted"]).execute().data or []:
-            apps[str(a["listing_id"])] = apps.get(str(a["listing_id"]), 0) + 1
-        for s in sb.table("inspection_slots").select("listing_id").eq("owner_id", owner_id).eq("status", "scheduled").gte("starts_at", now_iso()).execute().data or []:
-            slots[str(s["listing_id"])] = slots.get(str(s["listing_id"]), 0) + 1
-    except Exception:
-        pass
+    def _tally(query) -> dict[str, int]:
+        out: dict[str, int] = {}
+        try:
+            for r in query.execute().data or []:
+                out[str(r["listing_id"])] = out.get(str(r["listing_id"]), 0) + 1
+        except Exception:
+            pass
+        return out
+
+    apps, slots = run_parallel(
+        lambda: _tally(sb.table("applications").select("listing_id, status").eq("owner_id", owner_id).in_("status", ["submitted", "under_review", "shortlisted"])),
+        lambda: _tally(sb.table("inspection_slots").select("listing_id").eq("owner_id", owner_id).eq("status", "scheduled").gte("starts_at", now_iso())),
+    )
     return apps, slots
 
 
 def portfolio(sb, owner_id: str) -> dict:
-    props = _properties(sb, owner_id)
-    listings = _owner_listings(sb, owner_id)
-    apps, slots = _counts_by_listing(sb, owner_id)
+    # Independent reads, fetched together (concurrency.py).
+    props, listings, (apps, slots) = run_parallel(
+        lambda: _properties(sb, owner_id),
+        lambda: _owner_listings(sb, owner_id),
+        lambda: _counts_by_listing(sb, owner_id),
+    )
     by_prop: dict[str, list[dict]] = {}
     unassigned = []
     for row in listings:
@@ -206,8 +214,10 @@ def list_properties(request: Request, authorization: Optional[str] = Header(None
     require_owner(actor)
     sb = get_supabase_admin()
     try:
-        data = portfolio(sb, actor.id)
-        drafts = sb.table("listing_drafts").select("id, property_id, data, step, updated_at").eq("owner_id", actor.id).is_("submitted_at", "null").order("updated_at", desc=True).execute().data or []
+        data, drafts = run_parallel(
+            lambda: portfolio(sb, actor.id),
+            lambda: sb.table("listing_drafts").select("id, property_id, data, step, updated_at").eq("owner_id", actor.id).is_("submitted_at", "null").order("updated_at", desc=True).execute().data or [],
+        )
     except Exception as e:
         raise hub_table_error(e)
     data["drafts"] = [_draft_summary(d) for d in drafts]
@@ -885,8 +895,10 @@ def listing_performance(sb, listing_ids: list[str], *, days: int = 30) -> dict:
         return {"days": days, "totals": {**empty, "unique_views": 0}, "by_listing": {}, "tracking_since": None}
     since = (now_utc() - timedelta(days=days)).isoformat()
     try:
-        rows = sb.table("listing_events").select("listing_id, event, actor_hash, created_at").in_("listing_id", listing_ids).gte("created_at", since).limit(20000).execute().data or []
-        first = sb.table("listing_events").select("created_at").in_("listing_id", listing_ids).order("created_at").limit(1).execute().data
+        rows, first = run_parallel(
+            lambda: sb.table("listing_events").select("listing_id, event, actor_hash, created_at").in_("listing_id", listing_ids).gte("created_at", since).limit(20000).execute().data or [],
+            lambda: sb.table("listing_events").select("created_at").in_("listing_id", listing_ids).order("created_at").limit(1).execute().data,
+        )
     except Exception:
         return {"days": days, "totals": {**empty, "unique_views": 0}, "by_listing": {}, "tracking_since": None}
     by: dict[str, dict] = {}
@@ -921,11 +933,30 @@ def insights(request: Request, days: int = 30, authorization: Optional[str] = He
     require_owner(actor)
     days = 7 if days <= 7 else 90 if days >= 90 else 30
     sb = get_supabase_admin()
-    listings = _owner_listings(sb, actor.id)
-    ids = [str(l["id"]) for l in listings]
-    perf = listing_performance(sb, ids, days=days)
-    occupied = sum(1 for l in listings if (l.get("occupancy") or "vacant") == "occupied")
     today = date.today()
+
+    def _revenue():
+        try:
+            tenancy_ids = [t["id"] for t in sb.table("tenancies").select("id").eq("owner_id", actor.id).execute().data or []]
+            if not tenancy_ids:
+                return None
+            since = (today - timedelta(days=days)).isoformat()
+            paid = sb.table("rent_payments").select("amount_paid, paid_on").in_("tenancy_id", tenancy_ids).gte("paid_on", since).execute().data or []
+            return round(sum(float(p.get("amount_paid") or 0) for p in paid), 2)
+        except Exception:
+            return None
+
+    def _listings_and_performance():
+        listings = _owner_listings(sb, actor.id)
+        return listings, listing_performance(sb, [str(l["id"]) for l in listings], days=days)
+
+    # Three independent chains, run together (concurrency.py).
+    (listings, perf), revenue, reply_hours = run_parallel(
+        _listings_and_performance,
+        _revenue,
+        lambda: median_reply_hours(sb, actor.id),
+    )
+    occupied = sum(1 for l in listings if (l.get("occupancy") or "vacant") == "occupied")
     vacant_days = []
     for l in listings:
         if (l.get("occupancy") or "vacant") == "vacant" and l.get("moderation_status") == "approved":
@@ -934,15 +965,6 @@ def insights(request: Request, days: int = 30, authorization: Optional[str] = He
                 vacant_days.append(max(0, (today - start).days))
             except ValueError:
                 pass
-    revenue = None
-    try:
-        tenancy_ids = [t["id"] for t in sb.table("tenancies").select("id").eq("owner_id", actor.id).execute().data or []]
-        if tenancy_ids:
-            since = (today - timedelta(days=days)).isoformat()
-            paid = sb.table("rent_payments").select("amount_paid, paid_on").in_("tenancy_id", tenancy_ids).gte("paid_on", since).execute().data or []
-            revenue = round(sum(float(p.get("amount_paid") or 0) for p in paid), 2)
-    except Exception:
-        revenue = None
     per_listing = []
     for l in listings:
         b = perf["by_listing"].get(str(l["id"]), {})
@@ -955,7 +977,7 @@ def insights(request: Request, days: int = 30, authorization: Optional[str] = He
         "listings": per_listing,
         "occupancy": {"occupied": occupied, "units": len(listings)},
         "median_days_vacant": sorted(vacant_days)[len(vacant_days) // 2] if vacant_days else None,
-        "median_reply_hours": median_reply_hours(sb, actor.id),
+        "median_reply_hours": reply_hours,
         "rent_recorded": revenue,
     }
 

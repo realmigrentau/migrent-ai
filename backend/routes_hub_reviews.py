@@ -14,6 +14,7 @@ from typing import Optional
 from fastapi import APIRouter, Header, HTTPException, Request
 from pydantic import BaseModel, Field, field_validator
 
+from concurrency import run_parallel
 from db import get_supabase_admin
 from hub_common import (
     fetch_listings,
@@ -45,16 +46,20 @@ def _contexts(sb, actor_id: str) -> list[dict]:
     {kind, id, listing_id, renter_id, owner_id, window, ends}."""
     today = date.today()
     out: list[dict] = []
-    try:
-        tenancies = sb.table("tenancies").select("id, listing_id, owner_id, renter_id, status, start_date, end_date").or_(f"renter_id.eq.{actor_id},owner_id.eq.{actor_id}").execute().data or []
-    except Exception:
-        tenancies = []
+
+    def _rows(query):
+        try:
+            return query.execute().data or []
+        except Exception:
+            return []
+
+    # Independent reads, fetched together (concurrency.py).
+    tenancies, stays = run_parallel(
+        lambda: _rows(sb.table("tenancies").select("id, listing_id, owner_id, renter_id, status, start_date, end_date").or_(f"renter_id.eq.{actor_id},owner_id.eq.{actor_id}")),
+        lambda: _rows(sb.table("bookings").select("id, listing_id, owner_id, seeker_id, status, check_in_date, check_out_date").or_(f"seeker_id.eq.{actor_id},owner_id.eq.{actor_id}")),
+    )
     for t in tenancies:
         out.append({"kind": "tenancy", "id": str(t["id"]), "listing_id": str(t["listing_id"]), "renter_id": str(t["renter_id"]), "owner_id": str(t["owner_id"]), "window": tenancy_window(t, today)})
-    try:
-        stays = sb.table("bookings").select("id, listing_id, owner_id, seeker_id, status, check_in_date, check_out_date").or_(f"seeker_id.eq.{actor_id},owner_id.eq.{actor_id}").execute().data or []
-    except Exception:
-        stays = []
     for b in stays:
         out.append({"kind": "stay", "id": str(b["id"]), "listing_id": str(b["listing_id"]), "renter_id": str(b["seeker_id"]), "owner_id": str(b["owner_id"]), "window": stay_window(b, today)})
     return out
@@ -77,12 +82,14 @@ def pending_reviews(request: Request, authorization: Optional[str] = Header(None
     sb = get_supabase_admin()
     today = date.today()
     try:
-        done = _already_reviewed(sb, actor.id)
-        open_ = [c for c in _contexts(sb, actor.id) if is_open(c["window"], today) and f"{c['kind']}:{c['id']}" not in done]
+        done, contexts = run_parallel(lambda: _already_reviewed(sb, actor.id), lambda: _contexts(sb, actor.id))
+        open_ = [c for c in contexts if is_open(c["window"], today) and f"{c['kind']}:{c['id']}" not in done]
     except Exception as e:
         raise hub_table_error(e)
-    listings = fetch_listings(sb, [c["listing_id"] for c in open_])
-    people = fetch_people(sb, [c["owner_id"] if c["renter_id"] == actor.id else c["renter_id"] for c in open_])
+    listings, people = run_parallel(
+        lambda: fetch_listings(sb, [c["listing_id"] for c in open_]),
+        lambda: fetch_people(sb, [c["owner_id"] if c["renter_id"] == actor.id else c["renter_id"] for c in open_]),
+    )
     items = []
     for c in open_:
         as_renter = c["renter_id"] == actor.id

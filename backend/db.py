@@ -68,6 +68,28 @@ def _create_session(self, base_url, headers, timeout, verify=True, proxy=None):
 
 _postgrest_sync_client.SyncPostgrestClient.create_session = _create_session
 
+
+def _keep_auth_connection_open(client) -> None:
+    """Give the shared client's auth API the same long-lived connection.
+
+    Token checks that cannot be done locally (admin requests, older tokens)
+    ask Supabase Auth over this client. Its default HTTP client drops idle
+    connections after 5 seconds, so most checks paid for a new connection
+    to Sydney (about half a second from the API) on top of the answer.
+    """
+    auth = getattr(client, "auth", None)
+    if auth is None or not hasattr(auth, "_http_client"):
+        return
+    from gotrue.http_clients import SyncClient as _GoTrueSyncClient
+
+    auth._http_client = _GoTrueSyncClient(
+        verify=True,
+        follow_redirects=True,
+        http2=True,
+        limits=httpx.Limits(max_connections=100, max_keepalive_connections=20, keepalive_expiry=KEEPALIVE_SECONDS),
+    )
+
+
 _admin_client: "Client | None" = None
 _admin_lock = threading.Lock()
 
@@ -114,4 +136,66 @@ def get_supabase_admin() -> Client:
                     "Set SUPABASE_SERVICE_ROLE_KEY in environment for full admin access."
                 )
                 _admin_client = create_client(SUPABASE_URL, SUPABASE_ANON_KEY)
+            _keep_auth_connection_open(_admin_client)
         return _admin_client
+
+
+# ---------------------------------------------------------------------------
+# Keeping the connections warm
+#
+# Keepalive only helps while requests keep coming. On a quiet site most
+# requests arrive after the connections to Sydney have gone idle and closed,
+# so each one paid for fresh connections first. A background thread touches
+# the database and Auth every KEEP_WARM_SECONDS (well inside the keepalive
+# window) so a real request always finds them open, and refreshes the
+# token-signing keys before they expire so no request waits on that either.
+#
+# Each touch is a one-row read and a health check: a few thousand tiny
+# requests a day. KEEP_WARM_SECONDS=0 turns it off.
+# ---------------------------------------------------------------------------
+
+KEEP_WARM_SECONDS = float(os.environ.get("KEEP_WARM_SECONDS", "25") or 0)
+JWKS_REFRESH_SECONDS = 30 * 60
+
+_warm_thread: "threading.Thread | None" = None
+
+
+def _warm_once(refresh_keys: bool) -> None:
+    client = get_supabase_admin()
+    try:
+        client.table("listings").select("id").limit(1).execute()
+    except Exception:
+        logger.debug("keep-warm: database touch failed", exc_info=True)
+    try:
+        client.auth._request("GET", "health")
+    except Exception:
+        logger.debug("keep-warm: auth touch failed", exc_info=True)
+    if refresh_keys:
+        try:
+            from auth_utils import refresh_signing_keys
+
+            refresh_signing_keys()
+        except Exception:
+            logger.debug("keep-warm: signing key refresh failed", exc_info=True)
+
+
+def start_keep_warm() -> None:
+    """Start the keep-warm thread once per process (no-op when disabled)."""
+    global _warm_thread
+    if KEEP_WARM_SECONDS <= 0 or _warm_thread is not None:
+        return
+
+    def loop():
+        import time
+
+        last_keys = 0.0
+        while True:
+            now = time.monotonic()
+            refresh = now - last_keys >= JWKS_REFRESH_SECONDS
+            _warm_once(refresh)
+            if refresh:
+                last_keys = now
+            time.sleep(KEEP_WARM_SECONDS)
+
+    _warm_thread = threading.Thread(target=loop, name="keep-warm", daemon=True)
+    _warm_thread.start()
