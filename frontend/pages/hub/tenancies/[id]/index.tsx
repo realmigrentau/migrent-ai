@@ -1,10 +1,10 @@
 import { useRouter } from "next/router";
-import HubShell from "../../../components/hub/HubShell";
-import TenancyView from "../../../components/hub/tenancy/TenancyView";
-import { CardSkeleton, EmptyState, ErrorState } from "../../../components/hub/ui/Feedback";
-import { PageHeader } from "../../../components/hub/ui/Layout";
-import { useHubQuery } from "../../../lib/hub/query";
-import type { TenancyDetail } from "../../../lib/hub/types";
+import HubShell from "../../../../components/hub/HubShell";
+import TenancyView from "../../../../components/hub/tenancy/TenancyView";
+import { CardSkeleton, EmptyState, ErrorState } from "../../../../components/hub/ui/Feedback";
+import { PageHeader } from "../../../../components/hub/ui/Layout";
+import { useHubQuery } from "../../../../lib/hub/query";
+import type { TenancyDetail } from "../../../../lib/hub/types";
 
 export default function TenancyPage() {
   const router = useRouter();

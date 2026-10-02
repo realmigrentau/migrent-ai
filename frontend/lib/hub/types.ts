@@ -13,6 +13,8 @@ export interface HubFeatures {
   renter_verification: boolean;
   fees: { currency: string; host_fee: number; host_fee_model: string; renter_verification_fee: number };
   view_as: boolean;
+  /** Rent in advance paid through Migrent (backend/move_in.py). */
+  move_in_payments?: boolean;
 }
 
 export interface VerificationSummary {

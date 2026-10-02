@@ -20,6 +20,8 @@ export default function Document() {
 
         {/* PWA + mobile */}
         <link rel="manifest" href="/manifest.json" />
+        <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         {/* Browser chrome follows the theme: warm paper in light, espresso in dark */}
         <meta name="theme-color" content="#f6f8fc" media="(prefers-color-scheme: light)" />
         <meta name="theme-color" content="#090b10" media="(prefers-color-scheme: dark)" />

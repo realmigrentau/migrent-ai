@@ -63,3 +63,5 @@ next-env.d.ts
 
 # Production build the Playwright suite runs against (NEXT_DIST_DIR=.next-e2e).
 /.next-e2e/
+# The same, named so iCloud Drive does not sync it (iCloud skips *.nosync).
+/.next-e2e.nosync/

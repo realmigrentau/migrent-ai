@@ -18,6 +18,7 @@ import { useHub } from "../../lib/hub/session";
 import type { HubMe, Person, Template } from "../../lib/hub/types";
 import { supabase } from "../../lib/supabase";
 import { cn } from "../../lib/cn";
+import { PayoutsCard } from "../../components/hub/tenancy/MoveIn";
 
 /* ── Layout ─────────────────────────────────────────────── */
 
@@ -1041,6 +1042,7 @@ export default function SettingsPage() {
     ...(role === "owner" || me?.mentor ? [{ id: "verification", label: "ID check" }] : []),
     ...(me?.mentor ? [{ id: "mentor", label: "Mentor profile" }] : []),
     ...(role === "owner" ? [{ id: "templates", label: "Reply templates" }] : []),
+    ...(role === "owner" && me?.features?.move_in_payments ? [{ id: "payouts", label: "Payments" }] : []),
     { id: "notifications", label: "Email notifications" },
     { id: "appearance", label: "Appearance" },
     { id: "security", label: "Sign-in and security" },
@@ -1097,6 +1099,11 @@ export default function SettingsPage() {
             {(role === "owner" || me.mentor) && <VerificationCard me={me} />}
             {me.mentor && <MentorCard me={me} />}
             {role === "owner" && <TemplatesCard />}
+            {role === "owner" && me.features?.move_in_payments && (
+              <Card id="payouts" title="Payments" description="Get rent in advance paid straight to your bank, through Migrent.">
+                <PayoutsCard />
+              </Card>
+            )}
             <NotificationsCard me={me} />
             <Card id="appearance" title="Appearance" description="Migrent Hub follows your device unless you choose. The public site has its own setting.">
               <ThemeSegmented />

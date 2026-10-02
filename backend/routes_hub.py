@@ -74,6 +74,7 @@ def _jwt_claims(authorization: Optional[str]) -> dict:
 def features(actor: Optional[HubActor] = None) -> dict:
     from ai_provider import listing_assist_enabled
     from billing import fees, payments_mode, renter_verification_available
+    from move_in import enabled as move_in_enabled
 
     return {
         "ai_listing_assist": listing_assist_enabled(),
@@ -81,6 +82,7 @@ def features(actor: Optional[HubActor] = None) -> dict:
         "renter_verification": renter_verification_available(),
         "fees": fees(),
         "view_as": bool(actor and actor.is_admin and not actor.read_only),
+        "move_in_payments": move_in_enabled(),
     }
 
 

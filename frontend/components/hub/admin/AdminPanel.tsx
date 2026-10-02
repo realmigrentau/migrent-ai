@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { useRouter } from "next/router";
-import { BadgeCheck, BarChart3, Flag, HandHeart, Inbox, LayoutGrid, ListChecks, Lock, LockKeyhole, ScrollText, ShieldCheck, Users } from "lucide-react";
+import { BadgeCheck, BarChart3, Flag, Wallet, HandHeart, Inbox, LayoutGrid, ListChecks, Lock, LockKeyhole, ScrollText, ShieldCheck, Users } from "lucide-react";
 import { cn } from "../../../lib/cn";
 import { IDLE_LOCK_MS, adminIdleRemainingMs, lockAdminPanel, unlockAdminPanel, useAdminPanelUnlocked } from "../../../lib/hub/adminPanel";
 import { primeAlarm } from "../../../lib/hub/alarm";
@@ -26,6 +26,7 @@ export const ADMIN_SECTIONS: NavItem[] = [
   { label: "Support", to: "/admin/support", icon: Inbox },
   { label: "People", to: "/admin/people", icon: Users },
   { label: "Numbers", to: "/admin/numbers", icon: BarChart3 },
+  { label: "Move-ins", to: "/admin/move-ins", icon: Wallet },
   { label: "Audit log", to: "/admin/audit", icon: ScrollText },
 ];
 

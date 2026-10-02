@@ -166,6 +166,20 @@ Properties (`/properties`) has a search box (address, suburb, nickname or title)
 |---|---|---|---|
 | Host fee | AUD 99 per property, once | when the owner accepts the first stay booked through Migrent at that property | live code, needs live Stripe keys |
 | Renter ID check | AUD 19, optional | when the renter chooses it | switched off (`SEEKER_VERIFICATION_ENABLED`) until it checks something real |
+| New-renter fee | AUD 99, owner pays | once per new renter for an owner, charged to the owner's saved card after the renter's move-in payment goes through | built, off until `MOVE_IN_PAYMENTS_ENABLED=true` and Stripe Connect is on |
+
+### Move-in payments (`backend/move_in.py`, migration 050)
+
+Owner decisions, 2 October 2026. Off unless `MOVE_IN_PAYMENTS_ENABLED=true` and Stripe Connect is switched on for Migrent's Stripe account.
+
+1. **Owner setup** (Hub > Settings > Payments): connect a bank through Stripe (an Express account; `profiles.stripe_account_id`) and save a card for Migrent's fee (Checkout in setup mode).
+2. **The renter pays** the rent in advance from the tenancy page: the listing's `rent_in_advance_weeks`, or one week. It is a destination charge on behalf of the owner, so Stripe sends it straight to the owner and Migrent never holds it. **The renter pays the card fee on top** (a second line on the Stripe page, `card_fee_cents`, grossed up so Stripe's cut of the whole payment is covered); Migrent keeps it as the application fee and the owner receives the full rent. Australian law caps a card surcharge at the cost of taking the card, so `MOVE_IN_CARD_FEE_PERCENT` and `MOVE_IN_CARD_FEE_FIXED_CENTS` must match Stripe's price.
+3. **The green light**: the Stripe webhook (`fee_type=move_in`) marks it paid, adds it to the rent ledger, and emails both receipts. The renter's shows the owner and the property; the owner's shows the renter.
+4. **The fee**: if the owner has not had this renter through Migrent before, their saved card is charged AUD 99 off-session. A decline is shown to the owner (update card, try again) and to admins.
+5. **Both confirm**: the owner taps "I've received the payment", the renter "I've moved in and have the keys". Then Migrent's receipt is complete and admins are told (Admin panel > Move-ins).
+6. **The security code**: one 10-character code (no 0/O or 1/I) on all three receipts, so the renter and owner can check each other when they meet.
+
+The bond is never paid through Migrent: the renter pays it to their state's bond authority.
 
 `backend/billing.py` reports `payments_mode()` as `off`, `test` or `live` from the Stripe key, and the Hub says so wherever money is mentioned ("test mode: nothing is charged"). There is no fake checkout.
 

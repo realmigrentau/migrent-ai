@@ -313,6 +313,11 @@ def _handle_refund(sb, event: dict, charge: dict) -> dict:
     mentor_session_id = (charge.get("metadata") or {}).get("mentor_session_id")
     if mentor_session_id:
         return _handle_mentor_refund(sb, charge, mentor_session_id)
+    move_in_id = (charge.get("metadata") or {}).get("move_in_id")
+    if move_in_id and (charge.get("metadata") or {}).get("fee_type") == "move_in":
+        from move_in import handle_move_in_refund
+
+        return handle_move_in_refund(sb, charge, move_in_id)
     if payment_intent:
         sb.table("bookings").update({"status": "REFUNDED", "refunded_at": datetime.now(timezone.utc).isoformat()}).eq("stripe_payment_intent", payment_intent).execute()
     return {"status": "ok", "refund": True}
@@ -375,6 +380,14 @@ async def stripe_webhook(request: Request):
                 return _handle_verification_paid(sb, event, obj)
             if metadata.get("fee_type") == "mentor_session":
                 return _handle_mentor_session_paid(sb, event, obj)
+            if metadata.get("fee_type") == "move_in":
+                from move_in import handle_move_in_paid
+
+                return handle_move_in_paid(sb, event, obj)
+            if metadata.get("purpose") == "owner_fee_card" and obj.get("mode") == "setup":
+                from move_in import handle_card_saved
+
+                return handle_card_saved(sb, obj)
             return _handle_legacy_deal_paid(sb, event, obj)
         if event_type == "checkout.session.expired":
             return _handle_session_expired(sb, event, obj)

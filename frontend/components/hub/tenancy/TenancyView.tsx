@@ -17,6 +17,7 @@ import { MAINTENANCE_STATUS, URGENCY } from "../../../lib/hub/status";
 import type { RentPayment, TenancyDetail } from "../../../lib/hub/types";
 import { cn } from "../../../lib/cn";
 import PendingReviews from "../reviews/PendingReviews";
+import { MoveInPanel } from "./MoveIn";
 
 const FREQ: Record<string, string> = { weekly: "weekly", fortnightly: "fortnightly", monthly: "monthly" };
 const TENANCY_STATUS: Record<string, { label: string; tone: "info" | "success" | "neutral" | "warning" }> = {
@@ -313,6 +314,8 @@ export default function TenancyView({ d, refetch }: { d: TenancyDetail; refetch:
             </div>
           </div>
         </Panel>
+
+        {live && <MoveInPanel tenancyId={t.id} />}
 
         <PendingReviews only={t.id} title="Review this tenancy" />
 

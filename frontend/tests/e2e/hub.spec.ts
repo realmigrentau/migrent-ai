@@ -343,6 +343,32 @@ test.describe("trust and safety", () => {
     await expect(blocked).toContainText("You haven't blocked anyone.");
   });
 
+  test("move-in: the renter pays, both sides get the green light and receipts with one code", async ({ page }) => {
+    await signIn(page, "tenant@example.test", "/tenancies/ten-1");
+    const pay = page.getByTestId("move-in-pay");
+    await expect(pay).toContainText("bond is not paid through Migrent");
+    // The renter sees the rent, the card fee they pay on top, and the total.
+    await expect(pay.getByTestId("move-in-quote")).toContainText("Card fee");
+    await expect(pay.getByTestId("move-in-quote")).toContainText("$295.53");
+    await pay.getByRole("button", { name: /^Pay / }).click();
+    const green = page.getByTestId("move-in-green-light");
+    await expect(green).toContainText("Payment sent to the owner");
+    await expect(green.getByTestId("security-code")).toContainText("K7PM2QX9RT");
+    await green.getByRole("button", { name: "I've moved in and have the keys" }).click();
+    await expect(green).toContainText("You confirmed you moved in");
+    await green.getByRole("link", { name: "Receipt" }).click();
+    const receipt = page.getByTestId("receipt");
+    await expect(receipt).toContainText("Renter's receipt");
+    await expect(receipt).toContainText("Priya Nair");
+    await expect(receipt.getByTestId("security-code")).toContainText("K7PM2QX9RT");
+    await page.getByRole("navigation", { name: "Migrent Hub" }).first().getByRole("button", { name: "Sign out" }).click();
+    await expect(page).toHaveURL(/\/hub\/sign-in/);
+
+    await signIn(page, "owner@example.test", "/tenancies/ten-1/receipt");
+    await expect(page.getByTestId("receipt")).toContainText("Tom Nguyen");
+    await expect(page.getByTestId("receipt").getByTestId("security-code")).toContainText("K7PM2QX9RT");
+  });
+
   test("a stay request shows how to pay the host safely", async ({ page }) => {
     await signIn(page, "renter@example.test");
     await page.goto("/listing/11111111-1111-4111-8111-000000000099");

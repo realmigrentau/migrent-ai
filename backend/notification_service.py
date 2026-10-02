@@ -39,6 +39,11 @@ DELIVERY_RULES = {
     "booking_declined":             {"in_app": True, "email": True,  "push": False},
     "booking_confirmed":            {"in_app": True, "email": True,  "push": True},
     "payment_received":             {"in_app": True, "email": True,  "push": False},
+    # Move-in payments (move_in.py). The receipts are emailed on their own,
+    # so these notices stay in the Hub; a failed fee is emailed.
+    "move_in_paid":                 {"in_app": True, "email": False, "push": True},
+    "move_in_complete":             {"in_app": True, "email": False, "push": False},
+    "move_in_fee_failed":           {"in_app": True, "email": True,  "push": False},
     "verification_status_changed":  {"in_app": True, "email": True,  "push": False},
     "message_received":             {"in_app": True, "email": True,  "push": True},
     "weekly_summary_ready":         {"in_app": False, "email": True, "push": False},

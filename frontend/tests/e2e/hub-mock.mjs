@@ -404,7 +404,7 @@ function me(uid) {
     notification_prefs: u.prefs || {},
     owner_verification: role === "owner" ? { status: "verified", checks: { email_confirmed: true, phone_confirmed: true, government_id: "approved" }, verified_at: "2026-03-10T00:00:00Z", explainer_url: "/how-renting-works#checks", disclaimer: "Verification confirms documents were checked. It is not a guarantee of safety or suitability." } : null,
     member_since: u.created_at.slice(0, 10),
-    features: { ai_listing_assist: false, payments: "test", renter_verification: false, fees: { currency: "AUD", host_fee: 99, host_fee_model: "per_property", renter_verification_fee: 19 }, view_as: Boolean(u.is_admin) },
+    features: { ai_listing_assist: false, payments: "test", renter_verification: false, fees: { currency: "AUD", host_fee: 99, host_fee_model: "per_property", renter_verification_fee: 19 }, view_as: Boolean(u.is_admin), move_in_payments: true },
     assurance_level: "aal1",
     viewing_as: null,
   };
@@ -1377,6 +1377,36 @@ export function handleHub(req, url, body, send) {
     }
     return send(200, maintDetail(r)), true;
   }
+  // Move-in payments (backend/move_in.py). The mock's "checkout" pays at
+  // once, standing in for Stripe and its webhook.
+  if (p === "/hub/payouts") return send(200, { enabled: true, payouts_ready: true, payouts_started: true, card_saved: true, card_label: "Visa ending 4242", fee: 99 }), true;
+  mm = m(/^\/hub\/tenancies\/([^/]+)\/(move-in|receipt)(?:\/(checkout|confirm|fee))?$/);
+  if (mm) {
+    const t = S.tenancies.find((x) => x.id === mm[1] && (x.owner_id === uid || x.renter_id === uid));
+    if (!t) return send(404, { detail: "Tenancy not found" }), true;
+    const viewer = t.owner_id === uid ? "owner" : "renter";
+    S.moveIns ||= {};
+    const weekly = t.rent_frequency === "fortnightly" ? t.rent_amount / 2 : t.rent_amount;
+    const quote = { weeks: 2, weekly, rent: weekly * 2, card_fee: 5.53, amount: weekly * 2 + 5.53 };
+    let mi = S.moveIns[t.id];
+    const state = () => (mi ? { id: mi.id, status: mi.status, weeks: 2, amount: quote.amount, card_fee: quote.card_fee, to_owner: quote.rent, paid_at: mi.paid_at, green_light: true, owner_confirmed_at: mi.owner_confirmed_at, renter_confirmed_at: mi.renter_confirmed_at, complete: Boolean(mi.owner_confirmed_at && mi.renter_confirmed_at), receipt_code: mi.code, ...(viewer === "owner" ? { fee_status: "charged", fee: 99 } : {}) } : { status: "not_started" });
+    if (mm[2] === "receipt") {
+      if (!mi) return send(404, { detail: "There is no receipt yet" }), true;
+      const base = { role: viewer, receipt_code: mi.code, issued_at: mi.paid_at, payment: { amount: quote.amount, weeks: 2, weekly_rent: weekly, card_fee: quote.card_fee, to_owner: quote.rent, currency: "AUD", paid_at: mi.paid_at, reference: "pi_mock_123", status: "paid" }, tenancy: { start_date: t.start_date, end_date: t.end_date, rent_amount: t.rent_amount, rent_frequency: t.rent_frequency }, property: { title: listingById(t.listing_id)?.title, address: OWNED[t.listing_id]?.address, unit_label: null } };
+      return send(200, viewer === "renter" ? { ...base, owner: { name: USERS[t.owner_id].name, email: USERS[t.owner_id].email, phone: "0400 000 000", member_since: "2026-02-14", id_checked: true }, bond_note: "The bond is not paid through Migrent." } : { ...base, renter: { name: USERS[t.renter_id].name, email: USERS[t.renter_id].email, phone: null, member_since: "2026-04-20" }, fee: { status: "charged", amount: 99, charged_at: mi.paid_at } }), true;
+    }
+    if (mm[3] === "checkout") {
+      if (viewer !== "renter") return send(403, { detail: "The renter pays the move-in rent." }), true;
+      mi = S.moveIns[t.id] = { id: uuid(), status: "paid", paid_at: iso(now()), code: "K7PM2QX9RT", owner_confirmed_at: null, renter_confirmed_at: null };
+      return send(200, { url: `/hub/tenancies/${t.id}?move_in=paid` }), true;
+    }
+    if (mm[3] === "confirm") {
+      if (!mi) return send(409, { detail: "Nothing to confirm yet" }), true;
+      mi[viewer === "owner" ? "owner_confirmed_at" : "renter_confirmed_at"] = iso(now());
+      return send(200, { payment: state() }), true;
+    }
+    return send(200, { enabled: true, viewer, owner_ready: true, quote, payment: state(), owner_setup: viewer === "owner" ? { enabled: true, payouts_ready: true, card_saved: true, card_label: "Visa ending 4242", fee: 99 } : null }), true;
+  }
   mm = m(/^\/hub\/tenancies\/([^/]+)(?:\/(schedule|maintenance|payments)(?:\/([^/]+))?)?$/);
   if (mm) {
     const t = S.tenancies.find((x) => x.id === mm[1] && (x.owner_id === uid || x.renter_id === uid));
@@ -1553,6 +1583,13 @@ export function handleHub(req, url, body, send) {
         reports_by: S.reports.filter((r) => r.reporter_id === id).map(({ id: rid, item_type, item_id, reason, status, created_at }) => ({ id: rid, item_type, item_id, reason, status, created_at })),
         history: S.audit.filter((e) => ids.has(e.target_id)),
       }), true;
+    }
+    if (p === "/hub/admin/move-ins") {
+      const rows = Object.entries(S.moveIns || {}).map(([tid, mi]) => {
+        const t = S.tenancies.find((x) => x.id === tid);
+        return { id: mi.id, tenancy_id: tid, status: mi.status, amount: 290, paid_at: mi.paid_at, receipt_code: mi.code, complete: Boolean(mi.owner_confirmed_at && mi.renter_confirmed_at), fee_status: "charged", renter: person(t.renter_id), owner: person(t.owner_id), created_at: mi.paid_at };
+      });
+      return send(200, { enabled: true, move_ins: rows }), true;
     }
     if (p === "/hub/admin/metrics") {
       const users = Object.values(USERS);

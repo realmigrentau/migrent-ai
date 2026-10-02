@@ -45,6 +45,7 @@ from unsubscribe import router as unsubscribe_router
 from routes_hub_owner import router as hub_owner_router
 from routes_tenancies import router as hub_tenancies_router
 from routes_hub_admin import router as hub_admin_router
+from move_in import router as move_in_router
 
 # ── Startup validation ──────────────────────────────────────
 ENV = os.environ.get("ENV", "development")
@@ -166,6 +167,7 @@ app.include_router(unsubscribe_router)
 app.include_router(hub_owner_router)
 app.include_router(hub_tenancies_router)
 app.include_router(hub_admin_router)
+app.include_router(move_in_router)
 app.include_router(webhook_router)
 
 # Note: each router defines its own prefix (/auth, /listings, /matches, /deals)
