@@ -167,10 +167,13 @@ _suspended_lock = threading.Lock()
 _suspended_cache: dict[str, Any] = {"until": 0.0, "ids": []}
 
 
-def suspended_owner_ids() -> list[str]:
+def suspended_owner_ids(*, refresh: bool = False) -> list[str]:
+    """The suspended accounts. refresh=True reads them now even when the
+    remembered list is fresh: the keep-warm thread (db.start_keep_warm) does
+    that every few seconds so a public search never waits on this read."""
     now = time.monotonic()
     with _suspended_lock:
-        if _suspended_cache["until"] > now:
+        if not refresh and _suspended_cache["until"] > now:
             return list(_suspended_cache["ids"])
     try:
         from db import get_supabase_admin

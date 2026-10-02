@@ -81,9 +81,24 @@ if SENTRY_DSN:
     except Exception:
         logger.exception("Sentry failed to initialise - continuing without error tracking")
 
+# ── Warm connections to Sydney ──────────────────────────────
+# See db.start_keep_warm. Not under tests, which never touch the network.
+from contextlib import asynccontextmanager
+
+
+@asynccontextmanager
+async def lifespan(_app):
+    if ENV != "test":
+        from db import start_keep_warm
+
+        start_keep_warm()
+    yield
+
+
 # The interactive API docs publish every endpoint and schema. Keep them for
 # local development, hide them in production.
 app = FastAPI(
+    lifespan=lifespan,
     title="Migrent API",
     version="0.1.0",
     docs_url=None if IS_PRODUCTION else "/docs",
@@ -131,6 +146,38 @@ app.add_middleware(
     # preflight is a full round trip to the API.
     max_age=7200,
 )
+
+
+# ── Server timing ───────────────────────────────────────────
+# Every response says how long the API itself took (Server-Timing: app;dur=
+# milliseconds), so a slow page can be split into time spent here and time
+# spent travelling to and from the API.
+import time as _time
+
+
+class ServerTimingMiddleware:
+    def __init__(self, app):
+        self.app = app
+
+    async def __call__(self, scope, receive, send):
+        if scope["type"] != "http":
+            await self.app(scope, receive, send)
+            return
+        start = _time.perf_counter()
+
+        async def send_with_timing(message):
+            if message["type"] == "http.response.start":
+                took = (_time.perf_counter() - start) * 1000
+                headers = list(message.get("headers", []))
+                headers.append((b"server-timing", f"app;dur={took:.0f}".encode()))
+                message = {**message, "headers": headers}
+            await send(message)
+
+        await self.app(scope, receive, send_with_timing)
+
+
+app.add_middleware(ServerTimingMiddleware)
+
 
 app.include_router(auth_router)
 app.include_router(listings_router)

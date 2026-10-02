@@ -14,7 +14,7 @@ from typing import Any, Optional
 import jwt
 from fastapi import HTTPException
 
-from db import SUPABASE_URL, get_supabase
+from db import SUPABASE_URL, get_supabase_admin
 
 logger = logging.getLogger(__name__)
 
@@ -45,6 +45,12 @@ logger = logging.getLogger(__name__)
 
 ISSUER = f"{SUPABASE_URL}/auth/v1"
 _jwks = jwt.PyJWKClient(f"{ISSUER}/.well-known/jwks.json", cache_jwk_set=True, lifespan=3600, timeout=5)
+
+
+def refresh_signing_keys() -> None:
+    """Fetch the key set now (db.start_keep_warm calls this on a timer), so
+    a request never waits on the hourly refetch."""
+    _jwks.get_signing_keys(refresh=True)
 
 REMOTE_CACHE_SECONDS = 60
 REMOTE_CACHE_MAX = 2000
@@ -109,7 +115,7 @@ def _verify_remotely(token: str):
         if hit and hit[0] > now:
             return hit[1]
     try:
-        res = get_supabase().auth.get_user(token)
+        res = get_supabase_admin().auth.get_user(token)
     except Exception:
         raise HTTPException(status_code=401, detail="Invalid or expired token")
     if res is None or res.user is None:
@@ -138,7 +144,7 @@ def require_live_session(authorization: str, user_id: str) -> None:
     if not token:
         raise HTTPException(status_code=401, detail="Invalid authorization header")
     try:
-        res = get_supabase().auth.get_user(token)
+        res = get_supabase_admin().auth.get_user(token)
     except Exception:
         raise HTTPException(status_code=401, detail="Your session has ended. Sign in again.")
     if res is None or res.user is None or str(res.user.id) != str(user_id):
@@ -212,9 +218,20 @@ def get_active_user(authorization: str):
     """get_current_user(), refusing suspended accounts (403) and sessions
     that skipped a two-step check the account has set up."""
     user = get_current_user(authorization)
-    if account_is_suspended(str(user.id)):
+    uid = str(user.id)
+    # Both lookups are cached briefly; on a miss they are separate round
+    # trips, so start them together and decide in the original order.
+    mfa_known = False if session_aal(authorization) == "aal2" else mfa_enrolled_cached(uid)
+    if mfa_known is None:
+        from concurrency import run_parallel
+
+        suspended, mfa_known = run_parallel(lambda: account_is_suspended(uid), lambda: mfa_enrolled(uid))
+    else:
+        suspended = account_is_suspended(uid)
+    if suspended:
         raise HTTPException(status_code=403, detail=SUSPENDED_DETAIL)
-    require_mfa_if_enrolled(str(user.id), authorization)
+    if mfa_known:
+        raise HTTPException(status_code=401, detail=MFA_STEP_UP_DETAIL)
     return user
 
 
@@ -255,6 +272,13 @@ def token_claims(authorization: Optional[str]) -> dict:
 
 def session_aal(authorization: Optional[str]) -> str:
     return str(token_claims(authorization).get("aal") or "aal1")
+
+
+def mfa_enrolled_cached(user_id: str) -> Optional[bool]:
+    """mfa_enrolled()'s remembered answer, or None when it would have to ask."""
+    with _mfa_lock:
+        hit = _mfa_cache.get(user_id)
+        return hit[1] if hit and hit[0] > time.monotonic() else None
 
 
 def mfa_enrolled(user_id: str) -> bool:
@@ -326,9 +350,21 @@ def require_admin(authorization: str):
     """Validate the token and require an admin role from the database, a
     live session and a two-step sign-in."""
     user = get_current_user(authorization)
-    if not is_admin_user(user):
+    from concurrency import run_parallel
+
+    def live_check() -> Optional[HTTPException]:
+        try:
+            require_live_session(authorization, str(user.id))
+        except HTTPException as e:
+            return e
+        return None
+
+    # Two independent round trips: ask both at once, decide role first.
+    is_admin, live_error = run_parallel(lambda: is_admin_user(user), live_check)
+    if not is_admin:
         raise HTTPException(status_code=403, detail="Admin access required")
-    require_live_session(authorization, str(user.id))
+    if live_error is not None:
+        raise live_error
     from admin_panel import require_admin_mfa
 
     require_admin_mfa(authorization)

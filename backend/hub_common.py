@@ -22,7 +22,15 @@ from typing import Any, Iterable, Optional
 
 from fastapi import HTTPException, Request
 
-from auth_utils import get_current_user, require_live_session
+from auth_utils import (
+    MFA_STEP_UP_DETAIL,
+    get_current_user,
+    mfa_enrolled,
+    mfa_enrolled_cached,
+    require_live_session,
+    session_aal,
+)
+from concurrency import run_parallel
 from db import get_supabase_admin
 
 logger = logging.getLogger(__name__)
@@ -105,6 +113,11 @@ def _profile_is_admin(profile: dict) -> bool:
     return bool(profile.get("is_admin")) or profile.get("role") in ADMIN_ROLES
 
 
+# Accounts this process has seen holding an admin role, so hub_actor can
+# start their live session check without waiting for the profile.
+_known_admins: set[str] = set()
+
+
 def _view_as_allowed(sb, admin_id: str, target_id: str) -> bool:
     """An admin may view as a customer only inside a window they opened with
     POST /hub/admin/view-as, which writes the audit row this reads."""
@@ -139,18 +152,51 @@ def hub_actor(request: Request, authorization: Optional[str]) -> HubActor:
     if not authorization:
         raise HTTPException(status_code=401, detail="Sign in to continue")
     user = get_current_user(authorization)
+    uid = str(user.id)
     sb = get_supabase_admin()
-    profile = load_profile(sb, str(user.id))
+
+    # The profile, the two-step lookup and (for an admin) the live session
+    # check are independent network round trips: start them together.
+    # Whether someone is an admin is only known once the profile arrives,
+    # so the live check runs alongside it for accounts this process has
+    # already seen as admins, and after it otherwise. The checks still
+    # decide in the original order: suspended, then two-step, then session.
+    mfa_known: Optional[bool] = False if session_aal(authorization) == "aal2" else mfa_enrolled_cached(uid)
+    live_early = uid in _known_admins
+
+    def live_check() -> Optional[HTTPException]:
+        try:
+            require_live_session(authorization, uid)
+        except HTTPException as e:
+            return e
+        return None
+
+    tasks = [lambda: load_profile(sb, uid)]
+    if mfa_known is None:
+        tasks.append(lambda: mfa_enrolled(uid))
+    if live_early:
+        tasks.append(live_check)
+    results = run_parallel(*tasks)
+    profile = results[0]
+    if mfa_known is None:
+        mfa_known = results[1]
+    live_error = results[-1] if live_early else None
+
     if profile.get("disabled_at"):
         raise HTTPException(status_code=403, detail="This account has been suspended. Contact support if you think this is a mistake.")
-    from auth_utils import require_mfa_if_enrolled
-
-    require_mfa_if_enrolled(str(user.id), authorization)
-    actor = HubActor(id=str(user.id), email=getattr(user, "email", None), profile=profile, is_admin=_profile_is_admin(profile))
+    if mfa_known:
+        raise HTTPException(status_code=401, detail=MFA_STEP_UP_DETAIL)
+    actor = HubActor(id=uid, email=getattr(user, "email", None), profile=profile, is_admin=_profile_is_admin(profile))
     if actor.is_admin:
+        _known_admins.add(uid)
         # Admin sessions are checked live, so a revoked one stops at once
         # (auth_utils: local token checks cannot see revocation).
-        require_live_session(authorization, actor.id)
+        if not live_early:
+            live_error = live_check()
+        if live_error is not None:
+            raise live_error
+    else:
+        _known_admins.discard(uid)
 
     target = request.headers.get(VIEW_AS_HEADER)
     if not target or target == actor.id:

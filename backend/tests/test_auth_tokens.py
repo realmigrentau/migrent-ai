@@ -48,7 +48,7 @@ def test_a_good_token_is_accepted_without_a_network_call(monkeypatch):
     def no_network():
         raise AssertionError("should not call Supabase for an ES256 token")
 
-    monkeypatch.setattr(auth_utils, "get_supabase", no_network)
+    monkeypatch.setattr(auth_utils, "get_supabase_admin", no_network)
     user = auth_utils.get_current_user(f"Bearer {_token()}")
     assert user.id == USER_ID
     assert user.email == "renter@example.test"
@@ -87,7 +87,7 @@ def test_an_hs256_token_falls_back_to_supabase_and_is_remembered(monkeypatch):
             calls.append(token)
             return SimpleNamespace(user=SimpleNamespace(id=USER_ID, email="renter@example.test"))
 
-    monkeypatch.setattr(auth_utils, "get_supabase", lambda: SimpleNamespace(auth=FakeAuth()))
+    monkeypatch.setattr(auth_utils, "get_supabase_admin", lambda: SimpleNamespace(auth=FakeAuth()))
     token = jwt.encode({"sub": USER_ID, "exp": int(time.time()) + 3600}, "legacy-secret", algorithm="HS256")
     for _ in range(3):
         assert auth_utils.get_current_user(f"Bearer {token}").id == USER_ID
@@ -110,7 +110,7 @@ def test_a_revoked_admin_session_is_refused_even_with_a_valid_token(monkeypatch)
         def get_user(self, token):
             raise RuntimeError("session not found")
 
-    monkeypatch.setattr(auth_utils, "get_supabase", lambda: SimpleNamespace(auth=RevokedAuth()))
+    monkeypatch.setattr(auth_utils, "get_supabase_admin", lambda: SimpleNamespace(auth=RevokedAuth()))
     header = f"Bearer {_token()}"
     assert auth_utils.get_current_user(header).id == USER_ID
     with pytest.raises(HTTPException) as err:
@@ -123,6 +123,6 @@ def test_a_live_session_for_someone_else_is_refused(monkeypatch):
         def get_user(self, token):
             return SimpleNamespace(user=SimpleNamespace(id="99999999-0000-4000-8000-000000000000"))
 
-    monkeypatch.setattr(auth_utils, "get_supabase", lambda: SimpleNamespace(auth=OtherUser()))
+    monkeypatch.setattr(auth_utils, "get_supabase_admin", lambda: SimpleNamespace(auth=OtherUser()))
     with pytest.raises(HTTPException):
         auth_utils.require_live_session(f"Bearer {_token()}", USER_ID)

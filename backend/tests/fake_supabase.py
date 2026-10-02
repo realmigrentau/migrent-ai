@@ -312,6 +312,10 @@ class _FakeStorageBucket:
     def create_signed_url(self, path: str, expires_in: int):
         return {"signedURL": f"https://storage.test/{self._name}/{path}?token=signed&exp={expires_in}"}
 
+    def create_signed_urls(self, paths, expires_in: int):
+        self._db.signed_url_batches.append(list(paths))
+        return [{"path": p, "error": None, **self.create_signed_url(p, expires_in)} for p in paths]
+
     def get_public_url(self, path: str):
         return f"https://storage.test/{self._name}/{path}"
 
@@ -392,6 +396,7 @@ class FakeSupabase:
     insert_hooks: dict[str, list[Callable]] = field(default_factory=dict)
     update_hooks: dict[str, list[Callable]] = field(default_factory=dict)
     signed_out: list[tuple[str, str]] = field(default_factory=list)
+    signed_url_batches: list[list[str]] = field(default_factory=list)
     # Accounts with a verified authenticator (auth.mfa_factors in Supabase).
     mfa_enrolled: set[str] = field(default_factory=set)
 
