@@ -6,12 +6,9 @@ Uses Mailjet (same as email_bookings.py). All functions are fire-and-forget.
 
 import os
 import logging
-import httpx
 
 logger = logging.getLogger(__name__)
 
-MAILJET_API_KEY = os.environ.get("MAILJET_API_KEY", "")
-MAILJET_SECRET_KEY = os.environ.get("MAILJET_SECRET_KEY", "")
 FROM_EMAIL = os.environ.get("FROM_EMAIL", "migrentau@gmail.com")
 FROM_NAME = os.environ.get("FROM_NAME", "Migrent")
 FRONTEND_URL = os.environ.get("FRONTEND_URL", "https://migrent.vercel.app")
@@ -54,28 +51,11 @@ def _email_layout(content: str) -> str:
 
 
 def _send(to: str, subject: str, html: str):
-    if not MAILJET_API_KEY or not MAILJET_SECRET_KEY:
-        logger.warning("MAILJET keys not set - skipping email to %s", to)
-        return
-    try:
-        response = httpx.post(
-            "https://api.mailjet.com/v3.1/send",
-            json={
-                "Messages": [{
-                    "From": {"Email": FROM_EMAIL, "Name": FROM_NAME},
-                    "To": [{"Email": to}],
-                    "Subject": subject,
-                    "HTMLPart": html,
-                }]
-            },
-            auth=(MAILJET_API_KEY, MAILJET_SECRET_KEY),
-            timeout=10,
-        )
-        response.raise_for_status()
-        logger.info("Verification email sent to %s: %s", to, subject)
-    except Exception as e:
-        logger.error("Failed to send verification email to %s: %s", to, e)
+    """The one sender for every Migrent email (email_bookings._send_email:
+    Gmail SMTP when configured, otherwise Mailjet)."""
+    from email_bookings import _send_email
 
+    _send_email(to, subject, html)
 
 
 def send_id_approved_email(to_email: str, owner_name: str, fully_verified: bool):

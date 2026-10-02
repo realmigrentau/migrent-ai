@@ -97,11 +97,60 @@ def _details_box(rows: list[tuple[str, str]]) -> str:
     </div>"""
 
 
+# Sending through Gmail itself (owner decision, 3 October 2026). Since
+# Gmail's 2024 sender rules, a service sending "from" a @gmail.com address
+# lands in spam or is refused; Gmail's own SMTP server, signed in with an
+# app password, sends genuinely from migrentau@gmail.com (about 500 a day).
+# When SMTP_HOST is set it is used; otherwise Mailjet, as before.
+SMTP_HOST = os.environ.get("SMTP_HOST", "").strip()
+SMTP_PORT = int(os.environ.get("SMTP_PORT", "465") or 465)
+SMTP_USER = os.environ.get("SMTP_USER", "").strip()
+SMTP_PASSWORD = os.environ.get("SMTP_PASSWORD", "").replace(" ", "")  # Google shows app passwords in groups of four
+REPLY_TO = os.environ.get("REPLY_TO_EMAIL", "").strip()
+
+
+def _send_smtp(to: str, subject: str, html_body: str, text: str = "", headers: Optional[dict] = None) -> None:
+    import smtplib
+    import ssl
+    from email.message import EmailMessage
+    from email.utils import formataddr, make_msgid
+
+    msg = EmailMessage()
+    msg["From"] = formataddr((FROM_NAME, SMTP_USER or FROM_EMAIL))
+    msg["To"] = to
+    msg["Subject"] = subject
+    msg["Message-ID"] = make_msgid(domain=(SMTP_USER or FROM_EMAIL).split("@")[-1])
+    if REPLY_TO:
+        msg["Reply-To"] = REPLY_TO
+    for name, value in (headers or {}).items():
+        msg[name] = value
+    msg.set_content(text or "This email is best viewed in an email app that shows HTML.")
+    msg.add_alternative(html_body, subtype="html")
+    context = ssl.create_default_context()
+    if SMTP_PORT == 465:
+        with smtplib.SMTP_SSL(SMTP_HOST, SMTP_PORT, context=context, timeout=15) as s:
+            s.login(SMTP_USER, SMTP_PASSWORD)
+            s.send_message(msg)
+    else:
+        with smtplib.SMTP(SMTP_HOST, SMTP_PORT, timeout=15) as s:
+            s.starttls(context=context)
+            s.login(SMTP_USER, SMTP_PASSWORD)
+            s.send_message(msg)
+
+
 def _send_email(to: str, subject: str, html: str, text: str = "", headers: Optional[dict] = None):
-    """Send an HTML email via Mailjet with plain-text fallback. `headers`
-    adds mail headers (List-Unsubscribe, unsubscribe.py)."""
+    """Send an HTML email with a plain-text fallback, through Gmail SMTP when
+    SMTP_HOST is set, otherwise Mailjet. `headers` adds mail headers
+    (List-Unsubscribe, unsubscribe.py). Never raises."""
+    if SMTP_HOST and SMTP_USER and SMTP_PASSWORD:
+        try:
+            _send_smtp(to, subject, html, text, headers)
+            logger.info("Email sent to %s: %s", to, subject)
+        except Exception as e:
+            logger.error("Failed to send email to %s: %s", to, e)
+        return
     if not MAILJET_API_KEY or not MAILJET_SECRET_KEY:
-        logger.warning("MAILJET keys not set - skipping email to %s", to)
+        logger.warning("No email sender configured (SMTP_HOST or MAILJET keys) - skipping email to %s", to)
         return
 
     try:
