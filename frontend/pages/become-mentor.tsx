@@ -1,7 +1,7 @@
 import { useEffect, useState, type FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { ArrowRight, CheckCircle2, Wallet } from "lucide-react";
+import { ArrowRight, CheckCircle2, Clock, IdCard, PencilLine, Wallet } from "lucide-react";
 import SEOHead from "../components/SEOHead";
 import { PageHero } from "../components/site";
 import StatusPage from "../components/site/StatusPage";
@@ -35,7 +35,18 @@ const SPECIALTIES = [
 
 const LANGUAGES = ["English", "Mandarin", "Hindi", "Arabic", "Korean", "Vietnamese", "Tagalog", "Spanish", "Japanese", "Cantonese", "Tamil", "Urdu", "Thai", "Indonesian", "Nepali"];
 
-type MentorProfile = { suburb: string; hourly_rate: number; stripe_onboarding_complete?: boolean };
+type ReviewStatus = "pending" | "approved" | "rejected";
+type MentorProfile = {
+  suburb: string;
+  postcode?: number | null;
+  hourly_rate: number;
+  languages?: string[];
+  specialties?: string[];
+  bio?: string | null;
+  stripe_onboarding_complete?: boolean;
+  review_status?: ReviewStatus;
+  review_reason?: string | null;
+};
 
 function Chips({ label, options, selected, onToggle }: { label: string; options: string[]; selected: string[]; onToggle: (v: string) => void }) {
   return (
@@ -61,6 +72,10 @@ export default function BecomeMentorPage() {
   const [existing, setExisting] = useState<MentorProfile | null>(null);
   const [checking, setChecking] = useState(true);
   const [created, setCreated] = useState(false);
+  // After creating: "id_check" when they still need to upload a photo ID.
+  const [nextStep, setNextStep] = useState<"id_check" | "approval" | null>(null);
+  // Editing a profile Migrent sent back (or updating a listed one).
+  const [editing, setEditing] = useState(false);
   // null until asked: whether Stripe can pay this mentor yet.
   const [payoutsReady, setPayoutsReady] = useState<boolean | null>(null);
 
@@ -121,8 +136,9 @@ export default function BecomeMentorPage() {
     if (suburb.trim().length < 2 || languages.length === 0 || (postcode && !/^\d{3,4}$/.test(postcode))) return;
     setLoading(true);
     try {
-      const res = await fetch(`${BASE_URL}/mentors`, {
-        method: "POST",
+      const updating = editing && existing;
+      const res = await fetch(`${BASE_URL}/mentors${updating ? "/me" : ""}`, {
+        method: updating ? "PATCH" : "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${session.access_token}` },
         body: JSON.stringify({
           suburb: suburb.trim(),
@@ -135,9 +151,17 @@ export default function BecomeMentorPage() {
       });
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
-        toast.error(err.detail || "We could not create your mentor profile. Please try again.");
+        toast.error(err.detail || "We could not save your mentor profile. Please try again.");
         return;
       }
+      const data = await res.json().catch(() => ({}));
+      if (updating) {
+        setExisting(data.mentor ?? existing);
+        setEditing(false);
+        toast.success("Saved. Migrent will read your profile again before it is listed.");
+        return;
+      }
+      setNextStep(data.next_step ?? null);
       setCreated(true);
     } catch {
       toast.error("Something went wrong. Please try again.");
@@ -161,63 +185,9 @@ export default function BecomeMentorPage() {
     }
   };
 
-  if (checking) {
-    return <div className="min-h-[70vh]" aria-busy="true" />;
-  }
-
-  if (created || existing) {
-    const needsPayouts = !payoutsReady;
-    return (
-      <>
-        <SEOHead title={created ? "You are a mentor" : "Your mentor profile"} noIndex />
-        <StatusPage
-          icon={<CheckCircle2 className="h-6 w-6" strokeWidth={1.9} />}
-          tone="success"
-          eyebrow="Local mentor"
-          title={
-            created ? (
-              <>
-                Your profile is <strong>listed.</strong>
-              </>
-            ) : (
-              <>
-                You are already <strong>a mentor.</strong>
-              </>
-            )
-          }
-          actions={
-            <>
-              {needsPayouts && (
-                <button type="button" onClick={startPayouts} disabled={loading} data-state={loading ? "loading" : undefined} className="btn-primary btn-lg">
-                  <Wallet className="h-4 w-4" strokeWidth={2.2} aria-hidden="true" /> Set up payouts
-                </button>
-              )}
-              <Link href="/mentors" className="btn-secondary btn-lg">
-                See the mentor list
-              </Link>
-            </>
-          }
-        >
-          {existing && !created ? (
-            <p className="m-0">
-              {existing.suburb}, ${(existing.hourly_rate / 100).toFixed(0)} a session.
-            </p>
-          ) : (
-            <p className="m-0">New arrivals looking in your suburb can now find you.</p>
-          )}
-          {needsPayouts ? (
-            <p className="m-0">People can book you once you connect a bank account through Stripe. It takes a few minutes, and your 70% of each session is paid straight to you.</p>
-          ) : (
-            <p className="m-0">Payouts are set up. Your 70% of each session goes straight to your bank account through Stripe.</p>
-          )}
-        </StatusPage>
-      </>
-    );
-  }
-
-  const keep = Math.round(rate * (1 - PLATFORM_SHARE));
-
-  return (
+  // The page's heading and pitch render on the server too (MIG-051); only
+  // the form waits for the check of an existing mentor profile.
+  const intro = (
     <>
       <SEOHead title="Become a mentor" description="Help new arrivals settle into your suburb. You set your price per session; Migrent keeps 30%." />
 
@@ -232,6 +202,115 @@ export default function BecomeMentorPage() {
         lead="Show a new arrival your suburb: the train, the shops, the doctor who speaks their language. You set your price per session, and Migrent keeps 30% of it."
         narrow
       />
+    </>
+  );
+
+  if (checking) {
+    return (
+      <>
+        {intro}
+        <div className="min-h-[40vh]" aria-busy="true" />
+      </>
+    );
+  }
+
+  const startEditing = () => {
+    if (!existing) return;
+    setSuburb(existing.suburb || "");
+    setPostcode(existing.postcode ? String(existing.postcode) : "");
+    setLanguages(existing.languages?.length ? existing.languages : ["English"]);
+    setSpecialties(existing.specialties ?? []);
+    setBio(existing.bio ?? "");
+    setRate(Math.round((existing.hourly_rate || 2500) / 100));
+    setEditing(true);
+  };
+
+  if ((created || existing) && !editing) {
+    const needsPayouts = !payoutsReady;
+    // Mentors meet new arrivals, often in person, and are paid through
+    // Migrent: nobody is listed until Migrent has checked their photo ID and
+    // read their profile (backend routes_mentors, review_status).
+    const status: ReviewStatus = created ? "pending" : existing?.review_status ?? "pending";
+    const idLink = hubFromSite.path("/settings#verification");
+    return (
+      <>
+        <SEOHead title={status === "approved" ? "Your mentor profile" : "Your mentor profile is in review"} noIndex />
+        <StatusPage
+          icon={status === "approved" ? <CheckCircle2 className="h-6 w-6" strokeWidth={1.9} /> : <Clock className="h-6 w-6" strokeWidth={1.9} />}
+          tone={status === "approved" ? "success" : "primary"}
+          eyebrow="Local mentor"
+          title={
+            status === "approved" ? (
+              <>
+                You are <strong>a mentor.</strong>
+              </>
+            ) : status === "rejected" ? (
+              <>
+                Your profile needs <strong>a change.</strong>
+              </>
+            ) : (
+              <>
+                Your profile is <strong>in review.</strong>
+              </>
+            )
+          }
+          actions={
+            <>
+              {status === "pending" && nextStep !== "approval" && (
+                <a href={idLink} className="btn-primary btn-lg">
+                  <IdCard className="h-4 w-4" strokeWidth={2.2} aria-hidden="true" /> Upload your photo ID
+                </a>
+              )}
+              {status === "rejected" && (
+                <button type="button" onClick={startEditing} className="btn-primary btn-lg">
+                  <PencilLine className="h-4 w-4" strokeWidth={2.2} aria-hidden="true" /> Change your profile
+                </button>
+              )}
+              {needsPayouts && (
+                <button type="button" onClick={startPayouts} disabled={loading} data-state={loading ? "loading" : undefined} className={status === "approved" ? "btn-primary btn-lg" : "btn-secondary btn-lg"}>
+                  <Wallet className="h-4 w-4" strokeWidth={2.2} aria-hidden="true" /> Set up payouts
+                </button>
+              )}
+              {status === "approved" && (
+                <>
+                  <button type="button" onClick={startEditing} className="btn-secondary btn-lg">
+                    <PencilLine className="h-4 w-4" strokeWidth={2.2} aria-hidden="true" /> Edit your profile
+                  </button>
+                  <Link href="/mentors" className="btn-secondary btn-lg">
+                    See the mentor list
+                  </Link>
+                </>
+              )}
+            </>
+          }
+        >
+          {status === "approved" && existing && (
+            <p className="m-0">
+              Listed in {existing.suburb}, ${(existing.hourly_rate / 100).toFixed(0)} a session. Changing your introduction sends it back to Migrent to read again.
+            </p>
+          )}
+          {status === "pending" && (
+            <p className="m-0">
+              New arrivals may meet you in person, so Migrent lists a mentor only after checking their photo ID and reading their profile.{" "}
+              {nextStep === "approval" ? "Your ID is already checked, so we only need to read your profile." : "Upload a passport, driver licence, national ID or visa grant notice in Migrent Hub."} We email you as soon as you are listed.
+            </p>
+          )}
+          {status === "rejected" && <p className="m-0">Migrent asked for this before listing you: {existing?.review_reason || "please update your introduction."}</p>}
+          {needsPayouts ? (
+            <p className="m-0">People can book you once you are listed and have connected a bank account through Stripe. It takes a few minutes, and your 70% of each session is paid straight to you.</p>
+          ) : (
+            <p className="m-0">Payouts are set up. Your 70% of each session goes straight to your bank account through Stripe.</p>
+          )}
+        </StatusPage>
+      </>
+    );
+  }
+
+  const keep = Math.round(rate * (1 - PLATFORM_SHARE));
+
+  return (
+    <>
+      {intro}
 
       <section className="site-section site-section--flush" aria-label="Mentor sign-up">
         <div className="site-shell site-shell--narrow">
@@ -296,10 +375,10 @@ export default function BecomeMentorPage() {
 
                 <div className="flex flex-col items-start gap-3">
                   <button type="submit" disabled={loading} data-state={loading ? "loading" : undefined} className="btn-primary btn-lg">
-                    {session ? "Create my mentor profile" : "Sign in to continue"}
+                    {!session ? "Sign in to continue" : editing ? "Save and send for review" : "Create my mentor profile"}
                     <ArrowRight className="btn-arrow h-4 w-4" strokeWidth={2.2} aria-hidden="true" />
                   </button>
-                  <p className="site-meta m-0">Your profile is listed straight away. To be paid, you then connect a bank account through Stripe.</p>
+                  <p className="site-meta m-0">Migrent checks your photo ID and reads your profile before it is listed. To be paid, you then connect a bank account through Stripe.</p>
                 </div>
               </div>
             </div>

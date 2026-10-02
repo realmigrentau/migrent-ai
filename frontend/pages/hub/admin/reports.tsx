@@ -1,6 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { ExternalLink, Flag, Siren, UserRound } from "lucide-react";
+import { Ban, ExternalLink, Flag, MessagesSquare, Pause, Siren, UserRound } from "lucide-react";
+import HubLink from "../../../components/hub/HubLink";
+import ReasonPicker from "../../../components/hub/admin/ReasonPicker";
+import SuspendDialog, { type SuspendTarget } from "../../../components/hub/admin/SuspendDialog";
 import AdminPanelShell from "../../../components/hub/admin/AdminPanel";
 import { Button } from "../../../components/hub/ui/Button";
 import { EmptyState, ErrorState, RowSkeleton, StatusBadge } from "../../../components/hub/ui/Feedback";
@@ -30,8 +33,11 @@ interface Report {
   resolved_at: string | null;
   item_type: string;
   item_id: string | null;
-  target: (ListingCard & Partial<Person>) | null;
+  /** Listing or person; for a message or review, what was said and between whom. */
+  target: (ListingCard & Partial<Person> & { text?: string; from?: Person | null; to?: Person | null; rating?: number; about?: string; hidden?: boolean }) | null;
   reporter: Person | null;
+  /** "system" when the scam check raised it rather than a person. */
+  source?: "user" | "system";
   assigned_to: Person | null;
 }
 
@@ -114,11 +120,136 @@ function ResolveDialog({ report, onClose, onDone }: { report: Report | null; onC
   );
 }
 
+/** Pause a reported listing without leaving the report (MIG-024). */
+function PauseListingDialog({ listing, onClose, onDone }: { listing: { id: string; title: string } | null; onClose: () => void; onDone: () => void }) {
+  const toast = useToast();
+  const [reason, setReason] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  async function save() {
+    if (!listing) return;
+    setBusy(true);
+    try {
+      await hubApi.post(`/hub/admin/listings/${listing.id}/action`, { action: "pause", reason: reason.trim() });
+      toast.success("Listing paused", { description: "The owner is told why. Close the report when you have finished." });
+      setReason("");
+      onDone();
+      onClose();
+    } catch (e) {
+      toast.error(e instanceof HubError ? e.message : "That didn't save.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <Dialog
+      open={!!listing}
+      onClose={onClose}
+      title={listing ? `Pause ${listing.title}?` : ""}
+      description="It goes offline at once. The owner is emailed the reason and cannot bring it back themselves; you unpause it from Listings."
+      footer={
+        <>
+          <Button variant="ghost" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button variant="danger" loading={busy} disabled={reason.trim().length < 5} onClick={() => void save()}>
+            Pause listing
+          </Button>
+        </>
+      }
+    >
+      <div className="flex flex-col gap-4">
+        <ReasonPicker kind="listing_pause" onPick={setReason} />
+        <Field label="Reason (sent to the owner)">
+          {({ id, describedBy }) => <Textarea id={id} rows={3} value={reason} maxLength={1000} onChange={(e) => setReason(e.target.value)} aria-describedby={describedBy} />}
+        </Field>
+      </div>
+    </Dialog>
+  );
+}
+
+interface Thread {
+  reported_message_id: string;
+  people: Record<string, Person | null>;
+  messages: { id: string; from: string; text: string; attachment_name: string | null; created_at: string }[];
+}
+
+/** The messages around a reported one. Opening it is audited (view_conversation). */
+function ConversationDialog({ reportId, onClose }: { reportId: string | null; onClose: () => void }) {
+  const [thread, setThread] = useState<Thread | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!reportId) return;
+    let alive = true;
+    hubApi
+      .get<Thread>(`/hub/admin/reports/${reportId}/conversation`)
+      .then((t) => alive && setThread(t))
+      .catch((e) => alive && setError(e instanceof HubError ? e.message : "The conversation didn't load."));
+    return () => {
+      alive = false;
+      setThread(null);
+      setError(null);
+    };
+  }, [reportId]);
+
+  return (
+    <Dialog open={!!reportId} onClose={onClose} size="lg" title="The conversation" description="Reading it is recorded in the audit log. Only the two people in it and Migrent's admins can see it.">
+      {error ? (
+        <p role="alert" className="text-[14px] text-[color:var(--color-danger-500)]">
+          {error}
+        </p>
+      ) : !thread ? (
+        <RowSkeleton rows={3} />
+      ) : (
+        <ol className="flex max-h-[60vh] flex-col gap-2 overflow-y-auto" data-testid="reported-conversation">
+          {thread.messages.map((m) => (
+            <li
+              key={m.id}
+              className={`rounded-[14px] border px-3.5 py-2.5 text-[14px] ${m.id === thread.reported_message_id ? "border-[var(--color-danger-500)] bg-[color:color-mix(in_oklab,var(--color-danger-500)_8%,var(--color-surface))]" : "border-[var(--color-line)] bg-[var(--color-surface)]"}`}
+            >
+              <p className="text-[12.5px] font-semibold text-[color:var(--color-ink-3)]">
+                {thread.people[m.from]?.name ?? "Someone"} · {relative(m.created_at)}
+                {m.id === thread.reported_message_id ? " · reported" : ""}
+              </p>
+              <p className="mt-0.5 whitespace-pre-wrap text-[color:var(--color-ink)]">{m.text || m.attachment_name || "(attachment)"}</p>
+            </li>
+          ))}
+        </ol>
+      )}
+    </Dialog>
+  );
+}
+
 function ReportsList({ status }: { status: "open" | "all" }) {
   const toast = useToast();
   const key = `/hub/admin/reports?status=${status}`;
   const { data, error, loading, refetch } = useHubQuery<{ reports: Report[] }>(key);
   const [closing, setClosing] = useState<Report | null>(null);
+  const [pausing, setPausing] = useState<{ id: string; title: string } | null>(null);
+  const [suspendTarget, setSuspendTarget] = useState<SuspendTarget | null>(null);
+  const [readingFor, setReadingFor] = useState<string | null>(null);
+  const [reviewAction, setReviewAction] = useState<{ id: string; hide: boolean } | null>(null);
+  const [reviewReason, setReviewReason] = useState("");
+  const [savingReview, setSavingReview] = useState(false);
+
+  async function saveReview() {
+    if (!reviewAction) return;
+    if (reviewReason.trim().length < 5) return toast.warning("Say why, in a few words.");
+    setSavingReview(true);
+    try {
+      await hubApi.post(`/hub/admin/user-reviews/${reviewAction.id}`, { hidden: reviewAction.hide, reason: reviewReason.trim() });
+      toast.success(reviewAction.hide ? "Review hidden" : "Review is back up");
+      setReviewAction(null);
+      setReviewReason("");
+      void refetch();
+    } catch (e) {
+      toast.error(e instanceof HubError ? e.message : "That didn't save.");
+    } finally {
+      setSavingReview(false);
+    }
+  }
 
   async function triage(r: Report, patch: { priority?: string; assign_to_me?: boolean; status?: string }) {
     try {
@@ -151,11 +282,29 @@ function ReportsList({ status }: { status: "open" | "all" }) {
                 </StatusBadge>
                 <span className="text-[13px] text-[color:var(--color-ink-3)]">
                   {r.item_type} · reported {relative(r.created_at)}
-                  {r.reporter ? ` by ${r.reporter.name}` : ""}
+                  {r.source === "system" ? " by the scam check" : r.reporter ? ` by ${r.reporter.name}` : ""}
                 </span>
               </div>
               <div className="flex flex-col gap-4 sm:flex-row">
-                {listing ? (
+                {(r.item_type === "message" || r.item_type === "review") && r.target?.text !== undefined ? (
+                  <div className="flex w-full shrink-0 flex-col gap-2 rounded-[14px] border border-[var(--color-line)] p-3 sm:w-[320px]" data-testid="reported-text">
+                    <p className="text-[12.5px] text-[color:var(--color-ink-3)]">
+                      {r.item_type === "review" ? `Review of ${r.target.about}` : "Message"}
+                      {r.target.from ? ` from ${r.target.from.name}` : ""}
+                      {r.target.to ? ` to ${r.target.to.name}` : ""}
+                      {r.item_type === "review" && r.target.rating ? ` · ${r.target.rating}/5` : ""}
+                    </p>
+                    <blockquote className="whitespace-pre-wrap border-l-2 border-[var(--color-line-2)] pl-3 text-[13.5px] leading-relaxed text-[color:var(--color-ink)]">{r.target.text || "(no text)"}</blockquote>
+                    {r.item_type === "review" && r.item_id && (
+                      <div className="flex items-center gap-2">
+                        {r.target.hidden && <StatusBadge tone="neutral" icon={false}>Hidden</StatusBadge>}
+                        <Button size="sm" variant="secondary" onClick={() => setReviewAction({ id: r.item_id!, hide: !r.target!.hidden })}>
+                          {r.target.hidden ? "Put the review back" : "Hide the review"}
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                ) : listing ? (
                   <a href={siteUrl(`/listing/${listing.id}`)} target="_blank" rel="noopener noreferrer" className="flex w-full shrink-0 items-center gap-3 rounded-[14px] border border-[var(--color-line)] p-2 hover:bg-[var(--color-surface-hover)] sm:w-[280px]">
                     <HomeImage src={listing.image} alt="" className="h-12 w-16 shrink-0" rounded="rounded-[10px]" sizes="64px" />
                     <span className="min-w-0 flex-1">
@@ -186,6 +335,47 @@ function ReportsList({ status }: { status: "open" | "all" }) {
                 </div>
               </div>
               {open && (
+                <div className="flex flex-wrap items-center gap-2" role="group" aria-label="Act on this report" data-testid="report-actions">
+                  {listing && (
+                    <>
+                      <Button size="sm" variant="secondary" icon={<Pause className="h-4 w-4" strokeWidth={1.75} />} onClick={() => setPausing({ id: listing.id, title: listing.title || "this listing" })}>
+                        Pause the listing
+                      </Button>
+                      <HubLink to={`/admin/listings?queue=all&listing=${listing.id}`} className="text-[13.5px] font-semibold text-[color:var(--color-primary)] hover:underline">
+                        Review it in Listings
+                      </HubLink>
+                    </>
+                  )}
+                  {(r.item_type === "user" || r.item_type === "profile") && r.item_id && (
+                    <>
+                      <HubLink to={`/admin/people/${r.item_id}`} className="text-[13.5px] font-semibold text-[color:var(--color-primary)] hover:underline">
+                        Open their page
+                      </HubLink>
+                      {r.target?.name && (
+                        <Button size="sm" variant="secondary" icon={<Ban className="h-4 w-4" strokeWidth={1.75} />} onClick={() => setSuspendTarget({ id: r.item_id!, name: r.target!.name!, suspended: false })}>
+                          Suspend
+                        </Button>
+                      )}
+                    </>
+                  )}
+                  {r.item_type === "message" && (
+                    <Button size="sm" variant="secondary" icon={<MessagesSquare className="h-4 w-4" strokeWidth={1.75} />} onClick={() => setReadingFor(r.id)}>
+                      Read the conversation
+                    </Button>
+                  )}
+                  {(r.item_type === "message" || r.item_type === "review") && r.target?.from && (
+                    <>
+                      <HubLink to={`/admin/people/${r.target.from.id}`} className="text-[13.5px] font-semibold text-[color:var(--color-primary)] hover:underline">
+                        Open {r.target.from.name}&apos;s page
+                      </HubLink>
+                      <Button size="sm" variant="secondary" icon={<Ban className="h-4 w-4" strokeWidth={1.75} />} onClick={() => setSuspendTarget({ id: r.target!.from!.id, name: r.target!.from!.name, suspended: false })}>
+                        Suspend {r.target.from.name}
+                      </Button>
+                    </>
+                  )}
+                </div>
+              )}
+              {open && (
                 <div className="flex flex-wrap items-center gap-2 border-t border-[var(--color-line)] pt-4">
                   <label className="sr-only" htmlFor={`prio-${r.id}`}>
                     Priority
@@ -213,7 +403,30 @@ function ReportsList({ status }: { status: "open" | "all" }) {
           );
         })}
       </ul>
+      <Dialog
+        open={Boolean(reviewAction)}
+        onClose={() => setReviewAction(null)}
+        title={reviewAction?.hide ? "Hide this review?" : "Put this review back?"}
+        description={reviewAction?.hide ? "Hide reviews that are abusive, share private details or are not about the tenancy or stay. Disagreeing with a review is not a reason." : "It will show again on the listing."}
+        footer={
+          <>
+            <Button variant="ghost" onClick={() => setReviewAction(null)}>
+              Cancel
+            </Button>
+            <Button loading={savingReview} onClick={() => void saveReview()}>
+              {reviewAction?.hide ? "Hide the review" : "Put it back"}
+            </Button>
+          </>
+        }
+      >
+        <Field label="Why" hint="Recorded in the audit log.">
+          {({ id, describedBy }) => <Textarea id={id} rows={3} value={reviewReason} maxLength={1000} onChange={(e) => setReviewReason(e.target.value)} aria-describedby={describedBy} />}
+        </Field>
+      </Dialog>
       <ResolveDialog report={closing} onClose={() => setClosing(null)} onDone={() => void refetch()} />
+      <PauseListingDialog listing={pausing} onClose={() => setPausing(null)} onDone={() => void refetch()} />
+      <SuspendDialog account={suspendTarget} onClose={() => setSuspendTarget(null)} onDone={() => void refetch()} />
+      <ConversationDialog reportId={readingFor} onClose={() => setReadingFor(null)} />
     </>
   );
 }

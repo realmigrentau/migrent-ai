@@ -10,6 +10,7 @@ import { ButtonLink } from "../ui/Button";
 import { CardSkeleton, EmptyState, ErrorState, ProgressRing, Skeleton } from "../ui/Feedback";
 import { HomeImage } from "../ui/Media";
 import { Panel, Reveal, Section, TextLink } from "../ui/Layout";
+import PendingReviews from "../reviews/PendingReviews";
 
 const ACTION_ICON: Record<string, typeof Compass> = {
   inspection: CalendarDays,
@@ -144,6 +145,7 @@ export default function RenterHome() {
 
       <div className="mt-10 grid gap-10 lg:grid-cols-[minmax(0,1fr)_340px]">
         <div className="flex min-w-0 flex-col gap-12">
+          <PendingReviews />
           {data.tenancy && (
             <Section title="Your home" action={<TextLink to="/my-home">Open</TextLink>}>
               <HubLink to="/my-home" className="hub-lift flex flex-col overflow-hidden rounded-[22px] border border-[var(--color-line)] bg-[var(--color-surface)] sm:flex-row">

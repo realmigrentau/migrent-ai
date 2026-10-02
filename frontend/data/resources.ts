@@ -127,6 +127,9 @@ const GUIDE_CATEGORY: Record<string, ResourceCategory> = {
   earnings: "Money",
   visas: "Visas & rights",
   disputes: "Visas & rights",
+  "applying-for-a-room": "Housing",
+  "condition-report": "Housing",
+  "getting-your-bond-back": "Money",
 };
 
 /** Blog slug -> filter category, and the ones that read as product news

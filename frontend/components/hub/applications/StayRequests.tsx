@@ -114,6 +114,11 @@ export default function StayRequests() {
   return (
     <Section title="Short stays" description="Requests with fixed dates, from the request-to-book flow.">
       {me?.features.payments === "test" && role === "owner" && <InlineAlert tone="neutral">Payments are in test mode. Accepting takes you to a test checkout; no real money is charged.</InlineAlert>}
+      {role !== "owner" && (
+        <InlineAlert tone="warning" title="Paying the host safely">
+          Agree how you&apos;ll pay in your Migrent messages. Pay only after you have seen the room, by bank transfer to an account in the host&apos;s own name, never by gift card, crypto or a money transfer service. Migrent never asks renters for money.
+        </InlineAlert>
+      )}
       <ul className="flex flex-col gap-3">
         {bookings.map((b) => {
           const awaitingFee = role === "owner" && b.status === "OWNER_ACCEPTED";
@@ -127,7 +132,7 @@ export default function StayRequests() {
                 <p className="truncate text-[15px] font-semibold text-[color:var(--color-ink)]">{b.listing?.title ?? "Stay"}</p>
                 <p className="inline-flex items-center gap-1.5 text-[13.5px] text-[color:var(--color-ink-2)]">
                   <CalendarRange className="h-4 w-4 text-[color:var(--color-ink-3)]" strokeWidth={1.75} aria-hidden />
-                  {day(b.check_in_date, { year: false })} to {day(b.check_out_date)} · {b.guests} guest{b.guests === 1 ? "" : "s"} · {aud(b.total_price)}
+                  {day(b.check_in_date, { year: false })} to {day(b.check_out_date)} · {b.guests} {b.guests === 1 ? "person" : "people"} · {aud(b.total_price)}
                 </p>
                 {role === "owner" && b.other_party?.name && <p className="text-[13px] text-[color:var(--color-ink-3)]">From {b.other_party.name}</p>}
               </div>

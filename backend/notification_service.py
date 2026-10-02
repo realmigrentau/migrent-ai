@@ -46,6 +46,8 @@ DELIVERY_RULES = {
     "host_response_sent":           {"in_app": True, "email": True,  "push": True},
     "listing_published":            {"in_app": True, "email": True,  "push": False},
     "listing_rejected":             {"in_app": True, "email": True,  "push": False},
+    "mentor_approved":              {"in_app": True, "email": True,  "push": False},
+    "mentor_rejected":              {"in_app": True, "email": True,  "push": False},
     "listing_changes_requested":    {"in_app": True, "email": True,  "push": False},
     "listing_flagged":              {"in_app": True, "email": True,  "push": False},
     "listing_hidden":               {"in_app": True, "email": True,  "push": False},
@@ -65,6 +67,8 @@ DELIVERY_RULES = {
     "maintenance_created":          {"in_app": True, "email": True,  "push": True},
     "maintenance_updated":          {"in_app": True, "email": True,  "push": False},
     "tenancy_created":              {"in_app": True, "email": True,  "push": False},
+    "review_prompt":                {"in_app": True, "email": True,  "push": False},
+    "review_received":              {"in_app": True, "email": True,  "push": False},
     "listing_submitted":            {"in_app": True, "email": False, "push": False},
     # Three wrong Admin panel passwords (routes_hub_admin._lock_out). A
     # security notice, so it has no email switch.
@@ -97,6 +101,8 @@ EMAIL_PREFERENCE_GROUP = {
     "maintenance_created": "maintenance",
     "maintenance_updated": "maintenance",
     "tenancy_created": "applications",
+    "review_prompt": "applications",
+    "review_received": "applications",
     "listing_published": "listings",
     "listing_rejected": "listings",
     "listing_changes_requested": "listings",
@@ -145,6 +151,8 @@ NOTIFICATION_TYPE_LABELS = {
     "maintenance_created": "Maintenance",
     "maintenance_updated": "Maintenance",
     "tenancy_created": "Home",
+    "review_prompt": "Reviews",
+    "review_received": "Reviews",
     "listing_submitted": "Listings",
     "admin_security_alert": "Security",
 }
@@ -210,6 +218,7 @@ def notify(
                 body=body,
                 cta_url=cta_url,
                 event=event,
+                user_id=user_id,
             )
         except Exception as e:
             logger.error("Failed to send notification email to %s: %s", recipient_email, e)
@@ -241,6 +250,7 @@ def _send_notification_email(
     body: str,
     cta_url: str,
     event: str,
+    user_id: str | None = None,
 ):
     """Send a generic notification email using the Migrent template.
 
@@ -280,6 +290,8 @@ def _send_notification_email(
         "maintenance_created": "View request",
         "maintenance_updated": "View request",
         "tenancy_created": "View your home",
+        "review_prompt": "Write a review",
+        "review_received": "Write your review",
         "admin_security_alert": "Open the audit log",
     }
     btn_text = button_labels.get(event, "Open Migrent Hub")
@@ -294,12 +306,32 @@ def _send_notification_email(
     </p>
     """
 
+    # Every kind of email that has an on/off switch carries an unsubscribe
+    # link and header (unsubscribe.py, MIG-031).
+    group = EMAIL_PREFERENCE_GROUP.get(event)
+    mail_headers = None
+    footer_text = ""
+    if group and user_id:
+        import unsubscribe
+
+        stop = unsubscribe.page_url(str(user_id), group)
+        label = unsubscribe.GROUP_LABELS.get(group, "these")
+        content += f"""
+    <p style="font-size:12px;line-height:18px;color:#667085;margin:20px 0 0;border-top:1px solid #eaecf0;padding-top:12px;">
+      You get these emails about {_html.escape(label)}. <a href="{_html.escape(stop, quote=True)}" style="color:#667085;">Unsubscribe</a>
+      or choose which emails you get in Migrent Hub &gt; Settings.
+    </p>
+    """
+        footer_text = f"\n\nYou get these emails about {label}. Unsubscribe: {stop}"
+        mail_headers = unsubscribe.headers(str(user_id), group)
+
     text_body = (
         f"Hi {name},\n\n"
         f"{title}\n\n"
         f"{body}\n\n"
         f"{btn_text}: {full_url}\n\n"
         f"- The Migrent team"
+        f"{footer_text}"
     )
 
-    _send_email(to, title, _email_layout(content, body[:140]), text_body)
+    _send_email(to, title, _email_layout(content, body[:140]), text_body, headers=mail_headers)

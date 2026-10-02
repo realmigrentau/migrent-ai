@@ -6,7 +6,7 @@ from datetime import datetime, date, timezone
 from fastapi import APIRouter, HTTPException, Header, Request
 from models import BookingCreate, BookingRespond, BookingStatus, BookingType
 from db import get_supabase, get_supabase_admin
-from auth_utils import get_current_user
+from auth_utils import get_current_user, get_active_user
 from email_bookings import (
     send_booking_request_to_owner,
     send_booking_accepted_to_seeker,
@@ -134,7 +134,7 @@ def create_booking(
     body: BookingCreate,
     authorization: str = Header(...),
 ):
-    user = get_current_user(authorization)
+    user = get_active_user(authorization)
     user_id = str(user.id)
     sb = get_supabase_admin()
 
@@ -155,6 +155,9 @@ def create_booking(
     # Cannot book your own listing
     if user_id == owner_id:
         raise HTTPException(status_code=400, detail="You cannot book your own listing")
+    from blocks import require_not_blocked
+
+    require_not_blocked(sb, user_id, owner_id)
 
     # Validate dates
     try:
@@ -442,7 +445,7 @@ def respond_to_booking(
     body: BookingRespond,
     authorization: str = Header(...),
 ):
-    user = get_current_user(authorization)
+    user = get_active_user(authorization)
     user_id = str(user.id)
     sb = get_supabase_admin()
 
@@ -656,7 +659,7 @@ def pay_owner_fee(
     webhook only honours the session stored on the booking: paying an old
     link would otherwise take the money without confirming the stay.
     """
-    user = get_current_user(authorization)
+    user = get_active_user(authorization)
     user_id = str(user.id)
     sb = get_supabase_admin()
 

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { useRouter } from "next/router";
-import { BadgeCheck, Flag, Inbox, LayoutGrid, ListChecks, Lock, LockKeyhole, ScrollText, ShieldCheck, Users } from "lucide-react";
+import { BadgeCheck, BarChart3, Flag, HandHeart, Inbox, LayoutGrid, ListChecks, Lock, LockKeyhole, ScrollText, ShieldCheck, Users } from "lucide-react";
 import { cn } from "../../../lib/cn";
 import { IDLE_LOCK_MS, adminIdleRemainingMs, lockAdminPanel, unlockAdminPanel, useAdminPanelUnlocked } from "../../../lib/hub/adminPanel";
 import { primeAlarm } from "../../../lib/hub/alarm";
@@ -20,10 +20,12 @@ export const ADMIN_SECTIONS: NavItem[] = [
   { label: "Overview", to: "/admin", icon: LayoutGrid },
   { label: "Listings", to: "/admin/listings", icon: ListChecks },
   { label: "ID checks", to: "/admin/id-checks", icon: BadgeCheck },
+  { label: "Mentors", to: "/admin/mentors", icon: HandHeart },
   { label: "Final reviews", to: "/admin/reviews", icon: ShieldCheck },
   { label: "Reports", to: "/admin/reports", icon: Flag },
   { label: "Support", to: "/admin/support", icon: Inbox },
   { label: "People", to: "/admin/people", icon: Users },
+  { label: "Numbers", to: "/admin/numbers", icon: BarChart3 },
   { label: "Audit log", to: "/admin/audit", icon: ScrollText },
 ];
 
@@ -32,6 +34,9 @@ const IDLE_SECONDS = Math.round(IDLE_LOCK_MS / 1000);
 interface PanelState {
   attempts_left: number;
   locked: boolean;
+  /** The server will not open the panel on a session without an
+   *  authenticator code (backend admin_panel.require_admin_mfa). */
+  mfa_required?: boolean;
 }
 
 interface UnlockResult {
@@ -124,7 +129,7 @@ function UnlockForm() {
   }
   if (!state.data) return <Skeleton className="mx-auto h-[320px] w-full max-w-[440px] rounded-[22px]" />;
 
-  const { attempts_left: left, locked } = state.data;
+  const { attempts_left: left, locked, mfa_required: needsMfa } = state.data;
   return (
     <div className="mx-auto flex w-full max-w-[440px] flex-col items-center gap-6 pt-6 text-center sm:pt-12">
       <span className="flex h-14 w-14 items-center justify-center rounded-[18px] bg-[var(--color-primary-soft)] text-[color:var(--color-primary)]">
@@ -136,7 +141,15 @@ function UnlockForm() {
           Enter the admin password to open it. It locks again after {IDLE_SECONDS} seconds without any activity.
         </p>
       </div>
-      {locked ? (
+      {needsMfa ? (
+        <InlineAlert tone="warning" title="Turn on two-step verification first" className="w-full text-left">
+          The Admin panel only opens when you have signed in with a code from an authenticator app as well as your password. Set it up in{" "}
+          <HubLink to="/settings#security" className="font-semibold text-[color:var(--color-primary)] underline-offset-2 hover:underline">
+            Settings, Sign-in and security
+          </HubLink>
+          , then sign out and back in with your code and open the panel again.
+        </InlineAlert>
+      ) : locked ? (
         <InlineAlert tone="danger" title="Locked" className="w-full text-left">
           Three wrong passwords were entered on this account, so the Admin panel is locked for 15 minutes and every admin was alerted.
         </InlineAlert>

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { useHCaptcha } from "@hcaptcha/react-hcaptcha/hooks";
+import { useCaptcha } from "../../lib/captcha";
 import { MailCheck } from "lucide-react";
 import AuthLayout, { AuthHeading, Divider, GoogleButton, hubCallbackUrl } from "../../components/hub/AuthLayout";
 import HubLink, { useHubNavigate } from "../../components/hub/HubLink";
@@ -10,6 +10,7 @@ import { InlineAlert } from "../../components/hub/ui/Feedback";
 import { supabase } from "../../lib/supabase";
 import { safeHubPath, siteUrl } from "../../lib/hub/routes";
 import { useHub } from "../../lib/hub/session";
+import { Events, trackEvent } from "../../lib/analytics";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -23,7 +24,7 @@ export default function SignUp() {
   const router = useRouter();
   const navigate = useHubNavigate();
   const { status } = useHub();
-  const captcha = useHCaptcha();
+  const captcha = useCaptcha();
   const next = safeHubPath(router.query.next);
   const intent = typeof router.query.intent === "string" ? router.query.intent : "";
   const [email, setEmail] = useState("");
@@ -53,6 +54,7 @@ export default function SignUp() {
     setErrors(errs);
     if (Object.keys(errs).length) return;
     setLoading(true);
+    trackEvent(Events.SIGNUP_STARTED, { intent: intent || "none" });
     try {
       let token: string | undefined;
       if (captcha?.executeInstance) token = (await captcha.executeInstance().catch(() => undefined)) ?? undefined;

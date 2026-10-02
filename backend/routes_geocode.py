@@ -9,8 +9,11 @@ import os
 import math
 import logging
 import httpx
-from fastapi import APIRouter, HTTPException, Request
+from typing import Optional
+
+from fastapi import APIRouter, Header, HTTPException, Request
 from pydantic import BaseModel
+from auth_utils import get_current_user
 from limiter import limiter
 
 logger = logging.getLogger(__name__)
@@ -121,12 +124,16 @@ async def geocode_and_find_station(address: str) -> GeocodeResponse:
 
 @router.post("/address", response_model=GeocodeResponse)
 @limiter.limit("20/minute")
-async def geocode_address(request: Request, body: GeocodeRequest):
+async def geocode_address(request: Request, body: GeocodeRequest, authorization: Optional[str] = Header(None)):
     """
+    Signed-in only (MIGRENT_MASTER_AUDIT MIG-058): it calls a paid geocoder,
+    and the site no longer calls it for visitors.
+
     Geocode an Australian address and find the nearest train/tram station.
 
     Returns lat/lng, formatted address, nearest station name, and walk time.
     """
+    get_current_user(authorization)
     if not body.address or len(body.address.strip()) < 3:
         raise HTTPException(status_code=400, detail="Address too short")
 

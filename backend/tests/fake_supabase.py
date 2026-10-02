@@ -172,12 +172,31 @@ class FakeQuery:
     def ilike(self, col, val):
         return self._add(lambda r: _OPS["ilike"](r.get(col), val))
 
+    def like(self, col, val):
+        pattern = "^" + re.escape(str(val)).replace("%", ".*").replace("_", ".") + "$"
+        return self._add(lambda r: r.get(col) is not None and re.match(pattern, str(r.get(col)), re.S) is not None)
+
     def in_(self, col, vals):
         vals = [str(v) for v in vals]
         return self._add(lambda r: str(r.get(col)) in vals)
 
     def is_(self, col, val):
         return self._add(lambda r: _OPS["is"](r.get(col), val))
+
+    @property
+    def not_(self):
+        """postgrest-py's negation: .not_.in_(...), .not_.is_(...)."""
+        query = self
+
+        class _Not:
+            def in_(self, col, vals):
+                vals = [str(v) for v in vals]
+                return query._add(lambda r: str(r.get(col)) not in vals)
+
+            def is_(self, col, val):
+                return query._add(lambda r: not _OPS["is"](r.get(col), val))
+
+        return _Not()
 
     def or_(self, expr: str):
         return self._add(_parse_or(expr))
@@ -301,6 +320,18 @@ class _FakeStorageBucket:
             self._db.storage_objects.get(self._name, {}).pop(p, None)
         return paths
 
+    def list(self, path: str = "", options=None):
+        """Objects directly inside `path`, like Supabase Storage's list()."""
+        prefix = f"{path.strip('/')}/" if path else ""
+        search = (options or {}).get("search") or ""
+        names = sorted(
+            k[len(prefix):] for k in self._db.storage_objects.get(self._name, {})
+            if k.startswith(prefix) and "/" not in k[len(prefix):] and search in k[len(prefix):]
+        )
+        offset = int((options or {}).get("offset") or 0)
+        limit = int((options or {}).get("limit") or 100)
+        return [{"name": n} for n in names[offset : offset + limit]]
+
 
 class _FakeStorage:
     def __init__(self, db: "FakeSupabase"):
@@ -339,6 +370,15 @@ class _FakeAuth:
     def get_user(self, token: str):
         user_id = self._db.tokens.get(token)
         if not user_id:
+            # Test sign-ins (conftest.auth) are unsigned-key JWTs whose `sub`
+            # names a fixture user; accept those for any user the test added.
+            try:
+                import jwt as pyjwt
+
+                user_id = pyjwt.decode(token, "test-secret", algorithms=["HS256"]).get("sub")
+            except Exception:
+                user_id = None
+        if not user_id or user_id not in self._db.users:
             raise RuntimeError("invalid token")
         return SimpleNamespace(user=self._db.users[user_id])
 
@@ -352,6 +392,8 @@ class FakeSupabase:
     insert_hooks: dict[str, list[Callable]] = field(default_factory=dict)
     update_hooks: dict[str, list[Callable]] = field(default_factory=dict)
     signed_out: list[tuple[str, str]] = field(default_factory=list)
+    # Accounts with a verified authenticator (auth.mfa_factors in Supabase).
+    mfa_enrolled: set[str] = field(default_factory=set)
 
     def __post_init__(self):
         self.auth = _FakeAuth(self)
@@ -361,7 +403,10 @@ class FakeSupabase:
         return FakeQuery(self, name)
 
     def rpc(self, name: str, params=None):
-        raise RuntimeError("rpc not supported in fake")
+        if name == "user_mfa_enrolled":
+            uid = str((params or {}).get("uid"))
+            return SimpleNamespace(execute=lambda: _Result(data=uid in self.mfa_enrolled))
+        raise RuntimeError(f"rpc {name} not supported in fake")
 
     # ---- helpers for tests ------------------------------------------
     def add_user(self, user_id: str, email: str, *, user_metadata: Optional[dict] = None, token: Optional[str] = None):

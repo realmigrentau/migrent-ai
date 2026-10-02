@@ -15,6 +15,34 @@ import HostAbout from "../../../components/profile/HostAbout";
 import VerificationCarousel from "../../../components/profile/VerificationCarousel";
 import { blockUser, unblockUser, isUserBlocked } from "../../../lib/api";
 import { CalendarDays, Clock, Home, MessageSquare, type LucideIcon } from "lucide-react";
+import type { GetServerSideProps } from "next";
+
+/**
+ * An address that cannot be a profile, or one that does not exist, is a
+ * real 404 (MIGRENT_MASTER_AUDIT MIG-050). The check reads the public
+ * profile view with the anon key; if that fails, the page renders as before.
+ */
+export const getServerSideProps: GetServerSideProps = async ({ params, res }) => {
+  const id = String(params?.id || "");
+  const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+  if (!uuid && !/^[A-Za-z0-9_-]{4,40}$/.test(id)) return { notFound: true };
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (url && key) {
+    try {
+      const column = uuid ? "id" : "public_id";
+      const r = await fetch(`${url}/rest/v1/public_profiles?select=id&${column}=eq.${encodeURIComponent(id)}&limit=1`, {
+        headers: { apikey: key, Authorization: `Bearer ${key}` },
+        signal: AbortSignal.timeout(4000),
+      });
+      if (r.ok && ((await r.json()) as unknown[]).length === 0) return { notFound: true };
+    } catch {
+      // Unreachable or slow: let the browser try.
+    }
+  }
+  res.setHeader("Cache-Control", "public, s-maxage=300, stale-while-revalidate=3600");
+  return { props: {} };
+};
 
 const TABS = [
   { key: "about", label: "About" },

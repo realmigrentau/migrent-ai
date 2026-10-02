@@ -334,6 +334,7 @@ def test_wizard_reports_missing_fields_then_creates_a_linked_listing(client, db)
         "title": "Bright room near the metro", "description": "A furnished room with a desk and built-in wardrobe.",
         "images": ["https://img.test/room.jpg"], "weekly_price": 320, "available_from": (date.today() + timedelta(days=7)).isoformat(),
         "furnished": True, "bills_included": True, "listing_purpose": "long_term", "lease_months": 6,
+        "bond_weeks": 4, "rent_in_advance_weeks": 2,
     }
     assert client.put(f"/hub/listing-drafts/{draft_id}", headers=auth(VERIFIED_OWNER_ID), json={"data": {**data, "not_a_field": 1}, "step": 7}).status_code == 200
     stored = next(d for d in db.rows("listing_drafts") if d["id"] == draft_id)

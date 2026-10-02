@@ -94,15 +94,30 @@ def me(request: Request, authorization: Optional[str] = Header(None)):
     actor = hub_actor(request, authorization)
     p = actor.profile
     sb = get_supabase_admin()
+
+    def _verification_row():
+        try:
+            return sb.table("owner_verification").select("*").eq("user_id", actor.id).execute().data
+        except Exception:
+            return None
+
+    def _mentor_row():
+        try:
+            return sb.table("mentors").select("id, review_status, review_reason, active").eq("user_id", actor.id).execute().data
+        except Exception:
+            return None
+
+    v_rows, m_rows = run_parallel(_verification_row, _mentor_row)
+    mentor = None
+    if m_rows:
+        m = m_rows[0]
+        mentor = {"id": str(m["id"]), "status": m.get("review_status") or "pending", "reason": m.get("review_reason"), "active": bool(m.get("active"))}
     verification = None
-    if actor.is_owner:
+    # Hosts and mentors both need a checked government ID.
+    if actor.is_owner or mentor:
         from public_dto import verification_summary
 
-        try:
-            v = sb.table("owner_verification").select("*").eq("user_id", actor.id).execute().data
-            verification = verification_summary(v[0] if v else None)
-        except Exception:
-            verification = verification_summary(None)
+        verification = verification_summary(v_rows[0] if v_rows else None)
     claims = _jwt_claims(authorization) if not actor.read_only else {}
     return {
         "id": actor.id,
@@ -114,9 +129,14 @@ def me(request: Request, authorization: Optional[str] = Header(None)):
         "role": public_role(p, actor.is_admin),
         "is_admin": actor.is_admin,
         "owner_kind": p.get("owner_kind"),
+        "agency_name": p.get("agency_name"),
+        "agency_licence": p.get("agency_licence"),
         "onboarded": bool(p.get("hub_onboarded_at") or (p.get("onboarding_completed") and p.get("role") in (RENTER, OWNER))),
         "notification_prefs": p.get("notification_prefs") or {},
         "owner_verification": verification,
+        # Their mentor profile, if they signed up as one: listed only once
+        # Migrent has checked their ID and approved it.
+        "mentor": mentor,
         "member_since": (p.get("created_at") or "")[:10] or None,
         "features": features(actor),
         "assurance_level": claims.get("aal"),
@@ -171,8 +191,9 @@ def onboarding(request: Request, body: OnboardingBody, authorization: Optional[s
     if not actor.profile.get("name"):
         patch["name"] = body.name.strip()
     try:
-        current = sb.table("profiles").select("over_18_confirmed_at, legal_accepted_at").eq("id", actor.id).execute().data
+        current = sb.table("profiles").select("over_18_confirmed_at, legal_accepted_at, hub_onboarded_at").eq("id", actor.id).execute().data
         cur = current[0] if current else {}
+        first_time = not cur.get("hub_onboarded_at")
         if not cur.get("over_18_confirmed_at"):
             patch["over_18_confirmed_at"] = now
         if not cur.get("legal_accepted_at"):
@@ -183,6 +204,14 @@ def onboarding(request: Request, body: OnboardingBody, authorization: Optional[s
         patch.pop("hub_onboarded_at", None)
         patch.pop("owner_kind", None)
         sb.table("profiles").update(patch).eq("id", actor.id).execute()
+        first_time = False
+    if first_time and actor.profile.get("email"):
+        try:
+            from email_bookings import send_welcome
+
+            send_welcome(actor.profile["email"], body.name.strip(), body.role)
+        except Exception:
+            logger.warning("welcome email failed for %s", actor.id, exc_info=True)
     return me(request, authorization)
 
 
@@ -237,6 +266,9 @@ class SettingsBody(BaseModel):
     bio: Optional[str] = Field(None, max_length=1000)
     owner_kind: Optional[str] = None
     notification_prefs: Optional[dict] = None
+    # Property managers (MIG-026): shown to renters beside their listings.
+    agency_name: Optional[str] = Field(None, max_length=120)
+    agency_licence: Optional[str] = Field(None, max_length=60)
 
     @field_validator("owner_kind")
     @classmethod
@@ -260,6 +292,13 @@ def update_settings(request: Request, body: SettingsBody, authorization: Optiona
         patch["bio"] = body.bio.strip() or None
     if body.owner_kind is not None:
         patch["owner_kind"] = body.owner_kind
+    if body.agency_name is not None or body.agency_licence is not None:
+        if (body.owner_kind or actor.profile.get("owner_kind")) != "property_manager":
+            raise HTTPException(status_code=400, detail="Agency details are for property managers")
+        if body.agency_name is not None:
+            patch["agency_name"] = body.agency_name.strip() or None
+        if body.agency_licence is not None:
+            patch["agency_licence"] = body.agency_licence.strip() or None
     if body.notification_prefs is not None:
         email = body.notification_prefs.get("email") if isinstance(body.notification_prefs.get("email"), dict) else {}
         patch["notification_prefs"] = {"email": {g: bool(email.get(g, True)) for g in PREF_GROUPS}}

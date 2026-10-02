@@ -7,7 +7,8 @@ import PhotosStep from "../../../../components/hub/wizard/PhotosStep";
 import { DetailsStep, Group, RentStep, SpaceStep } from "../../../../components/hub/wizard/Steps";
 import { Button } from "../../../../components/hub/ui/Button";
 import { CardSkeleton, EmptyState, ErrorState, InlineAlert } from "../../../../components/hub/ui/Feedback";
-import { Field, Input } from "../../../../components/hub/ui/Field";
+import { Field, Input, controlClass } from "../../../../components/hub/ui/Field";
+import SuburbCombobox from "../../../../components/forms/SuburbCombobox";
 import { PageHeader, Tabs } from "../../../../components/hub/ui/Layout";
 import { useConfirm } from "../../../../components/ui/ConfirmDialog";
 import { useToast } from "../../../../components/ui/Toast";
@@ -16,6 +17,9 @@ import { draftProblems, stepOf, type DraftData, type Problem } from "../../../..
 import { invalidate, useHubQuery } from "../../../../lib/hub/query";
 import { useHub } from "../../../../lib/hub/session";
 import type { OwnerListing } from "../../../../lib/hub/types";
+import { bondWeeksFromText } from "../../../../lib/listingCosts";
+import { useLocationCheck } from "../../../../lib/hub/useLocationCheck";
+import { cn } from "../../../../lib/cn";
 
 type Section = "details" | "space" | "photos" | "rent" | "address";
 
@@ -64,7 +68,11 @@ function toDraft(l: OwnerListing): DraftData {
     other_safety_details: nn(l.other_safety_details),
     images: l.images ?? [],
     weekly_price: nn(l.weekly_price),
-    bond: nn(l.bond),
+    // Listings from before bond was set in weeks carry it as text.
+    bond_weeks: l.bond_weeks ?? bondWeeksFromText(l.bond) ?? undefined,
+    rent_in_advance_weeks: nn(l.rent_in_advance_weeks),
+    bills_estimate_weekly: nn(l.bills_estimate_weekly),
+    newcomer_friendly: nn(l.newcomer_friendly),
     weekly_discount: nn(l.weekly_discount),
     monthly_discount: nn(l.monthly_discount),
     listing_purpose: l.listing_purpose === "short_stay" ? "short_stay" : "long_term",
@@ -89,12 +97,27 @@ const LISTING_FIELDS: Record<string, string> = {
   pets_allowed: "pets_allowed", pet_details: "pet_details", no_smoking: "no_smoking", quiet_hours: "quiet_hours",
   nearest_transport: "nearest_transport", neighbourhood_vibe: "neighbourhood_vibe", security_cameras: "security_cameras",
   security_cameras_location: "security_cameras_location", weapons_on_property: "weapons_on_property", weapons_explanation: "weapons_explanation",
-  other_safety_details: "other_safety_details", images: "images", weekly_price: "weekly_price", bond: "bond",
+  other_safety_details: "other_safety_details", images: "images", weekly_price: "weekly_price", bond_weeks: "bond_weeks",
+  rent_in_advance_weeks: "rent_in_advance_weeks", bills_estimate_weekly: "bills_estimate_weekly", newcomer_friendly: "newcomer_friendly",
   weekly_discount: "weekly_discount", monthly_discount: "monthly_discount", available_from: "available_from", available_to: "available_to",
   tenant_prefs: "tenant_prefs", couples_ok: "couples_ok", gender_preference: "gender_preference",
 };
 
 const same = (a: unknown, b: unknown) => JSON.stringify(a ?? null) === JSON.stringify(b ?? null);
+
+// Changes that send a live listing back to Migrent for review. Mirrors
+// material_changes() in backend/routes_listings.py; the server decides, this
+// only warns first.
+const REVIEW_COLUMNS = ["title", "description", "images", "address", "suburb", "postcode", "bond_weeks", "rent_in_advance_weeks"];
+const PRICE_REVIEW_RATIO = 0.15;
+
+function needsReview(patch: Record<string, unknown>, before: Record<string, unknown>): boolean {
+  if (REVIEW_COLUMNS.some((c) => c in patch)) return true;
+  if (!("weekly_price" in patch)) return false;
+  const was = Number(before.weekly_price) || 0;
+  const now = Number(patch.weekly_price) || 0;
+  return was <= 0 || Math.abs(now - was) / was > PRICE_REVIEW_RATIO;
+}
 
 export default function EditListingPage() {
   const router = useRouter();
@@ -132,7 +155,11 @@ export default function EditListingPage() {
     return () => window.removeEventListener("beforeunload", onUnload);
   }, [dirty]);
 
-  const problems = serverProblems ?? draftProblems(d);
+  // Only an address the host is changing is checked as they type.
+  const addressChanged = Boolean(original) && (!same(original?.suburb, d.suburb) || !same(original?.postcode, d.postcode));
+  const location = useLocationCheck(addressChanged ? d.suburb : null, d.postcode, null);
+  const localProblems = (data: DraftData) => [...draftProblems(data), ...(location?.problem ? [{ step: "property", field: "location", message: location.problem }] : [])];
+  const problems = serverProblems ?? localProblems(d);
   const err = (field: string) => (showErrors ? problems.find((p) => p.field === field)?.message : undefined);
   const set = (patch: Partial<DraftData>) => {
     setServerProblems(null);
@@ -142,7 +169,7 @@ export default function EditListingPage() {
   async function save() {
     if (!data || !original) return;
     setShowErrors(true);
-    const local = draftProblems(d);
+    const local = localProblems(d);
     if (local.length) {
       const first = stepOf(local[0].step);
       setSection(first === "property" ? "address" : (first as Section));
@@ -168,12 +195,24 @@ export default function EditListingPage() {
       } else if (changed.includes("lease_months") && d.lease_months) {
         unitPatch.min_stay_weeks = Math.round(d.lease_months * 4.345);
       }
-      if (Object.keys(listingPatch).length) await hubApi.patch(`/listings/${data.listing.id}`, listingPatch);
+      const wasLive = data.listing.moderation_status === "approved";
+      if (wasLive && needsReview(listingPatch, { weekly_price: original.weekly_price })) {
+        const ok = await confirm({
+          title: "Send these changes for review?",
+          description:
+            "Changes to the photos, title, description, address, bond, rent in advance or a big change in rent are checked by Migrent before renters see them. The listing goes offline until it is approved again, and we email you when it is.",
+          confirmLabel: "Save and send for review",
+        });
+        if (!ok) return;
+      }
+      let updated: { moderation_status?: string } | null = null;
+      if (Object.keys(listingPatch).length) updated = await hubApi.patch<{ moderation_status?: string }>(`/listings/${data.listing.id}`, listingPatch);
       if (Object.keys(unitPatch).length) await hubApi.patch(`/hub/listings/${data.listing.id}/unit`, unitPatch);
       setOriginal(d);
       invalidate(`/hub/listings/${data.listing.id}`);
       invalidate("/hub/properties");
-      toast.success("Changes saved");
+      if (wasLive && updated?.moderation_status === "pending_approval") toast.info("Changes saved and sent to Migrent for review. The listing is offline until it is approved.");
+      else toast.success("Changes saved");
       void navigate(`/listings/${data.listing.id}`);
     } catch (e) {
       if (e instanceof HubError && e.problems.length) setServerProblems(e.problems.map((p) => ({ step: String(p.step ?? "details"), field: String(p.field ?? ""), message: p.message })));
@@ -226,7 +265,7 @@ export default function EditListingPage() {
           </>
         }
       />
-      {live && <InlineAlert className="mb-6">This listing is live. Saved changes show on Migrent straight away.</InlineAlert>}
+      {live && <InlineAlert className="mb-6">This listing is live. Dates, features and small rent changes show straight away. New photos, a new title, description, address, bond or rent in advance, or a big change in rent go to Migrent for review first, and the listing is offline until they are approved.</InlineAlert>}
       <Tabs
         label="Sections"
         value={section}
@@ -257,12 +296,30 @@ export default function EditListingPage() {
             </Field>
             <div className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_160px]">
               <Field label="Suburb" error={err("suburb")}>
-                {({ id: fid, describedBy, invalid }) => <Input id={fid} value={d.suburb ?? ""} maxLength={100} onChange={(e) => set({ suburb: e.target.value })} aria-describedby={describedBy} aria-invalid={invalid} />}
+                {({ id: fid, describedBy, invalid }) => (
+                  <SuburbCombobox
+                    id={fid}
+                    value={d.suburb ?? ""}
+                    maxLength={100}
+                    onChange={(suburb) => set({ suburb })}
+                    onSelect={(c) => set({ suburb: c.name, ...(c.postcode ? { postcode: c.postcode } : {}) })}
+                    inputClassName={cn(controlClass, "h-11")}
+                    aria-describedby={describedBy}
+                    aria-invalid={invalid}
+                  />
+                )}
               </Field>
               <Field label="Postcode" error={err("postcode")}>
                 {({ id: fid, describedBy, invalid }) => <Input id={fid} inputMode="numeric" maxLength={4} value={d.postcode ? String(d.postcode) : ""} onChange={(e) => set({ postcode: e.target.value.replace(/\D/g, "").slice(0, 4) })} aria-describedby={describedBy} aria-invalid={invalid} />}
               </Field>
             </div>
+            {location?.problem ? (
+              <p role="alert" className="text-[13.5px] leading-snug text-[color:var(--color-danger-500)]">
+                {location.problem}
+              </p>
+            ) : location?.hint ? (
+              <p className="text-[13.5px] leading-snug text-[color:var(--color-ink-3)]">{location.hint}</p>
+            ) : null}
           </Group>
         )}
       </div>

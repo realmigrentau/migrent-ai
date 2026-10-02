@@ -57,7 +57,7 @@ backend/migrations/043_migrent_hub.sql
 |---|---|---|
 | Renter | `profiles.role = 'seeker'` | chosen at onboarding, or switched in Settings |
 | Owner | `profiles.role = 'owner'`, `owner_kind = 'individual'` | chosen at onboarding or in Settings |
-| Property manager | `profiles.role = 'owner'`, `owner_kind = 'property_manager'` | same |
+| Property manager | `profiles.role = 'owner'`, `owner_kind = 'property_manager'` | same. They can add an agency name and licence number in Settings (`agency_name`, `agency_licence`, migration 049), shown to renters on the owner card of every listing they manage |
 | Admin | `profiles.is_admin` or an admin role | **never self-selected**; granted in the database. An admin with a renter or owner role uses the Hub as that role, with an **Admin panel** added to their navigation |
 
 - Every endpoint resolves the caller with `hub_actor()` and checks rights on the server (`require_owner`, `require_admin_actor`, ownership of each record). Hiding a button is never the control.
@@ -74,9 +74,10 @@ Everything the Migrent team does happens in the Hub's **Admin panel**. The older
 
 Admins sign in like anyone else. The admin tools sit behind a second password, the Admin panel password, checked by the server (`backend/admin_panel.py`):
 
+- **Two-step sign-in first.** The panel opens only on a session signed in with an authenticator code (`aal2` in the access token): `admin_panel.require_admin_mfa` refuses unlocking and every admin request otherwise, and `/hub/admin/panel` reports `mfa_required` so the panel explains how to turn it on (Settings, Sign-in and security). `ADMIN_REQUIRE_MFA=false` switches this off for a local mock only. Any account that has set up an authenticator must also use it on every Hub request (`auth_utils.require_mfa_if_enrolled`, reading `user_mfa_enrolled()` from migration 046).
 - It is stored only as a salted PBKDF2 hash in `admin_panel_settings` (migration 044), never in the code. Change it inside the panel (Overview, "Admin password"); the change is audited.
 - The right password returns an unlock token, valid for 20 minutes, tied to that admin and that sign-in. The Hub sends it as `X-Migrent-Admin-Unlock`. Every `/hub/admin/*` endpoint, the final review endpoints, admin access to other people's applications, and the older `/admin`, `/admin/spam`, owner ID review and reports-queue endpoints answer **423** to an admin without it. People who are not admins see exactly what they saw before.
-- **30 seconds without activity** (mouse, keyboard, touch or scroll) locks the panel in the browser and raises the alarm: red and blue police lights over the whole screen, an "Admin panel locked" banner and a siren, until the admin chooses "Unlock again" (`lib/hub/adminPanel.ts`, `components/hub/admin/AdminIdleAlarm.tsx`). "Lock now", signing out, closing the tab, the unlock expiring and any 423 lock it quietly. A reload inside the 30 seconds keeps it open.
+- **30 seconds without activity** (mouse, keyboard, touch or scroll; kept at 30 seconds by owner decision, 2026-10-02) locks the panel in the browser and raises the alarm: red and blue police lights over the whole screen, an "Admin panel locked" banner and a siren, until the admin chooses "Unlock again" (`lib/hub/adminPanel.ts`, `components/hub/admin/AdminIdleAlarm.tsx`). "Lock now", signing out, closing the tab, the unlock expiring and any 423 lock it quietly. A reload inside the 30 seconds keeps it open.
 - **Three wrong passwords** within 15 minutes lock the panel for that account for 15 minutes, end the account's sign-in sessions everywhere, send every admin a "Potential threat" alert (in the Hub, by email and push), and show the full-screen police lights, "Potential threat / Potential hack" banner and siren at `/locked`.
 - **The alarm** (`lib/hub/alarm.ts`, `components/hub/admin/PoliceAlert.tsx`): the siren is made in the browser with Web Audio, wails once a second in step with the lights, can be silenced, and stops by itself after 30 seconds. Browsers only allow sound after a click or key press, so the Unlock button primes it; without that (for example after a fresh page load) the lights show silently. The lights pulse once a second per colour (under the 3-per-second seizure threshold) and stand still with reduced motion.
 - Unlocks, wrong passwords, lockouts and password changes are in the audit log; the attempt count is read from it.
@@ -85,19 +86,22 @@ Admins sign in like anyone else. The admin tools sit behind a second password, t
 |---|---|---|
 | Overview | `/admin` | what is waiting in each queue, the number of accounts and approved listings, and the Admin panel password. Accounts whose only role is admin also see this on `/` |
 | Listings | `/admin/listings` | tabs: To review, Flagged (spam check), Hidden, Removal pending, Paused, All listings (search by title, suburb, owner name or email). A side panel shows photos, owner, spam reasons and history, and only the actions the listing's state allows |
-| ID checks | `/admin/id-checks` | owners waiting for a government ID check: view the document (a five-minute link), approve, or reject with a reason the owner is emailed |
+| ID checks | `/admin/id-checks` | hosts and mentors waiting for a government ID check: view the document (a five-minute link), approve, or reject with a reason they are emailed |
+| Mentors | `/admin/mentors` | mentor sign-ups: listed only after their ID is checked and an admin approves the profile; send back with a reason. An approved mentor who changes their introduction comes back here |
 | Final reviews | `/admin/reviews` | owner-approved applications waiting for Migrent |
-| Reports | `/admin/reports` | user reports and emergency repairs |
+| Reports | `/admin/reports` | user reports, scam-check flags on messages and emergency repairs. Act without leaving the report: pause a reported listing, read a reported conversation (audited as `view_conversation`), open or suspend the person, hide or restore a review |
 | Support | `/admin/support` | tickets from the help button: reply (shown on the customer's ticket page), internal notes, status, priority, topic |
-| People | `/admin/people` | find an account, view as them (read-only), suspend or reinstate |
+| People | `/admin/people` | everyone, newest first, 50 a page; search by name or email and filter by role, account status, ID check and join date. View as them (read-only), suspend or reinstate |
+| Person | `/admin/people/{id}` | one person: ID check, listings, applications and tenancies, reports about them (including their messages) and by them, and every admin action on them and their listings |
+| Numbers | `/admin/numbers` | plain counts from the database when the page opens (`GET /hub/admin/metrics`): people, homes, activity, safety and support, with median time to review a listing and to first reply. Nothing is estimated |
 | Audit log | `/admin/audit` | every consequential admin action, who took it and why |
 
 - **Endpoints** are in `backend/routes_hub_admin.py`. Listing moderation and ID checks call the same functions as the older `/admin` API (`routes_admin`, `routes_spam_moderation`, `routes_owner_verification`), so owner emails, the listing's moderation history and the audit rows are identical either way.
 - **Audit first.** Each action writes `admin_audit_log` before it changes anything; if the write fails, nothing happens. Actions and target types must be in the CHECK constraints (migration 043, actions extended in 044) (`backend/tests/conftest.py` enforces them in tests, and `frontend/tests/unit/hubAdmin.test.ts` checks every one has a label). Support tickets keep their own history in `support_events`.
-- **Reasons.** Rejecting, asking for changes, pausing, hiding and starting a removal need a written reason; so do rejecting an ID and suspending or reinstating an account.
+- **Reasons.** Rejecting, asking for changes, pausing, hiding and starting a removal need a written reason; so do rejecting an ID and suspending or reinstating an account. "Common reasons" offers ready-made wording to start from (`READY_REASONS` in `lib/hub/admin.ts`); it fills the box and can still be edited.
 - **Removal is two steps**: start it (the listing stays offline in Removal pending), then confirm it. The row is kept (`moderation_status = 'deleted'`).
-- **Suspending** sets `profiles.disabled_at`. Every Hub request from that account is then refused; nothing is deleted and their listings are not changed (pause them in Listings if needed). Admin accounts can only be changed in the database.
-- **Retired without a replacement:** Analytics (its "visited" number was invented), Revenue (it read a `payments` table that does not exist; Stripe is the record of money) and the Help articles form (the public Help Centre reads `lib/helpData.ts`, not that table).
+- **Suspending** sets `profiles.disabled_at`. Every Hub request from that account is then refused, the routes outside the Hub refuse its writes (`auth_utils.get_active_user`: messages, listings, bookings, reviews, mentor actions, profile edits), and its listings drop out of search, listing pages, Hub cards and `public_listings`. Nothing is deleted and listing statuses are untouched, so reinstating brings everything back. Support, reports, pausing or deleting their own listing and deleting the account stay open. The account cannot clear the flag itself (migration 046). Admin accounts can only be changed in the database.
+- **Retired:** Analytics (its "visited" number was invented; Numbers replaces it with real counts), Revenue (it read a `payments` table that does not exist; Stripe is the record of money) and the Help articles form (the public Help Centre reads `lib/helpData.ts`, not that table).
 
 ---
 
@@ -124,6 +128,19 @@ Owners open times (in the property's time zone) with a capacity; renters book, c
 
 Every conversation is keyed by home and person (`<listing_id>_<other_user_id>`, or `direct_<id>`), and shows the application status and any booked inspection beside it. Owners have editable reply templates. Conversations can be archived, muted and reported.
 
+- **Scam signs** (`backend/message_safety.py`): money before an inspection, a payment to hold the room, gift cards / crypto / money transfer services, bank details, "WhatsApp only", keys by post. The message is delivered (owner decision, 2026-10-02); the recipient sees a warning above it with a Report link, and the spam check files one report per sender per day in the admin Reports queue (`reports.source = 'system'`, migration 048).
+- **Blocking** (`backend/blocks.py`, `/hub/blocks`): from the conversation menu; unblock there or in Settings > Blocked people. Either side's block stops messages, enquiries, applications, inspection bookings and stay requests between them, and the check fails closed. The person blocked is not told; their conversation just closes.
+
+### Reviews
+
+Both ways, after something real (`backend/reviews_core.py`, `routes_hub_reviews.py`, migration 048):
+
+- A renter reviews the home and host, and a host reviews the renter, once each per tenancy (from 30 days in, or when it ends) or stay (after check-out), until 60 days after it ended.
+- Neither sees the other's first: a review shows once both have written one, or 14 days after it was written.
+- Renters' reviews are public (listing page, first name only). Hosts' reviews of a renter are never public: only a host deciding on that renter's application sees them, on the application.
+- Pending reviews show on the Hub home and the tenancy page; `POST /internal/cron/review-prompts` emails a reminder (docs/runbooks/scheduled-jobs.md).
+- Anyone can report a review (`/reviews/{id}/flag` or the report form); it stays up until an admin hides it from the Reports queue (`hide_review`, audited). The person reviewed cannot hide a review by flagging it.
+
 ### Tenancies, rent and repairs
 
 - **Rent record, not rent collection.** Migrent never takes rent or bond. The owner sets up rent dates from the lease and records what arrived; the renter sees the same record.
@@ -132,6 +149,14 @@ Every conversation is keyed by home and person (`<listing_id>_<other_user_id>`, 
 ### Listing wizard
 
 Six steps (property, space, details, photos, rent and dates, review) with free navigation and autosave to `listing_drafts`. Nothing is gated behind a Next button; the review step lists what is missing and links to it. Submitting creates the listing through the same `create_listing` path the old form used, so moderation, verification and spam checks are unchanged. Owners whose ID is not checked yet can save; the listing waits as a draft until the check is done.
+
+- **Money up front.** Bond and rent in advance are whole weeks of rent (`bond_weeks`, `rent_in_advance_weeks`, migration 047), capped at 4 and 2 weeks in every state (owner decision, 2026-10-01; `backend/listing_rules.py`). A lease must state both (zero is an answer); a short stay may leave bond out and never takes rent in advance. Hosts can add a weekly bills estimate when bills are not included. Renters see the total as "to move in" on the listing (`components/listings/MoveInCost.tsx`), on search cards and in Compare. The old free-text `bond` column is read only for older listings.
+- **Where it is.** Suburb, state and postcode are checked against the ABS suburbs and localities (`backend/data/suburb_postcodes.json`, rebuilt by `frontend/scripts/abs/build-backend-index.mjs` at the end of every suburb data build). A suburb that is not in the chosen state, or a postcode from another state that the ABS does not map onto that suburb, is refused; anything less certain is a hint. The wizard suggests suburbs as you type and checks live (`GET /hub/location-check`).
+- **New arrivals.** "Happy to rent to people new to Australia" (`newcomer_friendly`) shows on the listing and is a search filter.
+
+### Many listings (property managers)
+
+Properties (`/properties`) has a search box (address, suburb, nickname or title) and a status filter once an owner has more than one listing, and a "Manage several listings" list: select listings, then Pause, Bring back or Renew until a date. `POST /hub/listings/bulk` (up to 50 at a time) runs each through the same rules as its own page (`renew_for_owner`, `pause_for_owner`, `resume_for_owner` in `routes_listings.py`) and reports each one; any that could not change are named. There are no staff seats or CSV import (owner decision, 2026-10-02).
 
 ---
 
@@ -152,6 +177,8 @@ Six steps (property, space, details, photos, rent and dates, review) with free n
 
 `notify_user()` (hub_common.py) writes the in-app notification (Activity) and sends the email unless the person turned that group off in Settings (`EMAIL_PREFERENCE_GROUP` in notification_service.py). Links point at the Hub page (`HUB_BASE_URL` once set). Security and account emails have no switch.
 
+**Unsubscribe.** Every email that can be switched off carries a footer link to `/unsubscribe` (asks once, then switches that kind of email off without signing in) and `List-Unsubscribe` / `List-Unsubscribe-Post` headers so mail apps can show their own button (`backend/unsubscribe.py`, `POST /email/unsubscribe`). The link is signed with an HMAC of the person and the email kind, so it cannot be forged for someone else.
+
 Scheduled jobs (all `POST`, header `X-Cron-Secret`), see also [runbooks/scheduled-jobs.md](runbooks/scheduled-jobs.md):
 
 | Endpoint | Suggested schedule |
@@ -160,6 +187,7 @@ Scheduled jobs (all `POST`, header `X-Cron-Secret`), see also [runbooks/schedule
 | `/internal/cron/saved-search-alerts?cadence=daily` | daily, 08:00 AEST |
 | `/internal/cron/saved-search-alerts?cadence=weekly` | Mondays, 08:00 AEST |
 | `/internal/cron/inspection-reminders` | daily, 09:00 AEST |
+| `/internal/cron/review-prompts` | daily, 10:00 AEST |
 
 ---
 
@@ -197,6 +225,9 @@ Off unless `AI_LISTING_ASSIST_ENABLED=true` **and** an Anthropic credential is s
 | `AI_LISTING_MODEL` | optional | defaults to `claude-opus-5` |
 | `FEE_MODEL` | optional | `per_property` (default) |
 | `STRIPE_SECRET_KEY` | for payments | `sk_live_...` to take real payments; `sk_test_...` shows "test mode" |
+| `RATE_LIMIT_STORAGE_URI` | recommended | a Redis URL (for example Upstash, `rediss://...`) so rate limits are shared by every server process; unset keeps them per process. If Redis is unreachable the limits fall back to memory rather than failing requests |
+| `UNSUBSCRIBE_SECRET` | recommended | any long random string; signs unsubscribe links (falls back to a key derived from the service key) |
+| `API_PUBLIC_URL` | optional | this API's public address for one-click unsubscribe; Render's `RENDER_EXTERNAL_URL` is used when unset |
 
 ---
 

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { Archive, ArrowLeft, BellOff, Bell, CalendarDays, FileText, Flag, Home, Loader2, MoreHorizontal, Paperclip, Pencil, RotateCw, Send, ShieldAlert, Sparkles, X } from "lucide-react";
+import { Archive, ArrowLeft, Ban, BellOff, Bell, CalendarDays, FileText, Flag, Home, Loader2, MoreHorizontal, Paperclip, Pencil, RotateCw, Send, ShieldAlert, Sparkles, TriangleAlert, X } from "lucide-react";
 import { cn } from "../../../lib/cn";
 import { hubApi, hubUploadWithProgress, HubError } from "../../../lib/hub/api";
 import { weekly, whenLabel } from "../../../lib/hub/format";
@@ -8,6 +8,7 @@ import { invalidate, setQueryData, useHubQuery } from "../../../lib/hub/query";
 import { applicationCopy } from "../../../lib/hub/status";
 import type { Conversation as ConversationData, Message, Template } from "../../../lib/hub/types";
 import { useToast } from "../../ui/Toast";
+import { useConfirm } from "../../ui/ConfirmDialog";
 import HubLink, { useHubNavigate } from "../HubLink";
 import ReportDialog from "../ReportDialog";
 import { Button, IconButton } from "../ui/Button";
@@ -36,6 +37,7 @@ interface Pending {
 
 export default function Conversation({ threadKey, onBack }: { threadKey: string; onBack?: () => void }) {
   const toast = useToast();
+  const confirm = useConfirm();
   const navigate = useHubNavigate();
   const reduce = useReducedMotion();
   const key = `/hub/inbox/${threadKey}`;
@@ -181,6 +183,30 @@ export default function Conversation({ threadKey, onBack }: { threadKey: string;
     }
   }
 
+  async function setBlocked(block: boolean) {
+    if (!data) return;
+    const name = data.other.name.split(" ")[0];
+    if (block) {
+      const ok = await confirm({
+        title: `Block ${name}?`,
+        description: `${name} won't be able to message you, apply for your homes or book inspections, and you won't be able to contact them. They are not told. You can unblock them in Settings.`,
+        confirmLabel: "Block",
+        tone: "danger",
+      });
+      if (!ok) return;
+    }
+    try {
+      if (block) await hubApi.post("/hub/blocks", { user_id: data.other_user_id });
+      else await hubApi.del(`/hub/blocks/${data.other_user_id}`);
+      setQueryData<ConversationData>(key, (prev) => (prev ? { ...prev, blocked: { by_me: block, closed: block } } : prev!));
+      invalidate("/hub/blocks");
+      toast.info(block ? `${name} is blocked` : `${name} is unblocked`);
+      if (!block) void refetch().catch(() => {});
+    } catch (e) {
+      toast.error(e instanceof HubError ? e.message : "That didn't save.");
+    }
+  }
+
   if (error) {
     return error.status === 404 ? (
       <div className="p-6">
@@ -238,6 +264,9 @@ export default function Conversation({ threadKey, onBack }: { threadKey: string;
             { label: data.archived ? "Move to inbox" : "Archive", icon: <Archive className="h-4 w-4" strokeWidth={1.75} />, onSelect: () => void setState({ archived: !data.archived }) },
             { label: data.muted ? "Turn notifications on" : "Mute notifications", icon: data.muted ? <Bell className="h-4 w-4" strokeWidth={1.75} /> : <BellOff className="h-4 w-4" strokeWidth={1.75} />, onSelect: () => void setState({ muted: !data.muted }) },
             { label: `Report ${firstName}`, icon: <Flag className="h-4 w-4" strokeWidth={1.75} />, danger: true, onSelect: () => setReportOpen(true) },
+            data.blocked?.by_me
+              ? { label: `Unblock ${firstName}`, icon: <Ban className="h-4 w-4" strokeWidth={1.75} />, onSelect: () => void setBlocked(false) }
+              : { label: `Block ${firstName}`, icon: <Ban className="h-4 w-4" strokeWidth={1.75} />, danger: true, onSelect: () => void setBlocked(true) },
           ]}
         />
       </header>
@@ -310,6 +339,20 @@ export default function Conversation({ threadKey, onBack }: { threadKey: string;
                 <motion.li key={renderKey[m.id] ?? m.id} layout={!reduce} initial={reduce ? false : { opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }} className="flex flex-col">
                   {header && <p className="my-4 text-center text-[12px] font-semibold text-[color:var(--color-ink-4)]">{header}</p>}
                   <div className={cn("flex max-w-[82%] flex-col gap-1 sm:max-w-[70%]", m.from_me ? "self-end items-end" : "self-start items-start")}>
+                    {!m.from_me && (m.risks?.length ?? 0) > 0 && (
+                      <div role="note" className="mb-1 rounded-[14px] border border-[color:color-mix(in_oklab,var(--color-warn-500)_45%,transparent)] bg-[color:color-mix(in_oklab,var(--color-warn-500)_12%,var(--color-surface))] px-3 py-2.5 text-[13px] leading-snug text-[color:var(--color-ink)]" data-testid="scam-warning">
+                        <p className="flex items-start gap-1.5 font-semibold">
+                          <TriangleAlert className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--color-warn-600)]" strokeWidth={2} aria-hidden />
+                          Be careful: this message {m.risks!.join("; it ")}.
+                        </p>
+                        <p className="mt-1 text-[color:var(--color-ink-2)]">
+                          Never pay before you have inspected the home and signed an agreement, and never by gift card, crypto or a money transfer service. Migrent never asks renters for money.{" "}
+                          <button type="button" onClick={() => setReportOpen(true)} className="font-semibold underline underline-offset-2">
+                            Report {firstName}
+                          </button>
+                        </p>
+                      </div>
+                    )}
                     {m.attachment_type?.startsWith("image/") && m.attachment_url ? (
                       <a href={m.attachment_url} target="_blank" rel="noopener noreferrer" className="block overflow-hidden rounded-[16px]">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -364,7 +407,20 @@ export default function Conversation({ threadKey, onBack }: { threadKey: string;
         </ol>
       </div>
 
-      {/* Composer */}
+      {/* Composer, or why there isn't one */}
+      {data.blocked?.closed ? (
+        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-[var(--color-line)] bg-[var(--color-surface)] px-4 pb-[max(14px,env(safe-area-inset-bottom))] pt-3.5 text-[13.5px] text-[color:var(--color-ink-2)] sm:px-5" data-testid="conversation-closed">
+          <p className="flex items-center gap-2">
+            <Ban className="h-4 w-4 text-[color:var(--color-ink-3)]" strokeWidth={1.75} aria-hidden />
+            {data.blocked.by_me ? `You blocked ${firstName}. Unblock them to send messages.` : "You can't send messages in this conversation."}
+          </p>
+          {data.blocked.by_me && (
+            <Button size="sm" variant="secondary" onClick={() => void setBlocked(false)}>
+              Unblock
+            </Button>
+          )}
+        </div>
+      ) : (
       <form
         className="border-t border-[var(--color-line)] bg-[var(--color-surface)] px-3 pb-[max(12px,env(safe-area-inset-bottom))] pt-3 sm:px-5"
         onSubmit={(e) => {
@@ -441,6 +497,7 @@ export default function Conversation({ threadKey, onBack }: { threadKey: string;
         </div>
         <p className="mt-1.5 hidden text-[11.5px] text-[color:var(--color-ink-4)] sm:block">Enter to send · Shift+Enter for a new line{data.my_side === "owner" ? " · Templates are yours to edit before sending" : ""}</p>
       </form>
+      )}
 
       <ReportDialog open={reportOpen} onClose={() => setReportOpen(false)} itemType="user" itemId={data.other_user_id} subject={firstName} />
     </div>

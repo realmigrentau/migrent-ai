@@ -10,6 +10,8 @@ export interface PageMeta {
   title: string;
   description: string;
   noIndex?: boolean;
+  /** With noIndex: still let crawlers follow the page's links. */
+  follow?: boolean;
 }
 
 const DEFAULT: PageMeta = {
@@ -31,7 +33,7 @@ const ROUTES: Array<[string, PageMeta]> = [
   ["/auth/callback", { title: "Signing you in", description: "Completing your sign-in.", noIndex: true }],
 
   // Seeker
-  ["/seeker/search", { title: "Search rooms", description: "Browse rooms from ID-checked hosts across Australia.", noIndex: true }],
+  ["/seeker/search", { title: "Search rooms", description: "Browse rooms from ID-checked hosts across Australia.", noIndex: true, follow: true }],
 
   // Owner
 
@@ -40,6 +42,7 @@ const ROUTES: Array<[string, PageMeta]> = [
   // Bookings / payments
   ["/booking-success", { title: "Host fee payment", description: "The result of a host fee payment.", noIndex: true }],
   ["/booking-cancelled", { title: "Payment not completed", description: "The host fee payment was not completed.", noIndex: true }],
+  ["/unsubscribe", { title: "Unsubscribe", description: "Stop a kind of email from Migrent.", noIndex: true }],
   ["/mentor-session-success", { title: "Session booked", description: "Your mentor session is confirmed.", noIndex: true }],
   ["/verification-success", { title: "Verification", description: "Verification result.", noIndex: true }],
   ["/verification-cancelled", { title: "Verification cancelled", description: "Verification was not completed.", noIndex: true }],

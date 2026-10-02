@@ -41,6 +41,10 @@ const ENABLED: string[] = (process.env.NEXT_PUBLIC_ENABLED_LOCALES || "en")
 
 export const SUPPORTED_LANGUAGES = ALL_LANGUAGES.filter((l) => ENABLED.includes(l.code));
 
+/** A language menu with one entry is dead UI (MIGRENT_MASTER_AUDIT MIG-038);
+ * it appears once a second language is switched on. */
+export const OFFERS_LANGUAGES = SUPPORTED_LANGUAGES.length > 1;
+
 i18n
   .use(HttpBackend)
   .use(LanguageDetector)

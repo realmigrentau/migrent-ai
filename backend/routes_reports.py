@@ -59,7 +59,7 @@ def create_report(
     # Normalize fields (support both old and new format)
     resolved_id = body.item_id or body.listing_id or ""
     resolved_type = body.item_type or "listing"
-    if resolved_type not in ("listing", "profile", "user", "message", "property"):
+    if resolved_type not in ("listing", "profile", "user", "message", "property", "review"):
         raise HTTPException(status_code=400, detail="Unknown report type")
     resolved_reason = body.category or body.reason or "Other"
     resolved_details = body.message or body.details or ""

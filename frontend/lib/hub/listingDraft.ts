@@ -55,7 +55,10 @@ export interface DraftData {
   images?: string[];
   // Rent and dates
   weekly_price?: number;
-  bond?: string;
+  /** Whole weeks; at most MAX_BOND_WEEKS (lib/listingCosts.ts). */
+  bond_weeks?: number;
+  rent_in_advance_weeks?: number;
+  bills_estimate_weekly?: number;
   weekly_discount?: number;
   monthly_discount?: number;
   listing_purpose?: "long_term" | "short_stay";
@@ -68,6 +71,7 @@ export interface DraftData {
   tenant_prefs?: string;
   couples_ok?: boolean;
   gender_preference?: string;
+  newcomer_friendly?: boolean;
 }
 
 export interface Draft {
@@ -114,6 +118,14 @@ export function draftProblems(d: DraftData): Problem[] {
   const price = Number(d.weekly_price || 0);
   need(price > 0 && price <= 50000, "rent", "weekly_price", "Set the weekly rent");
   need(Boolean(d.available_from), "rent", "available_from", "Choose when it is available from");
+  if ((d.listing_purpose ?? "long_term") === "long_term") {
+    need(d.bond_weeks != null, "rent", "bond_weeks", "Choose the bond (choose No bond if there isn't one)");
+    need(d.rent_in_advance_weeks != null, "rent", "rent_in_advance_weeks", "Choose how much rent is paid in advance");
+    // One rent period only in Tasmania and the NT (lib/listingCosts.ts).
+    const state = d.state || stateForPostcode(d.postcode);
+    const oneWeek = state === "TAS" || state === "NT";
+    if (oneWeek) need((d.rent_in_advance_weeks ?? 0) <= 1, "rent", "rent_in_advance_weeks", `In ${state} the law allows rent in advance for one rent period only, so Migrent allows 1 week`);
+  }
   if (d.available_from && d.available_to) need(d.available_to >= d.available_from, "rent", "available_to", "The end date must be after the start date");
   return out;
 }

@@ -15,6 +15,7 @@ import {
 } from "../../lib/navData";
 import { Logo } from "./Logo";
 import LanguageSwitcher from "./LanguageSwitcher";
+import { OFFERS_LANGUAGES } from "../../lib/i18n";
 
 /**
  * The site header.
@@ -540,7 +541,7 @@ export default function MegaNavbar({ revealAfterVh = 0 }: { revealAfterVh?: numb
             </Link>
           ),
         },
-    { key: "language", node: <LanguageSwitcher variant="sheet" /> },
+    ...(OFFERS_LANGUAGES ? [{ key: "language", node: <LanguageSwitcher variant="sheet" /> }] : []),
   ];
 
   return (
@@ -592,9 +593,11 @@ export default function MegaNavbar({ revealAfterVh = 0 }: { revealAfterVh?: numb
 
             <div className="site-nav__end">
               <ul className="site-nav__items">
-                <li onMouseEnter={() => closeDropdown()}>
-                  <LanguageSwitcher variant="nav" />
-                </li>
+                {OFFERS_LANGUAGES && (
+                  <li onMouseEnter={() => closeDropdown()}>
+                    <LanguageSwitcher variant="nav" />
+                  </li>
+                )}
                 {session ? (
                   renderDropdown(ACCOUNT_MENU)
                 ) : (

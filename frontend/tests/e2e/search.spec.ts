@@ -58,7 +58,8 @@ test.describe("move-in date", () => {
      move-in date is exercised from where people set it: the search page. */
   test("the homepage house search reaches the search page", async ({ page }) => {
     await page.goto("/");
-    await page.getByLabel("Where do you want to live?").fill("Kellyville");
+    // Phones have a second Where box above the house; by role finds the one shown.
+    await page.getByRole("combobox", { name: "Where do you want to live?" }).fill("Kellyville");
     await page.getByRole("button", { name: "Show matching rooms" }).click();
     await expect(page).toHaveURL(/\/seeker\/search\?.*suburb=Kellyville/);
     await expect(page.getByTestId("listing-card").first()).toBeVisible();
@@ -107,8 +108,13 @@ test.describe("error and empty states", () => {
 
   test("no matches shows the empty state with recovery actions", async ({ page }) => {
     await page.goto("/seeker/search?suburb=Nowhereville");
-    await expect(page.getByTestId("search-empty")).toBeVisible();
-    await expect(page.getByRole("button", { name: "Kellyville" })).toBeVisible();
+    const empty = page.getByTestId("search-empty");
+    await expect(empty).toBeVisible();
+    await expect(empty.getByRole("heading", { name: "No rooms match your search" })).toBeVisible();
+    // A way to hear about rooms later, not just a dead end.
+    await expect(empty.getByRole("link", { name: "Get an alert" })).toBeVisible();
+    await expect(empty.getByRole("button", { name: "Clear all filters" })).toBeVisible();
+    await expect(empty.getByRole("button", { name: "Parramatta" })).toBeVisible();
   });
 
   test("pagination loads more and reports totals honestly", async ({ page }) => {
@@ -149,5 +155,65 @@ test.describe("verification and listing state", () => {
     }
     expect(html).toContain('"precision":"approximate"');
     expect(html).toContain("The street address is shared when you book an inspection");
+  });
+});
+
+test.describe("finding a place to live", () => {
+  test("phones search from a Where box above the house, with suburb suggestions", async ({ page, isMobile }) => {
+    test.skip(!isMobile, "the box above the house is for phones");
+    await page.goto("/");
+    const where = page.getByRole("combobox", { name: "Where do you want to live?" });
+    const whereBox = await where.boundingBox();
+    const houseBox = await page.locator(".hc__scene").boundingBox();
+    expect(whereBox && houseBox && whereBox.y < houseBox.y).toBeTruthy();
+    await where.fill("Parramat");
+    await page.getByRole("option", { name: /^Parramatta, NSW/ }).click();
+    await expect(page).toHaveURL(/\/seeker\/search\?.*suburb=Parramatta/);
+    // Search keeps the box at the top on phones, without opening Filters.
+    await expect(page.getByTestId("mobile-where").getByRole("combobox")).toHaveValue("Parramatta");
+  });
+
+  test("lease or short stay, and homes that welcome new arrivals", async ({ page, isMobile }) => {
+    await page.goto("/seeker/search?suburb=Kellyville");
+    if (isMobile) await page.getByRole("button", { name: /^Filters/ }).click();
+    await page.getByRole("button", { name: "A lease (months)" }).click();
+    await expect(page).toHaveURL(/lease=long_term/);
+    await page.getByRole("button", { name: "No local rental history needed" }).click();
+    await expect(page).toHaveURL(/newcomer=true/);
+  });
+
+  test("a card shows what it costs to move in", async ({ page }) => {
+    await page.goto("/seeker/search?suburb=Kellyville");
+    const card = page.getByTestId("listing-card").filter({ hasText: "Sunny room near the station" }).first();
+    await expect(card).toContainText("$1,920 to move in");
+  });
+
+  test("the listing shows the move-in cost and where the bond goes", async ({ page }) => {
+    await page.goto(`/listing/${LIVE_ID}`);
+    const box = page.getByTestId("move-in-cost");
+    await expect(box).toContainText("$1,920");
+    await expect(box).toContainText("Bond (4 weeks)");
+    await expect(box).toContainText("about $35 a week");
+    await expect(box.getByRole("link", { name: /Renting rules in NSW/ })).toHaveAttribute("href", /fairtrading\.nsw\.gov\.au/);
+    await expect(page.getByTestId("newcomer-friendly")).toBeVisible();
+    await expect(page.getByTestId("listing-tools").getByRole("button", { name: "Compare" })).toBeVisible();
+  });
+
+  test("an older listing that never stated its costs says to ask", async ({ page }) => {
+    await page.goto("/listing/11111111-1111-4111-8111-000000000002");
+    await expect(page.getByTestId("move-in-cost")).toContainText("Ask the host how much bond");
+  });
+});
+
+test.describe("rental law by state", () => {
+  test("shows each state's sources and when they were checked", async ({ page }) => {
+    await page.goto("/guides/rental-laws");
+    const sources = page.getByTestId("rental-law-sources");
+    await expect(sources).toContainText("Sources for New South Wales");
+    await expect(sources).toContainText("Checked on 2 October 2026");
+    await page.getByRole("tab", { name: "TAS" }).click();
+    await expect(page.getByText(/rent in advance only for the first rent period/i)).toBeVisible();
+    await page.getByRole("tab", { name: "NT" }).click();
+    await expect(page.getByText(/no government bond authority/i)).toBeVisible();
   });
 });

@@ -35,7 +35,7 @@ const PLANS = [
     points: [
       "Free to list, edit and receive applications",
       "Long-term tenancies through applications: no fee",
-      `Stay bookings: $${fee} once per property, when the first one is confirmed`,
+      `Stays (weeks at a time, booked on Migrent): $${fee} once per property, when the first one is confirmed`,
       "No commission on rent, no subscription",
     ],
     cta: { label: "List a property", href: hubFromSite.listProperty() },
@@ -46,6 +46,7 @@ const PLANS = [
 const FAQS: FaqEntry[] = [
   { q: "What do renters pay?", a: seekerFeeSentence() },
   { q: "What do hosts pay?", a: `${hostFeeSentence()} Listing a room and taking a long-term tenant through an application costs nothing.` },
+  { q: "What is the difference between a lease and a stay?", a: "A lease is a home for months or longer: renters apply, the host chooses, and Migrent charges nobody. A stay is a shorter booking of weeks at a time, requested and confirmed on Migrent. The host fee applies only to stays." },
   { q: "Is there a monthly fee or a commission on rent?", a: "No. There is no subscription and no percentage of rent, ever." },
   { q: "Does Migrent hold the rent or bond?", a: "No. Rent is paid to the host the way you agree, and the bond is lodged with your state or territory bond authority. Migrent never holds either." },
   { q: "How is the host fee paid?", a: "By card through Stripe, when the first stay booking on that property is confirmed. Card details never reach Migrent's servers." },

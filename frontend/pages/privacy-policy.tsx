@@ -82,7 +82,7 @@ export default function PrivacyPolicy() {
                 <li>To process platform fees via Stripe</li>
                 <li>To send transactional emails via Resend (account confirmations, deal notifications, receipts)</li>
                 <li>To verify user identity and visa status through third-party providers</li>
-                <li>To improve our AI matching algorithms and platform experience</li>
+                <li>To improve search results and the platform experience</li>
                 <li>To send important service notifications (account, payment, safety)</li>
                 <li>To detect and prevent fraud, abuse, or violations of our Terms</li>
                 <li>To comply with legal obligations under Australian law</li>

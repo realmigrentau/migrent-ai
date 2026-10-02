@@ -2,6 +2,7 @@ import { useId, useMemo, useState, type FormEvent, type ReactNode } from "react"
 import { useRouter } from "next/router";
 import { AirVent, ArrowRight, Car, KeyRound, MapPin, PawPrint, Receipt, Search, Sofa, Wifi, type LucideIcon } from "lucide-react";
 import HouseScene from "./HouseScene";
+import SuburbCombobox from "../../forms/SuburbCombobox";
 import { Segmented, Stepper, Switch } from "../../hub/ui/Field";
 import { Tabs } from "../../hub/ui/Layout";
 import { useAuth } from "../../../hooks/useAuth";
@@ -101,6 +102,33 @@ export default function HouseConfigurator() {
 
   return (
     <div className="hc" data-mode={state.mode}>
+      {/* Phones: where first, above the house (MIGRENT_MASTER_AUDIT MIG-039).
+          Shares state.where with the panel's field, which phones hide while
+          looking. Picking a suggestion searches straight away. */}
+      {looking && (
+        <form className="hc__phone-where" role="search" aria-label="Find a room" onSubmit={onSubmit}>
+          <div className="hc__where">
+            <MapPin className="hc__where-icon" strokeWidth={1.9} aria-hidden="true" />
+            <SuburbCombobox
+              className="hc__where-box"
+              aria-label="Where do you want to live?"
+              value={state.where}
+              maxLength={80}
+              onChange={(where) => update({ where })}
+              onSelect={(c) => {
+                update({ where: c.name });
+                void router.push(toSearchHref({ ...state, where: c.name }));
+              }}
+              placeholder="Where? Suburb or city"
+              enterKeyHint="search"
+            />
+          </div>
+          <button type="submit" className="hc__phone-go">
+            Search
+          </button>
+        </form>
+      )}
+
       <div className="hc__scene">
         <HouseScene state={state} onToggleBedroom={(i) => setState((s) => toggleBedroom(s, i))} />
         <p className="hc__tip" aria-hidden="true">
@@ -120,20 +148,19 @@ export default function HouseConfigurator() {
           ]}
         />
 
-        <label htmlFor={whereId} className="hc__where">
+        <div className="hc__where hc__where--panel">
           <MapPin className="hc__where-icon" strokeWidth={1.9} aria-hidden="true" />
-          <span className="sr-only">{looking ? "Where do you want to live?" : "Where is your home?"}</span>
-          <input
+          <SuburbCombobox
             id={whereId}
-            type="text"
-            inputMode="search"
-            autoComplete="address-level2"
+            className="hc__where-box"
+            aria-label={looking ? "Where do you want to live?" : "Where is your home?"}
             maxLength={80}
             value={state.where}
-            onChange={(e) => update({ where: e.target.value })}
+            onChange={(where) => update({ where })}
+            onSelect={(c) => update({ where: c.name })}
             placeholder={looking ? "Suburb, city or postcode" : "Your suburb or postcode"}
           />
-        </label>
+        </div>
 
         <Tabs<TabKey> label="House settings" value={tab} onChange={setTab} tabs={TABS} idBase={ids} className="hc__tabs" />
 

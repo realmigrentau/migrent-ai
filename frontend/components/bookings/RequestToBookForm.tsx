@@ -13,6 +13,8 @@ interface Listing {
   max_guests?: number;
   available_from?: string;
   available_to?: string;
+  /** The host's bond in whole weeks; null when they have not said. */
+  bond_weeks?: number | null;
 }
 
 interface RequestToBookFormProps {
@@ -59,7 +61,8 @@ export default function RequestToBookForm({
     ? listing.weekly_price * weeksEstimate
     : null;
   // The row below says "typically 4 weeks", so the figure has to be 4 weeks.
-  const bondEstimate = listing.weekly_price * 4;
+  // The host's own bond (lib/listingCosts.ts); no guess when they haven't said.
+  const bondEstimate = listing.bond_weeks != null ? listing.weekly_price * listing.bond_weeks : 0;
 
   const today = new Date().toISOString().split("T")[0];
   // The host's availability window bounds the date pickers; the API enforces
@@ -72,12 +75,12 @@ export default function RequestToBookForm({
     setError("");
 
     if (!checkIn || !checkOut) {
-      setError("Please select check-in and check-out dates");
+      setError("Choose your move-in and move-out dates");
       return;
     }
 
     if (new Date(checkOut) <= new Date(checkIn)) {
-      setError("Check-out must be after check-in");
+      setError("Move-out must be after move-in");
       return;
     }
     if (checkIn < earliest) {
@@ -169,13 +172,14 @@ export default function RequestToBookForm({
         </label>
       </div>
 
-      {/* Guests */}
+      {/* People staying */}
       <div>
-        <div className="eyebrow mb-1.5">Tenants</div>
+        <div className="eyebrow mb-1.5" id="booking-people">People staying</div>
         <div className="flex items-center gap-3">
           <button
             type="button"
             onClick={() => setGuests(Math.max(1, guests - 1))}
+            aria-label="Fewer people"
             className="w-8 h-8 rounded-full border border-[var(--color-line-2)] flex items-center justify-center text-[var(--color-ink-2)] hover:border-[var(--color-ink-3)] hover:text-[var(--color-ink)] transition-colors disabled:opacity-30"
             disabled={guests <= 1}
           >
@@ -190,11 +194,12 @@ export default function RequestToBookForm({
           <button
             type="button"
             onClick={() => setGuests(Math.min(maxGuests, guests + 1))}
+            aria-label="More people"
             className="w-8 h-8 rounded-full border border-[var(--color-line-2)] flex items-center justify-center text-[var(--color-ink-2)] hover:border-[var(--color-ink-3)] hover:text-[var(--color-ink)] transition-colors"
           >
             +
           </button>
-          <span className="text-[11.5px] text-[var(--color-ink-3)]">max {maxGuests}</span>
+          <span className="text-[11.5px] text-[var(--color-ink-3)]">up to {maxGuests}</span>
         </div>
       </div>
 
@@ -227,8 +232,10 @@ export default function RequestToBookForm({
             <span className="text-[var(--color-ink)] tabular-nums">${totalRent.toLocaleString()}</span>
           </div>
           <div className="flex justify-between py-1.5 text-[13px]">
-            <span className="text-[var(--color-ink-2)]">Bond (typically 4 weeks, refundable)</span>
-            <span className="text-[var(--color-ink)] tabular-nums">${bondEstimate.toLocaleString()}</span>
+            <span className="text-[var(--color-ink-2)]">
+              {listing.bond_weeks == null ? "Bond" : listing.bond_weeks === 0 ? "Bond" : `Bond (${listing.bond_weeks} week${listing.bond_weeks === 1 ? "" : "s"}, refundable)`}
+            </span>
+            <span className="text-[var(--color-ink)] tabular-nums">{listing.bond_weeks == null ? "Ask the host" : listing.bond_weeks === 0 ? "None" : `$${bondEstimate.toLocaleString()}`}</span>
           </div>
           <div className="flex justify-between py-1.5 text-[13px]">
             <span className="text-[var(--color-ink-2)]">Migrent renter fee</span>
@@ -236,7 +243,7 @@ export default function RequestToBookForm({
           </div>
           <div className="h-px bg-[var(--color-line)] my-2" />
           <div className="flex justify-between text-[14px] font-bold text-[var(--color-ink)]">
-            <span>Move-in total</span>
+            <span>{listing.bond_weeks == null ? "Total rent" : "Total, bond included"}</span>
             <span className="tabular-nums">${(totalRent + bondEstimate).toLocaleString()}</span>
           </div>
           <p className="text-[11.5px] text-[var(--color-ink-3)] leading-relaxed mt-2">
@@ -260,6 +267,22 @@ export default function RequestToBookForm({
             your host. Ask for the lodgement receipt, and never pay a bond before
             you have seen the room.
           </div>
+        </div>
+      </div>
+
+      {/* Paying the host (MIGRENT_MASTER_AUDIT MIG-034). Stays are paid
+          directly to the host, which is exactly where rental scams happen;
+          Migrent holding payments waits on legal advice. */}
+      <div className="flex items-start gap-3 rounded-[6px] border-l-[3px] border-l-[var(--color-warn-500)] bg-[color:color-mix(in_oklab,var(--color-warn-500)_10%,var(--color-surface))] px-3.5 py-2.5" data-testid="stay-payment-warning">
+        <Shield className="w-4 h-4 text-[var(--color-warn-600)] mt-0.5 shrink-0" />
+        <div>
+          <div className="text-[13px] font-semibold text-[var(--color-ink)]">Paying the host safely</div>
+          <ul className="text-[12px] text-[var(--color-ink-2)] mt-1 leading-relaxed list-disc pl-4 space-y-0.5">
+            <li>Agree how and when you&rsquo;ll pay in writing, in your Migrent messages.</li>
+            <li>Pay only after you have seen the room, in person or on a live video call you start.</li>
+            <li>Pay by bank transfer to an account in the host&rsquo;s own name. Never by gift card, crypto, Western Union or MoneyGram.</li>
+            <li>Never pay to &ldquo;hold&rdquo; a room you haven&rsquo;t seen. Migrent never asks renters for money.</li>
+          </ul>
         </div>
       </div>
 
@@ -288,7 +311,7 @@ export default function RequestToBookForm({
           </>
         ) : (
           <>
-            Submit application
+            Request these dates
             <Send className="w-4 h-4" />
           </>
         )}
@@ -297,7 +320,7 @@ export default function RequestToBookForm({
       <p className="text-center text-[11.5px] text-[var(--color-ink-3)]">
         {isInstantBook
           ? "Free for renters. The room is held for you straight away."
-          : "You won't be charged until the host accepts."}
+          : "Free for renters. Nothing is booked until the host accepts."}
       </p>
     </form>
   );

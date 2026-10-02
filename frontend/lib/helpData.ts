@@ -503,7 +503,12 @@ Choose your check-in and check-out dates and the number of guests. The listing's
 
 ## What happens next
 
-The host accepts or declines your request, and you can follow it in Migrent Hub. Once the host has accepted and confirmed it, the booking is confirmed. Renters do not pay Migrent anything for a stay; how and when you pay the host is between you and them, so agree it in writing first.`,
+The host accepts or declines your request, and you can follow it in Migrent Hub. Once the host has accepted and confirmed it, the booking is confirmed. Renters do not pay Migrent anything for a stay. You pay the host directly, so:
+
+- Agree how and when you will pay in writing, in your Migrent messages.
+- Pay only after you have seen the room, in person or on a live video call you start.
+- Pay by bank transfer to an account in the host's own name. Never by gift card, crypto, Western Union or MoneyGram.
+- Never pay to "hold" a room you have not seen. If a host asks, report them from the conversation.`,
   },
   {
     id: "art-14",

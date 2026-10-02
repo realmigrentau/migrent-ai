@@ -401,6 +401,10 @@ export async function submitSupportRequest(data: {
   email: string;
   role: "seeker" | "owner";
   message: string;
+  topic?: string;
+  subject?: string;
+  /** The hidden spam-trap field; people leave it empty. */
+  website?: string;
 }) {
   try {
     const res = await fetch(`${BASE_URL}/support/contact`, {
@@ -408,6 +412,8 @@ export async function submitSupportRequest(data: {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
+    // Too many messages from one address: say so rather than "it failed".
+    if (res.status === 429) return { error: ((await res.json().catch(() => ({}))) as { detail?: string }).detail || "You've sent several messages already. We'll reply by email." };
     if (!res.ok)
       throw new Error(`submitSupportRequest failed: ${res.status}`);
     return await res.json();
@@ -749,67 +755,36 @@ export async function submitReport(
 }
 
 // ── Block user ──────────────────────────────────────
+// Through the API (/hub/blocks): the browser no longer writes blocked_users
+// directly (migration 046, MIGRENT_MASTER_AUDIT MIG-032).
 
-/**
- * Block a user (inserts into blocked_users table via Supabase).
- */
 export async function blockUser(blockedId: string): Promise<boolean> {
   try {
-    const { createClient } = await import("@supabase/supabase-js");
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-    const supabase = createClient(supabaseUrl, supabaseAnonKey);
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) return false;
-    const { error } = await supabase.from("blocked_users").insert({
-      blocker_id: session.user.id,
-      blocked_id: blockedId,
-    });
-    if (error && error.code === "23505") return true; // already blocked
-    return !error;
+    const { hubApi } = await import("./hub/api");
+    await hubApi.post("/hub/blocks", { user_id: blockedId });
+    return true;
   } catch (err) {
     console.error("blockUser error:", err);
     return false;
   }
 }
 
-/**
- * Unblock a user.
- */
 export async function unblockUser(blockedId: string): Promise<boolean> {
   try {
-    const { createClient } = await import("@supabase/supabase-js");
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-    const supabase = createClient(supabaseUrl, supabaseAnonKey);
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) return false;
-    const { error } = await supabase.from("blocked_users").delete()
-      .eq("blocker_id", session.user.id)
-      .eq("blocked_id", blockedId);
-    return !error;
+    const { hubApi } = await import("./hub/api");
+    await hubApi.del(`/hub/blocks/${blockedId}`);
+    return true;
   } catch (err) {
     console.error("unblockUser error:", err);
     return false;
   }
 }
 
-/**
- * Check if current user has blocked a specific user.
- */
 export async function isUserBlocked(blockedId: string): Promise<boolean> {
   try {
-    const { createClient } = await import("@supabase/supabase-js");
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-    const supabase = createClient(supabaseUrl, supabaseAnonKey);
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) return false;
-    const { data } = await supabase.from("blocked_users").select("id")
-      .eq("blocker_id", session.user.id)
-      .eq("blocked_id", blockedId)
-      .maybeSingle();
-    return !!data;
+    const { hubApi } = await import("./hub/api");
+    const res = await hubApi.get<{ blocked: { person: { id: string } }[] }>("/hub/blocks");
+    return res.blocked.some((b) => b.person.id === blockedId);
   } catch {
     return false;
   }
@@ -1262,6 +1237,8 @@ export async function createTicket(
     source?: string;
     email?: string;
     name?: string;
+    /** The hidden spam-trap field; people leave it empty. */
+    website?: string;
   },
   token?: string
 ) {
@@ -1273,6 +1250,7 @@ export async function createTicket(
       headers,
       body: JSON.stringify(data),
     });
+    if (res.status === 429) return { error: ((await res.json().catch(() => ({}))) as { detail?: string }).detail || "You've sent several messages already. We'll reply by email." };
     if (!res.ok) throw new Error(`createTicket failed: ${res.status}`);
     return await res.json();
   } catch (err) {
@@ -2276,6 +2254,8 @@ export interface PublicOwner {
   listings_count: number | null;
   achievement_badges: string[];
   verification: VerificationSummary;
+  /** Set when a property manager lists the home (MIG-026). */
+  agency?: { name: string; licence: string | null } | null;
 }
 
 export interface PublicLocation {
@@ -2339,7 +2319,12 @@ export interface PublicListing {
   other_safety_details?: string | null;
   who_else_lives_here?: string | null;
   total_other_people?: string | null;
+  /** Old free text, only for listings from before bond was set in weeks. */
   bond?: string | null;
+  bond_weeks?: number | null;
+  rent_in_advance_weeks?: number | null;
+  bills_estimate_weekly?: number | null;
+  newcomer_friendly?: boolean | null;
   created_at?: string;
   display_address: string;
   location: PublicLocation | null;

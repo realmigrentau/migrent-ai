@@ -228,6 +228,7 @@ def conversation(key: str, request: Request, before: Optional[str] = None, limit
             sb.table("messages").update({"read_at": now_iso()}).in_("id", unread).eq("receiver_id", uid).execute()
 
     from routes_messages import _sign_attachments
+    from message_safety import RISK_LABELS, message_risks
 
     messages = _sign_attachments(
         sb,
@@ -242,12 +243,20 @@ def conversation(key: str, request: Request, before: Optional[str] = None, limit
                 "attachment_type": m.get("attachment_type"),
                 "read_at": m.get("read_at"),
                 "created_at": m["created_at"],
+                # Scam signs, shown to the person receiving the message.
+                "risks": [RISK_LABELS[r] for r in message_risks(m.get("message_text"))] if str(m["sender_id"]) != uid else [],
             }
             for m in rows
         ],
     )
     people = fetch_people(sb, [other])
     state = _states(sb, uid).get(key, {})
+    from blocks import block_state
+
+    try:
+        blocked = block_state(sb, uid, other)
+    except Exception:
+        blocked = {"by_me": False, "by_them": False}
     my_side = "owner" if listing and str(listing.get("owner_id")) == uid else "renter"
 
     context: dict = {"application": None, "inspection": None}
@@ -285,6 +294,8 @@ def conversation(key: str, request: Request, before: Optional[str] = None, limit
         "my_side": my_side,
         "archived": bool(state.get("archived_at")),
         "muted": bool(state.get("muted")),
+        # Who blocked whom is not said: either way the conversation is closed.
+        "blocked": {"by_me": blocked["by_me"], "closed": blocked["by_me"] or blocked["by_them"]},
         "messages": messages,
         "has_more": has_more,
         "context": context,
@@ -403,6 +414,67 @@ def set_state(key: str, request: Request, body: StateBody, authorization: Option
     except Exception as e:
         raise hub_table_error(e)
     return {"key": key, "archived": bool(patch.get("archived_at")) if "archived_at" in patch else None, "muted": patch.get("muted")}
+
+
+# ---------------------------------------------------------------------------
+# Blocking (MIG-032)
+# ---------------------------------------------------------------------------
+
+
+class BlockBody(BaseModel):
+    user_id: str = Field(..., min_length=36, max_length=36)
+    reason: Optional[str] = Field(None, max_length=500)
+
+
+@router.get("/blocks")
+def list_blocks(request: Request, authorization: Optional[str] = Header(None)):
+    actor = hub_actor(request, authorization)
+    sb = get_supabase_admin()
+    try:
+        rows = sb.table("blocked_users").select("blocked_id, created_at").eq("blocker_id", actor.id).order("created_at", desc=True).execute().data or []
+    except Exception as e:
+        raise hub_table_error(e)
+    people = fetch_people(sb, [r["blocked_id"] for r in rows])
+    return {
+        "blocked": [
+            {"person": people.get(str(r["blocked_id"])) or {"id": str(r["blocked_id"]), "name": "Migrent member", "avatar_url": None}, "created_at": r.get("created_at")}
+            for r in rows
+        ]
+    }
+
+
+@router.post("/blocks")
+@limiter.limit("30/hour")
+def block_person(request: Request, body: BlockBody, authorization: Optional[str] = Header(None)):
+    actor = hub_actor(request, authorization)
+    require_writable(actor)
+    other = body.user_id.lower()
+    if not re.fullmatch(UUID, other):
+        raise HTTPException(status_code=400, detail="Unknown person")
+    if other == actor.id:
+        raise HTTPException(status_code=400, detail="You can't block yourself")
+    sb = get_supabase_admin()
+    if not sb.table("profiles").select("id").eq("id", other).execute().data:
+        raise HTTPException(status_code=404, detail="Unknown person")
+    try:
+        existing = sb.table("blocked_users").select("id").eq("blocker_id", actor.id).eq("blocked_id", other).execute().data
+        if not existing:
+            sb.table("blocked_users").insert({"blocker_id": actor.id, "blocked_id": other, "reason": (body.reason or "").strip() or None}).execute()
+    except Exception as e:
+        raise hub_table_error(e)
+    return {"blocked": True, "user_id": other}
+
+
+@router.delete("/blocks/{user_id}")
+def unblock_person(user_id: str, request: Request, authorization: Optional[str] = Header(None)):
+    actor = hub_actor(request, authorization)
+    require_writable(actor)
+    sb = get_supabase_admin()
+    try:
+        sb.table("blocked_users").delete().eq("blocker_id", actor.id).eq("blocked_id", user_id.lower()).execute()
+    except Exception as e:
+        raise hub_table_error(e)
+    return {"blocked": False, "user_id": user_id.lower()}
 
 
 # ---------------------------------------------------------------------------

@@ -1,4 +1,5 @@
-import { useMemo, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useState, type FormEvent } from "react";
+import { useRouter } from "next/router";
 import Link from "next/link";
 import { ArrowRight, CheckCircle2, LifeBuoy, Mail, Newspaper, Scale, ShieldAlert } from "lucide-react";
 import SEOHead from "../components/SEOHead";
@@ -6,12 +7,15 @@ import { PageHero, Reveal } from "../components/site";
 import { Segmented } from "../components/hub/ui/Field";
 import { submitSupportRequest } from "../lib/api";
 import { siteIdentity, supportPromise } from "../lib/siteIdentity";
+import { Events, trackEvent } from "../lib/analytics";
 
 /**
  * Contact: one form, and the right door for the things a form is wrong for
  * (an emergency, a legal notice, the press). The form posts to the same
- * support endpoint as before (lib/api.ts submitSupportRequest). Reply times
- * are the one promise lib/siteIdentity.ts makes, nothing faster.
+ * support endpoint as before (lib/api.ts submitSupportRequest), which opens a
+ * ticket in the Admin panel's Support queue. Reply times are the one promise
+ * lib/siteIdentity.ts makes, nothing faster. ?topic=SAFETY&subject=... (from
+ * a listing's "Tell us here") pre-fills the form.
  */
 
 type Role = "seeker" | "owner" | "other";
@@ -34,10 +38,20 @@ export default function Contact() {
   const [role, setRole] = useState<Role>("seeker");
   const [topic, setTopic] = useState<Topic>("GENERAL");
   const [subject, setSubject] = useState("");
+  const router = useRouter();
+  useEffect(() => {
+    if (!router.isReady) return;
+    const t = typeof router.query.topic === "string" ? router.query.topic.toUpperCase() : "";
+    if (TOPICS.some((x) => x.value === t)) setTopic(t as Topic);
+    const sub = typeof router.query.subject === "string" ? router.query.subject.slice(0, 120) : "";
+    if (sub) setSubject(sub);
+  }, [router.isReady]); // eslint-disable-line react-hooks/exhaustive-deps
   const [message, setMessage] = useState("");
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [submitting, setSubmitting] = useState(false);
+  const [trap, setTrap] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [reference, setReference] = useState("");
   const [error, setError] = useState("");
 
   const errors = useMemo(() => {
@@ -46,6 +60,7 @@ export default function Contact() {
     if (!email.trim()) e.email = "We need your email to reply.";
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) e.email = "That email address does not look right.";
     if (!message.trim()) e.message = "Please add a short message.";
+    else if (message.trim().length < 10) e.message = "Please write a little more, at least 10 characters, so we can help.";
     if (message.length > 2000) e.message = "Please keep it under 2,000 characters.";
     return e;
   }, [name, email, message]);
@@ -58,18 +73,26 @@ export default function Contact() {
     if (Object.keys(errors).length) return;
     setSubmitting(true);
     setError("");
-    const prefix = `[${topic}]`;
     const result = await submitSupportRequest({
       name: name.trim(),
       email: email.trim(),
       role: role === "owner" ? "owner" : "seeker",
-      message: `${subject.trim() ? `${prefix} ${subject.trim()}` : prefix}\n\nRole: ${role}\n\n${message.trim()}`,
+      topic,
+      subject: subject.trim() || undefined,
+      message: role === "other" ? `${message.trim()}\n\n(They chose "Something else" for what they use Migrent for.)` : message.trim(),
+      website: trap || undefined,
     });
     setSubmitting(false);
     if (!result) {
       setError(`We could not send your message just now. Please email ${siteIdentity.emails.support} instead.`);
       return;
     }
+    if ("error" in result && typeof result.error === "string") {
+      setError(result.error);
+      return;
+    }
+    setReference(typeof result.reference === "string" ? result.reference : "");
+    trackEvent(Events.CONTACT_FORM_SENT, { topic });
     setSubmitted(true);
   };
 
@@ -96,15 +119,22 @@ export default function Contact() {
                 <CheckCircle2 className="h-9 w-9 text-[color:var(--color-success-500)]" strokeWidth={1.75} aria-hidden="true" />
                 <h2 className="site-h2 !text-[clamp(1.6rem,2.6vw,2.1rem)]">Thanks, {name.trim().split(" ")[0] || "we have it"}.</h2>
                 <p className="site-body">
-                  Your message is with us. We will reply to {email.trim()}. {supportPromise()}
+                  Your message is with us{reference ? ` (reference ${reference})` : ""}, and a confirmation is on its way. We will reply to {email.trim()}. {supportPromise()}
                 </p>
                 <Link href="/help" className="site-link">
                   Browse help while you wait <ArrowRight className="h-4 w-4" strokeWidth={2} aria-hidden="true" />
                 </Link>
               </div>
             ) : (
-              <form onSubmit={onSubmit} noValidate className="flex flex-col gap-5">
+              <form onSubmit={onSubmit} noValidate className="relative flex flex-col gap-5">
                 <h2 className="site-h3 site-h3--lg">Send us a message</h2>
+                {/* Spam trap: hidden from people and screen readers; bots fill it. */}
+                <div aria-hidden="true" className="absolute -left-[10000px] top-0 h-px w-px overflow-hidden">
+                  <label>
+                    Website
+                    <input tabIndex={-1} autoComplete="off" name="website" value={trap} onChange={(e) => setTrap(e.target.value)} />
+                  </label>
+                </div>
 
                 <div className="grid gap-5 sm:grid-cols-2">
                   <div>

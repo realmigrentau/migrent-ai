@@ -42,8 +42,8 @@ export default function RulesCommunityGuidelines() {
                 <li>Be truthful and accurate in your profile and during any verification process</li>
                 <li>Respect house rules, neighbours, and applicable tenancy or lodging laws</li>
                 <li>Do not ghost owners after agreeing to an arrangement</li>
-                <li>Understand that Migrent may present an optional one-time AUD $19 platform fee when a successful match occurs</li>
-                <li>Do not encourage or agree to arrangements where an owner intends to circumvent platform fees</li>
+                <li>Know that Migrent never charges renters to search, message, inspect or apply, so anyone asking you to pay Migrent for those is not Migrent</li>
+                <li>Do not agree to take a short stay arranged through Migrent off the platform to avoid the host fee</li>
                 <li>Leave the property in the condition you found it</li>
                 <li>Communicate openly about any issues during your stay</li>
               </ul>
@@ -59,8 +59,8 @@ export default function RulesCommunityGuidelines() {
                 <li>Do not post misleading photos or descriptions</li>
                 <li>Comply with relevant tenancy or lodging laws and anti-discrimination rules</li>
                 <li>Do not demand unlawful payments (e.g. excessive bond or hidden charges)</li>
-                <li>Agree to pay Migrent&apos;s one-time AUD $99 platform fee on each successful match</li>
-                <li>Do not use Migrent to find seekers and then move the arrangement off-platform to avoid fees</li>
+                <li>Pay Migrent&apos;s one-off AUD $99 per property when you confirm the first short stay booked through Migrent at that property (long-term tenancies through applications are free)</li>
+                <li>Do not move a short stay arranged through Migrent off the platform to avoid the host fee</li>
                 <li>Provide a safe, clean, and habitable living environment</li>
                 <li>Respond to enquiries in a timely manner</li>
               </ul>

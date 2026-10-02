@@ -18,11 +18,11 @@ Routes:
 
 import os
 import logging
-import resend
 import httpx
 from typing import Optional
 from datetime import datetime, timezone
-from fastapi import APIRouter, BackgroundTasks, HTTPException, Header, Query
+from fastapi import APIRouter, BackgroundTasks, HTTPException, Header, Query, Request
+from limiter import limiter
 from db import get_supabase_admin
 from auth_utils import get_current_user
 from models_support import (
@@ -35,7 +35,6 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/support", tags=["support-system"])
 
-RESEND_API_KEY = os.environ.get("RESEND_API_KEY", "")
 SUPPORT_EMAIL = os.environ.get("SUPPORT_EMAIL", "migrentau@gmail.com")
 N8N_WEBHOOK_BASE = os.environ.get("N8N_WEBHOOK_BASE", "")  # e.g. https://n8n.migrent-ai.com/webhook
 
@@ -98,14 +97,29 @@ async def _fire_webhook(event: str, payload: dict):
 # ══════════════════════════════════════════════════════════════
 
 @router.post("/tickets")
-async def create_ticket(body: TicketCreate, authorization: Optional[str] = Header(None)):
-    """Create a new support ticket. Works for both authenticated and guest users."""
+@limiter.limit("5/hour")
+async def create_ticket(request: Request, body: TicketCreate, authorization: Optional[str] = Header(None)):
+    """Create a new support ticket. Works for both authenticated and guest users.
+
+    Guests (MIG-041): an email is required so there is someone to answer,
+    they cannot set the priority, a per-address daily limit applies on top
+    of the per-connection one, and the hidden `website` field drops bots."""
     user = _get_user_optional(authorization)
     sb = get_supabase_admin()
+    from support_guard import guest_limit_reached, is_bot
+
+    if is_bot(body.website):
+        return {"status": "ok", "ticket_id": "received"}
 
     uid = str(user.id) if user else None
     email = body.email
     name = body.name
+    if not user:
+        if not email:
+            raise HTTPException(status_code=400, detail="Add your email so we can reply.")
+        if guest_limit_reached(sb, email):
+            raise HTTPException(status_code=429, detail="We have your messages. We'll reply by email; please wait for that before sending more.")
+        body.priority = "normal"
 
     # If authenticated, pull email from user
     if user and not email:
@@ -151,24 +165,14 @@ async def create_ticket(body: TicketCreate, authorization: Optional[str] = Heade
         "message": body.message,
     })
 
-    # Send confirmation email to customer
-    if RESEND_API_KEY and email:
+    # Confirmation to the customer, from Migrent's own sender (it used
+    # Resend's shared test sender, which only delivers to the account
+    # owner, and put the subject into the HTML unescaped).
+    if email:
         try:
-            resend.api_key = RESEND_API_KEY
-            resend.Emails.send({
-                "from": "Migrent Support <onboarding@resend.dev>",
-                "to": [email],
-                "subject": f"We received your request: {body.subject}",
-                "html": f"""
-                <h2>Thanks for contacting Migrent Support</h2>
-                <p>We have received your request. We reply on weekdays, in Australian business hours, usually within one business day.</p>
-                <p><strong>Ticket ID:</strong> {ticket_id[:8]}</p>
-                <p><strong>Subject:</strong> {body.subject}</p>
-                <p>You can view your ticket status in your <a href="{FRONTEND_URL}/support/tickets">support requests</a>.</p>
-                <br/>
-                <p>- The Migrent Team</p>
-                """,
-            })
+            from email_bookings import send_support_request_received
+
+            send_support_request_received(email, name or (user.email if user else None), ticket_id[:8], body.subject)
         except Exception:
             logger.exception("Failed to send ticket confirmation email")
 
@@ -523,7 +527,8 @@ def create_help_article(body: HelpArticleCreate, authorization: str = Header(...
 
 
 @router.post("/help/articles/{article_id}/vote")
-def vote_article(article_id: str, body: HelpVote):
+@limiter.limit("20/hour")
+def vote_article(request: Request, article_id: str, body: HelpVote):
     """Vote an article as helpful or not. Public endpoint."""
     sb = get_supabase_admin()
 

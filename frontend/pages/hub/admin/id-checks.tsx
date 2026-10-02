@@ -13,6 +13,7 @@ import { hubApi, HubError } from "../../../lib/hub/api";
 import { plural, relative } from "../../../lib/hub/format";
 import { invalidate, useHubQuery } from "../../../lib/hub/query";
 import type { Person } from "../../../lib/hub/types";
+import ReasonPicker from "../../../components/hub/admin/ReasonPicker";
 
 interface IdCheck {
   user_id: string;
@@ -114,9 +115,12 @@ function DecisionDialog({ check, action, onClose }: { check: IdCheck | null; act
       }
     >
       {!approve && (
-        <Field label="What was wrong (sent to the owner)" hint="e.g. The photo is too blurry to read the name. Please upload a clearer photo of the whole page.">
-          {({ id, describedBy }) => <Textarea id={id} rows={3} value={reason} maxLength={500} onChange={(e) => setReason(e.target.value)} aria-describedby={describedBy} autoFocus />}
-        </Field>
+        <div className="flex flex-col gap-4">
+          <ReasonPicker kind="id_reject" onPick={setReason} />
+          <Field label="What was wrong (sent to the owner)" hint="e.g. The photo is too blurry to read the name. Please upload a clearer photo of the whole page.">
+            {({ id, describedBy }) => <Textarea id={id} rows={3} value={reason} maxLength={500} onChange={(e) => setReason(e.target.value)} aria-describedby={describedBy} autoFocus />}
+          </Field>
+        </div>
       )}
     </Dialog>
   );

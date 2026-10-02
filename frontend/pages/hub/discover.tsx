@@ -77,6 +77,8 @@ function savedSearchParams(f: SearchFilters) {
   if (f.petsAllowed) p.pets_allowed = true;
   if (f.parking) p.parking = true;
   if (f.checkIn) p.available_from = f.checkIn;
+  if (f.leaseType) p.listing_purpose = f.leaseType;
+  if (f.newcomer) p.newcomer_friendly = true;
   return p;
 }
 
@@ -111,6 +113,16 @@ export default function Discover() {
   const [saving, setSaving] = useState(false);
   const listRef = useRef<HTMLDivElement>(null);
   const requestId = useRef(0);
+
+  // "Get an alert" on the public search links here with ?save=1 and that
+  // search's filters: open the save dialog straight away, once.
+  const offeredSave = useRef(false);
+  useEffect(() => {
+    if (!router.isReady || offeredSave.current || router.query.save !== "1") return;
+    offeredSave.current = true;
+    setSaveName(searchName(filters));
+    setSaveOpen(true);
+  }, [router.isReady, router.query.save, filters]);
 
   useEffect(() => {
     if (!router.isReady) return;

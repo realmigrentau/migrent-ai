@@ -90,9 +90,9 @@ function AlertCard({ empty }: { empty: boolean }) {
         <span className="site-icon" aria-hidden="true">
           <BellRing className="h-5 w-5" strokeWidth={1.9} />
         </span>
-        <h3 className="site-h3 site-h3--lg mt-5">{empty ? "New rooms are added every week" : "More rooms every week"}</h3>
+        <h3 className="site-h3 site-h3--lg mt-5">{empty ? "Be the first to hear" : "Hear about new rooms"}</h3>
         <p className="site-body mt-2">
-          Save a search in Migrent Hub for where you want to live, and choose how often you hear about new rooms.
+          Save a search in Migrent Hub for where you want to live, and choose how often we tell you about new rooms there.
         </p>
       </div>
       <Link href={hubAbsoluteUrl("/discover")} className="btn-secondary self-start">
@@ -130,15 +130,23 @@ export default function RoomsNow({ initial = null }: { initial?: Listing[] | nul
     <section id="rooms" className="site-section pb-8 scroll-mt-[96px]" aria-labelledby="rooms-heading">
       <Reveal>
         <Strip
-          label="Rooms available now"
+          label={listings && listings.length === 0 ? "Rooms" : "Rooms available now"}
           head={
             <SectionHead
-              eyebrow="Available now"
+              eyebrow={listings && listings.length === 0 ? "Rooms" : "Available now"}
               id="rooms-heading"
               heading={
-                <>
-                  Rooms you can <strong>move into.</strong>
-                </>
+                listings && listings.length === 0 ? (
+                  // No rooms are live yet: say so, rather than a heading
+                  // promising rooms above an empty strip.
+                  <>
+                    The first rooms are <strong>on their way.</strong>
+                  </>
+                ) : (
+                  <>
+                    Rooms you can <strong>move into.</strong>
+                  </>
+                )
               }
               aside={
                 <Link href="/seeker/search" className="site-link">

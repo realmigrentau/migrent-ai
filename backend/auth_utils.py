@@ -158,6 +158,137 @@ def get_current_user(authorization: str):
     return _verify_remotely(token)
 
 
+# ---------------------------------------------------------------------------
+# Suspended accounts
+#
+# An admin suspends an account by setting profiles.disabled_at (Admin panel >
+# People). Migrent Hub's hub_actor() refuses suspended accounts; the routes
+# outside the Hub that change something call get_active_user() instead of
+# get_current_user() so a suspension stops them too (sending messages,
+# creating or editing listings, bookings, reviews, mentor actions, profile
+# edits). Reading, contacting support, reporting, pausing or deleting your own
+# listing and deleting the account stay open to a suspended account.
+#
+# The answer is cached for a few seconds per account, so a burst of calls
+# costs one lookup; forget_account_status() drops the cache entry when an
+# admin suspends or reinstates someone, so it applies at once on this
+# instance and within ACTIVE_CACHE_SECONDS everywhere else.
+# ---------------------------------------------------------------------------
+
+SUSPENDED_DETAIL = "This account has been suspended. Contact support if you think this is a mistake."
+ACTIVE_CACHE_SECONDS = 15
+_active_cache: dict[str, tuple[float, bool]] = {}
+_active_lock = threading.Lock()
+
+
+def account_is_suspended(user_id: str) -> bool:
+    now = time.monotonic()
+    with _active_lock:
+        hit = _active_cache.get(user_id)
+        if hit and hit[0] > now:
+            return hit[1]
+    from db import get_supabase_admin
+
+    try:
+        res = get_supabase_admin().table("profiles").select("disabled_at").eq("id", user_id).execute()
+    except Exception:
+        # Fail closed: a write that cannot confirm the account is active
+        # does not go ahead.
+        raise HTTPException(status_code=503, detail="We could not confirm your account just now. Try again in a moment.")
+    suspended = bool(res.data and res.data[0].get("disabled_at"))
+    with _active_lock:
+        if len(_active_cache) >= REMOTE_CACHE_MAX:
+            _active_cache.clear()
+        _active_cache[user_id] = (now + ACTIVE_CACHE_SECONDS, suspended)
+    return suspended
+
+
+def forget_account_status(user_id: str) -> None:
+    with _active_lock:
+        _active_cache.pop(str(user_id), None)
+
+
+def get_active_user(authorization: str):
+    """get_current_user(), refusing suspended accounts (403) and sessions
+    that skipped a two-step check the account has set up."""
+    user = get_current_user(authorization)
+    if account_is_suspended(str(user.id)):
+        raise HTTPException(status_code=403, detail=SUSPENDED_DETAIL)
+    require_mfa_if_enrolled(str(user.id), authorization)
+    return user
+
+
+# ---------------------------------------------------------------------------
+# Two-step verification (MFA)
+#
+# Supabase records how a session signed in as the `aal` claim of the access
+# token: aal1 for a password, magic link or Google alone, aal2 once an
+# authenticator code was also entered. The Hub already asks for the code in
+# the browser when an account has an authenticator; these checks make the
+# server insist on it too, so a stolen password cannot be used against the
+# API directly.
+#
+#  - require_mfa_if_enrolled: an account with a verified authenticator must
+#    present an aal2 session. Whether it has one is read from auth.mfa_factors
+#    through the user_mfa_enrolled() database function (migration 046) and
+#    cached briefly. If that function is missing (the API deployed before the
+#    migration), this check is skipped with a warning rather than locking
+#    everyone out.
+#  - Admin access always needs aal2 (admin_panel.require_admin_mfa).
+# ---------------------------------------------------------------------------
+
+MFA_STEP_UP_DETAIL = "Enter the code from your authenticator app to continue."
+MFA_CACHE_SECONDS = 120
+_mfa_cache: dict[str, tuple[float, bool]] = {}
+_mfa_lock = threading.Lock()
+
+
+def token_claims(authorization: Optional[str]) -> dict:
+    """The claims of an access token. Only call this after the token has been
+    verified (get_current_user); the signature is not checked again here."""
+    token = (authorization or "").removeprefix("Bearer ").strip()
+    try:
+        return jwt.decode(token, options={"verify_signature": False}) or {}
+    except jwt.PyJWTError:
+        return {}
+
+
+def session_aal(authorization: Optional[str]) -> str:
+    return str(token_claims(authorization).get("aal") or "aal1")
+
+
+def mfa_enrolled(user_id: str) -> bool:
+    now = time.monotonic()
+    with _mfa_lock:
+        hit = _mfa_cache.get(user_id)
+        if hit and hit[0] > now:
+            return hit[1]
+    try:
+        res = get_supabase_admin_client().rpc("user_mfa_enrolled", {"uid": user_id}).execute()
+        enrolled = bool(res.data)
+    except Exception:
+        logger.warning("user_mfa_enrolled() unavailable; two-step check skipped (has migration 046 run?)")
+        return False
+    with _mfa_lock:
+        if len(_mfa_cache) >= REMOTE_CACHE_MAX:
+            _mfa_cache.clear()
+        _mfa_cache[user_id] = (now + MFA_CACHE_SECONDS, enrolled)
+    return enrolled
+
+
+def require_mfa_if_enrolled(user_id: str, authorization: Optional[str]) -> None:
+    if session_aal(authorization) == "aal2":
+        return
+    if mfa_enrolled(user_id):
+        raise HTTPException(status_code=401, detail=MFA_STEP_UP_DETAIL)
+
+
+def get_supabase_admin_client():
+    from db import get_supabase_admin
+
+    return get_supabase_admin()
+
+
 def is_admin_user(user) -> bool:
     """True if the user holds an admin role, per the database.
 
@@ -192,9 +323,13 @@ def get_optional_user(authorization):
 
 
 def require_admin(authorization: str):
-    """Validate the token and require an admin role from the database."""
+    """Validate the token and require an admin role from the database, a
+    live session and a two-step sign-in."""
     user = get_current_user(authorization)
     if not is_admin_user(user):
         raise HTTPException(status_code=403, detail="Admin access required")
     require_live_session(authorization, str(user.id))
+    from admin_panel import require_admin_mfa
+
+    require_admin_mfa(authorization)
     return user

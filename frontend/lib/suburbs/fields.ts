@@ -267,7 +267,9 @@ export const AMENITY_LABELS: Record<string, string> = {
 
 /** Singular forms for "nearest X" lines. */
 export const TRANSPORT_SINGULAR: Record<string, string> = {
-  train_station: "train station",
+  // OpenStreetMap's station tag also covers light rail and metro stops
+  // (Parramatta's nearest was a light rail stop), so no "train" here.
+  train_station: "station or stop",
   tram_stop: "tram or light rail stop",
   ferry_terminal: "ferry terminal",
 };

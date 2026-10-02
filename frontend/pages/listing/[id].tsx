@@ -13,6 +13,8 @@ import ReviewsSection from "../../components/listings/ReviewsSection";
 import SimilarListings from "../../components/listings/SimilarListings";
 import ModerationStatusBanner from "../../components/listings/ModerationStatusBanner";
 import TrueCostBadge from "../../components/listings/TrueCostBadge";
+import MoveInCost from "../../components/listings/MoveInCost";
+import ListingTools from "../../components/listings/ListingTools";
 import SEOHead from "../../components/SEOHead";
 import { API_BASE_URL } from "../../lib/apiBase";
 import { siteIdentity, supportPromise } from "../../lib/siteIdentity";
@@ -20,6 +22,8 @@ import { siteIdentity, supportPromise } from "../../lib/siteIdentity";
 import type { GetServerSideProps } from "next";
 import { hubFromSite } from "../../lib/hub/routes";
 import HubActions, { hubIntentHref } from "../../components/listings/HubActions";
+import ListingSafety from "../../components/listings/ListingSafety";
+import { Events, trackEvent } from "../../lib/analytics";
 import { useMounted } from "../../hooks/useMounted";
 
 /**
@@ -126,6 +130,15 @@ export default function ListingDetailPage({ initialListing }: { initialListing?:
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, session?.access_token, refreshing, retryCount, initialListing]);
+
+  // One view per listing per page load (owner visits excluded server-side
+  // in listing insights; this is the site-wide funnel count).
+  const viewedRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (!listing?.id || viewedRef.current === listing.id) return;
+    viewedRef.current = listing.id;
+    trackEvent(Events.LISTING_VIEWED, { listing_id: listing.id });
+  }, [listing?.id]);
 
   useEffect(() => {
     if (!bookingFormRef.current) return;
@@ -328,6 +341,16 @@ export default function ListingDetailPage({ initialListing }: { initialListing?:
                   {shortStay ? "The street address is shared once the host accepts your booking." : "The street address is shared when you book an inspection."}
                 </p>
               )}
+              {listing.newcomer_friendly && (
+                <p className="mt-3 inline-flex items-center gap-2 rounded-full bg-[var(--color-primary-soft)] px-3 py-1.5 text-[13px] font-semibold text-[var(--color-ink)]" data-testid="newcomer-friendly">
+                  New to Australia? No local rental history needed.
+                </p>
+              )}
+              {isPublished && (
+                <div className="mt-4">
+                  <ListingTools listingId={listing.id} title={title} />
+                </div>
+              )}
             </div>
             <p className="m-0 shrink-0 text-[28px] font-semibold tracking-[-0.02em] text-[var(--color-ink)] tabular-nums">
               ${listing.weekly_price}
@@ -342,7 +365,9 @@ export default function ListingDetailPage({ initialListing }: { initialListing?:
                 <p className="site-body whitespace-pre-line">{listing.description}</p>
               </section>
 
-              <TrueCostBadge weeklyRent={listing.weekly_price} billsIncluded={Boolean(listing.bills_included)} listingLat={listing.location?.approx_lat} listingLng={listing.location?.approx_lng} />
+              <MoveInCost listing={listing} headingClassName="site-h3 site-h3--lg" />
+
+              <TrueCostBadge weeklyRent={listing.weekly_price} billsIncluded={Boolean(listing.bills_included)} billsEstimate={listing.bills_estimate_weekly ?? undefined} listingLat={listing.location?.approx_lat} listingLng={listing.location?.approx_lng} />
 
               <KeyDetails
                 listing={{
@@ -381,9 +406,12 @@ export default function ListingDetailPage({ initialListing }: { initialListing?:
                 }}
               />
 
-              {owner && <OwnerCard owner={owner} listingId={listing.id} />}
+              {owner && <OwnerCard owner={owner} listingId={listing.id} signedIn={Boolean(session)} />}
 
-              <ReviewsSection listingId={listing.id} initialStats={reviewStats} />
+              {/* Reviews can only come from a completed stay or tenancy, and
+                  none exist yet (MIGRENT_MASTER_AUDIT MIG-011): show the
+                  section once there is something in it, not an empty heading. */}
+              {(reviewStats?.review_count ?? 0) > 0 && <ReviewsSection listingId={listing.id} initialStats={reviewStats} signedIn={Boolean(session)} />}
 
               {similarListings.length > 0 && (
                 <SimilarListings
@@ -448,7 +476,7 @@ export default function ListingDetailPage({ initialListing }: { initialListing?:
                       <ol className="text-left text-[13.5px] text-[var(--color-ink-2)] leading-[1.6] space-y-2 mb-4">
                         <li className="flex gap-2.5"><span className="font-mono text-[11px] text-[var(--color-ink-3)] mt-0.5">1</span><span>This room is held for your dates. The host has been told.</span></li>
                         <li className="flex gap-2.5"><span className="font-mono text-[11px] text-[var(--color-ink-3)] mt-0.5">2</span><span>We will email you when the host confirms, and it will show up under your bookings.</span></li>
-                        <li className="flex gap-2.5"><span className="font-mono text-[11px] text-[var(--color-ink-3)] mt-0.5">3</span><span>You owe Migrent nothing. Rent and bond are arranged with the host directly.</span></li>
+                        <li className="flex gap-2.5"><span className="font-mono text-[11px] text-[var(--color-ink-3)] mt-0.5">3</span><span>You owe Migrent nothing. Pay the host only after you have seen the room, by bank transfer to an account in their name, never by gift card or crypto.</span></li>
                       </ol>
                     ) : (
                       <ol className="text-left text-[13.5px] text-[var(--color-ink-2)] leading-[1.6] space-y-2 mb-4">
@@ -504,6 +532,7 @@ export default function ListingDetailPage({ initialListing }: { initialListing?:
                         max_guests: listing.max_guests ?? undefined,
                         available_from: listing.available_from ?? undefined,
                         available_to: listing.available_to ?? undefined,
+                        bond_weeks: listing.bond_weeks ?? null,
                       }}
                       onSubmit={handleBooking}
                       loading={bookingLoading}
@@ -511,6 +540,7 @@ export default function ListingDetailPage({ initialListing }: { initialListing?:
                     />
                   </>
                 )}
+                {isPublished && !isOwner && <ListingSafety listingId={listing.id} title={listing.title || "a room"} signedIn={Boolean(session)} />}
               </div>
             </div>
           </div>

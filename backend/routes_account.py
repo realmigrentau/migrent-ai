@@ -3,9 +3,10 @@ Account management endpoints - Delete account only.
 """
 
 import logging
+import time
 from fastapi import APIRouter, HTTPException, Header, Request
 from db import get_supabase_admin
-from auth_utils import get_current_user
+from auth_utils import get_current_user, token_claims
 from limiter import limiter
 
 logger = logging.getLogger(__name__)
@@ -65,6 +66,74 @@ def _delete_hub_rows(sb, uid: str) -> None:
                 logger.warning("Error deleting %s on the account's listings", table)
 
 
+# Deleting an account is permanent, so it needs a fresh sign-in: Supabase
+# records when the person last proved who they are in the `amr` claim of
+# every access token. 428 tells the Hub to ask them to sign in again.
+RECENT_SIGN_IN_SECONDS = 15 * 60
+REAUTH_DETAIL = "For your security, sign in again and then delete your account. We ask for a fresh sign-in before anything this permanent."
+
+
+def _signed_in_recently(authorization: str) -> bool:
+    amr = token_claims(authorization).get("amr") or []
+    stamps = [a.get("timestamp") for a in amr if isinstance(a, dict) and isinstance(a.get("timestamp"), (int, float))]
+    return bool(stamps) and time.time() - max(stamps) <= RECENT_SIGN_IN_SECONDS
+
+
+def _open_report_involving(sb, uid: str) -> bool:
+    """A report about this person, or one of their listings, that Migrent is
+    still looking into. Deleting then would destroy what the team needs."""
+    try:
+        listing_ids = [r["id"] for r in (sb.table("listings").select("id").eq("owner_id", uid).execute().data or [])]
+        about_them = sb.table("reports").select("id").eq("item_id", uid).in_("status", ["pending", "reviewing"]).limit(1).execute().data
+        if about_them:
+            return True
+        if listing_ids:
+            on_listings = sb.table("reports").select("id").in_("item_id", listing_ids).in_("status", ["pending", "reviewing"]).limit(1).execute().data
+            return bool(on_listings)
+    except Exception:
+        logger.warning("Could not check reports before account deletion")
+    return False
+
+
+# Private and public files a person uploaded, by bucket. Each is stored under
+# their account id (see the upload routes); profile photos are named by it.
+USER_FILE_BUCKETS = ("owner-id-docs", "renter-documents", "message-attachments", "listing-images")
+
+
+def _remove_user_files(sb, uid: str) -> int:
+    """Delete everything the account uploaded to Storage. The rows that
+    pointed at these files go with the account; the files used to stay
+    behind, government ID images included."""
+    removed = 0
+
+    def _drain(bucket: str, folder: str, search: str | None = None, prefix: str | None = None) -> None:
+        nonlocal removed
+        store = sb.storage.from_(bucket)
+        while True:
+            opts = {"limit": 100, "offset": 0}
+            if search:
+                opts["search"] = search
+            items = store.list(folder, opts) or []
+            paths = [f"{prefix or folder}/{i['name']}" for i in items if i.get("name") and (not search or i["name"].startswith(search))]
+            if not paths:
+                return
+            store.remove(paths)
+            removed += len(paths)
+            if len(items) < 100:
+                return
+
+    for bucket in USER_FILE_BUCKETS:
+        try:
+            _drain(bucket, uid)
+        except Exception:
+            logger.warning("Could not remove %s files for a deleted account", bucket)
+    try:
+        _drain("avatars", "profile-photos", search=uid)
+    except Exception:
+        logger.warning("Could not remove the profile photo for a deleted account")
+    return removed
+
+
 @router.delete("/delete")
 @limiter.limit("3/hour")
 def delete_account(
@@ -79,9 +148,20 @@ def delete_account(
     sb = get_supabase_admin()
     uid = str(user.id)
 
+    if not _signed_in_recently(authorization):
+        raise HTTPException(status_code=428, detail=REAUTH_DETAIL)
+
     reason = _blocking_reason(sb, uid)
     if reason:
         raise HTTPException(status_code=409, detail=reason)
+    if _open_report_involving(sb, uid):
+        raise HTTPException(
+            status_code=409,
+            detail="Migrent is looking into a report involving your account or one of your listings. Contact support and we will finish this with you.",
+        )
+
+    # Files first: once the rows are gone nothing records where they were.
+    files_removed = _remove_user_files(sb, uid)
 
     try:
         logger.info("Starting account deletion")
@@ -158,7 +238,7 @@ def delete_account(
         except Exception:
             logger.warning("Could not delete auth user record")
 
-        logger.info("Account deletion completed")
+        logger.info("Account deletion completed (%d files removed)", files_removed)
         return {
             "success": True,
             "message": "Account and all associated data deleted successfully. You can sign up again later.",

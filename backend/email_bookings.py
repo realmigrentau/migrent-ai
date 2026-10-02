@@ -6,7 +6,9 @@ Uses Mailjet for transactional emails. All functions are fire-and-forget
 """
 
 import os
+import html
 import logging
+from typing import Optional
 import httpx
 
 logger = logging.getLogger(__name__)
@@ -21,6 +23,14 @@ FRONTEND_URL = os.environ.get("FRONTEND_URL", "https://migrent.vercel.app")
 # 5.9:1, so button labels stay readable at 16px.
 BRAND_COLOR = "#3153D9"
 BRAND_BG = "#F6F8FC"
+
+
+def _hub_url(path: str) -> str:
+    """Absolute link to a Migrent Hub page. The old /dashboard, /owner and
+    /account pages only redirect into the Hub after a sign-in bounce, and
+    /support never existed (MIGRENT_MASTER_AUDIT MIG-030)."""
+    base = os.environ.get("HUB_BASE_URL", "").rstrip("/") or f"{FRONTEND_URL}/hub"
+    return f"{base}{path}"
 
 
 def _email_layout(content: str, preview: str = "") -> str:
@@ -87,8 +97,9 @@ def _details_box(rows: list[tuple[str, str]]) -> str:
     </div>"""
 
 
-def _send_email(to: str, subject: str, html: str, text: str = ""):
-    """Send an HTML email via Mailjet with plain-text fallback."""
+def _send_email(to: str, subject: str, html: str, text: str = "", headers: Optional[dict] = None):
+    """Send an HTML email via Mailjet with plain-text fallback. `headers`
+    adds mail headers (List-Unsubscribe, unsubscribe.py)."""
     if not MAILJET_API_KEY or not MAILJET_SECRET_KEY:
         logger.warning("MAILJET keys not set - skipping email to %s", to)
         return
@@ -106,6 +117,8 @@ def _send_email(to: str, subject: str, html: str, text: str = ""):
         }
         if text:
             payload["Messages"][0]["TextPart"] = text
+        if headers:
+            payload["Messages"][0]["Headers"] = headers
 
         response = httpx.post(
             "https://api.mailjet.com/v3.1/send",
@@ -117,6 +130,25 @@ def _send_email(to: str, subject: str, html: str, text: str = ""):
         logger.info("Email sent to %s: %s", to, subject)
     except Exception as e:
         logger.error("Failed to send email to %s: %s", to, e)
+
+
+def send_support_request_received(to: str, name: Optional[str], reference: str, subject: str) -> None:
+    """Confirmation to someone who wrote to Migrent support (Contact page or
+    the help button). Sent from FROM_EMAIL like every other Migrent email."""
+    first = (name or "").strip().split(" ")[0] or "there"
+    safe_subject = html.escape(subject or "Your message")
+    content = f"""
+      <h1 style="font-size:22px;margin:0 0 12px;">We have your message</h1>
+      <p style="margin:0 0 12px;">Hi {html.escape(first)}, thanks for writing to Migrent. A person reads every message and replies by email, usually within one business day (weekdays, Australian business hours).</p>
+      {_details_box([("Reference", html.escape(reference)), ("About", safe_subject)])}
+      <p style="margin:0 0 12px;">If you feel unsafe, call 000 first.</p>
+      <p style="margin:0;color:#6b7280;font-size:13px;">You can reply to this email to add anything.</p>
+    """
+    text = (
+        f"Hi {first}, thanks for writing to Migrent. A person replies by email, usually within one business day.\n"
+        f"Reference: {reference}\nAbout: {subject}\nIf you feel unsafe, call 000 first."
+    )
+    _send_email(to, f"We have your message ({reference})", _email_layout(content, preview="A person replies by email, usually within one business day."), text)
 
 
 def send_booking_request_to_owner(
@@ -148,7 +180,7 @@ def send_booking_request_to_owner(
         ("Status", "Awaiting your response"),
     ])}
 
-    {_button("Review Request", f"{FRONTEND_URL}/dashboard/owner")}
+    {_button("Review Request", _hub_url("/applications"))}
 
     <p style="font-size:13px;color:#9ca3af;text-align:center;margin:8px 0 0;">
       You have 48 hours to respond before the request expires.
@@ -161,7 +193,7 @@ def send_booking_request_to_owner(
         f"Dates: {check_in} to {check_out}\n"
         f"Guests: {guests}\n"
         f"Estimated rent: AUD ${total_price:,.2f}\n\n"
-        f"Review: {FRONTEND_URL}/dashboard/owner\n\n"
+        f"Review: {_hub_url('/applications')}\n\n"
         f"You have 48 hours to respond.\n\n"
         f"- The Migrent Team"
     )
@@ -337,7 +369,7 @@ def send_booking_confirmed_to_both(
       <p style="font-size:13px;color:#92400e;margin:0;line-height:20px;">3. Be available on check-in day for handover</p>
     </div>
 
-    {_button("Go to Dashboard", f"{FRONTEND_URL}/dashboard/owner")}
+    {_button("Go to Dashboard", _hub_url("/applications"))}
     """
 
     owner_text = (
@@ -345,7 +377,7 @@ def send_booking_confirmed_to_both(
         f"Payment is complete! The booking for {listing_title} is now confirmed.\n\n"
         f"Guest: {seeker_name}\n"
         f"Dates: {check_in} to {check_out}\n\n"
-        f"Dashboard: {FRONTEND_URL}/dashboard/owner\n\n"
+        f"Dashboard: {_hub_url('/applications')}\n\n"
         f"- The Migrent Team"
     )
 
@@ -377,14 +409,14 @@ def send_booking_confirmed_to_both(
       <p style="font-size:13px;color:#92400e;margin:0;line-height:20px;">3. Arrive on your check-in date</p>
     </div>
 
-    {_button("Go to Dashboard", f"{FRONTEND_URL}/dashboard/seeker")}
+    {_button("Go to Dashboard", _hub_url("/applications"))}
     """
 
     seeker_text = (
         f"Hi {seeker_name},\n\n"
         f"Your booking for {listing_title} is confirmed!\n\n"
         f"Check-in: {check_in}\nCheck-out: {check_out}\n\n"
-        f"Dashboard: {FRONTEND_URL}/dashboard/seeker\n\n"
+        f"Dashboard: {_hub_url('/applications')}\n\n"
         f"Welcome to your new home!\n\n"
         f"- The Migrent Team"
     )
@@ -417,7 +449,7 @@ def send_listing_approved_to_owner(
         ("Status", "Live"),
     ])}
 
-    {_button("View Your Listing", f"{FRONTEND_URL}/owner/listings")}
+    {_button("View Your Listing", _hub_url("/properties"))}
 
     <p style="font-size:13px;color:#9ca3af;text-align:center;margin:8px 0 0;">
       Seekers can now find and book your room.
@@ -427,7 +459,7 @@ def send_listing_approved_to_owner(
     text = (
         f"Hi {owner_name},\n\n"
         f"Your listing '{listing_title}' has been approved and is now live on Migrent!\n\n"
-        f"View your listings: {FRONTEND_URL}/owner/listings\n\n"
+        f"View your listings: {_hub_url('/properties')}\n\n"
         f"- The Migrent Team"
     )
 
@@ -463,7 +495,7 @@ def send_listing_rejected_to_owner(
       You can update your listing and resubmit it for review.
     </p>
 
-    {_button("Edit Your Listing", f"{FRONTEND_URL}/owner/listings")}
+    {_button("Edit Your Listing", _hub_url("/properties"))}
 
     <p style="font-size:13px;color:#9ca3af;text-align:center;margin:8px 0 0;">
       Need help? Contact our support team.
@@ -474,7 +506,7 @@ def send_listing_rejected_to_owner(
         f"Hi {owner_name},\n\n"
         f"Your listing '{listing_title}' was not approved.\n\n"
         f"Reason: {reason}\n\n"
-        f"You can edit and resubmit: {FRONTEND_URL}/owner/listings\n\n"
+        f"You can edit and resubmit: {_hub_url('/properties')}\n\n"
         f"- The Migrent Team"
     )
 
@@ -510,14 +542,14 @@ def send_listing_changes_requested_to_owner(
       Once you make the changes, your listing will be re-reviewed quickly.
     </p>
 
-    {_button("Edit Your Listing", f"{FRONTEND_URL}/owner/listings")}
+    {_button("Edit Your Listing", _hub_url("/properties"))}
     """
 
     text = (
         f"Hi {owner_name},\n\n"
         f"Your listing '{listing_title}' needs some changes before going live.\n\n"
         f"Changes needed: {changes_needed}\n\n"
-        f"Edit your listing: {FRONTEND_URL}/owner/listings\n\n"
+        f"Edit your listing: {_hub_url('/properties')}\n\n"
         f"- The Migrent Team"
     )
 
@@ -551,7 +583,7 @@ def send_listing_under_review_to_owner(
       <p style="font-size:13px;color:#1e40af;margin:0;line-height:20px;">- If changes are needed, we will let you know exactly what to update</p>
     </div>
 
-    {_button("View Your Listings", f"{FRONTEND_URL}/owner/listings")}
+    {_button("View Your Listings", _hub_url("/properties"))}
 
     <p style="font-size:13px;color:#9ca3af;text-align:center;margin:8px 0 0;">
       If you have questions, please contact our support team.
@@ -562,7 +594,7 @@ def send_listing_under_review_to_owner(
         f"Hi {owner_name},\n\n"
         f"Your listing '{listing_title}' is currently under additional review.\n"
         f"This is routine - our team will review it shortly.\n\n"
-        f"View your listings: {FRONTEND_URL}/owner/listings\n\n"
+        f"View your listings: {_hub_url('/properties')}\n\n"
         f"- The Migrent Team"
     )
 
@@ -598,7 +630,7 @@ def send_listing_removed_to_owner(
       If you believe this was a mistake, please contact our support team and we will be happy to review.
     </p>
 
-    {_button("Contact Support", f"{FRONTEND_URL}/support")}
+    {_button("Contact Support", f"{FRONTEND_URL}/contact")}
 
     <p style="font-size:13px;color:#9ca3af;text-align:center;margin:8px 0 0;">
       All moderation decisions are reviewed by a real person on our team.
@@ -609,7 +641,7 @@ def send_listing_removed_to_owner(
         f"Hi {owner_name},\n\n"
         f"Your listing '{listing_title}' has been removed.\n\n"
         f"Reason: {reason}\n\n"
-        f"If you believe this was a mistake, contact support: {FRONTEND_URL}/support\n\n"
+        f"If you believe this was a mistake, contact support: {FRONTEND_URL}/contact\n\n"
         f"- The Migrent Team"
     )
 
@@ -627,7 +659,7 @@ def send_listing_expiring_to_owner(
     extend it or let it lapse. Without this, rooms silently vanished from
     search and owners assumed the site had stopped working."""
     subject = f"Your listing '{listing_title}' comes off Migrent on {available_to}"
-    renew_url = f"{FRONTEND_URL}/owner/listings/edit/{listing_id}"
+    renew_url = _hub_url(f"/listings/{listing_id}/edit")
 
     content = f"""
     <h2 style="font-size:24px;font-weight:bold;color:#1a1a1a;margin:0 0 16px;">Still available?</h2>
@@ -663,7 +695,7 @@ def send_listing_paused_to_owner(
 ):
     """An admin has taken a listing offline and needs specific things fixed."""
     subject = f"Action needed: '{listing_title}' is paused on Migrent"
-    edit_url = f"{FRONTEND_URL}/owner/listings/edit/{listing_id}"
+    edit_url = _hub_url(f"/listings/{listing_id}/edit")
     items = "".join(f"<li style='margin:0 0 6px;'>{a}</li>" for a in required_actions)
 
     content = f"""
@@ -689,3 +721,21 @@ def send_listing_paused_to_owner(
         + f"\n\nUpdate it here: {edit_url}\n\n- The Migrent Team"
     )
     _send_email(owner_email, subject, _email_layout(content, f"{listing_title} is paused"), text)
+
+
+def send_welcome(to: str, name: str, role: str) -> None:
+    """Sent once, when someone first finishes onboarding in the Hub
+    (MIGRENT_MASTER_AUDIT MIG-056; the old site sent it from a sign-in page
+    the Hub does not use)."""
+    first = html.escape((name or "").split(" ")[0] or "there")
+    if role == "owner":
+        lead = "Your next steps: check your ID once, then list your property. Renters see that hosts are ID-checked before a room goes live."
+        cta = _button("List a property", _hub_url("/properties/new"))
+    else:
+        lead = "Save a search and we'll email you when a matching room is listed. Every host is ID-checked before a room goes live, and searching and applying are free."
+        cta = _button("Find a room", f"{FRONTEND_URL}/seeker/search")
+    content = f"""<h1 style="font-size:24px;line-height:32px;margin:0 0 12px;">Welcome to Migrent, {first}</h1>
+      <p style="font-size:16px;line-height:24px;margin:0 0 12px;">{lead}</p>
+      {cta}
+      <p style="font-size:14px;line-height:22px;color:#475467;margin:0;">Never pay a deposit or bond before you have seen a room and have a written agreement. If anyone asks you to, report them from the listing or the conversation.</p>"""
+    _send_email(to, "Welcome to Migrent", _email_layout(content, preview="Your account is ready."), text=f"Welcome to Migrent, {first}. {lead}")

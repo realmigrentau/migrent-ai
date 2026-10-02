@@ -13,6 +13,8 @@
 export type SearchType = "suburb" | "postcode" | "address" | "nearMe";
 export type SortBy = "newest" | "price_asc" | "price_desc" | "best_match";
 export type StationDistance = "any" | "15" | "30";
+/** A lease (months or longer) or a short stay (weeks); "" is either. */
+export type LeaseType = "" | "long_term" | "short_stay";
 
 export interface SearchFilters {
   searchType: SearchType;
@@ -54,6 +56,9 @@ export interface SearchFilters {
   noCameras: boolean;
   /** Bedroom doors that lock. */
   lockable: boolean;
+  leaseType: LeaseType;
+  /** Hosts happy to rent without Australian rental history. */
+  newcomer: boolean;
   minStay: string;
   stationName: string;
   stationDistance: StationDistance;
@@ -96,6 +101,8 @@ export const DEFAULT_FILTERS: SearchFilters = {
   internet: false,
   noCameras: false,
   lockable: false,
+  leaseType: "",
+  newcomer: false,
   minStay: "",
   stationName: "",
   stationDistance: "any",
@@ -257,6 +264,9 @@ export function parseSearchQuery(q: QueryLike, today: string = isoToday()): Sear
   f.internet = bool(q.internet);
   f.noCameras = bool(q.noCameras);
   f.lockable = bool(q.lockable);
+  const lease = first(q.lease);
+  f.leaseType = lease === "long_term" || lease === "short_stay" ? lease : "";
+  f.newcomer = bool(q.newcomer);
   f.minStay = first(q.minStay).slice(0, 20);
   f.stationName = first(q.station).slice(0, 80);
   const sd = first(q.stationDistance);
@@ -307,6 +317,8 @@ export function serializeSearchFilters(f: SearchFilters): URLSearchParams {
   set("internet", f.internet);
   set("noCameras", f.noCameras);
   set("lockable", f.lockable);
+  set("lease", f.leaseType);
+  set("newcomer", f.newcomer);
   set("minStay", f.minStay);
   set("station", f.stationName);
   if (f.stationDistance !== "any") set("stationDistance", f.stationDistance);
@@ -354,6 +366,8 @@ export function filtersToApiParams(f: SearchFilters, offset = (f.page - 1) * PAG
   if (f.internet) params.internet_included = "true";
   if (f.noCameras) params.no_cameras = "true";
   if (f.lockable) params.lockable_bedroom = "true";
+  if (f.leaseType) params.lease_type = f.leaseType;
+  if (f.newcomer) params.newcomer_friendly = "true";
   if (f.minStay) params.min_stay = f.minStay;
   if (f.sortBy !== "newest") params.sort = f.sortBy;
   if (f.stationName) params.station_name = f.stationName;

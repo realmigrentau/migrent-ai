@@ -20,6 +20,13 @@ BRAND_COLOR = "#E11D48"
 BRAND_BG = "#f6f9fc"
 
 
+def _hub_url(path: str) -> str:
+    """Absolute link to a Migrent Hub page (MIG-030: not the old /owner and
+    /account pages, which bounce through sign-in)."""
+    base = os.environ.get("HUB_BASE_URL", "").rstrip("/") or f"{FRONTEND_URL}/hub"
+    return f"{base}{path}"
+
+
 def _email_layout(content: str) -> str:
     return f"""<!DOCTYPE html>
 <html>
@@ -81,9 +88,9 @@ def send_id_approved_email(to_email: str, owner_name: str, fully_verified: bool)
           <p style="color:#059669;font-size:14px;margin:8px 0 0;">You can now create and list rooms on Migrent.</p>
         </div>
         <div style="text-align:center;margin:24px 0;">
-          <a href="{url}/owner/listings/new" style="background-color:#059669;border-radius:8px;color:#ffffff;font-size:16px;font-weight:600;text-decoration:none;padding:14px 32px;display:inline-block;">List Your Room</a>
+          <a href="{url}" style="background-color:#059669;border-radius:8px;color:#ffffff;font-size:16px;font-weight:600;text-decoration:none;padding:14px 32px;display:inline-block;">List Your Room</a>
         </div>
-        """.replace("{url}", FRONTEND_URL)
+        """.replace("{url}", _hub_url("/properties/new"))
 
     content = f"""
     <div style="background:#ecfdf5;border-radius:8px;padding:16px;text-align:center;margin:0 0 20px;">
@@ -123,7 +130,7 @@ def send_id_rejected_email(to_email: str, owner_name: str, reason: str):
     </p>
 
     <div style="text-align:center;margin:24px 0;">
-      <a href="{FRONTEND_URL}/account/settings?tab=verification" style="background-color:{BRAND_COLOR};border-radius:8px;color:#ffffff;font-size:16px;font-weight:600;text-decoration:none;padding:14px 32px;display:inline-block;">Re-upload ID</a>
+      <a href="{_hub_url('/settings#verification')}" style="background-color:{BRAND_COLOR};border-radius:8px;color:#ffffff;font-size:16px;font-weight:600;text-decoration:none;padding:14px 32px;display:inline-block;">Re-upload ID</a>
     </div>
     """
     _send(to_email, "Update on your Migrent ID verification", _email_layout(content))

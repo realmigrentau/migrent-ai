@@ -3,7 +3,7 @@ from fastapi import APIRouter, HTTPException, Header
 from pydantic import BaseModel
 from typing import Optional
 from db import get_supabase_admin
-from auth_utils import get_current_user
+from auth_utils import get_current_user, get_active_user
 
 router = APIRouter(prefix="/referrals", tags=["referrals"])
 
@@ -39,7 +39,7 @@ def generate_referral_code(authorization: str = Header(...)):
 @router.post("/use")
 def use_referral_code(body: ReferralUse, authorization: str = Header(...)):
     """Apply a referral code during signup/onboarding."""
-    user = get_current_user(authorization)
+    user = get_active_user(authorization)
     sb = get_supabase_admin()
 
     # Find the referral

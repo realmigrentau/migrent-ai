@@ -216,6 +216,37 @@ function OwnerView({ d, refetch, admin }: { d: ApplicationDetail; refetch: () =>
           </Section>
         )}
 
+        {d.renter_reviews && (
+          <Section title={`What other hosts said about ${first}`} description="From hosts after a tenancy or stay on Migrent. Only hosts see these.">
+            {d.renter_reviews.count === 0 ? (
+              <p className="text-[14px] text-[color:var(--color-ink-3)]">No reviews yet. Many people renting here are new to Australia, so this is normal.</p>
+            ) : (
+              <ul className="flex flex-col gap-3" data-testid="renter-reviews">
+                {d.renter_reviews.reviews.map((r) => (
+                  <li key={r.id} className="rounded-[14px] border border-[var(--color-line)] bg-[var(--color-surface)] px-4 py-3">
+                    <p className="text-[14px] font-semibold text-[color:var(--color-ink)]">
+                      {"★".repeat(r.rating)}
+                      <span className="text-[color:var(--color-ink-4)]">{"★".repeat(5 - r.rating)}</span>
+                      <span className="sr-only">{r.rating} out of 5</span>
+                      <span className="ml-2 text-[12.5px] font-medium text-[color:var(--color-ink-3)]">
+                        {r.reviewer_name}, after a {r.kind === "stay" ? "stay" : "tenancy"} · {day(r.created_at)}
+                      </span>
+                    </p>
+                    {r.review_text && <p className="mt-1.5 text-[14px] leading-relaxed text-[color:var(--color-ink-2)]">{r.review_text}</p>}
+                    {(r.payment_rating || r.cleanliness_rating) && (
+                      <p className="mt-1.5 text-[12.5px] text-[color:var(--color-ink-3)]">
+                        {r.payment_rating ? `Paid on time ${r.payment_rating}/5` : ""}
+                        {r.payment_rating && r.cleanliness_rating ? " · " : ""}
+                        {r.cleanliness_rating ? `Looked after the home ${r.cleanliness_rating}/5` : ""}
+                      </p>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </Section>
+        )}
+
         <Section title="What's happened">
           <ApplicationTimeline events={d.events} viewer="owner" />
         </Section>

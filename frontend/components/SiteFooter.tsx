@@ -85,7 +85,7 @@ export default function SiteFooter() {
               <ul className="m-0 list-none space-y-3 p-0">
                 {col.links.map((l) => (
                   <li key={l.href}>
-                    <Link href={l.href} className="text-[14px] text-[color:var(--color-ink-2)] transition-colors duration-200 hover:text-[color:var(--color-ink)]">
+                    <Link href={l.href} className="inline-flex min-h-6 items-center text-[14px] text-[color:var(--color-ink-2)] transition-colors duration-200 hover:text-[color:var(--color-ink)]">
                       {l.label}
                     </Link>
                   </li>

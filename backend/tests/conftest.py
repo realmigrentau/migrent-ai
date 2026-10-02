@@ -20,6 +20,7 @@ sys.path.insert(0, str(ROOT))
 
 # Must be set before `db` is imported anywhere.
 os.environ.setdefault("SUPABASE_URL", "https://test.supabase.local")
+os.environ.setdefault("LISTING_IMAGE_HOSTS", "img.test")
 os.environ.setdefault("SUPABASE_ANON_KEY", "anon-test-key")
 os.environ.setdefault("SUPABASE_SERVICE_ROLE_KEY", "service-test-key")
 os.environ.setdefault("STRIPE_SECRET_KEY", "sk_test_placeholder")
@@ -181,6 +182,11 @@ def db(monkeypatch):
     import auth_utils
 
     auth_utils._remote_cache.clear()
+    auth_utils._active_cache.clear()
+    auth_utils._mfa_cache.clear()
+    import listing_lifecycle
+
+    listing_lifecycle._suspended_cache.update(until=0.0, ids=[])
 
     from limiter import limiter
 
@@ -209,11 +215,29 @@ def client(db):
     return TestClient(main.app)
 
 
-def auth(user_id: str, *, unlocked: bool = True) -> dict:
-    """Sign-in headers. By default they also carry an Admin panel unlock
-    for that account (it only matters for admins); unlocked=False leaves it
-    out, as when the panel is locked."""
-    headers = {"Authorization": f"Bearer tok-{user_id}"}
+def sign_in_token(user_id: str, aal: str = "aal2") -> str:
+    """A sign-in token for a fixture user. The fake accepts any token signed
+    with the test key whose `sub` is a user it knows (fake_supabase)."""
+    import jwt as pyjwt
+
+    # amr: how and when the person last signed in (Supabase puts it in every
+    # access token); deleting an account needs a recent one.
+    import time
+
+    signed_in_at = int(time.time()) // 600 * 600  # stable for ten minutes, so tokens compare equal
+    return pyjwt.encode(
+        {"sub": user_id, "aal": aal, "role": "authenticated", "amr": [{"method": "password", "timestamp": signed_in_at}]},
+        "test-secret",
+        algorithm="HS256",
+    )
+
+
+def auth(user_id: str, *, unlocked: bool = True, aal: str = "aal2") -> dict:
+    """Sign-in headers. The token is a JWT carrying `aal` (aal2 = signed in
+    with an authenticator code, which admin access requires). By default the headers also carry an Admin
+    panel unlock for that account (it only matters for admins);
+    unlocked=False leaves it out, as when the panel is locked."""
+    headers = {"Authorization": f"Bearer {sign_in_token(user_id, aal)}"}
     if unlocked:
         from admin_panel import UNLOCK_HEADER, issue_unlock_token
 

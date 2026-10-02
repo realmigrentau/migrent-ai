@@ -17,6 +17,8 @@ interface SEOHeadProps {
   modifiedAt?: string;
   authorName?: string;
   breadcrumbs?: { name: string; path: string }[];
+  /** Organization and WebSite JSON-LD, for the homepage (MIG-051). */
+  site?: boolean;
   listing?: {
     address: string;
     city?: string;
@@ -52,13 +54,16 @@ export default function SEOHead({
   modifiedAt,
   authorName,
   breadcrumbs,
+  site,
   listing,
 }: SEOHeadProps) {
   const router = useRouter();
   const path = (router?.asPath || "/").split("?")[0].split("#")[0];
   // A page that calls SEOHead for its title must not accidentally re-index a
   // route the registry marks private; the registry is the default.
-  const effectiveNoIndex = noIndex ?? Boolean(getPageMeta(router?.pathname || path).noIndex);
+  const routeMeta = getPageMeta(router?.pathname || path);
+  const effectiveNoIndex = noIndex ?? Boolean(routeMeta.noIndex);
+  const follow = Boolean(routeMeta.follow);
   const resolvedCanonical =
     canonical ?? (effectiveNoIndex || path.includes("[") ? undefined : path === "/" ? `${SITE_URL}/` : `${SITE_URL}${path}`);
 
@@ -104,6 +109,29 @@ export default function SEOHead({
     jsonLd.push(article);
   }
 
+  if (site) {
+    jsonLd.push({
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      name: SITE_NAME,
+      url: `${SITE_URL}/`,
+      logo: `${SITE_URL}/icons/icon-512x512.png`,
+      description: DEFAULT_DESC,
+      areaServed: "AU",
+    });
+    jsonLd.push({
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      name: SITE_NAME,
+      url: `${SITE_URL}/`,
+      potentialAction: {
+        "@type": "SearchAction",
+        target: `${SITE_URL}/seeker/search?suburb={search_term_string}`,
+        "query-input": "required name=search_term_string",
+      },
+    });
+  }
+
   if (breadcrumbs && breadcrumbs.length > 1) {
     jsonLd.push({
       "@context": "https://schema.org",
@@ -121,7 +149,7 @@ export default function SEOHead({
     <Head>
       <title key="title">{fullTitle}</title>
       <meta key="description" name="description" content={description} />
-      {effectiveNoIndex ? <meta key="robots" name="robots" content="noindex,nofollow" /> : <meta key="robots" name="robots" content="index,follow" />}
+      {effectiveNoIndex ? <meta key="robots" name="robots" content={follow ? "noindex,follow" : "noindex,nofollow"} /> : <meta key="robots" name="robots" content="index,follow" />}
       {resolvedCanonical && <link key="canonical" rel="canonical" href={resolvedCanonical} />}
 
       <meta key="og:type" property="og:type" content={ogType} />

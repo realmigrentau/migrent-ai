@@ -5,7 +5,7 @@ from fastapi import APIRouter, HTTPException, Header, Query
 from pydantic import BaseModel, Field
 from typing import Optional
 from db import get_supabase_admin
-from auth_utils import get_current_user
+from auth_utils import get_current_user, get_active_user
 from notifications import send_push_to_user
 
 logger = logging.getLogger(__name__)
@@ -24,9 +24,23 @@ PLATFORM_FEE_PERCENT = 30  # Migrent takes 30%
 PRIVATE_MENTOR_FIELDS = ("stripe_account_id", "stripe_onboarding_complete")
 
 
+# A mentor meets new arrivals, often in person, and is paid through Migrent,
+# so they are held to the same bar as a host: Migrent checks their
+# government ID and approves the profile before anyone can find or book
+# them (review_status, migration 046; decisions in routes_hub_admin).
+APPROVED = "approved"
+REVIEW_FIELDS = ("review_status", "reviewed_at", "reviewed_by", "review_reason")
+
+
+def is_listed(mentor: dict) -> bool:
+    return bool(mentor.get("active")) and mentor.get("review_status") == APPROVED
+
+
 def public_mentor(mentor: dict) -> dict:
-    out = {k: v for k, v in mentor.items() if k not in PRIVATE_MENTOR_FIELDS}
-    out["accepting_bookings"] = bool(mentor.get("active") and mentor.get("stripe_onboarding_complete"))
+    out = {k: v for k, v in mentor.items() if k not in PRIVATE_MENTOR_FIELDS and k not in REVIEW_FIELDS}
+    out["accepting_bookings"] = bool(is_listed(mentor) and mentor.get("stripe_onboarding_complete"))
+    # "verified" on a mentor means Migrent approved them after an ID check.
+    out["verified"] = mentor.get("review_status") == APPROVED
     return out
 
 
@@ -129,7 +143,7 @@ def list_mentors(
     try:
         sb = get_supabase_admin()
 
-        query = sb.table("mentors").select("*").eq("active", True).order("rating", desc=True)
+        query = sb.table("mentors").select("*").eq("active", True).eq("review_status", APPROVED).order("rating", desc=True)
 
         if suburb:
             query = query.ilike("suburb", f"%{suburb}%")
@@ -154,7 +168,7 @@ def create_mentor(
     body: MentorCreate,
     authorization: str = Header(...),
 ):
-    user = get_current_user(authorization)
+    user = get_active_user(authorization)
     user_id = str(user.id)
     sb = get_supabase_admin()
 
@@ -170,6 +184,11 @@ def create_mentor(
         "bio": body.bio,
         "specialties": body.specialties,
         "hourly_rate": body.hourly_rate,
+        # Their own on/off switch; they still are not listed until Migrent
+        # has checked their ID and approved the profile.
+        "active": True,
+        "review_status": "pending",
+        "verified": False,
     }
 
     try:
@@ -178,7 +197,12 @@ def create_mentor(
         logger.error(f"Failed to create mentor: {e}")
         raise HTTPException(status_code=500, detail="Failed to create mentor profile")
 
-    return {"mentor": res.data[0]}
+    from routes_owner_verification import check_owner_verified
+
+    return {
+        "mentor": res.data[0],
+        "next_step": "approval" if check_owner_verified(user_id) else "id_check",
+    }
 
 
 # -- IMPORTANT: Static routes MUST come before /{mentor_id} --
@@ -223,17 +247,27 @@ def update_mentor(
     body: MentorUpdate,
     authorization: str = Header(...),
 ):
-    user = get_current_user(authorization)
+    user = get_active_user(authorization)
     user_id = str(user.id)
     sb = get_supabase_admin()
 
-    existing = sb.table("mentors").select("id").eq("user_id", user_id).execute()
+    existing = sb.table("mentors").select("id, bio, review_status").eq("user_id", user_id).execute()
     if not existing.data:
         raise HTTPException(status_code=404, detail="Mentor profile not found")
 
     updates = {k: v for k, v in body.model_dump().items() if v is not None}
     if not updates:
         raise HTTPException(status_code=400, detail="No fields to update")
+
+    # A new introduction is what renters read; it is checked again, as a
+    # listing's description is.
+    current = existing.data[0]
+    if current.get("review_status") == APPROVED and "bio" in updates and (updates["bio"] or "").strip() != (current.get("bio") or "").strip():
+        updates["review_status"] = "pending"
+        updates["verified"] = False
+    # A profile Migrent sent back goes into the queue again once changed.
+    if current.get("review_status") == "rejected":
+        updates["review_status"] = "pending"
 
     res = sb.table("mentors").update(updates).eq("user_id", user_id).execute()
     return {"mentor": res.data[0]}
@@ -246,7 +280,7 @@ def create_session(
     body: SessionCreate,
     authorization: str = Header(...),
 ):
-    user = get_current_user(authorization)
+    user = get_active_user(authorization)
     user_id = str(user.id)
     sb = get_supabase_admin()
 
@@ -259,7 +293,7 @@ def create_session(
     if mentor["user_id"] == user_id:
         raise HTTPException(status_code=400, detail="You cannot book yourself")
 
-    if not mentor["active"]:
+    if not is_listed(mentor):
         raise HTTPException(status_code=400, detail="This mentor is not currently available")
     if not payouts_ready(sb, mentor):
         raise HTTPException(status_code=400, detail="This mentor is still setting up payouts, so they cannot take bookings yet.")
@@ -392,7 +426,7 @@ def create_review(
     body: ReviewCreate,
     authorization: str = Header(...),
 ):
-    user = get_current_user(authorization)
+    user = get_active_user(authorization)
     user_id = str(user.id)
     sb = get_supabase_admin()
 
@@ -441,7 +475,7 @@ def create_review(
 def stripe_onboard(
     authorization: str = Header(...),
 ):
-    user = get_current_user(authorization)
+    user = get_active_user(authorization)
     user_id = str(user.id)
     sb = get_supabase_admin()
 
@@ -499,6 +533,9 @@ def get_mentor(mentor_id: str):
         raise HTTPException(status_code=404, detail="Mentor not found")
 
     mentor = res.data[0]
+    if not is_listed(mentor):
+        # Pending, rejected or switched off: not public.
+        raise HTTPException(status_code=404, detail="Mentor not found")
 
     # Get profile
     profile_res = sb.table("profiles").select(

@@ -42,7 +42,6 @@ export interface AuthCallbackParams {
   tokenHash: string | null;
   otpType: EmailOtpType | null;
   next: string | null;
-  pollingId: string | null;
   /** Implicit-flow tokens. Only ever read from the fragment. */
   tokens: { accessToken: string; refreshToken: string } | null;
   error: { code: string; description: string } | null;
@@ -70,7 +69,6 @@ export function parseAuthCallback(href: string): AuthCallbackParams {
     tokenHash: get("token_hash"),
     otpType: EMAIL_OTP_TYPES.includes(type as EmailOtpType) ? (type as EmailOtpType) : null,
     next: get("next"),
-    pollingId: get("polling_id"),
     tokens: accessToken && refreshToken ? { accessToken, refreshToken } : null,
     error:
       errorCode || errorDescription

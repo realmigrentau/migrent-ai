@@ -78,6 +78,7 @@ export function navFor(role: HubRole | null, opts: { hasHome?: boolean; isAdmin?
       { label: "Reports", to: "/admin/reports", icon: Flag },
       { label: "Support", to: "/admin/support", icon: Inbox },
       { label: "People", to: "/admin/people", icon: Users },
+      { label: "Numbers", to: "/admin/numbers", icon: BarChart3 },
       { label: "Audit log", to: "/admin/audit", icon: ScrollText },
       { label: "Discover", to: "/discover", icon: Compass, match: ["/homes"] },
       { label: "Messages", to: "/messages", icon: MessageCircle, count: "messages" },
@@ -87,7 +88,7 @@ export function navFor(role: HubRole | null, opts: { hasHome?: boolean; isAdmin?
       { label: "Listings", to: "/admin/listings", icon: ListChecks },
       { label: "Reviews", to: "/admin/reviews", icon: ShieldCheck },
       { label: "Reports", to: "/admin/reports", icon: Flag },
-      { label: "Profile", to: "/me", icon: UserRound, match: ["/settings", "/activity", "/admin/id-checks", "/admin/support", "/admin/people", "/admin/audit"] },
+      { label: "Profile", to: "/me", icon: UserRound, match: ["/settings", "/activity", "/admin/id-checks", "/admin/support", "/admin/people", "/admin/numbers", "/admin/audit"] },
     ];
     return { primary, tabs };
   }

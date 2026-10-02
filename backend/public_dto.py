@@ -85,6 +85,10 @@ PUBLIC_LISTING_FIELDS: tuple[str, ...] = (
     "weekly_discount",
     "monthly_discount",
     "bond",
+    "bond_weeks",
+    "rent_in_advance_weeks",
+    "bills_estimate_weekly",
+    "newcomer_friendly",
     "created_at",
     "updated_at",
 )
@@ -239,6 +243,9 @@ def listing_public_state(row: dict, today: Optional[date] = None) -> str:
     """
     today = today or _today()
     status = row.get("moderation_status")
+    if row.get("_owner_suspended"):
+        # The owner's account is suspended (listing_lifecycle.mark_suspended_owners).
+        return "unavailable"
     if status == "expired":
         return "expired"
     if status != "approved" or row.get("hidden_at"):
@@ -332,6 +339,12 @@ def to_public_owner(profile_row: Optional[dict], verification_row: Optional[dict
         "listings_count": profile_row.get("listings_count"),
         "achievement_badges": public_badges(profile_row.get("badges")),
         "verification": verification_summary(verification_row),
+        # A property manager lists for owners; renters see who they deal with.
+        "agency": (
+            {"name": profile_row["agency_name"], "licence": profile_row.get("agency_licence")}
+            if profile_row.get("owner_kind") == "property_manager" and profile_row.get("agency_name")
+            else None
+        ),
     }
 
 

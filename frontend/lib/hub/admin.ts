@@ -274,6 +274,11 @@ export const AUDIT_ACTIONS: Record<string, string> = {
   admin_panel_failed: "Entered a wrong Admin panel password",
   admin_panel_lockout: "Was locked out of the Admin panel after 3 wrong passwords",
   admin_panel_password_changed: "Changed the Admin panel password",
+  approve_mentor: "Approved a mentor",
+  reject_mentor: "Asked a mentor for changes",
+  hide_review: "Hid a review",
+  restore_review: "Put a review back",
+  view_conversation: "Read a reported conversation",
 };
 
 export const auditAction = (a: string) => AUDIT_ACTIONS[a] ?? a.replace(/_/g, " ").replace(/^\w/, (c) => c.toUpperCase());
@@ -287,4 +292,48 @@ export const AUDIT_TARGETS: Record<string, string> = {
   report: "Report",
   tenancy: "Tenancy",
   property: "Property",
+  mentor: "Mentor",
+  review: "Review",
+};
+
+/**
+ * Ready-made reasons for admin decisions (MIGRENT_MASTER_AUDIT MIG-024).
+ * Picking one fills the reason box, which the admin can still edit; the
+ * customer sees the final text.
+ */
+export const READY_REASONS: Record<string, string[]> = {
+  listing_reject: [
+    "The photos don't show the room or home being rented.",
+    "The address, suburb or postcode doesn't match the photos or description.",
+    "It asks for money before an inspection, or for payment outside Migrent.",
+    "It duplicates another listing for the same room.",
+    "The bond or rent in advance is more than Migrent allows.",
+  ],
+  listing_request_changes: [
+    "Please add clear photos of the bedroom, bathroom and kitchen.",
+    "Please describe who else lives in the home and what is shared.",
+    "Please remove phone numbers, email addresses or links to other apps from the description.",
+    "Please check the suburb, state and postcode.",
+    "Please state the bond and rent in advance.",
+  ],
+  listing_pause: [
+    "Paused while we look into a report from a renter.",
+    "Paused while we confirm the owner's identity.",
+    "Paused because the photos or details may not match the home.",
+  ],
+  listing_hide: ["Hidden because it matches a known scam pattern.", "Hidden while we investigate a report."],
+  listing_request_removal: ["The home is no longer available.", "Removed for breaking the listing rules."],
+  id_reject: [
+    "The photo is blurry or cut off, so we can't read the details.",
+    "The document has expired.",
+    "The name on the document doesn't match the name on the account.",
+    "We need a government photo ID: a passport, driver licence or photo card.",
+    "The photo of the document looks edited.",
+  ],
+  mentor_reject: [
+    "Please say more about your experience helping people settle in Australia.",
+    "Your photo ID needs to be checked first: upload it in Settings.",
+    "Please remove contact details (phone, email, links) from your profile.",
+    "Please set a clear price and say what a session includes.",
+  ],
 };

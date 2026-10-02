@@ -5,13 +5,14 @@ import { useToast } from "../ui/Toast";
 import { Button } from "./ui/Button";
 import { ChoiceCard, Field, Textarea } from "./ui/Field";
 import { Dialog } from "./ui/Overlay";
+import { Events, trackEvent } from "../../lib/analytics";
 
 /**
  * Report a listing, a person or a message. Structured reasons first, detail
  * optional; the report goes to Migrent's moderation queue, never to the
  * person being reported.
  */
-export default function ReportDialog({ open, onClose, itemType, itemId, subject }: { open: boolean; onClose: () => void; itemType: "listing" | "user" | "message"; itemId: string; subject: string }) {
+export default function ReportDialog({ open, onClose, itemType, itemId, subject }: { open: boolean; onClose: () => void; itemType: "listing" | "user" | "message" | "review"; itemId: string; subject: string }) {
   const toast = useToast();
   const [reason, setReason] = useState("");
   const [details, setDetails] = useState("");
@@ -39,6 +40,7 @@ export default function ReportDialog({ open, onClose, itemType, itemId, subject 
       return;
     }
     setSending(false);
+    trackEvent(Events.REPORT_SUBMITTED, { item_type: itemType });
     toast.success("Thanks - we'll look into it", { description: "Reports go to Migrent's safety team, not to the person reported." });
     setReason("");
     setDetails("");

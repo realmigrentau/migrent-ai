@@ -200,9 +200,9 @@ export default function HowRentingWorks() {
               <ul>
                 <li>Provides an online platform where room owners can list available rooms</li>
                 <li>Allows accommodation seekers to search and filter listings</li>
-                <li>Uses AI matching to suggest compatible owner-seeker pairs</li>
+                <li>Can sort search results by how well they fit what a renter has told us (fixed rules, not AI)</li>
                 <li>Facilitates initial communication between users via messaging</li>
-                <li>Charges flat platform fees ($99/deal for owners, $19 optional for seekers)</li>
+                <li>Charges flat platform fees only: renters pay nothing, and hosts pay a one-off AUD $99 per property for short stays</li>
               </ul>
 
               <h3>What Migrent Does NOT Do</h3>

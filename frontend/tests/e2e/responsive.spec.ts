@@ -27,3 +27,25 @@ test("touch targets on the search card are at least 44px", async ({ page }) => {
   expect(box?.width ?? 0).toBeGreaterThanOrEqual(44);
   expect(box?.height ?? 0).toBeGreaterThanOrEqual(44);
 });
+
+test("the help panel fits a phone screen and answers from the Help centre", async ({ page, isMobile }) => {
+  test.skip(!isMobile, "mobile only");
+  for (const width of [320, 375, 430]) {
+    await page.setViewportSize({ width, height: 740 });
+    await page.goto("/pricing");
+    const launcher = page.getByRole("button", { name: "Help", exact: true });
+    await expect(launcher).toBeVisible();
+    await launcher.click();
+    const panel = page.getByRole("dialog", { name: "Migrent help" });
+    await expect(panel).toBeVisible();
+    const box = await panel.boundingBox();
+    // It used to be a fixed 448px wide and ran off the left edge of every phone.
+    expect(box!.x, `help panel starts off-screen at ${width}px`).toBeGreaterThanOrEqual(0);
+    expect(box!.x + box!.width, `help panel overflows at ${width}px`).toBeLessThanOrEqual(width);
+  }
+  const panel = page.getByRole("dialog", { name: "Migrent help" });
+  await panel.getByLabel("Your question").fill("Who holds my bond?");
+  await panel.getByRole("button", { name: "Search the Help centre" }).click();
+  await expect(panel.getByText(/bond authority/i)).toBeVisible();
+  await expect(panel.getByText(/\bAI\b|Online/)).toHaveCount(0);
+});

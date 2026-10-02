@@ -9,6 +9,7 @@ import { useToast } from "../../ui/Toast";
 import { useConfirm } from "../../ui/ConfirmDialog";
 import { Button } from "../ui/Button";
 import { EmptyState, InlineAlert, Skeleton } from "../ui/Feedback";
+import { Events, trackEvent } from "../../../lib/analytics";
 
 interface SlotsResponse {
   timezone: string;
@@ -67,6 +68,7 @@ export default function InspectionPicker({ listingId, title, isOwner }: { listin
         ? await hubApi.post<{ booking: InspectionBooking }>(`/hub/inspections/bookings/${mine.my_booking.id}/reschedule`, { slot_id: slot.id })
         : await hubApi.post<{ booking: InspectionBooking }>("/hub/inspections/bookings", { slot_id: slot.id });
       setBooked(res.booking);
+      if (!mine?.my_booking) trackEvent(Events.INSPECTION_BOOKED, { listing_id: listingId });
       invalidate(`/hub/listings/${listingId}/inspection-slots`);
       invalidate("/hub/inspections");
       invalidate("/hub/home");

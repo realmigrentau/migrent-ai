@@ -8,6 +8,25 @@ import SEOHead from "../../components/SEOHead";
 import { Segmented } from "../../components/hub/ui/Field";
 import { hubFromSite } from "../../lib/hub/routes";
 import { API_BASE_URL as BASE_URL } from "../../lib/apiBase";
+import type { GetServerSideProps } from "next";
+
+/**
+ * An unknown mentor is a real 404 (MIGRENT_MASTER_AUDIT MIG-050), not an
+ * empty page that search engines index. If the API is slow or down, the
+ * page renders as before and loads the mentor in the browser.
+ */
+export const getServerSideProps: GetServerSideProps = async ({ params, res }) => {
+  const id = String(params?.id || "");
+  if (!/^[0-9a-f-]{36}$/i.test(id)) return { notFound: true };
+  try {
+    const r = await fetch(`${BASE_URL}/mentors/${id}`, { signal: AbortSignal.timeout(4000) });
+    if (r.status === 404) return { notFound: true };
+  } catch {
+    // Unreachable or slow: let the browser try.
+  }
+  res.setHeader("Cache-Control", "public, s-maxage=300, stale-while-revalidate=3600");
+  return { props: {} };
+};
 
 /**
  * One mentor, and the form to book a paid session with them. The old page's

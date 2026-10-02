@@ -5,8 +5,9 @@
  * ABS's, and they are the ones most likely to be misread, so the rules are
  * strict:
  *
- *  - Only approved, visible listings count. A listing hidden, awaiting
- *    moderation or pending deletion is not a room anyone can rent.
+ *  - Only approved, visible listings count (the public_listings view). A
+ *    listing hidden, awaiting moderation or pending deletion is not a room
+ *    anyone can rent.
  *  - A median is published only once MIN_LISTING_SAMPLE listings exist in the
  *    suburb. Below that the page says there is not enough data, because the
  *    "median" of two rooms is just one of the two rooms.
@@ -57,12 +58,14 @@ async function fetchActiveListings(): Promise<ListingRow[] | null> {
   const supabase = client();
   if (!supabase) return null;
   try {
+    // public_listings is the public contract view (migration 042, owners'
+    // suspension added in 046): approved, not hidden, still available. The
+    // listings table itself is closed to the anon key, which is why this
+    // query used to fail and every suburb page said room data was
+    // unavailable.
     const { data, error } = await supabase
-      .from("listings")
+      .from("public_listings")
       .select("suburb, postcode, weekly_price, furnished, bills_included, created_at")
-      .eq("moderation_status", "approved")
-      .is("hidden_at", null)
-      .is("delete_approved_at", null)
       .abortSignal(AbortSignal.timeout(QUERY_TIMEOUT_MS));
     if (error) return null;
     return (data ?? []) as ListingRow[];
@@ -208,4 +211,11 @@ export async function getListingStats(salCode: string): Promise<ListingStats | n
       quality: "insufficient_sample",
     }
   );
+}
+
+/** Suburbs with at least one room on Migrent now, for the sitemap's room pages. */
+export async function suburbsWithRooms(): Promise<PlaceSummary[]> {
+  const all = await getAllListingStats();
+  if (!all) return [];
+  return loadPlaces().filter((p) => (all.bySalCode[p.salCode]?.activeListings ?? 0) > 0);
 }

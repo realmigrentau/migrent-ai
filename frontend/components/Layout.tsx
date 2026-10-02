@@ -20,7 +20,7 @@ const SITE_KIT = [
   "/rules-community-guidelines", "/code-of-conduct", "/safety-reporting", "/support-disputes", "/contact-legal",
   // One-message pages (components/site/StatusPage)
   "/404", "/500", "/_error", "/booking-success", "/booking-cancelled", "/verification-success", "/verification-cancelled",
-  "/mentor-session-success",
+  "/mentor-session-success", "/unsubscribe",
   "/mentors", "/become-mentor", "/suburbs",
 ];
 /** Full-width routes that sit below the header rather than drawing a sky. */

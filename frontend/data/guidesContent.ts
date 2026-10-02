@@ -535,6 +535,161 @@ const guidesContent: GuideContent[] = [
       },
     ],
   },
+  // ────────────────────────────────────────────────────────────────────────
+  // Newcomer guides (MIGRENT_MASTER_AUDIT MIG-044, 2 October 2026). General
+  // information only; state figures live on /guides/rental-laws, which is
+  // checked against official sources, and these guides point there.
+  // ────────────────────────────────────────────────────────────────────────
+  {
+    id: "applying-for-a-room",
+    title: "Inspecting and applying for a room",
+    description:
+      "How renting a room usually works in Australia, from the first message to signing: what to ask, what to see, and what you never pay before you have.",
+    icon: "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6",
+    gradient: "from-blue-500 to-indigo-500",
+    color: "text-blue-500",
+    bgColor: "bg-blue-50 dark:bg-blue-500/10",
+    difficulty: "Beginner",
+    readTime: "6 min read",
+    category: "seeker",
+    relatedGuides: ["condition-report", "getting-your-bond-back"],
+    sections: [
+      {
+        id: "the-usual-order",
+        title: "The usual order",
+        content: [
+          "Most rooms are rented in the same order: you message the host, you inspect the room (in person, or by live video if you are still overseas), you apply, the host says yes, and only then do you sign an agreement and pay the money due up front.",
+          "On Migrent each step happens in the Hub: messages, inspection times, your application and the host's answer. Searching, messaging and applying are free for renters.",
+        ],
+      },
+      {
+        id: "before-you-inspect",
+        title: "Questions to ask before you inspect",
+        content: [
+          "Ask what the rent includes. Is it bills included, or is there a separate share of electricity, gas, water and internet? Every Migrent listing shows the bond and rent in advance in weeks, and the total you pay to move in, so you can compare rooms fairly.",
+          "Ask who else lives there, what the house rules are (guests, quiet hours, cleaning), how long the host wants someone to stay, and whether you will get a written agreement.",
+          "Ask whether you will be a tenant with your own lease, or a lodger or boarder in the host's home. The rules are different, and the rental laws page explains how each state treats rooms in someone's home.",
+        ],
+      },
+      {
+        id: "at-the-inspection",
+        title: "At the inspection",
+        content: [
+          "Check the room matches the photos: the bed, the storage, the window, and whether the door locks. Run the taps, look for damp or mould in the bathroom, and check the kitchen and laundry you will share.",
+          "Walk or check the trip to the station or bus stop you will use. A short time on the listing is not the same as a short walk at night.",
+          "If you cannot inspect in person, ask for a live video call and ask the host to show the room, the bathroom and the front of the building on camera.",
+        ],
+        tip: "Never pay a deposit, a holding fee or a bond before you have seen the room (in person or on a live video call) and have a written agreement. Asking for money first is the most common rental scam.",
+      },
+      {
+        id: "applying",
+        title: "Applying",
+        content: [
+          "Hosts usually ask who you are, how you will pay the rent (work, study support or savings), and for someone who can vouch for you. If you are new to Australia and have no rental history here, say so plainly: a reference from a previous landlord overseas, an employer, or proof of savings helps.",
+          "Your Migrent rental profile keeps these details in one place, so each application takes a minute. Only the hosts you apply to can see it.",
+          "Share copies of ID only when you are applying, only through Migrent or directly with the host you are renting from, and never send your passport to someone you have not met through a listing.",
+        ],
+      },
+      {
+        id: "saying-yes",
+        title: "When the host says yes",
+        content: [
+          "Read the agreement before you sign. It should name you, the address, the rent, how often it is paid, the bond, the start date and how either of you can end it.",
+          "Pay the bond and first rent the way the agreement says, and keep a receipt for every payment. For a tenancy, the bond is lodged with the state's bond authority, and you should hear from them; the guide to getting your bond back explains how.",
+        ],
+      },
+    ],
+  },
+  {
+    id: "condition-report",
+    title: "Move-in day: the condition report",
+    description:
+      "The record of what the room was like when you moved in is what protects your bond when you move out. How to fill it in and what to photograph.",
+    icon: "M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z",
+    gradient: "from-emerald-500 to-teal-500",
+    color: "text-emerald-500",
+    bgColor: "bg-emerald-50 dark:bg-emerald-500/10",
+    difficulty: "Beginner",
+    readTime: "4 min read",
+    category: "seeker",
+    relatedGuides: ["getting-your-bond-back", "applying-for-a-room"],
+    sections: [
+      {
+        id: "what-it-is",
+        title: "What it is",
+        content: [
+          "A condition report records the state of the property, room by room, at the start of a tenancy. In most states the landlord of a residential tenancy must give one to the renter at the start, and the renter has a set number of days to check it, note anything they disagree with, and return a copy.",
+          "If you are a lodger or boarder in the host's own home, the law may not require one. Make your own record anyway and send it to the host so you both have it.",
+        ],
+      },
+      {
+        id: "how-to-check",
+        title: "How to check it",
+        content: [
+          "Go through every item in your room and the shared spaces: walls, floors, carpet, windows and screens, doors and locks, light fittings, power points, the bed and furniture if it is furnished, and kitchen and bathroom fittings.",
+          "Where the report says \"clean\" or \"good\" and you can see a stain, a scratch, a chip or a mark, write exactly what and where. Small things matter: they are what a bond claim is made of later.",
+        ],
+        tip: "Take dated photos and a short video of every room on the day you move in, before you unpack, and email them to yourself and the host. It costs nothing and settles most bond disagreements.",
+      },
+      {
+        id: "keep-it",
+        title: "Keep your copy",
+        content: [
+          "Return your signed copy within the time your state allows and keep one yourself, with your photos. You will compare against it on the day you move out.",
+          "If something breaks during the tenancy, report it in writing (a repair request in the Hub is in writing) so it is not mistaken for damage you caused.",
+        ],
+      },
+    ],
+  },
+  {
+    id: "getting-your-bond-back",
+    title: "Getting your bond back",
+    description:
+      "Where your bond is held, how to claim it when you leave, and what to do if the host wants to keep some of it.",
+    icon: "M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z",
+    gradient: "from-amber-500 to-orange-500",
+    color: "text-amber-500",
+    bgColor: "bg-amber-50 dark:bg-amber-500/10",
+    difficulty: "Beginner",
+    readTime: "5 min read",
+    category: "seeker",
+    relatedGuides: ["condition-report", "applying-for-a-room"],
+    sections: [
+      {
+        id: "where-it-is",
+        title: "Where your bond is held",
+        content: [
+          "For a residential tenancy, the landlord must lodge your bond with the state or territory's bond authority within a set time (in the Northern Territory the landlord holds it under territory law). You should receive confirmation from the authority with a bond number. Keep it.",
+          "If you never hear from the authority, ask the landlord for the lodgement details, and contact the authority if they cannot give them to you.",
+          "For a room in the host's own home, as a lodger or boarder, the rules depend on the state. The rental laws page sets out each state, with links to the official sources.",
+        ],
+      },
+      {
+        id: "moving-out",
+        title: "Before you move out",
+        content: [
+          "Give notice the way your agreement and your state's law require, and in writing. Clean the room and the areas you shared, take out rubbish, and repair anything you damaged.",
+          "On the last day, take dated photos and a video of every room again and compare them with your move-in condition report. Normal wear and tear from everyday living is not damage.",
+        ],
+      },
+      {
+        id: "claiming",
+        title: "Claiming it",
+        content: [
+          "In most states you and the landlord can agree on the amount and lodge a claim with the bond authority together, often online, and the money is paid to your bank account. If you agree on the full amount, it usually comes quickly.",
+          "If the landlord wants to keep some of it, they have to give reasons. You do not have to agree. Each state has a free or low-cost way to decide it, usually through the bond authority and then a tribunal, and the condition report and your photos are your evidence.",
+        ],
+        tip: "Leaving Australia soon? Claim before you go, and make sure the authority has bank details that will still work. Some authorities can pay to an overseas account; ask them.",
+      },
+      {
+        id: "help",
+        title: "Where to get help",
+        content: [
+          "Each state's fair trading or consumer affairs office explains bonds and runs or points to the bond authority. Free tenant advice services exist in every state. The rental laws page lists the official source for each one.",
+        ],
+      },
+    ],
+  },
 ];
 
 // ─── Helper Functions ──────────────────────────────────────────────────────

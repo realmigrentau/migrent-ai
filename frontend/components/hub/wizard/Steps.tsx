@@ -1,7 +1,10 @@
 import type { ReactNode } from "react";
-import { Check, Lock } from "lucide-react";
+import { AlertCircle, Check, Lock } from "lucide-react";
 import AiAssist from "./AiAssist";
-import { ChoiceCard, Field, Input, Segmented, Select, Stepper, Switch, Textarea } from "../ui/Field";
+import { ChoiceCard, Field, Input, Segmented, Select, Stepper, Switch, Textarea, controlClass } from "../ui/Field";
+import SuburbCombobox from "../../forms/SuburbCombobox";
+import type { LocationCheck } from "../../../lib/hub/useLocationCheck";
+import { MAX_BOND_WEEKS, maxRentInAdvanceWeeks, moveInCost, weeksLabel, weeksOf } from "../../../lib/listingCosts";
 import { Panel } from "../ui/Layout";
 import { BATHROOM_TYPES, GENDER, HIGHLIGHTS, LAUNDRY, PLACE_TYPES, PROPERTY_TYPES, STATES, isRoom, stateForPostcode, type DraftData } from "../../../lib/hub/listingDraft";
 import type { ListingCard } from "../../../lib/hub/types";
@@ -35,7 +38,7 @@ export interface StepProps {
   err: (field: string) => string | undefined;
 }
 
-export function PropertyStep({ d, set, err, linked }: StepProps & { linked: boolean }) {
+export function PropertyStep({ d, set, err, linked, location }: StepProps & { linked: boolean; location?: LocationCheck | null }) {
   if (linked) {
     return (
       <div className="flex flex-col gap-5">
@@ -66,7 +69,20 @@ export function PropertyStep({ d, set, err, linked }: StepProps & { linked: bool
         </Field>
         <div className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_160px_140px]">
           <Field label="Suburb" error={err("suburb")}>
-            {({ id, describedBy, invalid }) => <Input id={id} autoComplete="address-level2" value={d.suburb ?? ""} onChange={(e) => set({ suburb: e.target.value })} aria-describedby={describedBy} aria-invalid={invalid} maxLength={100} />}
+            {({ id, describedBy, invalid }) => (
+              <SuburbCombobox
+                id={id}
+                value={d.suburb ?? ""}
+                onChange={(suburb) => set({ suburb })}
+                onSelect={(c) => set({ suburb: c.name, state: c.state, ...(c.postcode ? { postcode: c.postcode } : {}) })}
+                stateFilter={d.state || null}
+                inputClassName={cn(controlClass, "h-11")}
+                aria-describedby={describedBy}
+                aria-invalid={invalid}
+                maxLength={100}
+                placeholder="Start typing, e.g. Parramatta"
+              />
+            )}
           </Field>
           <Field label="State">
             {({ id }) => (
@@ -98,6 +114,16 @@ export function PropertyStep({ d, set, err, linked }: StepProps & { linked: bool
             )}
           </Field>
         </div>
+        {location?.problem ? (
+          <p role="alert" className="flex items-start gap-1.5 text-[13.5px] leading-snug text-[color:var(--color-danger-500)]">
+            <AlertCircle className="mt-[2px] h-3.5 w-3.5 shrink-0" strokeWidth={2} aria-hidden />
+            {location.problem}
+          </p>
+        ) : location?.hint ? (
+          <p className="text-[13.5px] leading-snug text-[color:var(--color-ink-3)]" aria-live="polite">
+            {location.hint}
+          </p>
+        ) : null}
       </Group>
       <Group title="Kind of property">
         <div className="flex flex-wrap gap-2">
@@ -275,6 +301,12 @@ export function DetailsStep({ d, set, err, ai }: StepProps & { ai: boolean }) {
         <div className="grid gap-x-8 gap-y-4 sm:grid-cols-2">
           <Switch checked={Boolean(d.no_smoking)} onChange={(v) => set({ no_smoking: v })} label="No smoking" />
           <Switch checked={Boolean(d.couples_ok)} onChange={(v) => set({ couples_ok: v })} label="Couples welcome" />
+          <Switch
+            checked={Boolean(d.newcomer_friendly)}
+            onChange={(v) => set({ newcomer_friendly: v })}
+            label="Happy to rent to people new to Australia"
+            description="No Australian rental history needed: overseas references, a job offer or study enrolment are fine. Renters can search for this."
+          />
         </div>
         <Field label="Quiet hours" optional hint="e.g. 10pm to 7am.">
           {({ id, describedBy }) => <Input id={id} value={d.quiet_hours ?? ""} maxLength={100} onChange={(e) => set({ quiet_hours: e.target.value })} aria-describedby={describedBy} />}
@@ -316,6 +348,9 @@ export function DetailsStep({ d, set, err, ai }: StepProps & { ai: boolean }) {
 
 export function RentStep({ d, set, err }: StepProps) {
   const purpose = d.listing_purpose ?? "long_term";
+  const moveIn = moveInCost(d);
+  const state = d.state || stateForPostcode(d.postcode);
+  const maxAdvance = maxRentInAdvanceWeeks(state);
   return (
     <div className="flex flex-col gap-8">
       <Group title="What kind of stay">
@@ -331,9 +366,6 @@ export function RentStep({ d, set, err }: StepProps) {
               <Input id={id} inputMode="numeric" prefix="$" value={d.weekly_price ? String(d.weekly_price) : ""} onChange={(e) => set({ weekly_price: Number(e.target.value.replace(/\D/g, "").slice(0, 5)) || undefined })} aria-describedby={describedBy} aria-invalid={invalid} />
             )}
           </Field>
-          <Field label="Bond" optional hint="Usually four weeks' rent, lodged with your state's bond authority.">
-            {({ id, describedBy }) => <Input id={id} value={d.bond ?? ""} maxLength={60} placeholder="e.g. 4 weeks" onChange={(e) => set({ bond: e.target.value })} aria-describedby={describedBy} />}
-          </Field>
         </div>
         {purpose === "short_stay" && (
           <div className="grid gap-4 sm:grid-cols-2">
@@ -344,6 +376,68 @@ export function RentStep({ d, set, err }: StepProps) {
               {({ id, describedBy }) => <Input id={id} inputMode="numeric" suffix="%" value={d.monthly_discount != null ? String(d.monthly_discount) : ""} onChange={(e) => set({ monthly_discount: e.target.value ? Math.min(70, Number(e.target.value.replace(/\D/g, ""))) : undefined })} aria-describedby={describedBy} />}
             </Field>
           </div>
+        )}
+      </Group>
+      <Group
+        title="Money up front"
+        description={`Migrent allows up to ${MAX_BOND_WEEKS} weeks' bond${purpose === "long_term" ? ` and ${weeksOf(maxAdvance)} rent in advance` : ""}${maxAdvance === 1 ? ` (in ${state}, the law allows one rent period in advance)` : ""}. Renters see the total before they apply.`}
+      >
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Field label="Bond" optional={purpose !== "long_term"} error={err("bond_weeks")} hint="Lodged with your state's bond authority (in the NT, held by you under territory law). Never paid to Migrent.">
+            {({ id, describedBy, invalid }) => (
+              <Select id={id} value={d.bond_weeks != null ? String(d.bond_weeks) : ""} onChange={(e) => set({ bond_weeks: e.target.value === "" ? undefined : Number(e.target.value) })} aria-describedby={describedBy} aria-invalid={invalid}>
+                <option value="">Choose</option>
+                <option value="0">No bond</option>
+                {Array.from({ length: MAX_BOND_WEEKS }, (_, i) => i + 1).map((w) => (
+                  <option key={w} value={w}>
+                    {weeksLabel(w)}
+                    {d.weekly_price ? ` ($${(w * d.weekly_price).toLocaleString("en-AU")})` : ""}
+                  </option>
+                ))}
+              </Select>
+            )}
+          </Field>
+          {purpose === "long_term" && (
+            <Field label="Rent in advance" error={err("rent_in_advance_weeks")} hint="Paid before moving in, then counted towards rent.">
+              {({ id, describedBy, invalid }) => (
+                <Select id={id} value={d.rent_in_advance_weeks != null ? String(d.rent_in_advance_weeks) : ""} onChange={(e) => set({ rent_in_advance_weeks: e.target.value === "" ? undefined : Number(e.target.value) })} aria-describedby={describedBy} aria-invalid={invalid}>
+                  <option value="">Choose</option>
+                  <option value="0">None</option>
+                  {Array.from({ length: maxAdvance }, (_, i) => i + 1).map((w) => (
+                    <option key={w} value={w}>
+                      {weeksLabel(w)}
+                      {d.weekly_price ? ` ($${(w * d.weekly_price).toLocaleString("en-AU")})` : ""}
+                    </option>
+                  ))}
+                </Select>
+              )}
+            </Field>
+          )}
+        </div>
+        {!d.bills_included && (
+          <Field label="Bills estimate a week" optional hint="Power, gas, water and internet for this renter. Shown as your estimate." error={err("bills_estimate_weekly")}>
+            {({ id, describedBy, invalid }) => (
+              <Input
+                id={id}
+                inputMode="numeric"
+                prefix="$"
+                className="sm:max-w-[220px]"
+                value={d.bills_estimate_weekly != null ? String(d.bills_estimate_weekly) : ""}
+                onChange={(e) => {
+                  const v = e.target.value.replace(/\D/g, "").slice(0, 4);
+                  set({ bills_estimate_weekly: v ? Math.min(1000, Number(v)) : undefined });
+                }}
+                aria-describedby={describedBy}
+                aria-invalid={invalid}
+              />
+            )}
+          </Field>
+        )}
+        {moveIn.known && moveIn.total != null && purpose === "long_term" && (
+          <p className="rounded-[14px] bg-[var(--color-surface-muted)] px-4 py-3 text-[14px] text-[color:var(--color-ink-2)]" aria-live="polite">
+            Renters will see <strong className="text-[color:var(--color-ink)]">${moveIn.total.toLocaleString("en-AU")} to move in</strong>
+            {moveIn.total > 0 ? `: ${[moveIn.bondWeeks ? `${weeksOf(moveIn.bondWeeks)} bond` : "", moveIn.advanceWeeks ? `${weeksOf(moveIn.advanceWeeks)} rent in advance` : ""].filter(Boolean).join(" and ")}.` : "."}
+          </p>
         )}
       </Group>
       <Group title="Dates" description="The listing comes down after the last date, so it never shows a home that isn't free.">

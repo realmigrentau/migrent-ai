@@ -46,11 +46,11 @@ class SpamModerationAction(BaseModel):
 @router.get("/flagged")
 def get_flagged_listings(
     authorization: str = Header(...),
-    status: Optional[str] = Query(None, regex="^(flagged|hidden|delete_requested)$"),
+    status: Optional[str] = Query(None, pattern="^(flagged|hidden|delete_requested)$"),
     min_score: Optional[int] = Query(None, ge=0, le=100),
     limit: int = Query(50, ge=1, le=100),
     offset: int = Query(0, ge=0),
-    sort: Optional[str] = Query("score_desc", regex="^(score_desc|score_asc|newest|oldest)$"),
+    sort: Optional[str] = Query("score_desc", pattern="^(score_desc|score_asc|newest|oldest)$"),
 ):
     """Get listings flagged by spam detection system."""
     _require_admin(authorization)

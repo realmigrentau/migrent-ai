@@ -7,14 +7,14 @@ import re
 import logging
 from fastapi import APIRouter, File, Header, HTTPException, Request, UploadFile
 from fastapi.responses import JSONResponse
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from typing import Optional
 from uuid import UUID, uuid4
 
 from models import MessageCreate, MessageOut
 from pydantic import BaseModel, Field
 from db import get_supabase_admin
-from auth_utils import get_current_user
+from auth_utils import get_current_user, get_active_user
 from limiter import limiter
 
 logger = logging.getLogger(__name__)
@@ -61,7 +61,7 @@ def send_message(
     Send a message between users.
     Supports both listing-based and direct messages.
     """
-    user = get_current_user(authorization)
+    user = get_active_user(authorization)
     sb = get_supabase_admin()
 
     # Validate sender is the authenticated user (str() both sides to fix UUID vs string mismatch)
@@ -84,23 +84,10 @@ def send_message(
     if not receiver.data:
         raise HTTPException(status_code=404, detail="Receiver not found")
 
-    # Either party may have blocked the other.
-    try:
-        blocks = (
-            sb.table("blocked_users")
-            .select("id")
-            .or_(
-                f"and(blocker_id.eq.{body.sender_id},blocked_id.eq.{body.receiver_id}),"
-                f"and(blocker_id.eq.{body.receiver_id},blocked_id.eq.{body.sender_id})"
-            )
-            .execute()
-        )
-        if blocks.data:
-            raise HTTPException(status_code=403, detail="You cannot message this user")
-    except HTTPException:
-        raise
-    except Exception:
-        logger.warning("blocked_users check failed; continuing")
+    # Either party may have blocked the other. Fails closed (blocks.py).
+    from blocks import require_not_blocked
+
+    require_not_blocked(sb, str(body.sender_id), str(body.receiver_id))
 
     # If listing_id is provided, the thread context must be real: the
     # listing must exist and one side of the conversation must own it.
@@ -139,8 +126,8 @@ def send_message(
         "attachment_path": attachment_path,
         "attachment_name": body.attachment_name if (attachment_path and body.attachment_name) else None,
         "attachment_type": body.attachment_type if (attachment_path and body.attachment_type) else None,
-        "created_at": datetime.utcnow().isoformat(),
-        "updated_at": datetime.utcnow().isoformat(),
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "updated_at": datetime.now(timezone.utc).isoformat(),
     }
 
     result = sb.table("messages").insert(msg_data).execute()
@@ -148,11 +135,56 @@ def send_message(
         raise HTTPException(status_code=500, detail="Failed to send message")
 
     _notify_new_message(sb, body)
+    flag_risky_message(sb, result.data[0])
 
     return {
         "success": True,
         "message": result.data[0]
     }
+
+
+def flag_risky_message(sb, message: dict) -> None:
+    """A message with scam signs (message_safety.py) is delivered, and the
+    recipient sees a warning; Migrent's admins get one report per sender per
+    day, so a run of messages does not flood the queue. Never raises."""
+    from message_safety import RISK_LABELS, message_risks
+
+    try:
+        risks = message_risks(message.get("message_text"))
+        if not risks:
+            return
+        sender = str(message.get("sender_id"))
+        marker = f"Sender {sender}"
+        since = (datetime.now(timezone.utc) - timedelta(days=1)).isoformat()
+        recent = (
+            sb.table("reports")
+            .select("id")
+            .eq("item_type", "message")
+            .eq("source", "system")
+            .gte("created_at", since)
+            .like("details", f"{marker}%")
+            .limit(1)
+            .execute()
+            .data
+        )
+        if recent:
+            return
+        excerpt = (message.get("message_text") or "")[:500]
+        sb.table("reports").insert(
+            {
+                "reporter_id": None,
+                "source": "system",
+                "item_type": "message",
+                "item_id": str(message.get("id")),
+                "listing_id": str(message.get("id")),
+                "reason": "Possible scam message",
+                "details": f"{marker} to {message.get('receiver_id')}. Signs: {'; '.join(RISK_LABELS[r] for r in risks)}.\n\n{excerpt}",
+                "status": "pending",
+                "priority": "high",
+            }
+        ).execute()
+    except Exception:
+        logger.exception("could not flag message %s", message.get("id"))
 
 
 def thread_key(listing_id: Optional[str], other_user_id: str) -> str:
@@ -239,7 +271,7 @@ async def upload_attachment(
     """
     from uploads import ImageValidationError, prepare_public_image, sniff_pdf, validate_private_document
 
-    user = get_current_user(authorization)
+    user = get_active_user(authorization)
     uid = str(user.id)
     data = await file.read()
     try:
@@ -251,7 +283,7 @@ async def upload_attachment(
         raise HTTPException(status_code=400, detail=str(e))
 
     safe_name = re.sub(r"[^A-Za-z0-9._-]", "_", (file.filename or "attachment"))[:80]
-    path = f"{uid}/{int(datetime.utcnow().timestamp())}_{uuid4().hex[:8]}.{ext}"
+    path = f"{uid}/{int(datetime.now(timezone.utc).timestamp())}_{uuid4().hex[:8]}.{ext}"
     sb = get_supabase_admin()
     try:
         sb.storage.from_(ATTACHMENT_BUCKET).upload(path=path, file=data, file_options={"content-type": content_type})
@@ -376,7 +408,7 @@ def get_direct_messages(
         if unread_ids:
             for msg_id in unread_ids:
                 sb.table("messages").update(
-                    {"read_at": datetime.utcnow().isoformat()}
+                    {"read_at": datetime.now(timezone.utc).isoformat()}
                 ).eq("id", msg_id).execute()
 
     return {"messages": _sign_attachments(sb, messages.data or [])}
@@ -429,7 +461,7 @@ def get_thread_messages(
         if unread_ids:
             for msg_id in unread_ids:
                 sb.table("messages").update(
-                    {"read_at": datetime.utcnow().isoformat()}
+                    {"read_at": datetime.now(timezone.utc).isoformat()}
                 ).eq("id", msg_id).execute()
 
     return {"messages": _sign_attachments(sb, messages.data or [])}
@@ -461,7 +493,7 @@ def mark_message_read(
         raise HTTPException(status_code=403, detail="Only receiver can mark as read")
 
     result = sb.table("messages").update(
-        {"read_at": datetime.utcnow().isoformat()}
+        {"read_at": datetime.now(timezone.utc).isoformat()}
     ).eq("id", message_id).execute()
 
     return {"success": True, "message": result.data[0] if result.data else {}}
@@ -496,7 +528,7 @@ def mark_messages_read(
 
     result = (
         sb.table("messages")
-        .update({"read_at": datetime.utcnow().isoformat()})
+        .update({"read_at": datetime.now(timezone.utc).isoformat()})
         .in_("id", body.message_ids)
         .eq("receiver_id", uid)
         .is_("read_at", "null")

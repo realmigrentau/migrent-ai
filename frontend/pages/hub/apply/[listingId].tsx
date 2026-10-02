@@ -25,6 +25,7 @@ import { useHub } from "../../../lib/hub/session";
 import type { ApplicationDetail, DocumentMeta } from "../../../lib/hub/types";
 import { useRentalProfile, type SaveState } from "../../../lib/hub/useRentalProfile";
 import { cn } from "../../../lib/cn";
+import { Events, trackEvent } from "../../../lib/analytics";
 
 const STEPS = [
   { key: "about", label: "About you" },
@@ -203,6 +204,7 @@ export default function Apply() {
     }
     try {
       await hubApi.post(`/hub/applications/${start.id}/submit`);
+      trackEvent(Events.APPLICATION_SUBMITTED);
       invalidate("/hub/applications");
       invalidate("/hub/home");
       invalidate("/hub/counts");

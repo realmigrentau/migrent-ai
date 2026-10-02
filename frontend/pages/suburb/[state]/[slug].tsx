@@ -9,6 +9,7 @@ import {
 } from "../../../lib/suburbs/data.server";
 import { getListingStats } from "../../../lib/suburbs/listings.server";
 import { placeHref } from "../../../lib/suburbs/search";
+import { roomsHref } from "../../../lib/suburbs/rooms";
 import { buildFaqs, buildMetaDescription, buildSummary } from "../../../lib/suburbs/summary";
 import {
   formatArea, formatAud, formatDate, formatDistance, formatNumber, formatPercent, placeNoun,
@@ -183,7 +184,7 @@ export default function SuburbPage({
                 <p className="sub-rooms__asof">
                   Counted {formatDate(listings.calculatedAt)} from approved, visible listings.
                 </p>
-                <Link className="sub-btn sub-btn--primary" href={`/seeker/search?suburb=${encodeURIComponent(detail.name)}`}>
+                <Link className="sub-btn sub-btn--primary" href={roomsHref(detail)}>
                   See rooms in {detail.name}
                 </Link>
               </div>
@@ -408,7 +409,7 @@ export default function SuburbPage({
               renters pay us nothing.
             </p>
             <div className="sub-cta__actions">
-              <Link className="sub-btn sub-btn--primary" href={`/seeker/search?suburb=${encodeURIComponent(detail.name)}`}>
+              <Link className="sub-btn sub-btn--primary" href={listings && listings.activeListings > 0 ? roomsHref(detail) : `/seeker/search?suburb=${encodeURIComponent(detail.name)}`}>
                 Browse rooms in {detail.name}
               </Link>
               <Link className="sub-btn sub-btn--ghost" href="/suburbs">

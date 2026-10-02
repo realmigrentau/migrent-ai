@@ -11,6 +11,7 @@ import { HomeImage } from "../../components/hub/ui/Media";
 import { useCompare } from "../../lib/hub/compare";
 import { day, weekly } from "../../lib/hub/format";
 import { useHubQuery } from "../../lib/hub/query";
+import { moveInCost, weeksLabel } from "../../lib/listingCosts";
 import type { ListingCard } from "../../lib/hub/types";
 
 type CompareHome = ListingCard & {
@@ -21,6 +22,11 @@ type CompareHome = ListingCard & {
   dishwasher: boolean | null;
   station_distance_min: number | null;
   bond: string | null;
+  bond_weeks: number | null;
+  rent_in_advance_weeks: number | null;
+  bills_estimate_weekly: number | null;
+  newcomer_friendly: boolean | null;
+  listing_purpose: string | null;
   host_verification: "verified" | "pending" | "unverified";
   upcoming_inspections: number;
 };
@@ -78,7 +84,23 @@ export default function Compare() {
   const cheapest = homes.length ? Math.min(...homes.map((h) => h.weekly_price ?? Infinity)) : null;
   const rows: { label: string; render: (h: CompareHome) => ReactNode }[] = [
     { label: "Rent", render: (h) => <span className="font-bold text-[color:var(--color-ink)]">{weekly(h.weekly_price)}{h.weekly_price === cheapest && homes.length > 1 ? <span className="ml-2 rounded-full bg-[var(--color-success-50)] px-2 py-0.5 text-[11.5px] font-bold text-[color:var(--color-success-600)] dark:text-[color:var(--color-success-500)]">Lowest</span> : null}</span> },
-    { label: "Bond", render: (h) => h.bond || <span className="text-[color:var(--color-ink-4)]">Not stated</span> },
+    {
+      label: "To move in",
+      render: (h) => {
+        const c = moveInCost(h);
+        if (c.known && c.total != null) return <span className="font-semibold text-[color:var(--color-ink)]">${c.total.toLocaleString("en-AU")}</span>;
+        return <span className="text-[color:var(--color-ink-4)]">Not stated</span>;
+      },
+    },
+    {
+      label: "Bond",
+      render: (h) =>
+        h.bond_weeks != null ? (h.bond_weeks ? weeksLabel(h.bond_weeks) : "None") : h.bond || <span className="text-[color:var(--color-ink-4)]">Not stated</span>,
+    },
+    {
+      label: "Bills",
+      render: (h) => (h.bills_included ? "Included" : h.bills_estimate_weekly ? `About $${h.bills_estimate_weekly} a week extra` : "Extra"),
+    },
     { label: "Where", render: (h) => h.display_address },
     { label: "Type", render: (h) => kindLabel(h) },
     { label: "Bedrooms", render: (h) => h.bedrooms ?? "-" },
@@ -86,11 +108,11 @@ export default function Compare() {
     { label: "Available", render: (h) => (h.available_from && h.available_from > new Date().toISOString().slice(0, 10) ? day(h.available_from) : "Now") },
     { label: "Minimum stay", render: (h) => (h.min_stay_weeks ? `${h.min_stay_weeks} weeks` : "Not stated") },
     { label: "Furnished", render: (h) => <Yes value={h.furnished} /> },
-    { label: "Bills included", render: (h) => <Yes value={h.bills_included} /> },
     { label: "Internet", render: (h) => <Yes value={h.internet_included} /> },
     { label: "Air conditioning", render: (h) => <Yes value={h.air_conditioning} /> },
     { label: "Parking", render: (h) => <Yes value={h.parking} /> },
     { label: "Pets", render: (h) => <Yes value={h.pets_allowed} /> },
+    { label: "New to Australia", render: (h) => (h.newcomer_friendly ? "No local rental history needed" : <span className="text-[color:var(--color-ink-4)]">Not stated</span>) },
     { label: "Station", render: (h) => (h.station_distance_min ? `${h.station_distance_min} min walk` : h.nearest_transport || "Not stated") },
     {
       label: "Owner ID check",

@@ -20,6 +20,8 @@ import {
 interface TrueCostBadgeProps {
   weeklyRent: number;
   billsIncluded?: boolean;
+  /** The host's own weekly bills estimate, when they gave one. */
+  billsEstimate?: number;
   listingLat?: number;
   listingLng?: number;
 }
@@ -27,6 +29,7 @@ interface TrueCostBadgeProps {
 export default function TrueCostBadge({
   weeklyRent,
   billsIncluded = false,
+  billsEstimate: hostBills,
   listingLat,
   listingLng,
 }: TrueCostBadgeProps) {
@@ -34,7 +37,7 @@ export default function TrueCostBadge({
   const [destination, setDestination] = useState<Destination | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
-  const [billsEstimate, setBillsEstimate] = useState(BILLS_RANGE.default);
+  const [billsEstimate, setBillsEstimate] = useState(hostBills ?? BILLS_RANGE.default);
 
   const filteredDestinations = useMemo(() => {
     if (!searchQuery.trim()) return DESTINATIONS.slice(0, 8);
@@ -200,8 +203,8 @@ export default function TrueCostBadge({
                   </div>
                   <input
                     type="range"
-                    min={BILLS_RANGE.min}
-                    max={BILLS_RANGE.max}
+                    min={Math.min(BILLS_RANGE.min, hostBills ?? BILLS_RANGE.min)}
+                    max={Math.max(BILLS_RANGE.max, hostBills ?? BILLS_RANGE.max)}
                     value={billsEstimate}
                     onChange={(e) => setBillsEstimate(Number(e.target.value))}
                     className="w-full h-1.5 rounded-full appearance-none cursor-pointer bg-[var(--color-accent-soft)] dark:bg-emerald-900/50 accent-emerald-500"

@@ -483,8 +483,9 @@ def unsave_home(listing_id: str, request: Request, authorization: Optional[str] 
 SEARCH_KEYS = {
     "q", "suburb", "postcode", "state", "city", "min_price", "max_price", "property_type", "place_type",
     "bedrooms", "furnished", "bills_included", "pets_allowed", "parking", "available_from", "listing_purpose",
+    "newcomer_friendly",
 }
-BOOL_KEYS = {"furnished", "bills_included", "pets_allowed", "parking"}
+BOOL_KEYS = {"furnished", "bills_included", "pets_allowed", "parking", "newcomer_friendly"}
 
 
 def clean_search_params(params: dict) -> dict:
@@ -530,6 +531,11 @@ def query_public_listings(sb, params: dict, *, limit: int = 12, created_after: O
         q = q.in_("place_type", place_type_spellings(str(p["place_type"])))
     if p.get("bedrooms"):
         q = q.gte("bedrooms", p["bedrooms"])
+    # As in /listings/search: listings that never said count as leases.
+    if p.get("listing_purpose") == "long_term":
+        q = q.or_("listing_purpose.is.null,listing_purpose.eq.long_term")
+    elif p.get("listing_purpose") == "short_stay":
+        q = q.eq("listing_purpose", "short_stay")
     for b in BOOL_KEYS:
         if p.get(b) is True:
             q = q.eq(b, True)
@@ -717,7 +723,7 @@ def compare(ids: str, request: Request, authorization: Optional[str] = Header(No
             "id, owner_id, address, title, suburb, city, postcode, weekly_price, images, property_type, place_type, bedrooms, bathrooms, "
             "parking, furnished, bills_included, pets_allowed, available_from, available_to, moderation_status, hidden_at, "
             "min_stay_weeks, internet_included, air_conditioning, laundry, dishwasher, nearest_transport, station_distance_min, bond, "
-            "created_at"
+            "bond_weeks, rent_in_advance_weeks, bills_estimate_weekly, newcomer_friendly, listing_purpose, created_at"
         ),
     )
     from hub_common import owner_verified_map
@@ -739,6 +745,11 @@ def compare(ids: str, request: Request, authorization: Optional[str] = Header(No
                 "dishwasher": r.get("dishwasher"),
                 "station_distance_min": r.get("station_distance_min"),
                 "bond": r.get("bond"),
+                "bond_weeks": r.get("bond_weeks"),
+                "rent_in_advance_weeks": r.get("rent_in_advance_weeks"),
+                "bills_estimate_weekly": r.get("bills_estimate_weekly"),
+                "newcomer_friendly": r.get("newcomer_friendly"),
+                "listing_purpose": r.get("listing_purpose"),
                 "host_verification": verified.get(str(r.get("owner_id")), "unverified"),
                 "upcoming_inspections": now_slots.get(lid, 0),
             }

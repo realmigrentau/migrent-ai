@@ -117,7 +117,7 @@ def get_pending_listings(
     limit: int = Query(50, ge=1, le=100),
     offset: int = Query(0, ge=0),
     suburb: Optional[str] = None,
-    sort: Optional[str] = Query("newest", regex="^(newest|oldest)$"),
+    sort: Optional[str] = Query("newest", pattern="^(newest|oldest)$"),
 ):
     """Get all listings pending moderation."""
     _require_admin(authorization)
@@ -181,7 +181,7 @@ def _fetch_pending(suburb, sort, limit, offset):
 @router.get("/listings")
 def get_all_moderated_listings(
     authorization: str = Header(...),
-    status: Optional[str] = Query(None, regex="^(draft|pending_approval|approved|paused|expired|rejected|changes_requested|flagged|hidden|delete_requested|deleted)$"),
+    status: Optional[str] = Query(None, pattern="^(draft|pending_approval|approved|paused|expired|rejected|changes_requested|flagged|hidden|delete_requested|deleted)$"),
     limit: int = Query(50, ge=1, le=100),
     offset: int = Query(0, ge=0),
 ):

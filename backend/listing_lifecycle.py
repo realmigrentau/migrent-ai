@@ -24,6 +24,8 @@ and is mirrored by the public_listings view and the RLS policy.
 from __future__ import annotations
 
 import logging
+import threading
+import time
 from datetime import date, timedelta
 from typing import Any, Optional
 
@@ -143,7 +145,61 @@ def public_filter(query, today: Optional[date] = None):
     query = query.eq("moderation_status", STATUS_APPROVED)
     query = query.is_("hidden_at", "null")
     query = query.or_(f"available_to.is.null,available_to.gte.{iso}")
+    suspended = suspended_owner_ids()
+    if suspended:
+        query = query.not_.in_("owner_id", suspended)
     return query
+
+
+# ---------------------------------------------------------------------------
+# Suspended owners
+#
+# A suspended account's listings disappear from every public surface (search,
+# listing pages, Hub cards, sitemap) without their own status changing, so
+# reinstating the account brings them straight back. The set of suspended
+# accounts is tiny and changes rarely; it is read once and kept for
+# SUSPENDED_CACHE_SECONDS, and dropped at once when an admin suspends or
+# reinstates someone on this instance (forget_suspended_owners).
+# ---------------------------------------------------------------------------
+
+SUSPENDED_CACHE_SECONDS = 30
+_suspended_lock = threading.Lock()
+_suspended_cache: dict[str, Any] = {"until": 0.0, "ids": []}
+
+
+def suspended_owner_ids() -> list[str]:
+    now = time.monotonic()
+    with _suspended_lock:
+        if _suspended_cache["until"] > now:
+            return list(_suspended_cache["ids"])
+    try:
+        from db import get_supabase_admin
+
+        rows = get_supabase_admin().table("profiles").select("id").not_.is_("disabled_at", "null").execute().data or []
+        ids = sorted(str(r["id"]) for r in rows if r.get("id"))
+    except Exception:
+        logger.warning("Could not read suspended accounts; using the last known list")
+        with _suspended_lock:
+            return list(_suspended_cache["ids"])
+    with _suspended_lock:
+        _suspended_cache.update(until=now + SUSPENDED_CACHE_SECONDS, ids=ids)
+    return ids
+
+
+def forget_suspended_owners() -> None:
+    with _suspended_lock:
+        _suspended_cache["until"] = 0.0
+
+
+def mark_suspended_owners(rows) -> None:
+    """Flag listing rows whose owner is suspended, in place, so
+    public_dto.listing_public_state reports them as unavailable."""
+    suspended = set(suspended_owner_ids())
+    if not suspended:
+        return
+    for row in rows or []:
+        if row and str(row.get("owner_id")) in suspended:
+            row["_owner_suspended"] = True
 
 
 def availability_filter(query, check_in: Optional[date], check_out: Optional[date]):

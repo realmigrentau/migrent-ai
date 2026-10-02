@@ -3,9 +3,12 @@ import { motion } from "framer-motion";
 import { Star, ChevronDown } from "lucide-react";
 import { useListingReviews } from "../../hooks/useReviews";
 import ReviewStats from "../reviews/ReviewStats";
+import ReportDialog from "../hub/ReportDialog";
 
 interface ReviewsSectionProps {
   listingId: string;
+  /** Signed in, Report opens the report form; otherwise it goes to Contact. */
+  signedIn?: boolean;
   initialStats?: {
     review_count: number;
     avg_rating: number;
@@ -33,7 +36,9 @@ function StarRating({ rating }: { rating: number }) {
 
 function ReviewCard({
   review,
+  onReport,
 }: {
+  onReport: () => void;
   review: {
     id: string;
     rating: number;
@@ -82,7 +87,7 @@ function ReviewCard({
             {review.migrant_friendliness != null &&
               review.migrant_friendliness > 0 && (
                 <span className="text-xs text-[var(--color-primary)] dark:text-[var(--color-primary)] font-medium">
-                  Migrant friendly: {review.migrant_friendliness}/5
+                  Welcoming to new arrivals: {review.migrant_friendliness}/5
                 </span>
               )}
           </div>
@@ -92,6 +97,9 @@ function ReviewCard({
               {review.review_text}
             </p>
           )}
+          <button type="button" onClick={onReport} className="mt-1.5 text-xs text-[var(--color-ink-3)] underline-offset-2 hover:underline">
+            Report this review
+          </button>
 
           {review.photos && review.photos.length > 0 && (
             <div className="flex gap-2 mt-2 overflow-x-auto">
@@ -128,10 +136,16 @@ function getRelativeTime(date: Date): string {
 export default function ReviewsSection({
   listingId,
   initialStats,
+  signedIn = false,
 }: ReviewsSectionProps) {
   const { reviews, stats, loading, hasMore, loadMore } =
     useListingReviews(listingId);
   const [expanded, setExpanded] = useState(false);
+  const [reporting, setReporting] = useState<string | null>(null);
+  const report = (id: string) => {
+    if (signedIn) setReporting(id);
+    else window.location.assign(`/contact?topic=SAFETY&subject=${encodeURIComponent(`Review ${id.slice(0, 8)} on listing ${listingId.slice(0, 8)}`)}`);
+  };
 
   const displayStats = stats.review_count > 0 ? stats : initialStats || stats;
 
@@ -151,16 +165,17 @@ export default function ReviewsSection({
 
   return (
     <div>
-      <h2 className="site-h3 site-h3--lg mb-4">
+      <h2 className="site-h3 site-h3--lg mb-1">
         Reviews
       </h2>
+      <p className="site-meta mb-4">From renters after a tenancy or stay booked on Migrent.</p>
 
       <ReviewStats stats={displayStats} />
 
       {reviews.length > 0 ? (
         <div className="mt-4">
           {(expanded ? reviews : reviews.slice(0, 3)).map((review) => (
-            <ReviewCard key={review.id} review={review} />
+            <ReviewCard key={review.id} review={review} onReport={() => report(review.id)} />
           ))}
 
           {reviews.length > 3 && !expanded && (
@@ -186,9 +201,10 @@ export default function ReviewsSection({
         </div>
       ) : (
         <p className="mt-3 text-sm text-[var(--color-ink-3)]">
-          No reviews yet. Be the first to book and review this place.
+          No reviews yet. Reviews come from renters after a tenancy or stay.
         </p>
       )}
+      {signedIn && reporting && <ReportDialog open onClose={() => setReporting(null)} itemType="review" itemId={reporting} subject="this review" />}
     </div>
   );
 }

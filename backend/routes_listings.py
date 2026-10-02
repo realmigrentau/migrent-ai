@@ -6,11 +6,14 @@ from fastapi import APIRouter, Header, HTTPException, Request, Response
 from pydantic import BaseModel, Field
 from supabase import create_client
 
-from auth_utils import get_current_user, is_admin_user, require_live_session
+from auth_utils import get_current_user, is_admin_user, require_live_session, get_active_user
 from concurrency import run_parallel
 from db import SUPABASE_ANON_KEY, SUPABASE_URL, get_supabase_admin
 from limiter import limiter
+from listing_rules import advance_limit_message, location_problem, max_rent_in_advance_weeks
+from hub_common import state_for_postcode
 from listing_lifecycle import (
+    mark_suspended_owners,
     OWNER_SUBMITTABLE,
     STATUS_APPROVED,
     STATUS_CHANGES,
@@ -52,10 +55,14 @@ SEARCH_COLUMNS = (
     "bathroom_type, max_guests, furnished, bills_included, parking, air_conditioning, "
     "pets_allowed, couples_ok, gender_preference, instant_book, instant_book_enabled, "
     "available_from, available_to, min_stay, min_stay_weeks, max_stay_weeks, latitude, "
-    "longitude, nearest_transport, station_distance_min, moderation_status, hidden_at, created_at"
+    "longitude, nearest_transport, station_distance_min, moderation_status, hidden_at, created_at, "
+    "listing_purpose, bond_weeks, rent_in_advance_weeks, bills_estimate_weekly, newcomer_friendly"
 )
 
 OWNER_PROFILE_COLUMNS = "id, public_id, name, preferred_name, custom_pfp, bio, about_me, badges, created_at"
+# Property managers' agency details (migration 049). Read separately so the
+# owner card still loads on a database without them.
+OWNER_AGENCY_COLUMNS = "owner_kind, agency_name, agency_licence"
 VERIFICATION_COLUMNS = "user_id, email_verified, phone_verified, id_status, fully_verified, id_reviewed_at"
 
 
@@ -106,7 +113,10 @@ def _load_owner_context(sb, owner_ids: list[str]) -> tuple[dict, dict]:
     if not ids:
         return profiles, verifications
     try:
-        pr = sb.table("profiles").select(OWNER_PROFILE_COLUMNS).in_("id", ids).execute()
+        try:
+            pr = sb.table("profiles").select(f"{OWNER_PROFILE_COLUMNS}, {OWNER_AGENCY_COLUMNS}").in_("id", ids).execute()
+        except Exception:
+            pr = sb.table("profiles").select(OWNER_PROFILE_COLUMNS).in_("id", ids).execute()
         profiles = {str(p["id"]): p for p in (pr.data or [])}
     except Exception:
         logger.exception("Failed to load owner profiles")
@@ -153,7 +163,7 @@ async def create_listing(
     listing: ListingCreate,
     authorization: str = Header(...),
 ):
-    user = get_current_user(authorization)
+    user = get_active_user(authorization)
     # The account's role comes from the database (profiles.role, set through
     # Migrent Hub onboarding or settings), not from user_metadata, which the
     # user can rewrite. user_metadata is only a fallback for accounts that
@@ -212,7 +222,10 @@ async def create_listing(
         "highlights": listing.highlights,
         "weekly_discount": listing.weekly_discount,
         "monthly_discount": listing.monthly_discount,
-        "bond": listing.bond,
+        "bond_weeks": listing.bond_weeks,
+        "rent_in_advance_weeks": listing.rent_in_advance_weeks,
+        "bills_estimate_weekly": listing.bills_estimate_weekly,
+        "newcomer_friendly": listing.newcomer_friendly,
         "no_smoking": listing.no_smoking,
         "quiet_hours": listing.quiet_hours,
         "tenant_prefs": listing.tenant_prefs,
@@ -241,6 +254,16 @@ async def create_listing(
     for key, value in extended_fields.items():
         if value is not None:
             row[key] = value
+
+    # Rent in advance: one rent period only in Tasmania and the NT.
+    state = state_for_postcode(listing.postcode)
+    if listing.rent_in_advance_weeks is not None and listing.rent_in_advance_weeks > max_rent_in_advance_weeks(state):
+        raise HTTPException(status_code=400, detail=advance_limit_message(state))
+
+    # The suburb has to exist and agree with the postcode (ABS localities).
+    place_problem = location_problem(listing.suburb, listing.postcode)
+    if place_problem:
+        raise HTTPException(status_code=400, detail=place_problem)
 
     # Location. If the client sent coordinates, they must agree with the
     # suburb and postcode; otherwise geocode the address server-side.
@@ -370,7 +393,7 @@ def submit_listing_for_review(
     hosts appear in search is unchanged. The database enforces the same rule
     with the listings_require_verified_owner trigger.
     """
-    user = get_current_user(authorization)
+    user = get_active_user(authorization)
     user_id = str(user.id)
     sb = get_supabase_admin()
 
@@ -422,12 +445,15 @@ def renew_listing(
     has expired sends it back through review, so a room that quietly sat
     unavailable for months is looked at by a person before it reappears.
     """
-    user = get_current_user(authorization)
-    user_id = str(user.id)
-    sb = get_supabase_admin()
+    user = get_active_user(authorization)
+    return renew_for_owner(get_supabase_admin(), str(user.id), listing_id, body.available_from, body.available_to)
+
+
+def renew_for_owner(sb, user_id: str, listing_id: str, available_from: Optional[str], available_to: str) -> dict:
+    """renew_listing's work, shared with the Hub's bulk actions."""
     row = _owner_row_or_404(sb, listing_id, user_id)
 
-    start, end = _availability_or_400(body.available_from or row.get("available_from"), body.available_to, allow_past_start=True)
+    start, end = _availability_or_400(available_from or row.get("available_from"), available_to, allow_past_start=True)
     if end is None:
         raise HTTPException(status_code=400, detail="available_to is required")
 
@@ -469,8 +495,11 @@ def renew_listing(
 def pause_listing(request: Request, listing_id: str, authorization: str = Header(...)):
     """Owner takes a live listing offline. Reversible with /resume."""
     user = get_current_user(authorization)
-    user_id = str(user.id)
-    sb = get_supabase_admin()
+    return pause_for_owner(get_supabase_admin(), str(user.id), listing_id)
+
+
+def pause_for_owner(sb, user_id: str, listing_id: str) -> dict:
+    """pause_listing's work, shared with the Hub's bulk actions."""
     row = _owner_row_or_404(sb, listing_id, user_id)
     if row["moderation_status"] != STATUS_APPROVED:
         raise HTTPException(status_code=400, detail="Only a live listing can be paused.")
@@ -487,9 +516,12 @@ def resume_listing(request: Request, listing_id: str, authorization: str = Heade
     """Owner brings a paused listing back. Goes straight back live if it was
     paused by the owner, is still verified and its dates are still open;
     otherwise back into review."""
-    user = get_current_user(authorization)
-    user_id = str(user.id)
-    sb = get_supabase_admin()
+    user = get_active_user(authorization)
+    return resume_for_owner(get_supabase_admin(), str(user.id), listing_id)
+
+
+def resume_for_owner(sb, user_id: str, listing_id: str) -> dict:
+    """resume_listing's work, shared with the Hub's bulk actions."""
     row = _owner_row_or_404(sb, listing_id, user_id, "id, owner_id, moderation_status, available_from, available_to, title, paused_by_admin")
     if row["moderation_status"] != STATUS_PAUSED:
         raise HTTPException(status_code=400, detail="This listing is not paused.")
@@ -561,6 +593,8 @@ def search_listings(
     internet_included: Optional[bool] = None,
     no_cameras: Optional[bool] = None,
     lockable_bedroom: Optional[bool] = None,
+    lease_type: Optional[str] = None,
+    newcomer_friendly: Optional[bool] = None,
     sort: Optional[str] = None,
     limit: int = 20,
     offset: int = 0,
@@ -650,6 +684,14 @@ def search_listings(
             q = q.or_("security_cameras.is.null,security_cameras.is.false")
         if lockable_bedroom is True:
             q = q.eq("lockable_bedroom", True)
+        # A lease (months) or a short stay (weeks). Listings from before the
+        # two were told apart have no purpose and count as leases.
+        if lease_type == "long_term":
+            q = q.or_("listing_purpose.is.null,listing_purpose.eq.long_term")
+        elif lease_type == "short_stay":
+            q = q.eq("listing_purpose", "short_stay")
+        if newcomer_friendly is True:
+            q = q.eq("newcomer_friendly", True)
         if gender_preference == "female":
             q = q.eq("gender_preference", "female")
         if min_stay:
@@ -774,6 +816,7 @@ def get_listing_by_id(
         raise HTTPException(status_code=404, detail="Listing not found")
 
     listing = res.data[0]
+    mark_suspended_owners([listing])
     today = date.today()
 
     viewer = _optional_viewer(authorization)
@@ -820,49 +863,16 @@ def get_listing_by_id(
         except Exception:
             return None
 
-    def _review_stats():
-        empty = {"review_count": 0, "avg_rating": 0, "avg_migrant_friendliness": None, "positive_count": 0}
-        try:
-            stats_res = sb.table("listing_review_stats").select("*").eq("listing_id", listing_id).execute()
-            return stats_res.data[0] if stats_res.data else empty
-        except Exception:
-            return empty
+    def _reviews():
+        """Published renter reviews only (reviews_core): hosts' reviews of
+        renters never appear on a listing."""
+        from reviews_core import listing_reviews, present, stats
 
-    def _recent_reviews():
         try:
-            reviews_res = (
-                sb.table("reviews")
-                .select("id, reviewer_id, rating, review_text, migrant_friendliness, photos, created_at")
-                .eq("listing_id", listing_id)
-                .eq("flagged", False)
-                .order("created_at", desc=True)
-                .limit(5)
-                .execute()
-            )
-            reviews = reviews_res.data or []
-            reviewer_ids = list({r["reviewer_id"] for r in reviews if r.get("reviewer_id")})
-            profile_map = {}
-            if reviewer_ids:
-                pr = sb.table("profiles").select("id, name, preferred_name, custom_pfp").in_("id", reviewer_ids).execute()
-                profile_map = {p["id"]: p for p in (pr.data or [])}
-            public_reviews = []
-            for r in reviews:
-                p = profile_map.get(r.get("reviewer_id"), {})
-                public_reviews.append(
-                    {
-                        "id": r.get("id"),
-                        "rating": r.get("rating"),
-                        "review_text": r.get("review_text"),
-                        "migrant_friendliness": r.get("migrant_friendliness"),
-                        "photos": r.get("photos") or [],
-                        "created_at": r.get("created_at"),
-                        "reviewer_name": p.get("preferred_name") or p.get("name") or "Anonymous",
-                        "reviewer_photo": p.get("custom_pfp"),
-                    }
-                )
-            return public_reviews
+            rows = listing_reviews(sb, listing_id)
+            return stats(rows), present(sb, rows[:5])
         except Exception:
-            return []
+            return {"review_count": 0, "avg_rating": 0, "avg_migrant_friendliness": None, "positive_count": 0}, []
 
     def _similar():
         similar_rows: list[dict] = []
@@ -892,13 +902,13 @@ def get_listing_by_id(
     want_similar = "similar" in includes and state == "published"
     # Everything below depends only on the listing row, so it is fetched
     # together rather than one query after another (concurrency.py).
-    (profiles, verifications), listings_count, review_stats, recent_reviews, similar = run_parallel(
+    (profiles, verifications), listings_count, reviews_bundle, similar = run_parallel(
         lambda: _load_owner_context(sb, [owner_id] if owner_id else []),
         _owner_listing_count,
-        _review_stats if want_reviews else (lambda: None),
-        _recent_reviews if want_reviews else (lambda: None),
+        _reviews if want_reviews else (lambda: (None, None)),
         _similar if want_similar else (lambda: []),
     )
+    review_stats, recent_reviews = reviews_bundle
     owner_profile = profiles.get(owner_id) if owner_id else None
     owner_verification = verifications.get(owner_id) if owner_id else None
     if owner_profile is not None:
@@ -975,6 +985,38 @@ def list_listings(
 # ---------------------------------------------------------------------------
 
 
+# Changes to a live listing that send it back to review (update_listing).
+REVIEW_ON_CHANGE = ("title", "description", "images", "address", "suburb", "postcode", "bond_weeks", "rent_in_advance_weeks")
+# A price change beyond this fraction either way is also reviewed: a sudden
+# drop far below the market is a classic scam signal.
+PRICE_REVIEW_RATIO = 0.15
+
+
+def material_changes(current: dict, updates: dict) -> list[str]:
+    """Names of the fields in `updates` that change the substance of a
+    listing compared with `current`."""
+    changed = []
+    for field in REVIEW_ON_CHANGE:
+        if field not in updates:
+            continue
+        before, after = current.get(field), updates.get(field)
+        if isinstance(before, str) and isinstance(after, str):
+            if before.strip() == after.strip():
+                continue
+        elif before == after:
+            continue
+        changed.append(field)
+    if "weekly_price" in updates:
+        try:
+            before = float(current.get("weekly_price") or 0)
+            after = float(updates["weekly_price"] or 0)
+        except (TypeError, ValueError):
+            before, after = 0.0, 1.0
+        if before <= 0 or abs(after - before) / before > PRICE_REVIEW_RATIO:
+            changed.append("weekly_price")
+    return changed
+
+
 @router.patch("/{listing_id}")
 async def update_listing(
     listing_id: str,
@@ -982,11 +1024,11 @@ async def update_listing(
     authorization: str = Header(...),
 ):
     """Update a listing. Only the owner can update their own listing."""
-    user = get_current_user(authorization)
+    user = get_active_user(authorization)
     user_id = str(user.id)
     sb = get_supabase_admin()
 
-    listing_res = sb.table("listings").select("id, owner_id, moderation_status, address, suburb, postcode, latitude, longitude, available_from, available_to").eq("id", listing_id).execute()
+    listing_res = sb.table("listings").select("id, owner_id, moderation_status, address, suburb, postcode, latitude, longitude, available_from, available_to, title, description, images, weekly_price, bond_weeks, rent_in_advance_weeks").eq("id", listing_id).execute()
     if not listing_res.data:
         raise HTTPException(status_code=404, detail="Listing not found")
     current = listing_res.data[0]
@@ -1012,7 +1054,16 @@ async def update_listing(
             allow_past_start=True,
         )
 
+    if updates.get("rent_in_advance_weeks") is not None:
+        state = state_for_postcode(updates.get("postcode", current.get("postcode")))
+        if updates["rent_in_advance_weeks"] > max_rent_in_advance_weeks(state):
+            raise HTTPException(status_code=400, detail=advance_limit_message(state))
+
     location_keys = {"address", "suburb", "postcode", "latitude", "longitude"}
+    if {"suburb", "postcode"} & set(updates.keys()):
+        place_problem = location_problem(updates.get("suburb", current.get("suburb")), updates.get("postcode", current.get("postcode")))
+        if place_problem:
+            raise HTTPException(status_code=400, detail=place_problem)
     if location_keys & set(updates.keys()):
         location = await validate_listing_location(
             address=updates.get("address", current.get("address")),
@@ -1029,11 +1080,34 @@ async def update_listing(
             if location.formatted_address:
                 updates["geocoded_address"] = location.formatted_address
 
+    # A live listing whose substance changes goes back to Migrent for review
+    # before anyone sees the new version. Without this, a host could get a
+    # genuine listing approved and then swap the photos, address or text
+    # ("pay a holding deposit to this account") while keeping the ID-checked
+    # badge. Availability dates, amenities and small price changes stay live.
+    review_reasons = material_changes(current, updates)
+    back_to_review = current.get("moderation_status") == STATUS_APPROVED and bool(review_reasons)
+    if back_to_review:
+        updates["moderation_status"] = STATUS_PENDING
+
     try:
         sb.table("listings").update(updates).eq("id", listing_id).execute()
     except Exception:
         logger.exception("Failed to update listing")
         raise HTTPException(status_code=500, detail="Failed to update listing")
+
+    if back_to_review:
+        record_event(
+            sb,
+            listing_id=listing_id,
+            actor_id=user_id,
+            actor_type="owner",
+            event_type="submitted",
+            old_status=STATUS_APPROVED,
+            new_status=STATUS_PENDING,
+            notes="Live listing changed; back to review: " + ", ".join(review_reasons),
+            metadata={"reason": "material_edit", "changed": review_reasons},
+        )
 
     content_fields = {"title", "description", "images", "weekly_price", "address", "suburb"}
     if content_fields & set(updates.keys()):
@@ -1064,10 +1138,14 @@ async def update_listing(
                     actor_type="owner",
                     event_type="owner_edited",
                     old_status=current.get("moderation_status"),
-                    new_status=current.get("moderation_status"),
+                    new_status=updates.get("moderation_status", current.get("moderation_status")),
                     notes=f"Owner edited fields: {', '.join(sorted(updates.keys()))}",
                     metadata={"spam_score": spam_result["spam_score"]},
                 )
+                # The rescan used to be recorded and then ignored. Flag or
+                # hide on the new content exactly as on a new listing.
+                if spam_result.get("action") in ("flag", "hide"):
+                    apply_spam_result(listing_id, spam_result, user_id)
         except Exception as e:
             logger.warning("Spam rescan failed for listing %s: %s", listing_id, e)
 

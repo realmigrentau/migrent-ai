@@ -16,6 +16,7 @@ import { day, placeTypeLabel, propertyTypeLabel, weekly } from "../../../../lib/
 import { invalidate, setQueryData, useHubQuery } from "../../../../lib/hub/query";
 import { siteUrl } from "../../../../lib/hub/routes";
 import type { OwnerListing } from "../../../../lib/hub/types";
+import { moveInCost, weeksLabel } from "../../../../lib/listingCosts";
 import { supabase } from "../../../../lib/supabase";
 
 function isoPlusDays(n: number, from?: string | null) {
@@ -162,6 +163,7 @@ export default function ListingPage() {
   const [renewing, setRenewing] = useState(false);
   const [archiving, setArchiving] = useState(false);
   const l = data?.listing;
+  const moveIn = moveInCost(l ?? {});
 
   const refresh = () => {
     invalidate("/hub/properties");
@@ -321,7 +323,9 @@ export default function ListingPage() {
                 <Fact label="Available" value={l.available_from ? `From ${day(l.available_from)}` : "-"} />
                 {l.bedrooms != null && <Fact label="Bedrooms" value={l.bedrooms} />}
                 {l.bathrooms != null && <Fact label="Bathrooms" value={l.bathrooms} />}
-                {l.bond && <Fact label="Bond" value={l.bond} />}
+                {l.bond_weeks != null ? <Fact label="Bond" value={l.bond_weeks ? weeksLabel(l.bond_weeks) : "None"} /> : l.bond ? <Fact label="Bond" value={l.bond} /> : null}
+                {l.listing_purpose !== "short_stay" && l.rent_in_advance_weeks != null && <Fact label="Rent in advance" value={l.rent_in_advance_weeks ? weeksLabel(l.rent_in_advance_weeks) : "None"} />}
+                {moveIn.known && moveIn.total != null && l.listing_purpose !== "short_stay" && <Fact label="Renters pay to move in" value={`$${moveIn.total.toLocaleString("en-AU")}`} />}
               </dl>
               {l.description && <p className="line-clamp-6 whitespace-pre-wrap text-[14.5px] leading-relaxed text-[color:var(--color-ink-2)]">{l.description}</p>}
             </Panel>

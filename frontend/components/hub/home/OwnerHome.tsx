@@ -11,6 +11,7 @@ import { ButtonLink } from "../ui/Button";
 import { ErrorState, Skeleton } from "../ui/Feedback";
 import { HomeImage } from "../ui/Media";
 import { Panel, Reveal, Section, TextLink } from "../ui/Layout";
+import PendingReviews from "../reviews/PendingReviews";
 
 const ATTENTION_ICON: Record<string, typeof Wrench> = {
   verification: BadgeCheck,
@@ -226,6 +227,7 @@ export default function OwnerHome() {
 
       <div className="mt-10 grid gap-10 lg:grid-cols-[minmax(0,1fr)_340px]">
         <div className="flex min-w-0 flex-col gap-12">
+          <PendingReviews />
           {data.attention.length > 0 && (
             <Section title="Needs your attention">
               <Panel padded={false} className="p-2">

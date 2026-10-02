@@ -7,13 +7,18 @@ export default function CodeOfConduct() {
     <>
       <SEOHead title="NSW STRA Code of Conduct" description="Summary of the NSW Short-Term Rental Accommodation Code of Conduct and how it applies to Migrent users." />
 
-      <LegalLayout title="STRA Code of Conduct" note="Last updated: March 2026">
+      <LegalLayout title="NSW short-stay code of conduct" note="Last updated: March 2026">
 
         <div className="space-y-8">
           {/* Introduction */}
           <section className="card p-6 rounded-2xl space-y-3">
             <h2 className="text-lg font-bold text-[var(--color-ink)]">About the NSW STRA Code</h2>
             <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
+              <p>
+                <strong>This page is only for short stays in NSW.</strong> Most rooms on Migrent are longer-term rentals, which this code does not cover. The rules for everyone on Migrent are in the{" "}
+                <Link href="/rules-community-guidelines" className="text-[var(--color-primary)] underline underline-offset-2">community guidelines</Link>, and each state&apos;s renting rules are on the{" "}
+                <Link href="/guides/rental-laws" className="text-[var(--color-primary)] underline underline-offset-2">rental laws page</Link>.
+              </p>
               <p>New South Wales has a mandatory Code of Conduct for Short-Term Rental Accommodation (STRA) under the Fair Trading Regulation. This code applies to hosts, guests, and booking platforms operating in NSW.</p>
               <p>This page is a <strong>summary only</strong>. For the full official code, visit the <a href="https://www.nsw.gov.au/housing-and-construction/short-term-rental-accommodation" target="_blank" rel="noopener noreferrer" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">NSW Government STRA page</a>.</p>
               <p>Migrent is an introduction service. While some listings on Migrent may fall under STRA regulations, we inform all users of their obligations under the code.</p>

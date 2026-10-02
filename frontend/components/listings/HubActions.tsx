@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { CalendarClock, FileText, Heart, MessageCircle } from "lucide-react";
 import { hubFromSite } from "../../lib/hub/routes";
+import { Events, trackEvent } from "../../lib/analytics";
 
-type Intent = "apply" | "inspect" | "message" | "save";
+type Intent = "apply" | "inspect" | "message" | "save" | "report";
 
 /**
  * Where a listing hands off to Migrent Hub. Signed in, each action opens the
@@ -24,18 +25,18 @@ export default function HubActions({ listingId, ownerName, signedIn, shortStay }
         <>
           <p className="text-[15px] font-semibold text-[var(--color-ink)]">Interested in this home?</p>
           <p className="text-[13px] leading-snug text-[var(--color-ink-3)]">Apply with one Rental Profile, book an inspection or ask {first} a question. It all happens in Migrent Hub.</p>
-          <Link href={hubIntentHref(listingId, "apply", signedIn)} className="flex items-center justify-center gap-2 w-full btn-primary min-h-[48px] rounded-xl text-[15px] font-semibold">
+          <Link href={hubIntentHref(listingId, "apply", signedIn)} onClick={() => trackEvent(Events.HUB_ACTION_CLICKED, { intent: "apply" })} className="flex items-center justify-center gap-2 w-full btn-primary min-h-[48px] rounded-xl text-[15px] font-semibold">
             <FileText className="w-4 h-4" aria-hidden="true" />
             Apply for this home
           </Link>
-          <Link href={hubIntentHref(listingId, "inspect", signedIn)} className={secondary}>
+          <Link href={hubIntentHref(listingId, "inspect", signedIn)} onClick={() => trackEvent(Events.HUB_ACTION_CLICKED, { intent: "inspect" })} className={secondary}>
             <CalendarClock className="w-4 h-4" aria-hidden="true" />
             Book an inspection
           </Link>
         </>
       )}
       <div className="grid grid-cols-2 gap-3">
-        <Link href={hubIntentHref(listingId, "message", signedIn)} className={secondary}>
+        <Link href={hubIntentHref(listingId, "message", signedIn)} onClick={() => trackEvent(Events.HUB_ACTION_CLICKED, { intent: "message" })} className={secondary}>
           <MessageCircle className="w-4 h-4" aria-hidden="true" />
           Message
         </Link>

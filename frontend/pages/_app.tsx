@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { createElement, useEffect, type ReactNode } from "react";
 import dynamic from "next/dynamic";
 import type { AppProps } from "next/app";
 import { AnimatePresence, motion } from "framer-motion";
@@ -9,15 +9,22 @@ import SEOHead from "../components/SEOHead";
 import { ToastProvider } from "../components/ui/Toast";
 import { ConfirmProvider } from "../components/ui/ConfirmDialog";
 import { HCAPTCHA_SITE_KEY } from "../lib/recaptcha";
+import { LazyCaptchaProvider } from "../lib/captcha";
+import { hubSessionProvider } from "../lib/hub/sessionSlot";
 import { getPageMeta } from "../lib/pageMeta";
 import { fontClassName, fontRootCss } from "../lib/fonts";
 import "../lib/i18n";
 import "../styles/globals.css";
 
-// Loaded only where they are used, so the public site does not download the
-// Hub's session code (and the Supabase client behind it) or the captcha.
-const HubSessionProvider = dynamic(() => import("../lib/hub/session").then((m) => m.HubSessionProvider));
-const HCaptchaProvider = dynamic(() => import("@hcaptcha/react-hcaptcha/hooks").then((m) => m.HCaptchaProvider));
+// The Hub's session code (and the Supabase client behind it) only reaches
+// Hub pages: they import it, and it leaves its provider in sessionSlot. The
+// dynamic import is a fallback for a Hub page that does not import it.
+const LazyHubSessionProvider = dynamic(() => import("../lib/hub/session").then((m) => m.HubSessionProvider));
+
+function HubSession({ children }: { children: ReactNode }) {
+  // The same module-level component on every render once a Hub page loaded.
+  return createElement(hubSessionProvider() ?? LazyHubSessionProvider, null, children);
+}
 
 const ADMIN_PATH = process.env.NEXT_PUBLIC_ADMIN_PATH || "/admin";
 
@@ -41,9 +48,9 @@ export default function App({ Component, pageProps, router }: AppProps) {
   const isHub = router.pathname === "/hub" || router.pathname.startsWith("/hub/");
 
   const inner = isHub ? (
-    <HubSessionProvider>
+    <HubSession>
       <Component {...pageProps} />
-    </HubSessionProvider>
+    </HubSession>
   ) : isAdmin ? (
     <Layout>
       <Component {...pageProps} />
@@ -98,7 +105,8 @@ export default function App({ Component, pageProps, router }: AppProps) {
   );
 
   // The captcha provider is only mounted on the pages that call it, so the
-  // hCaptcha script is not downloaded on the homepage, search or listings.
+  // hCaptcha script is not downloaded on the homepage, search or listings;
+  // even there it loads on the first tap or key press (lib/captcha.tsx).
   const needsCaptcha = ["/hub/sign-in", "/hub/sign-up", "/hub/forgot-password"].some((p) =>
     router.pathname.startsWith(p),
   );
@@ -107,8 +115,8 @@ export default function App({ Component, pageProps, router }: AppProps) {
   }
 
   return (
-    <HCaptchaProvider sitekey={HCAPTCHA_SITE_KEY}>
+    <LazyCaptchaProvider sitekey={HCAPTCHA_SITE_KEY}>
       {wrapped}
-    </HCaptchaProvider>
+    </LazyCaptchaProvider>
   );
 }

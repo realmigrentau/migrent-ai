@@ -14,10 +14,12 @@ import { useToast } from "../../../components/ui/Toast";
 import { hubApi, HubError } from "../../../lib/hub/api";
 import { aud } from "../../../lib/hub/format";
 import { WIZARD_STEPS, draftProblems, stepOf, type Draft, type DraftData, type Problem, type StepKey } from "../../../lib/hub/listingDraft";
+import { useLocationCheck } from "../../../lib/hub/useLocationCheck";
 import { invalidate } from "../../../lib/hub/query";
 import { useHub } from "../../../lib/hub/session";
 import { decodePrefill } from "../../../lib/home/houseConfig";
 import { cn } from "../../../lib/cn";
+import { Events, trackEvent } from "../../../lib/analytics";
 
 type SaveState = "idle" | "saving" | "saved" | "error";
 
@@ -184,7 +186,13 @@ export default function NewListingPage() {
     };
   }, [persist]);
 
-  const localProblems = useMemo(() => draftProblems(data), [data]);
+  // The address is checked against the ABS localities as it is typed; a
+  // clear mismatch is a problem like any other missing field.
+  const location = useLocationCheck(draft?.property_id ? null : data.suburb, data.postcode, data.state);
+  const localProblems = useMemo(
+    () => [...draftProblems(data), ...(location?.problem ? [{ step: "property", field: "location", message: location.problem }] : [])],
+    [data, location],
+  );
   const problems = serverProblems ?? localProblems;
   const problemsFor = (k: StepKey) => problems.filter((p) => stepOf(p.step) === k);
   const err = (field: string) => (showErrors.has(stepKey) || serverProblems ? problems.find((p) => p.field === field)?.message : undefined);
@@ -219,6 +227,7 @@ export default function NewListingPage() {
       const res = await hubApi.post<{ listing_id: string; property_id: string | null; needs_verification: boolean }>(`/hub/listing-drafts/${draft.id}/submit`, {});
       invalidate("/hub/properties");
       invalidate("/hub/home");
+      trackEvent(Events.LISTING_SUBMITTED, { needs_verification: res.needs_verification });
       setDone(res);
       window.scrollTo({ top: 0 });
     } catch (e) {
@@ -380,7 +389,7 @@ export default function NewListingPage() {
           <AnimatePresence mode="wait" initial={false}>
             <motion.div key={stepKey} initial={reduce ? false : { opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }} exit={reduce ? undefined : { opacity: 0, x: -12 }} transition={{ duration: 0.18 }}>
               <div className={cn(stepKey !== "review" && "rounded-[22px] border border-[var(--color-line)] bg-[var(--color-surface)] p-5 sm:p-7")}>
-                {stepKey === "property" && <PropertyStep {...stepProps} linked={Boolean(draft.property_id)} />}
+                {stepKey === "property" && <PropertyStep {...stepProps} linked={Boolean(draft.property_id)} location={location} />}
                 {stepKey === "space" && <SpaceStep {...stepProps} />}
                 {stepKey === "details" && <DetailsStep {...stepProps} ai={Boolean(me?.features.ai_listing_assist)} />}
                 {stepKey === "photos" && (

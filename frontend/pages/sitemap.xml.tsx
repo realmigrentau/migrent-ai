@@ -6,6 +6,8 @@ import guidesContent from "../data/guidesContent";
 import { HELP_ARTICLES, HELP_CATEGORIES } from "../lib/helpData";
 import { HIDDEN_GUIDES, HIDDEN_POSTS } from "../data/resources";
 import contentLastmod from "../data/contentLastmod.json";
+import { suburbsWithRooms } from "../lib/suburbs/listings.server";
+import { roomsHref } from "../lib/suburbs/rooms";
 
 // Dates come from git history via scripts/content-lastmod.mjs, committed as
 // data/contentLastmod.json. A page with no recorded date is omitted from
@@ -59,7 +61,8 @@ function urlTag(loc: string, changefreq: string, priority: string, lastmod?: str
 }
 
 function generateSitemap(
-  listings: { id: string; updated_at?: string; created_at?: string }[] = []
+  listings: { id: string; updated_at?: string; created_at?: string }[] = [],
+  roomPages: string[] = [],
 ): string {
   const tags: string[] = [];
 
@@ -88,6 +91,12 @@ function generateSitemap(
     tags.push(urlTag(`${SITE_URL}/listing/${l.id}`, "daily", "0.8", stamp));
   }
 
+  // "Rooms for rent in <suburb>" pages, only where there are rooms (an empty
+  // one is noindex).
+  for (const path of roomPages) {
+    tags.push(urlTag(`${SITE_URL}${path}`, "daily", "0.7"));
+  }
+
   return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${tags.join("\n")}
@@ -98,26 +107,32 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
   // Approved listings only. The search endpoint already filters to
   // moderation_status = 'approved', so drafts and rejected listings cannot
   // leak into the sitemap.
-  let listings: { id: string; updated_at?: string; created_at?: string }[] = [];
+  // Paged, 100 at a time (the API's maximum), up to 2,000 listings.
+  const listings: { id: string; updated_at?: string; created_at?: string }[] = [];
   try {
-    const r = await fetch(`${API_BASE_URL}/listings/search?limit=100`);
-    if (r.ok) {
+    for (let offset = 0; offset < 2000; offset += 100) {
+      const r = await fetch(`${API_BASE_URL}/listings/search?limit=100&offset=${offset}`);
+      if (!r.ok) break;
       const data = await r.json();
       const rows = Array.isArray(data) ? data : data.listings || [];
-      listings = rows
-        .filter((l: { id?: string; public_state?: string }) => Boolean(l.id) && (l.public_state ?? "published") === "published")
-        .map((l: { id: string; updated_at?: string; created_at?: string }) => ({ id: l.id, updated_at: l.updated_at, created_at: l.created_at }));
+      listings.push(
+        ...rows
+          .filter((l: { id?: string; public_state?: string }) => Boolean(l.id) && (l.public_state ?? "published") === "published")
+          .map((l: { id: string; updated_at?: string; created_at?: string }) => ({ id: l.id, updated_at: l.updated_at, created_at: l.created_at })),
+      );
+      if (r.headers.get("X-Has-More") !== "true") break;
     }
   } catch {
     // Backend unreachable - ship the rest of the sitemap rather than nothing.
   }
+  const roomPages = (await suburbsWithRooms()).map(roomsHref);
 
   res.setHeader("Content-Type", "application/xml; charset=utf-8");
   res.setHeader(
     "Cache-Control",
     "public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400"
   );
-  res.write(generateSitemap(listings));
+  res.write(generateSitemap(listings, roomPages));
   res.end();
   return { props: {} };
 };

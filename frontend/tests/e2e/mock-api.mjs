@@ -81,8 +81,11 @@ function listing(id, over = {}) {
 }
 
 const LISTINGS = [
-  listing("11111111-1111-4111-8111-000000000001"),
-  listing("11111111-1111-4111-8111-000000000002", { title: "Studio in Parramatta", suburb: "Parramatta", postcode: 2150, weekly_price: 410, place_type: "entire", display_address: "Parramatta 2150", location: { approx_lat: -33.815, approx_lng: 151.001, radius_m: 400, precision: "approximate" } }),
+  // The first room states its costs (bond and rent in advance in weeks) and
+  // welcomes new arrivals; the others are older listings that never said.
+  listing("11111111-1111-4111-8111-000000000001", { bond_weeks: 4, rent_in_advance_weeks: 2, bills_estimate_weekly: 35, newcomer_friendly: true, listing_purpose: "long_term" }),
+  // Listed by a property manager, whose agency shows on the owner card.
+  listing("11111111-1111-4111-8111-000000000002", { owner: { ...verifiedOwner, agency: { name: "Harbour Rentals", licence: "10012345" } }, title: "Studio in Parramatta", suburb: "Parramatta", postcode: 2150, weekly_price: 410, place_type: "entire", display_address: "Parramatta 2150", location: { approx_lat: -33.815, approx_lng: 151.001, radius_m: 400, precision: "approximate" } }),
   listing("11111111-1111-4111-8111-000000000003", { title: "Room with unverified host", owner: unverifiedOwner, host_verification: unverifiedOwner.verification, weekly_price: 250 }),
   listing("11111111-1111-4111-8111-000000000004", { title: "Available next month", available_from: plus(30), weekly_price: 290 }),
 ];

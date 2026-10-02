@@ -10,6 +10,8 @@ and safe to run more often than needed.
     POST /internal/cron/expiry-reminders     email owners 7 days before
     POST /internal/cron/saved-search-alerts  ?cadence=instant|daily|weekly
     POST /internal/cron/inspection-reminders the day before an inspection
+    POST /internal/cron/review-prompts       ask for reviews a month into a
+                                              tenancy, when it ends, and after a stay
 
 Auth: header `X-Cron-Secret` must equal the CRON_SECRET environment
 variable. With CRON_SECRET unset, the endpoints refuse every request.
@@ -102,3 +104,13 @@ def cron_inspection_reminders(request: Request, x_cron_secret: str | None = Head
     sent = send_inspection_reminders(sb)
     return {"reminded": sent, "ran_at": datetime.now(timezone.utc).isoformat()}
 
+
+@router.post("/cron/review-prompts")
+@limiter.limit("30/minute")
+def cron_review_prompts(request: Request, x_cron_secret: str | None = Header(None)):
+    _require_cron_secret(x_cron_secret)
+    from routes_hub_reviews import send_review_prompts
+
+    sb = get_supabase_admin()
+    prompted = send_review_prompts(sb)
+    return {"prompted": prompted, "ran_at": datetime.now(timezone.utc).isoformat()}

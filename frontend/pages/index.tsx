@@ -37,6 +37,7 @@ interface HomeProps {
   articles: ArticleCard[];
   /** Rooms fetched when the page was last built; null if the API did not answer. */
   rooms: RoomListing[] | null;
+  mentorsListed: boolean;
 }
 
 const FAQS: FaqEntry[] = [
@@ -70,10 +71,11 @@ const FAQS: FaqEntry[] = [
   },
 ];
 
-export default function Home({ suburbs, articles, rooms }: HomeProps) {
+export default function Home({ suburbs, articles, rooms, mentorsListed }: HomeProps) {
   return (
     <>
       <SEOHead
+        site
         title="A real home in Australia, found the right way"
         description="Rooms and homes across Australia for migrants, students and new arrivals. Every host is ID-checked before a room goes live. Searching and applying are free."
       />
@@ -85,7 +87,7 @@ export default function Home({ suburbs, articles, rooms }: HomeProps) {
       <TrustSection />
       <OwnersTeaser />
       <Neighbourhoods suburbs={suburbs} />
-      <GuidesAndMentors articles={articles} />
+      <GuidesAndMentors articles={articles} mentorsListed={mentorsListed} />
 
       <section id="faq" className="site-section site-section--tight scroll-mt-[96px]" aria-labelledby="faq-heading">
         <div className="site-shell grid gap-10 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-20">
@@ -191,5 +193,21 @@ export const getStaticProps: GetStaticProps<HomeProps> = async () => {
     }
   }
 
-  return { props: { suburbs, articles, rooms }, revalidate: 300 };
+  // Whether any mentor is approved and listed: the homepage only points to
+  // mentors once there is someone to meet.
+  let mentorsListed = false;
+  if (API_BASE_URL) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 4000);
+    try {
+      const r = await fetch(`${API_BASE_URL}/mentors?limit=1`, { headers: { Accept: "application/json" }, signal: controller.signal });
+      if (r.ok) mentorsListed = ((await r.json())?.mentors ?? []).length > 0;
+    } catch {
+      mentorsListed = false;
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+
+  return { props: { suburbs, articles, rooms, mentorsListed }, revalidate: 300 };
 };

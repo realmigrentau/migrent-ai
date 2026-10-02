@@ -98,10 +98,42 @@ test.describe("signed out", () => {
     await expect(page.getByText("Sign in to apply.")).toBeVisible();
   });
 
+  test("Hub pages hydrate without React throwing the server's HTML away", async ({ page }) => {
+    const errors: string[] = [];
+    page.on("pageerror", (e) => errors.push(e.message));
+    await page.goto("/hub/sign-in");
+    await page.waitForLoadState("networkidle");
+    await signIn(page, "owner@example.test", "/properties");
+    await page.reload();
+    await page.waitForLoadState("networkidle");
+    expect(errors.filter((e) => /#418|#423|Hydration/i.test(e))).toEqual([]);
+  });
+
   test("wrong password is announced", async ({ page }) => {
     await page.goto("/hub/sign-in");
     await fillSignIn(page, "renter@example.test", "nope");
     await expect(page.getByRole("alert").filter({ hasText: /do not match/i })).toBeVisible();
+  });
+
+  test("an email's unsubscribe link asks once, then switches that kind of email off", async ({ page }) => {
+    await page.goto("/unsubscribe?u=aaaa0000-0000-4000-8000-000000000005&g=saved_searches&t=test-token");
+    await expect(page.getByRole("heading", { name: "Stop emails about saved search alerts?" })).toBeVisible();
+    await page.getByRole("button", { name: "Unsubscribe" }).click();
+    await expect(page.getByRole("heading", { name: "Done." })).toBeVisible();
+    await expect(page.getByText("account and safety emails still reach you")).toBeVisible();
+  });
+
+  test("a forged unsubscribe link changes nothing and says so", async ({ page }) => {
+    await page.goto("/unsubscribe?u=aaaa0000-0000-4000-8000-000000000005&g=messages&t=guessed");
+    await page.getByRole("button", { name: "Unsubscribe" }).click();
+    await expect(page.getByRole("alert").filter({ hasText: "isn't valid" })).toBeVisible();
+  });
+
+  test("a property manager's agency and licence show on their listing", async ({ page }) => {
+    await page.goto(`/listing/${STUDIO}`);
+    const agency = page.getByTestId("owner-agency").first();
+    await expect(agency).toContainText("Harbour Rentals");
+    await expect(agency).toContainText("Licence 10012345");
   });
 });
 
@@ -232,11 +264,89 @@ test.describe("owner", () => {
     await expect(page.getByRole("img", { name: /Photo 1 \(cover\)/ })).toBeVisible();
     await page.getByRole("button", { name: /^Next/ }).click();
     await page.getByLabel("Rent a week").fill("320");
+    // A lease has to state its money up front, within Migrent's limits.
+    await expect(page.getByLabel("Bond", { exact: true }).locator("option")).toHaveCount(6); // Choose, None, 1 to 4 weeks
+    await page.getByLabel("Bond", { exact: true }).selectOption("4");
+    await page.getByLabel("Rent in advance").selectOption("2");
+    await expect(page.getByText("$1,920 to move in")).toBeVisible();
     await page.getByLabel("Available from").fill("2026-11-01");
     await page.getByRole("button", { name: /^Review/ }).last().click();
     await expect(page.getByText("Ready to send")).toBeVisible();
     await page.getByRole("button", { name: "Send for review" }).click();
     await expect(page.getByRole("heading", { name: "Sent for review" })).toBeVisible();
+  });
+
+  test("find listings by address and pause, then bring back, a selection", async ({ page }) => {
+    await signIn(page, "owner@example.test", "/properties");
+    await page.getByLabel("Search by address, suburb or title").fill("Church");
+    const many = page.getByTestId("many-listings");
+    await expect(many.getByRole("listitem")).toHaveCount(1);
+    await expect(page.getByRole("link", { name: /Smith Street share house/ })).toHaveCount(0);
+    await many.getByText("Select all shown").click();
+    await expect(many.getByText("1 selected")).toBeVisible();
+    await many.getByRole("button", { name: "Pause" }).click();
+    await expect(page.getByText("1 listing updated")).toBeVisible();
+    await expect(many.getByText("Paused", { exact: true })).toBeVisible();
+    await many.getByText("Select all shown").click();
+    await many.getByRole("button", { name: "Bring back" }).click();
+    await expect(many.getByText("Live", { exact: true })).toBeVisible();
+  });
+
+  test("a property manager adds their agency in Settings", async ({ page }) => {
+    await signIn(page, "boss@example.test", "/settings");
+    await page.getByText("A property manager", { exact: true }).click();
+    const agency = page.getByTestId("agency-fields");
+    await agency.getByLabel("Agency name").fill("Hills Property Co");
+    await agency.getByLabel(/Licence number/).fill("20098765");
+    await agency.getByRole("button", { name: "Save agency details" }).click();
+    await expect(page.getByText("Agency details saved")).toBeVisible();
+    await page.getByText("The owner", { exact: true }).click();
+    await expect(page.getByTestId("agency-fields")).toHaveCount(0);
+  });
+});
+
+test.describe("trust and safety", () => {
+  test.skip(({ isMobile }) => isMobile, "changes data");
+
+  test("a tenant reviews their tenancy a month in", async ({ page }) => {
+    await signIn(page, "tenant@example.test");
+    const pending = page.getByTestId("pending-reviews");
+    await expect(pending).toBeVisible();
+    await pending.getByRole("button", { name: "Write a review" }).click();
+    const dialog = page.getByRole("dialog");
+    await expect(dialog).toContainText("first name only");
+    await dialog.getByRole("radio", { name: /^5 out of 5/ }).first().click();
+    await dialog.getByLabel("What should the next renter know?").fill("Quiet house, and the host fixed the oven quickly.");
+    await dialog.getByRole("button", { name: "Send review" }).click();
+    await expect(page.getByText("Thanks for your review")).toBeVisible();
+    await expect(page.getByTestId("pending-reviews")).toHaveCount(0);
+  });
+
+  test("a scam-looking message warns the renter, who can block and later unblock the sender", async ({ page }) => {
+    await signIn(page, "owner@example.test", `/messages/${ROOM_1}_aaaa0000-0000-4000-8000-000000000001`);
+    await page.getByLabel(/^Message /).fill("Please pay a deposit before the inspection so I can hold the room");
+    await page.getByRole("button", { name: "Send", exact: true }).click();
+    await expect(page.getByText("Please pay a deposit before the inspection so I can hold the room", { exact: true })).toBeVisible();
+    await page.getByRole("navigation", { name: "Migrent Hub" }).first().getByRole("button", { name: "Sign out" }).click();
+    await expect(page).toHaveURL(/\/hub\/sign-in/);
+
+    await signIn(page, "renter@example.test", `/messages/${ROOM_1}_aaaa0000-0000-4000-8000-000000000002`);
+    await expect(page.getByTestId("scam-warning").last()).toContainText("asks for money before you have inspected the home");
+    await page.getByRole("button", { name: "Conversation options" }).click();
+    await page.getByRole("menuitem", { name: /^Block / }).click();
+    await page.getByRole("dialog").getByRole("button", { name: "Block" }).click();
+    await expect(page.getByTestId("conversation-closed")).toContainText("You blocked");
+
+    await page.goto("/hub/settings#blocked");
+    const blocked = page.locator("#blocked");
+    await blocked.getByRole("button", { name: "Unblock" }).click();
+    await expect(blocked).toContainText("You haven't blocked anyone.");
+  });
+
+  test("a stay request shows how to pay the host safely", async ({ page }) => {
+    await signIn(page, "renter@example.test");
+    await page.goto("/listing/11111111-1111-4111-8111-000000000099");
+    await expect(page.getByTestId("stay-payment-warning")).toContainText("Never by gift card, crypto");
   });
 });
 
@@ -246,6 +356,7 @@ test.describe("admin", () => {
   test("viewing as a customer needs a recorded reason and is read-only", async ({ page }) => {
     await signInToPanel(page, "admin@example.test", "/admin/people");
     await page.getByRole("searchbox", { name: /name or email/i }).fill("sarah");
+    await expect(page.getByText("1 person", { exact: true })).toBeVisible();
     await page.getByRole("button", { name: "View as" }).first().click();
     const dialog = page.getByRole("dialog");
     await expect(dialog.getByRole("button", { name: "Start viewing" })).toBeDisabled();
@@ -311,9 +422,22 @@ test.describe("admin", () => {
     await expect(page.getByText("Rejected an owner's ID").first()).toBeVisible();
   });
 
+  test("approve a mentor once their ID is checked, and it is audited", async ({ page }) => {
+    await signInToPanel(page, "admin@example.test", "/admin/mentors");
+    await expect(page.getByText("Twelve years in the Hills district.")).toBeVisible();
+    await expect(page.getByText("ID checked")).toBeVisible();
+    await page.getByRole("button", { name: "Approve and list" }).click();
+    const dialog = page.getByRole("dialog", { name: /as a mentor\?/ });
+    await dialog.getByRole("button", { name: "Approve and list" }).click();
+    await expect(page.getByText("No mentors waiting")).toBeVisible();
+    await page.goto("/hub/admin/audit");
+    await expect(page.getByText("Approved a mentor").first()).toBeVisible();
+  });
+
   test("suspend an account with a reason, then reinstate it", async ({ page }) => {
     await signInToPanel(page, "admin@example.test", "/admin/people");
     await page.getByRole("searchbox", { name: /name or email/i }).fill("liam");
+    await expect(page.getByText("1 person", { exact: true })).toBeVisible();
     await page.getByRole("button", { name: "Suspend" }).click();
     const dialog = page.getByRole("dialog", { name: /Suspend Liam Park/ });
     await expect(dialog.getByRole("button", { name: "Suspend account" })).toBeDisabled();
@@ -325,6 +449,50 @@ test.describe("admin", () => {
     await back.getByLabel("Why?").fill("Appeal accepted after a call");
     await back.getByRole("button", { name: "Reinstate" }).click();
     await expect(page.getByRole("button", { name: "Suspend" })).toBeVisible();
+  });
+
+  test("everyone is listed without a search, filters narrow it, and a person's page brings it together", async ({ page }) => {
+    await signInToPanel(page, "admin@example.test", "/admin/people");
+    await expect(page.getByText(/^\d+ people$/)).toBeVisible();
+    await page.getByLabel("Role").selectOption("owner");
+    await page.getByRole("searchbox", { name: /name or email/i }).fill("priya");
+    await expect(page.getByText("1 person", { exact: true })).toBeVisible();
+    await page.getByRole("link", { name: "Priya Nair" }).click();
+    await expect(page.getByRole("heading", { name: "Priya Nair", level: 1 })).toBeVisible();
+    await expect(page.getByText("Possible scam: asks for money before an inspection")).toBeVisible();
+    await expect(page.getByText(/scam check/).first()).toBeVisible();
+    await expect(page.getByRole("heading", { name: /^Listings \(\d+\)$/ })).toBeVisible();
+  });
+
+  test("Numbers counts what is in the database", async ({ page }) => {
+    await signInToPanel(page, "admin@example.test", "/admin");
+    await page.getByRole("navigation", { name: "Admin panel" }).getByRole("link", { name: "Numbers" }).click();
+    const numbers = page.getByTestId("admin-numbers");
+    await expect(numbers.getByText("Accounts", { exact: true })).toBeVisible();
+    await expect(numbers.getByText("Scam flags in 30 days")).toBeVisible();
+    await expect(page.getByText("Nothing here is estimated.", { exact: false })).toBeVisible();
+  });
+
+  test("act from a report: read the flagged conversation, then pause a reported listing with a ready-made reason", async ({ page }) => {
+    await signInToPanel(page, "admin@example.test", "/admin/reports");
+    const scam = page.getByRole("listitem").filter({ hasText: "by the scam check" });
+    await scam.getByTestId("report-actions").getByRole("button", { name: "Read the conversation" }).click();
+    const convo = page.getByRole("dialog", { name: "The conversation" });
+    await expect(convo.getByTestId("reported-conversation")).toContainText("if that suits");
+    await expect(convo.getByText(/· reported/)).toBeVisible();
+    await page.keyboard.press("Escape");
+
+    const listing = page.getByRole("listitem").filter({ hasText: "Looks like a scam" });
+    await listing.getByTestId("report-actions").getByRole("button", { name: "Pause the listing" }).click();
+    const pause = page.getByRole("dialog", { name: /^Pause / });
+    await expect(pause.getByRole("button", { name: "Pause listing" })).toBeDisabled();
+    await pause.getByLabel("Common reasons").selectOption({ index: 1 });
+    await expect(pause.getByLabel("Reason (sent to the owner)")).toHaveValue("Paused while we look into a report from a renter.");
+    await pause.getByRole("button", { name: "Pause listing" }).click();
+    await expect(page.getByText("Listing paused")).toBeVisible();
+
+    await page.goto("/hub/admin/audit");
+    await expect(page.getByText("Read a reported conversation").first()).toBeVisible();
   });
 
   test("answer a support ticket and leave an internal note", async ({ page }) => {
@@ -496,7 +664,7 @@ test.describe("appearance and accessibility", () => {
   test("axe: Hub admin screens in light and dark", async ({ page }) => {
     await signInToPanel(page, "admin@example.test", "/admin/listings");
     let i = 0;
-    for (const path of ["/", "/admin", "/admin/listings", "/admin/id-checks", "/admin/support", "/admin/people", "/admin/audit"]) {
+    for (const path of ["/", "/admin", "/admin/listings", "/admin/id-checks", "/admin/mentors", "/admin/support", "/admin/people", "/admin/audit"]) {
       await stayActive(page, i++);
       await page.goto(`/hub${path === "/" ? "" : path}`);
       for (const theme of ["light", "dark"] as const) {
@@ -525,7 +693,7 @@ test.describe("appearance and accessibility", () => {
   test("no horizontal overflow on Hub admin screens", async ({ page }) => {
     await signInToPanel(page, "admin@example.test", "/admin");
     let i = 0;
-    for (const path of ["/", "/admin", "/admin/listings", "/admin/listings?queue=all", "/admin/id-checks", "/admin/support", "/admin/people", "/admin/audit"]) {
+    for (const path of ["/", "/admin", "/admin/listings", "/admin/listings?queue=all", "/admin/id-checks", "/admin/mentors", "/admin/support", "/admin/people", "/admin/audit"]) {
       await stayActive(page, i++);
       await page.goto(`/hub${path === "/" ? "" : path}`);
       await expect(page.getByText("Admin panel open")).toBeVisible();

@@ -83,10 +83,19 @@ PROFILE_COLUMNS = (
 )
 
 
+# Property managers' agency details (migration 049).
+AGENCY_COLUMNS = "agency_name, agency_licence"
+
+
 def load_profile(sb, user_id: str) -> dict:
-    try:
-        res = sb.table("profiles").select(PROFILE_COLUMNS).eq("id", str(user_id)).execute()
-    except Exception:
+    res = None
+    for cols in (f"{PROFILE_COLUMNS}, {AGENCY_COLUMNS}", PROFILE_COLUMNS):
+        try:
+            res = sb.table("profiles").select(cols).eq("id", str(user_id)).execute()
+            break
+        except Exception:
+            continue
+    if res is None:
         # Before 043 the Hub columns do not exist; fall back to the old set.
         res = sb.table("profiles").select("id, email, name, preferred_name, role, is_admin, custom_pfp, created_at, bio, about_me").eq("id", str(user_id)).execute()
     return (res.data or [{}])[0] if res.data else {}
@@ -134,6 +143,9 @@ def hub_actor(request: Request, authorization: Optional[str]) -> HubActor:
     profile = load_profile(sb, str(user.id))
     if profile.get("disabled_at"):
         raise HTTPException(status_code=403, detail="This account has been suspended. Contact support if you think this is a mistake.")
+    from auth_utils import require_mfa_if_enrolled
+
+    require_mfa_if_enrolled(str(user.id), authorization)
     actor = HubActor(id=str(user.id), email=getattr(user, "email", None), profile=profile, is_admin=_profile_is_admin(profile))
     if actor.is_admin:
         # Admin sessions are checked live, so a revoked one stops at once
@@ -299,7 +311,11 @@ def fetch_listings(sb, ids: Iterable[str], columns: str = CARD_COLUMNS) -> dict[
         res = sb.table("listings").select(columns).in_("id", wanted).execute()
     except Exception:
         res = sb.table("listings").select(CARD_COLUMNS_LEGACY).in_("id", wanted).execute()
-    return {str(r["id"]): r for r in (res.data or [])}
+    rows = res.data or []
+    from listing_lifecycle import mark_suspended_owners
+
+    mark_suspended_owners(rows)
+    return {str(r["id"]): r for r in rows}
 
 
 def listing_card(row: Optional[dict], *, viewer_is_owner: bool = False) -> Optional[dict]:

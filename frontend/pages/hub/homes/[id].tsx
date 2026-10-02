@@ -10,6 +10,7 @@ import {
   Check,
   Flag,
   GitCompareArrows,
+  Globe,
   Images,
   Info,
   MapPin,
@@ -36,6 +37,8 @@ import { Panel, Section } from "../../../components/hub/ui/Layout";
 import { useToast } from "../../../components/ui/Toast";
 import { API_BASE_URL } from "../../../lib/apiBase";
 import type { PublicListing } from "../../../lib/api";
+import MoveInCost from "../../../components/listings/MoveInCost";
+import { moveInCost } from "../../../lib/listingCosts";
 import { accessToken, trackListingView } from "../../../lib/hub/api";
 import { useCompare } from "../../../lib/hub/compare";
 import { day, weekly } from "../../../lib/hub/format";
@@ -110,6 +113,7 @@ export default function HubHome() {
       void toggleSaved(listing.id, true).then(() => toast.success("Saved", { description: "It's in your Saved homes." })).catch(() => toast.error("That home could not be saved."));
     }
     if (intent === "message") setEnquiryOpen(true);
+    if (intent === "report") setReportOpen(true);
     if (intent === "inspect") document.getElementById("inspections")?.scrollIntoView({ behavior: "smooth" });
     if (intent === "apply") void navigate(`/apply/${listing.id}`, { replace: true });
     void router.replace({ pathname: router.pathname, query: { id: listing.id } }, router.asPath.split("?")[0], { shallow: true, scroll: false });
@@ -177,7 +181,9 @@ export default function HubHome() {
     property_type: l.property_type,
   } as Parameters<typeof kindLabel>[0];
   const verified = l.host_verification?.status === "verified";
+  const moveIn = moveInCost(l);
   const amenities: { icon: typeof Wifi; label: string }[] = [];
+  if (l.newcomer_friendly) amenities.push({ icon: Globe, label: "New to Australia? No local rental history needed" });
   if (l.furnished) amenities.push({ icon: Sofa, label: "Furnished" });
   if (l.bills_included) amenities.push({ icon: Zap, label: "Bills included" });
   if (l.internet_included) amenities.push({ icon: Wifi, label: l.internet_speed ? `Internet (${l.internet_speed})` : "Internet included" });
@@ -298,6 +304,8 @@ export default function HubHome() {
               </Section>
             )}
 
+            <MoveInCost listing={l} headingClassName="text-[18px] font-semibold tracking-[-0.01em] text-[color:var(--color-ink)]" />
+
             {amenities.length > 0 && (
               <Section title="What's included">
                 <ul className="grid gap-4 sm:grid-cols-2">
@@ -378,6 +386,12 @@ export default function HubHome() {
                       <p className="text-[16px] font-semibold text-[color:var(--color-ink)]">{l.owner.name}</p>
                       {verified ? <StatusBadge tone="info">ID checked</StatusBadge> : <StatusBadge tone="neutral" icon={false}>ID not checked yet</StatusBadge>}
                     </div>
+                    {l.owner.agency && (
+                      <p className="text-[13.5px] text-[color:var(--color-ink-2)]">
+                        Property manager at <span className="font-semibold text-[color:var(--color-ink)]">{l.owner.agency.name}</span>
+                        {l.owner.agency.licence ? ` · Licence ${l.owner.agency.licence}` : ""}
+                      </p>
+                    )}
                     {l.owner.member_since && <p className="text-[13.5px] text-[color:var(--color-ink-3)]">On Migrent since {day(l.owner.member_since)}</p>}
                     {l.owner.bio && <p className="text-[14.5px] leading-relaxed text-[color:var(--color-ink-2)]">{l.owner.bio}</p>}
                     <p className="flex items-start gap-2 text-[12.5px] leading-snug text-[color:var(--color-ink-3)]">
@@ -407,7 +421,11 @@ export default function HubHome() {
             <div className="sticky top-10 flex flex-col gap-5 rounded-[22px] border border-[var(--color-line)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-card)]">
               <div>
                 <p className="text-[28px] font-bold tracking-[-0.02em] text-[color:var(--color-ink)]">{weekly(l.weekly_price)}</p>
-                {l.bond && <p className="text-[13.5px] text-[color:var(--color-ink-3)]">Bond: {l.bond}</p>}
+                {moveIn.known && moveIn.total ? (
+                  <p className="text-[13.5px] text-[color:var(--color-ink-3)]">${moveIn.total.toLocaleString("en-AU")} to move in, bond included</p>
+                ) : l.bond ? (
+                  <p className="text-[13.5px] text-[color:var(--color-ink-3)]">Bond: {l.bond}</p>
+                ) : null}
               </div>
               <dl className="grid grid-cols-2 gap-3 rounded-[14px] bg-[var(--color-surface-muted)] p-3.5 text-[13.5px]">
                 <div>

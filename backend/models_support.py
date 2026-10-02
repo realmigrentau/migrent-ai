@@ -24,6 +24,9 @@ class TicketCreate(BaseModel):
     # For guest submissions (no auth)
     email: Optional[EmailStr] = None
     name: Optional[str] = Field(None, max_length=200)
+    # A field people never see. Bots fill every field; anything here means
+    # the request is dropped quietly (routes_support_tickets.create_ticket).
+    website: Optional[str] = Field(None, max_length=200)
 
 
 class TicketReply(BaseModel):

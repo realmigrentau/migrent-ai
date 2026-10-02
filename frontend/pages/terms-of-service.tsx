@@ -7,7 +7,8 @@ export default function TermsOfService() {
     <>
       <SEOHead title="Terms of Service" description="Migrent Terms of Service - platform fees, cancellations, liability, and user responsibilities." />
 
-      <LegalLayout title="Terms of Service" note="Last updated: March 2026">
+      <LegalLayout title="Terms of Service" note="Last updated: 1 October 2026">
+        {/* Fee wording aligned with the live product on 1 October 2026 (MIGRENT_MASTER_AUDIT.md MIG-006): hosts pay AUD $99 once per property, for short stays only; renters pay nothing. Must be reviewed by Australian counsel before launch (docs/legal/identity-and-claims.md). */}
 
         <div className="space-y-8">
           {/* Acceptance */}
@@ -82,8 +83,8 @@ export default function TermsOfService() {
                     </tr>
                     <tr>
                       <td className="py-2.5 px-3">Pay applicable platform fees</td>
-                      <td className="py-2.5 px-3 text-center text-[var(--color-accent)]">$99/deal</td>
-                      <td className="py-2.5 px-3 text-center text-[var(--color-ink-3)]">$19 optional</td>
+                      <td className="py-2.5 px-3 text-center text-[var(--color-accent)]">$99 per property, short stays only</td>
+                      <td className="py-2.5 px-3 text-center text-[var(--color-ink-3)]">None</td>
                     </tr>
                     <tr>
                       <td className="py-2.5 px-3">Ensure property meets safety and habitability standards</td>
@@ -116,16 +117,16 @@ export default function TermsOfService() {
             <h2 className="text-lg font-bold text-[var(--color-ink)]">5. Platform Fees &amp; Payments</h2>
             <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
               <div className="card-subtle p-4 rounded-xl">
-                <h3 className="font-semibold text-[var(--color-ink)] mb-2">Owner Fees</h3>
-                <p>Owners agree to pay a one-time AUD $99 platform fee per successful match made through Migrent. This fee is charged at the time a deal is confirmed through the platform. Migrent charges flat fees only - we do not take a percentage of rent.</p>
+                <h3 className="font-semibold text-[var(--color-ink)] mb-2">Host Fees</h3>
+                <p>Listing a property, receiving applications and taking a long-term tenant through an application are free. For short stays booked through Migrent, the host pays a one-off AUD $99 platform fee per property, charged when the host confirms the first stay booking at that property. Later stay bookings at the same property are not charged again. There is no subscription, and Migrent does not take a percentage of rent.</p>
               </div>
               <div className="card-subtle p-4 rounded-xl">
-                <h3 className="font-semibold text-[var(--color-ink)] mb-2">Seeker Fees</h3>
-                <p>Seekers may be presented with an optional one-time AUD $19 verification fee. This is always clearly disclosed before payment and is optional.</p>
+                <h3 className="font-semibold text-[var(--color-ink)] mb-2">Renter Fees</h3>
+                <p>Renters pay Migrent nothing to search, message hosts, book inspections or apply. Mentor sessions are optional: each mentor sets their own price, which is shown before you pay, and Migrent keeps 30% of it as a platform fee.</p>
               </div>
               <div className="card-subtle p-4 rounded-xl border-l-2 border-l-amber-500">
                 <h3 className="font-semibold text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)] mb-2">Fee Circumvention</h3>
-                <p>Users must not use Migrent to locate or contact another user and then intentionally complete the arrangement entirely outside the platform to avoid fees. Suspected circumvention may result in account suspension or termination.</p>
+                <p>Hosts must not take a short stay that was arranged through Migrent outside the platform to avoid the host fee. Suspected circumvention may result in account suspension or termination. Long-term tenancies arranged through applications carry no fee.</p>
               </div>
               <p>All payments are processed securely through Stripe. Migrent does not store your full credit card details.</p>
             </div>
@@ -135,7 +136,7 @@ export default function TermsOfService() {
           <section className="card p-6 rounded-2xl space-y-3">
             <h2 className="text-lg font-bold text-[var(--color-ink)]">6. Refund Policy</h2>
             <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
-              <p>Platform fees are generally non-refundable once a deal is confirmed and payment is processed. In exceptional circumstances, refunds may be considered at the sole discretion of Migrent.</p>
+              <p>Platform fees are generally non-refundable once a booking is confirmed and payment is processed. In exceptional circumstances, refunds may be considered at the sole discretion of Migrent.</p>
               <p>Stripe receipts are automatically sent to the email address associated with your account. For refund inquiries, contact <a href="mailto:migrentau@gmail.com" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">migrentau@gmail.com</a>.</p>
             </div>
           </section>

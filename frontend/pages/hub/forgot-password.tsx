@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { useHCaptcha } from "@hcaptcha/react-hcaptcha/hooks";
+import { useCaptcha } from "../../lib/captcha";
 import AuthLayout, { AuthHeading, hubCallbackUrl } from "../../components/hub/AuthLayout";
 import HubLink from "../../components/hub/HubLink";
 import { Button } from "../../components/hub/ui/Button";
@@ -10,7 +10,7 @@ import { supabase } from "../../lib/supabase";
 
 export default function ForgotPassword() {
   const router = useRouter();
-  const captcha = useHCaptcha();
+  const captcha = useCaptcha();
   const [email, setEmail] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [sent, setSent] = useState(false);

@@ -9,7 +9,7 @@ const ITEMS = [
   { icon: ShieldCheck, label: "Hosts ID-checked before listing" },
   { icon: FileCheck2, label: "Apply without a local rental history" },
   { icon: Wallet, label: "Free to search and apply" },
-  { icon: MessagesSquare, label: "Real people when you need help" },
+  { icon: MessagesSquare, label: "Help from a person, by email" },
 ];
 
 export default function TrustStrip() {

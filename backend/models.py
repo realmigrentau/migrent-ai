@@ -1,30 +1,37 @@
-from pydantic import BaseModel, EmailStr, Field, field_validator
+import os
+from urllib.parse import urlparse
+
+from pydantic import BaseModel, Field, field_validator
 from typing import Optional, Literal
 from datetime import datetime, date
 from enum import Enum
 
 
-class UserRegister(BaseModel):
-    email: EmailStr
-    password: str = Field(..., min_length=8, max_length=128)
-    type: Literal["seeker", "owner"]
-
-    @field_validator("password")
-    @classmethod
-    def password_strength(cls, v: str) -> str:
-        if not any(c.isdigit() for c in v):
-            raise ValueError("Password must contain at least one digit")
-        if not any(c.isalpha() for c in v):
-            raise ValueError("Password must contain at least one letter")
-        return v
-
-
-class UserLogin(BaseModel):
-    email: EmailStr
-    password: str = Field(..., min_length=1, max_length=128)
-
-
 # ── Listing models ──────────────────────────────────────────
+
+
+def _image_hosts() -> set[str]:
+    """Where listing photos may live: Migrent's Supabase storage, plus any
+    host in LISTING_IMAGE_HOSTS (comma separated; used by tests)."""
+    hosts = {h.strip().lower() for h in os.environ.get("LISTING_IMAGE_HOSTS", "").split(",") if h.strip()}
+    base = urlparse(os.environ.get("SUPABASE_URL", ""))
+    if base.hostname:
+        hosts.add(base.hostname.lower())
+    return hosts
+
+
+def check_image_urls(urls: Optional[list[str]]) -> Optional[list[str]]:
+    """Listing photos must be ones uploaded to Migrent (MIGRENT_MASTER_AUDIT
+    MIG-057). A link to anywhere else would break under the site's content
+    policy at best, and hotlink someone else's photos at worst."""
+    if not urls:
+        return urls
+    allowed = _image_hosts()
+    for url in urls:
+        parsed = urlparse(url or "")
+        if parsed.scheme != "https" or (parsed.hostname or "").lower() not in allowed:
+            raise ValueError("Photos must be uploaded to Migrent. Add them with the photo button.")
+    return urls
 
 
 class ListingCreate(BaseModel):
@@ -35,6 +42,11 @@ class ListingCreate(BaseModel):
     weekly_price: float = Field(..., gt=0, le=50000)
     description: str = Field(..., min_length=10, max_length=5000)
     images: list[str] = Field(default=[], max_length=20)
+
+    @field_validator("images")
+    @classmethod
+    def _images_ok(cls, v):
+        return check_image_urls(v)
     # Extended fields
     title: Optional[str] = Field(None, max_length=80)
     property_type: Optional[str] = None
@@ -52,7 +64,12 @@ class ListingCreate(BaseModel):
     highlights: Optional[list[str]] = None
     weekly_discount: Optional[float] = Field(None, ge=0, le=50)
     monthly_discount: Optional[float] = Field(None, ge=0, le=70)
-    bond: Optional[str] = None
+    # Whole weeks, capped by Migrent in every state (listing_rules.py). The
+    # old free-text `bond` column is no longer written.
+    bond_weeks: Optional[int] = Field(None, ge=0, le=4)
+    rent_in_advance_weeks: Optional[int] = Field(None, ge=0, le=2)
+    bills_estimate_weekly: Optional[int] = Field(None, ge=0, le=1000)
+    newcomer_friendly: Optional[bool] = None
     no_smoking: Optional[bool] = None
     quiet_hours: Optional[str] = None
     tenant_prefs: Optional[str] = None
@@ -92,6 +109,11 @@ class ListingUpdate(BaseModel):
     weekly_price: Optional[float] = Field(None, gt=0, le=50000)
     description: Optional[str] = Field(None, min_length=10, max_length=5000)
     images: Optional[list[str]] = Field(None, max_length=20)
+
+    @field_validator("images")
+    @classmethod
+    def _images_ok(cls, v):
+        return check_image_urls(v)
     title: Optional[str] = Field(None, max_length=80)
     property_type: Optional[str] = None
     place_type: Optional[str] = None
@@ -108,7 +130,12 @@ class ListingUpdate(BaseModel):
     highlights: Optional[list[str]] = None
     weekly_discount: Optional[float] = Field(None, ge=0, le=50)
     monthly_discount: Optional[float] = Field(None, ge=0, le=70)
-    bond: Optional[str] = None
+    # Whole weeks, capped by Migrent in every state (listing_rules.py). The
+    # old free-text `bond` column is no longer written.
+    bond_weeks: Optional[int] = Field(None, ge=0, le=4)
+    rent_in_advance_weeks: Optional[int] = Field(None, ge=0, le=2)
+    bills_estimate_weekly: Optional[int] = Field(None, ge=0, le=1000)
+    newcomer_friendly: Optional[bool] = None
     no_smoking: Optional[bool] = None
     quiet_hours: Optional[str] = None
     tenant_prefs: Optional[str] = None
@@ -190,7 +217,9 @@ class ProfileUpdate(BaseModel):
     preferred_language: Optional[str] = Field(None, max_length=20)
     preferred_currency: Optional[str] = Field(None, max_length=5)
     timezone: Optional[str] = Field(None, max_length=50)
-    wishlist: Optional[list[str]] = None
+    # wishlist is not accepted: saved homes live in `favorites` and are
+    # written through /hub/saved. A writable wishlist let any user point
+    # the old /seeker/wishlist endpoint at any listing id.
     # identity_verified and identity_verification_url are deliberately NOT
     # accepted here. They were writable through PATCH /profiles/me, which let
     # any user award themselves the "ID verified" badge that the listing page

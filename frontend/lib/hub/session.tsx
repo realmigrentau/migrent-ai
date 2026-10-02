@@ -20,6 +20,7 @@ import { supabase } from "../supabase";
 import { lockAdminPanel } from "./adminPanel";
 import { getViewAs, hubApi, setViewAs } from "./api";
 import { clearQueryCache, invalidate, prefetchQuery, useHubQuery } from "./query";
+import { setHubSessionProvider } from "./sessionSlot";
 import type { HubMe, HubRole } from "./types";
 
 export type HubStatus = "loading" | "signed-out" | "needs-mfa" | "needs-onboarding" | "ready" | "error";
@@ -170,3 +171,6 @@ export function useHub(): HubContextValue {
   if (!ctx) throw new Error("useHub must be used inside HubSessionProvider");
   return ctx;
 }
+
+// For _app.tsx, without it importing this module (see sessionSlot.ts).
+setHubSessionProvider(HubSessionProvider);

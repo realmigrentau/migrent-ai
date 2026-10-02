@@ -59,7 +59,7 @@ export default function CookiePolicy() {
                     </tr>
                     <tr>
                       <td className="py-2.5 px-3 font-mono text-xs">va (Vercel)</td>
-                      <td className="py-2.5 px-3"><span className="px-2 py-0.5 rounded-full bg-[var(--color-primary-100)] dark:bg-[var(--color-primary)]/20 text-[var(--color-primary)] dark:text-[var(--color-primary)] text-xs font-medium">Analytics</span></td>
+                      <td className="py-2.5 px-3"><span className="px-2 py-0.5 rounded-full bg-[var(--color-primary-100)] dark:bg-[var(--color-primary)]/20 text-[var(--color-primary-700)] text-xs font-medium">Analytics</span></td>
                       <td className="py-2.5 px-3">Anonymous page view tracking (Vercel Analytics)</td>
                       <td className="py-2.5 px-3">Session</td>
                     </tr>

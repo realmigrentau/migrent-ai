@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
-import { useHCaptcha } from "@hcaptcha/react-hcaptcha/hooks";
+import { useCaptcha } from "../../lib/captcha";
 import { Mail } from "lucide-react";
 import AuthLayout, { AuthHeading, Divider, GoogleButton, hubCallbackUrl } from "../../components/hub/AuthLayout";
 import HubLink, { useHubNavigate } from "../../components/hub/HubLink";
@@ -23,7 +23,7 @@ export default function SignIn() {
   const router = useRouter();
   const navigate = useHubNavigate();
   const { status } = useHub();
-  const captcha = useHCaptcha();
+  const captcha = useCaptcha();
   const next = safeHubPath(router.query.next);
   const intent = typeof router.query.intent === "string" ? router.query.intent : "";
 
@@ -31,6 +31,9 @@ export default function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
+  const [showPassword, setShowPassword] = useState(false);
+  const emailRef = useRef<HTMLInputElement>(null);
+  const passwordRef = useRef<HTMLInputElement>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -60,7 +63,9 @@ export default function SignIn() {
             ? "Sign in to book an inspection time."
             : intent === "list"
               ? "Sign in to list your property."
-              : "Welcome back.";
+              : intent === "report"
+                ? "Sign in to report this listing. Reports go to Migrent's safety team, never to the host."
+                : "Welcome back.";
 
   async function captchaToken(): Promise<string | undefined> {
     if (!captcha?.executeInstance) return undefined;
@@ -75,10 +80,15 @@ export default function SignIn() {
     e.preventDefault();
     setMessage(null);
     const errs: typeof errors = {};
-    if (!EMAIL_RE.test(email.trim())) errs.email = "Enter the email address you signed up with.";
+    if (!email.trim()) errs.email = "Enter the email address you signed up with.";
+    else if (!EMAIL_RE.test(email.trim())) errs.email = "That is not an email address. Check for a missing @ or dot.";
     if (mode === "password" && !password) errs.password = "Enter your password.";
     setErrors(errs);
-    if (Object.keys(errs).length) return;
+    if (Object.keys(errs).length) {
+      // Take the person to the first thing to fix (MIG-063).
+      (errs.email ? emailRef : passwordRef).current?.focus();
+      return;
+    }
     setLoading(true);
     try {
       const token = await captchaToken();
@@ -134,13 +144,27 @@ export default function SignIn() {
       <form onSubmit={onSubmit} noValidate className="flex flex-col gap-4">
         <Field label="Email" error={errors.email}>
           {({ id, describedBy, invalid }) => (
-            <Input id={id} type="email" inputMode="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} aria-invalid={invalid} aria-describedby={describedBy} autoFocus />
+            <Input ref={emailRef} id={id} type="email" inputMode="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} aria-invalid={invalid} aria-describedby={describedBy} autoFocus />
           )}
         </Field>
         {mode === "password" && (
           <div className="flex flex-col gap-1.5">
             <Field label="Password" error={errors.password}>
-              {({ id, describedBy, invalid }) => <Input id={id} type="password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} aria-invalid={invalid} aria-describedby={describedBy} />}
+              {({ id, describedBy, invalid }) => (
+                <div className="relative">
+                  <Input ref={passwordRef} id={id} type={showPassword ? "text" : "password"} autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} aria-invalid={invalid} aria-describedby={describedBy} className="pr-20" />
+                  <button
+                    type="button"
+                    aria-pressed={showPassword}
+                    aria-controls={id}
+                    onClick={() => setShowPassword((v) => !v)}
+                    className="absolute inset-y-0 right-1.5 my-auto h-8 rounded-[8px] px-3 text-[13px] font-semibold text-[color:var(--color-primary)] hover:bg-[var(--color-surface-muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]"
+                  >
+                    {showPassword ? "Hide" : "Show"}
+                    <span className="sr-only"> password</span>
+                  </button>
+                </div>
+              )}
             </Field>
             <HubLink to={`/forgot-password${email ? `?email=${encodeURIComponent(email)}` : ""}`} className="self-end text-[13px] font-semibold text-[color:var(--color-primary)] hover:underline">
               Forgot your password?

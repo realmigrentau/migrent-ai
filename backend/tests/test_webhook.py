@@ -152,7 +152,7 @@ MENTOR_CHECKOUT = "cs_test_mentor"
 @pytest.fixture()
 def mentor_wired(wired, monkeypatch):
     db, sent = wired
-    db.seed("mentors", [{"id": "mentor-1", "user_id": VERIFIED_OWNER_ID, "suburb": "Parramatta", "active": True, "hourly_rate": 3000}])
+    db.seed("mentors", [{"id": "mentor-1", "user_id": VERIFIED_OWNER_ID, "suburb": "Parramatta", "active": True, "review_status": "approved", "hourly_rate": 3000}])
     db.seed(
         "mentor_sessions",
         [{"id": MENTOR_SESSION_ID, "mentor_id": "mentor-1", "seeker_id": SEEKER_ID, "amount": 3000, "platform_fee": 900,
@@ -195,7 +195,7 @@ def test_mentor_session_rejects_wrong_amount_and_foreign_checkout(client, mentor
 def test_creating_a_mentor_checkout_does_not_mark_it_paid(client, db, monkeypatch):
     import routes_mentors
 
-    db.seed("mentors", [{"id": "mentor-2", "user_id": VERIFIED_OWNER_ID, "suburb": "Ryde", "active": True, "hourly_rate": 2500,
+    db.seed("mentors", [{"id": "mentor-2", "user_id": VERIFIED_OWNER_ID, "suburb": "Ryde", "active": True, "review_status": "approved", "hourly_rate": 2500,
                          "stripe_account_id": "acct_mentor2", "stripe_onboarding_complete": True}])
 
     class Checkout:
@@ -230,7 +230,7 @@ def test_creating_a_mentor_checkout_does_not_mark_it_paid(client, db, monkeypatc
 def test_mentor_without_payouts_cannot_be_booked(client, db, monkeypatch):
     import routes_mentors
 
-    db.seed("mentors", [{"id": "mentor-3", "user_id": VERIFIED_OWNER_ID, "suburb": "Ryde", "active": True, "hourly_rate": 2500}])
+    db.seed("mentors", [{"id": "mentor-3", "user_id": VERIFIED_OWNER_ID, "suburb": "Ryde", "active": True, "review_status": "approved", "hourly_rate": 2500}])
     called = []
     monkeypatch.setattr(routes_mentors.stripe.checkout.Session, "create", staticmethod(lambda **k: called.append(k)))
     from tests.conftest import auth
@@ -243,7 +243,7 @@ def test_mentor_without_payouts_cannot_be_booked(client, db, monkeypatch):
 
 
 def test_public_mentor_pages_hide_the_stripe_account(client, db):
-    db.seed("mentors", [{"id": "mentor-4", "user_id": VERIFIED_OWNER_ID, "suburb": "Ryde", "active": True, "hourly_rate": 2500,
+    db.seed("mentors", [{"id": "mentor-4", "user_id": VERIFIED_OWNER_ID, "suburb": "Ryde", "active": True, "review_status": "approved", "hourly_rate": 2500,
                          "rating": 5, "stripe_account_id": "acct_secret", "stripe_onboarding_complete": True}])
     detail = client.get("/mentors/mentor-4").json()
     assert "stripe_account_id" not in detail and detail["accepting_bookings"] is True
@@ -254,7 +254,7 @@ def test_public_mentor_pages_hide_the_stripe_account(client, db):
 def test_payout_status_asks_stripe_and_remembers(client, db, monkeypatch):
     import routes_mentors
 
-    db.seed("mentors", [{"id": "mentor-5", "user_id": VERIFIED_OWNER_ID, "suburb": "Ryde", "active": True, "hourly_rate": 2500,
+    db.seed("mentors", [{"id": "mentor-5", "user_id": VERIFIED_OWNER_ID, "suburb": "Ryde", "active": True, "review_status": "approved", "hourly_rate": 2500,
                          "stripe_account_id": "acct_m5", "stripe_onboarding_complete": False}])
     monkeypatch.setattr(routes_mentors.stripe.Account, "retrieve", staticmethod(lambda acct: {"id": acct, "payouts_enabled": True, "capabilities": {"transfers": "active"}}))
     from tests.conftest import auth

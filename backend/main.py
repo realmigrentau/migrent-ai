@@ -12,9 +12,7 @@ logger = logging.getLogger(__name__)
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routes_auth import router as auth_router
-from routes_magic_auth import router as magic_auth_router
 from routes_listings import router as listings_router
-from routes_matches import router as matches_router
 from routes_deals import router as deals_router, webhook_router
 from routes_support import router as support_router
 from routes_support_tickets import router as support_tickets_router
@@ -28,11 +26,8 @@ from routes_validation import router as validation_router
 from routes_reviews import router as reviews_router
 from routes_bookings import router as bookings_router
 from routes_geocode import router as geocode_router
-from routes_owner import router as owner_router
-from routes_seeker import router as seeker_router
 from routes_suburbs import router as suburbs_router
 from routes_stations import router as stations_router
-from routes_visa_matching import router as visa_matching_router
 from routes_admin import router as admin_router
 from routes_notifications import router as notifications_router
 from routes_mentors import router as mentors_router
@@ -45,6 +40,8 @@ from routes_hub_renter import router as hub_renter_router
 from routes_applications import router as hub_applications_router
 from routes_inspections import router as hub_inspections_router
 from routes_hub_messages import router as hub_messages_router
+from routes_hub_reviews import router as hub_reviews_router
+from unsubscribe import router as unsubscribe_router
 from routes_hub_owner import router as hub_owner_router
 from routes_tenancies import router as hub_tenancies_router
 from routes_hub_admin import router as hub_admin_router
@@ -135,9 +132,7 @@ app.add_middleware(
 )
 
 app.include_router(auth_router)
-app.include_router(magic_auth_router)
 app.include_router(listings_router)
-app.include_router(matches_router)
 app.include_router(deals_router)
 app.include_router(support_router)
 app.include_router(support_tickets_router)
@@ -151,11 +146,8 @@ app.include_router(validation_router)
 app.include_router(reviews_router)
 app.include_router(bookings_router)
 app.include_router(geocode_router)
-app.include_router(owner_router)
-app.include_router(seeker_router)
 app.include_router(suburbs_router)
 app.include_router(stations_router)
-app.include_router(visa_matching_router)
 app.include_router(admin_router)
 app.include_router(notifications_router)
 app.include_router(mentors_router)
@@ -169,6 +161,8 @@ app.include_router(hub_renter_router)
 app.include_router(hub_applications_router)
 app.include_router(hub_inspections_router)
 app.include_router(hub_messages_router)
+app.include_router(hub_reviews_router)
+app.include_router(unsubscribe_router)
 app.include_router(hub_owner_router)
 app.include_router(hub_tenancies_router)
 app.include_router(hub_admin_router)

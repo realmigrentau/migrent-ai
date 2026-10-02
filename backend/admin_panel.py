@@ -47,6 +47,29 @@ MIN_PASSWORD_LENGTH = 8
 
 LOCKED_DETAIL = "The admin panel is locked. Enter the admin password to open it."
 
+# Admin access needs a two-step sign-in (an authenticator code, aal2 in the
+# access token) as well as the panel password. ADMIN_REQUIRE_MFA=false turns
+# this off, for a local mock or an emergency only.
+ADMIN_MFA_DETAIL = (
+    "The Admin panel needs two-step verification. Turn it on in Settings > "
+    "Sign-in and security, sign in with your authenticator code, then open the panel again."
+)
+
+
+def admin_mfa_required() -> bool:
+    return os.environ.get("ADMIN_REQUIRE_MFA", "true").strip().lower() not in ("false", "0", "no")
+
+
+def admin_mfa_ok(authorization: Optional[str]) -> bool:
+    from auth_utils import session_aal
+
+    return not admin_mfa_required() or session_aal(authorization) == "aal2"
+
+
+def require_admin_mfa(authorization: Optional[str]) -> None:
+    if not admin_mfa_ok(authorization):
+        raise HTTPException(status_code=403, detail=ADMIN_MFA_DETAIL)
+
 
 # ---------------------------------------------------------------------------
 # Password hashing
@@ -139,6 +162,7 @@ def require_admin_panel(actor, request: Request, authorization: Optional[str]) -
     from hub_common import require_admin_actor
 
     require_admin_actor(actor)
+    require_admin_mfa(authorization)
     if not panel_unlocked(actor.id, request, authorization):
         raise HTTPException(status_code=423, detail=LOCKED_DETAIL)
 
@@ -156,6 +180,7 @@ def admin_panel_unlocked(request: Request, authorization: Optional[str] = Header
     if user is None or not is_admin_user(user):
         return
     require_live_session(authorization, str(user.id))
+    require_admin_mfa(authorization)
     if not panel_unlocked(str(user.id), request, authorization):
         raise HTTPException(status_code=423, detail=LOCKED_DETAIL)
 

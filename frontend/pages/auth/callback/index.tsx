@@ -81,22 +81,8 @@ function differentBrowserFailure(p: AuthCallbackParams): Failure {
 }
 
 /** Best-effort follow-ups. None of them may block the redirect. */
-function afterSignIn(session: Session, p: AuthCallbackParams, isNewAccount: boolean) {
+function afterSignIn(session: Session, isNewAccount: boolean) {
   const meta = session.user.user_metadata ?? {};
-
-  // Magic link opened on a second device: hand the tokens to the first one,
-  // which is polling for them (pages/magic-link-login).
-  if (p.pollingId) {
-    fetch(`${API_BASE}/auth/cross-device/store`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        polling_id: p.pollingId,
-        access_token: session.access_token,
-        refresh_token: session.refresh_token,
-      }),
-    }).catch(() => {});
-  }
 
   // The sign-up form records consent in user metadata; copy it to the profile.
   if (meta.legal_accepted_at) {
@@ -201,7 +187,7 @@ export default function AuthCallback() {
       const onboardingCompleted =
         status && typeof status.onboarding_completed === "boolean" ? status.onboarding_completed : null;
 
-      afterSignIn(session, p, onboardingCompleted === false || recentlyCreated);
+      afterSignIn(session, onboardingCompleted === false || recentlyCreated);
 
       void router.replace(
         postAuthDestination({ next: p.next, otpType: p.otpType, onboardingCompleted, recentlyCreated }),

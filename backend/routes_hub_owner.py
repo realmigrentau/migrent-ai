@@ -42,6 +42,7 @@ from hub_common import (
     state_for_postcode,
 )
 from limiter import limiter
+from listing_rules import bond_weeks_from_text, check_location, cost_problems, location_problem
 
 logger = logging.getLogger(__name__)
 
@@ -222,6 +223,9 @@ def create_property(request: Request, body: PropertyBody, authorization: Optiona
     sb = get_supabase_admin()
     row = body.model_dump()
     row["state"] = row.get("state") or state_for_postcode(row.get("postcode"))
+    place_problem = location_problem(row.get("suburb"), row.get("postcode"), row.get("state"))
+    if place_problem:
+        raise HTTPException(status_code=400, detail=place_problem)
     try:
         created = sb.table("properties").insert({**row, "owner_id": actor.id, "archived_at": None}).execute().data[0]
     except Exception as e:
@@ -237,6 +241,21 @@ def _own_property(sb, actor: HubActor, property_id: str) -> dict:
     if not res.data or str(res.data[0]["owner_id"]) != actor.id or res.data[0].get("archived_at"):
         raise HTTPException(status_code=404, detail="Property not found")
     return res.data[0]
+
+
+@router.get("/location-check")
+@limiter.limit("120/minute")
+def location_check(
+    request: Request,
+    suburb: str = "",
+    postcode: str = "",
+    state: str = "",
+    authorization: Optional[str] = Header(None),
+):
+    """The wizard's live check of suburb, state and postcode. `problem`
+    blocks the listing (the same rule runs on submit); `hint` is advice."""
+    hub_actor(request, authorization)
+    return check_location(suburb[:100], postcode[:4], (state or "")[:3] or None)
 
 
 @router.get("/properties/{property_id}")
@@ -282,13 +301,18 @@ def update_property(property_id: str, request: Request, body: PropertyPatch, aut
     require_writable(actor)
     require_owner(actor)
     sb = get_supabase_admin()
-    _own_property(sb, actor, property_id)
+    prop = _own_property(sb, actor, property_id)
     patch = body.model_dump(exclude_unset=True)
     if "state" in patch:
         try:
             patch["state"] = clean_state(patch["state"])
         except ValueError as e:
             raise HTTPException(status_code=400, detail=str(e))
+    if {"suburb", "state", "postcode"} & set(patch):
+        merged = {**prop, **patch}
+        place_problem = location_problem(merged.get("suburb"), merged.get("postcode"), merged.get("state"))
+        if place_problem:
+            raise HTTPException(status_code=400, detail=place_problem)
     if "relationship" in patch and patch["relationship"] not in ("owner", "manager"):
         raise HTTPException(status_code=400, detail="Choose owner or manager")
     if not patch:
@@ -337,11 +361,12 @@ DRAFT_FIELDS = {
     # photos
     "images",
     # pricing
-    "weekly_price", "bond", "weekly_discount", "monthly_discount", "fees_note",
+    "weekly_price", "bond_weeks", "rent_in_advance_weeks", "bills_estimate_weekly",
+    "weekly_discount", "monthly_discount", "fees_note",
     # availability
     "available_from", "available_to", "min_stay_weeks", "max_stay_weeks", "listing_purpose", "lease_months",
     # preferences
-    "tenant_prefs", "couples_ok", "gender_preference",
+    "tenant_prefs", "couples_ok", "gender_preference", "newcomer_friendly",
 }
 
 
@@ -381,10 +406,11 @@ LISTING_TO_DRAFT = {
     "weapons_on_property": "weapons_on_property",
     "weapons_explanation": "weapons_explanation", "other_safety_details": "other_safety_details",
     "nearest_transport": "nearest_transport", "neighbourhood_vibe": "neighbourhood_vibe", "images": "images",
-    "weekly_price": "weekly_price", "bond": "bond", "weekly_discount": "weekly_discount", "monthly_discount": "monthly_discount",
+    "weekly_price": "weekly_price", "bond_weeks": "bond_weeks", "rent_in_advance_weeks": "rent_in_advance_weeks",
+    "bills_estimate_weekly": "bills_estimate_weekly", "weekly_discount": "weekly_discount", "monthly_discount": "monthly_discount",
     "min_stay_weeks": "min_stay_weeks", "max_stay_weeks": "max_stay_weeks", "listing_purpose": "listing_purpose",
     "tenant_prefs": "tenant_prefs", "couples_ok": "couples_ok", "gender_preference": "gender_preference",
-    "address": "street_address", "suburb": "suburb", "postcode": "postcode", "property_type": "property_type",
+    "newcomer_friendly": "newcomer_friendly", "address": "street_address", "suburb": "suburb", "postcode": "postcode", "property_type": "property_type",
 }
 
 
@@ -433,6 +459,11 @@ def create_draft(request: Request, body: DraftCreate, authorization: Optional[st
             if src[0].get(col) is not None and key not in ("unit_label",):
                 data[key] = src[0][col]
         data["state"] = data.get("state") or state_for_postcode(src[0].get("postcode"))
+        # Listings from before bond was counted in weeks carry it as text.
+        if data.get("bond_weeks") is None:
+            weeks = bond_weeks_from_text(src[0].get("bond"))
+            if weeks is not None:
+                data["bond_weeks"] = weeks
         # A copy is a new room or a relist, never the same dates.
         data.pop("available_from", None)
         data.pop("available_to", None)
@@ -494,6 +525,13 @@ def delete_draft(draft_id: str, request: Request, authorization: Optional[str] =
     return {"deleted": True}
 
 
+def _whole(v: Any) -> Optional[int]:
+    try:
+        return int(v) if v is not None and v != "" else None
+    except (TypeError, ValueError):
+        return None
+
+
 def _draft_to_listing(data: dict) -> tuple[dict, str, Optional[int]]:
     """Map the wizard's fields onto the ListingCreate payload."""
     purpose = data.get("listing_purpose") or "long_term"
@@ -526,7 +564,10 @@ def _draft_to_listing(data: dict) -> tuple[dict, str, Optional[int]]:
         "highlights": data.get("highlights"),
         "weekly_discount": data.get("weekly_discount"),
         "monthly_discount": data.get("monthly_discount"),
-        "bond": data.get("bond"),
+        "bond_weeks": _whole(data.get("bond_weeks")),
+        "rent_in_advance_weeks": _whole(data.get("rent_in_advance_weeks")) if purpose == "long_term" else None,
+        "bills_estimate_weekly": _whole(data.get("bills_estimate_weekly")) if not data.get("bills_included") else None,
+        "newcomer_friendly": data.get("newcomer_friendly"),
         "no_smoking": data.get("no_smoking"),
         "quiet_hours": data.get("quiet_hours"),
         "tenant_prefs": data.get("tenant_prefs"),
@@ -582,6 +623,11 @@ def draft_problems(data: dict) -> list[dict]:
         price = 0
     need(0 < price <= 50000, "pricing", "weekly_price", "Set the weekly rent")
     need(bool(data.get("available_from")), "availability", "available_from", "Choose when it is available from")
+    problems.extend(cost_problems(data, data.get("listing_purpose") or "long_term"))
+    if 800 <= pc <= 9999 and data.get("suburb"):
+        place_problem = location_problem(data.get("suburb"), pc, data.get("state"))
+        if place_problem:
+            problems.append({"step": "property", "field": "suburb", "message": place_problem})
     if data.get("weapons_on_property"):
         need(bool((data.get("weapons_explanation") or "").strip()), "details", "weapons_explanation", "Explain the weapons disclosure")
     return problems
@@ -696,6 +742,54 @@ async def upload_listing_photo(request: Request, file: UploadFile = File(...), a
 # ---------------------------------------------------------------------------
 # One listing, owner view, and actions
 # ---------------------------------------------------------------------------
+
+
+class BulkBody(BaseModel):
+    listing_ids: list[str] = Field(..., min_length=1, max_length=50)
+    action: str
+    # For "renew": the new last day the listing is open.
+    available_to: Optional[str] = Field(None, max_length=10)
+
+    @field_validator("action")
+    @classmethod
+    def _action(cls, v: str) -> str:
+        if v not in ("pause", "resume", "renew"):
+            raise ValueError("Choose pause, resume or renew")
+        return v
+
+
+@router.post("/listings/bulk")
+@limiter.limit("20/hour")
+def bulk_listings(request: Request, body: BulkBody, authorization: Optional[str] = Header(None)):
+    """Pause, resume or renew several of the owner's listings at once
+    (property managers, MIG-026). Each listing goes through exactly the same
+    rules as on its own page; one that cannot be changed is reported, not
+    skipped silently, and the rest still go ahead."""
+    actor = hub_actor(request, authorization)
+    require_writable(actor)
+    require_owner(actor)
+    if body.action == "renew" and not body.available_to:
+        raise HTTPException(status_code=400, detail="Choose the new last day for the listings")
+    from auth_utils import get_active_user
+
+    if body.action != "pause":
+        get_active_user(authorization)  # suspended accounts cannot bring listings back
+    from routes_listings import pause_for_owner, renew_for_owner, resume_for_owner
+
+    sb = get_supabase_admin()
+    results = []
+    for listing_id in dict.fromkeys(body.listing_ids):
+        try:
+            if body.action == "pause":
+                out = pause_for_owner(sb, actor.id, listing_id)
+            elif body.action == "resume":
+                out = resume_for_owner(sb, actor.id, listing_id)
+            else:
+                out = renew_for_owner(sb, actor.id, listing_id, None, body.available_to or "")
+            results.append({"id": listing_id, "ok": True, "moderation_status": out.get("moderation_status")})
+        except HTTPException as e:
+            results.append({"id": listing_id, "ok": False, "error": e.detail if isinstance(e.detail, str) else "That listing could not be changed"})
+    return {"results": results, "changed": sum(1 for r in results if r["ok"])}
 
 
 def _own_listing_row(sb, actor: HubActor, listing_id: str) -> dict:

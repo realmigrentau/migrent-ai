@@ -139,7 +139,7 @@ export function buildFaqs(
   const nearestTrain = detail.amenities?.nearest?.find((n) => n.category === "train_station");
   if (nearestTrain?.name) {
     faqs.push({
-      q: `What is the nearest train station to ${name}?`,
+      q: `What is the nearest station to ${name}?`,
       a: `The nearest mapped station is ${nearestTrain.name}, about ${(nearestTrain.distanceMetres / 1000).toFixed(1)} km from the centre of ${name} in a straight line. That is a straight-line distance from OpenStreetMap data, not a walking route or a travel time.`,
     });
   }

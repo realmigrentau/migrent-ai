@@ -144,7 +144,7 @@ export default function MentorsPage() {
             Mentors
           </h2>
           <p className="site-card site-card--muted site-card--pad site-body mb-6">
-            Mentors are Migrent members who sign up to help. Unlike hosts, they are not ID-checked, so meet somewhere public the first time.
+            Mentors are Migrent members who sign up to help. Like hosts, each one has their government ID checked by Migrent before they are listed. Even so, meet somewhere public the first time.
           </p>
           <div aria-live="polite">
             {loading ? (
@@ -192,7 +192,11 @@ export default function MentorsPage() {
                   <Users className="h-5 w-5" strokeWidth={1.9} />
                 </span>
                 <p className="site-h3 site-h3--lg mt-4">No mentors {searchSuburb ? `in ${searchSuburb} ` : ""}yet</p>
-                <p className="site-body mt-2 max-w-[46ch]">Mentors are locals who sign up to help. Try a nearby suburb, or be the first here.</p>
+                <p className="site-body mt-2 max-w-[46ch]">
+                  {searchSuburb || language
+                    ? "Mentors are locals who sign up to help. Try a nearby suburb or another language, or be the first here."
+                    : "Mentors are locals who sign up to help, and Migrent checks each one before they appear here. Know your suburb well? You could be the first."}
+                </p>
                 <Link href="/become-mentor" className="btn-secondary mt-5">
                   Become a mentor <ArrowRight className="btn-arrow h-4 w-4" strokeWidth={2.2} aria-hidden="true" />
                 </Link>

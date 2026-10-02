@@ -14,6 +14,7 @@ import { setQueryData } from "../../lib/hub/query";
 import { hubSignInUrl, safeHubPath, siteUrl } from "../../lib/hub/routes";
 import { useHub } from "../../lib/hub/session";
 import type { HubMe } from "../../lib/hub/types";
+import { Events, trackEvent } from "../../lib/analytics";
 
 /**
  * Onboarding is one screen: what are you here to do, what should we call
@@ -63,6 +64,7 @@ export default function Welcome() {
     try {
       const updated = await hubApi.post<HubMe>("/hub/onboarding", { role, name: name.trim(), owner_kind: role === "owner" ? kind : undefined, over_18: adult, accept_terms: terms });
       setQueryData("/hub/me", updated);
+      trackEvent(Events.ONBOARDING_COMPLETED, { role });
       const dest = next === "/" && role === "owner" ? "/" : next;
       void navigate(dest, { replace: true });
     } catch (err) {

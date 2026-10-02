@@ -15,7 +15,7 @@ import { day } from "../../lib/hub/format";
 import { invalidate, setQueryData, useHubQuery } from "../../lib/hub/query";
 import { hubUrl, siteUrl } from "../../lib/hub/routes";
 import { useHub } from "../../lib/hub/session";
-import type { HubMe, Template } from "../../lib/hub/types";
+import type { HubMe, Person, Template } from "../../lib/hub/types";
 import { supabase } from "../../lib/supabase";
 import { cn } from "../../lib/cn";
 
@@ -288,9 +288,49 @@ function AccountTypeCard({ me }: { me: HubMe }) {
             <ChoiceCard name="owner-kind" value="individual" selected={me.owner_kind !== "property_manager"} onSelect={() => void setKind("individual")} title="The owner" description="Homes or rooms you own." />
             <ChoiceCard name="owner-kind" value="property_manager" selected={me.owner_kind === "property_manager"} onSelect={() => void setKind("property_manager")} title="A property manager" description="Homes you manage for their owners." />
           </div>
+          {me.owner_kind === "property_manager" && <AgencyFields me={me} />}
         </div>
       )}
     </Card>
+  );
+}
+
+/** Agency name and licence, shown to renters beside every listing (MIG-026). */
+function AgencyFields({ me }: { me: HubMe }) {
+  const toast = useToast();
+  const [name, setName] = useState(me.agency_name ?? "");
+  const [licence, setLicence] = useState(me.agency_licence ?? "");
+  const [busy, setBusy] = useState(false);
+  const dirty = name.trim() !== (me.agency_name ?? "") || licence.trim() !== (me.agency_licence ?? "");
+
+  async function save() {
+    setBusy(true);
+    try {
+      const res = await hubApi.patch<HubMe>("/hub/settings", { agency_name: name.trim(), agency_licence: licence.trim() });
+      setQueryData("/hub/me", res);
+      toast.success("Agency details saved");
+    } catch (e) {
+      toast.error(errMsg(e, "That didn't save."));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div className="flex flex-col gap-3 rounded-[16px] border border-[var(--color-line)] p-4" data-testid="agency-fields">
+      <p className="text-[13.5px] text-[color:var(--color-ink-2)]">Renters see these beside every listing you manage.</p>
+      <div className="grid gap-3 sm:grid-cols-2">
+        <Field label="Agency name">
+          {({ id }) => <Input id={id} value={name} maxLength={120} onChange={(e) => setName(e.target.value)} />}
+        </Field>
+        <Field label="Licence number" optional hint="Your state's real estate or agent licence.">
+          {({ id, describedBy }) => <Input id={id} value={licence} maxLength={60} onChange={(e) => setLicence(e.target.value)} aria-describedby={describedBy} />}
+        </Field>
+      </div>
+      <Button size="sm" className="w-fit" loading={busy} disabled={!dirty} onClick={() => void save()}>
+        Save agency details
+      </Button>
+    </div>
   );
 }
 
@@ -302,6 +342,33 @@ const ID_TYPES = [
   { value: "national_id", label: "National ID card" },
   { value: "visa", label: "Visa grant notice" },
 ];
+
+/** Where a mentor sign-up stands: ID check, then Migrent's approval. */
+function MentorCard({ me }: { me: HubMe }) {
+  const m = me.mentor;
+  if (!m) return null;
+  const idChecked = me.owner_verification?.checks.government_id === "approved";
+  const status = m.status === "approved" ? "Listed" : m.status === "rejected" ? "Needs a change" : "In review";
+  const tone = m.status === "approved" ? "info" : m.status === "rejected" ? "danger" : "warning";
+  const detail =
+    m.status === "approved"
+      ? m.active
+        ? "New arrivals can find and book you. Changing your introduction sends it back to Migrent to read again."
+        : "Approved, but switched off, so you are not shown in the mentor list."
+      : m.status === "rejected"
+        ? `Migrent asked for this before listing you: ${m.reason || "please update your introduction."}`
+        : idChecked
+          ? "Your ID is checked. Migrent is reading your profile and will email you when you are listed."
+          : "Upload your photo ID above. Once it is checked, Migrent reads your profile and lists you.";
+  return (
+    <Card id="mentor" title="Mentor profile" description="Mentors meet new arrivals, often in person, so Migrent checks every one before they are listed." aside={<StatusBadge tone={tone}>{status}</StatusBadge>}>
+      <p className="text-[14px] leading-relaxed text-[color:var(--color-ink-2)]">{detail}</p>
+      <a href={siteUrl("/become-mentor")} className="mt-3 inline-flex text-[14px] font-semibold text-[color:var(--color-primary)] underline-offset-2 hover:underline">
+        {m.status === "rejected" ? "Change your mentor profile" : "Open your mentor profile"}
+      </a>
+    </Card>
+  );
+}
 
 function VerificationCard({ me }: { me: HubMe }) {
   const toast = useToast();
@@ -334,7 +401,11 @@ function VerificationCard({ me }: { me: HubMe }) {
     <Card
       id="verification"
       title="ID check"
-      description="Renters see a mark on your listings once Migrent has checked your photo ID. Your document is never shown to anyone."
+      description={
+        me.role === "owner"
+          ? "Renters see a mark on your listings once Migrent has checked your photo ID. Your document is never shown to anyone."
+          : "Mentors are listed only after Migrent has checked their photo ID. Your document is never shown to anyone."
+      }
       aside={<StatusBadge tone={v?.status === "verified" ? "info" : v?.status === "pending" ? "warning" : "neutral"}>{v?.status === "verified" ? "Checked" : v?.status === "pending" ? "In review" : "Not checked"}</StatusBadge>}
     >
       <div className="flex flex-col">
@@ -791,6 +862,56 @@ function SecurityCard() {
 
 /* ── Privacy and data ───────────────────────────────────── */
 
+/* ── Blocked people (MIG-032) ───────────────────────────── */
+
+function BlockedCard() {
+  const toast = useToast();
+  const { data, error, loading, refetch } = useHubQuery<{ blocked: { person: Person; created_at: string | null }[] }>("/hub/blocks");
+  const [busy, setBusy] = useState<string | null>(null);
+
+  async function unblock(p: Person) {
+    setBusy(p.id);
+    try {
+      await hubApi.del(`/hub/blocks/${p.id}`);
+      setQueryData<{ blocked: { person: Person; created_at: string | null }[] }>("/hub/blocks", (prev) => ({ blocked: (prev?.blocked ?? []).filter((b) => b.person.id !== p.id) }));
+      invalidate("/hub/inbox");
+      toast.info(`${p.name.split(" ")[0]} is unblocked`);
+    } catch (e) {
+      toast.error(errMsg(e, "That didn't save."));
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  const list = data?.blocked ?? [];
+  return (
+    <Card id="blocked" title="Blocked people" description="People you block can't message you, apply for your homes or book inspections, and you can't contact them. They are not told. Block someone from the options in a conversation.">
+      {error ? (
+        <ErrorState message={error.message} offline={error.offline} onRetry={() => void refetch()} />
+      ) : loading && !data ? (
+        <RowSkeleton />
+      ) : list.length === 0 ? (
+        <p className="text-[14px] text-[color:var(--color-ink-3)]">You haven&apos;t blocked anyone.</p>
+      ) : (
+        <ul className="flex flex-col divide-y divide-[var(--color-line)]">
+          {list.map(({ person, created_at }) => (
+            <li key={person.id} className="flex items-center gap-3 py-3">
+              <Avatar name={person.name} src={person.avatar_url} size={36} />
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-[14.5px] font-semibold text-[color:var(--color-ink)]">{person.name}</p>
+                {created_at && <p className="text-[12.5px] text-[color:var(--color-ink-3)]">Blocked {day(created_at)}</p>}
+              </div>
+              <Button size="sm" variant="secondary" loading={busy === person.id} onClick={() => void unblock(person)}>
+                Unblock
+              </Button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </Card>
+  );
+}
+
 function DataCard({ me }: { me: HubMe }) {
   const toast = useToast();
   const { signOut } = useHub();
@@ -798,6 +919,8 @@ function DataCard({ me }: { me: HubMe }) {
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [typed, setTyped] = useState("");
   const [deleting, setDeleting] = useState(false);
+  // The server wants a fresh sign-in before deleting (428).
+  const [needsReauth, setNeedsReauth] = useState(false);
 
   async function exportData() {
     setExporting(true);
@@ -826,9 +949,15 @@ function DataCard({ me }: { me: HubMe }) {
       await signOut();
       window.location.href = siteUrl("/?account=deleted");
     } catch (e) {
-      toast.error(errMsg(e, "The account couldn't be deleted."));
+      if (e instanceof HubError && e.status === 428) setNeedsReauth(true);
+      else toast.error(errMsg(e, "The account couldn't be deleted."));
       setDeleting(false);
     }
+  }
+
+  async function signInAgain() {
+    await signOut();
+    window.location.href = hubUrl(`/sign-in?next=${encodeURIComponent("/settings#data")}`);
   }
 
   return (
@@ -863,18 +992,32 @@ function DataCard({ me }: { me: HubMe }) {
           setTyped("");
         }}
         title="Delete your account?"
-        description="Your profile, Rental Profile, documents, listings, applications, saved homes and messages are permanently removed. If you have a tenancy or an application in progress, finish those first."
+        description="Your profile, Rental Profile, documents and photos, listings, applications, saved homes and messages are permanently removed. If you have a tenancy or an application in progress, finish those first."
         footer={
-          <>
-            <Button variant="ghost" onClick={() => setDeleteOpen(false)}>
-              Keep my account
-            </Button>
-            <Button variant="danger" loading={deleting} disabled={typed.trim().toUpperCase() !== "DELETE"} onClick={() => void deleteAccount()}>
-              Delete permanently
-            </Button>
-          </>
+          needsReauth ? (
+            <>
+              <Button variant="ghost" onClick={() => setDeleteOpen(false)}>
+                Not now
+              </Button>
+              <Button onClick={() => void signInAgain()}>Sign in again</Button>
+            </>
+          ) : (
+            <>
+              <Button variant="ghost" onClick={() => setDeleteOpen(false)}>
+                Keep my account
+              </Button>
+              <Button variant="danger" loading={deleting} disabled={typed.trim().toUpperCase() !== "DELETE"} onClick={() => void deleteAccount()}>
+                Delete permanently
+              </Button>
+            </>
+          )
         }
       >
+        {needsReauth && (
+          <InlineAlert tone="info" className="mb-4">
+            For your security, sign in again first. We ask for a fresh sign-in before anything this permanent. You&apos;ll come straight back here.
+          </InlineAlert>
+        )}
         <InlineAlert tone="warning" className="mb-4">
           Download your data first if you want a copy.
         </InlineAlert>
@@ -895,10 +1038,13 @@ export default function SettingsPage() {
   const sections = [
     { id: "profile", label: "Profile" },
     ...(role !== "admin" ? [{ id: "account-type", label: "Account type" }] : []),
-    ...(role === "owner" ? [{ id: "verification", label: "ID check" }, { id: "templates", label: "Reply templates" }] : []),
+    ...(role === "owner" || me?.mentor ? [{ id: "verification", label: "ID check" }] : []),
+    ...(me?.mentor ? [{ id: "mentor", label: "Mentor profile" }] : []),
+    ...(role === "owner" ? [{ id: "templates", label: "Reply templates" }] : []),
     { id: "notifications", label: "Email notifications" },
     { id: "appearance", label: "Appearance" },
     { id: "security", label: "Sign-in and security" },
+    { id: "blocked", label: "Blocked people" },
     { id: "data", label: "Privacy and data" },
   ];
 
@@ -948,13 +1094,15 @@ export default function SettingsPage() {
           <div className="flex min-w-0 flex-col gap-6">
             <ProfileCard key={me.name} me={me} />
             {role !== "admin" && <AccountTypeCard me={me} />}
-            {role === "owner" && <VerificationCard me={me} />}
+            {(role === "owner" || me.mentor) && <VerificationCard me={me} />}
+            {me.mentor && <MentorCard me={me} />}
             {role === "owner" && <TemplatesCard />}
             <NotificationsCard me={me} />
             <Card id="appearance" title="Appearance" description="Migrent Hub follows your device unless you choose. The public site has its own setting.">
               <ThemeSegmented />
             </Card>
             <SecurityCard />
+            <BlockedCard />
             <DataCard me={me} />
           </div>
         </div>

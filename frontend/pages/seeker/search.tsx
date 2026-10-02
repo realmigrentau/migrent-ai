@@ -29,12 +29,17 @@ import {
   parseSearchQuery,
   serializeSearchFilters,
   validateSearchDates,
+  type LeaseType,
   type SearchFilters,
   type SortBy,
 } from "../../lib/search/searchQuery";
 import { hubFromSite } from "../../lib/hub/routes";
 import { hubApi } from "../../lib/hub/api";
 import { placeTypeLabel } from "../../lib/hub/format";
+import { Events, trackEvent } from "../../lib/analytics";
+import { useMounted } from "../../hooks/useMounted";
+import SuburbCombobox from "../../components/forms/SuburbCombobox";
+import { moveInCost } from "../../lib/listingCosts";
 
 /**
  * /seeker/search
@@ -222,6 +227,9 @@ export default function SeekerSearch({ initialFilters, initialPage, serverToday 
   const statusRef = useRef<HTMLParagraphElement>(null);
 
   const isBestMatch = filters.sortBy === "best_match";
+  // The session is only known in the browser; render what the server did
+  // until hydration is over (MIGRENT_MASTER_AUDIT MIG-027).
+  const mounted = useMounted();
   const filterCount = useMemo(() => activeFilterCount(filters), [filters]);
 
   const update = useCallback(<K extends keyof SearchFilters>(key: K, value: SearchFilters[K]) => {
@@ -315,6 +323,11 @@ export default function SeekerSearch({ initialFilters, initialPage, serverToday 
           setResults(page.listings);
           setTotal(page.total);
           setHasMore(page.hasMore);
+          trackEvent(Events.SEARCH_PERFORMED, {
+            has_location: Boolean(f.suburb || f.postcode || f.address || f.lat),
+            filters: activeFilterCount(f),
+            results: page.total ?? page.listings.length,
+          });
         } else {
           setSearchError(page.error);
           setSearchErrorMessage(page.errorMessage);
@@ -504,6 +517,9 @@ export default function SeekerSearch({ initialFilters, initialPage, serverToday 
   // ── Active chips ──
   const activeFilters: { label: string; clear: () => void }[] = [];
   const chip = (cond: boolean, label: string, clear: () => void) => cond && activeFilters.push({ label, clear });
+  chip(filters.leaseType === "long_term", "Lease", () => update("leaseType", ""));
+  chip(filters.leaseType === "short_stay", "Short stay", () => update("leaseType", ""));
+  chip(filters.newcomer, "No local rental history needed", () => update("newcomer", false));
   chip(filters.furnished, "Furnished", () => update("furnished", false));
   chip(filters.billsIncluded, "Bills included", () => update("billsIncluded", false));
   chip(filters.femaleOnly, "Female only", () => update("femaleOnly", false));
@@ -573,6 +589,10 @@ export default function SeekerSearch({ initialFilters, initialPage, serverToday 
   );
 
   const today = isoToday();
+  // Opens the Hub's save dialog with this search filled in.
+  const alertQuery = serializeSearchFilters({ ...filters, page: 1 });
+  alertQuery.set("save", "1");
+  const alertHref = hubFromSite.path(`/discover?${alertQuery.toString()}`);
 
   const filterContent = (
     <form role="search" aria-label="Room filters" onSubmit={onSubmitFilters} className="space-y-4">
@@ -596,10 +616,18 @@ export default function SeekerSearch({ initialFilters, initialPage, serverToday 
           )}
           {filters.searchType === "nearMe" && locationError && <p className="text-xs text-[var(--color-danger-500)]" role="alert">{locationError}</p>}
           {filters.searchType === "suburb" && (
-            <label className="block">
-              <span className="sr-only">Suburb or city</span>
-              <input type="search" name="suburb" value={filters.suburb} onChange={(e) => update("suburb", e.target.value)} placeholder="e.g. Kellyville, Parramatta" autoComplete="off" className="input-field text-sm" />
-            </label>
+            <div>
+              <SuburbCombobox
+                aria-label="Suburb or city"
+                name="suburb"
+                value={filters.suburb}
+                onChange={(v) => update("suburb", v)}
+                onSelect={(c) => update("suburb", c.name)}
+                placeholder="e.g. Kellyville, Parramatta"
+                inputClassName="input-field text-sm"
+                enterKeyHint="search"
+              />
+            </div>
           )}
           {filters.searchType === "postcode" && (
             <label className="block">
@@ -645,6 +673,18 @@ export default function SeekerSearch({ initialFilters, initialPage, serverToday 
         </div>
       </FilterSection>
 
+      <FilterSection title="How long for" defaultOpen>
+        <div className="flex flex-wrap gap-1.5">
+          {([
+            { value: "", label: "Either" },
+            { value: "long_term", label: "A lease (months)" },
+            { value: "short_stay", label: "A short stay (weeks)" },
+          ] as { value: LeaseType; label: string }[]).map((opt) => (
+            <TogglePill key={opt.value || "any"} active={filters.leaseType === opt.value} onClick={() => update("leaseType", opt.value)} label={opt.label} />
+          ))}
+        </div>
+      </FilterSection>
+
       <FilterSection title="Dates" defaultOpen={Boolean(filters.checkIn || filters.checkOut)}>
         <div className="grid grid-cols-2 gap-2">
           <label className="block">
@@ -667,6 +707,7 @@ export default function SeekerSearch({ initialFilters, initialPage, serverToday 
 
       <FilterSection title="Amenities & features" defaultOpen>
         <div className="flex flex-wrap gap-1.5">
+          <TogglePill active={filters.newcomer} onClick={() => update("newcomer", !filters.newcomer)} label="No local rental history needed" />
           <TogglePill active={filters.furnished} onClick={() => update("furnished", !filters.furnished)} label="Furnished" />
           <TogglePill active={filters.billsIncluded} onClick={() => update("billsIncluded", !filters.billsIncluded)} label="Bills included" />
           <TogglePill active={filters.instantBook} onClick={() => update("instantBook", !filters.instantBook)} label="Instant book" />
@@ -715,11 +756,11 @@ export default function SeekerSearch({ initialFilters, initialPage, serverToday 
           </div>
         </FilterSection>
 
-        <FilterSection title="Guests" defaultOpen={false}>
+        <FilterSection title="People moving in" defaultOpen={false}>
           <div className="space-y-2.5">
             <GuestCounter id="guests-adults" label="Adults (18+)" value={filters.adults} onDec={() => update("adults", Math.max(1, filters.adults - 1))} onInc={() => update("adults", Math.min(20, filters.adults + 1))} min={1} />
             <GuestCounter id="guests-children" label="Children (2-17)" value={filters.children} onDec={() => update("children", Math.max(0, filters.children - 1))} onInc={() => update("children", Math.min(20, filters.children + 1))} />
-            <GuestCounter id="guests-infants" label="Infants (0-2)" value={filters.infants} onDec={() => update("infants", Math.max(0, filters.infants - 1))} onInc={() => update("infants", Math.min(20, filters.infants + 1))} />
+            <GuestCounter id="guests-infants" label="Babies (under 2)" value={filters.infants} onDec={() => update("infants", Math.max(0, filters.infants - 1))} onInc={() => update("infants", Math.min(20, filters.infants + 1))} />
             <GuestCounter id="guests-pets" label="Pets" value={filters.pets} onDec={() => update("pets", Math.max(0, filters.pets - 1))} onInc={() => update("pets", Math.min(10, filters.pets + 1))} />
           </div>
         </FilterSection>
@@ -813,7 +854,7 @@ export default function SeekerSearch({ initialFilters, initialPage, serverToday 
     <label className="inline-flex items-center gap-2">
       <span className="sr-only">Sort results</span>
       <select id={id} value={filters.sortBy} onChange={(e) => update("sortBy", e.target.value as SortBy)} className={className}>
-        {session && <option value="best_match">Best match</option>}
+        {mounted && session && <option value="best_match">Best match</option>}
         <option value="newest">Newest</option>
         <option value="price_asc">Price: Low-High</option>
         <option value="price_desc">Price: High-Low</option>
@@ -836,6 +877,23 @@ export default function SeekerSearch({ initialFilters, initialPage, serverToday 
           You appear to be offline. Results shown are from your last search; we will retry when you reconnect.
         </div>
       )}
+
+      {/* Phones: where you want to live, without opening Filters first
+          (MIGRENT_MASTER_AUDIT MIG-039). Same state as the panel's field. */}
+      <form role="search" aria-label="Where" onSubmit={onSubmitFilters} className="lg:hidden flex gap-2" data-testid="mobile-where">
+        <div className="min-w-0 flex-1">
+          <SuburbCombobox
+            aria-label="Where do you want to live? Suburb or city"
+            value={filters.searchType === "suburb" ? filters.suburb : ""}
+            onChange={(v) => setFilters((p) => ({ ...p, searchType: "suburb", suburb: v, page: 1 }))}
+            onSelect={(c) => setFilters((p) => ({ ...p, searchType: "suburb", suburb: c.name, page: 1 }))}
+            placeholder="Where? Suburb or city"
+            inputClassName="input-field text-sm min-h-[44px]"
+            enterKeyHint="search"
+          />
+        </div>
+        <button type="submit" className="btn-primary min-h-[44px] shrink-0 rounded-xl px-4 text-sm font-semibold">Search</button>
+      </form>
 
       {/* Mobile: filter button + sort */}
       <div className="lg:hidden flex gap-2">
@@ -972,16 +1030,26 @@ export default function SeekerSearch({ initialFilters, initialPage, serverToday 
                 </div>
               ) : results.length === 0 ? (
                 <div className="card p-10 rounded-2xl text-center" data-testid="search-empty">
-                  <h2 className="font-bold text-lg text-[var(--color-ink)] mb-2">No rooms match your search</h2>
-                  <p className="text-sm text-[var(--color-ink-3)] mb-6 max-w-md mx-auto">Try removing some filters or searching a different area.</p>
+                  {/* With no filters, an empty result means there are no
+                      rooms on Migrent at all yet; don't blame the filters. */}
+                  <h2 className="font-bold text-lg text-[var(--color-ink)] mb-2">{filterCount > 0 ? "No rooms match your search" : "No rooms are listed yet"}</h2>
+                  <p className="text-sm text-[var(--color-ink-3)] mb-6 max-w-md mx-auto">
+                    {filterCount > 0
+                      ? "Try removing some filters or searching a nearby suburb. Or save this search and we will tell you when a room that fits is listed."
+                      : "Migrent is checking its first hosts now. Save a search and we will tell you as soon as rooms are listed where you want to live."}
+                  </p>
                   <div className="space-y-4">
+                    <div className="flex flex-wrap justify-center gap-3">
+                      <a href={alertHref} className="btn-primary px-6 min-h-[44px] inline-flex items-center rounded-xl text-sm font-semibold">Get an alert</a>
+                      {filterCount > 0 && (
+                        <button type="button" onClick={clearAllFilters} className="btn-secondary px-6 min-h-[44px] rounded-xl text-sm font-semibold">Clear all filters</button>
+                      )}
+                    </div>
                     {filterCount > 0 && (
-                      <button type="button" onClick={clearAllFilters} className="btn-primary px-6 min-h-[44px] rounded-xl text-sm font-semibold">Clear all filters</button>
-                    )}
                     <div>
-                      <p className="text-xs text-[var(--color-ink-3)] mb-2">Popular suburbs:</p>
+                      <p className="text-xs text-[var(--color-ink-3)] mb-2">Suburbs many new arrivals start in:</p>
                       <div className="flex flex-wrap justify-center gap-2">
-                        {["Kellyville", "Parramatta", "Blacktown", "Liverpool", "Chatswood", "Bankstown"].map((s) => (
+                        {["Parramatta", "Strathfield", "Burwood", "Carlton", "Box Hill", "Sunnybank"].map((s) => (
                           <button key={s} type="button" onClick={() => setFilters({ ...DEFAULT_FILTERS, searchType: "suburb", suburb: s })}
                             className="px-3 min-h-[36px] rounded-full text-xs bg-[var(--color-primary-soft)] text-[var(--color-primary)] hover:bg-[var(--color-line-2)] transition-colors">
                             {s}
@@ -989,6 +1057,7 @@ export default function SeekerSearch({ initialFilters, initialPage, serverToday 
                         ))}
                       </div>
                     </div>
+                    )}
                   </div>
                 </div>
               ) : (
@@ -999,6 +1068,7 @@ export default function SeekerSearch({ initialFilters, initialPage, serverToday 
                   >
                     {results.map((listing) => {
                       const price = priceLabel(listing);
+                      const moveIn = listing.listing_purpose === "short_stay" ? null : moveInCost(listing);
                       const title = listing.title || listing.display_address;
                       const isSaved = saved.has(listing.id);
                       return (
@@ -1042,6 +1112,7 @@ export default function SeekerSearch({ initialFilters, initialPage, serverToday 
                                 {listing.bills_included && <span className="site-chip !h-6 !px-2 !text-[11.5px]">Bills included</span>}
                                 {listing.pets_allowed && <span className="site-chip !h-6 !px-2 !text-[11.5px]">Pets OK</span>}
                                 {listing.gender_preference === "female" && <span className="site-chip !h-6 !px-2 !text-[11.5px]">Women only</span>}
+                                {listing.newcomer_friendly && <span className="site-chip !h-6 !px-2 !text-[11.5px]">No local rental history needed</span>}
                               </div>
                               {isBestMatch && typeof listing.match_score === "number" && (
                                 <div className="flex items-center gap-2 pt-1">
@@ -1054,11 +1125,12 @@ export default function SeekerSearch({ initialFilters, initialPage, serverToday 
                                 </div>
                               )}
                               {listing.nearest_transport && listing.station_distance_min != null && (
-                                <p className="site-meta">{listing.station_distance_min} min to {listing.nearest_transport.split(" - ")[0]}</p>
+                                <p className="site-meta">{listing.station_distance_min} min walk to {listing.nearest_transport.split(" - ")[0]}</p>
                               )}
-                              <p className="mt-auto flex items-baseline gap-1 pt-2">
+                              <p className="mt-auto flex flex-wrap items-baseline gap-x-1 pt-2">
                                 <span className="text-[19px] font-bold tracking-[-0.02em] text-[color:var(--color-ink)] tabular-nums">${price.amount}</span>
                                 <span className="site-meta">{price.unit}</span>
+                                {moveIn?.known && moveIn.total ? <span className="site-meta ml-auto">${moveIn.total.toLocaleString("en-AU")} to move in</span> : null}
                               </p>
                             </div>
                           </article>

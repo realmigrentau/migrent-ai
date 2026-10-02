@@ -12,7 +12,7 @@ from fastapi import APIRouter, Depends, HTTPException, Header, UploadFile, File,
 from pydantic import BaseModel
 from typing import Optional
 from db import get_supabase_admin
-from auth_utils import get_current_user
+from auth_utils import get_current_user, get_active_user
 from admin_panel import admin_panel_unlocked
 from email_verification import (
     send_id_approved_email,
@@ -95,7 +95,7 @@ def upload_government_id(
     file: UploadFile = File(...),
 ):
     """Upload a government ID document for manual review."""
-    user = get_current_user(authorization)
+    user = get_active_user(authorization)
     sb = get_supabase_admin()
 
     # Validate document type

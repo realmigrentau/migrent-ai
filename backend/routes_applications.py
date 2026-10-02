@@ -273,6 +273,9 @@ def start_application(request: Request, body: StartBody, authorization: Optional
         raise HTTPException(status_code=400, detail="You cannot apply for your own listing")
     if (listing.get("listing_purpose") or "long_term") == "sale":
         raise HTTPException(status_code=400, detail="This home is for sale, so there is no rental application")
+    from blocks import require_not_blocked
+
+    require_not_blocked(sb, actor.id, str(listing["owner_id"]))
     try:
         existing = (
             sb.table("applications")
@@ -535,6 +538,16 @@ def get_application(application_id: str, request: Request, authorization: Option
             {"id": o["id"], "status": o["status"], "listing": listing_card(other_listings.get(str(o["listing_id"])), viewer_is_owner=True)}
             for o in others
         ]
+        # What earlier hosts said about this renter (reviews_core: hosts'
+        # reviews of renters are shown only here, to a host deciding).
+        try:
+            from reviews_core import present, renter_reviews, stats
+
+            rows = renter_reviews(sb, str(app["renter_id"]))
+            s = stats(rows)
+            out["renter_reviews"] = {"count": s["review_count"], "avg_rating": s["avg_rating"], "reviews": present(sb, rows[:10], host_view=True)}
+        except Exception:
+            out["renter_reviews"] = {"count": 0, "avg_rating": 0, "reviews": []}
         out["allowed_actions"] = [
             action for (kind, action), (frm, _to) in TRANSITIONS.items() if kind == viewer and app["status"] in frm and action != "view"
         ]

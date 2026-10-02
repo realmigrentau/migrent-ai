@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 
 from fastapi import APIRouter, File, Header, HTTPException, Request, UploadFile
 
-from auth_utils import get_current_user
+from auth_utils import get_current_user, get_active_user
 from db import SUPABASE_URL, get_supabase_admin
 from limiter import limiter
 from models import ProfileUpdate
@@ -81,7 +81,7 @@ def get_onboarding_status(authorization: str = Header(...)):
 def complete_onboarding(request: Request, body: ProfileUpdate, authorization: str = Header(...)):
     """Complete onboarding with required fields."""
     try:
-        user = get_current_user(authorization)
+        user = get_active_user(authorization)
         sb = get_supabase_admin()
         uid = str(user.id)
 
@@ -121,7 +121,7 @@ def complete_onboarding(request: Request, body: ProfileUpdate, authorization: st
 def update_my_profile(request: Request, body: ProfileUpdate, authorization: str = Header(...)):
     """Update user profile. Locked fields cannot be changed after onboarding."""
     try:
-        user = get_current_user(authorization)
+        user = get_active_user(authorization)
         sb = get_supabase_admin()
         uid = str(user.id)
 
@@ -251,7 +251,7 @@ async def upload_profile_photo(request: Request, file: UploadFile = File(...), a
     from uploads import ImageValidationError, prepare_public_image
 
     try:
-        user = get_current_user(authorization)
+        user = get_active_user(authorization)
         sb = get_supabase_admin()
         uid = str(user.id)
 
@@ -356,7 +356,7 @@ def refresh_badges(authorization: str = Header(...)):
     public_dto.verification_summary); this endpoint awards activity badges.
     """
     try:
-        user = get_current_user(authorization)
+        user = get_active_user(authorization)
         sb = get_supabase_admin()
         uid = str(user.id)
 

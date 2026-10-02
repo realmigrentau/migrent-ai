@@ -50,12 +50,15 @@ Support tickets keep their own history (support_events), as before.
 import logging
 import uuid
 from collections import Counter
+from datetime import timedelta
 from typing import Optional
 
 from fastapi import APIRouter, BackgroundTasks, Header, HTTPException, Request
 from pydantic import BaseModel, Field, field_validator
 
+from auth_utils import forget_account_status
 from db import get_supabase_admin
+from listing_lifecycle import forget_suspended_owners
 from hub_common import (
     ADMIN_ROLES,
     CARD_COLUMNS,
@@ -69,7 +72,9 @@ from hub_common import (
     load_profile,
     notify_user,
     now_iso,
+    now_utc,
     owner_verified_map,
+    parse_ts,
     require_admin_actor,
 )
 from admin_panel import (
@@ -77,9 +82,11 @@ from admin_panel import (
     MAX_ATTEMPTS,
     MIN_PASSWORD_LENGTH,
     UNLOCK_TTL,
+    admin_mfa_ok,
     attempt_state,
     hash_password,
     issue_unlock_token,
+    require_admin_mfa,
     require_admin_panel,
     session_id,
     stored_hash,
@@ -114,7 +121,12 @@ def panel_status(request: Request, authorization: Optional[str] = Header(None)):
     actor = hub_actor(request, authorization)
     require_admin_actor(actor)
     state = attempt_state(get_supabase_admin(), actor.id)
-    return {"attempts_left": max(0, MAX_ATTEMPTS - state["failures"]), "locked": bool(state["locked_until"])}
+    return {
+        "attempts_left": max(0, MAX_ATTEMPTS - state["failures"]),
+        "locked": bool(state["locked_until"]),
+        # The panel will not open on a session without an authenticator code.
+        "mfa_required": not admin_mfa_ok(authorization),
+    }
 
 
 class UnlockBody(BaseModel):
@@ -155,6 +167,9 @@ def _lock_out(sb, actor, authorization: Optional[str]) -> None:
 def unlock(request: Request, body: UnlockBody, authorization: Optional[str] = Header(None)):
     actor = hub_actor(request, authorization)
     require_admin_actor(actor)
+    # Checked before the password, so a session without a two-step sign-in
+    # never uses up an attempt.
+    require_admin_mfa(authorization)
     sb = get_supabase_admin()
     state = attempt_state(sb, actor.id)
     if state["locked_until"]:
@@ -203,12 +218,106 @@ def overview(request: Request, authorization: Optional[str] = Header(None)):
         "open_reports": _count(sb, "reports", status=["pending", "reviewing"]),
         "listings_in_review": _count(sb, "listings", moderation_status=["pending_approval", "flagged"]),
         "id_checks_waiting": _count(sb, "owner_verification", id_status="pending"),
+        "mentors_waiting": _count(sb, "mentors", review_status="pending"),
         "open_emergencies": _count(sb, "maintenance_requests", urgency="emergency", status=["submitted", "acknowledged"]),
         "tickets_waiting": _count(sb, "tickets", status=list(TICKET_VIEWS["needs_reply"])),
         # Two plain facts, counted, never estimated.
         "accounts": _count(sb, "profiles"),
         "approved_listings": _count(sb, "listings", moderation_status="approved"),
     }
+
+
+def _count_since(sb, table: str, column: str, since: str, **eqs) -> int:
+    try:
+        q = sb.table(table).select("id", count="exact").gte(column, since)
+        for k, v in eqs.items():
+            q = q.in_(k, v) if isinstance(v, (list, tuple)) else q.eq(k, v)
+        return q.execute().count or 0
+    except Exception:
+        return 0
+
+
+def _median_hours(pairs: list[tuple[Optional[str], Optional[str]]]) -> Optional[float]:
+    from statistics import median
+
+    hours = []
+    for start, end in pairs:
+        s, e = parse_ts(start), parse_ts(end)
+        if s and e and e >= s:
+            hours.append((e - s).total_seconds() / 3600)
+    return round(median(hours), 1) if hours else None
+
+
+@router.get("/metrics")
+def metrics(request: Request, authorization: Optional[str] = Header(None)):
+    """Real counts for Admin > Numbers (MIG-024). Every figure is counted
+    from the database at request time; nothing is estimated or padded."""
+    actor = hub_actor(request, authorization)
+    require_admin_panel(actor, request, authorization)
+    sb = get_supabase_admin()
+    now = now_utc()
+    d7 = (now - timedelta(days=7)).isoformat()
+    d30 = (now - timedelta(days=30)).isoformat()
+
+    # Hours from a listing being sent for review to the decision, for
+    # decisions made in the last 30 days.
+    review_pairs: list[tuple[Optional[str], Optional[str]]] = []
+    try:
+        decided = sb.table("moderation_events").select("listing_id, created_at").in_("event_type", ["approved", "rejected", "changes_requested"]).gte("created_at", d30).limit(200).execute().data or []
+        if decided:
+            submitted = sb.table("moderation_events").select("listing_id, created_at").eq("event_type", "submitted").in_("listing_id", list({str(d["listing_id"]) for d in decided})).execute().data or []
+            for d in decided:
+                before = [s["created_at"] for s in submitted if str(s["listing_id"]) == str(d["listing_id"]) and str(s["created_at"]) <= str(d["created_at"])]
+                if before:
+                    review_pairs.append((max(before), d["created_at"]))
+    except Exception:
+        pass
+    try:
+        tickets = sb.table("tickets").select("created_at, first_response_at").gte("created_at", d30).not_.is_("first_response_at", "null").limit(500).execute().data or []
+    except Exception:
+        tickets = []
+
+    return {
+        "generated_at": now.isoformat(),
+        "people": {
+            "accounts": _count(sb, "profiles"),
+            "renters": _count(sb, "profiles", role=["seeker", "renter"]),
+            "owners": _count(sb, "profiles", role="owner"),
+            "joined_7_days": _count_since(sb, "profiles", "created_at", d7),
+            "joined_30_days": _count_since(sb, "profiles", "created_at", d30),
+            "id_checked_owners": _count(sb, "owner_verification", id_status="approved"),
+        },
+        "homes": {
+            "live": _count(sb, "listings", moderation_status="approved"),
+            "in_review": _count(sb, "listings", moderation_status=["pending_approval", "flagged"]),
+            "paused": _count(sb, "listings", moderation_status="paused"),
+            "drafts": _count(sb, "listings", moderation_status="draft"),
+            "listed_30_days": _count_since(sb, "listings", "created_at", d30),
+            "median_review_hours": _median_hours(review_pairs),
+        },
+        "activity": {
+            "messages_7_days": _count_since(sb, "messages", "created_at", d7),
+            "applications_30_days": _count_since(sb, "applications", "created_at", d30),
+            "inspections_booked_30_days": _count_since(sb, "inspection_bookings", "created_at", d30),
+            "stay_requests_30_days": _count_since(sb, "bookings", "created_at", d30),
+            "active_tenancies": _count(sb, "tenancies", status="active"),
+        },
+        "safety": {
+            "open_reports": _count(sb, "reports", status=["pending", "reviewing"]),
+            "reports_30_days": _count_since(sb, "reports", "created_at", d30),
+            "scam_flags_30_days": _count_since(sb, "reports", "created_at", d30, source="system"),
+            "suspended_accounts": _count_suspended(sb),
+            "open_tickets": _count(sb, "tickets", status=list(TICKET_VIEWS["needs_reply"])),
+            "median_first_reply_hours": _median_hours([(t.get("created_at"), t.get("first_response_at")) for t in tickets]),
+        },
+    }
+
+
+def _count_suspended(sb) -> int:
+    try:
+        return sb.table("profiles").select("id", count="exact").not_.is_("disabled_at", "null").execute().count or 0
+    except Exception:
+        return 0
 
 
 def _emails(sb, ids) -> dict[str, Optional[str]]:
@@ -341,6 +450,13 @@ def _listing_detail(sb, listing_id: str) -> dict:
     item = _moderation_items(sb, rows)[0]
     item["description"] = rows[0].get("description")
     item["images"] = rows[0].get("images") or []
+    # What renters will be asked for up front (MIG-017), for the reviewer.
+    cost_fields = ("bond_weeks", "rent_in_advance_weeks", "bills_estimate_weekly", "newcomer_friendly", "bond")
+    try:
+        extra = sb.table("listings").select(", ".join(cost_fields)).eq("id", listing_id).execute().data or [{}]
+        item.update({k: extra[0].get(k) for k in cost_fields})
+    except Exception:
+        logger.warning("listing cost columns unavailable for %s", listing_id)
     try:
         events = sb.table("moderation_events").select("*").eq("listing_id", listing_id).order("created_at", desc=True).limit(50).execute().data or []
     except Exception:
@@ -527,6 +643,115 @@ def id_decision(user_id: str, request: Request, body: IdDecisionBody, authorizat
 
 
 # ---------------------------------------------------------------------------
+# Mentors: approved after an ID check
+# ---------------------------------------------------------------------------
+# A mentor is paid through Migrent to meet new arrivals, often in person, so
+# they are listed only after Migrent has checked their government ID (the
+# same check as a host, in ID checks) and approved the profile here.
+
+
+def _mentor_row(m: dict, people: dict, emails: dict, ids: dict) -> dict:
+    uid = str(m["user_id"])
+    v = ids.get(uid) or {}
+    return {
+        "id": str(m["id"]),
+        "user_id": uid,
+        "person": people.get(uid) or {"id": uid, "name": "Unknown"},
+        "email": emails.get(uid),
+        "suburb": m.get("suburb"),
+        "postcode": m.get("postcode"),
+        "languages": m.get("languages") or [],
+        "specialties": m.get("specialties") or [],
+        "bio": m.get("bio") or "",
+        "hourly_rate": m.get("hourly_rate"),
+        "status": m.get("review_status") or "pending",
+        "review_reason": m.get("review_reason"),
+        "submitted_at": m.get("updated_at") or m.get("created_at"),
+        "id_status": v.get("id_status") or "not_submitted",
+        "payouts_ready": bool(m.get("stripe_onboarding_complete")),
+    }
+
+
+@router.get("/mentors")
+def mentors_queue(request: Request, status: str = "pending", authorization: Optional[str] = Header(None)):
+    actor = hub_actor(request, authorization)
+    require_admin_panel(actor, request, authorization)
+    if status not in ("pending", "approved", "rejected", "all"):
+        raise HTTPException(status_code=400, detail="Unknown status")
+    sb = get_supabase_admin()
+    try:
+        q = sb.table("mentors").select("*").order("created_at").limit(200)
+        if status != "all":
+            q = q.eq("review_status", status)
+        rows = q.execute().data or []
+    except Exception as e:
+        raise hub_table_error(e)
+    uids = [str(r["user_id"]) for r in rows]
+    people = fetch_people(sb, uids)
+    emails = _emails(sb, uids)
+    ids = {}
+    if uids:
+        for v in sb.table("owner_verification").select("user_id, id_status").in_("user_id", uids).execute().data or []:
+            ids[str(v["user_id"])] = v
+    return {"mentors": [_mentor_row(m, people, emails, ids) for m in rows]}
+
+
+class MentorDecisionBody(BaseModel):
+    action: str
+    reason: Optional[str] = Field(None, max_length=500)
+
+    @field_validator("action")
+    @classmethod
+    def _a(cls, v: str) -> str:
+        if v not in ("approve", "reject"):
+            raise ValueError("Unknown action")
+        return v
+
+
+@router.post("/mentors/{mentor_id}")
+def mentor_decision(mentor_id: str, request: Request, body: MentorDecisionBody, authorization: Optional[str] = Header(None)):
+    actor = hub_actor(request, authorization)
+    require_admin_panel(actor, request, authorization)
+    sb = get_supabase_admin()
+    rows = sb.table("mentors").select("*").eq("id", mentor_id).execute().data
+    if not rows:
+        raise HTTPException(status_code=404, detail="Mentor not found")
+    mentor = rows[0]
+    uid = str(mentor["user_id"])
+    reason = (body.reason or "").strip()
+    if body.action == "approve":
+        v = sb.table("owner_verification").select("id_status").eq("user_id", uid).execute().data or [{}]
+        if v[0].get("id_status") != "approved":
+            raise HTTPException(status_code=400, detail="Their government ID hasn't been checked yet. Approve it in ID checks first.")
+    elif len(reason) < 5:
+        raise HTTPException(status_code=400, detail="Tell them what to change. It is emailed to them and recorded in the audit log.")
+    approve = body.action == "approve"
+    audit(sb, admin_id=actor.id, action="approve_mentor" if approve else "reject_mentor", target_type="mentor", target_id=str(mentor["id"]), reason=reason or None)
+    sb.table("mentors").update(
+        {
+            "review_status": "approved" if approve else "rejected",
+            "verified": approve,
+            "reviewed_at": now_iso(),
+            "reviewed_by": actor.id,
+            "review_reason": None if approve else reason,
+        }
+    ).eq("id", mentor_id).execute()
+    if approve:
+        notify_user(
+            sb, uid, "mentor_approved", "You're listed as a Migrent mentor",
+            "Migrent checked your ID and approved your mentor profile. New arrivals can now find you. Set up payouts if you haven't, so you can take paid sessions.",
+            "/settings", entity_type="mentor", entity_id=str(mentor["id"]),
+        )
+    else:
+        notify_user(
+            sb, uid, "mentor_rejected", "Your mentor profile needs changes",
+            f"Migrent couldn't approve your mentor profile yet: {reason}",
+            "/settings", entity_type="mentor", entity_id=str(mentor["id"]),
+        )
+    return {"mentor": _mentor_row({**mentor, "review_status": "approved" if approve else "rejected", "review_reason": None if approve else reason}, fetch_people(sb, [uid]), _emails(sb, [uid]), {uid: {"id_status": "approved"}} if approve else {})}
+
+
+# ---------------------------------------------------------------------------
 # Reports queue
 # ---------------------------------------------------------------------------
 
@@ -547,9 +772,18 @@ def reports(request: Request, status: str = "open", authorization: Optional[str]
         raise hub_table_error(e)
     listing_ids = [r.get("item_id") or r.get("listing_id") for r in rows if (r.get("item_type") or "listing") == "listing"]
     listings = fetch_listings(sb, [i for i in listing_ids if i and len(str(i)) == 36])
-    people_ids = [r["reporter_id"] for r in rows] + [r.get("assigned_to") for r in rows if r.get("assigned_to")]
+    people_ids = [r["reporter_id"] for r in rows if r.get("reporter_id")] + [r.get("assigned_to") for r in rows if r.get("assigned_to")]
     people_ids += [r.get("item_id") for r in rows if r.get("item_type") in ("profile", "user") and r.get("item_id") and len(str(r["item_id"])) == 36]
-    people = fetch_people(sb, people_ids)
+    # Reported messages and reviews: what was said, and between whom.
+    message_ids = [str(r["item_id"]) for r in rows if r.get("item_type") == "message" and r.get("item_id")]
+    review_ids = [str(r["item_id"]) for r in rows if r.get("item_type") == "review" and r.get("item_id")]
+    messages = {str(m["id"]): m for m in (sb.table("messages").select("id, sender_id, receiver_id, message_text, created_at").in_("id", message_ids).execute().data or [])} if message_ids else {}
+    reviews = {str(v["id"]): v for v in (sb.table("reviews").select("id, reviewer_id, reviewed_user_id, review_type, rating, review_text, flagged, created_at").in_("id", review_ids).execute().data or [])} if review_ids else {}
+    for m in messages.values():
+        people_ids += [m.get("sender_id"), m.get("receiver_id")]
+    for v in reviews.values():
+        people_ids += [v.get("reviewer_id"), v.get("reviewed_user_id")]
+    people = fetch_people(sb, [p for p in people_ids if p])
     prio = {"urgent": 0, "high": 1, "normal": 2, "low": 3}
     out = []
     for r in rows:
@@ -560,13 +794,29 @@ def reports(request: Request, status: str = "open", authorization: Optional[str]
             target = listing_card(listings.get(str(target_id)), viewer_is_owner=True)
         elif kind in ("profile", "user"):
             target = people.get(str(target_id))
+        elif kind == "message" and str(target_id) in messages:
+            m = messages[str(target_id)]
+            target = {"text": (m.get("message_text") or "")[:1000], "from": people.get(str(m["sender_id"])), "to": people.get(str(m["receiver_id"])), "created_at": m.get("created_at")}
+        elif kind == "review" and str(target_id) in reviews:
+            v = reviews[str(target_id)]
+            target = {
+                "text": v.get("review_text") or "",
+                "rating": v.get("rating"),
+                "about": "a renter" if v.get("review_type") == "owner_to_seeker" else "a host and home",
+                "from": people.get(str(v["reviewer_id"])),
+                "to": people.get(str(v["reviewed_user_id"])),
+                "hidden": bool(v.get("flagged")),
+                "created_at": v.get("created_at"),
+            }
         out.append(
             {
                 **{k: r.get(k) for k in ("id", "reason", "details", "status", "priority", "resolution", "action_taken", "created_at", "resolved_at")},
                 "item_type": kind,
                 "item_id": target_id,
                 "target": target,
-                "reporter": people.get(str(r["reporter_id"])),
+                # None for reports the spam check raised (source "system").
+                "reporter": people.get(str(r["reporter_id"])) if r.get("reporter_id") else None,
+                "source": r.get("source") or "user",
                 "assigned_to": people.get(str(r.get("assigned_to"))) if r.get("assigned_to") else None,
             }
         )
@@ -627,6 +877,26 @@ def triage_report(report_id: str, request: Request, body: ReportTriage, authoriz
         patch["status"] = body.status
     updated = sb.table("reports").update(patch).eq("id", report_id).execute().data[0]
     return {"report": {k: updated.get(k) for k in ("id", "status", "priority", "resolution", "action_taken", "resolved_at")}}
+
+
+class ReviewVisibility(BaseModel):
+    hidden: bool
+    reason: str = Field(..., min_length=5, max_length=1000)
+
+
+@router.post("/user-reviews/{review_id}")
+def set_review_visibility(review_id: str, request: Request, body: ReviewVisibility, authorization: Optional[str] = Header(None)):
+    """Hide a review that breaks the rules (abuse, private details, not about
+    the tenancy), or put one back. Audited."""
+    actor = hub_actor(request, authorization)
+    require_admin_panel(actor, request, authorization)
+    sb = get_supabase_admin()
+    res = sb.table("reviews").select("id").eq("id", review_id).execute()
+    if not res.data:
+        raise HTTPException(status_code=404, detail="Review not found")
+    audit(sb, admin_id=actor.id, action="hide_review" if body.hidden else "restore_review", target_type="review", target_id=review_id, reason=body.reason.strip())
+    sb.table("reviews").update({"flagged": body.hidden, "flag_reason": body.reason.strip() if body.hidden else None, "moderated": True, "moderated_at": now_iso(), "moderated_by": actor.id}).eq("id", review_id).execute()
+    return {"review": {"id": review_id, "hidden": body.hidden}}
 
 
 # ---------------------------------------------------------------------------
@@ -821,25 +1091,143 @@ def audit_log(request: Request, limit: int = 100, target_type: Optional[str] = N
 # ---------------------------------------------------------------------------
 
 
+PEOPLE_PAGE = 50
+ROLE_FILTER = {"renter": ["seeker", "renter"], "owner": ["owner"], "admin": list(ADMIN_ROLES)}
+
+
 @router.get("/users")
-def find_users(request: Request, q: str, authorization: Optional[str] = Header(None)):
+def find_users(
+    request: Request,
+    q: str = "",
+    role: Optional[str] = None,
+    suspended: Optional[bool] = None,
+    id_status: Optional[str] = None,
+    joined_after: Optional[str] = None,
+    offset: int = 0,
+    authorization: Optional[str] = Header(None),
+):
+    """Everyone, newest first, narrowed by name or email and the filters on
+    Admin > People (MIG-024). Without a search it lists rather than asking
+    for one."""
     actor = hub_actor(request, authorization)
     require_admin_panel(actor, request, authorization)
-    needle = (q or "").strip()
-    if len(needle) < 2:
-        return {"users": []}
     sb = get_supabase_admin()
-    safe = needle.replace(",", " ").replace("(", " ").replace(")", " ")[:80]
-    rows = (
-        sb.table("profiles")
-        .select("id, name, preferred_name, email, role, is_admin, created_at, disabled_at")
-        .or_(f"name.ilike.%{safe}%,preferred_name.ilike.%{safe}%,email.ilike.%{safe}%")
-        .limit(20)
-        .execute()
-        .data
-        or []
-    )
-    return {"users": [_account_row(r) for r in rows]}
+    query = sb.table("profiles").select("id, name, preferred_name, email, role, is_admin, created_at, disabled_at", count="exact")
+    needle = (q or "").strip()
+    if len(needle) >= 2:
+        safe = needle.replace(",", " ").replace("(", " ").replace(")", " ")[:80]
+        query = query.or_(f"name.ilike.%{safe}%,preferred_name.ilike.%{safe}%,email.ilike.%{safe}%")
+    if role in ROLE_FILTER:
+        query = query.in_("role", ROLE_FILTER[role])
+    if suspended is True:
+        query = query.not_.is_("disabled_at", "null")
+    elif suspended is False:
+        query = query.is_("disabled_at", "null")
+    if joined_after:
+        query = query.gte("created_at", joined_after[:10])
+    if id_status in ("approved", "pending", "rejected", "not_submitted"):
+        ids = [r["user_id"] for r in (sb.table("owner_verification").select("user_id").eq("id_status", id_status).limit(1000).execute().data or [])]
+        if not ids:
+            return {"users": [], "total": 0, "has_more": False}
+        query = query.in_("id", ids)
+    offset = max(0, offset)
+    res = query.order("created_at", desc=True).range(offset, offset + PEOPLE_PAGE - 1).execute()
+    rows = res.data or []
+    checks = {str(r["user_id"]): r.get("id_status") for r in (sb.table("owner_verification").select("user_id, id_status").in_("user_id", [str(r["id"]) for r in rows]).execute().data or [])} if rows else {}
+    total = res.count if res.count is not None else len(rows)
+    return {
+        "users": [{**_account_row(r), "id_status": checks.get(str(r["id"]))} for r in rows],
+        "total": total,
+        "has_more": offset + len(rows) < total,
+    }
+
+
+@router.get("/users/{user_id}")
+def person_detail(user_id: str, request: Request, authorization: Optional[str] = Header(None)):
+    """One person, for an admin: account, ID check, listings, activity,
+    reports about and by them, and the admin history (MIG-024)."""
+    actor = hub_actor(request, authorization)
+    require_admin_panel(actor, request, authorization)
+    sb = get_supabase_admin()
+    profile = load_profile(sb, user_id)
+    if not profile:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    def rows(table: str, build) -> list[dict]:
+        try:
+            return build(sb.table(table)).execute().data or []
+        except Exception:
+            return []
+
+    check = (rows("owner_verification", lambda t: t.select("*").eq("user_id", user_id)) or [{}])[0]
+    listings = rows("listings", lambda t: t.select("id, title, suburb, postcode, weekly_price, moderation_status, created_at").eq("owner_id", user_id).order("created_at", desc=True).limit(50))
+    listing_ids = [str(l["id"]) for l in listings]
+    reports_about = rows("reports", lambda t: t.select("id, item_type, item_id, reason, status, source, created_at").in_("item_type", ["user", "profile"]).eq("item_id", user_id))
+    if listing_ids:
+        reports_about += rows("reports", lambda t: t.select("id, item_type, item_id, reason, status, source, created_at").eq("item_type", "listing").in_("item_id", listing_ids))
+    reports_about += rows("reports", lambda t: t.select("id, item_type, item_id, reason, status, source, created_at").eq("item_type", "message").like("details", f"Sender {user_id}%"))
+    reports_by = rows("reports", lambda t: t.select("id, item_type, item_id, reason, status, created_at").eq("reporter_id", user_id).order("created_at", desc=True).limit(50))
+    history = rows("admin_audit_log", lambda t: t.select("*").in_("target_id", [user_id, *listing_ids]).order("created_at", desc=True).limit(50))
+    admins = fetch_people(sb, [h["admin_id"] for h in history])
+    mentor = (rows("mentors", lambda t: t.select("id, review_status, active").eq("user_id", user_id)) or [None])[0]
+
+    def count(table: str, **eqs) -> int:
+        return _count(sb, table, **eqs)
+
+    reports_about.sort(key=lambda r: str(r.get("created_at") or ""), reverse=True)
+    return {
+        "person": {
+            **_account_row(profile),
+            "owner_kind": profile.get("owner_kind"),
+            "agency_name": profile.get("agency_name"),
+            "agency_licence": profile.get("agency_licence"),
+        },
+        "id_check": {k: check.get(k) for k in ("id_status", "id_document_type", "id_reviewed_at", "id_rejection_reason", "email_verified", "phone_verified")} if check else None,
+        "mentor": {"id": str(mentor["id"]), "status": mentor.get("review_status"), "active": bool(mentor.get("active"))} if mentor else None,
+        "listings": listings,
+        "activity": {
+            "applications_sent": count("applications", renter_id=user_id),
+            "applications_received": count("applications", owner_id=user_id),
+            "tenancies_as_renter": count("tenancies", renter_id=user_id),
+            "tenancies_as_owner": count("tenancies", owner_id=user_id),
+            "blocked_by": count("blocked_users", blocked_id=user_id),
+        },
+        "reports_about": reports_about[:50],
+        "reports_by": reports_by,
+        "history": [
+            {**{k: h.get(k) for k in ("id", "action", "target_type", "target_id", "reason", "created_at")}, "admin": admins.get(str(h["admin_id"]))}
+            for h in history
+        ],
+    }
+
+
+@router.get("/reports/{report_id}/conversation")
+def reported_conversation(report_id: str, request: Request, authorization: Optional[str] = Header(None)):
+    """The messages around a reported message, so a decision is made on the
+    whole exchange. Reading it is recorded in the audit log."""
+    actor = hub_actor(request, authorization)
+    require_admin_panel(actor, request, authorization)
+    sb = get_supabase_admin()
+    report = (sb.table("reports").select("*").eq("id", report_id).execute().data or [None])[0]
+    if not report or report.get("item_type") != "message":
+        raise HTTPException(status_code=404, detail="That report is not about a message")
+    msg = (sb.table("messages").select("*").eq("id", report.get("item_id")).execute().data or [None])[0]
+    if not msg:
+        raise HTTPException(status_code=404, detail="The message no longer exists")
+    a, b = str(msg["sender_id"]), str(msg["receiver_id"])
+    q = sb.table("messages").select("id, sender_id, receiver_id, message_text, attachment_name, created_at").or_(f"and(sender_id.eq.{a},receiver_id.eq.{b}),and(sender_id.eq.{b},receiver_id.eq.{a})")
+    q = q.eq("listing_id", msg["listing_id"]) if msg.get("listing_id") else q.is_("listing_id", "null")
+    thread = list(reversed(q.order("created_at", desc=True).limit(60).execute().data or []))
+    audit(sb, admin_id=actor.id, action="view_conversation", target_type="report", target_id=report_id)
+    people = fetch_people(sb, [a, b])
+    return {
+        "reported_message_id": str(msg["id"]),
+        "people": {a: people.get(a), b: people.get(b)},
+        "messages": [
+            {"id": str(m["id"]), "from": str(m["sender_id"]), "text": m.get("message_text") or "", "attachment_name": m.get("attachment_name"), "created_at": m.get("created_at")}
+            for m in thread
+        ],
+    }
 
 
 class ViewAsBody(BaseModel):
@@ -881,8 +1269,13 @@ def end_view_as(request: Request, body: EndViewAs, authorization: Optional[str] 
 # Suspending an account
 # ---------------------------------------------------------------------------
 # A suspended account can still sign in but Migrent Hub refuses every request
-# from it (hub_actor checks profiles.disabled_at). Nothing is deleted and it
-# can be reversed. Admin accounts are only ever changed in the database.
+# from it (hub_actor checks profiles.disabled_at), the routes outside the Hub
+# refuse its writes (auth_utils.get_active_user), and its listings drop out of
+# search, listing pages and Hub cards (listing_lifecycle.public_filter and
+# mark_suspended_owners). Nothing is deleted and it can be reversed: listing
+# statuses are untouched, so reinstating brings them straight back. The
+# column cannot be changed by the account itself (migration 046). Admin
+# accounts are only ever changed in the database.
 
 
 class AccountActionBody(BaseModel):
@@ -919,6 +1312,10 @@ def _account_change(request: Request, authorization: Optional[str], user_id: str
         return {"user": _account_row(profile)}
     audit(sb, admin_id=actor.id, action="suspend_user" if suspend else "unsuspend_user", target_type="user", target_id=user_id, reason=reason)
     sb.table("profiles").update({"disabled_at": now_iso() if suspend else None}).eq("id", user_id).execute()
+    # Apply it now on this instance: the active-account check and the list of
+    # owners whose listings are hidden both cache briefly.
+    forget_account_status(user_id)
+    forget_suspended_owners()
     return {"user": _account_row(load_profile(sb, user_id))}
 
 

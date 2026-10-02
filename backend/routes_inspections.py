@@ -334,6 +334,9 @@ def _book(sb, actor: HubActor, slot_id: str, note: Optional[str]) -> tuple[dict,
         raise HTTPException(status_code=409, detail="This home is no longer available")
     if str(listing["owner_id"]) == actor.id:
         raise HTTPException(status_code=400, detail="You cannot book an inspection of your own listing")
+    from blocks import require_not_blocked
+
+    require_not_blocked(sb, actor.id, str(listing["owner_id"]))
     already = sb.table("inspection_bookings").select("id").eq("slot_id", slot_id).eq("renter_id", actor.id).eq("status", "booked").execute()
     if already.data:
         raise HTTPException(status_code=409, detail="You are already booked for this time")

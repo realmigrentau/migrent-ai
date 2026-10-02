@@ -86,7 +86,7 @@ def test_ending_view_as_never_needs_the_panel(client):
 
 
 def test_the_right_password_unlocks_the_panel(client, db):
-    assert client.get("/hub/admin/panel", headers=LOCKED).json() == {"attempts_left": 3, "locked": False}
+    assert client.get("/hub/admin/panel", headers=LOCKED).json() == {"attempts_left": 3, "locked": False, "mfa_required": False}
     r = unlock(client, ADMIN_PANEL_PASSWORD)
     assert r.status_code == 200 and r.json()["unlocked"] is True
     token = r.json()["token"]
@@ -109,13 +109,13 @@ def test_three_wrong_passwords_lock_out_sign_out_and_alert_every_admin(client, d
     assert unlock(client, "guess 3").json() == {"unlocked": False, "locked": True, "attempts_left": 0}
 
     assert panel_actions(db) == ["admin_panel_failed"] * 3 + ["admin_panel_lockout"]
-    assert db.signed_out == [(f"tok-{ADMIN_ID}", "global")]
+    assert db.signed_out == [(LOCKED["Authorization"].split(" ", 1)[1], "global")]
     assert {a["user_id"] for a in alerts} == {ADMIN_ID, OTHER_ID + "-admin"}
     assert all(a["event"] == "admin_security_alert" and "Potential threat" in a["title"] for a in alerts)
 
     # Locked for everyone on that account, even with the right password.
     assert unlock(client, ADMIN_PANEL_PASSWORD).json()["locked"] is True
-    assert client.get("/hub/admin/panel", headers=LOCKED).json() == {"attempts_left": 0, "locked": True}
+    assert client.get("/hub/admin/panel", headers=LOCKED).json() == {"attempts_left": 0, "locked": True, "mfa_required": False}
 
 
 def test_the_lockout_ends_after_the_window(client, db, alerts):

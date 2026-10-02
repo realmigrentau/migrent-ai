@@ -211,8 +211,7 @@ export default function KeyDetails({ listing }: KeyDetailsProps) {
           {listing.max_guests != null && (
             <div className="flex items-center gap-1.5">
               <Users className="w-4 h-4 text-[var(--color-ink-3)]" />
-              Max {listing.max_guests} guest
-              {listing.max_guests !== 1 ? "s" : ""}
+              Up to {listing.max_guests} {listing.max_guests === 1 ? "person" : "people"}
             </div>
           )}
         </div>

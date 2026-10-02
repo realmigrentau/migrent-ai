@@ -1,326 +1,279 @@
+/**
+ * Rental law by state (/guides/rental-laws).
+ *
+ * Every figure here was checked against the state or territory's official
+ * source on LAST_CHECKED (MIGRENT_MASTER_AUDIT MIG-035): the government
+ * renting page, the standard tenancy agreement or the Act itself, listed in
+ * `sources` for each state. Claims that could not be checked were removed
+ * rather than kept. It is general information, still to be confirmed by a
+ * lawyer or a tenants' advice service, and the page says so.
+ *
+ * When tenancy law changes, update the figure, its source and LAST_CHECKED
+ * together.
+ */
+
+export const LAST_CHECKED = "2 October 2026";
+
+export interface Source {
+  label: string;
+  url: string;
+}
+
 export interface StateRentalLaw {
   code: string;
   name: string;
   bondRules: string[];
-  tenantRights: string[];
+  rentRules: string[];
+  entryRules: string[];
+  /** Renting a room in a home where the owner lives (boarders and lodgers). */
+  roomInHome: string[];
   disputeProcess: string[];
   migrantInfo: string[];
   emergencyContact: string;
+  /** The official renting page. lib/listingCosts.ts links the same one. */
   fairTradingUrl: string;
+  sources: Source[];
 }
+
+const ROOM_IN_HOME_GENERAL =
+  "If you rent a room in a home where the owner (or the main tenant) also lives, you may be a boarder or lodger rather than a tenant, and some or all of the rules on this page may not apply to you. Ask the official renting service below or a tenants' advice service before you pay a bond.";
+
+const NEW_ARRIVALS = [
+  "Your rights as a renter do not depend on your visa.",
+  "Treating you differently because of your race, nationality or ethnic origin is against the law everywhere in Australia.",
+  "Free interpreting is available from TIS National on 131 450.",
+  "Never pay rent or a bond before you have inspected the home and signed an agreement.",
+];
 
 const states: StateRentalLaw[] = [
   {
     code: "NSW",
     name: "New South Wales",
     bondRules: [
-      "Maximum bond is 4 weeks rent for properties rented at less than $800/week, or unlimited for properties at $800/week or more.",
-      "Bond must be lodged with NSW Fair Trading within 10 business days of receipt.",
-      "Landlords cannot ask for more than 2 weeks rent in advance.",
-      "Bond can only be used for unpaid rent, damage beyond fair wear and tear, or cleaning costs.",
-      "At the end of tenancy, both parties must agree on how the bond is distributed or the Tribunal decides.",
+      "The bond can be at most 4 weeks' rent.",
+      "It goes to NSW Fair Trading (Rental Bonds Online), not the landlord: within 10 working days of being paid, or, if paid to an agent, within 10 working days after the end of that month.",
     ],
-    tenantRights: [
-      "Right to a written residential tenancy agreement.",
-      "Right to quiet enjoyment of the property without unreasonable interference.",
-      "Landlord must give at least 24 hours notice before entering, except in emergencies.",
-      "Rent increases are limited to once every 12 months and must not be excessive.",
-      "Tenants can request urgent repairs and the landlord must respond within 24 hours.",
-      "No-grounds evictions are banned in NSW for ongoing leases as of mid-2025.",
-      "Tenants have the right to make minor modifications with landlord consent (which cannot be unreasonably withheld).",
-      "Retaliatory evictions (evicting because a tenant exercised their rights) are prohibited.",
+    rentRules: [
+      "A landlord can ask for at most 2 weeks' rent in advance.",
+      "Rent can go up at most once in any 12 months, and only with at least 60 days' written notice.",
     ],
+    entryRules: [
+      "Inspections need at least 7 days' written notice, and there can be no more than 4 in any 12 months.",
+      "Entry to carry out or check repairs needs at least 2 days' notice.",
+    ],
+    roomInHome: [ROOM_IN_HOME_GENERAL],
     disputeProcess: [
-      "1. Attempt to resolve the issue directly with the landlord or agent in writing.",
-      "2. Contact NSW Fair Trading for free mediation assistance (call 13 32 20).",
-      "3. If mediation fails, lodge an application with the NSW Civil and Administrative Tribunal (NCAT).",
-      "4. Attend the NCAT hearing, which may be conducted in person, by phone, or online.",
-      "5. NCAT will issue binding orders that both parties must follow.",
-      "6. If the order is not complied with, you can apply to NCAT for enforcement.",
+      "1. Raise the problem with the landlord or agent in writing.",
+      "2. Ask NSW Fair Trading for free help to resolve it (13 32 20).",
+      "3. If it is not resolved, apply to the NSW Civil and Administrative Tribunal (NCAT), whose orders are binding.",
     ],
-    migrantInfo: [
-      "You have the same tenancy rights regardless of your visa status.",
-      "It is against the law to refuse you, or treat you less favourably, because of your race, nationality or ethnic origin.",
-      "Interpreting services are available free of charge through NSW Fair Trading (call 13 14 50 for TIS).",
-      "You do not need an Australian rental history to apply; overseas references and employment letters are acceptable.",
-      "Be cautious of rental scams targeting new arrivals. Never pay money before inspecting the property in person.",
-      "Community legal centres offer free legal advice for tenancy matters in multiple languages.",
-    ],
+    migrantInfo: [...NEW_ARRIVALS, "Free tenancy advice: the Tenants' Union of NSW and local Tenants' Advice and Advocacy Services."],
     emergencyContact: "NSW Fair Trading: 13 32 20",
     fairTradingUrl: "https://www.fairtrading.nsw.gov.au/housing-and-property/renting",
+    sources: [
+      { label: "NSW standard residential tenancy agreement (updated 21 September 2026)", url: "https://www.nsw.gov.au/sites/default/files/noindex/2025-06/residential-tenancy-agreement-form.pdf" },
+      { label: "NSW Government: paying a rental bond", url: "https://www.nsw.gov.au/housing-and-construction/renting-a-place-to-live/renting-a-property-nsw/starting-a-lease/paying-a-rental-bond" },
+    ],
   },
   {
     code: "VIC",
     name: "Victoria",
     bondRules: [
-      "Maximum bond is 4 weeks rent for properties rented at less than $900/week.",
-      "Bond must be lodged with the Residential Tenancies Bond Authority (RTBA) within 10 business days.",
-      "Landlords cannot require more than 1 month rent in advance.",
-      "Bond claims must be lodged within 10 business days of the tenancy ending.",
-      "If there is a dispute, the bond is held by RTBA until resolved by VCAT.",
+      "In most cases the bond can be at most one month's rent. It can be more only if the rent is over $900 a week or VCAT has set a higher bond.",
+      "The rental provider must lodge it with the Residential Tenancies Bond Authority (RTBA) within 14 days of receiving it.",
     ],
-    tenantRights: [
-      "Right to a safe and habitable property that meets minimum rental standards.",
-      "Landlord must give at least 24 hours notice before entry (48 hours for routine inspections).",
-      "Tenants can make minor modifications without landlord consent for certain changes (e.g., picture hooks, curtains).",
-      "Rent increases are limited to once every 12 months and tenants can challenge excessive increases at VCAT.",
-      "Urgent repairs must be addressed within 24 hours.",
-      "Tenants have the right to keep pets; landlords cannot unreasonably refuse.",
-      "Fixed-term leases cannot be ended early by the landlord except for specific reasons.",
-      "Landlords must provide minimum privacy and security standards.",
+    rentRules: [
+      "At most one month's rent in advance, or 14 days' rent if rent is paid weekly. There is no limit when the rent is over $900 a week.",
+      "Rent can go up at most once every 12 months (for agreements from 19 June 2019), with at least 90 days' notice.",
     ],
+    entryRules: [
+      "General inspections need at least 7 days' notice and can happen at most once every 6 months.",
+      "Entry for repairs or the rental provider's other legal duties needs at least 24 hours' notice.",
+    ],
+    roomInHome: [ROOM_IN_HOME_GENERAL, "Rooming houses (rooms rented to several unrelated people) have their own rules in Victoria."],
     disputeProcess: [
-      "1. Notify the landlord or agent of the issue in writing.",
-      "2. Contact Consumer Affairs Victoria for advice and informal resolution (call 1300 558 181).",
-      "3. Apply for a free dispute resolution session through the Dispute Settlement Centre of Victoria.",
-      "4. If unresolved, lodge an application with the Victorian Civil and Administrative Tribunal (VCAT).",
-      "5. Attend the VCAT hearing with all supporting evidence and documentation.",
-      "6. VCAT issues legally binding orders enforceable by law.",
+      "1. Raise the problem with the rental provider or agent in writing.",
+      "2. Ask Consumer Affairs Victoria for advice (1300 558 181).",
+      "3. If it is not resolved, apply to the Victorian Civil and Administrative Tribunal (VCAT), whose orders are binding.",
     ],
-    migrantInfo: [
-      "Victorian rental laws protect all residents equally, regardless of visa status or citizenship.",
-      "Free interpreter services are available when dealing with Consumer Affairs Victoria (call 13 14 50).",
-      "Landlords and agents cannot refuse your application based on your country of origin.",
-      "The Victorian Government provides multilingual tenancy guides and resources.",
-      "Community legal centres such as Tenants Victoria offer free advice and can assist with disputes.",
-      "If you are on a temporary visa, you can still enter into a legally binding lease agreement.",
-    ],
+    migrantInfo: [...NEW_ARRIVALS, "Free tenancy advice: Tenants Victoria."],
     emergencyContact: "Consumer Affairs Victoria: 1300 558 181",
     fairTradingUrl: "https://www.consumer.vic.gov.au/housing/renting",
+    sources: [
+      { label: "Consumer Affairs Victoria: bond amounts and payments", url: "https://www.consumer.vic.gov.au/housing/renting/rent-bond-bills-and-condition-reports/bond/bond-amounts-and-paying-a-bond" },
+      { label: "Consumer Affairs Victoria: lodging the bond with the RTBA", url: "https://www.consumer.vic.gov.au/housing/renting/rent-bond-bills-and-condition-reports/bond/lodging-the-bond-with-the-rtba" },
+      { label: "Consumer Affairs Victoria: rent payments and rent in advance", url: "https://www.consumer.vic.gov.au/housing/renting/rent-bond-bills-and-condition-reports/rent/rent-payments-and-rent-in-advance" },
+      { label: "Consumer Affairs Victoria: rent increases", url: "https://www.consumer.vic.gov.au/housing/renting/rent-bond-bills-and-condition-reports/rent/rent-increases" },
+      { label: "Consumer Affairs Victoria: when a rental provider can enter", url: "https://www.consumer.vic.gov.au/housing/renting/rental-providers-inspecting-or-entering-a-property/when-a-rental-provider-can-enter-a-property" },
+    ],
   },
   {
     code: "QLD",
     name: "Queensland",
     bondRules: [
-      "Maximum bond is 4 weeks rent regardless of the weekly rent amount.",
-      "Bond must be lodged with the Residential Tenancies Authority (RTA) within 10 days.",
-      "Landlords can only ask for 2 weeks rent in advance.",
-      "At the end of tenancy, the RTA will process the bond refund based on the agreed distribution.",
-      "If there is a dispute, either party can lodge a bond dispute form with the RTA.",
+      "The bond can be at most 4 weeks' rent, for houses, units and rooming accommodation alike.",
+      "The property manager or owner must give you a receipt and lodge it with the Residential Tenancies Authority (RTA) within 10 days.",
     ],
-    tenantRights: [
-      "Right to a property that is clean, in good repair, and fit for habitation.",
-      "Landlord must provide at least 24 hours notice before entering the property.",
-      "Tenants can request emergency repairs and the landlord must respond promptly.",
-      "Rent increases are limited to once every 6 months for periodic agreements and once per lease term for fixed-term.",
-      "Tenants must be given a copy of the signed tenancy agreement within 14 days.",
-      "Domestic violence provisions allow tenants to end tenancies quickly in DV situations.",
-      "Tenants have the right to dispute any unfair charges or bond claims.",
-      "Landlords must maintain the property in a reasonable state of repair throughout the tenancy.",
+    rentRules: [
+      "At the start, at most 2 weeks' rent in advance for a periodic agreement or rooming accommodation, or 1 month for a fixed-term agreement.",
+      "Rent can only go up once at least 12 months have passed since the last increase, even under a new agreement or a new owner.",
+    ],
+    entryRules: [
+      "Routine inspections need at least 7 days' notice (an Entry notice, Form 9) and can happen at most once every 3 months.",
+      "Entry for repairs or maintenance needs at least 48 hours' notice.",
+    ],
+    roomInHome: [
+      "If the owner lives in the home and rents out 1 to 3 rooms and takes a bond, only the rules on bonds apply: it still goes to the RTA within 10 days.",
+      "If they rent out 1 to 3 rooms and take no bond, the rental law may not apply at all.",
+      "If they rent out 4 or more rooms, or a self-contained second dwelling, the law applies in full.",
     ],
     disputeProcess: [
-      "1. Try to resolve the dispute directly with the landlord or agent.",
-      "2. Contact the RTA for free dispute resolution services (call 1300 366 311).",
-      "3. The RTA will facilitate a conciliation process between both parties.",
-      "4. If conciliation fails, apply to the Queensland Civil and Administrative Tribunal (QCAT).",
-      "5. QCAT will schedule a hearing and issue binding orders.",
-      "6. Non-compliance with QCAT orders can result in penalties.",
+      "1. Raise the problem with the property manager or owner in writing.",
+      "2. Ask the RTA for its free dispute resolution service (1300 366 311).",
+      "3. If it is not resolved, apply to the Queensland Civil and Administrative Tribunal (QCAT), whose orders are binding.",
     ],
-    migrantInfo: [
-      "All tenants in Queensland have equal rights under the Residential Tenancies Act, regardless of visa status.",
-      "The RTA provides translated factsheets and guides in multiple languages.",
-      "Free interpreting services are available when dealing with the RTA and QCAT.",
-      "Be wary of scams: never transfer bond or rent to an overseas bank account.",
-      "Queensland has specific protections against discrimination in housing based on race or nationality.",
-      "Tenants Union Queensland offers free legal advice on tenancy matters.",
-    ],
-    emergencyContact: "RTA Queensland: 1300 366 311",
+    migrantInfo: [...NEW_ARRIVALS, "Free tenancy advice: Tenants Queensland."],
+    emergencyContact: "Residential Tenancies Authority: 1300 366 311",
     fairTradingUrl: "https://www.rta.qld.gov.au",
+    sources: [
+      { label: "RTA: rental bond", url: "https://www.rta.qld.gov.au/starting-a-tenancy/rental-bond" },
+      { label: "RTA: rent increases", url: "https://www.rta.qld.gov.au/rent" },
+      { label: "RTA: entry to the property", url: "https://www.rta.qld.gov.au/during-a-tenancy/living-in-the-property/entry-to-the-property" },
+      { label: "RTA: owner-occupiers renting out rooms (3 March 2025)", url: "https://www.rta.qld.gov.au/news/2025/03/03/owner-occupiers-renting-out-rooms" },
+    ],
   },
   {
     code: "WA",
     name: "Western Australia",
     bondRules: [
-      "Maximum bond is 4 weeks rent for properties rented at $1,200/week or less.",
-      "Bond must be lodged with the Bond Administrator within 14 days of receipt.",
-      "Landlords cannot require more than 2 weeks rent in advance.",
-      "Pet bonds of up to $260 may be charged in addition to the standard bond.",
-      "Bond disputes are resolved by the Magistrates Court if parties cannot agree.",
+      "The bond can be at most 4 weeks' rent, unless the rent is over $1,200 a week.",
+      "A pet bond of up to $350 can be added if you have a pet.",
+      "Bonds must be lodged with Bonds Administration within 14 days of being paid.",
     ],
-    tenantRights: [
-      "Right to a habitable property in reasonable repair and condition.",
-      "Landlord must give at least 24 hours written notice before entry (72 hours for routine inspections).",
-      "Rent increases are limited to once every 6 months and must be reasonable.",
-      "Tenants have the right to receive an ingoing property condition report.",
-      "Urgent repairs must be carried out as soon as possible.",
-      "Tenants cannot be evicted in retaliation for exercising their legal rights.",
-      "Tenants may terminate a lease early in cases of family violence with appropriate documentation.",
-      "Landlords must ensure all locks and security devices are in working order.",
+    rentRules: [
+      "At most 2 weeks' rent in advance.",
+      "Rent can go up at most once every 12 months, with at least 60 days' written notice.",
     ],
+    entryRules: ["Routine inspections need 7 to 14 days' written notice, and there can be no more than 4 in 12 months."],
+    roomInHome: [ROOM_IN_HOME_GENERAL],
     disputeProcess: [
-      "1. Raise the issue with the landlord or property manager in writing.",
-      "2. Contact the Department of Mines, Industry Regulation and Safety for advice (call 1300 304 054).",
-      "3. Attempt mediation through the department's free mediation service.",
-      "4. If unresolved, apply to the Magistrates Court for a hearing.",
-      "5. The court will issue orders that are legally binding on both parties.",
-      "6. Failure to comply with court orders may result in fines or further legal action.",
+      "1. Raise the problem with the landlord or property manager in writing.",
+      "2. Ask Consumer Protection for advice (1300 30 40 54).",
+      "3. If it is not resolved, apply to the Magistrates Court, whose orders are binding.",
     ],
-    migrantInfo: [
-      "All tenants in WA are protected by the Residential Tenancies Act regardless of visa or citizenship status.",
-      "Discrimination based on race, nationality, or ethnic background in housing is illegal under the Equal Opportunity Act.",
-      "Free translating and interpreting services are available via TIS National (call 13 14 50).",
-      "The Circle Green Community Legal Centre offers free tenancy legal advice.",
-      "Always inspect a property before paying any money and request proper receipts.",
-      "WA has specific protections for tenants in shared housing arrangements.",
-    ],
-    emergencyContact: "Consumer Protection WA: 1300 304 054",
+    migrantInfo: [...NEW_ARRIVALS, "Free tenancy advice: Circle Green Community Legal."],
+    emergencyContact: "Consumer Protection WA: 1300 30 40 54",
     fairTradingUrl: "https://www.commerce.wa.gov.au/consumer-protection/renting-home",
+    sources: [
+      { label: "Consumer Protection WA: rental bonds", url: "https://www.consumerprotection.wa.gov.au/rental-bonds" },
+      { label: "Consumer Protection WA: rent increases", url: "https://www.consumerprotection.wa.gov.au/rent-increases" },
+      { label: "Consumer Protection WA: rent inspections and privacy", url: "https://www.consumerprotection.wa.gov.au/rent-inspections-and-privacy-rights" },
+    ],
   },
   {
     code: "SA",
     name: "South Australia",
     bondRules: [
-      "Maximum bond is 4 weeks rent for unfurnished properties, 6 weeks for furnished properties.",
-      "Bond must be lodged with the Commissioner for Consumer Affairs within 14 days.",
-      "Landlords cannot require more than 2 weeks rent in advance.",
-      "At the end of tenancy, the bond is refunded based on the condition report and any agreed deductions.",
-      "Bond disputes are resolved by the South Australian Civil and Administrative Tribunal (SACAT).",
+      "For agreements from 1 April 2023, the bond can be at most 4 weeks' rent when the rent is $800 a week or less, and 6 weeks' rent above that.",
+      "It must be lodged with Consumer and Business Services within 2 weeks (registered agents have 4 weeks).",
     ],
-    tenantRights: [
-      "Right to a written lease agreement that sets out all terms and conditions.",
-      "Landlord must give at least 7 days notice for routine inspections and 24 hours for other entries.",
-      "Rent increases must be in line with the lease terms and cannot be excessive.",
-      "Tenants have the right to emergency repairs within 24 hours for essential services.",
-      "Landlords must maintain the property in a reasonable state of repair.",
-      "Tenants can apply to SACAT for any breach of the residential tenancy agreement.",
-      "Early termination is possible in cases of hardship with SACAT approval.",
-      "Tenants have the right to receive interest on their bond if held for more than 12 months.",
+    rentRules: [
+      "At the start, a landlord can ask only for the bond and at most 2 weeks' rent in advance.",
+      "Rent cannot go up within 12 months of the start of the tenancy or of the last increase, and needs at least 60 days' written notice.",
     ],
+    entryRules: ["Inspections can happen at most 4 times a year, with 7 to 28 days' written notice."],
+    roomInHome: [ROOM_IN_HOME_GENERAL, "Rooming houses have their own rules in South Australia."],
     disputeProcess: [
-      "1. Attempt to resolve the matter directly with the landlord in writing.",
-      "2. Contact Consumer and Business Services SA for advice (call 131 882).",
-      "3. Request free mediation through CBS or a community mediation service.",
-      "4. If mediation is unsuccessful, apply to SACAT for a formal hearing.",
-      "5. SACAT will consider evidence and issue legally binding orders.",
-      "6. Orders can be enforced through the courts if necessary.",
+      "1. Raise the problem with the landlord or agent in writing.",
+      "2. Ask Consumer and Business Services for advice (131 882).",
+      "3. If it is not resolved, apply to the South Australian Civil and Administrative Tribunal (SACAT), whose orders are binding.",
     ],
-    migrantInfo: [
-      "South Australian tenancy laws apply equally to all residents regardless of immigration status.",
-      "Free interpreter services are available for dealings with CBS and SACAT (call 13 14 50).",
-      "The Tenants Information and Advocacy Service (TIAS) provides free advice and support.",
-      "Agents cannot legally refuse your application based on nationality or ethnic origin.",
-      "Multicultural communities in SA often have housing support workers who can assist.",
-      "Always get receipts for any payments and keep copies of all correspondence.",
-    ],
-    emergencyContact: "Consumer and Business Services SA: 131 882",
+    migrantInfo: [...NEW_ARRIVALS, "Free tenancy advice: the Tenants' Information and Advocacy Service."],
+    emergencyContact: "Consumer and Business Services: 131 882",
     fairTradingUrl: "https://www.cbs.sa.gov.au/renting",
+    sources: [
+      { label: "Law Handbook (Legal Services Commission of SA): bonds", url: "https://www.lawhandbook.sa.gov.au/ch23s01s05s01.php" },
+      { label: "Law Handbook: rent", url: "https://www.lawhandbook.sa.gov.au/ch23s01s06s05.php" },
+      { label: "Law Handbook: the landlord's right of entry", url: "https://www.lawhandbook.sa.gov.au/ch23s01s06s01.php" },
+    ],
   },
   {
     code: "TAS",
     name: "Tasmania",
     bondRules: [
-      "Maximum bond is 4 weeks rent regardless of the rental amount.",
-      "Bond must be lodged with the Rental Deposit Authority within 2 business days.",
-      "Landlords cannot ask for more than 2 weeks rent in advance.",
-      "Bond refunds must be processed within 15 business days of the tenancy ending.",
-      "Bond disputes are resolved by the Residential Tenancy Commissioner.",
+      "The bond can be at most 4 weeks' rent.",
+      "It is held by the Rental Deposit Authority. Agents must lodge it within 10 working days of receiving it.",
     ],
-    tenantRights: [
-      "Right to a habitable property with all essential services in working order.",
-      "Landlord must give at least 24 hours notice before entry (48 hours for routine inspections).",
-      "Rent increases are limited to once every 12 months and must not be excessive.",
-      "Tenants have the right to urgently needed repairs within 24 hours.",
-      "Tenants must receive a condition report at the start of the tenancy.",
-      "Fixed-term tenancies provide security of tenure for the agreed period.",
-      "Landlords cannot unreasonably refuse a request to sublet or assign the lease.",
-      "Tenants have the right to quiet enjoyment of the property.",
+    rentRules: [
+      "A landlord can ask for rent in advance only for the first rent period. If you pay weekly, that is one week.",
+      "Rent can go up only with at least 60 days' written notice, and not within 12 months of the start or renewal of the lease or of the last increase.",
     ],
+    entryRules: ["Routine inspections need at least 24 hours' notice, between 8am and 6pm, and can happen at most once every 3 months."],
+    roomInHome: [ROOM_IN_HOME_GENERAL],
     disputeProcess: [
-      "1. Notify the landlord or agent of the issue in writing.",
-      "2. Contact Consumer, Building and Occupational Services (CBOS) for guidance (call 1300 654 499).",
-      "3. Apply to the Residential Tenancy Commissioner for a dispute resolution.",
-      "4. The Commissioner may convene a hearing or refer the matter to the Magistrates Court.",
-      "5. Attend the hearing with all supporting documentation.",
-      "6. The Commissioner or Magistrates Court will issue binding orders.",
+      "1. Raise the problem with the owner or agent in writing.",
+      "2. Ask Consumer, Building and Occupational Services (CBOS) for advice (1300 654 499).",
+      "3. Bond disputes go to the Residential Tenancy Commissioner; other disputes can go to the Magistrates Court.",
     ],
-    migrantInfo: [
-      "Tasmanian tenancy laws protect all residents equally, including temporary visa holders.",
-      "Free interpreter services are available through TIS National when dealing with CBOS (call 13 14 50).",
-      "The Tenants Union of Tasmania offers free legal advice and tenancy information.",
-      "Tasmania has a tight rental market; start your housing search early before arriving.",
-      "Community organisations like Migrant Resource Centres can help with finding housing.",
-      "Always verify the identity of the landlord or agent before making payments.",
-    ],
+    migrantInfo: [...NEW_ARRIVALS, "Free tenancy advice: the Tenants' Union of Tasmania."],
     emergencyContact: "CBOS Tasmania: 1300 654 499",
     fairTradingUrl: "https://www.cbos.tas.gov.au/topics/housing/renting",
+    sources: [
+      { label: "Residential Tenancy Act 1997 (Tas), sections 17, 20 and 25", url: "https://www.legislation.tas.gov.au/view/whole/html/inforce/current/act-1997-082" },
+      { label: "CBOS: privacy and access", url: "https://cbos.tas.gov.au/topics/housing/renting/during-a-tenancylease/privacy-access" },
+    ],
   },
   {
     code: "ACT",
     name: "Australian Capital Territory",
     bondRules: [
-      "Maximum bond is 4 weeks rent regardless of the rental amount.",
-      "Bond must be lodged with the Office of Rental Bonds within 2 weeks.",
-      "Landlords cannot require more than 2 weeks rent in advance.",
-      "Bond refund applications can be made online through the ACT Revenue Office.",
-      "Disputes over bond are resolved by the ACT Civil and Administrative Tribunal (ACAT).",
+      "The bond can be at most 4 weeks' rent.",
+      "It goes to the ACT Office of Rental Bonds within 2 weeks of being received or of the tenancy starting, whichever is later (4 weeks if an agent lodges it).",
     ],
-    tenantRights: [
-      "Right to a habitable property that complies with minimum housing standards.",
-      "Landlord must give at least 1 week notice for routine inspections and 24 hours for other entries.",
-      "Rent increases are limited to once every 12 months and must be in line with market rates.",
-      "Tenants have the right to urgent repairs within 4 hours for essential services.",
-      "The ACT has strong protections against retaliatory evictions.",
-      "Tenants can make minor alterations with consent (which cannot be unreasonably withheld).",
-      "Energy efficiency disclosure is required for all rental properties in the ACT.",
-      "Tenants have the right to install safety devices (e.g., smoke alarms, locks) at their own cost.",
+    rentRules: [
+      "At most 2 weeks' rent in advance, unless you choose to pay more.",
+      "Rent cannot go up more often than every 12 months, and needs 8 weeks' written notice.",
     ],
+    entryRules: ["Routine inspections can happen twice in 12 months (as well as at the start and end), with 1 week's written notice."],
+    roomInHome: [ROOM_IN_HOME_GENERAL],
     disputeProcess: [
-      "1. Raise the issue with the landlord or agent in writing.",
-      "2. Contact the ACT Human Rights Commission or Legal Aid ACT for advice (call (02) 6207 0400).",
-      "3. Apply for mediation through ACAT's dispute resolution service.",
-      "4. If mediation fails, apply for a formal ACAT hearing.",
-      "5. ACAT will hear the case and issue binding orders.",
-      "6. Non-compliance with ACAT orders can lead to enforcement proceedings.",
+      "1. Raise the problem with the lessor or agent in writing.",
+      "2. Ask Access Canberra for information (13 22 81).",
+      "3. If it is not resolved, apply to the ACT Civil and Administrative Tribunal (ACAT), whose orders are binding.",
     ],
-    migrantInfo: [
-      "ACT tenancy protections apply to all residents, regardless of visa or citizenship status.",
-      "The ACT Human Rights Commission can help with discrimination complaints in housing.",
-      "Canberra has a range of multicultural support services that can assist with housing.",
-      "Free interpreter services are available for ACAT and government interactions (call 13 14 50).",
-      "Tenants Advice Service ACT (TAAS) provides free legal advice and advocacy.",
-      "The ACT Government provides multilingual guides on renting rights and responsibilities.",
-    ],
-    emergencyContact: "ACT Revenue Office (Rental Bonds): (02) 6207 0028",
+    migrantInfo: [...NEW_ARRIVALS, "Free tenancy advice: the Tenants' Advice Service at Canberra Community Law."],
+    emergencyContact: "Access Canberra: 13 22 81",
     fairTradingUrl: "https://www.accesscanberra.act.gov.au/s/article/renting-tab-overview",
+    sources: [
+      { label: "ACT standard residential tenancy terms (Residential Tenancies Act 1997, schedule 1)", url: "https://www.act.gov.au/__data/assets/pdf_file/0006/2614443/Standard-residential-tenancy-terms-Sch-1.pdf" },
+      { label: "ACT Revenue Office: about rental bonds", url: "https://www.revenue.act.gov.au/rental-bonds/about-rental-bonds" },
+    ],
   },
   {
     code: "NT",
     name: "Northern Territory",
     bondRules: [
-      "Maximum bond is 4 weeks rent regardless of the rental amount.",
-      "Bond must be lodged with the NT Department of the Attorney-General and Justice within 14 days.",
-      "Landlords cannot ask for more than 2 weeks rent in advance for the first payment.",
-      "Bond refunds are processed through the department upon agreement or tribunal order.",
-      "Disputes over bond are resolved by the Northern Territory Civil and Administrative Tribunal (NTCAT).",
+      "The security deposit (bond) can be at most 4 weeks' rent.",
+      "There is no government bond authority: the landlord holds it in trust for you and returns it at the end, less any proper claims.",
     ],
-    tenantRights: [
-      "Right to a habitable property that is reasonably clean and in good repair.",
-      "Landlord must give at least 24 hours notice before entry (48 hours for routine inspections).",
-      "Rent increases must be reasonable and can be challenged at NTCAT.",
-      "Tenants have the right to urgent repairs within a reasonable time for health and safety issues.",
-      "A condition report must be completed and signed by both parties at the start of tenancy.",
-      "Tenants have the right to terminate a lease early in cases of domestic violence.",
-      "Landlords must provide and maintain all essential services (water, electricity, gas).",
-      "Tenants cannot be locked out or have their utilities disconnected as a form of eviction.",
+    rentRules: [
+      "A landlord can ask for at most one rent period in advance before the first period ends. If you pay weekly, that is one week.",
+      "Rent can go up only if the agreement allows it, with at least 30 days' written notice, and not within 6 months of the start or of the last increase.",
     ],
+    entryRules: ["Inspections must be arranged at least 7 days ahead, between 7am and 9pm, and at least 3 months apart."],
+    roomInHome: [ROOM_IN_HOME_GENERAL],
     disputeProcess: [
-      "1. Attempt to resolve the dispute directly with the landlord or agent.",
-      "2. Contact NT Consumer Affairs for advice and assistance (call 1800 019 319).",
-      "3. Apply for free mediation through NT Consumer Affairs.",
-      "4. If mediation is unsuccessful, lodge an application with NTCAT.",
-      "5. NTCAT will schedule and conduct a hearing.",
-      "6. NTCAT issues binding orders that are enforceable by law.",
+      "1. Raise the problem with the landlord or agent in writing.",
+      "2. Ask NT Consumer Affairs for advice (1800 019 319).",
+      "3. If it is not resolved, apply to the Northern Territory Civil and Administrative Tribunal (NTCAT), whose orders are binding.",
     ],
-    migrantInfo: [
-      "NT tenancy laws protect all residents, including those on temporary or bridging visas.",
-      "The NT has a high proportion of shared housing; ensure any shared arrangement has a written agreement.",
-      "Free interpreter services are available for government and tribunal interactions (call 13 14 50).",
-      "Darwin Community Legal Service provides free tenancy advice for people on low incomes.",
-      "Be aware that cyclone season (November to April) may affect housing; check insurance and building standards.",
-      "The NT Government provides information sheets on renting in multiple languages.",
-    ],
+    migrantInfo: [...NEW_ARRIVALS, "Free tenancy advice: Darwin Community Legal Service."],
     emergencyContact: "NT Consumer Affairs: 1800 019 319",
     fairTradingUrl: "https://nt.gov.au/property/renters",
+    sources: [
+      { label: "Residential Tenancies Act 1999 (NT), sections 29, 39, 41 and 70 (in force at 1 August 2025)", url: "https://legislation.nt.gov.au/api/sitecore/Act/PDF?id=12173" },
+      { label: "NT Government: security deposits and bonds", url: "https://nt.gov.au/property/private-renters/find-out-about-rental-costs/security-deposits-bonds" },
+    ],
   },
 ];
 
@@ -329,7 +282,5 @@ export function getAllStates(): StateRentalLaw[] {
 }
 
 export function getStateByCode(code: string): StateRentalLaw | undefined {
-  return states.find(
-    (s) => s.code.toUpperCase() === code.toUpperCase()
-  );
+  return states.find((s) => s.code.toUpperCase() === code.toUpperCase());
 }

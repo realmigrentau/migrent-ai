@@ -34,9 +34,15 @@ export interface HubMe {
   role: HubRole | null;
   is_admin: boolean;
   owner_kind: "individual" | "property_manager" | null;
+  /** Property managers only; shown to renters on the owner card. */
+  agency_name?: string | null;
+  agency_licence?: string | null;
   onboarded: boolean;
   notification_prefs: { email?: Record<string, boolean> };
   owner_verification: VerificationSummary | null;
+  /** Their mentor profile, if they signed up as one. Listed only once
+   *  Migrent has checked their photo ID and approved the profile. */
+  mentor: { id: string; status: "pending" | "approved" | "rejected"; reason: string | null; active: boolean } | null;
   member_since: string | null;
   features: HubFeatures;
   assurance_level: "aal1" | "aal2" | null;
@@ -222,6 +228,12 @@ export interface ApplicationDetail {
   snapshot?: ApplicationSnapshot | null;
   owner_notes?: { id: string; body: string; created_at: string }[];
   other_applications_with_you?: { id: string; status: ApplicationStatus; listing: ListingCard | null }[];
+  /** What earlier hosts said (owner and admin views only; never public). */
+  renter_reviews?: {
+    count: number;
+    avg_rating: number;
+    reviews: { id: string; rating: number; review_text: string | null; payment_rating?: number | null; cleanliness_rating?: number | null; created_at: string; reviewer_name: string; kind: "tenancy" | "stay" }[];
+  };
   allowed_actions?: string[];
 }
 
@@ -309,6 +321,8 @@ export interface Message {
   created_at: string;
   pending?: boolean;
   failed?: boolean;
+  /** Scam signs in a message someone sent you (backend/message_safety.py). */
+  risks?: string[];
 }
 
 export interface Conversation {
@@ -319,6 +333,8 @@ export interface Conversation {
   my_side: "owner" | "renter";
   archived: boolean;
   muted: boolean;
+  /** Either side blocked the other; who did is only said when it was you. */
+  blocked?: { by_me: boolean; closed: boolean };
   messages: Message[];
   has_more: boolean;
   context: {
@@ -585,6 +601,10 @@ export interface OwnerListing {
   weekly_discount: number | null;
   monthly_discount: number | null;
   bond: string | null;
+  bond_weeks?: number | null;
+  rent_in_advance_weeks?: number | null;
+  bills_estimate_weekly?: number | null;
+  newcomer_friendly?: boolean | null;
   weapons_on_property: boolean | null;
   weapons_explanation: string | null;
   created_at: string;

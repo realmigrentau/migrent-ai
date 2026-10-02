@@ -1,4 +1,4 @@
-import { ArrowRight, BadgeCheck, Flag, Inbox, ListChecks, ShieldCheck, Siren } from "lucide-react";
+import { ArrowRight, BadgeCheck, Flag, HandHeart, Inbox, ListChecks, ShieldCheck, Siren } from "lucide-react";
 import { useHubQuery } from "../../../lib/hub/query";
 import { firstName, greeting } from "../../../lib/hub/format";
 import { useHub } from "../../../lib/hub/session";
@@ -11,6 +11,8 @@ interface Overview {
   open_reports: number;
   listings_in_review: number;
   id_checks_waiting: number;
+  /** Absent on a server older than the mentor review queue. */
+  mentors_waiting?: number;
   open_emergencies: number;
   tickets_waiting: number;
   accounts: number;
@@ -19,7 +21,8 @@ interface Overview {
 
 const QUEUES = [
   { key: "listings_in_review", label: "Listings to moderate", body: "New listings, and anything the spam check flagged.", icon: ListChecks, to: "/admin/listings" },
-  { key: "id_checks_waiting", label: "ID checks waiting", body: "Owners who uploaded an identity document.", icon: BadgeCheck, to: "/admin/id-checks" },
+  { key: "id_checks_waiting", label: "ID checks waiting", body: "Hosts and mentors who uploaded an identity document.", icon: BadgeCheck, to: "/admin/id-checks" },
+  { key: "mentors_waiting", label: "Mentors to review", body: "Mentor sign-ups waiting to be read and approved.", icon: HandHeart, to: "/admin/mentors" },
   { key: "final_reviews", label: "Final application reviews", body: "Owner-approved applications waiting for Migrent.", icon: ShieldCheck, to: "/admin/reviews" },
   { key: "open_reports", label: "Open reports", body: "Listings, people and messages reported by users.", icon: Flag, to: "/admin/reports" },
   { key: "tickets_waiting", label: "Support tickets to answer", body: "Questions sent from the help button.", icon: Inbox, to: "/admin/support" },
@@ -54,7 +57,7 @@ export default function AdminHome() {
               <span className="flex h-10 w-10 items-center justify-center rounded-[12px] bg-[var(--color-primary-soft)] text-[color:var(--color-primary)]">
                 <q.icon className="h-5 w-5" strokeWidth={1.75} aria-hidden />
               </span>
-              {data ? <span className="text-[30px] font-semibold tabular-nums text-[color:var(--color-ink)]">{data[q.key]}</span> : <Skeleton className="h-8 w-10" />}
+              {data ? <span className="text-[30px] font-semibold tabular-nums text-[color:var(--color-ink)]">{data[q.key] ?? 0}</span> : <Skeleton className="h-8 w-10" />}
             </div>
             <div className="flex items-end justify-between gap-3">
               <div>

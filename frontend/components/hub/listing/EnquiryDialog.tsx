@@ -5,6 +5,7 @@ import { useHubNavigate } from "../HubLink";
 import { Button } from "../ui/Button";
 import { Field, Textarea } from "../ui/Field";
 import { Dialog } from "../ui/Overlay";
+import { Events, trackEvent } from "../../../lib/analytics";
 
 const STARTERS = ["Is it still available?", "Could I inspect this week?", "Are bills included in the rent?", "Is there a minimum lease?"];
 
@@ -34,6 +35,7 @@ export default function EnquiryDialog({ open, onClose, listingId, title, ownerNa
       const { key } = await hubApi.post<{ key: string }>("/hub/enquiries", { listing_id: listingId, text: text.trim() });
       invalidate("/hub/inbox");
       invalidate("/hub/counts");
+      trackEvent(Events.ENQUIRY_SENT, { listing_id: listingId });
       onClose();
       void navigate(`/messages/${key}`);
     } catch (e) {

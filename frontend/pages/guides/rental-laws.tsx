@@ -3,7 +3,7 @@ import { ExternalLink, Phone } from "lucide-react";
 import SEOHead from "../../components/SEOHead";
 import { CloseCard, PageHero, Reveal } from "../../components/site";
 import { Tabs } from "../../components/hub/ui/Layout";
-import { getAllStates } from "../../data/rentalLaws";
+import { LAST_CHECKED, getAllStates } from "../../data/rentalLaws";
 
 /**
  * Rental law by state. Moved from /resources/rental-laws (which redirects
@@ -19,7 +19,9 @@ export default function RentalLaws() {
 
   const blocks: { title: string; items: string[]; ordered?: boolean }[] = [
     { title: "Bonds", items: state.bondRules },
-    { title: "Your rights as a renter", items: state.tenantRights },
+    { title: "Rent", items: state.rentRules },
+    { title: "Inspections and entry", items: state.entryRules },
+    { title: "Renting a room in someone's home", items: state.roomInHome },
     { title: "If there is a dispute", items: state.disputeProcess.map((s) => s.replace(/^\d+\.\s*/, "")), ordered: true },
     { title: "Good to know if you are new to Australia", items: state.migrantInfo },
   ];
@@ -28,7 +30,7 @@ export default function RentalLaws() {
     <>
       <SEOHead
         title="Rental law by state"
-        description="Bond rules, renters' rights and how disputes are settled in every Australian state and territory, with the authority to contact in each."
+        description="Bond limits, rent in advance, rent increases, inspections and disputes in every Australian state and territory, checked against each government's own source."
         breadcrumbs={[
           { name: "Home", path: "/" },
           { name: "Guides", path: "/guides" },
@@ -44,13 +46,13 @@ export default function RentalLaws() {
             Rental law, <strong>state by state.</strong>
           </>
         }
-        lead="Bonds, your rights and what to do in a dispute, with the authority to contact where you live."
+        lead="Bonds, rent, inspections and what to do in a dispute, with the authority to contact where you live."
       />
 
       <section className="site-section site-section--flush" aria-labelledby="state-heading">
         <div className="site-shell">
           <p className="site-card site-card--muted site-card--pad site-body mb-8">
-            This is general information, not legal advice. Tenancy law changes; always check with the authority for your state or territory before you rely on it.
+            This is general information, not legal advice. Each figure was checked against the official source listed under each state on {LAST_CHECKED}. Tenancy law changes, so check with the authority for your state or territory before you rely on it.
           </p>
 
           <Tabs
@@ -96,6 +98,21 @@ export default function RentalLaws() {
                 Official information for {state.code} <ExternalLink className="h-4 w-4" strokeWidth={2} aria-hidden="true" />
                 <span className="sr-only">(opens in a new tab)</span>
               </a>
+            </div>
+
+            <div className="site-card site-card--pad mt-4" data-testid="rental-law-sources">
+              <h3 className="site-h3">Sources for {state.name}</h3>
+              <p className="site-meta mt-1">Checked on {LAST_CHECKED}.</p>
+              <ul className="site-body mt-3 list-disc space-y-1.5 pl-5">
+                {state.sources.map((s) => (
+                  <li key={s.url}>
+                    <a href={s.url} target="_blank" rel="noopener noreferrer" className="site-link">
+                      {s.label}
+                      <span className="sr-only"> (opens in a new tab)</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
         </div>

@@ -30,6 +30,7 @@ import { readPolygons, buildSpatialIndex, extentCentre } from "./geo.mjs";
 import { readDbf } from "./shapefile.mjs";
 import { assignSlugs } from "./naming.mjs";
 import { EDITORIAL, EDITORIAL_REVIEWED_ON, LEGACY_SLUGS } from "./editorial.mjs";
+import { buildBackendIndex } from "./build-backend-index.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 const OUT_DIR = join(ROOT, "data", "suburbs");
@@ -322,6 +323,9 @@ async function main() {
   log("");
   log(`Detail buckets   ${details.size}`);
   log(`Output           ${OUT_DIR}`);
+  // The API checks listing addresses against the same places.
+  const backendIndex = buildBackendIndex();
+  log(`API index        ${backendIndex.places.toLocaleString()} places`);
   log(`Elapsed          ${((Date.now() - t0) / 1000).toFixed(1)}s`);
 }
 

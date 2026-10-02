@@ -15,6 +15,8 @@ import { day, dateTime, placeTypeLabel, propertyTypeLabel, relative, viewerZone,
 import { invalidate, setQueryData, useHubQuery } from "../../../lib/hub/query";
 import { siteUrl } from "../../../lib/hub/routes";
 import type { ListingCard, Person } from "../../../lib/hub/types";
+import { moveInCost, weeksOf } from "../../../lib/listingCosts";
+import ReasonPicker from "../../../components/hub/admin/ReasonPicker";
 
 interface ModerationItem extends ListingCard {
   moderation_status: string;
@@ -43,11 +45,24 @@ interface HistoryEvent {
 }
 
 interface ModerationDetail extends ModerationItem {
+  bond_weeks?: number | null;
+  rent_in_advance_weeks?: number | null;
+  bills_estimate_weekly?: number | null;
+  newcomer_friendly?: boolean | null;
+  bond?: string | null;
   description: string | null;
   history: HistoryEvent[];
 }
 
 type Counts = Partial<Record<Exclude<ListingQueue, "all">, number>>;
+
+/** Bond and rent in advance as renters will see them (MIG-017). */
+function upFront(l: ModerationDetail): string {
+  const c = moveInCost(l);
+  if (!c.known) return l.bond ? `Bond "${l.bond}" (old free text, not checked)` : "Not stated";
+  const parts = [c.bondWeeks ? `${weeksOf(c.bondWeeks)} bond` : "no bond", l.listing_purpose === "short_stay" ? "" : c.advanceWeeks ? `${weeksOf(c.advanceWeeks)} rent in advance` : "no rent in advance"].filter(Boolean);
+  return `${parts.join(", ")}: $${(c.total ?? 0).toLocaleString("en-AU")}`;
+}
 
 const QUEUE_EMPTY: Record<ListingQueue, { title: string; body: string }> = {
   review: { title: "Nothing to review", body: "New listings appear here once the owner's ID is checked and they send the listing for review." },
@@ -134,6 +149,7 @@ function DecisionPanel({ listing, action, onCancel, onDone }: { listing: Moderat
           className="w-fit"
         />
       )}
+      {copy.reason && <ReasonPicker kind={`listing_${action}`} onPick={setReason} />}
       {copy.reason && (
         <Field label={copy.reason.label} hint={copy.reason.hint}>
           {({ id, describedBy }) => <Textarea id={id} rows={3} value={reason} maxLength={1000} onChange={(e) => setReason(e.target.value)} aria-describedby={describedBy} autoFocus />}
@@ -271,6 +287,10 @@ function ListingDrawer({ id, onClose }: { id: string | null; onClose: () => void
                 {day(l.available_from)}
                 {l.available_to ? ` to ${day(l.available_to)}` : ""}
               </dd>
+            </div>
+            <div className="col-span-2">
+              <dt className="text-[12.5px] text-[color:var(--color-ink-3)]">Up front</dt>
+              <dd className="font-semibold text-[color:var(--color-ink)]">{upFront(l)}</dd>
             </div>
             <div>
               <dt className="text-[12.5px] text-[color:var(--color-ink-3)]">Sent</dt>

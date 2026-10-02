@@ -212,6 +212,8 @@ const S = {
   ],
   states: {},
   drafts: [],
+  blocks: [],
+  reviews: [],
   notifications: {
     [RENTER]: [
       { id: "n1", type: "application_status_changed", title: "The owner opened your application", body: "Priya is reviewing your application for Room 1.", cta_url: "/hub/applications/app-1", entity_type: "application", entity_id: "app-1", is_read: false, created_at: iso(inDays(-2)) },
@@ -234,7 +236,11 @@ const S = {
       ] },
   ],
   templates: {},
-  reports: [{ id: "rep-1", reporter_id: RENTER, item_type: "listing", item_id: "11111111-1111-4111-8111-000000000003", reason: "Looks like a scam", details: "Asked me to pay a deposit before inspecting.", status: "pending", priority: "high", created_at: iso(inDays(-1)) }],
+  reports: [
+    { id: "rep-1", reporter_id: RENTER, item_type: "listing", item_id: "11111111-1111-4111-8111-000000000003", reason: "Looks like a scam", details: "Asked me to pay a deposit before inspecting.", status: "pending", priority: "high", created_at: iso(inDays(-1)) },
+    // Raised by the message scam check, not a person (backend/routes_messages.flag_risky_message).
+    { id: "rep-2", reporter_id: null, source: "system", item_type: "message", item_id: "m2", reason: "Possible scam: asks for money before an inspection", details: "Automatic check on a message.", status: "pending", priority: "high", created_at: iso(inDays(-1)) },
+  ],
   audit: [],
   // Hub admin: listings in moderation (kept apart from the public search
   // fixtures), an owner waiting for an ID check, and support tickets.
@@ -243,6 +249,9 @@ const S = {
     { id: "33333333-3333-4333-8333-000000000002", owner_id: OWNER, title: "CHEAP ROOM pay deposit now", suburb: "Blacktown", postcode: 2148, weekly_price: 90, address: "9 Main Street", place_type: "private_room", property_type: "apartment", description: "Transfer the deposit to secure it before viewing. WhatsApp only.", moderation_status: "flagged", spam_score: 78, spam_reasons: ["Asks for payment before a viewing", "Price far below the suburb median", "Contact details in the description"], flagged_at: iso(inDays(-1)), moderation_reason: null, moderation_notes: null, created_at: iso(inDays(-1)), updated_at: iso(inDays(-1)), history: [] },
   ],
   idChecks: [{ user_id: NEW_OWNER, document_type: "passport", submitted_at: iso(inDays(-1)), email_verified: true, phone_verified: false, id_status: "pending" }],
+  // Mentor sign-ups waiting for Migrent (backend routes_hub_admin mentors queue).
+  // The owner fixture has a checked ID, so they can be approved.
+  mentors: [{ id: "mentor-mock-1", user_id: OWNER, suburb: "Kellyville", postcode: 2155, languages: ["English", "Hindi"], specialties: ["Public transport"], bio: "Twelve years in the Hills district.", hourly_rate: 3000, status: "pending", review_reason: null, submitted_at: iso(inDays(-2)), payouts_ready: false }],
   tickets: [
     { id: "tk-1", user_id: OWNER, email: "owner@example.test", name: null, subject: "Photos won't upload on my phone", status: "open", priority: "normal", category: "listings", source: "in_app", created_at: iso(inDays(-1)), updated_at: iso(inDays(-1)), first_response_at: null, resolved_at: null, csat_rating: null, csat_comment: null, messages: [{ id: "tm-1", body: "The upload button spins and nothing happens. I'm on an iPhone.", sender_type: "user", is_internal: false, sender_id: OWNER, created_at: iso(inDays(-1)) }] },
     { id: "tk-2", user_id: null, email: "gina@example.test", name: "Gina Rossi", subject: "An owner asked me for cash", status: "pending_internal", priority: "urgent", category: "trust_safety", source: "contact_form", created_at: iso(inDays(-3)), updated_at: iso(inDays(-2)), first_response_at: iso(inDays(-3)), resolved_at: null, csat_rating: null, csat_comment: null, messages: [{ id: "tm-2", body: "The owner wants a cash deposit before I can see the room.", sender_type: "user", is_internal: false, sender_id: null, created_at: iso(inDays(-3)) }] },
@@ -389,6 +398,8 @@ function me(uid) {
     role,
     is_admin: Boolean(u.is_admin),
     owner_kind: u.owner_kind || null,
+    agency_name: u.agency_name || null,
+    agency_licence: u.agency_licence || null,
     onboarded: u.onboarded,
     notification_prefs: u.prefs || {},
     owner_verification: role === "owner" ? { status: "verified", checks: { email_confirmed: true, phone_confirmed: true, government_id: "approved" }, verified_at: "2026-03-10T00:00:00Z", explainer_url: "/how-renting-works#checks", disclaimer: "Verification confirms documents were checked. It is not a guarantee of safety or suitability." } : null,
@@ -540,6 +551,12 @@ function adminExtras(p, url, body, uid, send, req) {
   mm = p.match(/^\/hub\/admin\/listings\/([^/]+)(\/action)?$/);
   if (mm) {
     const l = S.moderation.find((x) => x.id === mm[1]);
+    if (!l && mm[2] && body.action === "pause" && listingById(mm[1])) {
+      // A live listing reported from the Reports queue (MIG-024).
+      if ((body.reason || "").trim().length < 5) return send(400, { detail: "Add a reason. It is recorded in the audit log." }), true;
+      audit("pause", "listing", mm[1], body.reason.trim());
+      return send(200, { listing: { id: mm[1], moderation_status: "paused" } }), true;
+    }
     if (!l) return send(404, { detail: "Listing not found" }), true;
     if (!mm[2]) return send(200, { listing: moderationDetail(l) }), true;
     const action = body.action;
@@ -576,6 +593,25 @@ function adminExtras(p, url, body, uid, send, req) {
     c.id_status = body.action === "approve" ? "approved" : "rejected";
     audit(body.action === "approve" ? "approve_id" : "reject_id", "owner_verification", c.user_id, body.reason || null, body.action === "approve" ? "Government ID approved" : null);
     return send(200, { message: body.action === "approve" ? "ID approved" : "ID rejected", fully_verified: body.action === "approve" }), true;
+  }
+
+  // Mentors
+  if (p === "/hub/admin/mentors") {
+    const status = url.searchParams.get("status") || "pending";
+    const rows = S.mentors.filter((m) => status === "all" || m.status === status);
+    return send(200, { mentors: rows.map((m) => ({ ...m, person: person(m.user_id), email: USERS[m.user_id]?.email || null, id_status: idCheckOf(m.user_id) === "verified" ? "approved" : idCheckOf(m.user_id) === "pending" ? "pending" : "not_submitted" })) }), true;
+  }
+  mm = p.match(/^\/hub\/admin\/mentors\/([^/]+)$/);
+  if (mm && req.method === "POST") {
+    const m = S.mentors.find((x) => x.id === mm[1]);
+    if (!m) return send(404, { detail: "Mentor not found" }), true;
+    const reason = (body.reason || "").trim();
+    if (body.action === "approve" && idCheckOf(m.user_id) !== "verified") return send(400, { detail: "Their government ID hasn't been checked yet. Approve it in ID checks first." }), true;
+    if (body.action === "reject" && reason.length < 5) return send(400, { detail: "Tell them what to change. It is emailed to them and recorded in the audit log." }), true;
+    m.status = body.action === "approve" ? "approved" : "rejected";
+    m.review_reason = body.action === "approve" ? null : reason;
+    audit(body.action === "approve" ? "approve_mentor" : "reject_mentor", "mentor", m.id, reason || null);
+    return send(200, { mentor: { ...m, person: person(m.user_id), email: USERS[m.user_id]?.email || null, id_status: "approved" } }), true;
   }
 
   // Accounts
@@ -713,6 +749,13 @@ export function handleHub(req, url, body, send) {
     return send(200, { booking_id: b.id, status: b.status, checkout_url: checkout }), true;
   }
   if (p === "/auth/store-legal-acceptance") return send(200, { status: "accepted" }), true;
+  if (p === "/email/unsubscribe" && req.method === "POST") {
+    // The mock's signed link uses the token "test-token" (backend/unsubscribe.py signs with HMAC).
+    const x = USERS[body.u];
+    if (!x || body.t !== "test-token" || !["messages", "applications", "inspections", "saved_searches", "maintenance", "listings", "summaries"].includes(body.g)) return send(400, { detail: "That unsubscribe link isn't valid. You can change your emails in Migrent Hub > Settings." }), true;
+    x.prefs = { ...(x.prefs || {}), email: { ...((x.prefs || {}).email || {}), [body.g]: false } };
+    return send(200, { unsubscribed: true, group: body.g }), true;
+  }
   if (p === "/reports" && req.method === "POST") {
     const rid = uidFromAuth(req);
     if (!rid) return send(401, { detail: "Sign in to continue" }), true;
@@ -811,6 +854,11 @@ export function handleHub(req, url, body, send) {
   if (p === "/hub/settings" && req.method === "PATCH") {
     if (body.name) u.name = body.name;
     if (typeof body.bio === "string") u.bio = body.bio;
+    if ("agency_name" in body || "agency_licence" in body) {
+      if ((body.owner_kind || u.owner_kind) !== "property_manager") return send(400, { detail: "Agency details are for property managers." }), true;
+      u.agency_name = (body.agency_name || "").trim() || null;
+      u.agency_licence = (body.agency_licence || "").trim() || null;
+    }
     if (body.owner_kind) u.owner_kind = body.owner_kind;
     if (body.notification_prefs) u.prefs = body.notification_prefs;
     return send(200, me(uid)), true;
@@ -1079,11 +1127,24 @@ export function handleHub(req, url, body, send) {
     if (q) list = list.filter((t) => t.other.name.toLowerCase().includes(q) || (t.listing?.title || "").toLowerCase().includes(q) || t.last_message.text.toLowerCase().includes(q));
     return send(200, { threads: list, unread_total: list.reduce((s, t) => s + t.unread_count, 0) }), true;
   }
+  // Blocking (backend/blocks.py): either side's block closes the conversation.
+  const blockedBetween = (a, b) => S.blocks.some((x) => (x.blocker === a && x.blocked === b) || (x.blocker === b && x.blocked === a));
+  if (p === "/hub/blocks" && req.method === "GET") return send(200, { blocked: S.blocks.filter((x) => x.blocker === uid).map((x) => ({ person: person(x.blocked), created_at: x.created_at })) }), true;
+  if (p === "/hub/blocks" && req.method === "POST") {
+    if (!S.blocks.some((x) => x.blocker === uid && x.blocked === body.user_id)) S.blocks.push({ blocker: uid, blocked: body.user_id, created_at: iso(now()) });
+    return send(200, { blocked: true, user_id: body.user_id }), true;
+  }
+  mm = m(/^\/hub\/blocks\/([^/]+)$/);
+  if (mm && req.method === "DELETE") {
+    S.blocks = S.blocks.filter((x) => !(x.blocker === uid && x.blocked === mm[1]));
+    return send(200, { blocked: false, user_id: mm[1] }), true;
+  }
   mm = m(/^\/hub\/inbox\/([^/]+)(?:\/(messages|state))?$/);
   if (mm) {
     const key = mm[1];
     const [lid, other] = key.split("_");
     if (mm[2] === "messages") {
+      if (blockedBetween(uid, other)) return send(403, { detail: "You can't contact this person on Migrent." }), true;
       const msg = { id: uuid(), sender: uid, receiver: other, listing_id: lid === "direct" ? null : lid, text: body.text || body.attachment_name || "Attachment", created_at: iso(now()), read_at: null };
       S.messages.push(msg);
       return send(200, { message: { id: msg.id, from_me: true, text: msg.text, attachment_url: null, attachment_name: body.attachment_name || null, attachment_type: body.attachment_type || null, read_at: null, created_at: msg.created_at } }), true;
@@ -1103,7 +1164,15 @@ export function handleHub(req, url, body, send) {
     const booking = l ? S.bookings.find((b) => b.listing_id === l.id && b.renter_id === renterId && b.status === "booked") : null;
     const slot = booking ? S.slots.find((s) => s.id === booking.slot_id) : null;
     const st = (S.states[uid] || {})[key] || {};
-    return send(200, { key, listing: card(l, my_side === "owner"), other: person(other), other_user_id: other, my_side, archived: Boolean(st.archived), muted: Boolean(st.muted), messages: msgs.map((x) => ({ id: x.id, from_me: x.sender === uid, text: x.text, attachment_url: null, attachment_name: null, attachment_type: null, read_at: x.read_at, created_at: x.created_at })), has_more: false, context: { application: app ? { id: app.id, status: app.status, updated_at: app.updated_at } : null, inspection: slot ? { booking_id: booking.id, id: slot.id, starts_at: slot.starts_at, ends_at: slot.ends_at, status: slot.status } : null } }), true;
+    // A cut-down backend/message_safety.py, for the recipient only.
+    const risks = (x) =>
+      x.sender === uid
+        ? []
+        : [
+            /\b(deposit|pay|payment|transfer)\b[^.?!]{0,60}\b(before|without)\b[^.?!]{0,40}\b(inspect\w*|view\w*)/i.test(x.text) ? "asks for money before you have inspected the home" : null,
+            /\b(western union|moneygram|gift ?cards?|bitcoin|crypto)\b/i.test(x.text) ? "mentions a payment method scammers use (gift cards, crypto, money transfer services)" : null,
+          ].filter(Boolean);
+    return send(200, { key, listing: card(l, my_side === "owner"), other: person(other), other_user_id: other, my_side, archived: Boolean(st.archived), muted: Boolean(st.muted), blocked: { by_me: S.blocks.some((x) => x.blocker === uid && x.blocked === other), closed: blockedBetween(uid, other) }, messages: msgs.map((x) => ({ id: x.id, from_me: x.sender === uid, text: x.text, attachment_url: null, attachment_name: null, attachment_type: null, read_at: x.read_at, created_at: x.created_at, risks: risks(x) })), has_more: false, context: { application: app ? { id: app.id, status: app.status, updated_at: app.updated_at } : null, inspection: slot ? { booking_id: booking.id, id: slot.id, starts_at: slot.starts_at, ends_at: slot.ends_at, status: slot.status } : null } }), true;
   }
   if (p === "/hub/enquiries" && req.method === "POST") {
     const owner = ownerOf(body.listing_id);
@@ -1197,8 +1266,55 @@ export function handleHub(req, url, body, send) {
     }
     return send(200, { draft: d }), true;
   }
+  // Reviews (backend/routes_hub_reviews.py): a tenancy a month in can be
+  // reviewed by both sides, once each.
+  if (p === "/hub/reviews/pending") {
+    const pending = S.tenancies
+      .filter((t) => (t.renter_id === uid || t.owner_id === uid) && t.status === "active" && t.start_date <= dayIso(inDays(-30)))
+      .filter((t) => !S.reviews.some((r) => r.tenancy_id === t.id && r.reviewer === uid))
+      .map((t) => {
+        const asRenter = t.renter_id === uid;
+        return { kind: "tenancy", id: t.id, direction: asRenter ? "seeker_to_owner" : "owner_to_seeker", listing: card(listingById(t.listing_id), !asRenter), other: person(asRenter ? t.owner_id : t.renter_id), closes_on: null };
+      });
+    return send(200, { pending }), true;
+  }
+  if (p === "/hub/reviews" && req.method === "POST") {
+    if (!body.rating) return send(422, { detail: "Choose a rating" }), true;
+    if (S.reviews.some((r) => r.tenancy_id === body.id && r.reviewer === uid)) return send(409, { detail: "You have already reviewed this." }), true;
+    const r = { id: uuid(), tenancy_id: body.id, reviewer: uid, rating: body.rating, text: body.text || null, created_at: iso(now()) };
+    S.reviews.push(r);
+    return send(200, { review: { id: r.id, kind: body.kind, context_id: body.id } }), true;
+  }
+  // A cut-down backend/listing_rules.py: enough for the wizard's live check.
+  if (p === "/hub/location-check") {
+    const suburb = String(url.searchParams.get("suburb") || "").trim().toLowerCase();
+    const state = url.searchParams.get("state");
+    if (suburb === "parramatta" && state && state !== "NSW") return send(200, { problem: `There's no Parramatta in ${state}. Parramatta is in NSW. Check the suburb and the state.`, hint: null, match: null }), true;
+    return send(200, { problem: null, hint: null, match: null }), true;
+  }
   if (p === "/hub/ai/listing-copy") return send(503, { detail: "The writing assistant is not switched on in the mock." }), true;
   if (p === "/hub/listing-photos") return send(200, { url: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=1200", width: 1200, height: 800 }), true;
+  if (p === "/hub/listings/bulk" && req.method === "POST") {
+    if (!isOwner) return send(403, { detail: "Only owners can manage listings" }), true;
+    if (!["pause", "resume", "renew"].includes(body.action)) return send(422, { detail: "Unknown action" }), true;
+    const results = (body.listing_ids || []).map((id) => {
+      const meta = OWNED[id];
+      const l = listingById(id);
+      if (!meta || meta.owner !== uid || !l) return { id, ok: false, error: "Listing not found" };
+      if (body.action === "pause") {
+        if (meta.moderation_status !== "approved") return { id, ok: false, error: "Only live listings can be paused." };
+        meta.moderation_status = "paused";
+      } else if (body.action === "resume") {
+        if (meta.moderation_status !== "paused") return { id, ok: false, error: "Only paused listings can be brought back." };
+        meta.moderation_status = "approved";
+      } else {
+        if (!body.available_to) return { id, ok: false, error: "Choose the new last day." };
+        l.available_to = body.available_to;
+      }
+      return { id, ok: true, moderation_status: meta.moderation_status };
+    });
+    return send(200, { results, changed: results.filter((r) => r.ok).length }), true;
+  }
   mm = m(/^\/hub\/listings\/([^/]+)(?:\/(occupancy|unit))?$/);
   if (mm) {
     const l = listingById(mm[1]);
@@ -1362,6 +1478,7 @@ export function handleHub(req, url, body, send) {
         open_reports: S.reports.filter((r) => r.status === "pending").length,
         listings_in_review: S.moderation.filter((l) => ["pending_approval", "flagged"].includes(l.moderation_status)).length,
         id_checks_waiting: S.idChecks.filter((c) => c.id_status === "pending").length,
+        mentors_waiting: S.mentors.filter((m) => m.status === "pending").length,
         open_emergencies: 0,
         tickets_waiting: S.tickets.filter((t) => ["open", "pending_internal"].includes(t.status)).length,
         accounts: Object.keys(USERS).length,
@@ -1377,7 +1494,22 @@ export function handleHub(req, url, body, send) {
       S.audit.unshift({ id: uuid(), action: `${body.action}_application`, target_type: "application", target_id: a.id, reason: body.reason || null, metadata: {}, created_at: iso(now()), admin: person(uid) });
       return send(200, { application: a }), true;
     }
-    if (p === "/hub/admin/reports") return send(200, { reports: S.reports.filter((r) => url.searchParams.get("status") === "all" || ["pending", "reviewing"].includes(r.status)).map((r) => ({ ...r, target: card(listingById(r.item_id), true), reporter: person(r.reporter_id), assigned_to: null })) }), true;
+    const reportTarget = (r) => {
+      if (r.item_type !== "message") return card(listingById(r.item_id), true);
+      const msg = S.messages.find((x) => x.id === r.item_id);
+      return msg ? { text: msg.text, from: person(msg.sender), to: person(msg.receiver) } : null;
+    };
+    if (p === "/hub/admin/reports") return send(200, { reports: S.reports.filter((r) => url.searchParams.get("status") === "all" || ["pending", "reviewing"].includes(r.status)).map((r) => ({ ...r, target: reportTarget(r), reporter: r.reporter_id ? person(r.reporter_id) : null, assigned_to: null })) }), true;
+    mm = m(/^\/hub\/admin\/reports\/([^/]+)\/conversation$/);
+    if (mm) {
+      const r = S.reports.find((x) => x.id === mm[1] && x.item_type === "message");
+      const msg = r && S.messages.find((x) => x.id === r.item_id);
+      if (!msg) return send(404, { detail: "That report isn't about a message" }), true;
+      S.audit.unshift({ id: uuid(), action: "view_conversation", target_type: "report", target_id: r.id, reason: null, metadata: {}, created_at: iso(now()), admin: person(uid) });
+      const pair = [msg.sender, msg.receiver];
+      const thread = S.messages.filter((x) => x.listing_id === msg.listing_id && pair.includes(x.sender) && pair.includes(x.receiver)).sort((a, b) => (a.created_at < b.created_at ? -1 : 1));
+      return send(200, { reported_message_id: msg.id, people: Object.fromEntries(pair.map((id) => [id, person(id)])), messages: thread.map((x) => ({ id: x.id, from: x.sender, text: x.text, attachment_name: null, created_at: x.created_at })) }), true;
+    }
     mm = m(/^\/hub\/admin\/reports\/([^/]+)$/);
     if (mm) {
       const r = S.reports.find((x) => x.id === mm[1]);
@@ -1388,9 +1520,50 @@ export function handleHub(req, url, body, send) {
     }
     if (p === "/hub/admin/audit") return send(200, { entries: S.audit.filter((e) => !url.searchParams.get("target_type") || e.target_type === url.searchParams.get("target_type")) }), true;
     if (p === "/hub/admin/emergencies") return send(200, { requests: S.maintenance.filter((x) => x.urgency === "emergency" && ["submitted", "acknowledged"].includes(x.status)).map((x) => ({ id: x.id, category: x.category, title: x.title, description: x.description, urgency: x.urgency, status: x.status, created_at: x.created_at, updated_at: x.updated_at, listing: card(listingById(x.listing_id), true), owner: person(x.owner_id), renter: person(x.renter_id) })) }), true;
+    const idStatusOf = (id) => ({ verified: "approved", pending: "pending" })[idCheckOf(id)] || (S.idChecks.find((c) => c.user_id === id)?.id_status ?? null);
     if (p === "/hub/admin/users") {
-      const q = (url.searchParams.get("q") || "").toLowerCase();
-      return send(200, { users: Object.entries(USERS).filter(([, x]) => x.email.includes(q) || x.name.toLowerCase().includes(q)).map(([id]) => account(id)) }), true;
+      const sp = url.searchParams;
+      const q = (sp.get("q") || "").toLowerCase();
+      const rows = Object.entries(USERS)
+        .filter(([id, x]) => (!q || x.email.includes(q) || x.name.toLowerCase().includes(q)) && (!sp.get("role") || (sp.get("role") === "admin" ? x.is_admin : account(id).role === sp.get("role"))) && (!sp.get("suspended") || Boolean(x.disabled) === (sp.get("suspended") === "true")) && (!sp.get("id_status") || idStatusOf(id) === sp.get("id_status")) && (!sp.get("joined_after") || x.created_at >= sp.get("joined_after")))
+        .sort((a, b) => b[1].created_at.localeCompare(a[1].created_at));
+      const offset = Number(sp.get("offset") || 0);
+      return send(200, { users: rows.slice(offset, offset + 50).map(([id]) => ({ ...account(id), id_status: idStatusOf(id) })), total: rows.length, has_more: offset + 50 < rows.length }), true;
+    }
+    mm = m(/^\/hub\/admin\/users\/([^/]+)$/);
+    if (mm && req.method === "GET") {
+      const id = mm[1];
+      const x = USERS[id];
+      if (!x) return send(404, { detail: "Person not found" }), true;
+      const owned = Object.entries(OWNED).filter(([, meta]) => meta.owner === id).map(([lid, meta]) => ({ lid, meta, l: listingById(lid) })).filter((o) => o.l);
+      const listings = [...owned.map(({ lid, meta, l }) => ({ id: lid, title: l.title, suburb: l.suburb, postcode: l.postcode, weekly_price: l.weekly_price, moderation_status: meta.moderation_status, created_at: l.created_at })), ...S.moderation.filter((l) => l.owner_id === id).map((l) => ({ id: l.id, title: l.title, suburb: l.suburb, postcode: l.postcode, weekly_price: l.weekly_price, moderation_status: l.moderation_status, created_at: l.created_at }))];
+      const ids = new Set([id, ...listings.map((l) => l.id)]);
+      const sentBy = new Set(S.messages.filter((msg) => msg.sender === id).map((msg) => msg.id));
+      const check = S.idChecks.find((c) => c.user_id === id);
+      return send(200, {
+        person: { ...account(id), owner_kind: x.owner_kind || null, agency_name: x.agency_name || null, agency_licence: x.agency_licence || null },
+        id_check: { id_status: idStatusOf(id) || "not_submitted", id_document_type: check?.document_type || (id === OWNER ? "passport" : null), id_reviewed_at: id === OWNER ? "2026-03-10T00:00:00Z" : null, id_rejection_reason: null, email_verified: true, phone_verified: id === OWNER },
+        mentor: (() => {
+          const mt = S.mentors.find((mm2) => mm2.user_id === id);
+          return mt ? { id: mt.id, status: mt.status, active: mt.status === "approved" } : null;
+        })(),
+        listings,
+        activity: { applications_sent: S.applications.filter((a) => a.renter_id === id).length, applications_received: S.applications.filter((a) => a.owner_id === id).length, tenancies_as_renter: S.tenancies.filter((t) => t.renter_id === id).length, tenancies_as_owner: S.tenancies.filter((t) => t.owner_id === id).length, blocked_by: S.blocks.filter((b) => b.blocked === id).length },
+        reports_about: S.reports.filter((r) => ids.has(r.item_id) || sentBy.has(r.item_id)).map(({ id: rid, item_type, item_id, reason, status, source, created_at }) => ({ id: rid, item_type, item_id, reason, status, source: source || "user", created_at })),
+        reports_by: S.reports.filter((r) => r.reporter_id === id).map(({ id: rid, item_type, item_id, reason, status, created_at }) => ({ id: rid, item_type, item_id, reason, status, created_at })),
+        history: S.audit.filter((e) => ids.has(e.target_id)),
+      }), true;
+    }
+    if (p === "/hub/admin/metrics") {
+      const users = Object.values(USERS);
+      const since = (days) => iso(inDays(-days));
+      return send(200, {
+        generated_at: iso(now()),
+        people: { accounts: users.length, renters: users.filter((x) => x.role === "seeker").length, owners: users.filter((x) => x.role === "owner").length, joined_7_days: users.filter((x) => x.created_at >= since(7)).length, joined_30_days: users.filter((x) => x.created_at >= since(30)).length, id_checked_owners: Object.keys(USERS).filter((id) => idStatusOf(id) === "approved").length },
+        homes: { live: Object.values(OWNED).filter((x) => x.moderation_status === "approved").length, in_review: S.moderation.filter((l) => ["pending_approval", "flagged"].includes(l.moderation_status)).length, paused: Object.values(OWNED).filter((x) => x.moderation_status === "paused").length, drafts: S.drafts.filter((d) => !d.submitted_at).length, listed_30_days: 2, median_review_hours: 5 },
+        activity: { messages_7_days: S.messages.filter((x) => x.created_at >= since(7)).length, applications_30_days: S.applications.length, inspections_booked_30_days: S.bookings.length, stay_requests_30_days: 0, active_tenancies: S.tenancies.filter((t) => t.status === "active").length },
+        safety: { open_reports: S.reports.filter((r) => ["pending", "reviewing"].includes(r.status)).length, reports_30_days: S.reports.length, scam_flags_30_days: S.reports.filter((r) => r.source === "system").length, suspended_accounts: users.filter((x) => x.disabled).length, open_tickets: S.tickets.filter((t) => ["open", "pending_internal"].includes(t.status)).length, median_first_reply_hours: 3 },
+      }), true;
     }
     if (p === "/hub/admin/view-as") {
       if ((body.reason || "").trim().length < 5) return send(400, { detail: "Say why you need to view this account (recorded in the audit log)" }), true;

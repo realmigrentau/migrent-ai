@@ -7,7 +7,8 @@ export default function AbnTerms() {
     <>
       <SEOHead title="ABN &amp; Business Details" description="Migrent business details, ABN, fee structure, and payment terms." />
 
-      <LegalLayout title="ABN & Business Details" note="Last updated: March 2026">
+      <LegalLayout title="ABN & Business Details" note="Last updated: 1 October 2026">
+        {/* Fee wording aligned with the live product on 1 October 2026 (MIGRENT_MASTER_AUDIT.md MIG-006): hosts pay AUD $99 once per property, for short stays only; renters pay nothing. Must be reviewed by Australian counsel before launch (docs/legal/identity-and-claims.md). */}
 
         <div className="space-y-8">
           {/* Business Details */}
@@ -58,7 +59,7 @@ export default function AbnTerms() {
               <p>Migrent operates as an <strong>online introduction service</strong> for accommodation. We are:</p>
               <ul className="list-disc list-inside space-y-1.5">
                 <li>A technology platform that connects room owners with accommodation seekers</li>
-                <li>An AI-powered matching service for short- to medium-term rooms</li>
+                <li>A platform where renters search for, inspect and apply for rooms and homes, from short stays to long-term tenancies</li>
                 <li>A facilitator of introductions - not a real estate agent or property manager</li>
               </ul>
               <p>We do not hold a real estate licence, as we do not perform real estate agent activities (see <Link href="/how-renting-works#not-an-agent" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">No Agency Disclosure</Link>). We do not collect rent, bonds, or manage tenancy agreements.</p>
@@ -82,16 +83,16 @@ export default function AbnTerms() {
                   </thead>
                   <tbody className="divide-y divide-[var(--color-line)] dark:divide-[var(--color-line)]">
                     <tr>
-                      <td className="py-2.5 px-3 font-medium">Deal Confirmation Fee</td>
+                      <td className="py-2.5 px-3 font-medium">Host fee (short stays)</td>
                       <td className="py-2.5 px-3 font-semibold text-[var(--color-ink)]">AUD $99</td>
-                      <td className="py-2.5 px-3">Owner</td>
-                      <td className="py-2.5 px-3">Per successful match / deal</td>
+                      <td className="py-2.5 px-3">Host</td>
+                      <td className="py-2.5 px-3">Once per property, when the first stay booking there is confirmed</td>
                     </tr>
                     <tr>
-                      <td className="py-2.5 px-3 font-medium">Verification Fee (optional)</td>
-                      <td className="py-2.5 px-3 font-semibold text-[var(--color-ink)]">AUD $19</td>
-                      <td className="py-2.5 px-3">Seeker</td>
-                      <td className="py-2.5 px-3">One-time, optional</td>
+                      <td className="py-2.5 px-3 font-medium">Mentor session (optional)</td>
+                      <td className="py-2.5 px-3 font-semibold text-[var(--color-ink)]">Set by the mentor; Migrent keeps 30%</td>
+                      <td className="py-2.5 px-3">Renter who books one</td>
+                      <td className="py-2.5 px-3">Only if they choose a session</td>
                     </tr>
                     <tr>
                       <td className="py-2.5 px-3 font-medium">Account creation</td>

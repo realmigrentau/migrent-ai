@@ -5,7 +5,8 @@ import { Reveal, SectionHead } from "../site";
 /**
  * Reading, and a person to ask. Three real articles (the props come from
  * data/ at build time, so a renamed article cannot leave a dead card) and
- * a small door to the mentors, who are real people rather than a feature.
+ * a small door to the mentors, who are real people rather than a feature,
+ * shown only once at least one mentor is approved and listed.
  */
 
 export interface ArticleCard {
@@ -16,7 +17,7 @@ export interface ArticleCard {
   readTime: string;
 }
 
-export default function GuidesAndMentors({ articles = [] }: { articles?: ArticleCard[] }) {
+export default function GuidesAndMentors({ articles = [], mentorsListed = false }: { articles?: ArticleCard[]; mentorsListed?: boolean }) {
   return (
     <section className="site-section" aria-labelledby="guides-heading">
       <div className="site-shell">
@@ -37,7 +38,7 @@ export default function GuidesAndMentors({ articles = [] }: { articles?: Article
           />
         </Reveal>
 
-        <div className="mt-10 grid gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
+        <div className={`mt-10 grid gap-4 ${mentorsListed ? "lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]" : ""}`}>
           <ul className="m-0 grid list-none gap-4 p-0 md:grid-cols-3 lg:grid-cols-3">
             {articles.map((a, i) => (
               <Reveal as="li" key={a.href} delay={i * 0.05}>
@@ -55,6 +56,10 @@ export default function GuidesAndMentors({ articles = [] }: { articles?: Article
             ))}
           </ul>
 
+          {/* Only once there is someone to meet: an approved, ID-checked
+              mentor (routes_mentors). Before that this card promised
+              people who did not exist. */}
+          {mentorsListed && (
           <Reveal delay={0.12} className="site-card site-card--muted site-card--pad flex flex-col">
             <span className="site-icon" aria-hidden="true">
               <HeartHandshake className="h-5 w-5" strokeWidth={1.9} />
@@ -72,6 +77,7 @@ export default function GuidesAndMentors({ articles = [] }: { articles?: Article
               </Link>
             </div>
           </Reveal>
+          )}
         </div>
       </div>
     </section>

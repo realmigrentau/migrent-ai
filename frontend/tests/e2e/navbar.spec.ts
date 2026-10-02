@@ -185,17 +185,21 @@ test.describe("phone", () => {
     await page.goto("/pricing");
     // The widget loads after the page is interactive. Wait for it, or this
     // would pass by testing an empty corner.
-    const launcher = page.getByRole("button", { name: "Migrent Support" });
+    const launcher = page.getByRole("button", { name: "Help", exact: true });
     await expect(launcher).toBeVisible();
     const spot = await launcher.boundingBox();
 
     await banner(page).getByRole("button", { name: "Open menu" }).click();
     await expect(page.getByRole("dialog", { name: "Menu" })).toBeVisible();
-    const topmost = await page.evaluate(([x, y]) => {
-      const el = document.elementFromPoint(x, y);
-      return el?.closest("#mobile-nav-panel") ? "sheet" : el?.closest("button")?.getAttribute("aria-label") ?? el?.tagName;
-    }, [spot!.x + spot!.width / 2, spot!.y + spot!.height / 2]);
-    expect(topmost).toBe("sheet");
+    // Polled: under load the sheet can still be sliding in on the first look.
+    await expect
+      .poll(() =>
+        page.evaluate(([x, y]) => {
+          const el = document.elementFromPoint(x, y);
+          return el?.closest("#mobile-nav-panel") ? "sheet" : el?.closest("button")?.getAttribute("aria-label") ?? el?.tagName;
+        }, [spot!.x + spot!.width / 2, spot!.y + spot!.height / 2]),
+      )
+      .toBe("sheet");
   });
 
   test("axe: no serious violations with the menu open", async ({ page }) => {

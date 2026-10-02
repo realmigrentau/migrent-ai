@@ -3,10 +3,12 @@ import { MessageCircle, Home } from "lucide-react";
 import GlassCard from "../ui/GlassCard";
 import VerificationBadge from "../VerificationBadge";
 import type { PublicOwner } from "../../lib/api";
+import { hubIntentHref } from "./HubActions";
 
 interface OwnerCardProps {
   owner: PublicOwner;
   listingId: string;
+  signedIn?: boolean;
 }
 
 /**
@@ -16,12 +18,13 @@ interface OwnerCardProps {
  * owner_verification. The free-text badges array is never rendered as a
  * trust signal: only the achievement badges the API allow-lists appear.
  */
-export default function OwnerCard({ owner, listingId }: OwnerCardProps) {
+export default function OwnerCard({ owner, listingId, signedIn = false }: OwnerCardProps) {
   const name = owner.name || "Host";
   const initial = name.charAt(0).toUpperCase();
-  const messageHref = owner.public_id
-    ? `/messages?listing=${encodeURIComponent(listingId)}&to=${encodeURIComponent(owner.public_id)}`
-    : "/messages";
+  // The same hand-off as the Message button under the listing: open this
+  // home in Migrent Hub with the message box ready (through sign-in when
+  // needed). The old /messages?listing=&to= link landed on an empty inbox.
+  const messageHref = hubIntentHref(listingId, "message", signedIn);
 
   return (
     <GlassCard gradient="rose" padding="md">
@@ -63,6 +66,13 @@ export default function OwnerCard({ owner, listingId }: OwnerCardProps) {
             )}
             {owner.member_since && <span>Member since {new Date(owner.member_since).toLocaleDateString("en-AU", { month: "short", year: "numeric" })}</span>}
           </div>
+
+          {owner.agency && (
+            <p className="mt-2 text-sm text-[var(--color-ink-2)]" data-testid="owner-agency">
+              Property manager at <span className="font-semibold text-[var(--color-ink)]">{owner.agency.name}</span>
+              {owner.agency.licence ? ` · Licence ${owner.agency.licence}` : ""}
+            </p>
+          )}
 
           {owner.bio && <p className="text-sm text-[var(--color-ink-2)] mt-2 line-clamp-3">{owner.bio}</p>}
 
