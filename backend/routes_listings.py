@@ -112,19 +112,28 @@ def _load_owner_context(sb, owner_ids: list[str]) -> tuple[dict, dict]:
     ids = [i for i in {str(o) for o in owner_ids if o}]
     if not ids:
         return profiles, verifications
-    try:
+
+    def _profiles() -> dict:
         try:
-            pr = sb.table("profiles").select(f"{OWNER_PROFILE_COLUMNS}, {OWNER_AGENCY_COLUMNS}").in_("id", ids).execute()
+            try:
+                pr = sb.table("profiles").select(f"{OWNER_PROFILE_COLUMNS}, {OWNER_AGENCY_COLUMNS}").in_("id", ids).execute()
+            except Exception:
+                pr = sb.table("profiles").select(OWNER_PROFILE_COLUMNS).in_("id", ids).execute()
+            return {str(p["id"]): p for p in (pr.data or [])}
         except Exception:
-            pr = sb.table("profiles").select(OWNER_PROFILE_COLUMNS).in_("id", ids).execute()
-        profiles = {str(p["id"]): p for p in (pr.data or [])}
-    except Exception:
-        logger.exception("Failed to load owner profiles")
-    try:
-        vr = sb.table("owner_verification").select(VERIFICATION_COLUMNS).in_("user_id", ids).execute()
-        verifications = {str(v["user_id"]): v for v in (vr.data or [])}
-    except Exception:
-        logger.exception("Failed to load owner verification")
+            logger.exception("Failed to load owner profiles")
+            return {}
+
+    def _verifications() -> dict:
+        try:
+            vr = sb.table("owner_verification").select(VERIFICATION_COLUMNS).in_("user_id", ids).execute()
+            return {str(v["user_id"]): v for v in (vr.data or [])}
+        except Exception:
+            logger.exception("Failed to load owner verification")
+            return {}
+
+    # Independent reads, fetched together (concurrency.py).
+    profiles, verifications = run_parallel(_profiles, _verifications)
     return profiles, verifications
 
 
