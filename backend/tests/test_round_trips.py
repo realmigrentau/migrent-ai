@@ -88,3 +88,12 @@ def test_attachments_in_a_thread_are_signed_in_one_request(db):
     assert "a/2.pdf" in out[1]["attachment_url"]
     assert "attachment_url" not in out[2] and all("attachment_path" not in m for m in out)
     assert out[3]["attachment_url"] == out[0]["attachment_url"]
+
+
+def test_keep_warm_refreshes_the_suspended_list_search_reads(db):
+    import db as dbmod
+    import listing_lifecycle
+
+    listing_lifecycle._suspended_cache.update(until=10**12, ids=["stale"])
+    dbmod._warm_once(refresh_keys=False)  # the fake has no Auth health check; that touch is skipped quietly
+    assert listing_lifecycle.suspended_owner_ids() == []

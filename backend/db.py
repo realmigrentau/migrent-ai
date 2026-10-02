@@ -150,8 +150,9 @@ def get_supabase_admin() -> Client:
 # window) so a real request always finds them open, and refreshes the
 # token-signing keys before they expire so no request waits on that either.
 #
-# Each touch is a one-row read and a health check: a few thousand tiny
-# requests a day. KEEP_WARM_SECONDS=0 turns it off.
+# Each touch is the suspended-accounts read search needs anyway (see
+# listing_lifecycle) and an Auth health check: a few thousand tiny requests a
+# day. KEEP_WARM_SECONDS=0 turns it off.
 # ---------------------------------------------------------------------------
 
 KEEP_WARM_SECONDS = float(os.environ.get("KEEP_WARM_SECONDS", "25") or 0)
@@ -163,7 +164,11 @@ _warm_thread: "threading.Thread | None" = None
 def _warm_once(refresh_keys: bool) -> None:
     client = get_supabase_admin()
     try:
-        client.table("listings").select("id").limit(1).execute()
+        # A real read every search needs, so it doubles as the database
+        # touch: public search then always finds the list fresh.
+        from listing_lifecycle import suspended_owner_ids
+
+        suspended_owner_ids(refresh=True)
     except Exception:
         logger.debug("keep-warm: database touch failed", exc_info=True)
     try:
