@@ -107,6 +107,30 @@ SMTP_PORT = int(os.environ.get("SMTP_PORT", "465") or 465)
 SMTP_USER = os.environ.get("SMTP_USER", "").strip()
 SMTP_PASSWORD = os.environ.get("SMTP_PASSWORD", "").replace(" ", "")  # Google shows app passwords in groups of four
 REPLY_TO = os.environ.get("REPLY_TO_EMAIL", "").strip()
+# Render's free plan cannot reach mail servers at all (outbound SMTP is
+# blocked), so the free way is a Google Apps Script web app running inside
+# the Gmail account (backend/gmail_relay/Code.gs): the server posts each
+# email to it over HTTPS and Gmail sends it, about 100 a day. Used first
+# when set.
+GMAIL_RELAY_URL = os.environ.get("GMAIL_RELAY_URL", "").strip()
+GMAIL_RELAY_SECRET = os.environ.get("GMAIL_RELAY_SECRET", "").strip()
+
+
+def _send_relay(to: str, subject: str, html_body: str, text: str = "") -> None:
+    r = httpx.post(
+        GMAIL_RELAY_URL,
+        json={"secret": GMAIL_RELAY_SECRET, "to": to, "subject": subject, "html": html_body, "text": text or " ", "name": FROM_NAME, "replyTo": REPLY_TO or None},
+        timeout=30,
+        # Apps Script answers on a second address it redirects to.
+        follow_redirects=True,
+    )
+    r.raise_for_status()
+    try:
+        data = r.json()
+    except ValueError:
+        raise RuntimeError(f"relay answered with something other than JSON (status {r.status_code})")
+    if not data.get("ok"):
+        raise RuntimeError(f"relay refused: {data.get('error')}")
 
 
 def _send_smtp(to: str, subject: str, html_body: str, text: str = "", headers: Optional[dict] = None) -> None:
@@ -139,9 +163,17 @@ def _send_smtp(to: str, subject: str, html_body: str, text: str = "", headers: O
 
 
 def _send_email(to: str, subject: str, html: str, text: str = "", headers: Optional[dict] = None):
-    """Send an HTML email with a plain-text fallback, through Gmail SMTP when
-    SMTP_HOST is set, otherwise Mailjet. `headers` adds mail headers
+    """Send an HTML email with a plain-text fallback: through the Gmail relay
+    when GMAIL_RELAY_URL is set, else Gmail SMTP when SMTP_HOST is set, else
+    Mailjet. `headers` adds mail headers
     (List-Unsubscribe, unsubscribe.py). Never raises."""
+    if GMAIL_RELAY_URL and GMAIL_RELAY_SECRET:
+        try:
+            _send_relay(to, subject, html, text)
+            logger.info("Email sent to %s via the Gmail relay: %s", to, subject)
+        except Exception as e:
+            logger.error("Failed to send email to %s via the Gmail relay: %s", to, e)
+        return
     if SMTP_HOST and SMTP_USER and SMTP_PASSWORD:
         try:
             _send_smtp(to, subject, html, text, headers)

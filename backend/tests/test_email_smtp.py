@@ -51,3 +51,46 @@ def test_a_failed_send_never_raises(monkeypatch):
     monkeypatch.setattr(email_bookings, "SMTP_USER", "migrentau@gmail.com")
     monkeypatch.setattr(email_bookings, "SMTP_PASSWORD", "x")
     email_bookings._send_email("sam@example.com", "Hello", "<p>Hi</p>")
+
+
+def test_the_gmail_relay_is_used_first(monkeypatch):
+    calls = []
+
+    class Resp:
+        status_code = 200
+
+        def raise_for_status(self):
+            pass
+
+        def json(self):
+            return {"ok": True, "remaining": 99}
+
+    def post(url, json=None, timeout=None, follow_redirects=None):
+        calls.append((url, json, follow_redirects))
+        return Resp()
+
+    monkeypatch.setattr(email_bookings.httpx, "post", post)
+    monkeypatch.setattr(email_bookings, "GMAIL_RELAY_URL", "https://script.google.com/macros/s/x/exec")
+    monkeypatch.setattr(email_bookings, "GMAIL_RELAY_SECRET", "s3cret")
+    monkeypatch.setattr(email_bookings, "SMTP_HOST", "smtp.gmail.com")  # set too, but the relay wins
+    email_bookings._send_email("sam@example.com", "Hello", "<p>Hi</p>", text="Hi")
+    url, body, follow = calls[0]
+    assert url.endswith("/exec") and follow is True
+    assert body["secret"] == "s3cret" and body["to"] == "sam@example.com" and body["html"] == "<p>Hi</p>"
+
+
+def test_a_relay_refusal_is_logged_not_raised(monkeypatch, caplog):
+    class Resp:
+        status_code = 200
+
+        def raise_for_status(self):
+            pass
+
+        def json(self):
+            return {"ok": False, "error": "not allowed"}
+
+    monkeypatch.setattr(email_bookings.httpx, "post", lambda *a, **k: Resp())
+    monkeypatch.setattr(email_bookings, "GMAIL_RELAY_URL", "https://script.google.com/macros/s/x/exec")
+    monkeypatch.setattr(email_bookings, "GMAIL_RELAY_SECRET", "wrong")
+    email_bookings._send_email("sam@example.com", "Hello", "<p>Hi</p>")
+    assert "not allowed" in caplog.text
