@@ -181,3 +181,10 @@ def test_switched_off_by_default(client, db, monkeypatch):
     monkeypatch.delenv("MOVE_IN_PAYMENTS_ENABLED", raising=False)
     assert client.get("/hub/payouts", headers=auth(VERIFIED_OWNER_ID)).json() == {"enabled": False}
     assert client.post("/hub/payouts/onboard", headers=auth(VERIFIED_OWNER_ID)).status_code == 503
+
+
+def test_weekly_rent_is_rent_amount_whatever_the_payment_frequency():
+    # rent_amount is the weekly rent; fortnightly or monthly is only how often
+    # it is paid (routes_tenancies.build_schedule reads it the same way).
+    for freq in ("weekly", "fortnightly", "monthly"):
+        assert move_in.weekly_cents({"rent_amount": 290, "rent_frequency": freq}) == 29000

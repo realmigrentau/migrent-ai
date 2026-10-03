@@ -107,10 +107,9 @@ def card_fee_cents(rent_cents: int) -> int:
 
 
 def weekly_cents(tenancy: dict) -> int:
-    amount = float(tenancy.get("rent_amount") or 0)
-    freq = tenancy.get("rent_frequency") or "weekly"
-    weekly = amount / 2 if freq == "fortnightly" else amount * 12 / 52 if freq == "monthly" else amount
-    return int(round(weekly * 100))
+    """tenancies.rent_amount is always the weekly rent (rent_frequency is only
+    how often it is paid), as in routes_tenancies.build_schedule."""
+    return int(round(float(tenancy.get("rent_amount") or 0) * 100))
 
 
 def _profile(sb, user_id: str) -> dict:
@@ -750,49 +749,74 @@ def admin_move_in_receipt(move_in_id: str, request: Request, authorization: Opti
 
 
 def send_receipt_email(sb, row: dict, role: str) -> None:
-    import html as _html
-
-    from email_bookings import _button, _details_box, _email_layout, _send_email
+    """The renter's, the owner's and Migrent's receipt emails, in the shared
+    design (email_theme.py). The security code is on all three."""
+    import email_theme as et
+    from email_bookings import _send_email
 
     r = build_receipt(sb, row, role)
-    esc = lambda v: _html.escape(str(v)) if v not in (None, "") else "-"  # noqa: E731
+    t = et.THEMES["money"]
     pay = r["payment"]
-    code_html = f"""<div style="margin:20px 0;padding:16px;border:2px dashed #3153D9;border-radius:12px;text-align:center;">
-      <p style="margin:0 0 6px;font-size:12px;color:#475467;text-transform:uppercase;letter-spacing:0.5px;">Security code</p>
-      <p style="margin:0;font-size:28px;font-weight:700;letter-spacing:4px;font-family:monospace;">{esc(r['receipt_code'])}</p>
-      <p style="margin:8px 0 0;font-size:13px;color:#475467;">The renter, the owner and Migrent have the same code. Check it matches when you meet.</p>
-    </div>"""
-    rows = [("Rent", f"AUD {pay['to_owner']:,.2f}"), ("Card fee (paid by the renter)", f"AUD {pay['card_fee']:,.2f}"), ("Total paid", f"AUD {pay['amount']:,.2f}"), ("For", f"{pay['weeks']} week{'s' if pay['weeks'] != 1 else ''} rent in advance"), ("Paid", esc((pay["paid_at"] or "")[:10])), ("Reference", esc(pay["reference"]))]
+    dash = lambda v: v if v not in (None, "") else "-"  # noqa: E731
+    weeks = f"{pay['weeks']} week{'s' if pay['weeks'] != 1 else ''}"
+    money_rows = [(f"Rent ({weeks})", f"AUD {pay['to_owner']:,.2f}"), ("Card fee (paid by the renter)", f"AUD {pay['card_fee']:,.2f}"), ("Total paid", f"AUD {pay['amount']:,.2f}"), ("Paid", dash((pay["paid_at"] or "")[:10])), ("Reference", dash(pay["reference"]))]
+    title_of = r["property"]["title"] or "your new home"
+    code = r["receipt_code"] or ""
     if role == "renter":
         o = r["owner"]
-        to = None
-        subject = "Your move-in receipt"
-        intro = f"Your rent in advance for {esc(r['property']['title'])} has gone to the owner."
-        rows += [("Owner", esc(o["name"])), ("Owner email", esc(o["email"])), ("Owner phone", esc(o["phone"])), ("Address", esc(r["property"]["address"])), ("Move in", esc(r["tenancy"]["start_date"]))]
         to = _contact(sb, str(row["renter_id"]))["email"]
-        extra = f"<p style=\"font-size:14px;color:#475467;\">{esc(r['bond_note'])}</p>"
+        subject = "Your move-in receipt"
+        body = et.render(
+            "money",
+            eyebrow="Payment received",
+            title="Payment sent to the owner",
+            preheader=f"Security code {code}. Your rent in advance reached the owner.",
+            greeting=None,
+            paragraphs=[f"Your rent in advance for {title_of} went straight to the owner's account."],
+            blocks=[
+                et.details(money_rows, t, title="Payment"),
+                et.details([("Owner", f"{o['name']}{' (ID-checked)' if o.get('id_checked') else ''}"), ("Email", dash(o["email"])), ("Phone", dash(o["phone"])), ("Address", dash(r["property"]["address"])), ("Move in", dash(r["tenancy"]["start_date"]))], t, title="Your home"),
+                et.security_code(code, t),
+            ],
+            cta=("Open the receipt", _hub(f"/tenancies/{row['tenancy_id']}/receipt")),
+            after=[et.tip("The bond", r.get("bond_note") or "The bond is not paid through Migrent.", t)],
+        )
     elif role == "owner":
         rn = r["renter"]
-        subject = "Your renter's payment receipt"
-        intro = f"Your renter's rent in advance for {esc(r['property']['title'])} was paid to your Stripe account."
-        rows += [("Renter", esc(rn["name"])), ("Renter email", esc(rn["email"])), ("Renter phone", esc(rn["phone"])), ("You receive", f"AUD {pay['to_owner']:,.2f}"), ("Move in", esc(r["tenancy"]["start_date"]))]
         fee = r["fee"]
-        if fee["status"] == "charged":
-            rows.append(("Migrent fee", f"AUD {fee['amount']:,.2f} charged to your card"))
-        elif fee["status"] == "failed":
-            rows.append(("Migrent fee", "Not paid yet: update your card in Settings"))
         to = _contact(sb, str(row["owner_id"]))["email"]
-        extra = ""
+        subject = "Your renter's payment receipt"
+        fee_row = [("Migrent fee", f"AUD {fee['amount']:,.2f} charged to your card")] if fee["status"] == "charged" else [("Migrent fee", "Not paid yet: update your card in Settings")] if fee["status"] == "failed" else [("Migrent fee", "None: returning renter")] if fee["status"] == "not_due" else []
+        body = et.render(
+            "money",
+            eyebrow="Payment received",
+            title="Your renter has paid",
+            preheader=f"Security code {code}. Rent in advance is on its way to your account.",
+            paragraphs=[f"Your renter's rent in advance for {title_of} was paid to your Stripe account. You receive the full rent; the renter paid the card fee."],
+            blocks=[
+                et.details(money_rows + [("You receive", f"AUD {pay['to_owner']:,.2f}")] + fee_row, t, title="Payment"),
+                et.details([("Renter", rn["name"]), ("Email", dash(rn["email"])), ("Phone", dash(rn["phone"])), ("Move in", dash(r["tenancy"]["start_date"]))], t, title="Your renter"),
+                et.security_code(code, t),
+            ],
+            cta=("Open the receipt", _hub(f"/tenancies/{row['tenancy_id']}/receipt")),
+            after=[et.tip("The bond", "The bond is not paid through Migrent. Your renter pays it to the state's bond authority.", t)],
+        )
     else:
-        subject = f"Move-in complete: {r['receipt_code']}"
-        intro = "Both sides have confirmed: the owner received the payment and the renter has moved in."
-        rows += [("Renter", f"{esc(r['renter']['name'])} ({esc(r['renter']['email'])})"), ("Owner", f"{esc(r['owner']['name'])} ({esc(r['owner']['email'])})"), ("Owner confirmed", esc((r["owner_confirmed_at"] or "")[:16])), ("Renter confirmed", esc((r["renter_confirmed_at"] or "")[:16])), ("Fee", esc(r["fee"]["status"]))]
         to = os.environ.get("SUPPORT_EMAIL") or os.environ.get("FOUNDER_EMAIL")
-        extra = ""
+        subject = f"Move-in complete: {code}"
+        body = et.render(
+            "money",
+            eyebrow="Admin: move-in complete",
+            title="Both sides confirmed",
+            preheader=f"Move-in {code}: payment received and renter moved in.",
+            paragraphs=["The owner confirmed the payment arrived and the renter confirmed they moved in."],
+            blocks=[
+                et.details(money_rows + [("Migrent fee", dash(r["fee"]["status"]))], t, title="Payment"),
+                et.details([("Renter", f"{r['renter']['name']} ({dash(r['renter']['email'])})"), ("Owner", f"{r['owner']['name']} ({dash(r['owner']['email'])})"), ("Owner confirmed", dash((r["owner_confirmed_at"] or "")[:16])), ("Renter confirmed", dash((r["renter_confirmed_at"] or "")[:16]))], t, title="Both sides"),
+                et.security_code(code, t),
+            ],
+            cta=("Open Move-ins", _hub("/admin/move-ins")),
+        )
     if not to:
         return
-    content = f"""<h1 style="font-size:22px;line-height:30px;margin:0 0 12px;">{esc(subject)}</h1>
-      <p style="font-size:16px;line-height:24px;margin:0;">{intro}</p>
-      {code_html}{_details_box(rows)}{extra}
-      {_button("Open the receipt", _hub(f"/tenancies/{row['tenancy_id']}/receipt" if role != "admin" else "/admin/move-ins"))}"""
-    _send_email(to, subject, _email_layout(content, preview=f"Security code {r['receipt_code']}"), text=f"{subject}. Security code: {r['receipt_code']}.")
+    _send_email(to, subject, body, text=f"{subject}. Security code: {code}.")

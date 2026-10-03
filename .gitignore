@@ -61,3 +61,6 @@ tsconfig.tsbuildinfo
 * 2.css
 * 2.md
 * 2.json
+
+# Email preview pages (backend/scripts/email_previews.py)
+email-previews/

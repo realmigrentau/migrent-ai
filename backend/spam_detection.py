@@ -486,7 +486,7 @@ def apply_spam_result(listing_id: str, result: dict, owner_id: str):
 
 def notify_founder_spam(listing_id: str, result: dict, listing_title: str, owner_name: str):
     """Send email to founder when a listing is flagged or hidden."""
-    from email_bookings import _send_email, _email_layout, _button, _details_box, FRONTEND_URL
+    from email_bookings import _send_email, FRONTEND_URL
 
     import os
     founder_email = os.environ.get("FOUNDER_EMAIL", os.environ.get("SUPPORT_EMAIL", "migrentau@gmail.com"))
@@ -497,47 +497,23 @@ def notify_founder_spam(listing_id: str, result: dict, listing_title: str, owner
     review_url = hub_path(f"/admin/listings?queue={queue}")
     review_url = review_url if review_url.startswith("http") else f"{FRONTEND_URL}{review_url}"
 
+    import email_theme as et
+
     severity = "HIDDEN" if result["action"] == "hide" else "FLAGGED"
     subject = f"[Migrent Moderation] Listing {severity} - {listing_title or 'Untitled'}"
-
-    reasons_html = ""
-    for reason in result["reasons"][:10]:
-        reasons_html += f'<li style="font-size:14px;color:#374151;line-height:22px;margin:4px 0;">{reason}</li>'
-
-    content = f"""
-    <div style="background:{'#fef2f2' if severity == 'HIDDEN' else '#fff7ed'};border-radius:8px;padding:16px;text-align:center;margin:0 0 20px;">
-      <p style="color:{'#dc2626' if severity == 'HIDDEN' else '#ea580c'};font-size:18px;font-weight:700;margin:0;">Listing {severity}</p>
-    </div>
-
-    <h2 style="font-size:22px;font-weight:bold;color:#1a1a1a;margin:0 0 16px;">Spam Detection Alert</h2>
-    <p style="font-size:15px;line-height:24px;color:#374151;margin:0 0 12px;">
-      A listing has been automatically {severity.lower()} by the spam detection system.
-    </p>
-
-    {_details_box([
-        ("Listing", listing_title or "Untitled"),
-        ("Owner", owner_name or "Unknown"),
-        ("Spam Score", f"{result['spam_score']}/100"),
-        ("Action Taken", severity),
-    ])}
-
-    <div style="background:#f3f4f6;border-radius:8px;padding:16px 20px;margin:16px 0;border-left:3px solid #6366f1;">
-      <p style="font-size:14px;font-weight:600;color:#1e40af;margin:0 0 8px;">Detection Reasons:</p>
-      <ul style="margin:0;padding-left:20px;">
-        {reasons_html}
-      </ul>
-    </div>
-
-    <p style="font-size:15px;line-height:24px;color:#374151;margin:16px 0 12px;">
-      Please review this listing and take action. No listing will be deleted without your approval.
-    </p>
-
-    {_button("Review in Migrent Hub", review_url)}
-
-    <p style="font-size:12px;color:#9ca3af;text-align:center;margin:8px 0 0;">
-      This is an automated alert from the Migrent spam detection system.
-    </p>
-    """
+    t = et.THEMES["security"]
+    content = et.render(
+        "security",
+        eyebrow=f"Admin: listing {severity.lower()}",
+        title="The spam check stopped a listing",
+        preheader=f"{listing_title or 'Untitled'} was {severity.lower()} automatically.",
+        paragraphs=[f"A listing was automatically {severity.lower()} by the spam check. Nothing is deleted without your approval."],
+        blocks=[
+            et.details([("Listing", listing_title or "Untitled"), ("Owner", owner_name or "Unknown"), ("Spam score", f"{result['spam_score']}/100"), ("Action taken", severity.title())], t, title="Listing"),
+            et.steps(list(result["reasons"][:10]) or ["No reasons recorded"], t, title="Why it was stopped"),
+        ],
+        cta=("Review in Migrent Hub", review_url),
+    )
 
     text = (
         f"Listing {severity}: {listing_title or 'Untitled'}\n\n"
@@ -549,7 +525,7 @@ def notify_founder_spam(listing_id: str, result: dict, listing_title: str, owner
     )
 
     try:
-        _send_email(founder_email, subject, _email_layout(content, f"Listing {severity}"), text)
+        _send_email(founder_email, subject, content, text)
         logger.info(f"Founder notified about {severity} listing {listing_id}")
     except Exception as e:
         logger.error(f"Failed to notify founder about listing {listing_id}: {e}")

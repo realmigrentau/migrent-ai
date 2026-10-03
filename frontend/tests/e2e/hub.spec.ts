@@ -349,7 +349,7 @@ test.describe("trust and safety", () => {
     await expect(pay).toContainText("bond is not paid through Migrent");
     // The renter sees the rent, the card fee they pay on top, and the total.
     await expect(pay.getByTestId("move-in-quote")).toContainText("Card fee");
-    await expect(pay.getByTestId("move-in-quote")).toContainText("$295.53");
+    await expect(pay.getByTestId("move-in-quote")).toContainText("$590.64");
     await pay.getByRole("button", { name: /^Pay / }).click();
     const green = page.getByTestId("move-in-green-light");
     await expect(green).toContainText("Payment sent to the owner");

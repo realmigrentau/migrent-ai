@@ -1,12 +1,10 @@
 """
-Email notifications for the booking flow.
-
-Uses Mailjet for transactional emails. All functions are fire-and-forget
-- callers should wrap in try/except so email failures never block bookings.
+Migrent's emails: the sender (Gmail relay, Gmail SMTP or Mailjet) and the
+booking, listing, support and welcome emails, drawn with email_theme.py.
+Sending never raises, so a failed email never blocks the action behind it.
 """
 
 import os
-import html
 import logging
 from typing import Optional
 import httpx
@@ -19,10 +17,7 @@ FROM_EMAIL = os.environ.get("FROM_EMAIL", "migrentau@gmail.com")
 FROM_NAME = os.environ.get("FROM_NAME", "Migrent")
 FRONTEND_URL = os.environ.get("FRONTEND_URL", "https://migrent.vercel.app")
 
-# Brand colours: Migrent cobalt on a cool off-white. White on #3153D9 is
-# 5.9:1, so button labels stay readable at 16px.
-BRAND_COLOR = "#3153D9"
-BRAND_BG = "#F6F8FC"
+# Colours and layout live in email_theme.py.
 
 
 def _hub_url(path: str) -> str:
@@ -34,67 +29,11 @@ def _hub_url(path: str) -> str:
 
 
 def _email_layout(content: str, preview: str = "") -> str:
-    """Wrap email content in the standard Migrent HTML layout.
+    """Older hand-written content in the shared design (email_theme.py).
+    Every current email uses email_theme.render directly."""
+    from email_theme import render_raw
 
-    Table-free, single column, 600px max: renders on phone clients and
-    reads in order for screen readers. `preview` becomes the hidden inbox
-    preview line.
-    """
-    import html as _html
-
-    hub = os.environ.get("HUB_BASE_URL", "").rstrip("/") or f"{FRONTEND_URL}/hub"
-    preview_html = (
-        f'<div style="display:none;max-height:0;overflow:hidden;opacity:0;">{_html.escape(preview)}</div>' if preview else ""
-    )
-    return f"""<!DOCTYPE html>
-<html lang="en-AU">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="color-scheme" content="light">
-  <title>Migrent</title>
-</head>
-<body style="margin:0;padding:24px 12px;background-color:{BRAND_BG};font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;color:#101828;">
-  {preview_html}
-  <div role="article" aria-label="Migrent" style="max-width:600px;margin:0 auto;background:#ffffff;border-radius:20px;overflow:hidden;border:1px solid #E4E9F0;">
-    <div style="padding:28px 32px 0;">
-      <a href="{FRONTEND_URL}" style="text-decoration:none;color:#101828;font-size:20px;font-weight:800;letter-spacing:-0.4px;">
-        <span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:#3D63F3;margin-right:8px;vertical-align:middle;"></span>Migrent
-      </a>
-    </div>
-    <div style="padding:20px 32px 32px;">
-      {content}
-    </div>
-    <div style="border-top:1px solid #E4E9F0;padding:20px 32px;">
-      <p style="color:#667085;font-size:13px;line-height:20px;margin:0 0 6px;">Migrent - find, secure and manage a home in Australia.</p>
-      <p style="color:#667085;font-size:13px;line-height:20px;margin:0;">
-        <a href="{hub}" style="color:{BRAND_COLOR};text-decoration:none;">Open Migrent Hub</a> &middot;
-        <a href="{hub}/settings#notifications" style="color:{BRAND_COLOR};text-decoration:none;">Email preferences</a> &middot;
-        <a href="{FRONTEND_URL}/contact" style="color:{BRAND_COLOR};text-decoration:none;">Support</a>
-      </p>
-    </div>
-  </div>
-</body>
-</html>"""
-
-
-def _button(text: str, url: str, color: str = BRAND_COLOR) -> str:
-    return f"""<div style="margin:24px 0;">
-      <a href="{url}" style="background-color:{color};border-radius:12px;color:#ffffff;font-size:16px;font-weight:600;text-decoration:none;padding:14px 28px;display:inline-block;">{text}</a>
-    </div>"""
-
-
-def _details_box(rows: list[tuple[str, str]]) -> str:
-    """Create a details box with label/value pairs."""
-    items = ""
-    for label, value in rows:
-        items += f"""<div style="display:inline-block;width:48%;vertical-align:top;margin-bottom:12px;">
-          <p style="font-size:12px;color:#6b7280;text-transform:uppercase;letter-spacing:0.5px;margin:0 0 4px;">{label}</p>
-          <p style="font-size:15px;font-weight:500;color:#1a1a1a;margin:0;">{value}</p>
-        </div>"""
-    return f"""<div style="background:#f9fafb;border-radius:8px;padding:20px;margin:16px 0;border:1px solid #e5e7eb;">
-      {items}
-    </div>"""
+    return render_raw("account", content, preheader=preview)
 
 
 # Sending through Gmail itself (owner decision, 3 October 2026). Since
@@ -213,23 +152,37 @@ def _send_email(to: str, subject: str, html: str, text: str = "", headers: Optio
         logger.error("Failed to send email to %s: %s", to, e)
 
 
+def _theme():
+    import email_theme
+
+    return email_theme
+
+
+def _first(name: Optional[str]) -> str:
+    return ((name or "").strip().split(" ")[0]) or "there"
+
+
 def send_support_request_received(to: str, name: Optional[str], reference: str, subject: str) -> None:
     """Confirmation to someone who wrote to Migrent support (Contact page or
-    the help button). Sent from FROM_EMAIL like every other Migrent email."""
-    first = (name or "").strip().split(" ")[0] or "there"
-    safe_subject = html.escape(subject or "Your message")
-    content = f"""
-      <h1 style="font-size:22px;margin:0 0 12px;">We have your message</h1>
-      <p style="margin:0 0 12px;">Hi {html.escape(first)}, thanks for writing to Migrent. A person reads every message and replies by email, usually within one business day (weekdays, Australian business hours).</p>
-      {_details_box([("Reference", html.escape(reference)), ("About", safe_subject)])}
-      <p style="margin:0 0 12px;">If you feel unsafe, call 000 first.</p>
-      <p style="margin:0;color:#6b7280;font-size:13px;">You can reply to this email to add anything.</p>
-    """
+    the help button)."""
+    et = _theme()
+    t = et.THEMES["support"]
+    first = _first(name)
+    body = et.render(
+        "support",
+        eyebrow="We've got it",
+        title="We have your message",
+        preheader="A person replies by email, usually within one business day.",
+        greeting=first,
+        paragraphs=["Thanks for writing to Migrent. A real person reads every message and replies by email, usually within one business day (weekdays, Australian business hours)."],
+        blocks=[et.details([("Reference", reference), ("About", subject or "Your message")], t, title="Your message")],
+        after=[et.note("If you feel unsafe", "Call 000 first. Then reply to this email and we'll help.", t), et.tip("Add something?", "Just reply to this email. It goes straight to the same conversation.", t)],
+    )
     text = (
         f"Hi {first}, thanks for writing to Migrent. A person replies by email, usually within one business day.\n"
         f"Reference: {reference}\nAbout: {subject}\nIf you feel unsafe, call 000 first."
     )
-    _send_email(to, f"We have your message ({reference})", _email_layout(content, preview="A person replies by email, usually within one business day."), text)
+    _send_email(to, f"We have your message ({reference})", body, text)
 
 
 def send_booking_request_to_owner(
@@ -243,43 +196,26 @@ def send_booking_request_to_owner(
     total_price: float,
     booking_id: str,
 ):
-    subject = f"New booking request for {listing_title}"
-
-    content = f"""
-    <h2 style="font-size:24px;font-weight:bold;color:#1a1a1a;margin:0 0 16px;">New Booking Request</h2>
-    <p style="font-size:15px;line-height:24px;color:#374151;margin:0 0 12px;">Hi {owner_name},</p>
-    <p style="font-size:15px;line-height:24px;color:#374151;margin:0 0 12px;">
-      <strong>{seeker_name}</strong> wants to book your listing:
-    </p>
-
-    {_details_box([
-        ("Listing", listing_title),
-        ("Guests", str(guests)),
-        ("Check-in", check_in),
-        ("Check-out", check_out),
-        ("Estimated Rent", f"AUD ${total_price:,.2f}"),
-        ("Status", "Awaiting your response"),
-    ])}
-
-    {_button("Review Request", _hub_url("/applications"))}
-
-    <p style="font-size:13px;color:#9ca3af;text-align:center;margin:8px 0 0;">
-      You have 48 hours to respond before the request expires.
-    </p>
-    """
-
-    text = (
-        f"Hi {owner_name},\n\n"
-        f"{seeker_name} has requested to book your listing: {listing_title}\n\n"
-        f"Dates: {check_in} to {check_out}\n"
-        f"Guests: {guests}\n"
-        f"Estimated rent: AUD ${total_price:,.2f}\n\n"
-        f"Review: {_hub_url('/applications')}\n\n"
-        f"You have 48 hours to respond.\n\n"
-        f"- The Migrent Team"
+    et = _theme()
+    t = et.THEMES["stays"]
+    url = _hub_url("/applications")
+    body = et.render(
+        "stays",
+        eyebrow="New stay request",
+        title=f"{_first(seeker_name)} wants to stay",
+        preheader=f"New stay request from {seeker_name} for {listing_title}.",
+        greeting=_first(owner_name),
+        paragraphs=[f"{seeker_name} asked to book {listing_title}. Have a look and accept or decline."],
+        blocks=[et.details([("Home", listing_title), ("Arrive", check_in), ("Leave", check_out), ("Guests", str(guests)), ("Estimated rent", f"AUD ${total_price:,.2f}"), ("Status", "Waiting for you")], t, title="Stay request")],
+        cta=("Review the request", url),
+        after=[et.tip("Respond within 48 hours", "Requests expire after 48 hours. Quick replies help your listing rank higher.", t)],
     )
-
-    _send_email(owner_email, subject, _email_layout(content, f"New booking from {seeker_name}"), text)
+    text = (
+        f"Hi {owner_name},\n\n{seeker_name} has requested to book your listing: {listing_title}\n\n"
+        f"Dates: {check_in} to {check_out}\nGuests: {guests}\nEstimated rent: AUD ${total_price:,.2f}\n\n"
+        f"Review: {url}\n\nYou have 48 hours to respond.\n\n- The Migrent Team"
+    )
+    _send_email(owner_email, f"New booking request for {listing_title}", body, text)
 
 
 def send_booking_accepted_to_seeker(
@@ -288,49 +224,26 @@ def send_booking_accepted_to_seeker(
     listing_title: str,
     booking_id: str,
 ):
-    """Tell the seeker their request was accepted.
-
-    This email used to carry a Stripe link and the line "Service Fees AUD
-    $118.00 / Owner fee: $99 + Seeker fee: $19", which billed the renter for
-    the host's fee. The pricing page promises renters pay nothing, so the
-    renter is no longer charged and no longer receives a payment link. The
-    $99 host fee is invoiced to the host separately.
-    """
-    subject = f"Your booking for {listing_title} was approved!"
-
-    content = f"""
-    <div style="background:#ecfdf5;border-radius:8px;padding:12px;text-align:center;margin:0 0 20px;">
-      <p style="color:#059669;font-size:16px;font-weight:600;margin:0;">Approved</p>
-    </div>
-
-    <h2 style="font-size:24px;font-weight:bold;color:#1a1a1a;margin:0 0 16px;">Your Booking Was Approved!</h2>
-    <p style="font-size:15px;line-height:24px;color:#374151;margin:0 0 12px;">Hi {seeker_name},</p>
-    <p style="font-size:15px;line-height:24px;color:#374151;margin:0 0 12px;">
-      Great news. The host has accepted your booking request for <strong>{listing_title}</strong>.
-    </p>
-
-    {_details_box([
-        ("What you pay Migrent", "AUD $0.00"),
-        ("Next step", "The host is confirming now. We will email you the moment it is locked in."),
-    ])}
-
-    <p style="font-size:14px;line-height:22px;color:#374151;margin:16px 0 0;">
-      Rent and bond are arranged directly between you and your host. Migrent
-      does not collect either, so never send money to anyone claiming to be us.
-    </p>
-    """
-
-    text = (
-        f"Hi {seeker_name},\n\n"
-        f"Great news. The host has accepted your booking request for: {listing_title}\n\n"
-        f"What you pay Migrent: $0.00\n"
-        f"The host is confirming now. We will email you the moment it is locked in.\n\n"
-        f"Rent and bond are arranged directly between you and your host. Migrent\n"
-        f"does not collect either, so never send money to anyone claiming to be us.\n\n"
-        f"- The Migrent Team"
+    """Tell the guest their request was accepted. Renters pay Migrent
+    nothing, so there is no payment link here (the host fee is the host's)."""
+    et = _theme()
+    t = et.THEMES["stays"]
+    body = et.render(
+        "stays",
+        eyebrow="Accepted",
+        title="Your stay was accepted",
+        preheader=f"The host accepted your request for {listing_title}.",
+        greeting=_first(seeker_name),
+        paragraphs=[f"Great news: the host accepted your request for {listing_title}. They're confirming it now, and we'll email you the moment it's locked in."],
+        blocks=[et.details([("Home", listing_title), ("What you pay Migrent", "AUD $0.00"), ("Next step", "The host confirms")], t)],
+        cta=("View your requests", _hub_url("/applications")),
+        after=[et.note("How to pay the host", "Rent is arranged directly with your host. Pay by bank transfer to an account in their name, after you've seen the place. Never by gift card, crypto or cash in advance.", t)],
     )
-
-    _send_email(seeker_email, subject, _email_layout(content, f"Booking approved for {listing_title}"), text)
+    text = (
+        f"Hi {seeker_name},\n\nGreat news. The host has accepted your booking request for: {listing_title}\n\n"
+        "What you pay Migrent: $0.00\nThe host is confirming now. We will email you the moment it is locked in.\n\n- The Migrent Team"
+    )
+    _send_email(seeker_email, f"Your booking for {listing_title} was approved!", body, text)
 
 
 def send_owner_fee_request(
@@ -342,38 +255,24 @@ def send_owner_fee_request(
     booking_id: str,
 ):
     """Invoice the host their one-off listing fee to confirm a booking."""
-    subject = f"Confirm your booking with {seeker_name}"
-
-    content = f"""
-    <h2 style="font-size:24px;font-weight:bold;color:#1a1a1a;margin:0 0 16px;">One step left</h2>
-    <p style="font-size:15px;line-height:24px;color:#374151;margin:0 0 12px;">Hi {owner_name},</p>
-    <p style="font-size:15px;line-height:24px;color:#374151;margin:0 0 12px;">
-      Your booking with <strong>{seeker_name}</strong> for <strong>{listing_title}</strong>
-      is held and ready. Pay your one-off listing fee to confirm it.
-    </p>
-
-    {_details_box([
-        ("Host listing fee", "AUD $99.00"),
-        ("When", "One time, per property, only when you match with a tenant"),
-        ("Commission on rent", "None"),
-    ])}
-
-    {_button("Pay $99 and confirm", checkout_url, "#059669")}
-
-    <p style="font-size:13px;color:#9ca3af;text-align:center;margin:8px 0 0;">
-      Secure payment powered by Stripe.
-    </p>
-    """
-
-    text = (
-        f"Hi {owner_name},\n\n"
-        f"Your booking with {seeker_name} for {listing_title} is held and ready.\n"
-        f"Pay your one-off $99 host listing fee to confirm it: {checkout_url}\n\n"
-        f"No commission on rent. One fee, per property, only when you match.\n\n"
-        f"- The Migrent Team"
+    et = _theme()
+    t = et.THEMES["money"]
+    body = et.render(
+        "money",
+        eyebrow="One step left",
+        title="Confirm your booking",
+        preheader=f"Pay the one-off $99 fee to confirm {seeker_name}'s stay.",
+        greeting=_first(owner_name),
+        paragraphs=[f"Your booking with {seeker_name} for {listing_title} is held and ready. Pay your one-off listing fee to confirm it."],
+        blocks=[et.details([("Host listing fee", "AUD $99.00"), ("When", "Once per property, only when you match"), ("Commission on rent", "None")], t, title="Fee")],
+        cta=("Pay $99 and confirm", checkout_url),
+        after=[et.tip("Secure payment", "Payments are handled by Stripe. Migrent never sees your card number.", t)],
     )
-
-    _send_email(owner_email, subject, _email_layout(content, f"Confirm your booking with {seeker_name}"), text)
+    text = (
+        f"Hi {owner_name},\n\nYour booking with {seeker_name} for {listing_title} is held and ready.\n"
+        f"Pay your one-off $99 host listing fee to confirm it: {checkout_url}\n\n- The Migrent Team"
+    )
+    _send_email(owner_email, f"Confirm your booking with {seeker_name}", body, text)
 
 
 def send_booking_declined_to_seeker(
@@ -381,37 +280,20 @@ def send_booking_declined_to_seeker(
     seeker_name: str,
     listing_title: str,
 ):
-    subject = f"Update on your booking request for {listing_title}"
-
-    content = f"""
-    <h2 style="font-size:24px;font-weight:bold;color:#1a1a1a;margin:0 0 16px;">Booking Update</h2>
-    <p style="font-size:15px;line-height:24px;color:#374151;margin:0 0 12px;">Hi {seeker_name},</p>
-    <p style="font-size:15px;line-height:24px;color:#374151;margin:0 0 12px;">
-      Unfortunately, the owner has declined your booking request for <strong>{listing_title}</strong>.
-    </p>
-    <p style="font-size:15px;line-height:24px;color:#374151;margin:0 0 12px;">
-      Don't worry - there are plenty of other great listings on Migrent!
-    </p>
-
-    {_button("Browse More Listings", f"{FRONTEND_URL}/seeker/search")}
-
-    <div style="background:#eff6ff;border-radius:8px;padding:16px 20px;margin:16px 0;border-left:3px solid #3b82f6;">
-      <p style="font-size:14px;font-weight:600;color:#1e40af;margin:0 0 8px;">Tips for getting accepted:</p>
-      <p style="font-size:13px;color:#1e40af;margin:0 0 4px;line-height:20px;">- Write a friendly introduction about yourself</p>
-      <p style="font-size:13px;color:#1e40af;margin:0 0 4px;line-height:20px;">- Mention your occupation or study plans</p>
-      <p style="font-size:13px;color:#1e40af;margin:0 0 4px;line-height:20px;">- Be clear about your move-in timeline</p>
-      <p style="font-size:13px;color:#1e40af;margin:0;line-height:20px;">- Complete your profile verification</p>
-    </div>
-    """
-
-    text = (
-        f"Hi {seeker_name},\n\n"
-        f"Unfortunately, the owner has declined your booking request for: {listing_title}\n\n"
-        f"Browse more listings: {FRONTEND_URL}/seeker/search\n\n"
-        f"- The Migrent Team"
+    et = _theme()
+    t = et.THEMES["searches"]
+    body = et.render(
+        "searches",
+        eyebrow="Booking update",
+        title="This one didn't work out",
+        preheader=f"The host couldn't take your request for {listing_title}. Here are your next steps.",
+        greeting=_first(seeker_name),
+        paragraphs=[f"The host couldn't accept your request for {listing_title}. Don't be discouraged: new rooms are listed every day."],
+        cta=("Find another room", f"{FRONTEND_URL}/seeker/search"),
+        after=[et.steps(["Write a friendly hello about who you are", "Mention your work or study plans", "Be clear about when you'd move in", "Finish your rental profile"], t, title="Tips for your next request")],
     )
-
-    _send_email(seeker_email, subject, _email_layout(content), text)
+    text = f"Hi {seeker_name},\n\nThe owner has declined your booking request for: {listing_title}\n\nBrowse more listings: {FRONTEND_URL}/seeker/search\n\n- The Migrent Team"
+    _send_email(seeker_email, f"Update on your booking request for {listing_title}", body, text)
 
 
 def send_booking_confirmed_to_both(
@@ -424,85 +306,33 @@ def send_booking_confirmed_to_both(
     check_out: str,
     booking_id: str,
 ):
-    # Email to owner
-    owner_content = f"""
-    <div style="background:#ecfdf5;border-radius:8px;padding:16px;text-align:center;margin:0 0 20px;">
-      <p style="color:#059669;font-size:18px;font-weight:700;margin:0;">Booking Confirmed!</p>
-    </div>
-
-    <h2 style="font-size:24px;font-weight:bold;color:#1a1a1a;margin:0 0 16px;">Your Room is Booked!</h2>
-    <p style="font-size:15px;line-height:24px;color:#374151;margin:0 0 12px;">Hi {owner_name},</p>
-    <p style="font-size:15px;line-height:24px;color:#374151;margin:0 0 12px;">
-      Payment is complete! The booking for <strong>{listing_title}</strong> is now confirmed.
-    </p>
-
-    {_details_box([
-        ("Guest", seeker_name),
-        ("Status", "Confirmed"),
-        ("Check-in", check_in),
-        ("Check-out", check_out),
-    ])}
-
-    <div style="background:#fef3c7;border-radius:8px;padding:16px 20px;margin:16px 0;border-left:3px solid #f59e0b;">
-      <p style="font-size:14px;font-weight:600;color:#92400e;margin:0 0 8px;">Next Steps:</p>
-      <p style="font-size:13px;color:#92400e;margin:0 0 4px;line-height:20px;">1. Message {seeker_name} to share move-in instructions</p>
-      <p style="font-size:13px;color:#92400e;margin:0 0 4px;line-height:20px;">2. Prepare the room for your guest's arrival</p>
-      <p style="font-size:13px;color:#92400e;margin:0;line-height:20px;">3. Be available on check-in day for handover</p>
-    </div>
-
-    {_button("Go to Dashboard", _hub_url("/applications"))}
-    """
-
-    owner_text = (
-        f"Hi {owner_name},\n\n"
-        f"Payment is complete! The booking for {listing_title} is now confirmed.\n\n"
-        f"Guest: {seeker_name}\n"
-        f"Dates: {check_in} to {check_out}\n\n"
-        f"Dashboard: {_hub_url('/applications')}\n\n"
-        f"- The Migrent Team"
+    et = _theme()
+    t = et.THEMES["stays"]
+    url = _hub_url("/applications")
+    owner_body = et.render(
+        "stays",
+        eyebrow="Confirmed",
+        title="Your room is booked",
+        preheader=f"{seeker_name}'s stay at {listing_title} is confirmed.",
+        greeting=_first(owner_name),
+        paragraphs=[f"The booking for {listing_title} is confirmed."],
+        blocks=[et.details([("Guest", seeker_name), ("Arrive", check_in), ("Leave", check_out), ("Status", "Confirmed")], t, title="Booking")],
+        cta=("Open the booking", url),
+        after=[et.steps([f"Message {_first(seeker_name)} with check-in details", "Get the room ready", "Be around on arrival day for the handover"], t, title="Next steps")],
     )
-
-    _send_email(owner_email, f"Booking confirmed - {listing_title}", _email_layout(owner_content), owner_text)
-
-    # Email to seeker
-    seeker_content = f"""
-    <div style="background:#ecfdf5;border-radius:8px;padding:16px;text-align:center;margin:0 0 20px;">
-      <p style="color:#059669;font-size:18px;font-weight:700;margin:0;">Booking Confirmed!</p>
-    </div>
-
-    <h2 style="font-size:24px;font-weight:bold;color:#1a1a1a;margin:0 0 16px;">Welcome to Your New Home!</h2>
-    <p style="font-size:15px;line-height:24px;color:#374151;margin:0 0 12px;">Hi {seeker_name},</p>
-    <p style="font-size:15px;line-height:24px;color:#374151;margin:0 0 12px;">
-      Your booking for <strong>{listing_title}</strong> is confirmed!
-    </p>
-
-    {_details_box([
-        ("Host", owner_name),
-        ("Status", "Confirmed"),
-        ("Check-in", check_in),
-        ("Check-out", check_out),
-    ])}
-
-    <div style="background:#fef3c7;border-radius:8px;padding:16px 20px;margin:16px 0;border-left:3px solid #f59e0b;">
-      <p style="font-size:14px;font-weight:600;color:#92400e;margin:0 0 8px;">Next Steps:</p>
-      <p style="font-size:13px;color:#92400e;margin:0 0 4px;line-height:20px;">1. Message {owner_name} to coordinate move-in details</p>
-      <p style="font-size:13px;color:#92400e;margin:0 0 4px;line-height:20px;">2. Prepare your documents (ID, visa if applicable)</p>
-      <p style="font-size:13px;color:#92400e;margin:0;line-height:20px;">3. Arrive on your check-in date</p>
-    </div>
-
-    {_button("Go to Dashboard", _hub_url("/applications"))}
-    """
-
-    seeker_text = (
-        f"Hi {seeker_name},\n\n"
-        f"Your booking for {listing_title} is confirmed!\n\n"
-        f"Check-in: {check_in}\nCheck-out: {check_out}\n\n"
-        f"Dashboard: {_hub_url('/applications')}\n\n"
-        f"Welcome to your new home!\n\n"
-        f"- The Migrent Team"
+    _send_email(owner_email, f"Booking confirmed - {listing_title}", owner_body, f"Hi {owner_name},\n\nThe booking for {listing_title} is confirmed.\nGuest: {seeker_name}\nDates: {check_in} to {check_out}\n\n{url}\n\n- The Migrent Team")
+    seeker_body = et.render(
+        "stays",
+        eyebrow="Confirmed",
+        title="Your stay is confirmed",
+        preheader=f"Your stay at {listing_title} is locked in.",
+        greeting=_first(seeker_name),
+        paragraphs=[f"Your booking for {listing_title} is confirmed. Welcome!"],
+        blocks=[et.details([("Host", owner_name), ("Arrive", check_in), ("Leave", check_out), ("Status", "Confirmed")], t, title="Booking")],
+        cta=("Open the booking", url),
+        after=[et.steps([f"Message {_first(owner_name)} about check-in", "Have your ID ready", "Arrive on your check-in date"], t, title="Next steps")],
     )
-
-    _send_email(seeker_email, f"Booking confirmed - {listing_title}", _email_layout(seeker_content), seeker_text)
+    _send_email(seeker_email, f"Booking confirmed - {listing_title}", seeker_body, f"Hi {seeker_name},\n\nYour booking for {listing_title} is confirmed!\nCheck-in: {check_in}\nCheck-out: {check_out}\n\n{url}\n\n- The Migrent Team")
 
 
 def send_listing_approved_to_owner(
@@ -511,40 +341,22 @@ def send_listing_approved_to_owner(
     listing_title: str,
 ):
     """Notify owner their listing has been approved and is now live."""
-    subject = f"Your listing '{listing_title}' is now live!"
-
-    content = f"""
-    <div style="background:#ecfdf5;border-radius:8px;padding:16px;text-align:center;margin:0 0 20px;">
-      <p style="color:#059669;font-size:18px;font-weight:700;margin:0;">Listing Approved</p>
-    </div>
-
-    <h2 style="font-size:24px;font-weight:bold;color:#1a1a1a;margin:0 0 16px;">Your Listing is Live!</h2>
-    <p style="font-size:15px;line-height:24px;color:#374151;margin:0 0 12px;">Hi {owner_name},</p>
-    <p style="font-size:15px;line-height:24px;color:#374151;margin:0 0 12px;">
-      Great news! Your listing <strong>{listing_title}</strong> has been reviewed and approved by our team.
-      It is now visible to seekers on Migrent.
-    </p>
-
-    {_details_box([
-        ("Listing", listing_title),
-        ("Status", "Live"),
-    ])}
-
-    {_button("View Your Listing", _hub_url("/properties"))}
-
-    <p style="font-size:13px;color:#9ca3af;text-align:center;margin:8px 0 0;">
-      Seekers can now find and book your room.
-    </p>
-    """
-
-    text = (
-        f"Hi {owner_name},\n\n"
-        f"Your listing '{listing_title}' has been approved and is now live on Migrent!\n\n"
-        f"View your listings: {_hub_url('/properties')}\n\n"
-        f"- The Migrent Team"
+    et = _theme()
+    t = et.THEMES["listings"]
+    url = _hub_url("/properties")
+    body = et.render(
+        "listings",
+        eyebrow="Approved",
+        title="Your listing is live",
+        preheader=f"{listing_title} is now visible to renters.",
+        greeting=_first(owner_name),
+        paragraphs=[f"Good news: Migrent checked {listing_title} and it's now visible to renters across Australia."],
+        blocks=[et.details([("Listing", listing_title), ("Status", "Live")], t)],
+        cta=("View your listings", url),
+        after=[et.tip("Get more applications", "Listings with 6 or more photos and a clear move-in cost get the most enquiries.", t)],
     )
-
-    _send_email(owner_email, subject, _email_layout(content, f"Listing approved: {listing_title}"), text)
+    text = f"Hi {owner_name},\n\nYour listing '{listing_title}' has been approved and is now live on Migrent!\n\nView your listings: {url}\n\n- The Migrent Team"
+    _send_email(owner_email, f"Your listing '{listing_title}' is now live!", body, text)
 
 
 def send_listing_rejected_to_owner(
@@ -554,44 +366,22 @@ def send_listing_rejected_to_owner(
     reason: str,
 ):
     """Notify owner their listing was rejected with a reason."""
-    subject = f"Update on your listing '{listing_title}'"
-
-    content = f"""
-    <div style="background:#fef2f2;border-radius:8px;padding:16px;text-align:center;margin:0 0 20px;">
-      <p style="color:#dc2626;font-size:18px;font-weight:700;margin:0;">Listing Not Approved</p>
-    </div>
-
-    <h2 style="font-size:24px;font-weight:bold;color:#1a1a1a;margin:0 0 16px;">Listing Update</h2>
-    <p style="font-size:15px;line-height:24px;color:#374151;margin:0 0 12px;">Hi {owner_name},</p>
-    <p style="font-size:15px;line-height:24px;color:#374151;margin:0 0 12px;">
-      Unfortunately, your listing <strong>{listing_title}</strong> was not approved.
-    </p>
-
-    <div style="background:#fef3c7;border-radius:8px;padding:16px 20px;margin:16px 0;border-left:3px solid #f59e0b;">
-      <p style="font-size:14px;font-weight:600;color:#92400e;margin:0 0 8px;">Reason:</p>
-      <p style="font-size:14px;color:#92400e;margin:0;line-height:22px;">{reason}</p>
-    </div>
-
-    <p style="font-size:15px;line-height:24px;color:#374151;margin:16px 0 12px;">
-      You can update your listing and resubmit it for review.
-    </p>
-
-    {_button("Edit Your Listing", _hub_url("/properties"))}
-
-    <p style="font-size:13px;color:#9ca3af;text-align:center;margin:8px 0 0;">
-      Need help? Contact our support team.
-    </p>
-    """
-
-    text = (
-        f"Hi {owner_name},\n\n"
-        f"Your listing '{listing_title}' was not approved.\n\n"
-        f"Reason: {reason}\n\n"
-        f"You can edit and resubmit: {_hub_url('/properties')}\n\n"
-        f"- The Migrent Team"
+    et = _theme()
+    t = et.THEMES["listings"]
+    url = _hub_url("/properties")
+    body = et.render(
+        "listings",
+        eyebrow="Not approved",
+        title="Your listing wasn't approved",
+        preheader=f"{listing_title} needs fixing before it can go live.",
+        greeting=_first(owner_name),
+        paragraphs=[f"Migrent couldn't approve {listing_title} this time."],
+        blocks=[et.note("Why", reason, t)],
+        cta=("Edit your listing", url),
+        after=[et.tip("What now?", "Fix the listing and send it for review again. Need help? Reply to this email.", t)],
     )
-
-    _send_email(owner_email, subject, _email_layout(content), text)
+    text = f"Hi {owner_name},\n\nYour listing '{listing_title}' was not approved.\n\nReason: {reason}\n\nYou can edit and resubmit: {url}\n\n- The Migrent Team"
+    _send_email(owner_email, f"Update on your listing '{listing_title}'", body, text)
 
 
 def send_listing_changes_requested_to_owner(
@@ -601,40 +391,22 @@ def send_listing_changes_requested_to_owner(
     changes_needed: str,
 ):
     """Notify owner that changes are needed before their listing can go live."""
-    subject = f"Changes needed for your listing '{listing_title}'"
-
-    content = f"""
-    <div style="background:#fff7ed;border-radius:8px;padding:16px;text-align:center;margin:0 0 20px;">
-      <p style="color:#ea580c;font-size:18px;font-weight:700;margin:0;">Changes Requested</p>
-    </div>
-
-    <h2 style="font-size:24px;font-weight:bold;color:#1a1a1a;margin:0 0 16px;">Almost There!</h2>
-    <p style="font-size:15px;line-height:24px;color:#374151;margin:0 0 12px;">Hi {owner_name},</p>
-    <p style="font-size:15px;line-height:24px;color:#374151;margin:0 0 12px;">
-      Your listing <strong>{listing_title}</strong> needs a few changes before it can go live.
-    </p>
-
-    <div style="background:#eff6ff;border-radius:8px;padding:16px 20px;margin:16px 0;border-left:3px solid #3b82f6;">
-      <p style="font-size:14px;font-weight:600;color:#1e40af;margin:0 0 8px;">What to update:</p>
-      <p style="font-size:14px;color:#1e40af;margin:0;line-height:22px;">{changes_needed}</p>
-    </div>
-
-    <p style="font-size:15px;line-height:24px;color:#374151;margin:16px 0 12px;">
-      Once you make the changes, your listing will be re-reviewed quickly.
-    </p>
-
-    {_button("Edit Your Listing", _hub_url("/properties"))}
-    """
-
-    text = (
-        f"Hi {owner_name},\n\n"
-        f"Your listing '{listing_title}' needs some changes before going live.\n\n"
-        f"Changes needed: {changes_needed}\n\n"
-        f"Edit your listing: {_hub_url('/properties')}\n\n"
-        f"- The Migrent Team"
+    et = _theme()
+    t = et.THEMES["listings"]
+    url = _hub_url("/properties")
+    body = et.render(
+        "listings",
+        eyebrow="Almost there",
+        title="A few changes and you're live",
+        preheader=f"{listing_title} needs a few changes.",
+        greeting=_first(owner_name),
+        paragraphs=[f"{listing_title} needs a few changes before it can go live."],
+        blocks=[et.note("What to update", changes_needed, t)],
+        cta=("Edit your listing", url),
+        after=[et.tip("Quick re-review", "Once you save the changes, a person on our team checks it again quickly.", t)],
     )
-
-    _send_email(owner_email, subject, _email_layout(content, f"Changes needed: {listing_title}"), text)
+    text = f"Hi {owner_name},\n\nYour listing '{listing_title}' needs some changes before going live.\n\nChanges needed: {changes_needed}\n\nEdit your listing: {url}\n\n- The Migrent Team"
+    _send_email(owner_email, f"Changes needed for your listing '{listing_title}'", body, text)
 
 
 def send_listing_under_review_to_owner(
@@ -643,43 +415,21 @@ def send_listing_under_review_to_owner(
     listing_title: str,
 ):
     """Notify owner their listing is under additional review (flagged by spam detection)."""
-    subject = f"Your listing '{listing_title}' is under review"
-
-    content = f"""
-    <div style="background:#fff7ed;border-radius:8px;padding:16px;text-align:center;margin:0 0 20px;">
-      <p style="color:#ea580c;font-size:18px;font-weight:700;margin:0;">Under Review</p>
-    </div>
-
-    <h2 style="font-size:24px;font-weight:bold;color:#1a1a1a;margin:0 0 16px;">Listing Under Review</h2>
-    <p style="font-size:15px;line-height:24px;color:#374151;margin:0 0 12px;">Hi {owner_name},</p>
-    <p style="font-size:15px;line-height:24px;color:#374151;margin:0 0 12px;">
-      Your listing <strong>{listing_title}</strong> is currently under additional review by our team.
-      This is a routine part of our quality and safety process - it does not mean there is a problem.
-    </p>
-
-    <div style="background:#eff6ff;border-radius:8px;padding:16px 20px;margin:16px 0;border-left:3px solid #3b82f6;">
-      <p style="font-size:14px;font-weight:600;color:#1e40af;margin:0 0 8px;">What happens next?</p>
-      <p style="font-size:13px;color:#1e40af;margin:0 0 4px;line-height:20px;">- Our team will review your listing shortly</p>
-      <p style="font-size:13px;color:#1e40af;margin:0 0 4px;line-height:20px;">- You will receive an email once the review is complete</p>
-      <p style="font-size:13px;color:#1e40af;margin:0;line-height:20px;">- If changes are needed, we will let you know exactly what to update</p>
-    </div>
-
-    {_button("View Your Listings", _hub_url("/properties"))}
-
-    <p style="font-size:13px;color:#9ca3af;text-align:center;margin:8px 0 0;">
-      If you have questions, please contact our support team.
-    </p>
-    """
-
-    text = (
-        f"Hi {owner_name},\n\n"
-        f"Your listing '{listing_title}' is currently under additional review.\n"
-        f"This is routine - our team will review it shortly.\n\n"
-        f"View your listings: {_hub_url('/properties')}\n\n"
-        f"- The Migrent Team"
+    et = _theme()
+    t = et.THEMES["listings"]
+    url = _hub_url("/properties")
+    body = et.render(
+        "listings",
+        eyebrow="In review",
+        title="We're checking your listing",
+        preheader=f"{listing_title} is in review. This is routine.",
+        greeting=_first(owner_name),
+        paragraphs=[f"{listing_title} is having an extra check by our team. It's a routine part of keeping Migrent safe, and doesn't mean anything is wrong."],
+        blocks=[et.steps(["A person on our team reviews it shortly", "You get an email when it's done", "If anything needs changing, we tell you exactly what"], t, title="What happens next")],
+        cta=("View your listings", url),
     )
-
-    _send_email(owner_email, subject, _email_layout(content, f"Listing under review: {listing_title}"), text)
+    text = f"Hi {owner_name},\n\nYour listing '{listing_title}' is currently under additional review.\nThis is routine - our team will review it shortly.\n\nView your listings: {url}\n\n- The Migrent Team"
+    _send_email(owner_email, f"Your listing '{listing_title}' is under review", body, text)
 
 
 def send_listing_removed_to_owner(
@@ -688,45 +438,22 @@ def send_listing_removed_to_owner(
     listing_title: str,
     reason: str,
 ):
-    """Notify owner their listing has been removed after founder review."""
-    subject = f"Your listing '{listing_title}' has been removed"
-
-    content = f"""
-    <div style="background:#fef2f2;border-radius:8px;padding:16px;text-align:center;margin:0 0 20px;">
-      <p style="color:#dc2626;font-size:18px;font-weight:700;margin:0;">Listing Removed</p>
-    </div>
-
-    <h2 style="font-size:24px;font-weight:bold;color:#1a1a1a;margin:0 0 16px;">Listing Update</h2>
-    <p style="font-size:15px;line-height:24px;color:#374151;margin:0 0 12px;">Hi {owner_name},</p>
-    <p style="font-size:15px;line-height:24px;color:#374151;margin:0 0 12px;">
-      After review, your listing <strong>{listing_title}</strong> has been removed from Migrent.
-    </p>
-
-    <div style="background:#fef3c7;border-radius:8px;padding:16px 20px;margin:16px 0;border-left:3px solid #f59e0b;">
-      <p style="font-size:14px;font-weight:600;color:#92400e;margin:0 0 8px;">Reason:</p>
-      <p style="font-size:14px;color:#92400e;margin:0;line-height:22px;">{reason}</p>
-    </div>
-
-    <p style="font-size:15px;line-height:24px;color:#374151;margin:16px 0 12px;">
-      If you believe this was a mistake, please contact our support team and we will be happy to review.
-    </p>
-
-    {_button("Contact Support", f"{FRONTEND_URL}/contact")}
-
-    <p style="font-size:13px;color:#9ca3af;text-align:center;margin:8px 0 0;">
-      All moderation decisions are reviewed by a real person on our team.
-    </p>
-    """
-
-    text = (
-        f"Hi {owner_name},\n\n"
-        f"Your listing '{listing_title}' has been removed.\n\n"
-        f"Reason: {reason}\n\n"
-        f"If you believe this was a mistake, contact support: {FRONTEND_URL}/contact\n\n"
-        f"- The Migrent Team"
+    """Notify owner their listing has been removed after review."""
+    et = _theme()
+    t = et.THEMES["security"]
+    body = et.render(
+        "security",
+        eyebrow="Listing removed",
+        title="Your listing was removed",
+        preheader=f"{listing_title} has been removed from Migrent.",
+        greeting=_first(owner_name),
+        paragraphs=[f"After review, {listing_title} has been removed from Migrent."],
+        blocks=[et.note("Why", reason, t)],
+        cta=("Contact support", f"{FRONTEND_URL}/contact"),
+        after=[et.tip("Think this is a mistake?", "Contact us and a real person on our team will look at it again.", t)],
     )
-
-    _send_email(owner_email, subject, _email_layout(content), text)
+    text = f"Hi {owner_name},\n\nYour listing '{listing_title}' has been removed.\n\nReason: {reason}\n\nIf you believe this was a mistake, contact support: {FRONTEND_URL}/contact\n\n- The Migrent Team"
+    _send_email(owner_email, f"Your listing '{listing_title}' has been removed", body, text)
 
 
 def send_listing_expiring_to_owner(
@@ -737,33 +464,23 @@ def send_listing_expiring_to_owner(
     listing_id: str,
 ):
     """Seven days before a listing's availability ends, ask the owner to
-    extend it or let it lapse. Without this, rooms silently vanished from
-    search and owners assumed the site had stopped working."""
-    subject = f"Your listing '{listing_title}' comes off Migrent on {available_to}"
+    extend it or let it lapse."""
+    et = _theme()
+    t = et.THEMES["listings"]
     renew_url = _hub_url(f"/listings/{listing_id}/edit")
-
-    content = f"""
-    <h2 style="font-size:24px;font-weight:bold;color:#1a1a1a;margin:0 0 16px;">Still available?</h2>
-    <p style="font-size:15px;line-height:24px;color:#374151;margin:0 0 12px;">Hi {owner_name},</p>
-    <p style="font-size:15px;line-height:24px;color:#374151;margin:0 0 12px;">
-      You set <strong>{listing_title}</strong> as available until <strong>{available_to}</strong>.
-      After that date it will stop appearing in search and its page will say the room is no longer available.
-    </p>
-    <p style="font-size:15px;line-height:24px;color:#374151;margin:0 0 12px;">
-      If the room is still free, extend the dates and it stays live. If it has been taken, you do not need to do anything.
-    </p>
-    {_button("Update availability", renew_url)}
-    """
-
-    text = (
-        f"Hi {owner_name},\n\n"
-        f"Your listing '{listing_title}' is set as available until {available_to}. "
-        f"After that it will come off search.\n\n"
-        f"Extend the dates here if it is still free: {renew_url}\n\n"
-        f"- The Migrent Team"
+    body = et.render(
+        "listings",
+        eyebrow="Ending soon",
+        title="Is your room still free?",
+        preheader=f"{listing_title} comes off Migrent on {available_to}.",
+        greeting=_first(owner_name),
+        paragraphs=[f"{listing_title} is set as available until {available_to}. After that it stops appearing in search."],
+        blocks=[et.details([("Listing", listing_title), ("Comes off search", available_to)], t)],
+        cta=("Update availability", renew_url),
+        after=[et.tip("Already taken?", "You don't need to do anything. It comes off search by itself.", t)],
     )
-
-    _send_email(owner_email, subject, _email_layout(content, f"{listing_title} expires {available_to}"), text)
+    text = f"Hi {owner_name},\n\nYour listing '{listing_title}' is set as available until {available_to}. After that it will come off search.\n\nExtend the dates here if it is still free: {renew_url}\n\n- The Migrent Team"
+    _send_email(owner_email, f"Your listing '{listing_title}' comes off Migrent on {available_to}", body, text)
 
 
 def send_listing_paused_to_owner(
@@ -775,48 +492,51 @@ def send_listing_paused_to_owner(
     listing_id: str,
 ):
     """An admin has taken a listing offline and needs specific things fixed."""
-    subject = f"Action needed: '{listing_title}' is paused on Migrent"
+    et = _theme()
+    t = et.THEMES["security"]
     edit_url = _hub_url(f"/listings/{listing_id}/edit")
-    items = "".join(f"<li style='margin:0 0 6px;'>{a}</li>" for a in required_actions)
-
-    content = f"""
-    <h2 style="font-size:24px;font-weight:bold;color:#1a1a1a;margin:0 0 16px;">Your listing is paused</h2>
-    <p style="font-size:15px;line-height:24px;color:#374151;margin:0 0 12px;">Hi {owner_name},</p>
-    <p style="font-size:15px;line-height:24px;color:#374151;margin:0 0 12px;">
-      We have taken <strong>{listing_title}</strong> offline while the following is sorted out. Nobody can see or book it in the meantime.
-    </p>
-    <div style="background:#fef3c7;border-radius:8px;padding:16px 20px;margin:16px 0;border-left:3px solid #f59e0b;">
-      <p style="font-size:14px;font-weight:600;color:#92400e;margin:0 0 8px;">Why:</p>
-      <p style="font-size:14px;color:#92400e;margin:0;line-height:22px;">{reason}</p>
-    </div>
-    <p style="font-size:15px;line-height:24px;color:#374151;margin:16px 0 8px;">To bring it back:</p>
-    <ul style="font-size:14px;line-height:22px;color:#374151;margin:0 0 16px;padding-left:20px;">{items}</ul>
-    {_button("Update the listing", edit_url)}
-    <p style="font-size:13px;color:#9ca3af;text-align:center;margin:8px 0 0;">
-      Once you resubmit, a person on our team reviews it, usually within two business days.
-    </p>
-    """
+    body = et.render(
+        "security",
+        eyebrow="Action needed",
+        title="Your listing is paused",
+        preheader=f"{listing_title} is offline until a few things are fixed.",
+        greeting=_first(owner_name),
+        paragraphs=[f"We've taken {listing_title} offline while the following is sorted out. Nobody can see or book it in the meantime."],
+        blocks=[et.note("Why", reason, t), et.steps(required_actions or ["Update the listing"], t, title="To bring it back")],
+        cta=("Update the listing", edit_url),
+        after=[et.tip("What happens next", "Once you resubmit, a person on our team reviews it, usually within two business days.", t)],
+    )
     text = (
         f"Hi {owner_name},\n\nWe have paused your listing '{listing_title}'.\n\nWhy: {reason}\n\n"
         + "To bring it back:\n" + "\n".join(f"- {a}" for a in required_actions)
         + f"\n\nUpdate it here: {edit_url}\n\n- The Migrent Team"
     )
-    _send_email(owner_email, subject, _email_layout(content, f"{listing_title} is paused"), text)
+    _send_email(owner_email, f"Action needed: '{listing_title}' is paused on Migrent", body, text)
 
 
 def send_welcome(to: str, name: str, role: str) -> None:
-    """Sent once, when someone first finishes onboarding in the Hub
-    (MIGRENT_MASTER_AUDIT MIG-056; the old site sent it from a sign-in page
-    the Hub does not use)."""
-    first = html.escape((name or "").split(" ")[0] or "there")
+    """Sent once, when someone first finishes onboarding in the Hub."""
+    et = _theme()
+    t = et.THEMES["account"]
+    first = _first(name)
     if role == "owner":
-        lead = "Your next steps: check your ID once, then list your property. Renters see that hosts are ID-checked before a room goes live."
-        cta = _button("List a property", _hub_url("/properties/new"))
+        lead = "Your account is ready. Renters see that every host is ID-checked before a room goes live, so the first step is a quick ID check."
+        step_list = ["Check your ID (takes about 2 minutes)", "List your property with photos and the move-in cost", "Choose your renter and set up the tenancy in Migrent Hub"]
+        cta = ("List a property", _hub_url("/properties/new"))
+        tip_text = "Listings with 6 or more photos and a clear move-in cost get the most enquiries."
     else:
-        lead = "Save a search and we'll email you when a matching room is listed. Every host is ID-checked before a room goes live, and searching and applying are free."
-        cta = _button("Find a room", f"{FRONTEND_URL}/seeker/search")
-    content = f"""<h1 style="font-size:24px;line-height:32px;margin:0 0 12px;">Welcome to Migrent, {first}</h1>
-      <p style="font-size:16px;line-height:24px;margin:0 0 12px;">{lead}</p>
-      {cta}
-      <p style="font-size:14px;line-height:22px;color:#475467;margin:0;">Never pay a deposit or bond before you have seen a room and have a written agreement. If anyone asks you to, report them from the listing or the conversation.</p>"""
-    _send_email(to, "Welcome to Migrent", _email_layout(content, preview="Your account is ready."), text=f"Welcome to Migrent, {first}. {lead}")
+        lead = "Your account is ready. Every host on Migrent is ID-checked before a room goes live, and searching and applying are always free."
+        step_list = ["Tell us your suburb, budget and move-in date", "Save a search and we'll email you new rooms", "Inspect, then apply in about a minute"]
+        cta = ("Find a room", f"{FRONTEND_URL}/seeker/search")
+        tip_text = "Fill in your rental profile once and every application takes about a minute."
+    body = et.render(
+        "account",
+        eyebrow="Welcome",
+        title=f"Welcome to Migrent, {first}",
+        preheader="Your account is ready.",
+        paragraphs=[lead],
+        blocks=[et.steps(step_list, t, title="Getting started")],
+        cta=cta,
+        after=[et.tip("Good to know", tip_text, t)],
+    )
+    _send_email(to, "Welcome to Migrent", body, text=f"Welcome to Migrent, {first}. {lead}")

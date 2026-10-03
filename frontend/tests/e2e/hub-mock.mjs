@@ -1386,8 +1386,8 @@ export function handleHub(req, url, body, send) {
     if (!t) return send(404, { detail: "Tenancy not found" }), true;
     const viewer = t.owner_id === uid ? "owner" : "renter";
     S.moveIns ||= {};
-    const weekly = t.rent_frequency === "fortnightly" ? t.rent_amount / 2 : t.rent_amount;
-    const quote = { weeks: 2, weekly, rent: weekly * 2, card_fee: 5.53, amount: weekly * 2 + 5.53 };
+    const weekly = t.rent_amount;
+    const quote = { weeks: 2, weekly, rent: weekly * 2, card_fee: 10.64, amount: weekly * 2 + 10.64 };
     let mi = S.moveIns[t.id];
     const state = () => (mi ? { id: mi.id, status: mi.status, weeks: 2, amount: quote.amount, card_fee: quote.card_fee, to_owner: quote.rent, paid_at: mi.paid_at, green_light: true, owner_confirmed_at: mi.owner_confirmed_at, renter_confirmed_at: mi.renter_confirmed_at, complete: Boolean(mi.owner_confirmed_at && mi.renter_confirmed_at), receipt_code: mi.code, ...(viewer === "owner" ? { fee_status: "charged", fee: 99 } : {}) } : { status: "not_started" });
     if (mm[2] === "receipt") {

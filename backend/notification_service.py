@@ -22,7 +22,7 @@ Usage from any route:
 import logging
 from db import get_supabase_admin
 from notifications import send_push_to_user
-from email_bookings import _send_email, _email_layout, _button, FRONTEND_URL, BRAND_COLOR
+from email_bookings import _send_email, FRONTEND_URL
 
 logger = logging.getLogger(__name__)
 
@@ -248,6 +248,45 @@ def _email_prefs(user_id: str) -> dict:
     return {}
 
 
+# The look of each notification email (email_theme.py): which coloured
+# banner, the small tag, the button, and an optional tip.
+NOTIFICATION_DESIGN: dict[str, tuple[str, str | None, str, tuple[str, str] | None]] = {
+    "booking_request_created": ("stays", "New stay request", "Review the request", ("Respond within 48 hours", "Requests expire after 48 hours.")),
+    "booking_approved": ("stays", "Accepted", "View your booking", None),
+    "booking_declined": ("searches", "Booking update", "Find another room", ("Keep going", "New rooms are listed every day. Save a search and we'll email you.")),
+    "booking_confirmed": ("stays", "Confirmed", "View your booking", None),
+    "payment_received": ("money", "Payment", "View the payment", None),
+    "verification_status_changed": ("identity", "ID check", "View your ID check", None),
+    "message_received": ("messages", "New message", "Reply", ("Stay safe", "Keep your conversation in Migrent Hub. If anyone asks you to pay before an inspection, report the message.")),
+    "host_response_sent": ("messages", "New reply", "View the reply", None),
+    "listing_published": ("listings", "Live", "View your listing", ("Get more applications", "Listings with 6 or more photos and a clear move-in cost get the most enquiries.")),
+    "listing_rejected": ("listings", "Not approved", "Edit your listing", None),
+    "listing_changes_requested": ("listings", "Almost there", "Edit your listing", None),
+    "listing_flagged": ("security", "In review", "View your listing", None),
+    "listing_hidden": ("security", "Hidden", "View your listing", None),
+    "listing_removed": ("security", "Removed", "Contact support", None),
+    "mentor_approved": ("mentors", "Approved", "Open your mentor profile", None),
+    "mentor_rejected": ("mentors", "Mentor profile", "Update your profile", None),
+    "application_submitted": ("applications", "New application", "Review the application", ("Tip", "Owners who reply within a day find a tenant faster.")),
+    "application_status_changed": ("applications", "Application update", "View your application", None),
+    "application_changes_requested": ("applications", "Action needed", "Update your application", None),
+    "application_approved": ("applications", "Approved", "View your application", ("What happens next", "Migrent checks everything is complete, then sets up your tenancy in Migrent Hub.")),
+    "application_finalised": ("home", "Finalised", "See your new home", ("Welcome home", "Your lease details, rent record and repairs now live in Migrent Hub.")),
+    "inspection_booked": ("inspections", "Booked", "View the inspection", ("Before you go", "Check the room matches the photos and walk to the station. Never pay anything at an inspection.")),
+    "inspection_changed": ("inspections", "New time", "View the inspection", None),
+    "inspection_cancelled": ("inspections", "Cancelled", "Find another time", None),
+    "inspection_reminder": ("inspections", "Reminder", "View the inspection", ("Bring", "Photo ID, and your questions about bills, house rules and the lease.")),
+    "saved_search_match": ("searches", "New homes", "See the new homes", ("Be quick", "Good rooms go fast. Message the host or book an inspection today.")),
+    "maintenance_created": ("home", "Repair request", "View the request", None),
+    "maintenance_updated": ("home", "Repair update", "View the request", None),
+    "tenancy_created": ("home", "Tenancy set up", "See your home", None),
+    "review_prompt": ("reviews", "Your review", "Write a review", ("Fair for everyone", "Reviews from both sides appear together once you've both written one, or after 14 days.")),
+    "review_received": ("reviews", "New review", "Write your review", None),
+    "move_in_fee_failed": ("money", "Action needed", "Update your card", None),
+    "admin_security_alert": ("security", "Security alert", "Open the audit log", None),
+}
+
+
 def _send_notification_email(
     to: str,
     name: str,
@@ -265,70 +304,41 @@ def _send_notification_email(
     """
     import html as _html
 
+    import email_theme as et
+
     full_url = cta_url if cta_url.startswith("http") else f"{FRONTEND_URL}{cta_url}"
-    safe_title, safe_body, safe_name = _html.escape(title), _html.escape(body), _html.escape(name)
-    safe_url = _html.escape(full_url, quote=True)
-
-    # Choose button text based on event type
-    button_labels = {
-        "booking_request_created": "Review Request",
-        "booking_approved": "Complete Payment",
-        "booking_declined": "Browse Listings",
-        "booking_confirmed": "View Booking",
-        "payment_received": "View Payment",
-        "verification_status_changed": "View Status",
-        "message_received": "Reply Now",
-        "host_response_sent": "View Response",
-        "listing_published": "View Listing",
-        "listing_rejected": "Edit Listing",
-        "listing_changes_requested": "Edit Listing",
-        "application_submitted": "Review application",
-        "application_status_changed": "View application",
-        "application_changes_requested": "Update application",
-        "application_approved": "View application",
-        "application_finalised": "View next steps",
-        "inspection_booked": "View inspection",
-        "inspection_changed": "View inspection",
-        "inspection_cancelled": "Find another time",
-        "inspection_reminder": "View inspection",
-        "saved_search_match": "See new homes",
-        "maintenance_created": "View request",
-        "maintenance_updated": "View request",
-        "tenancy_created": "View your home",
-        "review_prompt": "Write a review",
-        "review_received": "Write your review",
-        "admin_security_alert": "Open the audit log",
-    }
-    btn_text = button_labels.get(event, "Open Migrent Hub")
-
-    content = f"""
-    <h1 style="font-size:22px;line-height:30px;font-weight:700;color:#101828;margin:0 0 16px;">{safe_title}</h1>
-    <p style="font-size:15px;line-height:24px;color:#344054;margin:0 0 12px;">Hi {safe_name},</p>
-    <p style="font-size:15px;line-height:24px;color:#344054;margin:0 0 8px;">{safe_body}</p>
-    {_button(btn_text, safe_url)}
-    <p style="font-size:13px;line-height:20px;color:#667085;margin:8px 0 0;">
-      Or paste this link into your browser: <a href="{safe_url}" style="color:{BRAND_COLOR};word-break:break-all;">{safe_url}</a>
-    </p>
-    """
+    kind, eyebrow, btn_text, tip = NOTIFICATION_DESIGN.get(event, ("account", None, "Open Migrent Hub", None))
+    theme = et.THEMES[kind]
 
     # Every kind of email that has an on/off switch carries an unsubscribe
     # link and header (unsubscribe.py, MIG-031).
     group = EMAIL_PREFERENCE_GROUP.get(event)
     mail_headers = None
     footer_text = ""
+    footer_note = ""
     if group and user_id:
         import unsubscribe
 
         stop = unsubscribe.page_url(str(user_id), group)
         label = unsubscribe.GROUP_LABELS.get(group, "these")
-        content += f"""
-    <p style="font-size:12px;line-height:18px;color:#667085;margin:20px 0 0;border-top:1px solid #eaecf0;padding-top:12px;">
-      You get these emails about {_html.escape(label)}. <a href="{_html.escape(stop, quote=True)}" style="color:#667085;">Unsubscribe</a>
-      or choose which emails you get in Migrent Hub &gt; Settings.
-    </p>
-    """
+        footer_note = (
+            f'You get these emails about {_html.escape(label)}. <a href="{_html.escape(stop, quote=True)}" style="color:#C7D0E6;">Unsubscribe</a>'
+            " or choose which emails you get in Migrent Hub settings."
+        )
         footer_text = f"\n\nYou get these emails about {label}. Unsubscribe: {stop}"
         mail_headers = unsubscribe.headers(str(user_id), group)
+
+    html_body = et.render(
+        kind,
+        eyebrow=eyebrow,
+        title=title,
+        preheader=body[:140],
+        greeting=name,
+        paragraphs=[body],
+        cta=(btn_text, full_url),
+        after=[et.tip(tip[0], tip[1], theme)] if tip else [],
+        footer_note=footer_note,
+    )
 
     text_body = (
         f"Hi {name},\n\n"
@@ -339,4 +349,4 @@ def _send_notification_email(
         f"{footer_text}"
     )
 
-    _send_email(to, title, _email_layout(content, body[:140]), text_body, headers=mail_headers)
+    _send_email(to, title, html_body, text_body, headers=mail_headers)
