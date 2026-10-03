@@ -7,6 +7,7 @@ import { authCallbackUrl } from "../../lib/authRedirect";
 import { hubUrl, siteUrl } from "../../lib/hub/routes";
 import { HubMark } from "./HubShell";
 import { ThemeIconButton } from "./ThemeToggle";
+import { Logo } from "../ui/Logo";
 
 const JOURNEY = [
   { icon: Search, title: "Find", body: "Homes and rooms from ID-checked owners." },
@@ -37,10 +38,7 @@ export default function AuthLayout({ title, children, aside }: { title: string; 
             <div className="relative flex h-full flex-col justify-between p-12 text-white">
               <span className="inline-flex items-center gap-2.5">
                 <span className="flex h-9 w-9 items-center justify-center rounded-[11px] bg-white/15 backdrop-blur">
-                  <svg width="22" height="22" viewBox="0 0 28 28" aria-hidden>
-                    <path d="M3.5 22.5V8.5l4-3.5 4 6 2.5-2.5L18.5 11l4-3.5v15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-                    <circle cx="14" cy="14.5" r="1.4" fill="currentColor" />
-                  </svg>
+                  <Logo size={22} title="" />
                 </span>
                 <span className="text-[17px] font-extrabold tracking-[-0.02em]">Migrent</span>
                 <span className="text-[13px] font-semibold text-white/70">Hub</span>

@@ -26,6 +26,7 @@ import type { ApplicationDetail, DocumentMeta } from "../../../lib/hub/types";
 import { useRentalProfile, type SaveState } from "../../../lib/hub/useRentalProfile";
 import { cn } from "../../../lib/cn";
 import { Events, trackEvent } from "../../../lib/analytics";
+import EmailInboxHelp from "../../../components/EmailInboxHelp";
 
 const STEPS = [
   { key: "about", label: "About you" },
@@ -267,6 +268,7 @@ export default function Apply() {
               {detail.owner?.name ? `${detail.owner.name.split(" ")[0]} will` : "The owner will"} see it now. You'll get a message here and by email at every step - when it's opened, and when there's a decision.
             </p>
           </div>
+          <EmailInboxHelp className="text-left" compact />
           <div className="flex flex-wrap justify-center gap-3">
             <ButtonLink to={`/applications/${start.id}`} size="lg">
               Track this application

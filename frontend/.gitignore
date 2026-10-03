@@ -13,8 +13,10 @@
 # testing
 /coverage
 
-# next.js
+# next.js (every build folder: .next, .next-e2e, .next-paycheck, ...; Tailwind
+# scans anything not ignored, and a stray build breaks the CSS)
 /.next/
+/.next*/
 /out/
 
 # MapLibre's worker, copied on install (scripts/copy-maplibre-worker.mjs)

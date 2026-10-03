@@ -212,6 +212,14 @@ def render(
           <b style="color:{INK};">Stay safe:</b> never pay a deposit or bond before you've seen a home and have a written agreement. Migrent will never ask for your password.
         </td></tr></table>
     </td></tr>
+    <!-- inbox request: helps Migrent's emails reach the inbox -->
+    <tr><td style="padding:12px 8px 0;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+        <td style="padding:14px 18px;border-radius:16px;background:#FFF6E5;border:1px solid #F6D58E;font-family:{FONT};font-size:13px;line-height:19px;color:#5C3D00;">
+          <b style="color:#3D2900;">Found this in Spam, Junk or Promotions?</b> Please move it to your Inbox. You won't miss a home, and it helps Migrent a lot.
+          <a href="{_site()}/email-help" style="color:#8A4B00;font-weight:700;text-decoration:underline;">Show me how (1 minute)</a>
+        </td></tr></table>
+    </td></tr>
     <!-- footer -->
     <tr><td style="padding:18px 8px 0;">
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="{FOOTER}" style="background:{FOOTER};border-radius:20px;">

@@ -62,6 +62,7 @@ const ROUTES: Array<[string, PageMeta]> = [
   ["/pricing", { title: "Pricing", description: "Free for renters to search and apply. Hosts pay once per property, only for stays." }],
   ["/about", { title: "About Migrent", description: "Migrent helps migrants, students and new arrivals find a room they can trust in Australia." }],
   ["/contact", { title: "Contact us", description: "Get in touch with the Migrent team." }],
+  ["/email-help", { title: "Get our emails in your Inbox", description: "How to move Migrent's emails out of Spam, Junk or Promotions." }],
   ["/blog", { title: "Article", description: "Articles from the Migrent team on renting safely in Australia." }],
   ["/guides", { title: "Guides", description: "Practical guides to finding a room, settling in and renting safely in Australia." }],
   ["/help", { title: "Help", description: "Answers to common questions about Migrent." }],

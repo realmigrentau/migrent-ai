@@ -11,6 +11,7 @@ import { supabase } from "../../lib/supabase";
 import { safeHubPath, siteUrl } from "../../lib/hub/routes";
 import { safeRedirectPath } from "../../lib/safeRedirect";
 import { useHub } from "../../lib/hub/session";
+import EmailInboxHelp from "../../components/EmailInboxHelp";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -128,7 +129,8 @@ export default function SignIn() {
     return (
       <AuthLayout title="Check your email">
         <AuthHeading title="Check your email" body={<>We sent a sign-in link to <strong className="text-[color:var(--color-ink)]">{email.trim()}</strong>. Open it on this device to finish signing in.</>} />
-        <InlineAlert tone="info">Links work once and expire after an hour. Nothing arrived? Check spam, or try again in a minute.</InlineAlert>
+        <InlineAlert tone="info">Links work once and expire after an hour. Nothing arrived? Try again in a minute.</InlineAlert>
+        <EmailInboxHelp className="mt-3" />
         <Button variant="ghost" className="mt-6" onClick={() => setSent(false)}>
           Use a different email
         </Button>

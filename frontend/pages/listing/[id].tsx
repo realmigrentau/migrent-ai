@@ -25,6 +25,7 @@ import HubActions, { hubIntentHref } from "../../components/listings/HubActions"
 import ListingSafety from "../../components/listings/ListingSafety";
 import { Events, trackEvent } from "../../lib/analytics";
 import { useMounted } from "../../hooks/useMounted";
+import EmailInboxHelp from "../../components/EmailInboxHelp";
 
 /**
  * Server-render the listing.
@@ -485,6 +486,7 @@ export default function ListingDetailPage({ initialListing }: { initialListing?:
                         <li className="flex gap-2.5"><span className="font-mono text-[11px] text-[var(--color-ink-3)] mt-0.5">3</span><span>Nothing is booked and you owe nothing yet. Keep looking at other rooms in the meantime.</span></li>
                       </ol>
                     )}
+                    <EmailInboxHelp className="mb-4 text-left" compact />
                     <p className="text-[12.5px] text-[var(--color-ink-3)] border-t border-[var(--color-line)] pt-3 mb-4">
                       Migrent never asks renters for money. If anyone asks you to pay a deposit to hold this room, tell us before you pay.
                     </p>

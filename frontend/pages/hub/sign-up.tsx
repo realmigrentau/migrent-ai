@@ -11,6 +11,7 @@ import { supabase } from "../../lib/supabase";
 import { safeHubPath, siteUrl } from "../../lib/hub/routes";
 import { useHub } from "../../lib/hub/session";
 import { Events, trackEvent } from "../../lib/analytics";
+import EmailInboxHelp from "../../components/EmailInboxHelp";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -93,6 +94,7 @@ export default function SignUp() {
           <MailCheck className="h-6 w-6" strokeWidth={1.75} aria-hidden />
         </div>
         <AuthHeading title="Confirm your email" body={<>We sent a link to <strong className="text-[color:var(--color-ink)]">{email.trim()}</strong>. Open it to finish setting up - it takes you straight back here.</>} />
+        <EmailInboxHelp className="mb-4" />
         {resent ? (
           <InlineAlert tone="success">Sent again. It can take a minute to arrive.</InlineAlert>
         ) : (

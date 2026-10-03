@@ -35,6 +35,8 @@ def test_every_email_has_the_new_design(all_emails):
     for e in all_emails:
         assert "/banner-" in e["html"], e["name"]
         assert "Stay safe:" in e["html"], e["name"]
+        # Every email asks to be moved out of spam, with a link to the guide.
+        assert "/email-help" in e["html"] and "Found this in Spam" in e["html"], e["name"]
         assert "—" not in e["html"] and "—" not in e["subject"], e["name"]
 
 

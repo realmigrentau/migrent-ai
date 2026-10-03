@@ -6,6 +6,7 @@ import { createTicket } from "../../lib/api";
 import { siteIdentity } from "../../lib/siteIdentity";
 import type { HelpAnswer } from "../../lib/helpSearch";
 import { Events, trackEvent } from "../../lib/analytics";
+import EmailInboxHelp from "../EmailInboxHelp";
 
 type Tab = "answers" | "contact";
 
@@ -278,6 +279,7 @@ export default function SupportWidget() {
                       Reference: <span className="font-mono font-semibold text-[var(--color-primary)]">{ticketId}</span>
                     </p>
                     <p className="mt-2 text-xs text-[var(--color-ink-3)]">{REPLY}</p>
+                    <EmailInboxHelp className="mt-4 text-left" compact />
                     {session && (
                       <Link href="/support/tickets" className="mt-4 inline-block text-sm font-medium text-[var(--color-primary)]">
                         See your support requests

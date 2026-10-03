@@ -8,6 +8,7 @@ import { Segmented } from "../components/hub/ui/Field";
 import { submitSupportRequest } from "../lib/api";
 import { siteIdentity, supportPromise } from "../lib/siteIdentity";
 import { Events, trackEvent } from "../lib/analytics";
+import EmailInboxHelp from "../components/EmailInboxHelp";
 
 /**
  * Contact: one form, and the right door for the things a form is wrong for
@@ -121,6 +122,7 @@ export default function Contact() {
                 <p className="site-body">
                   Your message is with us{reference ? ` (reference ${reference})` : ""}, and a confirmation is on its way. We will reply to {email.trim()}. {supportPromise()}
                 </p>
+                <EmailInboxHelp className="text-left" />
                 <Link href="/help" className="site-link">
                   Browse help while you wait <ArrowRight className="h-4 w-4" strokeWidth={2} aria-hidden="true" />
                 </Link>

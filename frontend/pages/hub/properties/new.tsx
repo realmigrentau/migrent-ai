@@ -20,6 +20,7 @@ import { useHub } from "../../../lib/hub/session";
 import { decodePrefill } from "../../../lib/home/houseConfig";
 import { cn } from "../../../lib/cn";
 import { Events, trackEvent } from "../../../lib/analytics";
+import EmailInboxHelp from "../../../components/EmailInboxHelp";
 
 type SaveState = "idle" | "saving" | "saved" | "error";
 
@@ -284,6 +285,7 @@ export default function NewListingPage() {
               ? "Your listing is saved as a draft. Once Migrent has checked your ID, send it for review from the listing's page."
               : "Migrent reviews every listing before it goes live, usually within a working day. We'll email you when it's up, or if anything needs changing."}
           </p>
+          <EmailInboxHelp className="text-left" compact />
           <div className="flex flex-wrap justify-center gap-3">
             {done.needs_verification || !verified ? <ButtonLink to="/settings#verification">Check my ID</ButtonLink> : <ButtonLink to={`/listings/${done.listing_id}`}>View the listing</ButtonLink>}
             <Button variant="secondary" icon={<Plus className="h-4 w-4" strokeWidth={1.9} />} onClick={() => void addAnother()}>

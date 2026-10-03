@@ -7,6 +7,7 @@ import { Button } from "../../components/hub/ui/Button";
 import { Field, Input } from "../../components/hub/ui/Field";
 import { InlineAlert } from "../../components/hub/ui/Feedback";
 import { supabase } from "../../lib/supabase";
+import EmailInboxHelp from "../../components/EmailInboxHelp";
 
 export default function ForgotPassword() {
   const router = useRouter();
@@ -47,6 +48,7 @@ export default function ForgotPassword() {
       {sent ? (
         <>
           <AuthHeading title="Check your email" body={<>If there is an account for <strong className="text-[color:var(--color-ink)]">{email.trim()}</strong>, a reset link is on its way. Open it in this browser.</>} />
+          <EmailInboxHelp className="mb-4" />
           <HubLink to="/sign-in" className="text-[14px] font-semibold text-[color:var(--color-primary)] hover:underline">
             Back to sign in
           </HubLink>
