@@ -75,6 +75,15 @@ FRIENDLY_ERRORS = {
 }
 
 
+def free_test_mode() -> bool:
+    """Skip the AUD 19 for local testing. Only ever with Stripe TEST keys:
+    with live keys this is always False, so it can't give free checks on
+    the real site."""
+    from billing import payments_mode
+
+    return os.environ.get("ID_CHECK_FREE_TEST", "").strip().lower() == "true" and payments_mode() == "test"
+
+
 def enabled() -> bool:
     from billing import renter_verification_available
 
@@ -173,7 +182,27 @@ def _require_renter(actor) -> None:
 def get_id_check(request: Request, authorization: Optional[str] = Header(None)):
     actor = hub_actor(request, authorization)
     sb = get_supabase_admin()
-    return summary(_row(sb, actor.id))
+    row = _row(sb, actor.id)
+    if row and row.get("provider_ref") and row.get("status") in ("not_started", "retry", "pending") and enabled():
+        row = sync_with_stripe(sb, row) or row
+    return summary(row)
+
+
+def sync_with_stripe(sb, row: dict) -> Optional[dict]:
+    """Ask Stripe for the current check's result, in case its webhook is
+    late or missing. Shares the webhook's once-per-outcome record, so the
+    same result is never counted twice."""
+    try:
+        vs = stripe.identity.VerificationSession.retrieve(row["provider_ref"])
+    except stripe.error.StripeError:
+        return None
+    status = vs.get("status")
+    if status == "requires_input" and not (vs.get("last_error") or {}).get("code"):
+        return None  # still open, nothing finished yet
+    if status not in ("processing", "verified", "requires_input"):
+        return None
+    handle_identity_event(sb, {"id": f"sync_{vs.get('id')}_{status}", "type": f"identity.verification_session.{status}", "data": {"object": vs}})
+    return _row(sb, row["user_id"])
 
 
 @router.post("/id-check/checkout")
@@ -192,6 +221,13 @@ def id_check_checkout(request: Request, authorization: Optional[str] = Header(No
         # A used-up check (3 failed tries) can be bought again; anything else
         # still has tries left.
         raise HTTPException(status_code=409, detail="You've already paid. Start your ID check from your Rental Profile.")
+    if free_test_mode():
+        fresh_free = {"status": "not_started", "payment_status": "paid", "paid_at": _now(), "checkout_session_id": None, "payment_intent": None, "refunded_at": None, "failed_checks": 0, "checks_started": 0, "last_error": None, "provider_ref": None, "method": "stripe_identity_test", "updated_at": _now()}
+        if row:
+            sb.table("renter_verifications").update(fresh_free).eq("user_id", actor.id).execute()
+        else:
+            sb.table("renter_verifications").insert({"user_id": actor.id, **fresh_free}).execute()
+        return {"checkout_url": _hub("/profile?id_check=paid#verification")}
     try:
         session = stripe.checkout.Session.create(
             mode="payment",
@@ -355,10 +391,13 @@ def handle_identity_event(sb, event: dict) -> dict:
     if not row or row.get("provider_ref") != vs.get("id"):
         # An older session the renter replaced; it was cancelled.
         return {"status": "ignored", "reason": "not the current session"}
-    if not _record_event(sb, event, {"id": vs.get("id"), "metadata": {}}, fee_type="id_check", status=vs.get("status") or "unknown"):
+    # One record per session and outcome (not per Stripe event), so the
+    # webhook and sync_with_stripe never count the same result twice.
+    kind = event["type"].rsplit(".", 1)[-1]
+    once = {"id": f"idv_{vs.get('id')}_{kind}", "type": event["type"]}
+    if not _record_event(sb, once, {"id": vs.get("id"), "metadata": {}}, fee_type="id_check", status=vs.get("status") or "unknown"):
         return {"status": "duplicate"}
 
-    kind = event["type"].rsplit(".", 1)[-1]
     if kind == "processing":
         _update(sb, user_id, {"status": "pending", "last_error": None})
         return {"status": "ok", "id_check": "pending"}
@@ -391,7 +430,7 @@ def handle_identity_event(sb, event: dict) -> dict:
             return {"status": "ok", "id_check": "not_finished"}
         failed = int(row.get("failed_checks") or 0) + 1
         if failed >= FREE_TRIES:
-            _update(sb, user_id, {"status": "rejected", "failed_checks": failed, "last_error": code})
+            _update(sb, user_id, {"status": "rejected", "failed_checks": failed, "last_error": code, "provider_ref": None})
             notify_user(
                 sb,
                 user_id,
@@ -401,7 +440,9 @@ def handle_identity_event(sb, event: dict) -> dict:
                 "/profile#verification",
             )
             return {"status": "ok", "id_check": "rejected"}
-        _update(sb, user_id, {"status": "retry", "failed_checks": failed, "last_error": code})
+        # Closing the session means a repeat of this result (webhook retry,
+        # or sync_with_stripe) is ignored rather than counted again.
+        _update(sb, user_id, {"status": "retry", "failed_checks": failed, "last_error": code, "provider_ref": None})
         left = FREE_TRIES - failed
         notify_user(
             sb,

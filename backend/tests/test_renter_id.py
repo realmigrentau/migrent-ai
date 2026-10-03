@@ -121,10 +121,11 @@ def test_three_failed_tries_use_up_the_fee_without_a_refund(client, db, stripe_f
     client.post("/hub/id-check/start", headers=auth(SEEKER_ID))
     assert identity(client, "requires_input", session_id="vs_3", error="abandoned").json()["id_check"] == "not_finished"
     assert status(client)["tries_left"] == 1
-    # Each new start cancels the unfinished one before it.
-    assert stripe_fake["cancelled"] == ["vs_1", "vs_2"]
-
+    # Failed sessions are closed already; an unfinished one is cancelled
+    # when the next try starts.
     client.post("/hub/id-check/start", headers=auth(SEEKER_ID))
+    assert stripe_fake["cancelled"] == ["vs_3"]
+
     r = identity(client, "requires_input", session_id="vs_4", error="document_unverified_other").json()
     assert r["id_check"] == "rejected"
     assert stripe_fake["refunds"] == []
@@ -184,3 +185,27 @@ def test_the_rule_is_ignored_while_the_check_is_off(client, db, monkeypatch):
 
 def test_owners_use_owner_verification_not_this(client, stripe_fake):
     assert client.post("/hub/id-check/checkout", headers=auth(VERIFIED_OWNER_ID)).status_code == 403
+
+
+def test_free_test_mode_skips_payment_only_with_test_keys(client, db, stripe_fake, monkeypatch):
+    monkeypatch.setenv("ID_CHECK_FREE_TEST", "true")
+    monkeypatch.setenv("STRIPE_SECRET_KEY", "sk_live_x")
+    assert renter_id.free_test_mode() is False
+    monkeypatch.setenv("STRIPE_SECRET_KEY", "sk_test_x")
+    r = client.post("/hub/id-check/checkout", headers=auth(SEEKER_ID))
+    assert r.status_code == 200 and "id_check=paid" in r.json()["checkout_url"]
+    assert stripe_fake["checkouts"] == []
+    assert status(client)["paid"] is True
+    assert client.post("/hub/id-check/start", headers=auth(SEEKER_ID)).status_code == 200
+
+
+def test_the_result_is_fetched_from_stripe_if_the_webhook_is_missing(client, db, stripe_fake, monkeypatch):
+    pay(client)
+    client.post("/hub/id-check/start", headers=auth(SEEKER_ID))
+    failed = Obj(id="vs_1", status="requires_input", last_error={"code": "selfie_face_mismatch"}, metadata={"user_id": SEEKER_ID, "purpose": "renter_id"})
+    monkeypatch.setattr(renter_id.stripe.identity.VerificationSession, "retrieve", staticmethod(lambda sid, expand=None: failed))
+    assert status(client)["tries_left"] == 2
+    assert status(client)["tries_left"] == 2  # read again: not counted twice
+    # The late webhook for the same failure is not counted again either.
+    identity(client, "requires_input", session_id="vs_1", error="selfie_face_mismatch", event_id="evt_late")
+    assert status(client)["tries_left"] == 2
