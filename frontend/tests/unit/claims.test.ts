@@ -44,7 +44,9 @@ const FORBIDDEN: { pattern: RegExp; why: string; legal?: boolean }[] = [
   { pattern: /Superhost/, why: "no such programme; count badges read 'Hosts 3+ homes'" },
   { pattern: /proof of property/i, why: "hosts show government ID only" },
   { pattern: /\bVEVO\b/, why: "Migrent does not check visas" },
-  { pattern: /verified (seekers?|renters?|tenants?)/i, why: "renters are not verified" },
+  // Only renters who passed the paid ID check (backend renter_id.py) are
+  // verified, so the copy must say "ID-verified", never all renters.
+  { pattern: /(?<!ID-)verified (seekers?|renters?|tenants?)/i, why: "only renters who passed the ID check are verified: say 'ID-verified renters'" },
   { pattern: /\bAI[- ](powered|matching|match)/i, why: "matching is rules-based", legal: true },
 ];
 

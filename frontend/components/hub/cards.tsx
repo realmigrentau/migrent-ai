@@ -1,4 +1,5 @@
 import { useState, type ReactNode } from "react";
+import IdVerifiedBadge from "./IdVerifiedBadge";
 import { Bath, BedDouble, CalendarDays, Car, ChevronRight, Heart, MapPin, Paperclip, TrendingDown, TrendingUp } from "lucide-react";
 import { cn } from "../../lib/cn";
 import { aud, day, inboxStamp, placeTypeLabel, propertyTypeLabel, weekly, whenLabel } from "../../lib/hub/format";
@@ -187,6 +188,7 @@ export function ApplicationCard({ app, side = "renter" }: { app: ApplicationSumm
             <div className="flex items-center gap-2">
               <Avatar name={app.person.name} src={app.person.avatar_url} size={22} />
               <p className="truncate text-[15px] font-semibold text-[color:var(--color-ink)]">{app.person.name}</p>
+              {(app.id_verified || app.person.id_verified) && <IdVerifiedBadge size="sm" />}
               {app.unread_by_owner && <span className="h-2 w-2 shrink-0 rounded-full bg-[var(--color-primary)]" aria-label="New" />}
             </div>
           ) : (
@@ -260,7 +262,10 @@ export function ThreadRow({ thread, active }: { thread: Thread; active?: boolean
       </div>
       <div className="flex min-w-0 flex-1 flex-col gap-0.5">
         <div className="flex items-baseline justify-between gap-2">
-          <p className={cn("truncate text-[14.5px] text-[color:var(--color-ink)]", unread ? "font-bold" : "font-semibold")}>{thread.other.name}</p>
+          <span className="flex min-w-0 items-center gap-1.5">
+            <p className={cn("truncate text-[14.5px] text-[color:var(--color-ink)]", unread ? "font-bold" : "font-semibold")}>{thread.other.name}</p>
+            {thread.other.id_verified && <IdVerifiedBadge size="sm" />}
+          </span>
           <span className={cn("shrink-0 text-[12px]", unread ? "font-semibold text-[color:var(--color-primary)]" : "text-[color:var(--color-ink-3)]")}>{inboxStamp(thread.last_message.created_at)}</span>
         </div>
         {thread.listing && <p className="truncate text-[12.5px] font-medium text-[color:var(--color-ink-3)]">{thread.listing.unit_label ? `${thread.listing.unit_label} · ` : ""}{thread.listing.title}</p>}

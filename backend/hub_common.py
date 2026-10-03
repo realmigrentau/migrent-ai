@@ -338,7 +338,8 @@ CARD_COLUMNS = (
     "id, owner_id, address, title, suburb, city, postcode, weekly_price, images, property_type, place_type, "
     "bedrooms, bathrooms, parking, furnished, bills_included, pets_allowed, available_from, available_to, "
     "moderation_status, hidden_at, latitude, longitude, created_at, updated_at, property_id, unit_label, "
-    "listing_purpose, occupancy, occupied_until, nearest_transport, station_distance_min, min_stay_weeks"
+    "listing_purpose, occupancy, occupied_until, nearest_transport, station_distance_min, min_stay_weeks, "
+    "require_verified_renters"
 )
 CARD_COLUMNS_LEGACY = (
     "id, owner_id, address, title, suburb, city, postcode, weekly_price, images, property_type, place_type, "
@@ -401,6 +402,7 @@ def listing_card(row: Optional[dict], *, viewer_is_owner: bool = False) -> Optio
         "unit_label": row.get("unit_label"),
         "listing_purpose": row.get("listing_purpose") or "long_term",
         "nearest_transport": row.get("nearest_transport"),
+        "require_verified_renters": bool(row.get("require_verified_renters")),
     }
     if viewer_is_owner:
         card.update(

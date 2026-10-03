@@ -87,6 +87,7 @@ PUBLIC_LISTING_FIELDS: tuple[str, ...] = (
     "bond",
     "bond_weeks",
     "rent_in_advance_weeks",
+    "require_verified_renters",
     "bills_estimate_weekly",
     "newcomer_friendly",
     "created_at",

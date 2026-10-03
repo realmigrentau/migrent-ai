@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
 import { CalendarDays, FileText, KeyRound, MessageCircle, Scale } from "lucide-react";
+import IdVerifiedBadge from "../../../components/hub/IdVerifiedBadge";
 import HubShell from "../../../components/hub/HubShell";
 import HubLink from "../../../components/hub/HubLink";
 import ApplicantSnapshot from "../../../components/hub/applications/Snapshot";
@@ -178,7 +179,13 @@ function OwnerView({ d, refetch, admin }: { d: ApplicationDetail; refetch: () =>
             <h2 className="text-[22px] font-semibold tracking-[-0.015em] text-[color:var(--color-ink)]">{s?.name || d.renter?.name}</h2>
             <p className="text-[14px] text-[color:var(--color-ink-3)]">On Migrent since {day(s?.member_since || d.renter?.member_since || null)}</p>
             <div className="flex flex-wrap gap-2">
-              {s?.verification === "verified" ? <StatusBadge tone="info">Identity checked by Migrent</StatusBadge> : <StatusBadge tone="neutral" icon={false}>Identity not checked</StatusBadge>}
+              {d.renter?.id_verified || s?.verification === "verified" ? (
+                <IdVerifiedBadge />
+              ) : (
+                <StatusBadge tone="neutral" icon={false}>
+                  ID not verified
+                </StatusBadge>
+              )}
             </div>
           </div>
           {!admin && (

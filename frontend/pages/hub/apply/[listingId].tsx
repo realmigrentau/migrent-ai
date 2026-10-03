@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { ArrowLeft, ArrowRight, Check, CircleCheckBig, MessageSquareWarning, Pencil } from "lucide-react";
+import { ArrowLeft, BadgeCheck, ArrowRight, Check, CircleCheckBig, MessageSquareWarning, Pencil } from "lucide-react";
 import HubShell from "../../../components/hub/HubShell";
 import HubLink, { useHubNavigate } from "../../../components/hub/HubLink";
 import {
@@ -237,6 +237,14 @@ export default function Apply() {
       <HubShell title="Apply">
         {start.error.status === 404 ? (
           <EmptyState title="This home isn't taking applications" body="It may have been taken or the listing has ended." action={<ButtonLink to="/discover">Find similar homes</ButtonLink>} />
+        ) : start.error.status === 403 && /verified ID/i.test(start.error.message) ? (
+          <EmptyState
+            icon={<BadgeCheck className="h-6 w-6 text-[#16A34A]" strokeWidth={1.75} />}
+            title="This owner asks for a verified ID"
+            body="They only take applications from renters with the green ID verified badge. It's a one-off check of your photo ID and a selfie, about 2 minutes on your phone."
+            action={<ButtonLink to="/profile#verification">Verify my ID</ButtonLink>}
+            secondary={<ButtonLink to="/discover" variant="secondary">Find other homes</ButtonLink>}
+          />
         ) : (
           <ErrorState message={start.error.message} offline={start.error.offline} onRetry={() => router.reload()} />
         )}

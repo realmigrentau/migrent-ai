@@ -161,10 +161,14 @@ const ownerOf = (id) => OWNED[id]?.owner || "aaaa0000-0000-4000-8000-00000000000
 
 /* ── State ──────────────────────────────────────────────── */
 
+// The paid renter ID check (backend renter_id.py): uid -> state.
+const ID_CHECKS = {};
+const idVerified = (uid) => ID_CHECKS[uid]?.status === "verified";
+
 function person(uid) {
   const u = USERS[uid];
   if (!u) return { id: uid, name: "Verified Owner", avatar_url: null, public_id: "pubverif02", member_since: "2026-01-10" };
-  return { id: uid, name: u.name || "New member", avatar_url: null, public_id: `pub${uid.slice(-4)}`, member_since: u.created_at.slice(0, 10) };
+  return { id: uid, name: u.name || "New member", avatar_url: null, public_id: `pub${uid.slice(-4)}`, member_since: u.created_at.slice(0, 10), id_verified: idVerified(uid) };
 }
 
 const S = {
@@ -292,7 +296,8 @@ function appSummary(a, side) {
     changes_requested_by: a.changes_requested_by,
     unread_by_owner: side === "owner" && a.status === "submitted" && !a.owner_viewed_at,
     household: side === "owner" ? { adults: 1, children: 0, has_pets: false } : undefined,
-    verification: side === "owner" ? "not_started" : undefined,
+    verification: side === "owner" ? (idVerified(a.renter_id) ? "verified" : "not_started") : undefined,
+    id_verified: side === "owner" ? idVerified(a.renter_id) : undefined,
   };
 }
 
@@ -404,7 +409,7 @@ function me(uid) {
     notification_prefs: u.prefs || {},
     owner_verification: role === "owner" ? { status: "verified", checks: { email_confirmed: true, phone_confirmed: true, government_id: "approved" }, verified_at: "2026-03-10T00:00:00Z", explainer_url: "/how-renting-works#checks", disclaimer: "Verification confirms documents were checked. It is not a guarantee of safety or suitability." } : null,
     member_since: u.created_at.slice(0, 10),
-    features: { ai_listing_assist: false, payments: "test", renter_verification: false, fees: { currency: "AUD", host_fee: 99, host_fee_model: "per_property", renter_verification_fee: 19 }, view_as: Boolean(u.is_admin), move_in_payments: true },
+    features: { ai_listing_assist: false, payments: "test", renter_verification: true, fees: { currency: "AUD", host_fee: 99, host_fee_model: "per_property", renter_verification_fee: 19 }, view_as: Boolean(u.is_admin), move_in_payments: true },
     assurance_level: "aal1",
     viewing_as: null,
   };
@@ -886,6 +891,23 @@ export function handleHub(req, url, body, send) {
     return send(200, { ok: true }), true;
   }
 
+  // The paid renter ID check. Paying and the check itself complete at once here.
+  const idCheck = () => {
+    const c = ID_CHECKS[uid] || { status: "not_started", paid: false };
+    return { available: true, fee: 19, status: c.status, paid: c.paid, refunded: false, tries_included: 3, tries_left: c.paid ? 3 : 0, can_start: c.paid && c.status !== "verified", last_error: null, verified_at: c.status === "verified" ? c.at : null };
+  };
+  if (p === "/hub/id-check" && req.method === "GET") return send(200, idCheck()), true;
+  if (p === "/hub/id-check/checkout" && req.method === "POST") {
+    if (isOwner) return send(403, { detail: "The ID check is for renters." }), true;
+    ID_CHECKS[uid] = { status: "not_started", paid: true };
+    return send(200, { checkout_url: "/hub/profile?id_check=paid#verification" }), true;
+  }
+  if (p === "/hub/id-check/start" && req.method === "POST") {
+    if (!ID_CHECKS[uid]?.paid) return send(402, { detail: "Pay for the ID check first." }), true;
+    ID_CHECKS[uid] = { status: "verified", paid: true, at: iso(now()) };
+    return send(200, { url: "/hub/profile?id_check=done#verification" }), true;
+  }
+
   // Rental profile and documents
   if (p === "/hub/rental-profile") {
     if (req.method === "PUT") {
@@ -894,7 +916,7 @@ export function handleHub(req, url, body, send) {
       if (display_name) u.name = display_name;
     }
     const prof = S.profiles[uid] || { intro: null, preferred_move_date: null, preferred_lease_months: null, preferred_suburbs: [], budget_weekly: null, bedrooms_min: null, household_adults: 1, household_children: 0, household_notes: null, has_pets: false, pet_details: null, employment_status: null, employer: null, job_title: null, employment_since: null, income_weekly: null, rental_history: [], first_time_renter: false, referees: [], updated_at: null };
-    return send(200, { profile: prof, exists: Boolean(S.profiles[uid]), display_name: u.name, avatar_url: null, documents: S.documents[uid] || [], completion: completion(uid), verification: "not_started" }), true;
+    return send(200, { profile: prof, exists: Boolean(S.profiles[uid]), display_name: u.name, avatar_url: null, documents: S.documents[uid] || [], completion: completion(uid), verification: idVerified(uid) ? "verified" : "not_started" }), true;
   }
   if (p === "/hub/documents" && req.method === "POST") {
     const doc = { id: uuid(), kind: "income", label: null, file_name: "payslip.pdf", mime_type: "application/pdf", size_bytes: 182_000, created_at: iso(now()) };
@@ -1328,7 +1350,8 @@ export function handleHub(req, url, body, send) {
       if (body.min_stay_weeks) l.min_stay_weeks = body.min_stay_weeks;
       if (body.max_stay_weeks) l.max_stay_weeks = body.max_stay_weeks;
       if (body.listing_purpose) l.listing_purpose = body.listing_purpose;
-      return send(200, { listing_id: l.id, unit_label: OWNED[l.id].unit_label }), true;
+      if ("require_verified_renters" in body) l.require_verified_renters = Boolean(body.require_verified_renters);
+      return send(200, { listing_id: l.id, unit_label: OWNED[l.id].unit_label, require_verified_renters: Boolean(l.require_verified_renters) }), true;
     }
     const meta = OWNED[l.id];
     return send(200, { listing: { ...l, ...card(l, true), street_address: meta.address, moderation_status: meta.moderation_status, moderation_notes: null, status: unitStatus(l), pending_applications: S.applications.filter((a) => a.listing_id === l.id && ["submitted", "under_review", "shortlisted"].includes(a.status)).length, upcoming_inspections: S.slots.filter((s) => s.listing_id === l.id && s.status === "scheduled").length, performance: { days: 30, totals: perfTotals([l]), by_listing: {}, tracking_since: "2026-09-01T00:00:00Z" }, owner_verified: true, exact_location: { lat: -33.7139, lng: 150.9501 } } }), true;
@@ -1583,6 +1606,9 @@ export function handleHub(req, url, body, send) {
         reports_by: S.reports.filter((r) => r.reporter_id === id).map(({ id: rid, item_type, item_id, reason, status, created_at }) => ({ id: rid, item_type, item_id, reason, status, created_at })),
         history: S.audit.filter((e) => ids.has(e.target_id)),
       }), true;
+    }
+    if (p === "/hub/admin/id-checks") {
+      return send(200, { checks: Object.entries(ID_CHECKS).map(([id, c]) => ({ user_id: id, person: person(id), status: c.status, payment_status: c.paid ? "paid" : "unpaid", failed_checks: 0, checks_started: 1, last_error: null, verified_name: c.status === "verified" ? person(id).name : null, document_type: "passport", document_country: "AU", stripe_session: "vs_mock", paid_at: c.at || null, checked_at: c.at || null, refunded_at: null, refund_needed: false })) }), true;
     }
     if (p === "/hub/admin/move-ins") {
       const rows = Object.entries(S.moveIns || {}).map(([tid, mi]) => {

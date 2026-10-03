@@ -57,6 +57,22 @@ export interface Person {
   avatar_url: string | null;
   public_id?: string | null;
   member_since?: string | null;
+  /** Passed Migrent's renter ID check (shown to owners as a green badge). */
+  id_verified?: boolean;
+}
+
+/** GET /hub/id-check: the renter's own paid ID check (backend renter_id.py). */
+export interface IdCheck {
+  available: boolean;
+  fee: number;
+  status: "not_started" | "pending" | "retry" | "verified" | "rejected" | "expired";
+  paid: boolean;
+  refunded: boolean;
+  tries_included: number;
+  tries_left: number;
+  can_start: boolean;
+  last_error: string | null;
+  verified_at: string | null;
 }
 
 export interface ListingCard {
@@ -85,6 +101,8 @@ export interface ListingCard {
   unit_label: string | null;
   listing_purpose: "long_term" | "short_stay" | "sale";
   nearest_transport?: string | null;
+  /** The owner only accepts ID-verified renters. */
+  require_verified_renters?: boolean;
   // owner view
   moderation_status?: string;
   property_id?: string | null;
@@ -129,6 +147,7 @@ export interface ApplicationSummary {
   unread_by_owner: boolean;
   household?: { adults?: number; children?: number; has_pets?: boolean };
   verification?: string | null;
+  id_verified?: boolean;
   owner?: Person | null;
   owner_approved_at?: string | null;
 }
@@ -630,4 +649,5 @@ export interface OwnerListing {
   upcoming_inspections: number;
   performance: Performance;
   owner_verified: boolean;
+  require_verified_renters?: boolean;
 }

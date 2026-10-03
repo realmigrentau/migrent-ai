@@ -254,7 +254,9 @@ def _handle_mentor_session_paid(sb, event: dict, session: dict) -> dict:
 
 
 def _handle_verification_paid(sb, event: dict, session: dict) -> dict:
-    from payments import SEEKER_VERIFICATION_ENABLED
+    """The AUD 19 for the renter ID check (renter_id.py). Paying only opens
+    the check; the badge comes from Stripe Identity's own webhook."""
+    from renter_id import enabled, mark_paid
 
     metadata = session.get("metadata") or {}
     user_id = metadata.get("user_id")
@@ -263,12 +265,14 @@ def _handle_verification_paid(sb, event: dict, session: dict) -> dict:
     _verify_amount(session, "verification")
     if not _record_event(sb, event, session, fee_type="verification", status="accepted"):
         return {"status": "duplicate"}
-    if not SEEKER_VERIFICATION_ENABLED:
+    if not enabled():
         # Money was taken while the feature was off (should not happen: the
         # checkout endpoint refuses). Record it and flag for a refund.
         logger.error("Verification payment received while feature disabled: %s", session.get("id"))
         return {"status": "ok", "verification": False, "action_required": "refund"}
-    sb.table("profiles").upsert({"id": user_id, "verified": True}).execute()
+    if not mark_paid(sb, user_id, session):
+        logger.error("ID check payment %s is not the renter's current checkout; refund it", session.get("id"))
+        return {"status": "ok", "verification": False, "action_required": "refund"}
     return {"status": "ok", "verification": True}
 
 
@@ -389,6 +393,10 @@ async def stripe_webhook(request: Request):
 
                 return handle_card_saved(sb, obj)
             return _handle_legacy_deal_paid(sb, event, obj)
+        if event_type.startswith("identity.verification_session."):
+            from renter_id import handle_identity_event
+
+            return handle_identity_event(sb, event)
         if event_type == "checkout.session.expired":
             return _handle_session_expired(sb, event, obj)
         if event_type in ("charge.refunded", "refund.created"):

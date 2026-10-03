@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { useRouter } from "next/router";
-import { ClipboardCheck, Compass, FileText, GitCompareArrows, Search } from "lucide-react";
+import { BadgeCheck, ClipboardCheck, Compass, FileText, GitCompareArrows, Search } from "lucide-react";
 import HubShell from "../../../components/hub/HubShell";
 import { ApplicationCard } from "../../../components/hub/cards";
 import StayRequests from "../../../components/hub/applications/StayRequests";
@@ -10,6 +10,7 @@ import { EmptyState, ErrorState, RowSkeleton } from "../../../components/hub/ui/
 import { Checkbox, Select } from "../../../components/hub/ui/Field";
 import { PageHeader, Tabs } from "../../../components/hub/ui/Layout";
 import { useToast } from "../../../components/ui/Toast";
+import { cn } from "../../../lib/cn";
 import { useHubQuery } from "../../../lib/hub/query";
 import { isClosed } from "../../../lib/hub/status";
 import { useHub } from "../../../lib/hub/session";
@@ -64,6 +65,7 @@ function OwnerApplications({ apps }: { apps: ApplicationSummary[] }) {
   const [selecting, setSelecting] = useState(false);
   const [selected, setSelected] = useState<string[]>([]);
   const [comparing, setComparing] = useState(false);
+  const [verifiedOnly, setVerifiedOnly] = useState(router.query.verified === "1");
 
   const homes = useMemo(() => {
     const m = new Map<string, string>();
@@ -73,7 +75,7 @@ function OwnerApplications({ apps }: { apps: ApplicationSummary[] }) {
 
   const counts = Object.fromEntries((Object.keys(OWNER_TABS) as OwnerTab[]).map((t) => [t, apps.filter((a) => OWNER_TABS[t].includes(a.status)).length])) as Record<OwnerTab, number>;
   const needle = q.trim().toLowerCase();
-  const list = apps.filter((a) => OWNER_TABS[tab].includes(a.status) && (!home || a.listing?.id === home) && (!needle || (a.person?.name || "").toLowerCase().includes(needle) || (a.listing?.title || "").toLowerCase().includes(needle)));
+  const list = apps.filter((a) => OWNER_TABS[tab].includes(a.status) && (!home || a.listing?.id === home) && (!verifiedOnly || a.id_verified) && (!needle || (a.person?.name || "").toLowerCase().includes(needle) || (a.listing?.title || "").toLowerCase().includes(needle)));
   const setTab = (t: OwnerTab) => {
     const params = new URLSearchParams();
     if (t !== "new") params.set("tab", t);
@@ -131,6 +133,18 @@ function OwnerApplications({ apps }: { apps: ApplicationSummary[] }) {
             ))}
           </Select>
         )}
+        <button
+          type="button"
+          aria-pressed={verifiedOnly}
+          onClick={() => setVerifiedOnly((v) => !v)}
+          className={cn(
+            "inline-flex h-10 items-center gap-1.5 whitespace-nowrap rounded-full border px-4 text-[14px] font-medium transition-colors",
+            verifiedOnly ? "border-[#86EFAC] bg-[#DCFCE7] text-[#166534] dark:border-[#166534] dark:bg-[#14532D] dark:text-[#BBF7D0]" : "border-[var(--color-line-2)] bg-[var(--color-surface)] text-[color:var(--color-ink-2)] hover:bg-[var(--color-surface-hover)]",
+          )}
+        >
+          <BadgeCheck className="h-4 w-4" strokeWidth={2} aria-hidden />
+          Only ID-verified
+        </button>
         <Button
           variant={selecting ? "soft" : "ghost"}
           icon={<GitCompareArrows className="h-4 w-4" strokeWidth={1.75} />}
@@ -174,7 +188,7 @@ function OwnerApplications({ apps }: { apps: ApplicationSummary[] }) {
           )}
         </div>
       ) : (
-        <EmptyState compact title="Nothing here" body={needle || home ? "No applications match that search." : tab === "new" ? "You're all caught up." : "Applications move here as you make decisions."} />
+        <EmptyState compact title="Nothing here" body={verifiedOnly ? "No ID-verified applicants here yet. Turn off \"Only ID-verified\" to see everyone." : needle || home ? "No applications match that search." : tab === "new" ? "You're all caught up." : "Applications move here as you make decisions."} />
       )}
       <ApplicantCompare open={comparing} ids={selected} onClose={() => setComparing(false)} />
     </div>

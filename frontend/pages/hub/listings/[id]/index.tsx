@@ -17,6 +17,7 @@ import { invalidate, setQueryData, useHubQuery } from "../../../../lib/hub/query
 import { siteUrl } from "../../../../lib/hub/routes";
 import type { OwnerListing } from "../../../../lib/hub/types";
 import { moveInCost, weeksLabel } from "../../../../lib/listingCosts";
+import { useHub } from "../../../../lib/hub/session";
 import { supabase } from "../../../../lib/supabase";
 
 function isoPlusDays(n: number, from?: string | null) {
@@ -148,6 +149,34 @@ function OccupancyCard({ l, onChange }: { l: OwnerListing; onChange: (patch: Par
           {({ id, describedBy }) => <Input id={id} type="date" value={until} onChange={(e) => setUntil(e.target.value)} onBlur={() => until !== (l.occupied_until ?? "") && void save("occupied", until)} aria-describedby={describedBy} />}
         </Field>
       )}
+    </Panel>
+  );
+}
+
+/** "Only ID-verified renters can apply" (backend renter_id.py). Shown once renters can get verified. */
+function VerifiedRentersCard({ l, onChange }: { l: OwnerListing; onChange: (patch: Partial<OwnerListing>) => void }) {
+  const toast = useToast();
+  const { me } = useHub();
+  if (!me?.features?.renter_verification || (l.listing_purpose ?? "long_term") === "sale") return null;
+
+  async function save(next: boolean) {
+    try {
+      const res = await hubApi.patch<{ require_verified_renters: boolean }>(`/hub/listings/${l.id}/unit`, { require_verified_renters: next });
+      onChange({ require_verified_renters: res.require_verified_renters });
+      toast.success(next ? "Only ID-verified renters can apply now" : "Anyone can apply now");
+    } catch (e) {
+      toast.error(e instanceof HubError ? e.message : "That didn't save.");
+    }
+  }
+
+  return (
+    <Panel className="flex flex-col gap-3">
+      <Switch
+        checked={Boolean(l.require_verified_renters)}
+        onChange={(v) => void save(v)}
+        label="Only ID-verified renters can apply"
+        description="Renters with the green ID verified badge have had their photo ID and a live selfie checked. Others are asked to verify before they apply. Fewer people may apply."
+      />
     </Panel>
   );
 }
@@ -334,6 +363,7 @@ export default function ListingPage() {
 
         <aside className="flex flex-col gap-5 lg:sticky lg:top-10 lg:self-start">
           <OccupancyCard l={l} onChange={(patch) => setQueryData<{ listing: OwnerListing }>(key!, (prev) => (prev ? { listing: { ...prev.listing, ...patch } } : prev!))} />
+          <VerifiedRentersCard l={l} onChange={(patch) => setQueryData<{ listing: OwnerListing }>(key!, (prev) => (prev ? { listing: { ...prev.listing, ...patch } } : prev!))} />
           <Panel padded={false} className="overflow-hidden">
             <HomeImage src={l.images?.[0] ?? null} alt="" className="aspect-[4/3] w-full" rounded="rounded-none" sizes="340px" />
             <div className="p-4 text-[13px] leading-relaxed text-[color:var(--color-ink-3)]">Renters see {l.display_address} and an approximate area on the map. The street address is shared once they book an inspection.</div>

@@ -23,6 +23,7 @@ import {
   Wifi,
   Zap,
 } from "lucide-react";
+import VerifiedRentersNote from "../../../components/listings/VerifiedRentersNote";
 import HubShell from "../../../components/hub/HubShell";
 import HubLink, { useHubNavigate } from "../../../components/hub/HubLink";
 import InspectionPicker from "../../../components/hub/listing/InspectionPicker";
@@ -203,6 +204,7 @@ export default function HubHome() {
         </ButtonLink>
       ) : (
         <>
+          {canApply && l.require_verified_renters && <VerifiedRentersNote />}
           {canApply && (
             <ButtonLink to={`/apply/${l.id}`} size="lg" block>
               Apply for this home

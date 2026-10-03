@@ -205,7 +205,7 @@ def renter_applications(sb, renter_id: str, *, active_only: bool = False, limit:
     return [_summary(r, listings.get(str(r["listing_id"])), owners.get(str(r["owner_id"])), "renter") for r in rows]
 
 
-def owner_applications(sb, owner_id: str, *, status: Optional[str] = None, listing_id: Optional[str] = None, limit: Optional[int] = None) -> list[dict]:
+def owner_applications(sb, owner_id: str, *, status: Optional[str] = None, listing_id: Optional[str] = None, limit: Optional[int] = None, id_verified_only: bool = False) -> list[dict]:
     q = sb.table("applications").select("*").eq("owner_id", owner_id).in_("status", list(OWNER_VISIBLE)).order("updated_at", desc=True)
     if status:
         q = q.eq("status", status)
@@ -214,14 +214,23 @@ def owner_applications(sb, owner_id: str, *, status: Optional[str] = None, listi
     rows = q.execute().data or []
     if limit:
         rows = rows[:limit]
+    from renter_id import people_with_id_check
+
     listings = fetch_listings(sb, [r["listing_id"] for r in rows])
-    renters = fetch_people(sb, [r["renter_id"] for r in rows])
+    renters = people_with_id_check(sb, [r["renter_id"] for r in rows])
     out = []
     for r in rows:
-        s = _summary(r, listings.get(str(r["listing_id"])), renters.get(str(r["renter_id"])), "owner")
+        person = renters.get(str(r["renter_id"]))
+        verified = bool(person and person.get("id_verified"))
+        if id_verified_only and not verified:
+            continue
+        s = _summary(r, listings.get(str(r["listing_id"])), person, "owner")
         snap = r.get("snapshot") or {}
         s["household"] = (snap.get("household") or {}) if snap else {}
-        s["verification"] = snap.get("verification") if snap else None
+        # Live, not the snapshot's: a renter who verifies after applying
+        # shows as verified on applications they already sent.
+        s["verification"] = "verified" if verified else "not_started"
+        s["id_verified"] = verified
         out.append(s)
     return out
 
@@ -231,13 +240,14 @@ def list_applications(
     request: Request,
     status: Optional[str] = None,
     listing_id: Optional[str] = None,
+    id_verified: bool = False,
     authorization: Optional[str] = Header(None),
 ):
     actor = hub_actor(request, authorization)
     sb = get_supabase_admin()
     try:
         if actor.is_owner:
-            return {"role": "owner", "applications": owner_applications(sb, actor.id, status=status, listing_id=listing_id)}
+            return {"role": "owner", "applications": owner_applications(sb, actor.id, status=status, listing_id=listing_id, id_verified_only=id_verified)}
         return {"role": "renter", "applications": renter_applications(sb, actor.id)}
     except HTTPException:
         raise
@@ -276,6 +286,9 @@ def start_application(request: Request, body: StartBody, authorization: Optional
     from blocks import require_not_blocked
 
     require_not_blocked(sb, actor.id, str(listing["owner_id"]))
+    from renter_id import require_verified_if_listing_asks
+
+    require_verified_if_listing_asks(sb, listing, actor.id)
     try:
         existing = (
             sb.table("applications")
@@ -390,6 +403,10 @@ def submit_application(application_id: str, request: Request, authorization: Opt
     card = listing_card(listing)
     if not card or (card["public_state"] != "published" and not resubmit):
         raise HTTPException(status_code=409, detail="This home is no longer taking applications")
+    if not resubmit:
+        from renter_id import require_verified_if_listing_asks
+
+        require_verified_if_listing_asks(sb, listing, actor.id)
 
     from routes_hub_renter import build_snapshot
 
@@ -470,8 +487,10 @@ def get_application(application_id: str, request: Request, authorization: Option
         except HTTPException:
             app = _load(sb, application_id)
 
+    from renter_id import people_with_id_check
+
     listing = fetch_listings(sb, [app["listing_id"]]).get(str(app["listing_id"]))
-    people = fetch_people(sb, [app["renter_id"], app["owner_id"]])
+    people = people_with_id_check(sb, [app["renter_id"], app["owner_id"]])
     out = {
         "viewer": viewer,
         "application": {
@@ -509,7 +528,12 @@ def get_application(application_id: str, request: Request, authorization: Option
     # application is live.
     from routes_hub_renter import signed_document_url
 
-    out["snapshot"] = app.get("snapshot")
+    snapshot = dict(app.get("snapshot") or {}) or None
+    if snapshot is not None:
+        # The ID check is live: it can pass after the application was sent.
+        renter = people.get(str(app["renter_id"])) or {}
+        snapshot["verification"] = "verified" if renter.get("id_verified") else "not_started"
+    out["snapshot"] = snapshot
     out["documents"] = [
         {
             **{k: d.get(k) for k in ("id", "kind", "label", "file_name", "mime_type", "size_bytes")},

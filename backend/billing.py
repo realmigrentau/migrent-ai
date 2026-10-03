@@ -23,7 +23,7 @@ from __future__ import annotations
 
 import os
 
-from payments import HOST_LISTING_FEE_CENTS, SEEKER_VERIFICATION_ENABLED, SEEKER_VERIFICATION_FEE_CENTS
+from payments import HOST_LISTING_FEE_CENTS, SEEKER_VERIFICATION_FEE_CENTS
 
 
 def payments_mode() -> str:
@@ -45,6 +45,7 @@ def fees() -> dict:
 
 
 def renter_verification_available() -> bool:
-    """The paid renter badge only returns once there is a real check behind
-    it and live payments to take the fee."""
-    return SEEKER_VERIFICATION_ENABLED and payments_mode() == "live"
+    """The paid renter ID check (renter_id.py: Stripe Identity behind it).
+    Off until SEEKER_VERIFICATION_ENABLED=true and Stripe is set up."""
+    on = os.environ.get("SEEKER_VERIFICATION_ENABLED", "false").strip().lower() in ("1", "true", "yes")
+    return on and payments_mode() != "off"

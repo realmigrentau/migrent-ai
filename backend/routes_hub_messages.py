@@ -152,7 +152,7 @@ def build_threads(sb, actor: HubActor, *, limit_messages: int = 2000) -> list[di
     # Independent reads, fetched together (concurrency.py).
     listings, people, states, apps = run_parallel(
         lambda: fetch_listings(sb, listing_ids),
-        lambda: fetch_people(sb, [t["other_user_id"] for t in threads.values()]),
+        lambda: _people_with_id_check(sb, [t["other_user_id"] for t in threads.values()]),
         lambda: _states(sb, uid),
         _apps,
     )
@@ -170,6 +170,13 @@ def build_threads(sb, actor: HubActor, *, limit_messages: int = 2000) -> list[di
         out.append(t)
     out.sort(key=lambda t: t["last_message"]["created_at"], reverse=True)
     return out
+
+
+def _people_with_id_check(sb, ids):
+    # The other person's green "ID verified" badge (renter_id.py).
+    from renter_id import people_with_id_check
+
+    return people_with_id_check(sb, ids)
 
 
 @router.get("/inbox")
@@ -320,7 +327,7 @@ def conversation(key: str, request: Request, before: Optional[str] = None, limit
     _, messages, people, states, blocked, context = run_parallel(
         _mark_read,
         _messages,
-        lambda: fetch_people(sb, [other]),
+        lambda: _people_with_id_check(sb, [other]),
         lambda: _states(sb, uid),
         _blocked,
         _context,

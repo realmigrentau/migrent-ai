@@ -22,6 +22,7 @@ import { siteIdentity, supportPromise } from "../../lib/siteIdentity";
 import type { GetServerSideProps } from "next";
 import { hubFromSite } from "../../lib/hub/routes";
 import HubActions, { hubIntentHref } from "../../components/listings/HubActions";
+import VerifiedRentersNote from "../../components/listings/VerifiedRentersNote";
 import ListingSafety from "../../components/listings/ListingSafety";
 import { Events, trackEvent } from "../../lib/analytics";
 import { useMounted } from "../../hooks/useMounted";
@@ -507,7 +508,10 @@ export default function ListingDetailPage({ initialListing }: { initialListing?:
                     <p className="site-body">This room is not currently open for booking.</p>
                   </div>
                 ) : !shortStay ? (
-                  <HubActions listingId={listing.id} ownerName={owner?.name} signedIn={Boolean(session)} />
+                  <>
+                    {listing.require_verified_renters && <VerifiedRentersNote className="mb-3" />}
+                    <HubActions listingId={listing.id} ownerName={owner?.name} signedIn={Boolean(session)} />
+                  </>
                 ) : !session && !refreshing ? (
                   <div className="space-y-4">
                     <div className="site-card site-card--pad text-center space-y-4">
@@ -521,6 +525,7 @@ export default function ListingDetailPage({ initialListing }: { initialListing?:
                   </div>
                 ) : (
                   <>
+                    {listing.require_verified_renters && <VerifiedRentersNote className="mb-3" />}
                     <RequestToBookForm
                       listing={{
                         id: listing.id,

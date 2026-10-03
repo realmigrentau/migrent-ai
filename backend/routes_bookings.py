@@ -158,6 +158,9 @@ def create_booking(
     from blocks import require_not_blocked
 
     require_not_blocked(sb, user_id, owner_id)
+    from renter_id import require_verified_if_listing_asks
+
+    require_verified_if_listing_asks(sb, listing, user_id)
 
     # Validate dates
     try:

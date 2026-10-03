@@ -1497,7 +1497,8 @@ export async function createBooking(token: string, payload: CreateBookingPayload
     });
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
-      throw new Error(err.detail || `createBooking failed: ${res.status}`);
+      const detail = typeof err.detail === "object" && err.detail ? err.detail.message : err.detail;
+      throw new Error(detail || `createBooking failed: ${res.status}`);
     }
     return await res.json();
   } catch (err: any) {
@@ -2323,6 +2324,8 @@ export interface PublicListing {
   bond?: string | null;
   bond_weeks?: number | null;
   rent_in_advance_weeks?: number | null;
+  /** The owner only accepts ID-verified renters. */
+  require_verified_renters?: boolean;
   bills_estimate_weekly?: number | null;
   newcomer_friendly?: boolean | null;
   created_at?: string;

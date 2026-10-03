@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/router";
 import { Check, Eye, ShieldCheck } from "lucide-react";
 import HubShell from "../../components/hub/HubShell";
 import ApplicantSnapshot from "../../components/hub/applications/Snapshot";
@@ -22,9 +23,10 @@ import { Avatar } from "../../components/hub/ui/Media";
 import { useToast } from "../../components/ui/Toast";
 import { hubApi, HubError } from "../../lib/hub/api";
 import { aud } from "../../lib/hub/format";
-import { invalidate, setQueryData } from "../../lib/hub/query";
+import { invalidate, setQueryData, useHubQuery } from "../../lib/hub/query";
 import { useHub } from "../../lib/hub/session";
-import type { ApplicationSnapshot, DocumentMeta, RentalProfileResponse } from "../../lib/hub/types";
+import type { ApplicationSnapshot, DocumentMeta, IdCheck, RentalProfileResponse } from "../../lib/hub/types";
+import IdVerifiedBadge from "../../components/hub/IdVerifiedBadge";
 import { useRentalProfile } from "../../lib/hub/useRentalProfile";
 import { cn } from "../../lib/cn";
 
@@ -56,62 +58,143 @@ function snapshotFrom(d: ProfileDraft, avatar: string | null, memberSince: strin
   };
 }
 
-/** Optional identity check. Never required, never nagged about. */
-function VerificationCard({ status }: { status: string }) {
-  const { me } = useHub();
+/**
+ * The paid ID check (backend renter_id.py): AUD 19, then Stripe's photo ID
+ * and selfie check. A pass gives the green "ID verified" badge owners see.
+ * Three tries are included; if all fail, the fee is refunded.
+ */
+function VerificationCard() {
+  const router = useRouter();
   const toast = useToast();
-  const [busy, setBusy] = useState(false);
-  const f = me?.features;
-  const fee = f?.fees.renter_verification_fee ?? 19;
+  const { data, refetch } = useHubQuery<IdCheck>("/hub/id-check");
+  const [busy, setBusy] = useState<"pay" | "start" | null>(null);
+  const returned = router.query.id_check;
+  const sessionId = typeof router.query.session_id === "string" ? router.query.session_id : undefined;
 
-  if (status === "verified") {
+  // Back from Stripe's check: the result arrives by webhook within a minute
+  // or two, so look again a few times.
+  useEffect(() => {
+    if (returned !== "done" && returned !== "paid") return;
+    let n = 0;
+    const t = window.setInterval(() => {
+      n += 1;
+      void refetch();
+      if (n >= 24) window.clearInterval(t);
+    }, 5000);
+    return () => window.clearInterval(t);
+  }, [returned, refetch]);
+
+  if (!data) return <Skeleton className="h-40 w-full rounded-[18px]" />;
+  const c = data;
+
+  async function pay() {
+    setBusy("pay");
+    try {
+      const res = await hubApi.post<{ checkout_url: string }>("/hub/id-check/checkout", {});
+      window.location.href = res.checkout_url;
+    } catch (e) {
+      toast.error(e instanceof HubError ? e.message : "The payment page couldn't open.");
+      setBusy(null);
+    }
+  }
+
+  async function start() {
+    setBusy("start");
+    try {
+      const res = await hubApi.post<{ url: string }>("/hub/id-check/start", { session_id: sessionId });
+      window.location.href = res.url;
+    } catch (e) {
+      toast.error(e instanceof HubError ? e.message : "The ID check couldn't open.");
+      setBusy(null);
+      void refetch();
+    }
+  }
+
+  if (c.status === "verified") {
     return (
-      <Panel className="flex items-start gap-3">
-        <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-[color:var(--color-primary)]" strokeWidth={1.75} aria-hidden />
-        <div className="flex flex-col gap-1">
-          <p className="text-[15px] font-semibold text-[color:var(--color-ink)]">Identity checked</p>
-          <p className="text-[13.5px] leading-relaxed text-[color:var(--color-ink-2)]">Owners see that Migrent has checked your ID. They never see the document itself.</p>
-        </div>
+      <Panel className="flex flex-col gap-2 border-[#86EFAC] bg-[#F0FDF4] dark:border-[#166534] dark:bg-[#052E16]">
+        <IdVerifiedBadge className="w-fit" />
+        <p className="text-[15px] font-semibold text-[color:var(--color-ink)]">Your ID is verified</p>
+        <p className="text-[13.5px] leading-relaxed text-[color:var(--color-ink-2)]">Owners see the green badge on your applications and messages. They never see your ID itself.</p>
       </Panel>
     );
   }
 
-  async function start() {
-    setBusy(true);
-    try {
-      const res = await hubApi.post<{ checkout_url: string }>("/payments/create-verification-session", {});
-      window.location.href = res.checkout_url;
-    } catch (e) {
-      toast.error(e instanceof HubError ? e.message : "Verification could not start.");
-      setBusy(false);
-    }
-  }
+  const waitingForPayment = returned === "paid" && !c.paid;
+  const checking = c.status === "pending" || (returned === "done" && c.paid && c.status !== "retry" && c.status !== "rejected" && !c.last_error);
 
   return (
     <Panel className="flex flex-col gap-3">
       <div className="flex items-center gap-2">
-        <ShieldCheck className="h-5 w-5 text-[color:var(--color-ink-3)]" strokeWidth={1.75} aria-hidden />
-        <p className="text-[15px] font-semibold text-[color:var(--color-ink)]">Identity check</p>
-        <StatusBadge tone="neutral" icon={false}>
-          Optional
-        </StatusBadge>
+        <ShieldCheck className="h-5 w-5 text-[#16A34A]" strokeWidth={1.75} aria-hidden />
+        <p className="text-[15px] font-semibold text-[color:var(--color-ink)]">Get the green ID badge</p>
       </div>
-      {status === "pending" ? (
-        <p className="text-[13.5px] leading-relaxed text-[color:var(--color-ink-2)]">We're checking your ID. This usually takes a working day. You can keep applying in the meantime.</p>
-      ) : f?.renter_verification ? (
+
+      {!c.available ? (
+        <p className="text-[13.5px] leading-relaxed text-[color:var(--color-ink-2)]">An optional ID check is coming. You can apply to most homes without it.</p>
+      ) : checking ? (
+        <InlineAlert tone="info" title="Checking your ID">
+          Stripe is checking your ID and selfie. This usually takes a minute or two. You can leave this page; we'll email you the result.
+        </InlineAlert>
+      ) : c.status === "rejected" ? (
         <>
-          <p className="text-[13.5px] leading-relaxed text-[color:var(--color-ink-2)]">
-            A one-off {aud(fee)} check of your photo ID. Owners see a "checked" mark on your applications. You can apply to any home without it, and it doesn't change how we show your application.
-          </p>
-          {f.payments === "test" && <p className="text-[12.5px] text-[color:var(--color-ink-3)]">Payments are in test mode: no real card is charged.</p>}
-          <Button variant="secondary" size="sm" loading={busy} onClick={() => void start()} className="w-fit">
-            Check my ID for {aud(fee)}
+          <InlineAlert tone="warning" title="Your ID check didn't pass">
+            {c.refunded ? `All ${c.tries_included} tries were used, so we refunded your ${aud(c.fee)}.` : `All ${c.tries_included} tries were used. Our team is arranging your refund.`} You can still apply for homes that don't ask for it.
+          </InlineAlert>
+          {c.refunded && (
+            <Button variant="secondary" size="sm" loading={busy === "pay"} onClick={() => void pay()} className="w-fit">
+              Try again for {aud(c.fee)}
+            </Button>
+          )}
+        </>
+      ) : c.paid ? (
+        <>
+          {c.status === "retry" && c.last_error ? (
+            <InlineAlert tone="warning" title={`That try didn't pass. ${c.tries_left} ${c.tries_left === 1 ? "try" : "tries"} left.`}>
+              {c.last_error}
+            </InlineAlert>
+          ) : (
+            <p className="text-[13.5px] leading-relaxed text-[color:var(--color-ink-2)]">Payment received. Next: a photo of your ID, then a quick selfie. It takes about 2 minutes on your phone.</p>
+          )}
+          <IdSteps />
+          <Button size="sm" loading={busy === "start"} onClick={() => void start()} className="w-fit">
+            {c.status === "retry" ? "Try the ID check again" : "Start my ID check"}
           </Button>
         </>
+      ) : waitingForPayment ? (
+        <InlineAlert tone="info" title="Confirming your payment">
+          This takes a few seconds.{" "}
+          <button type="button" className="font-semibold underline" onClick={() => void start()}>
+            Start my ID check
+          </button>
+        </InlineAlert>
       ) : (
-        <p className="text-[13.5px] leading-relaxed text-[color:var(--color-ink-2)]">An optional ID check is coming. You can apply to any home without it, today and after it arrives.</p>
+        <>
+          <p className="text-[13.5px] leading-relaxed text-[color:var(--color-ink-2)]">
+            Show owners you're real. A one-off {aud(c.fee)} check of your photo ID and a live selfie gives you a green <strong>ID verified</strong> badge on every application and message.
+          </p>
+          <ul className="flex flex-col gap-1.5 text-[13px] leading-relaxed text-[color:var(--color-ink-2)]">
+            <li>• Passport, driver licence or national ID card. Overseas passports work.</li>
+            <li>• {c.tries_included} tries included. If all fail, you get your money back.</li>
+            <li>• Some owners only accept ID-verified renters.</li>
+            <li>• Checked securely by Stripe. Owners never see your ID.</li>
+          </ul>
+          <Button size="sm" loading={busy === "pay"} onClick={() => void pay()} className="w-fit">
+            Verify my ID for {aud(c.fee)}
+          </Button>
+        </>
       )}
     </Panel>
+  );
+}
+
+function IdSteps() {
+  return (
+    <ol className="flex flex-col gap-1 text-[13px] leading-relaxed text-[color:var(--color-ink-2)]">
+      <li>1. Use good light and put your ID on a flat, dark surface.</li>
+      <li>2. Make sure all four corners show and nothing is blurry.</li>
+      <li>3. For the selfie, face the camera without a hat or sunglasses.</li>
+    </ol>
   );
 }
 
@@ -201,7 +284,7 @@ export default function RentalProfilePage() {
       )}
 
       <div className="grid gap-8 lg:grid-cols-[260px_minmax(0,1fr)] xl:gap-12">
-        <aside className="flex flex-col gap-4 lg:sticky lg:top-10 lg:self-start">
+        <aside className="flex flex-col gap-4 lg:sticky lg:top-10 lg:max-h-[calc(100vh-5rem)] lg:self-start lg:overflow-y-auto lg:pb-2">
           <Panel className="flex items-center gap-4">
             <ProgressRing value={completion.percent} label="Profile complete" />
             <div className="flex min-w-0 flex-col gap-0.5">
@@ -237,7 +320,9 @@ export default function RentalProfilePage() {
               ))}
             </ol>
           </nav>
-          <VerificationCard status={data.verification} />
+          <div id="verification" className="scroll-mt-24">
+            <VerificationCard />
+          </div>
         </aside>
 
         <div className="flex min-w-0 flex-col gap-6">
@@ -281,7 +366,7 @@ export default function RentalProfilePage() {
           <Avatar name={d.display_name} src={data.avatar_url} size={56} />
           <div>
             <p className="text-[18px] font-semibold text-[color:var(--color-ink)]">{d.display_name || "Your name"}</p>
-            <p className="text-[13.5px] text-[color:var(--color-ink-3)]">{data.verification === "verified" ? "Identity checked by Migrent" : "Identity not checked"}</p>
+            {data.verification === "verified" ? <IdVerifiedBadge className="w-fit" /> : <p className="text-[13.5px] text-[color:var(--color-ink-3)]">ID not verified</p>}
           </div>
         </div>
         <ApplicantSnapshot s={snapshotFrom(d, data.avatar_url, me?.member_since ?? null, data.verification)} documents={[]} />

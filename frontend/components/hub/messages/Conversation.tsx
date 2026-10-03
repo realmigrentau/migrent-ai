@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Archive, ArrowLeft, Ban, BellOff, Bell, CalendarDays, FileText, Flag, Home, Loader2, MoreHorizontal, Paperclip, Pencil, RotateCw, Send, ShieldAlert, Sparkles, TriangleAlert, X } from "lucide-react";
+import IdVerifiedBadge from "../IdVerifiedBadge";
 import { cn } from "../../../lib/cn";
 import { hubApi, hubUploadWithProgress, HubError } from "../../../lib/hub/api";
 import { weekly, whenLabel } from "../../../lib/hub/format";
@@ -248,6 +249,7 @@ export default function Conversation({ threadKey, onBack }: { threadKey: string;
           <p className="truncate text-[15.5px] font-semibold text-[color:var(--color-ink)]">
             {data.other.name}
             <span className="ml-2 text-[12.5px] font-medium text-[color:var(--color-ink-3)]">{data.my_side === "owner" ? "Renter" : "Owner"}</span>
+            {data.other.id_verified && <IdVerifiedBadge size="sm" className="ml-2 align-middle" />}
           </p>
           {l && <p className="truncate text-[13px] text-[color:var(--color-ink-3)]">{l.unit_label ? `${l.unit_label} · ` : ""}{l.title}</p>}
         </div>

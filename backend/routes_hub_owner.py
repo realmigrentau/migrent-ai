@@ -819,6 +819,7 @@ def owner_listing(listing_id: str, request: Request, authorization: Optional[str
     out = to_owner_listing(row)
     for k in ("property_id", "unit_label", "listing_purpose", "occupancy", "occupied_until", "paused_at", "expired_at"):
         out[k] = row.get(k)
+    out["require_verified_renters"] = bool(row.get("require_verified_renters"))
     apps, slots = _counts_by_listing(sb, actor.id)
     out["status"] = unit_status(row, apps.get(listing_id, 0))
     out["pending_applications"] = apps.get(listing_id, 0)
@@ -859,6 +860,7 @@ class UnitPatch(BaseModel):
     property_id: Optional[str] = None
     min_stay_weeks: Optional[int] = Field(None, ge=1, le=104)
     max_stay_weeks: Optional[int] = Field(None, ge=1, le=260)
+    require_verified_renters: Optional[bool] = None
 
 
 @router.patch("/listings/{listing_id}/unit")
@@ -879,7 +881,7 @@ def update_unit(listing_id: str, request: Request, body: UnitPatch, authorizatio
     if not patch:
         raise HTTPException(status_code=400, detail="Nothing to change")
     row = sb.table("listings").update(patch).eq("id", listing_id).execute().data[0]
-    return {"listing_id": listing_id, **{k: row.get(k) for k in ("unit_label", "listing_purpose", "property_id", "min_stay_weeks", "max_stay_weeks")}}
+    return {"listing_id": listing_id, **{k: row.get(k) for k in ("unit_label", "listing_purpose", "property_id", "min_stay_weeks", "max_stay_weeks", "require_verified_renters")}}
 
 
 # ---------------------------------------------------------------------------
