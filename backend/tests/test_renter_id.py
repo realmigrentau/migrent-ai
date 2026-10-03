@@ -1,6 +1,6 @@
 """
 The paid renter ID check (renter_id.py): AUD 19, then Stripe Identity's
-document and selfie check, three tries then an automatic refund, and the
+document and selfie check, up to three tries (no refund if all fail), and the
 green badge owners see. Stripe is faked throughout.
 """
 
@@ -110,7 +110,7 @@ def test_owners_see_the_badge_live_and_can_filter(client, db, stripe_fake):
     assert detail["renter"]["id_verified"] is True and detail["snapshot"]["verification"] == "verified"
 
 
-def test_three_failed_tries_refund_the_fee(client, db, stripe_fake):
+def test_three_failed_tries_use_up_the_fee_without_a_refund(client, db, stripe_fake):
     pay(client)
     for n in (1, 2):
         client.post("/hub/id-check/start", headers=auth(SEEKER_ID))
@@ -126,10 +126,10 @@ def test_three_failed_tries_refund_the_fee(client, db, stripe_fake):
 
     client.post("/hub/id-check/start", headers=auth(SEEKER_ID))
     r = identity(client, "requires_input", session_id="vs_4", error="document_unverified_other").json()
-    assert r["id_check"] == "rejected" and r["refunded"] is True
-    assert stripe_fake["refunds"] == [{"payment_intent": "pi_id", "reason": "requested_by_customer", "metadata": {"purpose": "verification", "user_id": SEEKER_ID}}]
+    assert r["id_check"] == "rejected"
+    assert stripe_fake["refunds"] == []
     s = status(client)
-    assert s["status"] == "rejected" and s["refunded"] and not s["can_start"]
+    assert s["status"] == "rejected" and not s["refunded"] and not s["can_start"] and s["tries_left"] == 0
     assert client.post("/hub/id-check/start", headers=auth(SEEKER_ID)).status_code == 409
     # They can pay again for a fresh three tries.
     r = client.post("/hub/id-check/checkout", headers=auth(SEEKER_ID))

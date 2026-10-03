@@ -22,7 +22,6 @@ type Check = {
   paid_at: string | null;
   checked_at: string | null;
   refunded_at: string | null;
-  refund_needed: boolean;
 };
 
 const STATUS: Record<string, { label: string; tone: "success" | "warning" | "neutral" | "danger" | "info" }> = {
@@ -68,8 +67,8 @@ function RenterIdsContent() {
                   {STATUS[c.status]?.label ?? c.status}
                 </StatusBadge>
               )}
-              <StatusBadge tone={c.refund_needed ? "danger" : c.payment_status === "paid" ? "success" : "neutral"} icon={false}>
-                {c.refund_needed ? "Refund by hand in Stripe" : c.payment_status === "paid" ? "Paid" : c.payment_status === "refunded" ? "Refunded" : "Not paid"}
+              <StatusBadge tone={c.payment_status === "paid" ? "success" : "neutral"} icon={false}>
+                {c.payment_status === "paid" ? "Paid" : c.payment_status === "refunded" ? "Refunded" : "Not paid"}
               </StatusBadge>
             </li>
           ))}

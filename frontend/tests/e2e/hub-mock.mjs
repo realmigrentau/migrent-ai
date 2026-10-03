@@ -1608,7 +1608,7 @@ export function handleHub(req, url, body, send) {
       }), true;
     }
     if (p === "/hub/admin/id-checks") {
-      return send(200, { checks: Object.entries(ID_CHECKS).map(([id, c]) => ({ user_id: id, person: person(id), status: c.status, payment_status: c.paid ? "paid" : "unpaid", failed_checks: 0, checks_started: 1, last_error: null, verified_name: c.status === "verified" ? person(id).name : null, document_type: "passport", document_country: "AU", stripe_session: "vs_mock", paid_at: c.at || null, checked_at: c.at || null, refunded_at: null, refund_needed: false })) }), true;
+      return send(200, { checks: Object.entries(ID_CHECKS).map(([id, c]) => ({ user_id: id, person: person(id), status: c.status, payment_status: c.paid ? "paid" : "unpaid", failed_checks: 0, checks_started: 1, last_error: null, verified_name: c.status === "verified" ? person(id).name : null, document_type: "passport", document_country: "AU", stripe_session: "vs_mock", paid_at: c.at || null, checked_at: c.at || null, refunded_at: null })) }), true;
     }
     if (p === "/hub/admin/move-ins") {
       const rows = Object.entries(S.moveIns || {}).map(([tid, mi]) => {

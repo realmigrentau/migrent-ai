@@ -17,8 +17,10 @@ The flow:
    badge. Owners see it on applications and messages, can show only
    verified applicants, and can make a listing verified-renters-only.
 4. A failed check (blurry photo, a face that does not match) uses one of
-   three included tries. If all three fail, the AUD 19 is refunded
-   automatically and they can pay again later if they want.
+   three included tries. If all three fail, the fee is not refunded (owner
+   decision, 3 October 2026: each try costs Migrent at Stripe); they can pay
+   again for three more. The checkout page and the Hub say this before
+   anyone pays.
 
 Stripe keeps the document and selfie. Migrent stores only the name on the
 ID, the document type and country, and Stripe's reference, so it can help
@@ -186,10 +188,9 @@ def id_check_checkout(request: Request, authorization: Optional[str] = Header(No
     row = _row(sb, actor.id)
     if row and row.get("status") == "verified":
         raise HTTPException(status_code=409, detail="Your ID is already verified.")
-    if row and row.get("payment_status") == "paid":
-        if row.get("status") == "rejected":
-            # The automatic refund failed; support refunds it by hand first.
-            raise HTTPException(status_code=409, detail="Your refund for the last check is being arranged. Contact support and we'll sort it out.")
+    if row and row.get("payment_status") == "paid" and row.get("status") != "rejected":
+        # A used-up check (3 failed tries) can be bought again; anything else
+        # still has tries left.
         raise HTTPException(status_code=409, detail="You've already paid. Start your ID check from your Rental Profile.")
     try:
         session = stripe.checkout.Session.create(
@@ -200,7 +201,7 @@ def id_check_checkout(request: Request, authorization: Optional[str] = Header(No
                     "price_data": {
                         "currency": CURRENCY,
                         "unit_amount": SEEKER_VERIFICATION_FEE_CENTS,
-                        "product_data": {"name": "Migrent ID check", "description": f"Photo ID and selfie check. {FREE_TRIES} tries included; refunded if all {FREE_TRIES} fail."},
+                        "product_data": {"name": "Migrent ID check", "description": f"Photo ID and selfie check. Covers up to {FREE_TRIES} tries. Not refunded if none of the tries pass."},
                     },
                     "quantity": 1,
                 }
@@ -390,19 +391,16 @@ def handle_identity_event(sb, event: dict) -> dict:
             return {"status": "ok", "id_check": "not_finished"}
         failed = int(row.get("failed_checks") or 0) + 1
         if failed >= FREE_TRIES:
-            refunded = _refund(sb, row)
             _update(sb, user_id, {"status": "rejected", "failed_checks": failed, "last_error": code})
             notify_user(
                 sb,
                 user_id,
                 "verification_status_changed",
                 "Your ID check didn't pass",
-                f"All {FREE_TRIES} tries were used, so we've refunded your AUD {SEEKER_VERIFICATION_FEE_CENTS // 100}. It can take 5 to 10 days to reach your card. You can still apply for homes without the badge."
-                if refunded
-                else f"All {FREE_TRIES} tries were used. Your AUD {SEEKER_VERIFICATION_FEE_CENTS // 100} refund is being arranged by our team.",
+                f"All {FREE_TRIES} tries were used. You can still apply for homes that don't ask for a verified ID, or try again with a new check from your Rental Profile.",
                 "/profile#verification",
             )
-            return {"status": "ok", "id_check": "rejected", "refunded": refunded}
+            return {"status": "ok", "id_check": "rejected"}
         _update(sb, user_id, {"status": "retry", "failed_checks": failed, "last_error": code})
         left = FREE_TRIES - failed
         notify_user(
@@ -416,20 +414,6 @@ def handle_identity_event(sb, event: dict) -> dict:
         return {"status": "ok", "id_check": "retry", "tries_left": left}
 
     return {"status": "ignored"}
-
-
-def _refund(sb, row: dict) -> bool:
-    pi = row.get("payment_intent")
-    if not pi:
-        logger.error("ID check refund needed but no payment intent for %s", row.get("user_id"))
-        return False
-    try:
-        stripe.Refund.create(payment_intent=pi, reason="requested_by_customer", metadata={"purpose": "verification", "user_id": str(row["user_id"])})
-    except stripe.error.StripeError:
-        logger.exception("ID check refund failed for %s", row.get("user_id"))
-        return False
-    _update(sb, str(row["user_id"]), {"payment_status": "refunded", "refunded_at": _now()})
-    return True
 
 
 # ---------------------------------------------------------------------------
@@ -462,8 +446,6 @@ def admin_id_checks(request: Request, authorization: Optional[str] = Header(None
                 "paid_at": r.get("paid_at"),
                 "checked_at": r.get("checked_at"),
                 "refunded_at": r.get("refunded_at"),
-                # Rejected but still marked paid: the automatic refund failed.
-                "refund_needed": r.get("status") == "rejected" and r.get("payment_status") == "paid",
             }
         )
     return {"checks": out}

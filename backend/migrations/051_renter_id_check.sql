@@ -2,8 +2,8 @@
 -- 051: The paid renter ID check (owner decision, 3 October 2026)
 --
 -- A renter pays AUD 19, then Stripe Identity checks their photo ID is
--- genuine and that a live selfie matches it. Three tries are included; if
--- all three fail, the AUD 19 is refunded automatically. A passed check
+-- genuine and that a live selfie matches it. The fee covers up to three
+-- tries and is not refunded if none pass. A passed check
 -- gives the renter a green "ID verified" badge that owners see on
 -- applications and messages. Owners can show only verified applicants, and
 -- can set a listing to accept applications from verified renters only.

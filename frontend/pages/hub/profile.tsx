@@ -61,7 +61,7 @@ function snapshotFrom(d: ProfileDraft, avatar: string | null, memberSince: strin
 /**
  * The paid ID check (backend renter_id.py): AUD 19, then Stripe's photo ID
  * and selfie check. A pass gives the green "ID verified" badge owners see.
- * Three tries are included; if all fail, the fee is refunded.
+ * The fee covers up to three tries and is not refunded if none pass.
  */
 function VerificationCard() {
   const router = useRouter();
@@ -139,13 +139,11 @@ function VerificationCard() {
       ) : c.status === "rejected" ? (
         <>
           <InlineAlert tone="warning" title="Your ID check didn't pass">
-            {c.refunded ? `All ${c.tries_included} tries were used, so we refunded your ${aud(c.fee)}.` : `All ${c.tries_included} tries were used. Our team is arranging your refund.`} You can still apply for homes that don't ask for it.
+            All {c.tries_included} tries were used. You can still apply for homes that don't ask for a verified ID, or start a new check with {c.tries_included} more tries.
           </InlineAlert>
-          {c.refunded && (
-            <Button variant="secondary" size="sm" loading={busy === "pay"} onClick={() => void pay()} className="w-fit">
-              Try again for {aud(c.fee)}
-            </Button>
-          )}
+          <Button variant="secondary" size="sm" loading={busy === "pay"} onClick={() => void pay()} className="w-fit">
+            New check for {aud(c.fee)}
+          </Button>
         </>
       ) : c.paid ? (
         <>
@@ -175,7 +173,7 @@ function VerificationCard() {
           </p>
           <ul className="flex flex-col gap-1.5 text-[13px] leading-relaxed text-[color:var(--color-ink-2)]">
             <li>• Passport, driver licence or national ID card. Overseas passports work.</li>
-            <li>• {c.tries_included} tries included. If all fail, you get your money back.</li>
+            <li>• Covers up to {c.tries_included} tries. The fee isn't refunded if none pass, so use good light and a valid ID.</li>
             <li>• Some owners only accept ID-verified renters.</li>
             <li>• Checked securely by Stripe. Owners never see your ID.</li>
           </ul>
