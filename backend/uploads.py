@@ -25,6 +25,15 @@ class ImageValidationError(ValueError):
     pass
 
 
+# The most pixels a photo may have. Checked from the header BEFORE any pixel
+# is decoded: a "decompression bomb" is a few hundred KB on the wire and
+# gigabytes once decoded, enough to take the server down. Pillow's own guard
+# is set to the same number so it refuses rather than warns.
+MAX_PIXELS = 40_000_000
+if Image is not None:
+    Image.MAX_IMAGE_PIXELS = MAX_PIXELS
+
+
 MAGIC = {
     b"\xff\xd8\xff": ("image/jpeg", "jpg"),
     b"\x89PNG\r\n\x1a\n": ("image/png", "png"),
@@ -74,17 +83,21 @@ def prepare_public_image(
     if Image is None:
         raise ImageValidationError("Image processing is unavailable on this server.")
 
+    too_large = "That image is too large to process."
     try:
         img = Image.open(io.BytesIO(data))
+        width, height = img.size
+        if width * height > MAX_PIXELS:
+            raise ImageValidationError(too_large)
+        if width < min_side or height < min_side:
+            raise ImageValidationError(f"Photos must be at least {min_side}px on each side.")
         img.load()
-    except (UnidentifiedImageError, OSError) as e:
+    except ImageValidationError:
+        raise
+    except (Image.DecompressionBombError, Image.DecompressionBombWarning) as e:
+        raise ImageValidationError(too_large) from e
+    except (UnidentifiedImageError, OSError, ValueError, SyntaxError) as e:
         raise ImageValidationError("That file could not be read as an image.") from e
-
-    width, height = img.size
-    if width < min_side or height < min_side:
-        raise ImageValidationError(f"Photos must be at least {min_side}px on each side.")
-    if width * height > 40_000_000:
-        raise ImageValidationError("That image is too large to process.")
 
     # Apply the EXIF orientation, then drop all metadata by re-encoding.
     try:

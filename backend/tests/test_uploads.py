@@ -45,3 +45,26 @@ def test_private_document_accepts_pdf_and_images_only():
     assert validate_private_document(b"%PDF-1.7 rest") == ("application/pdf", "pdf")
     with pytest.raises(ImageValidationError):
         validate_private_document(b"MZ\x90\x00 executable")
+
+
+def test_a_decompression_bomb_is_refused_before_decoding(monkeypatch):
+    """A tiny file that claims a huge canvas must be refused from its header,
+    without decoding a single pixel."""
+    import io
+    import struct
+    import zlib
+
+    from PIL import Image
+
+    def chunk(kind: bytes, payload: bytes) -> bytes:
+        return struct.pack(">I", len(payload)) + kind + payload + struct.pack(">I", zlib.crc32(kind + payload) & 0xFFFFFFFF)
+
+    # 20000 x 20000 = 400M pixels, a few KB on the wire.
+    header = struct.pack(">IIBBBBB", 20000, 20000, 8, 0, 0, 0, 0)
+    bomb = b"\x89PNG\r\n\x1a\n" + chunk(b"IHDR", header) + chunk(b"IDAT", zlib.compress(b"\x00" * 1000)) + chunk(b"IEND", b"")
+
+    decoded = []
+    monkeypatch.setattr(Image.Image, "load", lambda self, *a, **k: decoded.append(1))
+    with pytest.raises(ImageValidationError, match="too large"):
+        prepare_public_image(bomb, max_bytes=10 * 1024 * 1024)
+    assert decoded == []
