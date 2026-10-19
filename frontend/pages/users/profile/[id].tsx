@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { useUserProfile } from "../../../hooks/useUserProfile";
+import { signedInHref, useUserProfile } from "../../../hooks/useUserProfile";
 import { useProfileListings, useProfileReviews } from "../../../hooks/useProfileData";
 import { useAuth } from "../../../hooks/useAuth";
 import ReportModal from "../../../components/ReportModal";
@@ -19,8 +19,8 @@ import type { GetServerSideProps } from "next";
 
 /**
  * An address that cannot be a profile, or one that does not exist, is a
- * real 404 (MIGRENT_MASTER_AUDIT MIG-050). The check reads the public
- * profile view with the anon key; if that fails, the page renders as before.
+ * real 404 (MIGRENT_MASTER_AUDIT MIG-050). The check asks get_public_profile
+ * with the anon key; if that fails, the page renders as before.
  */
 export const getServerSideProps: GetServerSideProps = async ({ params, res }) => {
   const id = String(params?.id || "");
@@ -30,12 +30,13 @@ export const getServerSideProps: GetServerSideProps = async ({ params, res }) =>
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   if (url && key) {
     try {
-      const column = uuid ? "id" : "public_id";
-      const r = await fetch(`${url}/rest/v1/public_profiles?select=id&${column}=eq.${encodeURIComponent(id)}&limit=1`, {
-        headers: { apikey: key, Authorization: `Bearer ${key}` },
+      const r = await fetch(`${url}/rest/v1/rpc/get_public_profile`, {
+        method: "POST",
+        headers: { apikey: key, Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
+        body: JSON.stringify({ lookup: id }),
         signal: AbortSignal.timeout(4000),
       });
-      if (r.ok && ((await r.json()) as unknown[]).length === 0) return { notFound: true };
+      if (r.ok && (await r.json()) === null) return { notFound: true };
     } catch {
       // Unreachable or slow: let the browser try.
     }
@@ -66,7 +67,8 @@ export default function PublicProfilePage() {
   const [blocked, setBlocked] = useState(false);
   const [blockLoading, setBlockLoading] = useState(false);
 
-  const isOwnProfile = user?.id === id;
+  // The address may be the public id, so compare with the profile too.
+  const isOwnProfile = !!user && (user.id === id || user.id === profile?.id);
 
   // Staggered section animation helper
   const sectionAnim = (delay: number) => ({
@@ -291,7 +293,7 @@ export default function PublicProfilePage() {
               <div className="flex items-center gap-4 flex-wrap">
                 <button
                   type="button"
-                  onClick={() => setReportOpen(true)}
+                  onClick={() => (profile.id ? setReportOpen(true) : router.push(signedInHref(profile, "", router.asPath)))}
                   className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm text-[var(--color-ink-3)] hover:bg-[var(--color-danger-50)] dark:hover:bg-[var(--color-danger-500)]/10 hover:text-[var(--color-danger-500)] dark:hover:text-[var(--color-danger-500)] transition-all"
                 >
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -326,7 +328,7 @@ export default function PublicProfilePage() {
           <div className="bg-white/95 dark:bg-[var(--color-surface)]/95 backdrop-blur-lg border-t border-[var(--color-line)] px-4 py-3 pb-safe-bottom">
             <div className="flex items-center gap-3 max-w-lg mx-auto">
               <Link
-                href={`/messages?userId=${profile.id}`}
+                href={signedInHref(profile, `/messages?userId=${profile.id}`, router.asPath)}
                 className="flex-1 flex items-center justify-center gap-2 btn-primary py-3 rounded-xl text-sm"
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

@@ -1,6 +1,7 @@
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { BadgeCheck, Clock, Home, MessageSquare, PencilLine, Star } from "lucide-react";
-import { UserProfile, ProfileBadges } from "../../hooks/useUserProfile";
+import { UserProfile, ProfileBadges, signedInHref } from "../../hooks/useUserProfile";
 import { hubFromSite } from "../../lib/hub/routes";
 
 interface HeroHeaderProps {
@@ -19,6 +20,7 @@ interface HeroHeaderProps {
  * useUserProfile: response rate and reply time are null until measurable).
  */
 export default function HeroHeader({ profile, badges, isOwnProfile, listingsCount, onVerifyClick }: HeroHeaderProps) {
+  const router = useRouter();
   const displayName = profile.preferred_name || profile.name || "User";
 
   return (
@@ -96,7 +98,7 @@ export default function HeroHeader({ profile, badges, isOwnProfile, listingsCoun
             </Link>
           ) : (
             <>
-              <Link href={`/messages?userId=${profile.id}`} className="btn-primary">
+              <Link href={signedInHref(profile, `/messages?userId=${profile.id}`, router.asPath)} className="btn-primary">
                 <MessageSquare className="h-4 w-4" strokeWidth={2} aria-hidden="true" /> Message
               </Link>
               {listingsCount > 0 && (

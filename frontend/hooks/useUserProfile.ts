@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
 import { loadSupabase } from "../lib/supabaseLazy";
+import { hubFromSite } from "../lib/hub/routes";
 
 /**
  * Another user's public profile.
  *
- * Reads the `public_profiles` view only. The view derives every trust
+ * Reads one row of the `public_profiles` view through get_public_profile
+ * (migration 052); the view itself cannot be listed. It derives every trust
  * field from owner_verification (identity_verified, verification_status,
  * email_verified, phone_verified, government_id_status); the paid
  * `verified` flag and the free-text badges array are never treated as
@@ -12,6 +14,7 @@ import { loadSupabase } from "../lib/supabaseLazy";
  */
 
 export interface UserProfile {
+  /** The internal id: empty for a visitor who is not signed in. */
   id: string;
   public_id: string | null;
   name: string | null;
@@ -99,22 +102,27 @@ function formatReplyTime(hours: number | null | undefined): string | null {
 }
 
 async function fetchPublicProfile(idOrPublicId: string): Promise<Record<string, unknown> | null> {
+  if (!UUID_RE.test(idOrPublicId) && !PUBLIC_ID_RE.test(idOrPublicId)) return null;
   try {
     const supabase = await loadSupabase();
-    let query = supabase.from("public_profiles").select("*");
-    if (UUID_RE.test(idOrPublicId)) query = query.eq("id", idOrPublicId);
-    else if (PUBLIC_ID_RE.test(idOrPublicId)) query = query.eq("public_id", idOrPublicId);
-    else return null;
-    const { data, error } = await query.maybeSingle();
+    // One profile for a known address; the view itself cannot be listed
+    // (migration 052). The internal id comes back only for a signed-in caller.
+    const { data, error } = await supabase.rpc("get_public_profile", { lookup: idOrPublicId });
     if (error) {
       console.error("Supabase profile fetch error:", error);
       return null;
     }
-    return data as Record<string, unknown> | null;
+    return data && typeof data === "object" ? (data as Record<string, unknown>) : null;
   } catch (err) {
     console.error("fetchPublicProfile error:", err);
     return null;
   }
+}
+
+/** Where "Message" (and "Report") go: straight there when signed in; for a
+ * visitor, Hub sign-in first and then back to this profile. */
+export function signedInHref(profile: Pick<UserProfile, "id">, target: string, here: string): string {
+  return profile.id ? target : `${hubFromSite.path("/sign-in")}?return=${encodeURIComponent(here)}`;
 }
 
 export function useUserProfile(userId: string | undefined) {
@@ -149,7 +157,7 @@ export function useUserProfile(userId: string | undefined) {
         const status = str("verification_status");
         const idStatus = str("government_id_status");
         const p: UserProfile = {
-          id: (data.id as string) || userId!,
+          id: typeof data.id === "string" ? data.id : UUID_RE.test(userId!) ? userId! : "",
           public_id: str("public_id"),
           name: str("name") || str("preferred_name"),
           preferred_name: str("preferred_name"),

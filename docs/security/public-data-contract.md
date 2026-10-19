@@ -7,7 +7,7 @@ places that must stay in sync:
 | Layer | Where | What it does |
 |---|---|---|
 | API serialiser | `backend/public_dto.py` | Builds every public listing/owner payload from an explicit allow-list. Anything not listed is dropped. |
-| Database view | `public_listings`, `public_profiles`, `public_verification` (migration 042) | The only listing/profile objects `anon` and `authenticated` may read directly. `anon` has no grant on `listings` at all. |
+| Database | `public_listings` view and `get_public_profile(lookup)` (migrations 042, 052) | The only listing/profile data the browser may read directly. `public_listings` can be listed; profiles cannot: `get_public_profile` returns one profile for a known public id, without the internal id unless the caller is signed in, and never for a suspended account. Since 052 `anon` and `authenticated` have no grant on any private table, so a row-policy mistake cannot expose data either. |
 | Tests | `backend/tests/test_public_dto.py`, `test_listings_public.py`, `frontend/tests/e2e/search.spec.ts` | Assert forbidden fields never appear, in the API and in rendered HTML. |
 
 ## Never public
