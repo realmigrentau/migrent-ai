@@ -8,7 +8,11 @@ reached, each process counts in its own memory as before: limits still
 apply, but reset on every deploy.
 
 Every endpoint has a limit. Routes with their own @limiter.limit keep it;
-every other route gets DEFAULT_LIMIT through the middleware in main.py.
+every other route gets DEFAULT_LIMIT through default_limit, an app-wide
+dependency (main.py). It runs after routing, so it sees the real endpoint
+however routers are nested; slowapi's own middleware looks the route up in
+app.routes and finds nothing once FastAPI keeps included routers nested
+(0.140+), which would quietly leave those routes unlimited.
 Routes that must never be limited (the Stripe webhook, health checks) are
 marked @limiter.exempt.
 
@@ -38,6 +42,7 @@ import os
 from typing import Optional
 
 from slowapi import Limiter
+from starlette.requests import Request
 
 STORAGE_URI = os.environ.get("RATE_LIMIT_STORAGE_URI", "").strip()
 # Generous: one Hub screen makes a handful of calls, and a university or
@@ -86,3 +91,15 @@ limiter = Limiter(
     key_prefix="migrent",
     headers_enabled=False,
 )
+
+
+def default_limit(request: Request) -> None:
+    """App-wide dependency: DEFAULT_LIMIT for routes without their own limit."""
+    endpoint = request.scope.get("endpoint")
+    if endpoint is None or not limiter.enabled:
+        return
+    name = f"{endpoint.__module__}.{endpoint.__name__}"
+    if name in limiter._route_limits or name in limiter._exempt_routes:
+        return
+    # in_middleware=True: check the application and default limits only.
+    limiter._check_request_limit(request, endpoint, True)

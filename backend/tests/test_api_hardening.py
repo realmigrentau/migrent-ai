@@ -44,8 +44,7 @@ def test_every_route_has_a_limit_unless_exempt():
     exempt = limiter_mod.limiter._exempt_routes
     assert "routes_deals.stripe_webhook" in exempt
     assert "main.health" in exempt
-    middleware = {m.cls.__name__ for m in main.app.user_middleware}
-    assert "SlowAPIASGIMiddleware" in middleware
+    assert any(d.dependency is limiter_mod.default_limit for d in main.app.router.dependencies)
 
 
 def test_default_limit_applies_to_an_undecorated_route(client, monkeypatch):

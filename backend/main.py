@@ -98,8 +98,13 @@ async def lifespan(_app):
 
 # The interactive API docs publish every endpoint and schema. Keep them for
 # local development, hide them in production.
+from fastapi import Depends
+from limiter import default_limit
+
 app = FastAPI(
     lifespan=lifespan,
+    # Every route without its own @limiter.limit gets the default limit.
+    dependencies=[Depends(default_limit)],
     title="Migrent API",
     version="0.1.0",
     docs_url=None if IS_PRODUCTION else "/docs",
@@ -109,12 +114,12 @@ app = FastAPI(
 
 # ── Rate limiting ───────────────────────────────────────────
 # Every route is limited: its own @limiter.limit, or DEFAULT_LIMIT through
-# SlowAPIASGIMiddleware below. See limiter.py for who counts as one person.
+# the default_limit dependency above. See limiter.py for who counts as one
+# person.
 from fastapi import HTTPException, Request
 from fastapi.responses import JSONResponse
 from limiter import limiter
 from slowapi.errors import RateLimitExceeded
-from slowapi.middleware import SlowAPIASGIMiddleware
 
 
 def _too_many_requests(request: Request, exc: RateLimitExceeded):
@@ -174,7 +179,6 @@ class BodySizeLimitMiddleware:
 
 
 app.add_middleware(BodySizeLimitMiddleware)
-app.add_middleware(SlowAPIASGIMiddleware)
 
 # ── CORS ────────────────────────────────────────────────────
 FRONTEND_URL = os.environ.get("FRONTEND_URL", "")
