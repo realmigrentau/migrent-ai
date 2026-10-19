@@ -35,6 +35,7 @@ from fastapi import APIRouter, Header, HTTPException, Request
 
 from auth_utils import get_current_user
 from db import get_supabase_admin
+from limiter import limiter
 from models import DealCreate, DealStatus, SeekerFeeRequest
 from payments import CURRENCY, expected_amount_for
 
@@ -356,6 +357,7 @@ def _handle_mentor_refund(sb, charge: dict, mentor_session_id: str) -> dict:
 
 
 @webhook_router.post("/webhooks/stripe")
+@limiter.exempt  # Stripe retries in bursts from shared addresses; the signature is the gate.
 async def stripe_webhook(request: Request):
     payload = await request.body()
     sig_header = request.headers.get("stripe-signature", "")

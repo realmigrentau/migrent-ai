@@ -108,12 +108,73 @@ app = FastAPI(
 )
 
 # ── Rate limiting ───────────────────────────────────────────
+# Every route is limited: its own @limiter.limit, or DEFAULT_LIMIT through
+# SlowAPIASGIMiddleware below. See limiter.py for who counts as one person.
+from fastapi import HTTPException, Request
+from fastapi.responses import JSONResponse
 from limiter import limiter
-from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
+from slowapi.middleware import SlowAPIASGIMiddleware
+
+
+def _too_many_requests(request: Request, exc: RateLimitExceeded):
+    return JSONResponse(
+        {"detail": "Too many requests. Please wait a minute and try again."},
+        status_code=429,
+        headers={"Retry-After": "60"},
+    )
+
 
 app.state.limiter = limiter
-app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+app.add_exception_handler(RateLimitExceeded, _too_many_requests)
+
+# ── Request size ────────────────────────────────────────────
+# The largest legitimate body is one 10 MB photo or document (uploads.py)
+# plus multipart overhead. Anything bigger is refused before it is read, so
+# a huge body cannot tie up memory.
+MAX_BODY_BYTES = int(os.environ.get("MAX_BODY_BYTES", str(12 * 1024 * 1024)))
+
+
+class _BodyTooLarge(HTTPException):
+    def __init__(self):
+        super().__init__(status_code=413, detail="That upload is too large.")
+
+
+class BodySizeLimitMiddleware:
+    def __init__(self, app):
+        self.app = app
+
+    async def __call__(self, scope, receive, send):
+        if scope["type"] != "http":
+            await self.app(scope, receive, send)
+            return
+        declared = dict(scope.get("headers") or []).get(b"content-length")
+        if declared is not None:
+            try:
+                too_big = int(declared) > MAX_BODY_BYTES
+            except ValueError:
+                too_big = True
+            if too_big:
+                await JSONResponse({"detail": "That upload is too large."}, status_code=413)(scope, receive, send)
+                return
+
+        received = 0
+
+        async def counted_receive():
+            nonlocal received
+            message = await receive()
+            if message["type"] == "http.request":
+                received += len(message.get("body", b""))
+                if received > MAX_BODY_BYTES:
+                    raise _BodyTooLarge()
+            return message
+
+        # Raised inside a route as an HTTPException, so FastAPI answers 413.
+        await self.app(scope, counted_receive, send)
+
+
+app.add_middleware(BodySizeLimitMiddleware)
+app.add_middleware(SlowAPIASGIMiddleware)
 
 # ── CORS ────────────────────────────────────────────────────
 FRONTEND_URL = os.environ.get("FRONTEND_URL", "")
@@ -180,6 +241,60 @@ class ServerTimingMiddleware:
 app.add_middleware(ServerTimingMiddleware)
 
 
+# ── Security headers ────────────────────────────────────────
+# The API returns JSON (and one small HTML page, unsubscribe). None of it may
+# be framed, sniffed into another type, or leak the page it was called from.
+# Answers to signed-in requests are personal, so no shared cache may keep
+# them unless the route chose its own Cache-Control.
+_SECURITY_HEADERS = [
+    (b"x-content-type-options", b"nosniff"),
+    (b"x-frame-options", b"DENY"),
+    (b"referrer-policy", b"no-referrer"),
+    (b"cross-origin-opener-policy", b"same-origin"),
+    (
+        b"content-security-policy",
+        b"default-src 'none'; style-src 'unsafe-inline'; img-src 'self' https: data:; "
+        b"form-action 'self'; base-uri 'none'; frame-ancestors 'none'",
+    ),
+    (b"permissions-policy", b"camera=(), microphone=(), geolocation=(), payment=()"),
+]
+if IS_PRODUCTION:
+    _SECURITY_HEADERS.append((b"strict-transport-security", b"max-age=63072000; includeSubDomains"))
+
+
+class SecurityHeadersMiddleware:
+    def __init__(self, app):
+        self.app = app
+
+    async def __call__(self, scope, receive, send):
+        if scope["type"] != "http":
+            await self.app(scope, receive, send)
+            return
+        path = scope.get("path", "")
+        if path in ("/docs", "/redoc") or path.startswith("/docs/"):
+            # Local-only interactive docs load their own scripts.
+            await self.app(scope, receive, send)
+            return
+        signed_in = any(name == b"authorization" for name, _ in scope.get("headers") or [])
+
+        async def send_with_headers(message):
+            if message["type"] == "http.response.start":
+                headers = list(message.get("headers", []))
+                present = {name.lower() for name, _ in headers}
+                for name, value in _SECURITY_HEADERS:
+                    if name not in present:
+                        headers.append((name, value))
+                if signed_in and b"cache-control" not in present:
+                    headers.append((b"cache-control", b"no-store"))
+                message = {**message, "headers": headers}
+            await send(message)
+
+        await self.app(scope, receive, send_with_headers)
+
+
+app.add_middleware(SecurityHeadersMiddleware)
+
+
 app.include_router(auth_router)
 app.include_router(listings_router)
 app.include_router(deals_router)
@@ -224,7 +339,18 @@ app.include_router(webhook_router)
 
 @app.api_route("/", methods=["GET", "HEAD"])
 @app.api_route("/health", methods=["GET", "HEAD"])
+@limiter.exempt
 def health():
     return {"status": "ok"}
+
+
+@app.get("/health/ip")
+@limiter.limit("30/minute")
+def health_ip(request: Request):
+    """The address this API counts the caller as (limiter.client_ip). Shows a
+    person only their own address; used to check rate limits after a deploy."""
+    from limiter import client_ip
+
+    return {"ip": client_ip(request)}
 
 
