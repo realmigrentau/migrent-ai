@@ -108,8 +108,30 @@ def test_cors_preflight_still_works(client):
     assert res.headers["access-control-allow-origin"] == "https://migrent.vercel.app"
 
 
-@pytest.mark.parametrize("size", [13 * 1024 * 1024])
+@pytest.mark.parametrize("size", [17 * 1024 * 1024])
 def test_oversized_bodies_are_refused_before_reading(client, size):
     res = client.post("/support/contact", content=b"x" * size, headers={"content-type": "application/json"})
     assert res.status_code == 413
     assert res.json() == {"detail": "That upload is too large."}
+
+
+def test_a_crash_is_a_plain_json_500_with_cors(client):
+    from fastapi import APIRouter
+
+    import main
+
+    router = APIRouter()
+
+    @router.get("/__crash_test")
+    def crash():
+        raise RuntimeError("secret internal detail")
+
+    main.app.include_router(router)
+    from fastapi.testclient import TestClient
+
+    res = TestClient(main.app, raise_server_exceptions=False).get("/__crash_test", headers={"Origin": "https://migrent.vercel.app"})
+    assert res.status_code == 500
+    assert "secret" not in res.text
+    assert res.json()["detail"].startswith("Something went wrong")
+    assert res.headers["access-control-allow-origin"] == "https://migrent.vercel.app"
+    assert res.headers["x-content-type-options"] == "nosniff"

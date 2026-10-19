@@ -134,10 +134,10 @@ app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _too_many_requests)
 
 # ── Request size ────────────────────────────────────────────
-# The largest legitimate body is one 10 MB photo or document (uploads.py)
+# The largest legitimate body is one 15 MB listing photo (routes_hub_owner)
 # plus multipart overhead. Anything bigger is refused before it is read, so
 # a huge body cannot tie up memory.
-MAX_BODY_BYTES = int(os.environ.get("MAX_BODY_BYTES", str(12 * 1024 * 1024)))
+MAX_BODY_BYTES = int(os.environ.get("MAX_BODY_BYTES", str(16 * 1024 * 1024)))
 
 
 class _BodyTooLarge(HTTPException):
@@ -179,6 +179,49 @@ class BodySizeLimitMiddleware:
 
 
 app.add_middleware(BodySizeLimitMiddleware)
+
+
+# ── Unexpected errors ───────────────────────────────────────
+# A crash inside a route used to surface as Starlette's plain-text 500 from
+# the outermost layer, outside CORS, so the browser reported "Failed to
+# fetch" instead of the error. Caught here, inside CORS: logged with the
+# stack (and sent to Sentry when configured), answered with a plain JSON
+# message that says nothing about the internals.
+class UnexpectedErrorMiddleware:
+    def __init__(self, app):
+        self.app = app
+
+    async def __call__(self, scope, receive, send):
+        if scope["type"] != "http":
+            await self.app(scope, receive, send)
+            return
+        started = False
+
+        async def tracking_send(message):
+            nonlocal started
+            if message["type"] == "http.response.start":
+                started = True
+            await send(message)
+
+        try:
+            await self.app(scope, receive, tracking_send)
+        except Exception:
+            logger.exception("Unhandled error on %s %s", scope.get("method"), scope.get("path"))
+            if SENTRY_DSN:
+                try:
+                    import sentry_sdk
+
+                    sentry_sdk.capture_exception()
+                except Exception:
+                    pass
+            if started:
+                raise
+            await JSONResponse(
+                {"detail": "Something went wrong on our side. Please try again in a moment."}, status_code=500
+            )(scope, receive, send)
+
+
+app.add_middleware(UnexpectedErrorMiddleware)
 
 # ── CORS ────────────────────────────────────────────────────
 FRONTEND_URL = os.environ.get("FRONTEND_URL", "")

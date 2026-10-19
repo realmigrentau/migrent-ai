@@ -128,7 +128,7 @@ def get_pending_listings(
         raise
     except Exception as e:
         logger.error(f"[Admin] Failed to get pending listings: {e}")
-        raise HTTPException(status_code=500, detail=f"Failed to load pending listings: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to load pending listings")
 
 
 def _fetch_pending(suburb, sort, limit, offset):
