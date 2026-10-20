@@ -48,3 +48,40 @@ def test_other_peoples_text_is_escaped(monkeypatch):
     email_bookings.send_listing_rejected_to_owner("o@example.com", "<b>Olive</b>", "<script>alert(1)</script>", "Bad <img src=x>")
     assert "<script>" not in sent[0] and "&lt;script&gt;" in sent[0]
     assert "<img src=x>" not in sent[0]
+
+
+def test_every_email_gets_a_plain_text_copy(monkeypatch):
+    """Spam filters expect a text/plain part beside the HTML."""
+    import email_bookings
+    import email_theme as et
+
+    seen = []
+    monkeypatch.setattr(email_bookings, "_deliver", lambda to, subject, html, text="", headers=None: seen.append(text))
+    html = et.render("account", title="Hello there", greeting="Sam", paragraphs=["Your room & your rules."], cta=("Open Migrent Hub", "https://migrent.test/hub"))
+    email_bookings._send_email("sam@example.com", "Hi", html)
+    text = seen[0]
+    assert "Hi Sam," in text and "Your room & your rules." in text
+    assert "Open Migrent Hub" in text and "(https://migrent.test/hub)" in text
+    assert "<" not in text.replace("<https", "")
+
+
+def test_outside_tests_emails_never_hold_up_the_request(monkeypatch):
+    import threading
+
+    import email_bookings
+
+    release = threading.Event()
+    done = []
+
+    def slow(*a, **k):
+        release.wait(5)
+        done.append(1)
+
+    monkeypatch.setattr(email_bookings, "_SEND_INLINE", False)
+    monkeypatch.setattr(email_bookings, "_deliver", slow)
+    email_bookings._send_email("sam@example.com", "Hi", "<p>Hi</p>", text="Hi")
+    assert done == []  # returned before the slow send finished
+    release.set()
+    email_bookings._executor().shutdown(wait=True)
+    email_bookings._pool = None
+    assert done == [1]

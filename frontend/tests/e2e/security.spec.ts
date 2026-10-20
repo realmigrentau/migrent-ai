@@ -61,13 +61,12 @@ test("sign-in destinations cannot leave the origin", async ({ page }) => {
   expect(html).not.toContain('href="//evil.example');
 });
 
-test("email relay refuses anonymous callers", async ({ request }) => {
-  const res = await request.post("/api/emails/send", { data: { type: "welcome", to: "victim@example.com" } });
-  expect(res.status()).toBe(401);
-  const suite = await request.post("/api/emails/welcome-suite", { data: { email: "victim@example.com" } });
-  expect(suite.status()).toBe(401);
-  const admin = await request.post("/api/admin/verify", { data: { username: "a", password: "b" } });
-  expect(admin.status()).toBe(401);
+test("the old email relay and admin passphrase routes are gone", async ({ request }) => {
+  // Every email is sent by the API now; the old admin console is retired.
+  for (const path of ["/api/emails/send", "/api/emails/welcome-suite", "/api/admin/verify"]) {
+    const res = await request.post(path, { data: { type: "welcome", to: "victim@example.com" } });
+    expect(res.status(), path).toBe(404);
+  }
 });
 
 test("no secrets in the client bundle", async ({ request }) => {

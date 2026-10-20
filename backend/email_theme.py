@@ -14,7 +14,9 @@ from __future__ import annotations
 
 import html
 import os
+import re
 from dataclasses import dataclass
+from datetime import datetime, timezone
 from typing import Optional, Sequence
 
 
@@ -173,7 +175,7 @@ def render(
     hello = f'<p style="margin:0 0 14px;font-family:{FONT};font-size:16px;line-height:25px;color:{BODY};">Hi {esc(greeting)},</p>' if greeting else ""
     preheader_html = f'<div style="display:none;max-height:0;overflow:hidden;opacity:0;color:transparent;">{esc(preheader)}&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;</div>' if preheader else ""
     note = f'<p style="margin:14px 0 0;font-family:{FONT};font-size:12px;line-height:18px;color:#98A2B3;">{footer_note}</p>' if footer_note else ""
-    year = "2026"
+    year = datetime.now(timezone.utc).year
     return f"""<!DOCTYPE html>
 <html lang="en-AU" xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -247,3 +249,22 @@ def render_raw(kind: str, content_html: str, *, preheader: str = "", title: str 
     return render(kind, title=title, preheader=preheader, blocks=[content_html], footer_note=footer_note, eyebrow=None).replace(
         f'<h1 style="margin:14px 0 18px;font-family:{FONT};font-size:28px;line-height:35px;font-weight:800;letter-spacing:-0.5px;color:{INK};">{esc(title)}</h1>', "", 1
     )
+
+
+def html_to_text(markup: str) -> str:
+    """A readable plain-text copy of an email, for the text/plain part that
+    spam filters expect beside the HTML. Links keep their address."""
+    text = re.sub(r"(?is)<(head|style|script)\b.*?</\1>", "", markup)
+    text = re.sub(r'(?is)<div style="display:none[^>]*>.*?</div>', "", text)  # preheader
+    text = re.sub(r'(?is)<a\b[^>]*href="([^"]+)"[^>]*>(.*?)</a>', lambda m: f"{m.group(2)} ({html.unescape(m.group(1))})", text)
+    text = re.sub(r"(?i)<br\s*/?>", "\n", text)
+    text = re.sub(r"(?i)</(p|h[1-6]|tr|li|table)>", "\n\n", text)
+    text = re.sub(r"(?i)</td>", "  ", text)
+    text = re.sub(r"<[^>]+>", "", text)
+    text = html.unescape(text).replace("\u034f", "").replace("\u200c", "").replace("\xa0", " ")
+    lines = [re.sub(r"[ \t]+", " ", line).strip() for line in text.splitlines()]
+    out: list[str] = []
+    for line in lines:
+        if line or (out and out[-1]):
+            out.append(line)
+    return "\n".join(out).strip() + "\n"

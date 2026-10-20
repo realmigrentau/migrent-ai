@@ -133,7 +133,6 @@ const nextConfig: NextConfig = {
       "lucide-react",
       "framer-motion",
       "recharts",
-      "@react-email/components",
     ],
   },
 

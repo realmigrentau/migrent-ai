@@ -1,6 +1,5 @@
 import os
 import logging
-import resend
 from pydantic import BaseModel, Field
 from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, Request, Header
@@ -12,7 +11,6 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/reports", tags=["reports"])
 
-RESEND_API_KEY = os.environ.get("RESEND_API_KEY", "")
 SUPPORT_EMAIL = os.environ.get("SUPPORT_EMAIL", "migrentau@gmail.com")
 
 
@@ -44,6 +42,33 @@ def _is_admin(sb, user_id: str) -> bool:
     res = sb.table("profiles").select("role, is_admin").eq("id", user_id).execute()
     row = (res.data or [{}])[0] if res.data else {}
     return bool(row.get("is_admin")) or row.get("role") in ("admin", "superadmin")
+
+
+def _alert_admins(item_type: str, item_id: str, reason: str, details: str, reporter_id: str) -> None:
+    """Tell the support inbox a report came in, in the shared email design
+    and through the one sender (email_bookings._send_email). Never raises."""
+    try:
+        import email_theme as et
+        from email_bookings import _send_email
+        from hub_common import hub_path
+
+        type_label = {"profile": "Profile", "user": "Profile", "message": "Message", "property": "Property"}.get(item_type, "Listing")
+        reports_url = hub_path("/admin/reports")
+        if not reports_url.startswith("http"):
+            reports_url = f"{os.environ.get('FRONTEND_URL', 'https://migrent.vercel.app').rstrip('/')}{reports_url}"
+        t = et.THEMES["security"]
+        body = et.render(
+            "security",
+            eyebrow="Admin: new report",
+            title=f"A {type_label.lower()} was reported",
+            preheader=f"Reason: {reason}",
+            paragraphs=["Someone reported this on Migrent. Review it in the Admin panel and take action if it breaks the rules."],
+            blocks=[et.details([("Type", type_label), ("Reason", reason), ("Details", details or "None given"), (f"{type_label} ID", item_id), ("Reporter ID", reporter_id)], t, title="Report")],
+            cta=("Open reports", reports_url),
+        )
+        _send_email(SUPPORT_EMAIL, f"New {type_label.lower()} report: {reason}"[:150], body)
+    except Exception:
+        logger.exception("Failed to send report email")
 
 
 @router.post("")
@@ -93,59 +118,7 @@ def create_report(
         logger.exception("Failed to save report")
         raise HTTPException(status_code=500, detail="Failed to submit report.")
 
-    # Email notification to admin via Resend
-    if RESEND_API_KEY:
-        try:
-            resend.api_key = RESEND_API_KEY
-
-            import html as _html
-
-            type_label = {"profile": "Profile", "user": "Profile", "message": "Message", "property": "Property"}.get(resolved_type, "Listing")
-            # Reporter-supplied text goes into HTML: escape it.
-            resolved_reason = _html.escape(resolved_reason)
-            resolved_details = _html.escape(resolved_details)
-            resolved_id = _html.escape(resolved_id)
-
-            resend.Emails.send({
-                "from": "Migrent Reports <onboarding@resend.dev>",
-                "to": [SUPPORT_EMAIL],
-                "subject": f"🚩 New {type_label} Report – {resolved_reason}",
-                "html": f"""
-                <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto;">
-                    <div style="background: linear-gradient(135deg, #f43f5e, #e11d48); padding: 24px; border-radius: 12px 12px 0 0;">
-                        <h2 style="color: white; margin: 0;">🚩 New {type_label} Report</h2>
-                    </div>
-                    <div style="background: #f8fafc; padding: 24px; border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 12px 12px;">
-                        <table style="width: 100%; border-collapse: collapse;">
-                            <tr>
-                                <td style="padding: 8px 0; color: #64748b; font-size: 14px; width: 120px;">Type:</td>
-                                <td style="padding: 8px 0; color: #1e293b; font-size: 14px; font-weight: 600;">{type_label}</td>
-                            </tr>
-                            <tr>
-                                <td style="padding: 8px 0; color: #64748b; font-size: 14px;">{type_label} ID:</td>
-                                <td style="padding: 8px 0; color: #1e293b; font-size: 14px; font-family: monospace;">{resolved_id}</td>
-                            </tr>
-                            <tr>
-                                <td style="padding: 8px 0; color: #64748b; font-size: 14px;">Reporter ID:</td>
-                                <td style="padding: 8px 0; color: #1e293b; font-size: 14px; font-family: monospace;">{user_id}</td>
-                            </tr>
-                            <tr>
-                                <td style="padding: 8px 0; color: #64748b; font-size: 14px;">Reason:</td>
-                                <td style="padding: 8px 0; color: #e11d48; font-size: 14px; font-weight: 600;">{resolved_reason}</td>
-                            </tr>
-                            <tr>
-                                <td style="padding: 8px 0; color: #64748b; font-size: 14px; vertical-align: top;">Details:</td>
-                                <td style="padding: 8px 0; color: #1e293b; font-size: 14px;">{resolved_details or 'No additional details provided.'}</td>
-                            </tr>
-                        </table>
-                        <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 16px 0;">
-                        <p style="color: #94a3b8; font-size: 12px; margin: 0;">This report needs a review. Open Reports in Migrent Hub to take action.</p>
-                    </div>
-                </div>
-                """,
-            })
-        except Exception:
-            logger.exception("Failed to send report email")
+    _alert_admins(resolved_type, resolved_id, resolved_reason, resolved_details, user_id)
 
     return {"status": "ok", "message": "Report submitted. Our team will review it shortly."}
 

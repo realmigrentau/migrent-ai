@@ -204,3 +204,19 @@ def test_the_paid_geocoder_needs_a_sign_in(client):
 def test_responses_say_how_long_the_api_took(client):
     r = client.get("/health")
     assert r.headers["server-timing"].startswith("app;dur=")
+
+
+def test_a_report_alerts_the_support_inbox_in_the_shared_design(client, sent):
+    import routes_reports
+
+    res = client.post(
+        "/reports",
+        headers=auth(SEEKER_ID),
+        json={"item_type": "listing", "item_id": LISTING_LIVE, "category": "Scam or fraud", "details": "<script>x</script> asked for bond by gift card"},
+    )
+    assert res.status_code == 200
+    alerts = [m for m in sent if m["to"] == routes_reports.SUPPORT_EMAIL]
+    assert len(alerts) == 1
+    assert "report" in alerts[0]["subject"].lower()
+    assert "banner-security.png" in alerts[0]["html"]
+    assert "<script>x</script>" not in alerts[0]["html"] and "&lt;script&gt;" in alerts[0]["html"]

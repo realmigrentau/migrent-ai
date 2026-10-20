@@ -55,9 +55,9 @@ function linkFailure(p: AuthCallbackParams, message: string): Failure {
     title: "That link did not work",
     message,
     primary: isReset
-      ? { href: "/forgot-password", label: "Send a new reset link" }
-      : { href: "/signin", label: "Sign in" },
-    secondary: isReset ? undefined : { href: "/magic-link-login", label: "Email me a sign-in link" },
+      ? { href: "/hub/forgot-password", label: "Send a new reset link" }
+      : { href: "/hub/sign-in", label: "Sign in" },
+    secondary: isReset ? undefined : { href: "/hub/sign-in", label: "Sign in another way" },
   };
 }
 
@@ -67,21 +67,21 @@ function differentBrowserFailure(p: AuthCallbackParams): Failure {
       title: "Open the link in the same browser",
       message:
         "Reset links only work in the browser you requested them from. Request a new one here and open it in this browser.",
-      primary: { href: "/forgot-password", label: "Send a new reset link" },
+      primary: { href: "/hub/forgot-password", label: "Send a new reset link" },
     };
   }
-  const signIn = p.next ? `/signin?redirect=${encodeURIComponent(p.next)}` : "/signin";
+  const signIn = p.next ? `/hub/sign-in?next=${encodeURIComponent(p.next)}` : "/hub/sign-in";
   return {
     title: "Finish signing in here",
     message:
       "This link was opened in a different browser or app from the one you started in, so we could not sign you in automatically. If you were confirming your email address, it is confirmed. Sign in to continue.",
     primary: { href: signIn, label: "Sign in" },
-    secondary: { href: "/magic-link-login", label: "Email me a sign-in link" },
+    secondary: { href: "/hub/sign-in", label: "Sign in another way" },
   };
 }
 
 /** Best-effort follow-ups. None of them may block the redirect. */
-function afterSignIn(session: Session, isNewAccount: boolean) {
+function afterSignIn(session: Session) {
   const meta = session.user.user_metadata ?? {};
 
   // The sign-up form records consent in user metadata; copy it to the profile.
@@ -91,26 +91,8 @@ function afterSignIn(session: Session, isNewAccount: boolean) {
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${session.access_token}` },
     }).catch(() => {});
   }
-
-  // Welcome emails once per new account on this browser. The API reads the
-  // recipient from the session cookie, not from anything sent here.
-  const welcomeKey = `migrent_welcome_sent:${session.user.id}`;
-  try {
-    if (isNewAccount && !localStorage.getItem(welcomeKey)) {
-      localStorage.setItem(welcomeKey, "1");
-      fetch("/api/emails/welcome-suite", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "same-origin",
-        body: JSON.stringify({
-          userName: meta.full_name || meta.name || session.user.email?.split("@")[0] || "there",
-          userRole: meta.type || "seeker",
-        }),
-      }).catch(() => {});
-    }
-  } catch {
-    // Storage blocked (private window). Skip rather than risk repeats.
-  }
+  // The welcome email is sent by the API when onboarding finishes
+  // (routes_hub.py), in the same design as every other Migrent email.
 }
 
 export default function AuthCallback() {
@@ -174,7 +156,7 @@ export default function AuthCallback() {
             : {
                 title: "Nothing to sign in with",
                 message: "This page finishes a sign-in, but it was opened without a sign-in link.",
-                primary: { href: "/signin", label: "Sign in" },
+                primary: { href: "/hub/sign-in", label: "Sign in" },
               },
         );
         return;
@@ -187,7 +169,7 @@ export default function AuthCallback() {
       const onboardingCompleted =
         status && typeof status.onboarding_completed === "boolean" ? status.onboarding_completed : null;
 
-      afterSignIn(session, onboardingCompleted === false || recentlyCreated);
+      afterSignIn(session);
 
       void router.replace(
         postAuthDestination({ next: p.next, otpType: p.otpType, onboardingCompleted, recentlyCreated }),
@@ -201,7 +183,7 @@ export default function AuthCallback() {
         message: offline
           ? "You appear to be offline. Reconnect, then open the link again."
           : "Something went wrong finishing your sign-in. Please try again.",
-        primary: { href: "/signin", label: "Sign in" },
+        primary: { href: "/hub/sign-in", label: "Sign in" },
       });
     });
   }, [router]);

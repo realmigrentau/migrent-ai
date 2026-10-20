@@ -101,11 +101,46 @@ def _send_smtp(to: str, subject: str, html_body: str, text: str = "", headers: O
             s.send_message(msg)
 
 
+# Emails go out on a small pool of background threads, so the action that
+# triggers one (sending a message, applying, approving a listing) answers at
+# once instead of waiting seconds for the Gmail relay. Tests (ENV=test) and
+# EMAIL_SEND_SYNC=1 send inline. Python waits for the pool on a normal
+# shutdown, so a deploy does not drop queued emails.
+_SEND_INLINE = os.environ.get("ENV") == "test" or os.environ.get("EMAIL_SEND_SYNC") == "1"
+_pool = None
+
+
+def _executor():
+    global _pool
+    if _pool is None:
+        from concurrent.futures import ThreadPoolExecutor
+
+        _pool = ThreadPoolExecutor(max_workers=4, thread_name_prefix="email")
+    return _pool
+
+
 def _send_email(to: str, subject: str, html: str, text: str = "", headers: Optional[dict] = None):
-    """Send an HTML email with a plain-text fallback: through the Gmail relay
-    when GMAIL_RELAY_URL is set, else Gmail SMTP when SMTP_HOST is set, else
-    Mailjet. `headers` adds mail headers
-    (List-Unsubscribe, unsubscribe.py). Never raises."""
+    """Send an HTML email with a plain-text copy (made from the HTML when
+    none is given): through the Gmail relay when GMAIL_RELAY_URL is set, else
+    Gmail SMTP when SMTP_HOST is set, else Mailjet. `headers` adds mail
+    headers (List-Unsubscribe, unsubscribe.py). Never raises, never waits."""
+    if not text:
+        try:
+            from email_theme import html_to_text
+
+            text = html_to_text(html)
+        except Exception:
+            text = ""
+    if _SEND_INLINE:
+        _deliver(to, subject, html, text, headers)
+        return
+    try:
+        _executor().submit(_deliver, to, subject, html, text, headers)
+    except RuntimeError:  # the pool is shutting down: send inline
+        _deliver(to, subject, html, text, headers)
+
+
+def _deliver(to: str, subject: str, html: str, text: str = "", headers: Optional[dict] = None):
     if GMAIL_RELAY_URL and GMAIL_RELAY_SECRET:
         try:
             _send_relay(to, subject, html, text)
