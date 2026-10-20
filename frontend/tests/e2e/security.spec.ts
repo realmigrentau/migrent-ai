@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { test, expect } from "@playwright/test";
 
 test("security headers are present on every response", async ({ request }) => {
@@ -85,4 +86,21 @@ test("security.txt is served", async ({ request }) => {
   const res = await request.get("/.well-known/security.txt");
   expect(res.status()).toBe(200);
   expect(await res.text()).toContain("Contact: mailto:");
+});
+
+test("every inline script is allowed by the CSP, so nothing is silently blocked", async ({ request }) => {
+  // Next 16.4's Turbopack build adds a per-page inline chunk-list script that
+  // a hash-based CSP blocks, which broke menus, search and sign-in (2026-10).
+  // Production builds use webpack (package.json); this keeps it that way.
+  for (const path of ["/", "/seeker/search", "/hub/sign-in", "/suburbs", "/for-owners"]) {
+    const res = await request.get(path);
+    const csp = res.headers()["content-security-policy"] || "";
+    const allowed = new Set([...csp.matchAll(/'sha256-([^']+)'/g)].map((m) => m[1]));
+    const html = await res.text();
+    const inline = [...html.matchAll(/<script(?![^>]*\bsrc=)([^>]*)>([\s\S]*?)<\/script>/g)].filter((m) => !/application\/(ld\+)?json/.test(m[1]) && m[2].trim());
+    for (const m of inline) {
+      const digest = createHash("sha256").update(m[2], "utf8").digest("base64");
+      expect(allowed.has(digest), `${path}: inline script not in CSP: ${m[2].slice(0, 80)}`).toBe(true);
+    }
+  }
 });

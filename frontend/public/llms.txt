@@ -1,0 +1,24 @@
+# Migrent
+
+> Migrent is an Australian website for finding a room or a home to rent, built for migrants, international students and new arrivals. Hosts have their government ID checked by a person at Migrent before a room goes live, and every listing is read before it is published. Renters search and apply for free and do not need an Australian rental history. Migrent is not a real estate agent and never holds rent or bond: bonds are lodged with the state or territory bond authority.
+
+## For renters
+
+- [Search rooms](https://migrent.vercel.app/seeker/search): rooms and homes from ID-checked hosts, with the approximate area shown and the street address shared once an inspection is booked.
+- [How renting works](https://migrent.vercel.app/how-renting-works): searching, applying with one Rental Profile, inspections, moving in.
+- [Suburb guides](https://migrent.vercel.app/suburbs): rent and community figures for every Australian suburb, from the 2021 Census.
+- [Rental laws by state](https://migrent.vercel.app/guides/rental-laws): bonds, notice periods and where to get help in each state and territory.
+- [How to spot rental scams](https://migrent.vercel.app/blog/spot-rental-scams)
+
+## For hosts and owners
+
+- [Why list with Migrent](https://migrent.vercel.app/for-owners)
+- [Pricing](https://migrent.vercel.app/pricing): what Migrent charges, and when.
+
+## Help and policies
+
+- [Help centre](https://migrent.vercel.app/help)
+- [Contact](https://migrent.vercel.app/contact)
+- [Terms of service](https://migrent.vercel.app/terms-of-service)
+- [Privacy policy](https://migrent.vercel.app/privacy-policy)
+- [Safety and reporting](https://migrent.vercel.app/safety-reporting)
