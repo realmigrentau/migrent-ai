@@ -10,7 +10,7 @@ python-multipart==0.0.32
 PyJWT==2.15.1
 cryptography==50.0.2
 sentry-sdk[fastapi]==2.72.0
-Pillow==12.3.0
+Pillow==13.0.0
 anthropic>=1.8,<2  # fallbacks="default" and output_config need 1.x
 # Shared rate-limit counters when RATE_LIMIT_STORAGE_URI is set (limiter.py).
 redis==5.2.1
