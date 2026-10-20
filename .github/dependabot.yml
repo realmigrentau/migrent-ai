@@ -1,5 +1,8 @@
-# Weekly pull requests for dependency updates, grouped so there are only a
-# few to review. Security fixes are raised as soon as GitHub knows of them.
+# Weekly pull requests for minor and patch updates, grouped into one per
+# ecosystem so there is little to review. Major versions are ignored: they
+# change behaviour (Next 16.4 changed the build output under our CSP) and are
+# taken deliberately, not from a bot. Security fixes still arrive as soon as
+# GitHub knows of them. Vercel does not build these branches (vercel.json).
 version: 2
 updates:
   - package-ecosystem: npm
@@ -13,8 +16,6 @@ updates:
       minor-and-patch:
         update-types: [minor, patch]
     ignore:
-      # Major versions change behaviour (Next 16.4 changed the build output
-      # under our CSP); take them deliberately, not from a bot.
       - dependency-name: "*"
         update-types: ["version-update:semver-major"]
 
@@ -28,8 +29,16 @@ updates:
     groups:
       minor-and-patch:
         update-types: [minor, patch]
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+      # Kept within 1.x on purpose (requirements.txt).
+      - dependency-name: "anthropic"
 
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: monthly
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]

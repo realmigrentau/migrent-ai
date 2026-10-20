@@ -3,5 +3,10 @@
   "regions": [
     "syd1"
   ],
-  "buildCommand": "npm run build"
+  "buildCommand": "npm run build",
+  "git": {
+    "deploymentEnabled": {
+      "dependabot/**": false
+    }
+  }
 }
