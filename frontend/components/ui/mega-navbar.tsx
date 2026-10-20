@@ -362,7 +362,11 @@ export default function MegaNavbar({ revealAfterVh = 0 }: { revealAfterVh?: numb
     onBlur: () => setHovered((h) => (h === key ? null : h)),
   });
 
-  /** One dropdown: a Dorpdown trigger and its panel of titled columns. */
+  /* eslint-disable react-hooks/refs -- renderDropdown is called while
+     rendering, but it only hands triggerRefs and the hover timers to a ref
+     callback and to event handlers, which React runs after rendering. The
+     compiler cannot see through the helper call. */
+  /** One dropdown: a dropdown trigger and its panel of titled columns. */
   const renderDropdown = (item: NavLinkDropdown) => {
     const open = openDropdown === item.id;
     const active = matches(item.matchPrefixes);
@@ -446,7 +450,8 @@ export default function MegaNavbar({ revealAfterVh = 0 }: { revealAfterVh?: numb
         </AnimatePresence>
       </li>
     );
-  };
+  };  /* eslint-enable react-hooks/refs */
+
 
   const listRoomHref = session ? hubAbsoluteUrl("/properties/new") : hubFromSite.listProperty();
   const signInHref = hubFromSite.signIn();

@@ -102,7 +102,7 @@ function AmenityItem({
 
 export default function KeyDetails({ listing }: KeyDetailsProps) {
   const mapContainer = useRef<HTMLDivElement>(null);
-  const mapRef = useRef<any>(null);
+  const mapRef = useRef<import("maplibre-gl").Map | null>(null);
 
   const approxLat = listing.location?.approx_lat;
   const approxLng = listing.location?.approx_lng;

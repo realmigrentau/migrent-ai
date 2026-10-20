@@ -16,7 +16,7 @@ import {
   type ProfileDraft,
 } from "../../components/hub/profile/sections";
 import { Button } from "../../components/hub/ui/Button";
-import { ErrorState, InlineAlert, ProgressRing, SaveStatus, Skeleton, StatusBadge } from "../../components/hub/ui/Feedback";
+import { ErrorState, InlineAlert, ProgressRing, SaveStatus, Skeleton } from "../../components/hub/ui/Feedback";
 import { Dialog } from "../../components/hub/ui/Overlay";
 import { PageHeader, Panel } from "../../components/hub/ui/Layout";
 import { Avatar } from "../../components/hub/ui/Media";

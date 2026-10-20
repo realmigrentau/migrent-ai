@@ -99,6 +99,8 @@ export default function NewListingPage() {
   const timer = useRef<number | null>(null);
   const dirty = useRef(false);
   const latest = useRef<{ data: DraftData; step: number }>({ data: {}, step: 0 });
+  // The furthest step reached, for the step list (latest.current is what gets saved).
+  const [furthest, setFurthest] = useState(0);
   const top = useRef<HTMLDivElement>(null);
 
   const stepKey = (typeof router.query.step === "string" && WIZARD_STEPS.some((s) => s.key === router.query.step) ? router.query.step : "property") as StepKey;
@@ -132,6 +134,7 @@ export default function NewListingPage() {
         setDraft(d);
         setData(d.data || {});
         latest.current = { data: d.data || {}, step: d.step || 0 };
+        setFurthest(d.step || 0);
         if (d.submitted_at && d.listing_id) setDone({ listing_id: d.listing_id, property_id: d.property_id, needs_verification: false });
         const step = typeof q.step === "string" ? q.step : WIZARD_STEPS[Math.min(d.step || 0, WIZARD_STEPS.length - 1)].key;
         void router.replace({ pathname: router.pathname, query: { draft: d.id, step } }, `${router.asPath.split("?")[0]}?draft=${d.id}&step=${step}`, { shallow: true });
@@ -203,6 +206,7 @@ export default function NewListingPage() {
     setShowErrors((s) => new Set(s).add(stepKey));
     const idx = WIZARD_STEPS.findIndex((s) => s.key === k);
     latest.current = { ...latest.current, step: Math.max(latest.current.step, idx) };
+    setFurthest((f) => Math.max(f, idx));
     dirty.current = true;
     void persist();
     void router.replace({ pathname: router.pathname, query: { ...router.query, step: k } }, `${router.asPath.split("?")[0]}?draft=${draft?.id}&step=${k}`, { shallow: true, scroll: false });
@@ -247,6 +251,8 @@ export default function NewListingPage() {
     if (!done?.property_id) return navigate("/properties/new");
     try {
       const res = await hubApi.post<{ draft: Draft }>("/hub/listing-drafts", { property_id: done.property_id });
+      // A full load on purpose: the next listing starts from a clean wizard.
+      // eslint-disable-next-line @next/next/no-location-assign-relative-destination
       window.location.assign(`${window.location.pathname}?draft=${res.draft.id}&step=space`);
     } catch (e) {
       toast.error(e instanceof HubError ? e.message : "That didn't start.");
@@ -357,7 +363,7 @@ export default function NewListingPage() {
           <ol className="flex flex-col gap-0.5">
             {WIZARD_STEPS.map((s, i) => {
               const open = problemsFor(s.key).length > 0 && s.key !== "review";
-              const visited = i < latest.current.step || showErrors.has(s.key);
+              const visited = i < furthest || showErrors.has(s.key);
               return (
                 <li key={s.key}>
                   <button

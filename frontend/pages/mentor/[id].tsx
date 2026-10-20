@@ -186,6 +186,7 @@ export default function MentorProfilePage() {
             <header className="flex flex-col gap-5 sm:flex-row sm:items-center">
               <div className="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-[28px] bg-[var(--color-primary-soft)]">
                 {photo ? (
+                  // eslint-disable-next-line @next/next/no-img-element -- a small avatar, already resized by the API
                   <img src={photo} alt="" className="h-full w-full object-cover" />
                 ) : (
                   <span className="text-3xl font-semibold text-[color:var(--color-primary-700)]" aria-hidden="true">

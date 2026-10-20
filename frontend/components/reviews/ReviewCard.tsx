@@ -4,7 +4,6 @@ import { Review, flagReview } from "../../hooks/useReviews";
 
 interface ReviewCardProps {
   review: Review;
-  showListingContext?: boolean;
 }
 
 function StarDisplay({ rating, size = "sm" }: { rating: number; size?: "sm" | "xs" }) {
@@ -42,7 +41,7 @@ function formatTimeAgo(dateStr: string): string {
   return `${Math.floor(diffDays / 365)}y ago`;
 }
 
-export default function ReviewCard({ review, showListingContext }: ReviewCardProps) {
+export default function ReviewCard({ review }: ReviewCardProps) {
   const [flagging, setFlagging] = useState(false);
   const [flagged, setFlagged] = useState(false);
   const [showFlagInput, setShowFlagInput] = useState(false);
@@ -116,6 +115,7 @@ export default function ReviewCard({ review, showListingContext }: ReviewCardPro
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-full bg-[var(--color-primary-soft)] from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center overflow-hidden">
             {review.reviewer_photo ? (
+              // eslint-disable-next-line @next/next/no-img-element -- a small avatar, already resized by the API
               <img src={review.reviewer_photo} alt={`${review.reviewer_name || "Reviewer"} profile photo`} className="w-full h-full object-cover" />
             ) : (
               <span className="text-xs font-bold text-white">

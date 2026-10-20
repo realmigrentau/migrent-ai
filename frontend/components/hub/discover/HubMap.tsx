@@ -62,8 +62,12 @@ export default function HubMap({ homes, activeId, dark, onHover, onSelect, onMov
   const cb = useRef({ onHover, onSelect, onMoved });
   const [ready, setReady] = useState(false);
   const userMoved = useRef(false);
-  cb.current = { onHover, onSelect, onMoved };
-  homesRef.current = homes;
+  // Keep the latest props for the map's own event handlers. Updated after
+  // each render, before the effects below run.
+  useEffect(() => {
+    cb.current = { onHover, onSelect, onMoved };
+    homesRef.current = homes;
+  });
 
   // Create the map once (and again if the theme changes the style).
   useEffect(() => {

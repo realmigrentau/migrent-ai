@@ -63,6 +63,7 @@ export default function VerificationModal({
                     {/* Avatar */}
                     <div className="w-16 h-16 rounded-full bg-[var(--color-primary-soft)] from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center text-white font-bold text-2xl shrink-0 overflow-hidden ring-2 ring-white dark:ring-slate-800 shadow-lg">
                       {profile.custom_pfp ? (
+                        // eslint-disable-next-line @next/next/no-img-element -- a small avatar, already resized by the API
                         <img
                           src={profile.custom_pfp}
                           alt={profile.name || "User"}

@@ -100,8 +100,8 @@ export default function RequestToBookForm({
         guests,
         message_to_owner: message || undefined,
       });
-    } catch (err: any) {
-      setError(err.message || "Something went wrong");
+    } catch (err) {
+      setError((err instanceof Error && err.message) || "Something went wrong");
     }
   };
 

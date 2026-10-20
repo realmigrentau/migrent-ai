@@ -1,6 +1,5 @@
 import { useRouter } from "next/router";
 import { ReactNode } from "react";
-import { useTranslation } from "react-i18next";
 import dynamic from "next/dynamic";
 import MegaNavbar from "./ui/mega-navbar";
 
@@ -30,16 +29,11 @@ const matchesAny = (list: string[], path: string) => list.some((p) => path === p
 
 export default function Layout({ children }: { children: ReactNode }) {
   const router = useRouter();
-  const { t } = useTranslation();
-
-  const adminPath = process.env.NEXT_PUBLIC_ADMIN_PATH || "/admin";
-  const isAdminRoute = router.pathname.startsWith(adminPath);
-  const isDashboard = router.pathname.startsWith("/dashboard");
   /* Pages built from components/site lay out their own full-width sections
      (the sky at the top, the closing card at the bottom), so they skip the
      centred container. Everything else still gets it. */
   const drawsOwnSky = matchesAny(SITE_KIT, router.pathname);
-  const isFullWidth = isAdminRoute || drawsOwnSky || LEGACY_FULL_WIDTH.includes(router.pathname);
+  const isFullWidth = drawsOwnSky || LEGACY_FULL_WIDTH.includes(router.pathname);
 
   return (
     <div className="min-h-screen flex flex-col bg-[var(--color-bg)] text-[var(--color-ink)]">
@@ -51,8 +45,7 @@ export default function Layout({ children }: { children: ReactNode }) {
         Skip to main content
       </a>
 
-      {/* Only load smooth scroll on marketing pages, skip on dashboard for speed */}
-      {!isDashboard && !isAdminRoute && <SmoothScroll />}
+      <SmoothScroll />
 
       {/* Backend status banner - sits above the nav when API is unreachable */}
       <BackendStatusBanner />

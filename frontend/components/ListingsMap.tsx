@@ -218,12 +218,10 @@ export default function ListingsMap({ listings, isDark, stations = [], onUnavail
 
   useEffect(() => {
     if (ready) renderListingAreas(listings);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [listings, ready]);
 
   useEffect(() => {
     if (ready) renderStations(stations);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stations, ready]);
 
   return (

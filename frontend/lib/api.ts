@@ -131,7 +131,7 @@ export async function createListing(
   payload: CreateListingPayload
 ) {
   try {
-    const body: Record<string, any> = {
+    const body: Record<string, unknown> = {
       address: payload.address,
       suburb: payload.suburb,
       postcode: Number(payload.postcode),
@@ -204,7 +204,7 @@ export async function createListing(
         if (errBody.detail) {
           if (Array.isArray(errBody.detail)) {
             detail = errBody.detail
-              .map((d: any) => d.msg || d.message || JSON.stringify(d))
+              .map((d: { msg?: string; message?: string }) => d.msg || d.message || JSON.stringify(d))
               .join("; ");
           } else if (typeof errBody.detail === "string") {
             detail = errBody.detail;
@@ -216,9 +216,9 @@ export async function createListing(
       throw new Error(detail);
     }
     return await res.json();
-  } catch (err: any) {
+  } catch (err) {
     console.error("createListing error:", err);
-    return { error: err.message || "Failed to create listing" };
+    return { error: (err instanceof Error && err.message) || "Failed to create listing" };
   }
 }
 
@@ -232,7 +232,7 @@ export async function updateListing(
   payload: Partial<CreateListingPayload>
 ) {
   try {
-    const body: Record<string, any> = {};
+    const body: Record<string, unknown> = {};
 
     // Map camelCase payload to snake_case for backend
     const fieldMap: Record<string, string> = {
@@ -287,8 +287,8 @@ export async function updateListing(
     };
 
     for (const [camel, snake] of Object.entries(fieldMap)) {
-      if (camel in payload && (payload as any)[camel] !== undefined) {
-        let val = (payload as any)[camel];
+      if (camel in payload && (payload as Record<string, unknown>)[camel] !== undefined) {
+        let val = (payload as Record<string, unknown>)[camel];
         if (camel === "postcode") val = Number(val);
         body[snake] = val;
       }
@@ -313,9 +313,9 @@ export async function updateListing(
     }
 
     return await res.json();
-  } catch (err: any) {
+  } catch (err) {
     console.error("updateListing error:", err);
-    return { error: err.message || "Failed to update listing" };
+    return { error: (err instanceof Error && err.message) || "Failed to update listing" };
   }
 }
 
@@ -555,7 +555,7 @@ export async function getMyProfile(token: string) {
  */
 export async function updateMyProfile(
   token: string,
-  data: Record<string, any>
+  data: Record<string, unknown>
 ) {
   try {
     const res = await fetch(`${BASE_URL}/profiles/me`, {
@@ -993,7 +993,7 @@ export async function checkOnboardingStatus(token: string) {
  * Complete onboarding with required fields.
  * POST /profiles/me/onboarding/complete
  */
-export async function completeOnboarding(token: string, data: Record<string, any>) {
+export async function completeOnboarding(token: string, data: Record<string, unknown>) {
   try {
     const res = await fetch(`${BASE_URL}/profiles/me/onboarding/complete`, {
       method: "POST",
@@ -1418,7 +1418,7 @@ export async function createBooking(token: string, payload: CreateBookingPayload
       throw new Error(detail || `createBooking failed: ${res.status}`);
     }
     return await res.json();
-  } catch (err: any) {
+  } catch (err) {
     console.error("createBooking error:", err);
     throw err;
   }
@@ -1467,7 +1467,7 @@ export async function respondToBooking(
       throw new Error(err.detail || `respondToBooking failed: ${res.status}`);
     }
     return await res.json();
-  } catch (err: any) {
+  } catch (err) {
     console.error("respondToBooking error:", err);
     throw err;
   }
@@ -1491,7 +1491,7 @@ export async function cancelBooking(token: string, bookingId: string) {
       throw new Error(err.detail || `cancelBooking failed: ${res.status}`);
     }
     return await res.json();
-  } catch (err: any) {
+  } catch (err) {
     console.error("cancelBooking error:", err);
     throw err;
   }
@@ -1557,7 +1557,7 @@ export async function deleteListing(
  * GET /listings/{id}?include=reviews,similar
  */
 export type ListingDetailResult =
-  | { ok: true; listing: any }
+  | { ok: true; listing: PublicListing }
   | { ok: false; reason: "not-found" | "network" };
 
 /**
@@ -1826,7 +1826,7 @@ export interface Notification {
   entity_id: string | null;
   is_read: boolean;
   delivery_channel: string;
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
   created_at: string;
 }
 

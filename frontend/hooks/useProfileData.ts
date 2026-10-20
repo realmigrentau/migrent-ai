@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
 import { loadSupabase } from "../lib/supabaseLazy";
-import { UserProfile, ProfileBadges } from "./useUserProfile";
 
 export interface ProfileListing {
   id: string;
@@ -29,6 +28,33 @@ export interface ProfileReview {
 }
 
 const LISTINGS_PER_PAGE = 12;
+
+/** A row of the public_listings view, as far as this hook reads it. */
+interface PublicListingRow {
+  id: string;
+  title?: string | null;
+  display_address?: string | null;
+  postcode?: number | string | null;
+  weekly_price?: number | null;
+  description?: string | null;
+  property_type?: string | null;
+  place_type?: string | null;
+  bedrooms?: number | null;
+  bathrooms?: number | null;
+  images?: unknown;
+  created_at?: string | null;
+}
+
+/** A review as GET /reviews/user/:id returns it. */
+interface ReviewRow {
+  id: string;
+  reviewer_id?: string | null;
+  reviewer_name?: string | null;
+  reviewer_photo?: string | null;
+  rating?: number | null;
+  review_text?: string | null;
+  created_at?: string | null;
+}
 
 /**
  * A host's live listings, read from the `public_listings` view (anon has no
@@ -60,9 +86,9 @@ export function useProfileListings(userId: string | undefined) {
         return;
       }
 
-      const items = (data || []).map((d: any) => ({
+      const items = ((data || []) as PublicListingRow[]).map((d) => ({
         id: d.id,
-        title: d.title || d.display_address,
+        title: d.title || d.display_address || "Room",
         address: d.display_address || "",
         postcode: d.postcode?.toString() || "",
         weekly_price: d.weekly_price || 0,
@@ -71,7 +97,7 @@ export function useProfileListings(userId: string | undefined) {
         place_type: d.place_type || "Private room",
         bedrooms: d.bedrooms || 1,
         bathrooms: d.bathrooms || 1,
-        photos: Array.isArray(d.images) ? d.images.filter((p: string) => p && p.startsWith("http")) : [],
+        photos: Array.isArray(d.images) ? d.images.filter((p): p is string => typeof p === "string" && p.startsWith("http")) : [],
         is_active: true,
         created_at: d.created_at || "",
       }));
@@ -136,12 +162,13 @@ export function useProfileReviews(userId: string | undefined) {
         setReviewsCount(totalCount);
         setAverageRating(totalCount > 0 ? totalRating / totalCount : 0);
 
-        setReviews((data.reviews || []).map((d: any) => ({
+        setReviews(((data.reviews || []) as ReviewRow[]).map((d) => ({
           id: d.id,
           reviewer_id: d.reviewer_id || "",
           reviewer_name: d.reviewer_name || "Anonymous",
           reviewer_photo: d.reviewer_photo && d.reviewer_photo.startsWith("http") ? d.reviewer_photo : null,
-          rating: d.rating || 5,
+          // A review with no rating shows no stars, never a made-up five.
+          rating: d.rating || 0,
           comment: d.review_text || "",
           created_at: d.created_at || "",
         })));

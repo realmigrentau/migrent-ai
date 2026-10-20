@@ -162,6 +162,19 @@ function TogglePill({ active, onClick, label }: { active: boolean; onClick: () =
   );
 }
 
+function GuestCounter({ id, label, value, onDec, onInc, min = 0 }: { id: string; label: string; value: number; onDec: () => void; onInc: () => void; min?: number }) {
+  return (
+    <div className="flex items-center justify-between" role="group" aria-labelledby={id}>
+      <span id={id} className="text-xs text-[var(--color-ink-2)]">{label}</span>
+      <div className="flex items-center gap-2">
+        <button type="button" aria-label={`Fewer ${label}`} onClick={onDec} disabled={value <= min} className="w-9 h-9 rounded-full border border-[var(--color-line)] flex items-center justify-center text-sm disabled:opacity-30 hover:bg-[var(--color-surface)] transition-colors">-</button>
+        <span className="text-xs font-semibold w-5 text-center text-[var(--color-ink)]" aria-live="polite">{value}</span>
+        <button type="button" aria-label={`More ${label}`} onClick={onInc} className="w-9 h-9 rounded-full border border-[var(--color-line)] flex items-center justify-center text-sm hover:bg-[var(--color-surface)] transition-colors">+</button>
+      </div>
+    </div>
+  );
+}
+
 function MapUnavailablePanel({ reason, onRetry }: { reason: string; onRetry?: () => void }) {
   return (
     <div
@@ -576,17 +589,6 @@ export default function SeekerSearch({ initialFilters, initialPage, serverToday 
         : total !== null && total > results.length
           ? `Showing ${results.length} of ${total} rooms`
           : `${results.length} ${results.length === 1 ? "room" : "rooms"} found`;
-
-  const GuestCounter = ({ id, label, value, onDec, onInc, min = 0 }: { id: string; label: string; value: number; onDec: () => void; onInc: () => void; min?: number }) => (
-    <div className="flex items-center justify-between" role="group" aria-labelledby={id}>
-      <span id={id} className="text-xs text-[var(--color-ink-2)]">{label}</span>
-      <div className="flex items-center gap-2">
-        <button type="button" aria-label={`Fewer ${label}`} onClick={onDec} disabled={value <= min} className="w-9 h-9 rounded-full border border-[var(--color-line)] flex items-center justify-center text-sm disabled:opacity-30 hover:bg-[var(--color-surface)] transition-colors">-</button>
-        <span className="text-xs font-semibold w-5 text-center text-[var(--color-ink)]" aria-live="polite">{value}</span>
-        <button type="button" aria-label={`More ${label}`} onClick={onInc} className="w-9 h-9 rounded-full border border-[var(--color-line)] flex items-center justify-center text-sm hover:bg-[var(--color-surface)] transition-colors">+</button>
-      </div>
-    </div>
-  );
 
   const today = isoToday();
   // Opens the Hub's save dialog with this search filled in.

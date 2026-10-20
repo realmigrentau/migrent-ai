@@ -25,6 +25,7 @@ export default function MentorCard({ id, name, photo, suburb, languages, bio, sp
     <article className="site-card site-card--link flex gap-4 p-5 sm:gap-5 sm:p-6">
       <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-[var(--color-primary-soft)]">
         {photo ? (
+          // eslint-disable-next-line @next/next/no-img-element -- a small avatar, already resized by the API
           <img src={photo} alt="" className="h-full w-full object-cover" />
         ) : (
           <span className="text-lg font-semibold text-[color:var(--color-primary-700)]" aria-hidden="true">

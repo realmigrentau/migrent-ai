@@ -70,8 +70,8 @@ export default function ReportModal({ listingId, itemType, itemId, isOpen, onClo
       });
       if (!result) throw new Error("Failed to submit");
       setSubmitted(true);
-    } catch (err: any) {
-      const msg = err?.message || "Failed to submit report. Please try again.";
+    } catch (err) {
+      const msg = (err instanceof Error && err.message) || "Failed to submit report. Please try again.";
       setError(msg);
     } finally {
       setLoading(false);

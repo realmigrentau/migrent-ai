@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { MapPin, Zap } from "lucide-react";
@@ -48,11 +49,12 @@ export default function SimilarListings({
               {/* Image */}
               <div className="relative aspect-[16/10] bg-[var(--color-surface-muted)] overflow-hidden">
                 {listing.images && listing.images.length > 0 ? (
-                  <img
+                  <Image
                     src={listing.images[0]}
                     alt={listing.title || listing.address}
-                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                    loading="lazy"
+                    fill
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    className="object-cover transition-transform duration-300 group-hover:scale-105"
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-[var(--color-ink-4)]">

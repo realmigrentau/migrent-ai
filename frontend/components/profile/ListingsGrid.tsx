@@ -1,5 +1,6 @@
 import { Home } from "lucide-react";
 import { motion } from "framer-motion";
+import Image from "next/image";
 import Link from "next/link";
 import { ProfileListing } from "../../hooks/useProfileData";
 
@@ -74,11 +75,12 @@ function ListingItem({ listing, index }: { listing: ProfileListing; index: numbe
           {/* Photo */}
           <div className="aspect-[4/3] bg-[var(--color-surface-muted)] relative overflow-hidden">
             {photo ? (
-              <img
+              <Image
                 src={photo}
                 alt={listing.title}
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                loading="lazy"
+                fill
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                className="object-cover transition-transform duration-500 group-hover:scale-105"
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center">

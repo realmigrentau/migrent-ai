@@ -173,8 +173,8 @@ export function useDealReview(dealId: string | undefined) {
       }
       const data = await res.json();
       setContext(data);
-    } catch (err: any) {
-      setError(err.message || "Failed to load review context");
+    } catch (err) {
+      setError((err instanceof Error && err.message) || "Failed to load review context");
     } finally {
       setLoading(false);
     }
@@ -219,8 +219,8 @@ export async function submitReview(data: {
     }
 
     return { success: true };
-  } catch (err: any) {
-    return { success: false, error: err.message || "Network error" };
+  } catch (err) {
+    return { success: false, error: (err instanceof Error && err.message) || "Network error" };
   }
 }
 

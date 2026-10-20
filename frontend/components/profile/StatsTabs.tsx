@@ -1,5 +1,5 @@
-import { useState, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useRef } from "react";
+import { motion } from "framer-motion";
 
 interface StatsTabsProps {
   tabs: { key: string; label: string; icon?: string; count?: number }[];

@@ -63,13 +63,6 @@ export default function TrueCostBadge({
     [weeklyRent, billsIncluded, billsEstimate, listingLat, listingLng, destination]
   );
 
-  const transportInfo = useMemo(() => {
-    if (result.distanceKm === null) return null;
-    return getTransportCost(result.distanceKm);
-  }, [result.distanceKm]);
-
-  const hasExtras = result.bills > 0 || result.transport > 0;
-
   const selectDest = (d: Destination) => {
     setDestination(d);
     setSearchQuery(d.shortName);

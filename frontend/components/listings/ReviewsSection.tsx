@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Router from "next/router";
 import { motion } from "framer-motion";
 import { Star, ChevronDown } from "lucide-react";
 import { useListingReviews } from "../../hooks/useReviews";
@@ -61,6 +62,7 @@ function ReviewCard({
     >
       <div className="flex items-start gap-3">
         {review.reviewer_photo ? (
+          // eslint-disable-next-line @next/next/no-img-element -- a small avatar, already resized by the API
           <img
             src={review.reviewer_photo}
             alt={review.reviewer_name || "Reviewer"}
@@ -104,10 +106,11 @@ function ReviewCard({
           {review.photos && review.photos.length > 0 && (
             <div className="flex gap-2 mt-2 overflow-x-auto">
               {review.photos.map((photo, i) => (
+                // eslint-disable-next-line @next/next/no-img-element -- a 64px thumbnail, already resized by the API
                 <img
                   key={i}
                   src={photo}
-                  alt="Reviewer profile photo"
+                  alt={`Photo ${i + 1} from this review`}
                   className="w-16 h-16 rounded-lg object-cover flex-shrink-0"
                   loading="lazy"
                 />
@@ -144,7 +147,7 @@ export default function ReviewsSection({
   const [reporting, setReporting] = useState<string | null>(null);
   const report = (id: string) => {
     if (signedIn) setReporting(id);
-    else window.location.assign(`/contact?topic=SAFETY&subject=${encodeURIComponent(`Review ${id.slice(0, 8)} on listing ${listingId.slice(0, 8)}`)}`);
+    else void Router.push(`/contact?topic=SAFETY&subject=${encodeURIComponent(`Review ${id.slice(0, 8)} on listing ${listingId.slice(0, 8)}`)}`);
   };
 
   const displayStats = stats.review_count > 0 ? stats : initialStats || stats;

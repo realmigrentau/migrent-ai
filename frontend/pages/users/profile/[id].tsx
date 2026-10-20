@@ -268,7 +268,6 @@ export default function PublicProfilePage() {
               reviewsCount={reviewsCount || profile.reviews_count}
               averageRating={averageRating || profile.average_rating}
               loading={reviewsLoading}
-              ownerName={displayName}
             />
           </motion.section>
 

@@ -1,6 +1,5 @@
-import { useState, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import Link from "next/link";
+import { useRef, useState } from "react";
+import { motion } from "framer-motion";
 import { ProfileReview } from "../../hooks/useProfileData";
 
 interface ReviewCarouselProps {
@@ -8,12 +7,19 @@ interface ReviewCarouselProps {
   reviewsCount: number;
   averageRating: number;
   loading: boolean;
-  ownerName: string;
 }
 
-export default function ReviewCarousel({ reviews, reviewsCount, averageRating, loading, ownerName }: ReviewCarouselProps) {
-  const [currentIndex, setCurrentIndex] = useState(0);
+export default function ReviewCarousel({ reviews, reviewsCount, averageRating, loading }: ReviewCarouselProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
+  // Which card is in view, for the dots under the row.
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const onScroll = () => {
+    const el = scrollRef.current;
+    const first = el?.firstElementChild as HTMLElement | null;
+    if (!el || !first) return;
+    const step = first.offsetWidth + 16; // card width + gap-4
+    setCurrentIndex(Math.min(Math.round(el.scrollLeft / step), Math.min(reviews.length, 6) - 1));
+  };
 
   if (loading) {
     return (
@@ -56,6 +62,7 @@ export default function ReviewCarousel({ reviews, reviewsCount, averageRating, l
         {/* Review cards */}
         <div
           ref={scrollRef}
+          onScroll={onScroll}
           className="flex gap-4 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-2 -mx-1 px-1"
         >
           {reviews.map((review, i) => (
@@ -90,6 +97,7 @@ export default function ReviewCarousel({ reviews, reviewsCount, averageRating, l
                 <div className="flex items-center gap-3 mt-4 pt-3 border-t border-[var(--color-line)]">
                   <div className="w-8 h-8 rounded-full bg-[var(--color-primary-soft)] from-[var(--color-primary)] to-[var(--color-primary)] flex items-center justify-center overflow-hidden">
                     {review.reviewer_photo ? (
+                      // eslint-disable-next-line @next/next/no-img-element -- a small avatar, already resized by the API
                       <img src={review.reviewer_photo} alt={`${review.reviewer_name || "Reviewer"} profile photo`} className="w-full h-full object-cover" />
                     ) : (
                       <span className="text-xs font-bold text-white">{review.reviewer_name.charAt(0)}</span>
@@ -109,7 +117,7 @@ export default function ReviewCarousel({ reviews, reviewsCount, averageRating, l
 
         {/* Scroll indicators */}
         {reviews.length > 1 && (
-          <div className="flex justify-center gap-1.5 mt-3">
+          <div className="flex justify-center gap-1.5 mt-3" aria-hidden="true">
             {reviews.slice(0, Math.min(reviews.length, 6)).map((_, i) => (
               <div
                 key={i}
