@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, BadgeCheck, BellRing, CalendarDays } from "lucide-react";
+import { ArrowRight, BadgeCheck, BellRing, CalendarDays, KeyRound, ShieldCheck, type LucideIcon } from "lucide-react";
 import { searchListings } from "../../lib/api";
 import { HomeImage } from "../hub/ui/Media";
-import { hubAbsoluteUrl } from "../../lib/hub/routes";
+import { hubAbsoluteUrl, hubFromSite } from "../../lib/hub/routes";
 import { placeTypeLabel } from "../../lib/hub/format";
 import { Reveal, SectionHead, Strip } from "../site";
 
@@ -12,7 +12,10 @@ import { Reveal, SectionHead, Strip } from "../site";
  *
  * The catalogue is young, so the strip is built to be honest at any size:
  * one room is one card, and the last card is always the way to hear about
- * the next one, never a padded grid of placeholders.
+ * the next one, never a padded grid of placeholders. With no rooms live at
+ * all, a strip of one card and empty scroll arrows looked broken, so the
+ * section becomes three real next steps instead: hear first, list a room,
+ * move in safely.
  */
 
 export type RoomListing = Listing;
@@ -95,8 +98,26 @@ function AlertCard({ empty }: { empty: boolean }) {
           Save a search in Migrent Hub for where you want to live, and choose how often we tell you about new rooms there.
         </p>
       </div>
-      <Link href={hubAbsoluteUrl("/discover")} className="btn-secondary self-start">
+      <Link href={hubAbsoluteUrl("/discover")} className={`${empty ? "btn-primary" : "btn-secondary"} self-start`}>
         Save a search
+        <ArrowRight className="btn-arrow h-4 w-4" strokeWidth={2.2} aria-hidden="true" />
+      </Link>
+    </div>
+  );
+}
+
+function NextStepCard({ icon: Icon, title, body, href, cta }: { icon: LucideIcon; title: string; body: string; href: string; cta: string }) {
+  return (
+    <div className="site-card site-card--pad flex h-full flex-col justify-between gap-6">
+      <div>
+        <span className="site-icon" aria-hidden="true">
+          <Icon className="h-5 w-5" strokeWidth={1.9} />
+        </span>
+        <h3 className="site-h3 site-h3--lg mt-5">{title}</h3>
+        <p className="site-body mt-2">{body}</p>
+      </div>
+      <Link href={href} className="btn-secondary self-start">
+        {cta}
         <ArrowRight className="btn-arrow h-4 w-4" strokeWidth={2.2} aria-hidden="true" />
       </Link>
     </div>
@@ -126,27 +147,68 @@ export default function RoomsNow({ initial = null }: { initial?: Listing[] | nul
     };
   }, [initial]);
 
+  if (listings && listings.length === 0) {
+    return (
+      <section id="rooms" className="site-section pb-8 scroll-mt-[96px]" aria-labelledby="rooms-heading">
+        <Reveal>
+          <div className="site-shell">
+            <SectionHead
+              eyebrow="Rooms"
+              id="rooms-heading"
+              heading={
+                <>
+                  The first rooms are <strong>on their way.</strong>
+                </>
+              }
+              lead="A room is published only after Migrent has checked the host's ID and read the listing. Save a search and you hear about it first."
+              aside={
+                <Link href="/seeker/search" className="site-link">
+                  Search all rooms <ArrowRight className="h-4 w-4" strokeWidth={2} aria-hidden="true" />
+                </Link>
+              }
+            />
+            <ul className="m-0 mt-10 grid list-none gap-4 p-0 md:grid-cols-3 lg:mt-12">
+              <li>
+                <AlertCard empty />
+              </li>
+              <li>
+                <NextStepCard
+                  icon={KeyRound}
+                  title="Have a room to rent?"
+                  body="List it free. Migrent checks your ID and reads your listing, then renters apply with a Rental Profile instead of a pile of paperwork."
+                  href={hubFromSite.listProperty()}
+                  cta="List a property"
+                />
+              </li>
+              <li>
+                <NextStepCard
+                  icon={ShieldCheck}
+                  title="Move in safely"
+                  body="Never pay a bond or deposit before you have seen the home and have a written agreement. Learn the warning signs of a rental scam."
+                  href="/blog/spot-rental-scams"
+                  cta="Read the guide"
+                />
+              </li>
+            </ul>
+          </div>
+        </Reveal>
+      </section>
+    );
+  }
+
   return (
     <section id="rooms" className="site-section pb-8 scroll-mt-[96px]" aria-labelledby="rooms-heading">
       <Reveal>
         <Strip
-          label={listings && listings.length === 0 ? "Rooms" : "Rooms available now"}
+          label="Rooms available now"
           head={
             <SectionHead
-              eyebrow={listings && listings.length === 0 ? "Rooms" : "Available now"}
+              eyebrow="Available now"
               id="rooms-heading"
               heading={
-                listings && listings.length === 0 ? (
-                  // No rooms are live yet: say so, rather than a heading
-                  // promising rooms above an empty strip.
-                  <>
-                    The first rooms are <strong>on their way.</strong>
-                  </>
-                ) : (
-                  <>
-                    Rooms you can <strong>move into.</strong>
-                  </>
-                )
+                <>
+                  Rooms you can <strong>move into.</strong>
+                </>
               }
               aside={
                 <Link href="/seeker/search" className="site-link">
@@ -176,7 +238,7 @@ export default function RoomsNow({ initial = null }: { initial?: Listing[] | nul
                   </li>
                 )),
                 <li key="alert">
-                  <AlertCard empty={listings.length === 0} />
+                  <AlertCard empty={false} />
                 </li>,
               ]}
         </Strip>

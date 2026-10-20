@@ -85,6 +85,8 @@ const nextConfig: NextConfig = {
 
   reactStrictMode: true,
   poweredByHeader: false,
+  // next dev would otherwise write an AGENTS.md into the project on every start.
+  agentRules: false,
   productionBrowserSourceMaps: false,
 
   // Pin the workspace root. A stray lockfile in the home directory otherwise

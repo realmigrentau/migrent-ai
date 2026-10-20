@@ -595,6 +595,10 @@ export default function SeekerSearch({ initialFilters, initialPage, serverToday 
   const alertQuery = serializeSearchFilters({ ...filters, page: 1 });
   alertQuery.set("save", "1");
   const alertHref = hubFromSite.path(`/discover?${alertQuery.toString()}`);
+  // With no rooms on Migrent at all (no filters, nothing found) the map has
+  // nothing to show; give the message the full width instead of an empty box.
+  const catalogueEmpty = !searching && !searchError && results.length === 0 && filterCount === 0;
+  const mapVisible = showMap && mapState !== "unavailable" && !catalogueEmpty;
 
   const filterContent = (
     <form role="search" aria-label="Room filters" onSubmit={onSubmitFilters} className="space-y-4">
@@ -967,7 +971,7 @@ export default function SeekerSearch({ initialFilters, initialPage, serverToday 
         </p>
         <div className="flex items-center gap-2">
           {sortSelect("sort-desktop", "input-field text-xs w-auto hidden lg:block min-h-[40px]")}
-          {mapState !== "unavailable" && (
+          {mapState !== "unavailable" && !catalogueEmpty && (
             <button type="button" onClick={() => setShowMap(!showMap)} aria-pressed={showMap}
               className="hidden xl:flex items-center gap-1.5 px-3 min-h-[40px] rounded-lg text-xs font-medium bg-[var(--color-surface-sunk)] text-[var(--color-ink-2)] hover:bg-[var(--color-line)] transition-colors">
               {showMap ? "Hide map" : "Show map"}
@@ -989,8 +993,8 @@ export default function SeekerSearch({ initialFilters, initialPage, serverToday 
             </div>
           )}
 
-          <div className={`grid gap-6 ${showMap && mapState !== "unavailable" ? "xl:grid-cols-5" : ""}`}>
-            <section aria-label="Search results" className={showMap && mapState !== "unavailable" ? "xl:col-span-3" : ""} data-testid="results-list">
+          <div className={`grid gap-6 ${mapVisible ? "xl:grid-cols-5" : ""}`}>
+            <section aria-label="Search results" className={mapVisible ? "xl:col-span-3" : ""} data-testid="results-list">
               {/* Skeletons only when the screen is empty.
                   Re-running a search used to swap the results for six
                   skeleton cards. With a small catalogue the real answer is
@@ -1043,8 +1047,10 @@ export default function SeekerSearch({ initialFilters, initialPage, serverToday 
                   <div className="space-y-4">
                     <div className="flex flex-wrap justify-center gap-3">
                       <a href={alertHref} className="btn-primary px-6 min-h-[44px] inline-flex items-center rounded-xl text-sm font-semibold">Get an alert</a>
-                      {filterCount > 0 && (
+                      {filterCount > 0 ? (
                         <button type="button" onClick={clearAllFilters} className="btn-secondary px-6 min-h-[44px] rounded-xl text-sm font-semibold">Clear all filters</button>
+                      ) : (
+                        <a href={hubFromSite.listProperty()} className="btn-secondary px-6 min-h-[44px] inline-flex items-center rounded-xl text-sm font-semibold">List your room free</a>
                       )}
                     </div>
                     {filterCount > 0 && (
@@ -1155,10 +1161,11 @@ export default function SeekerSearch({ initialFilters, initialPage, serverToday 
               )}
             </section>
 
-            {showMap && mapState !== "unavailable" && (
+            {mapVisible && (
               <div className="hidden xl:block xl:col-span-2">
                 <div className="sticky top-24 space-y-4">
-                  <div className="card rounded-2xl overflow-hidden aspect-[4/5]" data-testid="map-panel">
+                  {/* As tall as the screen allows, so the map stays useful while the list scrolls. */}
+                  <div className="card rounded-2xl overflow-hidden aspect-[4/5] xl:aspect-auto xl:h-[min(calc(100vh-10rem),760px)] xl:min-h-[420px]" data-testid="map-panel">
                     {mapState === "idle" ? (
                       <div className="w-full h-full flex items-center justify-center text-xs text-[var(--color-ink-3)]" aria-hidden="true">Map loads after results</div>
                     ) : (
