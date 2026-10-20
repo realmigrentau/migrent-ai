@@ -13,4 +13,4 @@ sentry-sdk[fastapi]==2.72.0
 Pillow==12.3.0
 anthropic>=1.8,<2  # fallbacks="default" and output_config need 1.x
 # Shared rate-limit counters when RATE_LIMIT_STORAGE_URI is set (limiter.py).
-redis==5.2.1
+redis==8.1.0
