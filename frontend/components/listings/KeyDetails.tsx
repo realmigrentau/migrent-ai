@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { isWebGLAvailable } from "../../lib/webgl";
+import type maplibregl from "../../lib/maplibre";
 import { bathroomLabel, genderLabel, hasLaundry, laundryLabel, placeTypeLabel, propertyTypeLabel } from "../../lib/hub/format";
 import {
   Wifi,
@@ -102,7 +103,7 @@ function AmenityItem({
 
 export default function KeyDetails({ listing }: KeyDetailsProps) {
   const mapContainer = useRef<HTMLDivElement>(null);
-  const mapRef = useRef<import("maplibre-gl").Map | null>(null);
+  const mapRef = useRef<maplibregl.Map | null>(null);
 
   const approxLat = listing.location?.approx_lat;
   const approxLng = listing.location?.approx_lng;
