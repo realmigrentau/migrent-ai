@@ -1080,7 +1080,6 @@ export async function validatePhone(phone: string): Promise<{
   }
 }
 
-
 // ══════════════════════════════════════════════════════════════
 //  SUPPORT SYSTEM
 // ══════════════════════════════════════════════════════════════
@@ -1389,9 +1388,7 @@ export async function getSupportAnalytics(token: string) {
   }
 }
 
-
 // ── Booking API ─────────────────────────────────────────────
-
 
 export interface CreateBookingPayload {
   listing_id: string;
@@ -1740,17 +1737,6 @@ export interface VisaType {
   duration_weeks: number;
 }
 
-export async function getVisaTypes(): Promise<VisaType[]> {
-  try {
-    const res = await fetch(`${BASE_URL}/visa/types`);
-    if (!res.ok) return [];
-    const data = await res.json();
-    return data.visa_types || [];
-  } catch {
-    return [];
-  }
-}
-
 export async function getVisaRecommended(token: string, limit: number = 12) {
   const res = await fetch(`${BASE_URL}/visa/recommended?limit=${limit}`, {
     headers: {
@@ -1759,17 +1745,6 @@ export async function getVisaRecommended(token: string, limit: number = 12) {
     },
   });
   if (!res.ok) throw new Error(`getVisaRecommended failed: ${res.status}`);
-  return await res.json();
-}
-
-export async function getVisaScore(token: string, listingId: string) {
-  const res = await fetch(`${BASE_URL}/visa/score?listing_id=${listingId}`, {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  if (!res.ok) return null;
   return await res.json();
 }
 
@@ -1834,222 +1809,9 @@ export async function nearbyStations(
   }
 }
 
-/**
- * List all stations (optionally filtered by city).
- * GET /stations?city=Sydney
- */
-export async function listStations(city?: string): Promise<Station[]> {
-  try {
-    const params = new URLSearchParams();
-    if (city) params.set("city", city);
-    const url = params.toString()
-      ? `${BASE_URL}/stations?${params}`
-      : `${BASE_URL}/stations`;
-    const res = await fetch(url);
-    if (!res.ok) return [];
-    return await res.json();
-  } catch {
-    return [];
-  }
-}
-
-
-/**
- * Subscribe to push notifications.
- * POST /notifications/subscribe
- */
-export async function subscribeToNotifications(
-  token: string,
-  fcmToken: string
-): Promise<boolean> {
-  try {
-    const res = await fetch(`${BASE_URL}/notifications/subscribe`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ fcm_token: fcmToken }),
-    });
-    if (!res.ok) return false;
-    return true;
-  } catch {
-    return false;
-  }
-}
-
 // ── Mentor Network ──────────────────────────────────────────
 
-export async function getMentors(params?: { suburb?: string; language?: string }) {
-  try {
-    const query = new URLSearchParams();
-    if (params?.suburb) query.set("suburb", params.suburb);
-    if (params?.language) query.set("language", params.language);
-    const res = await fetch(`${BASE_URL}/mentors?${query.toString()}`);
-    if (!res.ok) return null;
-    return await res.json();
-  } catch {
-    return null;
-  }
-}
-
-export async function getMentor(mentorId: string) {
-  try {
-    const res = await fetch(`${BASE_URL}/mentors/${mentorId}`);
-    if (!res.ok) return null;
-    return await res.json();
-  } catch {
-    return null;
-  }
-}
-
-export async function createMentor(token: string, data: {
-  suburb: string;
-  postcode?: number;
-  languages: string[];
-  bio?: string;
-  specialties?: string[];
-  hourly_rate: number;
-}) {
-  try {
-    const res = await fetch(`${BASE_URL}/mentors`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(data),
-    });
-    if (!res.ok) return null;
-    return await res.json();
-  } catch {
-    return null;
-  }
-}
-
-export async function bookMentorSession(token: string, data: {
-  mentor_id: string;
-  suburb: string;
-  preferred_language?: string;
-  session_type: string;
-  scheduled_at?: string;
-  notes?: string;
-}) {
-  try {
-    const res = await fetch(`${BASE_URL}/mentors/sessions`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(data),
-    });
-    if (!res.ok) return null;
-    return await res.json();
-  } catch {
-    return null;
-  }
-}
-
-export async function getMyMentorProfile(token: string) {
-  try {
-    const res = await fetch(`${BASE_URL}/mentors/me/profile`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    if (!res.ok) return null;
-    return await res.json();
-  } catch {
-    return null;
-  }
-}
-
-export async function startMentorStripeOnboarding(token: string) {
-  try {
-    const res = await fetch(`${BASE_URL}/mentors/stripe-onboard`, {
-      method: "POST",
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    if (!res.ok) return null;
-    return await res.json();
-  } catch {
-    return null;
-  }
-}
-
 // ─── Owner Verification API ──────────────────────────────────────
-
-export async function getOwnerVerificationStatus(token: string) {
-  try {
-    const res = await fetch(`${BASE_URL}/owner-verification/status`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    if (!res.ok) return null;
-    return await res.json();
-  } catch {
-    return null;
-  }
-}
-
-export async function uploadGovernmentID(token: string, file: File, documentType: string) {
-  try {
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("document_type", documentType);
-
-    const res = await fetch(`${BASE_URL}/owner-verification/id/upload`, {
-      method: "POST",
-      headers: { Authorization: `Bearer ${token}` },
-      body: formData,
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.detail || "Upload failed");
-    return data;
-  } catch (err: any) {
-    return { error: err.message || "Upload failed" };
-  }
-}
-
-export async function getAdminPendingIDs(token: string) {
-  try {
-    const res = await fetch(`${BASE_URL}/owner-verification/admin/pending-ids`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    if (!res.ok) return null;
-    return await res.json();
-  } catch {
-    return null;
-  }
-}
-
-export async function getAdminIDDocumentUrl(token: string, userId: string) {
-  try {
-    const res = await fetch(`${BASE_URL}/owner-verification/admin/id-document-url/${userId}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    if (!res.ok) return null;
-    return await res.json();
-  } catch {
-    return null;
-  }
-}
-
-export async function reviewOwnerID(token: string, userId: string, action: "approve" | "reject", reason?: string) {
-  try {
-    const res = await fetch(`${BASE_URL}/owner-verification/admin/review-id/${userId}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ action, reason }),
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.detail || "Review failed");
-    return data;
-  } catch (err: any) {
-    return { error: err.message || "Review failed" };
-  }
-}
 
 // ── Notification Center ─────────────────────────────────────
 
@@ -2087,19 +1849,6 @@ export async function getNotifications(
   } catch (err) {
     console.error("getNotifications error:", err);
     return null;
-  }
-}
-
-export async function getUnreadCount(token: string): Promise<number> {
-  try {
-    const res = await fetch(`${BASE_URL}/notification-center/unread-count`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    if (!res.ok) return 0;
-    const data = await res.json();
-    return data.unread_count || 0;
-  } catch {
-    return 0;
   }
 }
 
@@ -2148,7 +1897,6 @@ export async function deleteNotification(token: string, notificationId: string) 
     return null;
   }
 }
-
 
 // ── Public data contract types (mirror backend/public_dto.py) ────────────
 
@@ -2349,48 +2097,5 @@ export async function getCheckoutStatus(token: string, sessionId: string) {
     return { ok: true as const, paid: Boolean(body.paid), bookingId: body.booking_id as string, bookingStatus: body.status as string };
   } catch {
     return { ok: false as const, status: 0 };
-  }
-}
-
-/** Upload a message attachment through the API (validated, private bucket). */
-export async function uploadMessageAttachment(token: string, file: File) {
-  const form = new FormData();
-  form.append("file", file, file.name);
-  const res = await fetch(`${BASE_URL}/messages/attachments`, {
-    method: "POST",
-    headers: { Authorization: `Bearer ${token}` },
-    body: form,
-  });
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.detail || `Upload failed (${res.status})`);
-  }
-  return (await res.json()) as { attachment_path: string; attachment_name: string; attachment_type: string };
-}
-
-async function ownerListingAction(token: string, listingId: string, action: "renew" | "pause" | "resume", body?: Record<string, unknown>) {
-  const res = await fetch(`${BASE_URL}/listings/${encodeURIComponent(listingId)}/${action}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-    body: body ? JSON.stringify(body) : undefined,
-  });
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.detail || `Could not ${action} listing (${res.status})`);
-  return data as { id: string; moderation_status: string; available_to?: string };
-}
-
-export const renewListing = (token: string, listingId: string, availableTo: string, availableFrom?: string) =>
-  ownerListingAction(token, listingId, "renew", { available_to: availableTo, ...(availableFrom ? { available_from: availableFrom } : {}) });
-export const pauseListing = (token: string, listingId: string) => ownerListingAction(token, listingId, "pause");
-export const resumeListing = (token: string, listingId: string) => ownerListingAction(token, listingId, "resume");
-
-/** Public profile by opaque id (or, for old links, the auth id). */
-export async function getPublicProfileCard(idOrPublicId: string) {
-  try {
-    const res = await fetch(`${BASE_URL}/profiles/${encodeURIComponent(idOrPublicId)}`);
-    if (!res.ok) return null;
-    return await res.json();
-  } catch {
-    return null;
   }
 }
