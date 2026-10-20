@@ -71,3 +71,36 @@ shipped together.
 ## Owner tasks (things only the account owner can do)
 
 Listed in the final report with step-by-step instructions.
+
+## Status after the run (2026-10-20)
+
+Released to main as one series of commits; migration 052 applied after the
+new frontend went live.
+
+| Stage | Result |
+|---|---|
+| 1 API front door | Done. Rate-limit key from the edge header, never the caller's X-Forwarded-For; default limit on every route (an app-wide dependency, because FastAPI 0.140+ hides nested routes from slowapi's middleware); security headers; 16 MB body cap; /health/ip. |
+| 2 Dependencies | Done. pip-audit and npm audit both report none. |
+| 3 Database | Done. Migration 052 (profiles cannot be listed, no browser reads of private tables, storage uploads only through the API, indexes). |
+| 4 Errors | Done. Crashes answer plain JSON from inside CORS; no exception text in answers. |
+| 5 Sign-in | Reviewed, no change needed. |
+| 6 Uploads | Fixed: decompression bombs refused from the header. |
+| 7 Payments | Reviewed, no change needed. |
+| 8 Emails | Done. One system, sent in the background, plain-text copy, report alerts fixed. |
+| 9 Dead code | Done. Old admin console and 28 unused files removed. Old admin API routes kept: the Hub's Admin panel calls their handlers and they need admin + authenticator code + panel password. |
+| 10 Lint | 0 errors (was going to be 11 after the Next upgrade); 118 warnings down to 53. The rest are react-hooks/set-state-in-effect in data-loading effects across 44 screens, left for a dedicated pass. |
+| 11-13 Design | Honest empty states on the homepage and search; taller search map; review carousel dots; small copy and type fixes. |
+| 14 Accessibility | axe checks pass on all tested pages in light and dark; focus return fixed in the email help dialog. |
+| 15 Phone | No sideways scroll on any of 16 key pages at Pixel 7 size. |
+| 16 Search engines | Already sound; llms.txt added. |
+| 17 Speed | Production builds use webpack (Turbopack's inline script broke the CSP); budget passes on 5 of 6 pages, search LCP 2.8 s (was 5.8 s). |
+| 18 Claims | Already sound; invented-feature posts were already hidden and redirect away. |
+| 19 Operations | Dependabot, strict pip-audit in CI, README current. |
+| 20 Ship | See the commit history and the live checks in the session report. |
+
+### Known limits
+
+- Emails sent through the Gmail relay (Apps Script) cannot carry the
+  List-Unsubscribe header; SMTP and Mailjet do. Moving to a sending domain
+  (migrent.com.au) fixes this and the ~100 a day relay limit.
+- The 53 remaining lint warnings (see stage 10).
