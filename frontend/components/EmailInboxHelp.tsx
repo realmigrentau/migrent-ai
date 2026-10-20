@@ -44,6 +44,8 @@ export default function EmailInboxHelp({ className = "", compact = false }: { cl
 
   useEffect(() => {
     if (!open) return;
+    // The button that opened the dialog, captured now: focus goes back to it.
+    const opener = openerRef.current;
     closeRef.current?.focus();
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") setOpen(false);
@@ -54,7 +56,7 @@ export default function EmailInboxHelp({ className = "", compact = false }: { cl
     return () => {
       document.removeEventListener("keydown", onKey);
       document.body.style.overflow = prev;
-      openerRef.current?.focus();
+      opener?.focus();
     };
   }, [open]);
 
