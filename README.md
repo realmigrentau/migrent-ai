@@ -10,8 +10,12 @@ renters pay Migrent nothing; Migrent never holds rent or bond.
   with MapTiler tiles, Supabase Auth, hCaptcha. Deployed on Vercel.
 - `backend/`: FastAPI (Python 3.12), Supabase Postgres via `supabase-py`,
   Stripe (host listing fee only). Deployed on Render.
-- `backend/migrations/`: SQL applied by hand in the Supabase SQL editor, in
-  order. `042_verification_lifecycle_public_contract.sql` is the latest.
+- `backend/migrations/`: SQL applied in order (Supabase SQL editor or the
+  Supabase MCP). `052_finish_hardening.sql` is the latest.
+
+Production builds use webpack (`next build --webpack`). Next 16.4's default
+Turbopack build adds a per-page inline script that the hash-based CSP blocks;
+`tests/e2e/security.spec.ts` fails if any inline script is not allowed.
 
 There is no AI matching, no Pinecone, no Claude integration in this
 codebase: `backend/matching_engine.py` is a small rules-based scorer.

@@ -25,7 +25,8 @@ jobs:
       - run: pip install -r requirements.txt pytest==8.3.4 pip-audit
       - run: python -m pytest tests -q
       - name: Dependency audit
-        run: pip-audit -r requirements.txt --strict || echo "::warning::pip-audit found issues"
+        # Clean as of 2026-10-19; any new advisory fails the build.
+        run: pip-audit -r requirements.txt --strict
 
   frontend:
     name: Frontend lint, types, unit, build, e2e
