@@ -74,14 +74,14 @@ Listed in the final report with step-by-step instructions.
 
 ## Status after the run (2026-10-20)
 
-Released to main as one series of commits; migration 052 applied after the
-new frontend went live.
+Released to main as one series of commits; migrations 052 and 053 applied
+after the new frontend went live.
 
 | Stage | Result |
 |---|---|
 | 1 API front door | Done. Rate-limit key from the edge header, never the caller's X-Forwarded-For; default limit on every route (an app-wide dependency, because FastAPI 0.140+ hides nested routes from slowapi's middleware); security headers; 16 MB body cap; /health/ip. |
 | 2 Dependencies | Done. pip-audit and npm audit both report none. |
-| 3 Database | Done. Migration 052 (profiles cannot be listed, no browser reads of private tables, storage uploads only through the API, indexes). |
+| 3 Database | Done. Migrations 052 (profiles cannot be listed, no browser reads of private tables, storage uploads only through the API, indexes) and 053 (public_verification cannot be listed). Both applied 2026-10-20. |
 | 4 Errors | Done. Crashes answer plain JSON from inside CORS; no exception text in answers. |
 | 5 Sign-in | Reviewed, no change needed. |
 | 6 Uploads | Fixed: decompression bombs refused from the header. |

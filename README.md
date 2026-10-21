@@ -11,7 +11,7 @@ renters pay Migrent nothing; Migrent never holds rent or bond.
 - `backend/`: FastAPI (Python 3.12), Supabase Postgres via `supabase-py`,
   Stripe (host listing fee only). Deployed on Render.
 - `backend/migrations/`: SQL applied in order (Supabase SQL editor or the
-  Supabase MCP). `052_finish_hardening.sql` is the latest.
+  Supabase MCP). `053_public_verification_private.sql` is the latest.
 
 Production builds use webpack (`next build --webpack`). Next 16.4's default
 Turbopack build adds a per-page inline script that the hash-based CSP blocks;
