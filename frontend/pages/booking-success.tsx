@@ -25,14 +25,14 @@ export default function BookingSuccessPage() {
   const router = useRouter();
   const sessionId = typeof router.query.session_id === "string" ? router.query.session_id : "";
   const { session, loading } = useAuth();
-  const [state, setState] = useState<State>("checking");
+  const [checkState, setState] = useState<State>("checking");
+  // Signed out, or no checkout to ask about: there is nothing to check.
+  const nothingToCheck = router.isReady && !loading && !(session?.access_token && sessionId);
+  const state: State = nothingToCheck ? "unknown" : checkState;
 
   useEffect(() => {
     if (!router.isReady || loading) return;
-    if (!session?.access_token || !sessionId) {
-      setState("unknown");
-      return;
-    }
+    if (!session?.access_token || !sessionId) return;
     let cancelled = false;
     let tries = 0;
     let timer: ReturnType<typeof setTimeout> | undefined;

@@ -14,8 +14,14 @@ export default function MyTickets() {
   const { session, loading: authLoading } = useAuth();
   const router = useRouter();
   const [tickets, setTickets] = useState<Ticket[]>([]);
-  const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
+  // The list on screen is for the load that last finished; until then (and
+  // again after a new request is sent) the skeleton shows.
+  const token = session?.access_token;
+  const [reload, setReload] = useState(0);
+  const requestKey = token ? `${token}#${reload}` : null;
+  const [loadedKey, setLoadedKey] = useState<string | null>(null);
+  const loading = requestKey === null || loadedKey !== requestKey;
 
   // New ticket form
   const [subject, setSubject] = useState("");
@@ -24,21 +30,23 @@ export default function MyTickets() {
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    if (authLoading) return;
-    if (!session) {
-      window.location.assign(hubFromSite.signIn(router.asPath));
-      return;
-    }
-    loadTickets();
-  }, [session, authLoading]);
+    if (authLoading || session) return;
+    window.location.assign(hubFromSite.signIn(router.asPath));
+  }, [session, authLoading, router.asPath]);
 
-  async function loadTickets() {
-    if (!session?.access_token) return;
-    setLoading(true);
-    const res = await listTickets(session.access_token);
-    setTickets(res?.tickets || []);
-    setLoading(false);
-  }
+  useEffect(() => {
+    if (authLoading || !token) return;
+    let alive = true;
+    const key = `${token}#${reload}`;
+    void listTickets(token).then((res) => {
+      if (!alive) return;
+      setTickets(res?.tickets || []);
+      setLoadedKey(key);
+    });
+    return () => {
+      alive = false;
+    };
+  }, [authLoading, token, reload]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -53,7 +61,7 @@ export default function MyTickets() {
       setSubject("");
       setMessage("");
       setCategory("feedback");
-      loadTickets();
+      setReload((n) => n + 1);
     }
     setSubmitting(false);
   }

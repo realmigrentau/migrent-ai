@@ -41,7 +41,7 @@ export default function LanguageSwitcher({ variant = "default" }: { variant?: "d
 
   const choose = (code: string) => {
     i18n.changeLanguage(code);
-    if (typeof document !== "undefined") document.documentElement.lang = code;
+    if (typeof document !== "undefined") document.documentElement.setAttribute("lang", code);
     setOpen(false);
   };
 

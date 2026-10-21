@@ -13,7 +13,6 @@ import {
   DESTINATIONS,
   BILLS_RANGE,
   calculateTrueCost,
-  getTransportCost,
   type Destination,
 } from "../../data/destinations";
 

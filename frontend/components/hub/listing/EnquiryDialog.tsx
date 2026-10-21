@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { hubApi, HubError } from "../../../lib/hub/api";
 import { invalidate } from "../../../lib/hub/query";
 import { useHubNavigate } from "../HubLink";
@@ -20,9 +20,13 @@ export default function EnquiryDialog({ open, onClose, listingId, title, ownerNa
   const [error, setError] = useState<string | null>(null);
   const [sending, setSending] = useState(false);
 
-  useEffect(() => {
+  // Opening with nothing written yet starts a greeting (adjusted while
+  // rendering). Starts closed so a dialog that mounts open is greeted too.
+  const [wasOpen, setWasOpen] = useState(false);
+  if (wasOpen !== open) {
+    setWasOpen(open);
     if (open && !text) setText(`Hi${ownerName ? ` ${ownerName.split(" ")[0]}` : ""}, I'm interested in ${title}. `);
-  }, [open]); // eslint-disable-line react-hooks/exhaustive-deps
+  }
 
   async function send() {
     if (text.trim().length < 3) {

@@ -35,24 +35,24 @@ export default function Welcome() {
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
-  useEffect(() => {
-    if (!router.isReady) return;
-    if (router.query.role === "owner" || next.startsWith("/properties/new")) setRole((r) => r ?? "owner");
-    if (next.startsWith("/apply") || next.startsWith("/homes")) setRole((r) => r ?? "renter");
-  }, [router.isReady, router.query.role, next]);
+  // The link may already say which (adjusted while rendering, never over a choice made here).
+  const linkRole = !router.isReady ? null : router.query.role === "owner" || next.startsWith("/properties/new") ? "owner" : next.startsWith("/apply") || next.startsWith("/homes") ? "renter" : null;
+  if (linkRole && !role) setRole(linkRole);
 
   useEffect(() => {
     if (status === "signed-out") void router.replace(hubSignInUrl(`/welcome?next=${encodeURIComponent(next)}`));
     if (status === "ready") void navigate(next, { replace: true });
   }, [status, next, router, navigate]);
 
-  useEffect(() => {
-    if (!name) {
-      const meta = session?.user.user_metadata ?? {};
-      const guess = me?.name || meta.full_name || meta.name || "";
-      if (guess) setName(String(guess));
-    }
-  }, [me, session]); // eslint-disable-line react-hooks/exhaustive-deps
+  // An empty name field takes the name we already know, whenever the
+  // account or session arrives or changes (adjusted while rendering).
+  const [nameSource, setNameSource] = useState<{ me: typeof me; session: typeof session } | null>(null);
+  if (!nameSource || nameSource.me !== me || nameSource.session !== session) {
+    setNameSource({ me, session });
+    const meta = session?.user.user_metadata ?? {};
+    const guess = me?.name || meta.full_name || meta.name || "";
+    if (!name && guess) setName(String(guess));
+  }
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();

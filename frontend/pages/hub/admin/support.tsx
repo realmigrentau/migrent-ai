@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/router";
 import { ChevronRight, Inbox, Lock, Mail } from "lucide-react";
 import AdminPanelShell from "../../../components/hub/admin/AdminPanel";
@@ -45,10 +45,13 @@ function TicketDrawer({ id, onClose }: { id: string | null; onClose: () => void 
   const [mode, setMode] = useState<"reply" | "note">("reply");
   const [text, setText] = useState("");
   const [busy, setBusy] = useState(false);
-  useEffect(() => {
+  // Another ticket starts with an empty reply (adjusted while rendering).
+  const [shownId, setShownId] = useState(id);
+  if (shownId !== id) {
+    setShownId(id);
     setText("");
     setMode("reply");
-  }, [id]);
+  }
 
   const t = data?.ticket;
 

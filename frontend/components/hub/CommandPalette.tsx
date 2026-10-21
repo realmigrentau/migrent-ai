@@ -67,12 +67,15 @@ export default function CommandPalette({ open, onOpenChange }: { open: boolean; 
     return () => window.removeEventListener("keydown", onKey);
   }, [open, onOpenChange]);
 
-  useEffect(() => {
+  // Every opening starts with an empty search (adjusted while rendering).
+  const [wasOpen, setWasOpen] = useState(open);
+  if (wasOpen !== open) {
+    setWasOpen(open);
     if (open) {
       setQuery("");
       setActive(0);
     }
-  }, [open]);
+  }
 
   const go = useCallback(
     (to: string, label: string) => {
@@ -142,7 +145,6 @@ export default function CommandPalette({ open, onOpenChange }: { open: boolean; 
     return list.slice(0, 12);
   }, [commands, query, role, go]);
 
-  useEffect(() => setActive(0), [query]);
   useEffect(() => {
     listRef.current?.querySelector(`[data-index="${active}"]`)?.scrollIntoView({ block: "nearest" });
   }, [active]);
@@ -182,7 +184,10 @@ export default function CommandPalette({ open, onOpenChange }: { open: boolean; 
               <input
                 data-autofocus
                 value={query}
-                onChange={(e) => setQuery(e.target.value)}
+                onChange={(e) => {
+                  setQuery(e.target.value);
+                  setActive(0);
+                }}
                 onKeyDown={onKeyDown}
                 placeholder="Where to?"
                 aria-label="Search commands"

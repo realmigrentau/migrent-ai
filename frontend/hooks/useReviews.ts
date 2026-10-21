@@ -71,39 +71,48 @@ export function useListingReviews(listingId: string | undefined) {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(false);
 
-  const fetchReviews = useCallback(async (pageNum: number) => {
-    if (!listingId) return;
-    setLoading(true);
-    try {
-      const res = await fetch(
-        `${BASE_URL}/reviews/listing/${listingId}?page=${pageNum}&per_page=10`
-      );
-      if (!res.ok) throw new Error("Failed to fetch reviews");
-      const data = await res.json();
-      if (pageNum === 1) {
-        setReviews(data.reviews || []);
-      } else {
-        setReviews(prev => [...prev, ...(data.reviews || [])]);
-      }
-      setStats(data.stats || { review_count: 0, avg_rating: 0 });
-      setHasMore((data.reviews || []).length === 10);
-    } catch (err) {
-      console.error("useListingReviews error:", err);
-    } finally {
-      setLoading(false);
-    }
-  }, [listingId]);
+  // Another listing starts again from the first page. Adjusted while
+  // rendering, so the effect below only has to fetch.
+  const [pagesFor, setPagesFor] = useState(listingId);
+  if (pagesFor !== listingId) {
+    setPagesFor(listingId);
+    setPage(1);
+    if (listingId) setLoading(true);
+  }
+
+  const showPage = useCallback(
+    (pageNum: number) => {
+      if (!listingId) return;
+      void fetch(`${BASE_URL}/reviews/listing/${listingId}?page=${pageNum}&per_page=10`)
+        .then((res) => {
+          if (!res.ok) throw new Error("Failed to fetch reviews");
+          return res.json();
+        })
+        .then((data) => {
+          if (pageNum === 1) {
+            setReviews(data.reviews || []);
+          } else {
+            setReviews((prev) => [...prev, ...(data.reviews || [])]);
+          }
+          setStats(data.stats || { review_count: 0, avg_rating: 0 });
+          setHasMore((data.reviews || []).length === 10);
+        })
+        .catch((err) => console.error("useListingReviews error:", err))
+        .finally(() => setLoading(false));
+    },
+    [listingId],
+  );
 
   useEffect(() => {
-    setPage(1);
-    fetchReviews(1);
-  }, [fetchReviews]);
+    showPage(1);
+  }, [showPage]);
 
   const loadMore = useCallback(() => {
     const next = page + 1;
     setPage(next);
-    fetchReviews(next);
-  }, [page, fetchReviews]);
+    if (listingId) setLoading(true);
+    showPage(next);
+  }, [page, listingId, showPage]);
 
   return { reviews, stats, loading, hasMore, loadMore };
 }
@@ -112,14 +121,17 @@ export function useListingReviews(listingId: string | undefined) {
 export function useUserReviews(userId: string | undefined, reviewType?: string) {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [stats, setStats] = useState<Record<string, { review_count: number; avg_rating: number }>>({});
-  const [loading, setLoading] = useState(true);
+  // The request whose reviews are on screen; loading is derived from it.
+  const requestKey = userId ? `${userId}|${reviewType ?? ""}` : null;
+  const [loadedFor, setLoadedFor] = useState<string | null>(null);
+  const loading = requestKey !== null && loadedFor !== requestKey;
 
   useEffect(() => {
-    if (!userId) { setLoading(false); return; }
+    if (!userId) return;
     let cancelled = false;
+    const key = `${userId}|${reviewType ?? ""}`;
 
     async function load() {
-      setLoading(true);
       try {
         const params = new URLSearchParams({ page: "1", per_page: "20" });
         if (reviewType) params.set("review_type", reviewType);
@@ -136,53 +148,67 @@ export function useUserReviews(userId: string | undefined, reviewType?: string) 
           setReviews([]);
         }
       } finally {
-        if (!cancelled) setLoading(false);
+        if (!cancelled) setLoadedFor(key);
       }
     }
 
-    load();
+    void load();
     return () => { cancelled = true; };
   }, [userId, reviewType]);
 
   return { reviews, stats, loading };
 }
 
+async function fetchDealReview(dealId: string): Promise<DealReviewContext> {
+  const token = await getToken();
+  if (!token) throw new Error("Not authenticated");
+
+  const res = await fetch(`${BASE_URL}/reviews/deal/${dealId}`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || "Failed to load deal");
+  }
+  return res.json();
+}
+
 // Fetch deal review context (for the review form page)
 export function useDealReview(dealId: string | undefined) {
   const [context, setContext] = useState<DealReviewContext | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [attempt, setAttempt] = useState(0);
+  // The request that last finished, and its error. Loading and the error
+  // shown are derived from it, so a new request needs no reset.
+  const requestKey = dealId ? `${dealId}#${attempt}` : null;
+  const [settled, setSettled] = useState<{ key: string; error: string | null } | null>(null);
+  const loading = requestKey === null || settled?.key !== requestKey;
+  const error = settled && settled.key === requestKey ? settled.error : null;
 
-  const fetchContext = useCallback(async () => {
+  useEffect(() => {
     if (!dealId) return;
-    setLoading(true);
-    setError(null);
-    try {
-      const token = await getToken();
-      if (!token) { setError("Not authenticated"); return; }
+    let alive = true;
+    const key = `${dealId}#${attempt}`;
+    fetchDealReview(dealId).then(
+      (data) => {
+        if (!alive) return;
+        setContext(data);
+        setSettled({ key, error: null });
+      },
+      (err) => {
+        if (alive) setSettled({ key, error: (err instanceof Error && err.message) || "Failed to load review context" });
+      },
+    );
+    return () => {
+      alive = false;
+    };
+  }, [dealId, attempt]);
 
-      const res = await fetch(`${BASE_URL}/reviews/deal/${dealId}`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err.detail || "Failed to load deal");
-      }
-      const data = await res.json();
-      setContext(data);
-    } catch (err) {
-      setError((err instanceof Error && err.message) || "Failed to load review context");
-    } finally {
-      setLoading(false);
-    }
-  }, [dealId]);
+  const refetch = useCallback(() => setAttempt((a) => a + 1), []);
 
-  useEffect(() => { fetchContext(); }, [fetchContext]);
-
-  return { context, loading, error, refetch: fetchContext };
+  return { context, loading, error, refetch };
 }
 
 // Submit a review

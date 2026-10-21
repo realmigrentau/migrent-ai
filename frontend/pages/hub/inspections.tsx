@@ -120,9 +120,12 @@ function OpenTimesDialog({ open, onClose, units, preselect }: { open: boolean; o
   const [f, setF] = useState<NewSlotsForm>({ listingId: preselect || units[0]?.id || "", date: today, times: ["10:00"], duration: 30, capacity: 6, instructions: "" });
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
-  useEffect(() => {
+  // Opening picks the home (adjusted while rendering).
+  const [pickedFor, setPickedFor] = useState({ open, preselect, units });
+  if (pickedFor.open !== open || pickedFor.preselect !== preselect || pickedFor.units !== units) {
+    setPickedFor({ open, preselect, units });
     if (open) setF((p) => ({ ...p, listingId: preselect || p.listingId || units[0]?.id || "" }));
-  }, [open, preselect, units]);
+  }
   const unit = units.find((u) => u.id === f.listingId);
   const tz = unit?.timezone || "Australia/Sydney";
 
@@ -314,13 +317,16 @@ function MoveSlotDialog({ slot, onClose }: { slot: InspectionSlot | null; onClos
   const [date, setDate] = useState("");
   const [start, setStart] = useState("");
   const [saving, setSaving] = useState(false);
-  useEffect(() => {
+  // A slot to move starts from its current time (adjusted while rendering).
+  const [filledFrom, setFilledFrom] = useState<{ slot: InspectionSlot | null; tz: string }>({ slot: null, tz });
+  if (filledFrom.slot !== slot || filledFrom.tz !== tz) {
+    setFilledFrom({ slot, tz });
     if (slot) {
       const z = isoToZoned(slot.starts_at, tz);
       setDate(z.date);
       setStart(z.time);
     }
-  }, [slot, tz]);
+  }
   return (
     <Dialog
       open={Boolean(slot)}

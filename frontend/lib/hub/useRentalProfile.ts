@@ -22,13 +22,9 @@ export function useRentalProfile() {
   const timer = useRef<number | null>(null);
   const latest = useRef<ProfileDraft | null>(null);
 
-  useEffect(() => {
-    if (q.data && !draft) {
-      const d = { ...q.data.profile, display_name: q.data.display_name || "" } as ProfileDraft;
-      setDraft(d);
-      latest.current = d;
-    }
-  }, [q.data, draft]);
+  // The draft starts from the first profile that arrives (set while
+  // rendering). `latest` follows edits only: nothing saves until one.
+  if (q.data && !draft) setDraft({ ...q.data.profile, display_name: q.data.display_name || "" } as ProfileDraft);
 
   const save = useCallback(async () => {
     if (!latest.current || !dirty.current) return true;

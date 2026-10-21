@@ -166,7 +166,6 @@ export default function ListingsMap({ listings, isDark, stations = [], onUnavail
     previous?.remove();
     mapRef.current = null;
     readyRef.current = false;
-    setReady(false);
 
     let map: maplibregl.Map;
     try {
@@ -205,6 +204,7 @@ export default function ListingsMap({ listings, isDark, stations = [], onUnavail
       stationMarkersRef.current.forEach((m) => m.remove());
       stationMarkersRef.current = [];
       readyRef.current = false;
+      setReady(false);
       try {
         map.remove();
       } catch {

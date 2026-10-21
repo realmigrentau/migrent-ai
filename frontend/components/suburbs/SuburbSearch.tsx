@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import type { SearchApiResponse, SearchApiResult } from "../../pages/api/suburbs/search";
+import { useMounted } from "../../hooks/useMounted";
 
 /**
  * National suburb search.
@@ -71,18 +72,30 @@ export default function SuburbSearch({
     [onQueryChange],
   );
 
-  useEffect(() => {
-    const trimmed = query.trim();
-    if (trimmed.length < MIN_QUERY) {
-      abortRef.current?.abort();
+  // A new query (or state) clears a too-short search, or shows that one is
+  // on its way. Adjusted while rendering, once hydrated (the server HTML
+  // never shows a search in progress), so the effect below only fetches.
+  const mounted = useMounted();
+  const [searchedFor, setSearchedFor] = useState<{ query: string; stateFilter: string | null } | null>(null);
+  if (mounted && (searchedFor?.query !== query || searchedFor.stateFilter !== stateFilter)) {
+    setSearchedFor({ query, stateFilter });
+    if (query.trim().length < MIN_QUERY) {
       setResults([]);
       setRegions([]);
       setSearched(false);
       setLoading(false);
+    } else {
+      setLoading(true);
+    }
+  }
+
+  useEffect(() => {
+    const trimmed = query.trim();
+    if (trimmed.length < MIN_QUERY) {
+      abortRef.current?.abort();
       return;
     }
 
-    setLoading(true);
     const timer = setTimeout(async () => {
       abortRef.current?.abort();
       const controller = new AbortController();

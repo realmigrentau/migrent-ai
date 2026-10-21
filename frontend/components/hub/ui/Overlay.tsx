@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useId, useRef, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useId, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { X } from "lucide-react";
@@ -50,9 +50,11 @@ export function useFocusTrap(open: boolean, onClose: () => void) {
   return ref;
 }
 
+const noSubscription = () => () => {};
+
+/** Into document.body once in the browser; nothing on the server or during hydration. */
 function Portal({ children }: { children: ReactNode }) {
-  const [el, setEl] = useState<HTMLElement | null>(null);
-  useEffect(() => setEl(document.body), []);
+  const el = useSyncExternalStore(noSubscription, () => document.body, () => null);
   return el ? createPortal(children, el) : null;
 }
 

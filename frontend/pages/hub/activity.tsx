@@ -117,7 +117,7 @@ export default function ActivityPage() {
     if (!n.is_read) void markRead([n.id]);
     const target = resolveStoredLink(n.cta_url);
     if ("hub" in target) void navigate(target.hub);
-    else window.location.href = target.href;
+    else window.location.assign(target.href);
   }
 
   const groups: { label: string; items: NotificationItem[] }[] = [];

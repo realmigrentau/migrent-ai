@@ -124,10 +124,13 @@ export default function Discover() {
     setSaveOpen(true);
   }, [router.isReady, router.query.save, filters]);
 
-  useEffect(() => {
-    if (!router.isReady) return;
+  // The search box shows the place searched for, set again whenever that
+  // changes (adjusted while rendering; typing is kept until then).
+  const [queryFrom, setQueryFrom] = useState<{ suburb: string; postcode: string; q: unknown } | null>(null);
+  if (router.isReady && (!queryFrom || queryFrom.suburb !== filters.suburb || queryFrom.postcode !== filters.postcode || queryFrom.q !== router.query.q)) {
+    setQueryFrom({ suburb: filters.suburb, postcode: filters.postcode, q: router.query.q });
     setQuery(filters.suburb || filters.postcode || (typeof router.query.q === "string" ? router.query.q : ""));
-  }, [router.isReady, filters.suburb, filters.postcode, router.query.q]);
+  }
 
   const apply = useCallback(
     (next: SearchFilters) => {
@@ -138,37 +141,47 @@ export default function Discover() {
   );
 
   const load = useCallback(
-    async (offset: number) => {
+    (offset: number) => {
       const id = ++requestId.current;
       const params = filtersToApiParams(filters, offset, PAGE);
       if (router.query.radius && filters.searchType === "nearMe") params.radius = String(router.query.radius);
-      const page = await searchListingsPage(params).catch(() => null);
-      if (id !== requestId.current) return;
-      if (!page || !page.ok) {
-        const offline = page?.error === "network";
-        setError({ message: page?.error === "bad-request" ? page.errorMessage || "Those filters could not be used. Clear them and try again." : offline ? "We could not reach Migrent just now." : "Search is not responding. Please try again.", offline });
-        setStatus("error");
-        return;
-      }
-      const cards = page.listings.map(toCard);
-      setLocations((prev) => {
-        const next = offset ? { ...prev } : {};
-        for (const l of page.listings) if (l.location) next[l.id] = { lat: l.location.approx_lat, lng: l.location.approx_lng };
-        return next;
-      });
-      setHomes((prev) => (offset ? [...prev, ...cards] : cards));
-      setTotal(page.total);
-      setHasMore(page.hasMore);
-      setStatus("ready");
-      setError(null);
+      return searchListingsPage(params)
+        .catch(() => null)
+        .then((page) => {
+          if (id !== requestId.current) return;
+          if (!page || !page.ok) {
+            const offline = page?.error === "network";
+            setError({ message: page?.error === "bad-request" ? page.errorMessage || "Those filters could not be used. Clear them and try again." : offline ? "We could not reach Migrent just now." : "Search is not responding. Please try again.", offline });
+            setStatus("error");
+            return;
+          }
+          const cards = page.listings.map(toCard);
+          setLocations((prev) => {
+            const next = offset ? { ...prev } : {};
+            for (const l of page.listings) if (l.location) next[l.id] = { lat: l.location.approx_lat, lng: l.location.approx_lng };
+            return next;
+          });
+          setHomes((prev) => (offset ? [...prev, ...cards] : cards));
+          setTotal(page.total);
+          setHasMore(page.hasMore);
+          setStatus("ready");
+          setError(null);
+        });
     },
     [filters, router.query.radius],
   );
 
-  useEffect(() => {
-    if (!router.isReady) return;
+  // A new search shows the skeleton and forgets a "search this area" from
+  // the map. Adjusted while rendering; the effect below only fetches.
+  const [searchFor, setSearchFor] = useState<{ filters: SearchFilters; radius: unknown } | null>(null);
+  if (router.isReady && (!searchFor || searchFor.filters !== filters || searchFor.radius !== router.query.radius)) {
+    setSearchFor({ filters, radius: router.query.radius });
     setStatus("loading");
     setMapMoved(null);
+  }
+
+  useEffect(() => {
+    if (!router.isReady) return;
     void load(0);
   }, [router.isReady, load]);
 

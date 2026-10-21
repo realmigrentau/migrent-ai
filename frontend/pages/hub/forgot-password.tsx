@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/router";
 import { useCaptcha } from "../../lib/captcha";
 import AuthLayout, { AuthHeading, hubCallbackUrl } from "../../components/hub/AuthLayout";
@@ -17,9 +17,13 @@ export default function ForgotPassword() {
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    if (typeof router.query.email === "string") setEmail(router.query.email);
-  }, [router.query.email]);
+  // An email in the link fills the field (adjusted while rendering).
+  const queryEmail = typeof router.query.email === "string" ? router.query.email : null;
+  const [filledFrom, setFilledFrom] = useState<string | null>(null);
+  if (queryEmail !== null && queryEmail !== filledFrom) {
+    setFilledFrom(queryEmail);
+    setEmail(queryEmail);
+  }
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();

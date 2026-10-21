@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import Link from "next/link";
 import { ArrowRight, MapPin, Search, Users } from "lucide-react";
 import SEOHead from "../components/SEOHead";
@@ -37,37 +37,41 @@ const STEPS = [
 
 export default function MentorsPage() {
   const [mentors, setMentors] = useState<Mentor[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [loadFailed, setLoadFailed] = useState(false);
   const [suburb, setSuburb] = useState("");
   const [language, setLanguage] = useState("");
   const [searchSuburb, setSearchSuburb] = useState("");
-
-  const fetchMentors = useCallback(async () => {
-    setLoading(true);
-    setLoadFailed(false);
-    try {
-      const params = new URLSearchParams();
-      if (searchSuburb) params.set("suburb", searchSuburb);
-      if (language) params.set("language", language);
-      const res = await fetch(`${BASE_URL}/mentors?${params.toString()}`);
-      if (res.ok) {
-        const data = await res.json();
-        setMentors(data.mentors || []);
-      } else {
-        setLoadFailed(true);
-      }
-    } catch {
-      /* A failed request is not the same as "no mentors here yet". */
-      setLoadFailed(true);
-    } finally {
-      setLoading(false);
-    }
-  }, [searchSuburb, language]);
+  const [attempt, setAttempt] = useState(0);
+  // The search that last finished, and whether it failed. Loading and the
+  // error are derived from it, so a new search needs no reset.
+  const requestKey = `${searchSuburb}|${language}|${attempt}`;
+  const [settled, setSettled] = useState<{ key: string; failed: boolean } | null>(null);
+  const loading = settled?.key !== requestKey;
+  const loadFailed = !loading && Boolean(settled?.failed);
 
   useEffect(() => {
-    fetchMentors();
-  }, [fetchMentors]);
+    let alive = true;
+    const key = `${searchSuburb}|${language}|${attempt}`;
+    const params = new URLSearchParams();
+    if (searchSuburb) params.set("suburb", searchSuburb);
+    if (language) params.set("language", language);
+    fetch(`${BASE_URL}/mentors?${params.toString()}`)
+      .then(async (res) => {
+        if (!res.ok) return false;
+        const data = await res.json();
+        if (alive) setMentors(data.mentors || []);
+        return true;
+      })
+      // A failed request is not the same as "no mentors here yet".
+      .catch(() => false)
+      .then((ok) => {
+        if (alive) setSettled({ key, failed: !ok });
+      });
+    return () => {
+      alive = false;
+    };
+  }, [searchSuburb, language, attempt]);
+
+  const fetchMentors = () => setAttempt((a) => a + 1);
 
   const onSearch = (e: FormEvent) => {
     e.preventDefault();

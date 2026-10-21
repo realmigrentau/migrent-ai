@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { DEFAULT_FILTERS, type SearchFilters } from "../../../lib/search/searchQuery";
 import { Button } from "../ui/Button";
 import { Field, Input, Segmented, Switch } from "../ui/Field";
@@ -28,9 +28,13 @@ const PROPERTY_TYPES = [
  */
 export default function FilterSheet({ open, onClose, value, onApply }: { open: boolean; onClose: () => void; value: SearchFilters; onApply: (f: SearchFilters) => void }) {
   const [f, setF] = useState<SearchFilters>(value);
-  useEffect(() => {
+  // Opening the panel (or new filters arriving while it is open) starts the
+  // copy again from what is applied. Adjusted while rendering.
+  const [copiedFrom, setCopiedFrom] = useState({ open, value });
+  if (copiedFrom.open !== open || copiedFrom.value !== value) {
+    setCopiedFrom({ open, value });
     if (open) setF(value);
-  }, [open, value]);
+  }
   const set = <K extends keyof SearchFilters>(k: K, v: SearchFilters[K]) => setF((p) => ({ ...p, [k]: v, page: 1 }));
   const priceError = f.minPrice && f.maxPrice && Number(f.maxPrice) < Number(f.minPrice) ? "The maximum is below the minimum." : null;
 

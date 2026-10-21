@@ -56,6 +56,41 @@ interface ReviewRow {
   created_at?: string | null;
 }
 
+/** One page of a host's listings, or null when the read failed (logged). */
+async function fetchListingsPage(userId: string, pageNum: number): Promise<ProfileListing[] | null> {
+  const from = pageNum * LISTINGS_PER_PAGE;
+  const to = from + LISTINGS_PER_PAGE - 1;
+
+  const supabase = await loadSupabase();
+  const { data, error } = await supabase
+    .from("public_listings")
+    .select("id, title, display_address, postcode, weekly_price, description, property_type, place_type, bedrooms, bathrooms, images, created_at")
+    .eq("owner_public_id", userId)
+    .order("created_at", { ascending: false })
+    .range(from, to);
+
+  if (error) {
+    console.error("Listings fetch error:", error);
+    return null;
+  }
+
+  return ((data || []) as PublicListingRow[]).map((d) => ({
+    id: d.id,
+    title: d.title || d.display_address || "Room",
+    address: d.display_address || "",
+    postcode: d.postcode?.toString() || "",
+    weekly_price: d.weekly_price || 0,
+    description: d.description || "",
+    property_type: d.property_type || "House",
+    place_type: d.place_type || "Private room",
+    bedrooms: d.bedrooms || 1,
+    bathrooms: d.bathrooms || 1,
+    photos: Array.isArray(d.images) ? d.images.filter((p): p is string => typeof p === "string" && p.startsWith("http")) : [],
+    is_active: true,
+    created_at: d.created_at || "",
+  }));
+}
+
 /**
  * A host's live listings, read from the `public_listings` view (anon has no
  * grant on `listings` itself). Keyed by the owner's opaque public id.
@@ -66,65 +101,40 @@ export function useProfileListings(userId: string | undefined) {
   const [hasMore, setHasMore] = useState(false);
   const [page, setPage] = useState(0);
 
-  const fetchListings = useCallback(async (pageNum: number) => {
-    if (!userId) return;
-    setLoading(true);
-    try {
-      const from = pageNum * LISTINGS_PER_PAGE;
-      const to = from + LISTINGS_PER_PAGE - 1;
+  // A different host starts again from the first page. Adjusted while
+  // rendering, so the effect below only has to fetch.
+  const [pagesFor, setPagesFor] = useState(userId);
+  if (pagesFor !== userId) {
+    setPagesFor(userId);
+    setPage(0);
+    if (userId) setLoading(true);
+  }
 
-      const supabase = await loadSupabase();
-      const { data, error } = await supabase
-        .from("public_listings")
-        .select("id, title, display_address, postcode, weekly_price, description, property_type, place_type, bedrooms, bathrooms, images, created_at")
-        .eq("owner_public_id", userId)
-        .order("created_at", { ascending: false })
-        .range(from, to);
-
-      if (error) {
-        console.error("Listings fetch error:", error);
-        return;
-      }
-
-      const items = ((data || []) as PublicListingRow[]).map((d) => ({
-        id: d.id,
-        title: d.title || d.display_address || "Room",
-        address: d.display_address || "",
-        postcode: d.postcode?.toString() || "",
-        weekly_price: d.weekly_price || 0,
-        description: d.description || "",
-        property_type: d.property_type || "House",
-        place_type: d.place_type || "Private room",
-        bedrooms: d.bedrooms || 1,
-        bathrooms: d.bathrooms || 1,
-        photos: Array.isArray(d.images) ? d.images.filter((p): p is string => typeof p === "string" && p.startsWith("http")) : [],
-        is_active: true,
-        created_at: d.created_at || "",
-      }));
-
-      if (pageNum === 0) {
-        setListings(items);
-      } else {
-        setListings(prev => [...prev, ...items]);
-      }
-      setHasMore(items.length === LISTINGS_PER_PAGE);
-    } catch (err) {
-      console.error("useProfileListings error:", err);
-    } finally {
-      setLoading(false);
-    }
-  }, [userId]);
+  const showPage = useCallback(
+    (pageNum: number) => {
+      if (!userId) return;
+      void fetchListingsPage(userId, pageNum)
+        .then((items) => {
+          if (!items) return;
+          setListings((prev) => (pageNum === 0 ? items : [...prev, ...items]));
+          setHasMore(items.length === LISTINGS_PER_PAGE);
+        })
+        .catch((err) => console.error("useProfileListings error:", err))
+        .finally(() => setLoading(false));
+    },
+    [userId],
+  );
 
   useEffect(() => {
-    setPage(0);
-    fetchListings(0);
-  }, [fetchListings]);
+    showPage(0);
+  }, [showPage]);
 
   const loadMore = useCallback(() => {
     const next = page + 1;
     setPage(next);
-    fetchListings(next);
-  }, [page, fetchListings]);
+    if (userId) setLoading(true);
+    showPage(next);
+  }, [page, userId, showPage]);
 
   return { listings, loading, hasMore, loadMore };
 }
@@ -132,18 +142,19 @@ export function useProfileListings(userId: string | undefined) {
 import { API_BASE_URL as REVIEWS_API_BASE } from "../lib/apiBase";
 export function useProfileReviews(userId: string | undefined) {
   const [reviews, setReviews] = useState<ProfileReview[]>([]);
-  const [loading, setLoading] = useState(true);
   const [reviewsCount, setReviewsCount] = useState(0);
   const [averageRating, setAverageRating] = useState(0);
+  // The id whose reviews are on screen; loading is derived from it.
+  const [loadedFor, setLoadedFor] = useState<string | null>(null);
+  const loading = Boolean(userId) && loadedFor !== userId;
 
   useEffect(() => {
-    if (!userId) { setLoading(false); return; }
+    if (!userId) return;
     let cancelled = false;
 
-    async function load() {
-      setLoading(true);
+    async function load(id: string) {
       try {
-        const res = await fetch(`${REVIEWS_API_BASE}/reviews/user/${userId}?page=1&per_page=20`);
+        const res = await fetch(`${REVIEWS_API_BASE}/reviews/user/${id}?page=1&per_page=20`);
         if (cancelled) return;
         if (!res.ok) {
           console.warn("Reviews fetch failed:", res.status);
@@ -175,11 +186,11 @@ export function useProfileReviews(userId: string | undefined) {
       } catch {
         if (!cancelled) setReviews([]);
       } finally {
-        if (!cancelled) setLoading(false);
+        if (!cancelled) setLoadedFor(id);
       }
     }
 
-    load();
+    void load(userId);
     return () => { cancelled = true; };
   }, [userId]);
 

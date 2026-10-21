@@ -205,9 +205,9 @@ export default function RentalProfilePage() {
   const data = profile.data;
   const d = profile.draft;
 
-  useEffect(() => {
-    if (data && docs === null) setDocs(data.documents);
-  }, [data, docs]);
+  // The list starts from the first profile that arrives (set while
+  // rendering), then follows uploads and removals here.
+  if (data && docs === null) setDocs(data.documents ?? []);
 
   // Highlight the section in view in the side index.
   useEffect(() => {

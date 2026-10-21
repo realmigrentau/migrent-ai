@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, useSyncExternalStore, type ReactNode } from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { motion, useReducedMotion } from "framer-motion";
@@ -20,6 +20,17 @@ import { ErrorState, Skeleton } from "./ui/Feedback";
 import { Button } from "./ui/Button";
 
 const RAIL_KEY = "migrent-hub-rail";
+const noSubscription = () => () => {};
+
+/** The rail as it was last left; with no choice stored, compact on narrower screens. */
+function storedRailCompact(): boolean {
+  try {
+    const stored = localStorage.getItem(RAIL_KEY);
+    return stored ? stored === "compact" : window.innerWidth < 1280;
+  } catch {
+    return false;
+  }
+}
 
 export function HubMark({ compact, className }: { compact?: boolean; className?: string }) {
   return (
@@ -171,26 +182,21 @@ export default function HubShell({ children, title, fullBleed, fab, immersive, f
   const signOutNow = useSignOut();
   const reduce = useReducedMotion();
   const hubPath = toHubPath(router.asPath);
-  const [compact, setCompact] = useState(false);
+  // Storage is browser-only: expanded on the server and during hydration,
+  // then the stored preference, until the person toggles it here.
+  const storedCompact = useSyncExternalStore(noSubscription, storedRailCompact, () => false);
+  const [chosenCompact, setChosenCompact] = useState<boolean | null>(null);
+  const compact = chosenCompact ?? storedCompact;
   const [paletteOpen, setPaletteOpen] = useState(false);
 
-  useEffect(() => {
-    try {
-      const stored = localStorage.getItem(RAIL_KEY);
-      setCompact(stored ? stored === "compact" : window.innerWidth < 1280);
-    } catch {
-      /* default expanded */
-    }
-  }, []);
   const toggleRail = () => {
-    setCompact((c) => {
-      try {
-        localStorage.setItem(RAIL_KEY, c ? "expanded" : "compact");
-      } catch {
-        /* ignore */
-      }
-      return !c;
-    });
+    const next = !compact;
+    try {
+      localStorage.setItem(RAIL_KEY, next ? "compact" : "expanded");
+    } catch {
+      /* ignore */
+    }
+    setChosenCompact(next);
   };
 
   // Guard.

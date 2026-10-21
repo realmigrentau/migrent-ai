@@ -9,6 +9,8 @@
  * mount the map at all.
  */
 
+import { useSyncExternalStore } from "react";
+
 export type WebGLSupport = "supported" | "unsupported" | "unknown";
 
 let cached: WebGLSupport | null = null;
@@ -51,4 +53,12 @@ export function webglForcedUnavailable(): boolean {
 export function isWebGLAvailable(): boolean {
   if (webglForcedUnavailable()) return false;
   return detectWebGL() === "supported";
+}
+
+const noSubscription = () => () => {};
+
+/** isWebGLAvailable() for rendering: assumed available on the server and
+ * during hydration (so the first client render matches), then the answer. */
+export function useWebGLAvailable(): boolean {
+  return useSyncExternalStore(noSubscription, isWebGLAvailable, () => true);
 }
