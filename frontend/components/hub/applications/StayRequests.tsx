@@ -64,7 +64,7 @@ export default function StayRequests() {
     try {
       const res = await hubApi.post<{ checkout_url?: string | null }>(`/bookings/${b.id}/respond`, { action });
       if (res.checkout_url) {
-        window.location.href = res.checkout_url;
+        window.location.assign(res.checkout_url);
         return;
       }
       toast.success(action === "accept" ? "Stay accepted" : "Stay declined");
@@ -84,7 +84,7 @@ export default function StayRequests() {
     try {
       const res = await hubApi.post<{ checkout_url?: string | null; fee_waived?: boolean }>(`/bookings/${b.id}/pay-fee`);
       if (res.checkout_url) {
-        window.location.href = res.checkout_url;
+        window.location.assign(res.checkout_url);
         return;
       }
       toast.success(res.fee_waived ? "Stay confirmed. Your fee for this property is already paid." : "Stay confirmed");

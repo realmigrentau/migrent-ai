@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { isWebGLAvailable } from "../../lib/webgl";
+import { isWebGLAvailable, useWebGLAvailable } from "../../lib/webgl";
 import type maplibregl from "../../lib/maplibre";
 import { bathroomLabel, genderLabel, hasLaundry, laundryLabel, placeTypeLabel, propertyTypeLabel } from "../../lib/hub/format";
 import {
@@ -108,16 +108,16 @@ export default function KeyDetails({ listing }: KeyDetailsProps) {
   const approxLat = listing.location?.approx_lat;
   const approxLng = listing.location?.approx_lng;
   const [mapFailed, setMapFailed] = useState(false);
+  // No key or no WebGL: there is no map to try (known once hydrated).
+  const webgl = useWebGLAvailable();
+  const mapShown = !mapFailed && Boolean(process.env.NEXT_PUBLIC_MAPTILER_KEY) && webgl;
 
   // Mini-map: an approximate area, never a pin. The public payload does not
   // contain the exact coordinates, so there is nothing more precise to show.
   useEffect(() => {
     if (!mapContainer.current || approxLat == null || approxLng == null || mapRef.current) return;
     const mapTilerKey = process.env.NEXT_PUBLIC_MAPTILER_KEY;
-    if (!mapTilerKey || !isWebGLAvailable()) {
-      setMapFailed(true);
-      return;
-    }
+    if (!mapTilerKey || !isWebGLAvailable()) return;
     let cancelled = false;
     import("../../lib/maplibre")
       .then(({ default: maplibregl }) => {
@@ -374,7 +374,7 @@ export default function KeyDetails({ listing }: KeyDetailsProps) {
           )}
           {approxLat != null && approxLng != null && (
             <>
-              {!mapFailed ? (
+              {mapShown ? (
                 <div
                   ref={mapContainer}
                   role="img"

@@ -24,10 +24,12 @@ export default function StationAutocomplete({
   const wrapperRef = useRef<HTMLDivElement>(null);
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Sync external value changes
-  useEffect(() => {
+  // Sync external value changes (adjusted while rendering)
+  const [syncedValue, setSyncedValue] = useState(value);
+  if (syncedValue !== value) {
+    setSyncedValue(value);
     setQuery(value);
-  }, [value]);
+  }
 
   // Close dropdown on outside click
   useEffect(() => {

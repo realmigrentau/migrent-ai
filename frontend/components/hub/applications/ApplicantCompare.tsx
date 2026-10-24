@@ -20,11 +20,19 @@ export default function ApplicantCompare({ open, ids, onClose }: { open: boolean
   const [items, setItems] = useState<ApplicationDetail[] | null>(null);
   const [failed, setFailed] = useState(false);
 
+  // Each opening (or new selection) starts from the skeleton again.
+  const [shownFor, setShownFor] = useState({ open, ids });
+  if (shownFor.open !== open || shownFor.ids !== ids) {
+    setShownFor({ open, ids });
+    if (open) {
+      setItems(null);
+      setFailed(false);
+    }
+  }
+
   useEffect(() => {
     if (!open) return;
     let alive = true;
-    setItems(null);
-    setFailed(false);
     Promise.all(ids.map((id) => hubApi.get<ApplicationDetail>(`/hub/applications/${id}`)))
       .then((res) => alive && setItems(res))
       .catch(() => alive && setFailed(true));

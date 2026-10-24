@@ -688,6 +688,9 @@ test.describe("appearance and accessibility", () => {
   }
 
   test("axe: Hub admin screens in light and dark", async ({ page }) => {
+    // Sixteen reloads with an axe pass each: about 30 to 55 seconds on a
+    // busy machine, too close to the 60-second default.
+    test.slow();
     await signInToPanel(page, "admin@example.test", "/admin/listings");
     let i = 0;
     for (const path of ["/", "/admin", "/admin/listings", "/admin/id-checks", "/admin/mentors", "/admin/support", "/admin/people", "/admin/audit"]) {

@@ -68,13 +68,17 @@ export default function Conversation({ threadKey, onBack }: { threadKey: string;
     return () => window.clearInterval(id);
   }, [refetch]);
 
-  useEffect(() => {
+  // Another conversation starts with an empty composer and none of the
+  // last one's messages (adjusted while rendering).
+  const [shownThread, setShownThread] = useState(threadKey);
+  if (shownThread !== threadKey) {
+    setShownThread(threadKey);
     setLocal([]);
     setText("");
     setAttachment(null);
     setOlder([]);
     setOlderDone(false);
-  }, [threadKey]);
+  }
 
   // Opening a conversation marks it read: refresh the counts once.
   useEffect(() => {

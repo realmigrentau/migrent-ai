@@ -7,6 +7,7 @@ import { PageHero } from "../components/site";
 import StatusPage from "../components/site/StatusPage";
 import { Field, Input, Textarea } from "../components/hub/ui/Field";
 import { useAuth } from "../hooks/useAuth";
+import { useMounted } from "../hooks/useMounted";
 import { useToast } from "../components/ui/Toast";
 import { hubFromSite } from "../lib/hub/routes";
 import { API_BASE_URL as BASE_URL } from "../lib/apiBase";
@@ -70,7 +71,11 @@ export default function BecomeMentorPage() {
 
   const [loading, setLoading] = useState(false);
   const [existing, setExisting] = useState<MentorProfile | null>(null);
-  const [checking, setChecking] = useState(true);
+  // Checking for an existing profile: until hydrated (the session is only
+  // known in the browser), then while a signed-in person's first check runs.
+  const mounted = useMounted();
+  const [checked, setChecked] = useState(false);
+  const checking = !mounted || (Boolean(session?.access_token) && !checked);
   const [created, setCreated] = useState(false);
   // After creating: "id_check" when they still need to upload a photo ID.
   const [nextStep, setNextStep] = useState<"id_check" | "approval" | null>(null);
@@ -88,10 +93,7 @@ export default function BecomeMentorPage() {
   const [touched, setTouched] = useState(false);
 
   useEffect(() => {
-    if (!session?.access_token) {
-      setChecking(false);
-      return;
-    }
+    if (!session?.access_token) return;
     fetch(`${BASE_URL}/mentors/me/profile`, { headers: { Authorization: `Bearer ${session.access_token}` } })
       .then((res) => res.json())
       .then((data) => {
@@ -101,7 +103,7 @@ export default function BecomeMentorPage() {
         }
       })
       .catch(() => {})
-      .finally(() => setChecking(false));
+      .finally(() => setChecked(true));
   }, [session]);
 
   // Back from Stripe's payout setup. Stripe sends people here whether or not

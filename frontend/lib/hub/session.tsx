@@ -13,12 +13,12 @@
  * session, server-side; this is the client half, which also knows about
  * onboarding and MFA and keeps the page from flashing protected chrome.
  */
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, useSyncExternalStore, type ReactNode } from "react";
 import { useRouter } from "next/router";
 import type { Session } from "@supabase/supabase-js";
 import { supabase } from "../supabase";
 import { lockAdminPanel } from "./adminPanel";
-import { getViewAs, hubApi, setViewAs } from "./api";
+import { getViewAs, hubApi, setViewAs, subscribeViewAs } from "./api";
 import { clearQueryCache, invalidate, prefetchQuery, useHubQuery } from "./query";
 import { setHubSessionProvider } from "./sessionSlot";
 import type { HubMe, HubRole } from "./types";
@@ -55,10 +55,11 @@ export function HubSessionProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [sessionLoaded, setSessionLoaded] = useState(false);
   const [aal, setAal] = useState<{ current: string | null; next: string | null } | null>(null);
-  const [viewAs, setViewAsState] = useState<{ id: string; name: string } | null>(null);
+  // Kept in sessionStorage, so it is only known in the browser: null while
+  // the server renders and during hydration, then the stored value.
+  const viewAs = useSyncExternalStore(subscribeViewAs, getViewAs, () => null);
 
   useEffect(() => {
-    setViewAsState(getViewAs());
     let alive = true;
     supabase.auth.getSession().then(({ data }) => {
       if (!alive) return;
@@ -72,7 +73,6 @@ export function HubSessionProvider({ children }: { children: ReactNode }) {
         lockAdminPanel("signout");
         clearQueryCache();
         setViewAs(null);
-        setViewAsState(null);
       }
       if (event === "SIGNED_IN" || event === "USER_UPDATED" || event === "MFA_CHALLENGE_VERIFIED") invalidate("/hub/me");
     });
@@ -82,12 +82,12 @@ export function HubSessionProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  // Assurance level: only relevant once there is a session.
+  // Assurance level: only relevant once there is a session. Signing out
+  // forgets it (while rendering), so the next session starts from "loading".
+  if (!session && aal) setAal(null);
+  const accessToken = session?.access_token;
   useEffect(() => {
-    if (!session) {
-      setAal(null);
-      return;
-    }
+    if (!accessToken) return;
     let alive = true;
     supabase.auth.mfa
       .getAuthenticatorAssuranceLevel()
@@ -96,7 +96,7 @@ export function HubSessionProvider({ children }: { children: ReactNode }) {
     return () => {
       alive = false;
     };
-  }, [session?.access_token]);
+  }, [accessToken]);
 
   const needsMfa = Boolean(aal && aal.next === "aal2" && aal.current !== "aal2");
   const meQuery = useHubQuery<HubMe>(session && !needsMfa ? "/hub/me" : null);
@@ -127,7 +127,6 @@ export function HubSessionProvider({ children }: { children: ReactNode }) {
   const signOut = useCallback(async () => {
     lockAdminPanel("signout");
     setViewAs(null);
-    setViewAsState(null);
     await supabase.auth.signOut();
     clearQueryCache();
   }, []);
@@ -135,14 +134,12 @@ export function HubSessionProvider({ children }: { children: ReactNode }) {
   const startViewAs = useCallback(async (user: { id: string; name: string }, reason: string) => {
     await hubApi.post("/hub/admin/view-as", { user_id: user.id, reason });
     setViewAs(user);
-    setViewAsState(user);
     clearQueryCache({ refetch: true });
   }, []);
 
   const endViewAs = useCallback(async () => {
     const current = getViewAs();
     setViewAs(null);
-    setViewAsState(null);
     clearQueryCache({ refetch: true });
     if (current) await hubApi.post("/hub/admin/view-as/end", { user_id: current.id }).catch(() => {});
   }, []);

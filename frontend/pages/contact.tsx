@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type FormEvent } from "react";
+import { useMemo, useState, type FormEvent } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { ArrowRight, CheckCircle2, LifeBuoy, Mail, Newspaper, Scale, ShieldAlert } from "lucide-react";
@@ -40,13 +40,16 @@ export default function Contact() {
   const [topic, setTopic] = useState<Topic>("GENERAL");
   const [subject, setSubject] = useState("");
   const router = useRouter();
-  useEffect(() => {
-    if (!router.isReady) return;
+  // A link may choose the topic and subject: applied once, when the query
+  // is known (adjusted while rendering).
+  const [prefilled, setPrefilled] = useState(false);
+  if (router.isReady && !prefilled) {
+    setPrefilled(true);
     const t = typeof router.query.topic === "string" ? router.query.topic.toUpperCase() : "";
     if (TOPICS.some((x) => x.value === t)) setTopic(t as Topic);
     const sub = typeof router.query.subject === "string" ? router.query.subject.slice(0, 120) : "";
     if (sub) setSubject(sub);
-  }, [router.isReady]); // eslint-disable-line react-hooks/exhaustive-deps
+  }
   const [message, setMessage] = useState("");
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [submitting, setSubmitting] = useState(false);

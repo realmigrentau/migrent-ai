@@ -210,7 +210,7 @@ export default function HubMap({ homes, activeId, dark, onHover, onSelect, onMov
 
   // Highlight.
   useEffect(() => {
-    for (const [id, { el }] of markers.current) el.dataset.active = id === activeId ? "true" : "false";
+    for (const [id, { el }] of markers.current) el.setAttribute("data-active", id === activeId ? "true" : "false");
   }, [activeId, homes]);
 
   return <div ref={container} className="h-full w-full" role="region" aria-label="Map of homes (approximate locations)" />;

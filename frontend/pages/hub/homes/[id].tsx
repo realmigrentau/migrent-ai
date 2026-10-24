@@ -51,23 +51,28 @@ import { cn } from "../../../lib/cn";
 type Load = { state: "loading" } | { state: "ready"; listing: PublicListing } | { state: "gone"; listing?: PublicListing } | { state: "missing" } | { state: "error"; offline: boolean };
 
 function useListing(id: string | undefined) {
-  const [load, setLoad] = useState<Load>({ state: "loading" });
   const [attempt, setAttempt] = useState(0);
+  // The latest answer, kept with the request it answers: a new id or a
+  // retry shows "loading" until its own answer arrives.
+  const requestKey = id ? `${id}#${attempt}` : null;
+  const [answer, setAnswer] = useState<{ key: string; load: Load } | null>(null);
+  const load: Load = answer && answer.key === requestKey ? answer.load : { state: "loading" };
   useEffect(() => {
     if (!id) return;
     let alive = true;
-    setLoad({ state: "loading" });
+    const key = `${id}#${attempt}`;
+    const settle = (load: Load) => setAnswer({ key, load });
     (async () => {
       const token = await accessToken();
       try {
         const res = await fetch(`${API_BASE_URL}/listings/${encodeURIComponent(id)}?include=similar`, { headers: token ? { Authorization: `Bearer ${token}` } : {} });
         if (!alive) return;
-        if (res.status === 404) return setLoad({ state: "missing" });
-        if (res.status === 410) return setLoad({ state: "gone", listing: await res.json().catch(() => undefined) });
-        if (!res.ok) return setLoad({ state: "error", offline: false });
-        setLoad({ state: "ready", listing: await res.json() });
+        if (res.status === 404) return settle({ state: "missing" });
+        if (res.status === 410) return settle({ state: "gone", listing: await res.json().catch(() => undefined) });
+        if (!res.ok) return settle({ state: "error", offline: false });
+        settle({ state: "ready", listing: await res.json() });
       } catch {
-        if (alive) setLoad({ state: "error", offline: typeof navigator !== "undefined" && !navigator.onLine });
+        if (alive) settle({ state: "error", offline: typeof navigator !== "undefined" && !navigator.onLine });
       }
     })();
     return () => {
@@ -104,7 +109,14 @@ export default function HubHome() {
   const listing = load.state === "ready" ? load.listing : null;
   const isOwner = Boolean(listing?.viewer?.is_owner);
 
-  // Finish what the person was doing before they had to sign in.
+  // Finish what the person was doing before they had to sign in. A dialog
+  // it asks for opens while rendering; the effect below does the rest.
+  const [intentDialogsOpened, setIntentDialogsOpened] = useState(false);
+  if (listing && router.isReady && me && router.query.intent && !intentDialogsOpened) {
+    setIntentDialogsOpened(true);
+    if (router.query.intent === "message") setEnquiryOpen(true);
+    if (router.query.intent === "report") setReportOpen(true);
+  }
   useEffect(() => {
     if (!listing || !router.isReady || handledIntent.current || !me) return;
     const intent = router.query.intent;
@@ -113,8 +125,6 @@ export default function HubHome() {
     if (intent === "save" && !savedIds.has(listing.id)) {
       void toggleSaved(listing.id, true).then(() => toast.success("Saved", { description: "It's in your Saved homes." })).catch(() => toast.error("That home could not be saved."));
     }
-    if (intent === "message") setEnquiryOpen(true);
-    if (intent === "report") setReportOpen(true);
     if (intent === "inspect") document.getElementById("inspections")?.scrollIntoView({ behavior: "smooth" });
     if (intent === "apply") void navigate(`/apply/${listing.id}`, { replace: true });
     void router.replace({ pathname: router.pathname, query: { id: listing.id } }, router.asPath.split("?")[0], { shallow: true, scroll: false });

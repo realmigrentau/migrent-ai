@@ -33,24 +33,39 @@ export class HubError extends Error {
   }
 }
 
+type ViewAs = { id: string; name: string };
+
+// The last value read, so repeated reads of the same stored string return
+// the same object (useSyncExternalStore compares snapshots by identity).
+let viewAsRead: { raw: string | null; value: ViewAs | null } = { raw: null, value: null };
+const viewAsListeners = new Set<() => void>();
+
 /** The customer an admin is viewing as, if any (session-scoped). */
-export function getViewAs(): { id: string; name: string } | null {
+export function getViewAs(): ViewAs | null {
   if (typeof window === "undefined") return null;
   try {
     const raw = window.sessionStorage.getItem(VIEW_AS_KEY);
-    return raw ? (JSON.parse(raw) as { id: string; name: string }) : null;
+    if (raw !== viewAsRead.raw) viewAsRead = { raw, value: raw ? (JSON.parse(raw) as ViewAs) : null };
+    return viewAsRead.value;
   } catch {
     return null;
   }
 }
 
-export function setViewAs(value: { id: string; name: string } | null) {
+export function setViewAs(value: ViewAs | null) {
   try {
     if (value) window.sessionStorage.setItem(VIEW_AS_KEY, JSON.stringify(value));
     else window.sessionStorage.removeItem(VIEW_AS_KEY);
   } catch {
     /* ignore */
   }
+  viewAsListeners.forEach((fn) => fn());
+}
+
+/** Be told when setViewAs changes who an admin is viewing as. */
+export function subscribeViewAs(fn: () => void): () => void {
+  viewAsListeners.add(fn);
+  return () => viewAsListeners.delete(fn);
 }
 
 export async function accessToken(): Promise<string | null> {

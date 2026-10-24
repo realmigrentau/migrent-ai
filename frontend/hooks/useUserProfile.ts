@@ -128,24 +128,23 @@ export function signedInHref(profile: Pick<UserProfile, "id">, target: string, h
 export function useUserProfile(userId: string | undefined) {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [badges, setBadges] = useState<ProfileBadges | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  // The id that last finished loading, and its error. Loading and the error
+  // shown are derived from it, so a new id needs no reset.
+  const [settled, setSettled] = useState<{ id: string; error: string | null } | null>(null);
+  const loading = Boolean(userId) && settled?.id !== userId;
+  const error = settled && settled.id === userId ? settled.error : null;
 
   useEffect(() => {
-    if (!userId) {
-      setLoading(false);
-      return;
-    }
+    if (!userId) return;
     let cancelled = false;
 
     async function load() {
-      setLoading(true);
-      setError(null);
+      let failure: string | null = null;
       try {
         const data = await fetchPublicProfile(userId!);
         if (cancelled) return;
         if (!data) {
-          setError("Profile not found");
+          failure = "Profile not found";
           setProfile(null);
           setBadges(null);
           return;
@@ -197,11 +196,11 @@ export function useUserProfile(userId: string | undefined) {
         setBadges(computeBadges(p));
       } catch (err) {
         if (!cancelled) {
-          setError("Failed to load profile");
+          failure = "Failed to load profile";
           console.error("useUserProfile error:", err);
         }
       } finally {
-        if (!cancelled) setLoading(false);
+        if (!cancelled) setSettled({ id: userId!, error: failure });
       }
     }
 

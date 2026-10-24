@@ -18,7 +18,8 @@ import { API_BASE_URL } from "../../lib/apiBase";
 import StationAutocomplete from "../../components/search/StationAutocomplete";
 import MapErrorBoundary from "../../components/MapErrorBoundary";
 import VerificationBadge from "../../components/VerificationBadge";
-import { isWebGLAvailable } from "../../lib/webgl";
+import { isWebGLAvailable, useWebGLAvailable } from "../../lib/webgl";
+import { clearWishlist, readWishlist, useWishlist, writeWishlist } from "../../lib/wishlist";
 import type { MapListing } from "../../components/ListingsMap";
 import {
   DEFAULT_FILTERS,
@@ -222,11 +223,12 @@ export default function SeekerSearch({ initialFilters, initialPage, serverToday 
   const [loadMoreError, setLoadMoreError] = useState(false);
   const [offline, setOffline] = useState(false);
   const [dateErrors, setDateErrors] = useState<string[]>([]);
-  const [saved, setSaved] = useState<Set<string>>(new Set());
+  // The account's saved homes once fetched (signed in); null until then.
+  const [accountSaved, setAccountSaved] = useState<ReadonlySet<string> | null>(null);
   const [showMap, setShowMap] = useState(true);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
-  const [mapState, setMapState] = useState<MapState>("idle");
-  const [mapReason, setMapReason] = useState("");
+  const [mapStateSet, setMapState] = useState<MapState>("idle");
+  const [mapReasonSet, setMapReason] = useState("");
   const [mapKey, setMapKey] = useState(0);
   const [selectedStation, setSelectedStation] = useState<Station | null>(null);
   const [mapStations, setMapStations] = useState<{ name: string; lat: number; lng: number; line?: string }[]>([]);
@@ -265,19 +267,11 @@ export default function SeekerSearch({ initialFilters, initialPage, serverToday 
   // Signed in, hearts are the same saved homes as Migrent Hub (one store,
   // the API). Signed out, they live in this browser until sign-in, when
   // they are moved to the account.
+  const wishlist = useWishlist();
+  const saved = session ? (accountSaved ?? wishlist) : wishlist;
   useEffect(() => {
-    let local: string[] = [];
-    try {
-      const stored = localStorage.getItem("wishlist");
-      const parsed = stored ? JSON.parse(stored) : null;
-      if (Array.isArray(parsed)) local = parsed.filter((x): x is string => typeof x === "string");
-    } catch {
-      /* corrupt storage: start empty */
-    }
-    if (!session) {
-      setSaved(new Set(local));
-      return;
-    }
+    if (!session) return;
+    const local = Array.from(readWishlist());
     let alive = true;
     (async () => {
       try {
@@ -291,14 +285,10 @@ export default function SeekerSearch({ initialFilters, initialPage, serverToday 
             /* no longer available: drop it */
           }
         }
-        try {
-          localStorage.removeItem("wishlist");
-        } catch {
-          /* storage unavailable */
-        }
-        if (alive) setSaved(server);
+        clearWishlist();
+        if (alive) setAccountSaved(server);
       } catch {
-        if (alive) setSaved(new Set(local));
+        if (alive) setAccountSaved(new Set(local));
       }
     })();
     return () => {
@@ -306,19 +296,57 @@ export default function SeekerSearch({ initialFilters, initialPage, serverToday 
     };
   }, [session]);
 
-  // ── WebGL: decide once, before any map code is downloaded ──
-  useEffect(() => {
-    if (!isWebGLAvailable()) {
-      setMapState("unavailable");
-      setMapReason("Your browser or device cannot draw maps right now. Results are listed below.");
-    }
-  }, []);
+  // ── WebGL: decided before any map code is downloaded (once hydrated) ──
+  const webgl = useWebGLAvailable();
+  const mapState: MapState = webgl ? mapStateSet : "unavailable";
+  const mapReason = webgl ? mapReasonSet : "Your browser or device cannot draw maps right now. Results are listed below.";
 
   // ── Fetch ──
-  const runSearch = useCallback(
-    async (f: SearchFilters, mode: "replace" | "append") => {
+  // Asks for a page of results and shows it when it arrives. runSearch
+  // (below) first shows that a search is under way.
+  const accessToken = session?.access_token;
+  const fetchResults = useCallback(
+    (f: SearchFilters, mode: "replace" | "append") => {
       const seq = ++requestSeq.current;
       const offset = mode === "append" ? results.length : 0;
+      const token = f.sortBy === "best_match" && accessToken ? accessToken : undefined;
+      return searchListingsPage(filtersToApiParams(f, offset, PAGE_SIZE), token).then((page) => {
+        if (seq !== requestSeq.current) return; // a newer request superseded this one
+        if (mode === "replace") {
+          setSearching(false);
+          if (page.ok) {
+            setResults(page.listings);
+            setTotal(page.total);
+            setHasMore(page.hasMore);
+            trackEvent(Events.SEARCH_PERFORMED, {
+              has_location: Boolean(f.suburb || f.postcode || f.address || f.lat),
+              filters: activeFilterCount(f),
+              results: page.total ?? page.listings.length,
+            });
+          } else {
+            setSearchError(page.error);
+            setSearchErrorMessage(page.errorMessage);
+          }
+        } else {
+          setLoadingMore(false);
+          if (page.ok) {
+            setResults((prev) => {
+              const seen = new Set(prev.map((r) => r.id));
+              return [...prev, ...page.listings.filter((r) => !seen.has(r.id))];
+            });
+            setTotal(page.total);
+            setHasMore(page.hasMore);
+          } else {
+            setLoadMoreError(true);
+          }
+        }
+      });
+    },
+    [results.length, accessToken]
+  );
+
+  const runSearch = useCallback(
+    (f: SearchFilters, mode: "replace" | "append") => {
       if (mode === "replace") {
         setSearching(true);
         setSearchError(null);
@@ -327,39 +355,9 @@ export default function SeekerSearch({ initialFilters, initialPage, serverToday 
         setLoadingMore(true);
         setLoadMoreError(false);
       }
-      const token = f.sortBy === "best_match" && session?.access_token ? session.access_token : undefined;
-      const page = await searchListingsPage(filtersToApiParams(f, offset, PAGE_SIZE), token);
-      if (seq !== requestSeq.current) return; // a newer request superseded this one
-      if (mode === "replace") {
-        setSearching(false);
-        if (page.ok) {
-          setResults(page.listings);
-          setTotal(page.total);
-          setHasMore(page.hasMore);
-          trackEvent(Events.SEARCH_PERFORMED, {
-            has_location: Boolean(f.suburb || f.postcode || f.address || f.lat),
-            filters: activeFilterCount(f),
-            results: page.total ?? page.listings.length,
-          });
-        } else {
-          setSearchError(page.error);
-          setSearchErrorMessage(page.errorMessage);
-        }
-      } else {
-        setLoadingMore(false);
-        if (page.ok) {
-          setResults((prev) => {
-            const seen = new Set(prev.map((r) => r.id));
-            return [...prev, ...page.listings.filter((r) => !seen.has(r.id))];
-          });
-          setTotal(page.total);
-          setHasMore(page.hasMore);
-        } else {
-          setLoadMoreError(true);
-        }
-      }
+      return fetchResults(f, mode);
     },
-    [results.length, session?.access_token]
+    [fetchResults]
   );
 
   // Server fetch failed (or ran without an API URL): fetch on the client.
@@ -367,7 +365,8 @@ export default function SeekerSearch({ initialFilters, initialPage, serverToday 
   // so a shared link with an impossible date range or hostile input does
   // not stay in the URL (and does not get re-shared).
   useEffect(() => {
-    if (!initialPage) void runSearch(initialFilters, "replace");
+    // Nothing to reset: without a server page the first render is already searching.
+    if (!initialPage) void fetchResults(initialFilters, "replace");
     const canonical = serializeSearchFilters(initialFilters).toString();
     const current = typeof window !== "undefined" ? window.location.search.replace(/^\?/, "") : canonical;
     if (current !== canonical) {
@@ -414,11 +413,23 @@ export default function SeekerSearch({ initialFilters, initialPage, serverToday 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.asPath, router.isReady]);
 
-  // Re-run once the session arrives for best-match sorting.
+  // Re-run once the session arrives (it is only known once hydrated) for
+  // best-match sorting. Shown as searching while rendering; the effect
+  // below only fetches.
+  const sessionToken = mounted ? accessToken : undefined;
+  const [rankedFor, setRankedFor] = useState<string | undefined>(undefined);
+  if (sessionToken !== rankedFor) {
+    setRankedFor(sessionToken);
+    if (isBestMatch && sessionToken) {
+      setSearching(true);
+      setSearchError(null);
+      setSearchErrorMessage(undefined);
+    }
+  }
   useEffect(() => {
-    if (isBestMatch && session?.access_token) void runSearch(filters, "replace");
+    if (isBestMatch && sessionToken) void fetchResults(filters, "replace");
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [session?.access_token]);
+  }, [sessionToken]);
 
   // ── Map mounts only after results have painted ──
   useEffect(() => {
@@ -431,11 +442,10 @@ export default function SeekerSearch({ initialFilters, initialPage, serverToday 
   }, [searching, results.length, showMap, mapState]);
 
   // ── Stations near the selected station ──
+  // Clearing the station clears its pins (while rendering).
+  if (!selectedStation && mapStations.length) setMapStations([]);
   useEffect(() => {
-    if (!selectedStation) {
-      setMapStations([]);
-      return;
-    }
+    if (!selectedStation) return;
     nearbyStations(selectedStation.lat, selectedStation.lng, 10, 20)
       .then((nearby) => setMapStations(nearby.map((s) => ({ name: s.name, lat: s.lat, lng: s.lng, line: s.line }))))
       .catch(() => setMapStations([]));
@@ -467,19 +477,15 @@ export default function SeekerSearch({ initialFilters, initialPage, serverToday 
     const next = new Set(saved);
     if (wasSaved) next.delete(id);
     else next.add(id);
-    setSaved(next);
     if (!session) {
-      try {
-        localStorage.setItem("wishlist", JSON.stringify(Array.from(next)));
-      } catch {
-        /* storage unavailable */
-      }
+      writeWishlist(next);
       return;
     }
+    setAccountSaved(next);
     const request = wasSaved ? hubApi.del(`/hub/saved/${id}`) : hubApi.post("/hub/saved", { listing_id: id });
     request.catch(() =>
-      setSaved((cur) => {
-        const undo = new Set(cur);
+      setAccountSaved((cur) => {
+        const undo = new Set(cur ?? []);
         if (wasSaved) undo.add(id);
         else undo.delete(id);
         return undo;
@@ -1187,7 +1193,7 @@ export default function SeekerSearch({ initialFilters, initialPage, serverToday 
             {mapState === "unavailable" && showMap && (
               <div className="hidden xl:block xl:col-span-2">
                 <div className="sticky top-24 card rounded-2xl overflow-hidden aspect-[4/5]" data-testid="map-panel">
-                  <MapUnavailablePanel reason={mapReason} onRetry={isWebGLAvailable() ? retryMap : undefined} />
+                  <MapUnavailablePanel reason={mapReason} onRetry={webgl ? retryMap : undefined} />
                 </div>
               </div>
             )}

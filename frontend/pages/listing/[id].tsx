@@ -87,8 +87,6 @@ export default function ListingDetailPage({ initialListing }: { initialListing?:
   const session = mounted ? authSession : null;
 
   const [listing, setListing] = useState<PublicListing | null>(initialListing ?? null);
-  const [loading, setLoading] = useState(!initialListing);
-  const [loadError, setLoadError] = useState<"not-found" | "network" | null>(null);
   const [retryCount, setRetryCount] = useState(0);
   const [bookingLoading, setBookingLoading] = useState(false);
   const [bookingSuccess, setBookingSuccess] = useState(false);
@@ -99,39 +97,35 @@ export default function ListingDetailPage({ initialListing }: { initialListing?:
   const bookingFormRef = useRef<HTMLDivElement>(null);
   const [showMobileCTA, setShowMobileCTA] = useState(false);
 
+  // The server rendered the public view. Refetch only when there is
+  // something the server could not know: a session (the owner may see
+  // more), a failed server fetch, or an explicit retry.
+  const token = session?.access_token;
+  const needsClientFetch = !initialListing || Boolean(token) || retryCount > 0;
+  const fetchKey = typeof id === "string" && !refreshing && needsClientFetch ? `${id}|${token ?? ""}|${retryCount}` : null;
+  // A failed fetch, kept with the fetch it belongs to: a new fetch (a
+  // retry, a session) shows the spinner again rather than the old error.
+  const [failure, setFailure] = useState<{ key: string; reason: "not-found" | "network" } | null>(null);
+  const loadError = failure && failure.key === fetchKey ? failure.reason : null;
+  const loading = !listing && !loadError;
+
   useEffect(() => {
-    if (!id || typeof id !== "string") return;
-    if (refreshing) return;
-
-    // The server rendered the public view. Refetch only when there is
-    // something the server could not know: a session (the owner may see
-    // more), a failed server fetch, or an explicit retry.
-    const needsClientFetch = !initialListing || Boolean(session?.access_token) || retryCount > 0;
-    if (!needsClientFetch) {
-      setLoading(false);
-      return;
-    }
-
+    if (!fetchKey || typeof id !== "string") return;
     let cancelled = false;
-    if (!listing) setLoading(true);
-    setLoadError(null);
-
-    getListingDetail(id, session?.access_token).then((result) => {
+    getListingDetail(id, token).then((result) => {
       if (cancelled) return;
       if (result.ok) {
         setListing(result.listing);
       } else if (!initialListing) {
         setListing(null);
-        setLoadError(result.reason);
+        setFailure({ key: fetchKey, reason: result.reason });
       }
-      setLoading(false);
     });
 
     return () => {
       cancelled = true;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id, session?.access_token, refreshing, retryCount, initialListing]);
+  }, [fetchKey, id, token, initialListing]);
 
   // One view per listing per page load (owner visits excluded server-side
   // in listing insights; this is the site-wide funnel count).

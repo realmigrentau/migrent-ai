@@ -12,29 +12,34 @@ export default function TicketPage() {
   const router = useRouter();
   const { id } = router.query;
   const [ticket, setTicket] = useState<TicketDetail | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-
-  async function loadTicket() {
-    if (!session?.access_token || !id || typeof id !== "string") return;
-    setLoading(true);
-    const data = await getTicket(session.access_token, id);
-    if (data) {
-      setTicket(data);
-    } else {
-      setError("Ticket not found or you don't have access.");
-    }
-    setLoading(false);
-  }
+  // The load that last finished, and whether it found the ticket. Loading
+  // and the error are derived from it, so a reload needs no reset.
+  const token = session?.access_token;
+  const ticketId = typeof id === "string" ? id : null;
+  const [reload, setReload] = useState(0);
+  const requestKey = token && ticketId ? `${token}|${ticketId}#${reload}` : null;
+  const [settled, setSettled] = useState<{ key: string; found: boolean } | null>(null);
+  const loading = settled === null || settled.key !== requestKey;
+  const error = !loading && !settled.found ? "Ticket not found or you don't have access." : "";
 
   useEffect(() => {
-    if (authLoading) return;
-    if (!session) {
-      window.location.assign(hubFromSite.signIn(router.asPath));
-      return;
-    }
-    loadTicket();
-  }, [session, authLoading, id]);
+    if (authLoading || session) return;
+    window.location.assign(hubFromSite.signIn(router.asPath));
+  }, [session, authLoading, router.asPath]);
+
+  useEffect(() => {
+    if (authLoading || !token || !ticketId) return;
+    let alive = true;
+    const key = `${token}|${ticketId}#${reload}`;
+    void getTicket(token, ticketId).then((data) => {
+      if (!alive) return;
+      if (data) setTicket(data);
+      setSettled({ key, found: Boolean(data) });
+    });
+    return () => {
+      alive = false;
+    };
+  }, [authLoading, token, ticketId, reload]);
 
   if (authLoading || loading) {
     return (
@@ -85,7 +90,7 @@ export default function TicketPage() {
           ticket={ticket}
           token={session!.access_token}
           isAgent={false}
-          onUpdate={loadTicket}
+          onUpdate={() => setReload((n) => n + 1)}
         />
       </div>
     </>

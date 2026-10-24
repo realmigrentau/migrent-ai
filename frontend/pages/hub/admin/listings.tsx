@@ -187,7 +187,12 @@ function ListingDrawer({ id, onClose }: { id: string | null; onClose: () => void
   const { data, error, loading, refetch } = useHubQuery<{ listing: ModerationDetail }>(key);
   const [deciding, setDeciding] = useState<ListingAction | null>(null);
   const [rescanning, setRescanning] = useState(false);
-  useEffect(() => setDeciding(null), [id]);
+  // Another listing never opens on a half-made decision (adjusted while rendering).
+  const [shownId, setShownId] = useState(id);
+  if (shownId !== id) {
+    setShownId(id);
+    setDeciding(null);
+  }
 
   const l = data?.listing;
   const state = listingState(l?.moderation_status);
