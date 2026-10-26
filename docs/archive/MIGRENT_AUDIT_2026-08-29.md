@@ -42,7 +42,7 @@ On top of that sit two things that are not engineering problems at all: the site
 
 * **Problem:** Migration `015_fix_profiles_public_read.sql` creates `CREATE POLICY profiles_select ON profiles FOR SELECT USING (true)` with **no role restriction**, and follows it with `GRANT SELECT ON profiles TO anon`. RLS policies are OR'd, so this permissive policy overrides the own-row-or-superadmin policy from migration 013. Migration 019 then also adds `profiles_public_read USING (true)`.
 * **Severity:** 🔴 **P0 - Critical**
-* **Location:** [015_fix_profiles_public_read.sql:9](backend/migrations/015_fix_profiles_public_read.sql:9), [019_security_rls_fixes.sql:29](backend/migrations/019_security_rls_fixes.sql:29)
+* **Location:** [015_fix_profiles_public_read.sql:9](../../backend/migrations/015_fix_profiles_public_read.sql:9), [019_security_rls_fixes.sql:29](../../backend/migrations/019_security_rls_fixes.sql:29)
 * **Impact:** Anyone holding the publishable anon key - which ships in the client bundle by design - can run `supabase.from('profiles').select('*')` and receive **every column of every row**: `phone`, `phones[]`, `residential_address` (JSONB street address), `emergency_contact` (JSONB), `recovery_password_hash`, `identity_verification_url`, `age`, `visa_type`, `budget_min/max`, `move_in_date`. The user base is migrants and international students - among the most vulnerable renter cohorts in Australia. This is a notifiable data breach under the Privacy Act's NDB scheme the moment a real user signs up. Migration 038, the launch-hardening pass, did not touch `profiles`.
 * **Fix:** Drop both permissive policies. Create a `public_profiles` view exposing only `id, name, preferred_name, about_me, custom_pfp, occupation, verified, badges, average_rating, reviews_count`, grant `SELECT` on that view to `anon`/`authenticated`, and `REVOKE SELECT ON profiles FROM anon, authenticated` entirely - the backend uses the service role and does not need the grant. Move `recovery_password_hash` out of `profiles` altogether.
 * **Complexity:** Small (one migration, ~40 lines) + Medium (audit the ~30 frontend call sites that read `profiles` directly).
@@ -52,7 +52,7 @@ On top of that sit two things that are not engineering problems at all: the site
 * **Problem (path A, backend):** `_require_admin` checks `user.user_metadata.get("role")` **first**, before any database lookup. Supabase `user_metadata` is user-writable: `supabase.auth.updateUser({ data: { role: 'superadmin' } })` from the browser console.
 * **Problem (path B, database):** the `profiles_update_own` RLS policy is column-unrestricted, and `profiles_role_check` permits `'superadmin'`. So `supabase.from('profiles').update({ role: 'superadmin' }).eq('id', myId)` succeeds. `is_superadmin()` then returns true, which unlocks `admin_users_view` (every user's email and last sign-in), and the backend's fallback branch also grants admin.
 * **Severity:** 🔴 **P0 - Critical**
-* **Location:** [routes_admin.py:34-46](backend/routes_admin.py:34), [019_security_rls_fixes.sql:38](backend/migrations/019_security_rls_fixes.sql:38), [013_complete_superadmin_fix.sql:11](backend/migrations/013_complete_superadmin_fix.sql:11)
+* **Location:** [routes_admin.py:34-46](../../backend/routes_admin.py:34), [019_security_rls_fixes.sql:38](../../backend/migrations/019_security_rls_fixes.sql:38), [013_complete_superadmin_fix.sql:11](../../backend/migrations/013_complete_superadmin_fix.sql:11)
 * **Impact:** Full access to all 10 admin pages: the user table with emails, listing moderation, revenue, spam moderation, verification approval, reports. Note that `AdminGate.tsx` - the username/password prompt on `/admin` - is client-side only and is decorative; the real gate is `_require_admin`, and it is broken.
 * **Fix:** Delete the `user_metadata` branch from `_require_admin` entirely; read the role only from the database under the service role. Add a `BEFORE UPDATE` trigger on `profiles` that raises if `NEW.role IS DISTINCT FROM OLD.role` and the caller is not the service role. Better still, move admin status to a separate `admin_users` table that `authenticated` has no grant on at all.
 * **Complexity:** Small.
@@ -61,16 +61,16 @@ On top of that sit two things that are not engineering problems at all: the site
 
 * **Problem:** "Your bond is held in independent escrow, never in the landlord's account" appears in ~25 places including the homepage hero chips, the how-it-works panel, the pricing page's included-features list, `for-seekers`, `for-owners`, the sign-in and sign-up pages, the footer, the booking form, and **three meta descriptions**. `grep -ri escrow backend/` returns **zero matches**. There is no escrow provider, no bond-holding code, no bond field on `bookings`.
 * **Severity:** 🔴 **P0 - Critical (legal, not technical)**
-* **Location:** [pages/index.tsx:119,406,420,445,451,460](frontend/pages/index.tsx:119), [pages/pricing.tsx:32,42,50](frontend/pages/pricing.tsx:32), [components/SiteFooter.tsx:74](frontend/components/SiteFooter.tsx:74), [components/bookings/RequestToBookForm.tsx:225](frontend/components/bookings/RequestToBookForm.tsx:225)
+* **Location:** [pages/index.tsx:119,406,420,445,451,460](../../frontend/pages/index.tsx:119), [pages/pricing.tsx:32,42,50](../../frontend/pages/pricing.tsx:32), [components/SiteFooter.tsx:74](../../frontend/components/SiteFooter.tsx:74), [components/bookings/RequestToBookForm.tsx:225](../../frontend/components/bookings/RequestToBookForm.tsx:225)
 * **Impact:** Misleading conduct under s18 of the Australian Consumer Law, aimed at a cohort with limited local legal recourse. It is compounded by a fabricated testimonial - "Lucas, São Paulo → Surry Hills: *The bond went into escrow, not my landlord's account. That felt huge.*" - which is a fake customer endorsement of a feature that does not exist. Separately: in NSW, VIC and QLD residential bonds must be lodged with the state authority (Rental Bonds Online / RTBA / RTA), so "we hold your bond in escrow" would be unlawful even if you built it.
-* **Fix:** Remove every escrow claim today. If bond protection is the intended differentiator, the compliant version is "we walk you through lodging your bond with [state authority] and hold the receipt" - which is a genuinely good product and much cheaper to build. Remove the three fabricated testimonials (`Aisha`, `Lucas`, `Mei` at [index.tsx:444-447](frontend/pages/index.tsx:444)) or replace them with real, consented quotes.
+* **Fix:** Remove every escrow claim today. If bond protection is the intended differentiator, the compliant version is "we walk you through lodging your bond with [state authority] and hold the receipt" - which is a genuinely good product and much cheaper to build. Remove the three fabricated testimonials (`Aisha`, `Lucas`, `Mei` at [index.tsx:444-447](../../frontend/pages/index.tsx:444)) or replace them with real, consented quotes.
 * **Complexity:** Small.
 
 ### 4. The renter is charged the owner's $99 fee
 
 * **Problem:** `create_booking_checkout` builds one Stripe session containing **both** line items - "MigRent Owner Service Fee" ($99) and "MigRent Seeker Service Fee" ($19) - and that single session URL is handed to the **seeker**: returned to the seeker's browser on instant book, and emailed to the seeker via `send_booking_accepted_to_seeker` on request-to-book. The owner is never charged anything.
 * **Severity:** 🔴 **P0 - Critical**
-* **Location:** [routes_bookings.py:40-72](backend/routes_bookings.py:40), [routes_bookings.py:300-370](backend/routes_bookings.py:300)
+* **Location:** [routes_bookings.py:40-72](../../backend/routes_bookings.py:40), [routes_bookings.py:300-370](../../backend/routes_bookings.py:300)
 * **Impact:** The renter pays **$118 AUD** at a checkout the pricing page describes as "$0, forever - Renters never pay MigRent a service fee." That is a direct, documented contradiction of published pricing at the point of payment. It is also a business-model failure: the owner-side revenue never arrives.
 * **Fix:** Split into two Stripe sessions, or use Stripe Connect so the $99 is collected from the owner's payment method. If the intent is genuinely that the renter pays $118, then the pricing page, `for-seekers`, the footer and three meta descriptions must be rewritten first.
 * **Complexity:** Medium.
@@ -79,7 +79,7 @@ On top of that sit two things that are not engineering problems at all: the site
 
 * **Problem:** `MessageBubble.tsx:192` renders `message.message_html` through `dangerouslySetInnerHTML`. The only sanitiser is `_sanitize_html = re.sub(r"<[^>]+>", "", html)`, a regex tag-stripper, and it can be reached around two ways: (a) the regex requires a closing `>`, so `<img src=x onerror=alert(1)` passes through untouched and the browser auto-closes it; (b) the `messages` RLS policy grants `INSERT` directly to `authenticated` scoped only on `sender_id = auth.uid()`, so an attacker can write the row through PostgREST and never touch the backend at all.
 * **Severity:** 🔴 **P0 - Critical**
-* **Location:** [components/messages/MessageBubble.tsx:192](frontend/components/messages/MessageBubble.tsx:192), [routes_messages.py:37-42](backend/routes_messages.py:37), [019_security_rls_fixes.sql:134](backend/migrations/019_security_rls_fixes.sql:134)
+* **Location:** [components/messages/MessageBubble.tsx:192](../../frontend/components/messages/MessageBubble.tsx:192), [routes_messages.py:37-42](../../backend/routes_messages.py:37), [019_security_rls_fixes.sql:134](../../backend/migrations/019_security_rls_fixes.sql:134)
 * **Impact:** Script executes in the recipient's session. Supabase stores the session in `localStorage`, so the payload exfiltrates the access token - full account takeover of anyone you can message. The CSP that would have blunted this ships as `Content-Security-Policy-Report-Only`, so it blocks nothing. Note the irony: because the sanitiser strips *all* tags on the honest path, the rich-text feature (`[&_strong]:font-bold` etc.) never actually works. The feature is simultaneously broken and dangerous.
 * **Fix:** Stop rendering `message_html`. Render `message_text` as plain text - the component already has that branch. If rich text is wanted later, do it with a real allowlist sanitiser server-side and revoke the direct `INSERT` grant.
 * **Complexity:** Small.
@@ -88,7 +88,7 @@ On top of that sit two things that are not engineering problems at all: the site
 
 * **Problem:** Migration 019 grants `authenticated` direct `INSERT`/`UPDATE`/`DELETE` on `profiles`, `listings`, `deals`, `messages`, `reports` and `referrals`, and migration 024 does the same for `bookings`. Every rule the FastAPI layer enforces has a PostgREST bypass.
 * **Severity:** 🔴 **P0 - Critical**
-* **Location:** [019_security_rls_fixes.sql](backend/migrations/019_security_rls_fixes.sql), [024_bookings_system.sql:80-100](backend/migrations/024_bookings_system.sql:80), [021_reviews_system.sql:52](backend/migrations/021_reviews_system.sql:52)
+* **Location:** [019_security_rls_fixes.sql](../../backend/migrations/019_security_rls_fixes.sql), [024_bookings_system.sql:80-100](../../backend/migrations/024_bookings_system.sql:80), [021_reviews_system.sql:52](../../backend/migrations/021_reviews_system.sql:52)
 * **Impact, concretely:**
   * **Bookings:** `bookings_update_owner` permits `auth.uid() = owner_id OR auth.uid() = seeker_id` with no `WITH CHECK` on columns, so a **seeker can set their own booking to `status = 'PAID'`** without paying, which fires the "booking confirmed" emails to the owner.
   * **Reviews:** `reviews_insert_own` only checks `reviewer_id = auth.uid()`. `deal_id` is nullable and `UNIQUE(deal_id, reviewer_id)` does not constrain NULLs, so **unlimited fake 5-star reviews about any user or listing** can be injected. The careful deal-completion checks in `routes_reviews.py` are bypassed entirely.
@@ -101,16 +101,16 @@ On top of that sit two things that are not engineering problems at all: the site
 
 * **Problem:** `delete_listing` performs a hard `DELETE`. `bookings.listing_id` and `messages.listing_id` are both `REFERENCES listings(id) ON DELETE CASCADE`.
 * **Severity:** 🔴 **P0 - Critical**
-* **Location:** [routes_listings.py:690](backend/routes_listings.py:690), [024_bookings_system.sql:33](backend/migrations/024_bookings_system.sql:33), [002_add_messages_and_extended_profiles.sql:9](backend/migrations/002_add_messages_and_extended_profiles.sql:9)
+* **Location:** [routes_listings.py:690](../../backend/routes_listings.py:690), [024_bookings_system.sql:33](../../backend/migrations/024_bookings_system.sql:33), [002_add_messages_and_extended_profiles.sql:9](../../backend/migrations/002_add_messages_and_extended_profiles.sql:9)
 * **Impact:** One owner clicking "delete listing" silently destroys every booking on it - including `PAID` ones with a real Stripe charge - and the entire conversation history between that owner and every renter who contacted them. You cannot reconcile a Stripe payment to a booking that no longer exists, and you cannot adjudicate a dispute with no messages. Reviews orphan too (`reviews.listing_id` has no FK at all).
-* **Fix:** Soft-delete: set `moderation_status = 'deleted'` (the read paths at [routes_listings.py:556](backend/routes_listings.py:556) already expect this - though note `'deleted'` is **not in the CHECK constraint**, so that write would currently fail: `CHECK (moderation_status IN ('pending_approval','approved','rejected','changes_requested'))`). Change the FKs to `ON DELETE RESTRICT` for bookings and `SET NULL` for messages.
+* **Fix:** Soft-delete: set `moderation_status = 'deleted'` (the read paths at [routes_listings.py:556](../../backend/routes_listings.py:556) already expect this - though note `'deleted'` is **not in the CHECK constraint**, so that write would currently fail: `CHECK (moderation_status IN ('pending_approval','approved','rejected','changes_requested'))`). Change the FKs to `ON DELETE RESTRICT` for bookings and `SET NULL` for messages.
 * **Complexity:** Small.
 
 ### 8. There is no password reset
 
 * **Problem:** `resetPasswordForEmail` appears nowhere in the codebase. There is no forgot-password page. The "Forgot password?" link on the sign-in page points at `/magic-link-login`.
 * **Severity:** 🔴 **P0 - Critical**
-* **Location:** [pages/signin/index.tsx:156](frontend/pages/signin/index.tsx:156), [lib/helpData.ts:413](frontend/lib/helpData.ts:413)
+* **Location:** [pages/signin/index.tsx:156](../../frontend/pages/signin/index.tsx:156), [lib/helpData.ts:413](../../frontend/lib/helpData.ts:413)
 * **Impact:** A user who forgets their password can never set a new one - they are permanently on magic links. The help centre actively documents a flow that does not exist: *"go to the sign-in page and click Forgot password. Enter your email address and we'll send you a reset link."* That article will generate support tickets from day one.
 * **Fix:** Either build the reset flow (Supabase gives you `resetPasswordForEmail` plus a `/reset-password` page - about two hours), or commit to magic-link-only, relabel the link "Sign in with a link instead", and correct the two help articles.
 * **Complexity:** Small.
@@ -119,7 +119,7 @@ On top of that sit two things that are not engineering problems at all: the site
 
 * **Problem:** 95 of 98 pages are client-only. `pages/listing/[id].tsx` fetches in `useEffect` and **returns early on the loading branch before `SEOHead` renders**, so the pre-rendered HTML for every listing contains a skeleton and zero page-specific metadata. The sitemap's own comment concedes the point and lists no listing URLs at all.
 * **Severity:** 🟠 **P1 - High**
-* **Location:** [pages/listing/[id].tsx:44-115](frontend/pages/listing/[id].tsx:44), [pages/sitemap.xml.tsx:9](frontend/pages/sitemap.xml.tsx:9)
+* **Location:** [pages/listing/[id].tsx:44-115](../../frontend/pages/listing/[id].tsx:44), [pages/sitemap.xml.tsx:9](../../frontend/pages/sitemap.xml.tsx:9)
 * **Impact:** For a rental marketplace, listing pages are *the* organic asset - "room for rent Carlton" is the query that matters. Today they have no title, no description, no canonical, no Open Graph, no JSON-LD in the initial response, and they are not submitted for crawling. Sharing a listing on WhatsApp - the dominant channel for this audience - produces an unfurled grey box.
 * **Fix:** Convert `listing/[id]` to `getServerSideProps` (or ISR). The `SEOHead` component already accepts a `listing` prop and emits `Accommodation` JSON-LD - it is just never reached. Add approved listing URLs to the sitemap.
 * **Complexity:** Medium.
@@ -128,7 +128,7 @@ On top of that sit two things that are not engineering problems at all: the site
 
 * **Problem:** `navData.ts` points the Features mega-menu at `/features#ai-matching`, `#verified-hosts`, `#instant-booking`, `#suburb-reports`, `#smart-filters`, `#superhost`, `#support`, `#mentor-network`. `pages/features.tsx` contains exactly one `id`, and it is `id="more"`.
 * **Severity:** 🟠 **P1 - High**
-* **Location:** [lib/navData.ts:33-91](frontend/lib/navData.ts:33), [pages/features.tsx](frontend/pages/features.tsx)
+* **Location:** [lib/navData.ts:33-91](../../frontend/lib/navData.ts:33), [pages/features.tsx](../../frontend/pages/features.tsx)
 * **Impact:** The most-used menu in the site. Eight items that look like deep links all dump the visitor at the top of the same page with nothing highlighted. It reads as broken on first contact.
 * **Fix:** Add the eight `id` attributes to the matching sections in `features.tsx`, or flatten the menu to a single "Features" link.
 * **Complexity:** Small.
@@ -194,14 +194,14 @@ On top of that sit two things that are not engineering problems at all: the site
 
 The codebase takes mobile seriously - responsive prefixes are used consistently, the navbar has a real `lg:hidden` mobile tree, and the listing page has a sticky mobile CTA driven by an `IntersectionObserver`. The issues below are specific risks read from the code. Items marked **NEEDS VERIFICATION** require rendering at width.
 
-* 🟠 **P1 - Homepage hero grid.** `grid lg:grid-cols-[1.05fr_0.95fr]` with an `h1` at `text-[44px]` at the smallest breakpoint. At 320px, 44px display type in Fraunces with `[overflow-wrap:anywhere]` will break mid-word on "Australia". Consider `clamp()` down to ~34px. ([index.tsx:487](frontend/pages/index.tsx:487))
+* 🟠 **P1 - Homepage hero grid.** `grid lg:grid-cols-[1.05fr_0.95fr]` with an `h1` at `text-[44px]` at the smallest breakpoint. At 320px, 44px display type in Fraunces with `[overflow-wrap:anywhere]` will break mid-word on "Australia". Consider `clamp()` down to ~34px. ([index.tsx:487](../../frontend/pages/index.tsx:487))
 * 🟠 **P1 - Search page.** 1,098 lines containing a filter sidebar, a calendar, a results grid and a dynamically-imported MapLibre map. The map is the heaviest thing on the site and mobile users on a migrant budget are frequently on metered data. Confirm the map is not mounted at all below `lg`. **NEEDS VERIFICATION**
-* 🟠 **P1 - `ListingForm` step indicator.** Six steps rendered as circles plus connector lines in a single row. At 320px that is ~6 circles + 5 connectors; the connector uses one of the malformed classes so it is invisible, which may be masking an overflow. ([ListingForm.tsx:296-322](frontend/components/ListingForm.tsx:296))
-* 🟡 **P2 - Booking form date inputs.** `grid grid-cols-2 gap-3` with an icon absolutely positioned inside each. Two native date inputs side by side at 320px is roughly 140px each, which truncates the placeholder on iOS. Stack below `sm`. ([RequestToBookForm.tsx:113](frontend/components/bookings/RequestToBookForm.tsx:113))
+* 🟠 **P1 - `ListingForm` step indicator.** Six steps rendered as circles plus connector lines in a single row. At 320px that is ~6 circles + 5 connectors; the connector uses one of the malformed classes so it is invisible, which may be masking an overflow. ([ListingForm.tsx:296-322](../../frontend/components/ListingForm.tsx:296))
+* 🟡 **P2 - Booking form date inputs.** `grid grid-cols-2 gap-3` with an icon absolutely positioned inside each. Two native date inputs side by side at 320px is roughly 140px each, which truncates the placeholder on iOS. Stack below `sm`. ([RequestToBookForm.tsx:113](../../frontend/components/bookings/RequestToBookForm.tsx:113))
 * 🟡 **P2 - Modals.** 20 components use `fixed inset-0`. Only 2 declare `aria-modal`, and I found no scroll-lock on `body`. On iOS Safari a `fixed inset-0` overlay without scroll-lock lets the page scroll behind the modal.
-* 🟡 **P2 - `ScrollMarquee`** uses `text-[clamp(2rem,5vw,4rem)]` on a `w-max` flex row translated by scroll progress. It is `overflow-hidden` on the section so it should not cause horizontal page scroll - but confirm on iOS, where `overflow-hidden` on a transformed child is historically unreliable. **NEEDS VERIFICATION** ([index.tsx:175](frontend/pages/index.tsx:175))
+* 🟡 **P2 - `ScrollMarquee`** uses `text-[clamp(2rem,5vw,4rem)]` on a `w-max` flex row translated by scroll progress. It is `overflow-hidden` on the section so it should not cause horizontal page scroll - but confirm on iOS, where `overflow-hidden` on a transformed child is historically unreliable. **NEEDS VERIFICATION** ([index.tsx:175](../../frontend/pages/index.tsx:175))
 * 🟡 **P2 - Admin pages** are laid out for desktop tables with no mobile treatment. Acceptable for an internal tool, but moderation-from-phone will not work.
-* 🟢 **P3 - Touch targets.** The homepage card save button is `w-[32px] h-[32px]`; the filter-chip remove button is a `w-3 h-3` icon in a small button. Both are below the 44×44px WCAG 2.5.5 target. ([index.tsx:82](frontend/pages/index.tsx:82), [seeker/search.tsx:98](frontend/pages/seeker/search.tsx:98))
+* 🟢 **P3 - Touch targets.** The homepage card save button is `w-[32px] h-[32px]`; the filter-chip remove button is a `w-3 h-3` icon in a small button. Both are below the 44×44px WCAG 2.5.5 target. ([index.tsx:82](../../frontend/pages/index.tsx:82), [seeker/search.tsx:98](../../frontend/pages/seeker/search.tsx:98))
 
 ---
 
@@ -297,7 +297,7 @@ Credit where it is due. Across ~33,000 lines of frontend code: **1 `console.log`
 
 ## 10. Accessibility Problems
 
-* 🔴 **P0 - `AdminGate` lockout screen flashes red-to-blue every 0.5s indefinitely** (`animation: flash-bg 0.5s infinite`). This is a WCAG 2.3.1 failure and a genuine seizure risk. Remove it. ([AdminGate.tsx:150-157](frontend/components/AdminGate.tsx:150))
+* 🔴 **P0 - `AdminGate` lockout screen flashes red-to-blue every 0.5s indefinitely** (`animation: flash-bg 0.5s infinite`). This is a WCAG 2.3.1 failure and a genuine seizure risk. Remove it. ([AdminGate.tsx:150-157](../../frontend/components/AdminGate.tsx:150))
 * 🟠 **P1 - `<html lang>` never changes.** `_document.tsx` hardcodes `lang="en" dir="ltr"`; `useLanguage.ts:16` mutates `documentElement.dir` client-side only. So screen readers announce Arabic, Hindi and Chinese content with English pronunciation rules, and the server-rendered `dir` is wrong for Arabic. *Fix:* set both from the detected language; for real correctness use Next.js i18n routing (see section 11).
 * 🟠 **P1 - Modal accessibility is largely absent.** 20 components use `fixed inset-0`; 2 declare `aria-modal`. No focus trap, no `role="dialog"`, no restore-focus-on-close, no `Escape` handler that I could find, no `body` scroll lock. Keyboard and screen-reader users cannot escape a modal. *Fix:* one `<Modal>` primitive that does all five things; migrate the 20 call sites.
 * 🟠 **P1 - Icon-only buttons mostly lack labels.** 24 `aria-label`s against 495 `onClick` handlers. Some are done well - the homepage save button has `aria-label="Save listing"` and the budget slider has a descriptive label - but the filter-chip remove button, the gallery arrows, the message-attachment controls and the step-indicator buttons have none. *Fix:* sweep every `<button>` whose only child is an icon.
