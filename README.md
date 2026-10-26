@@ -61,4 +61,5 @@ cd frontend && npm run build:test && npm run test:e2e   # Playwright against the
 - `docs/product/listing-lifecycle.md`, `docs/product/access-control-matrix.md`.
 - `docs/legal/identity-and-claims.md`: the decisions that block launch.
 - `docs/security/secrets-and-environments.md`, `docs/security/retention-and-deletion.md`.
-- `BATCH_5_DEPLOY.md`: deployment order and rollback for the current branch.
+- `docs/operations.md`: hosting, deploys and backups.
+- `docs/archive/`: older deploy notes and the August 2026 audit, kept for history.

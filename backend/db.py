@@ -6,7 +6,7 @@ Handles Supabase client creation with proper key selection and fallback logic.
 
 import os
 import logging
-from supabase import create_client, Client
+from supabase import ClientOptions, create_client, Client
 
 logger = logging.getLogger(__name__)
 
@@ -39,53 +39,30 @@ if not SUPABASE_ANON_KEY:
 # and a shared client would then carry one person's session into another
 # person's request.
 #
-# PostgREST's HTTP client (HTTP/2) closes idle connections after 5 seconds
-# by default, so a quiet minute meant a fresh handshake again. It is kept
-# open for a minute instead.
+# The default HTTP clients close idle connections after 5 seconds, so a quiet
+# minute meant a fresh handshake again. The shared client is given one HTTP/2
+# connection pool, kept open for a minute, that its database, storage and
+# auth calls all use. Token checks that cannot be done locally (admin
+# requests, older tokens) ask Supabase Auth over it too, so they no longer pay
+# for a new connection to Sydney (about half a second from the API) each time.
+#
+# The pool is handed over through ClientOptions(httpx_client=...), the
+# library's supported setting. Older versions had none, so this module used
+# to patch postgrest and gotrue internals, which supabase 2.33 removed.
 # ---------------------------------------------------------------------------
 
 import threading
 
 import httpx
-from postgrest._sync import client as _postgrest_sync_client
-from postgrest.utils import SyncClient as _PostgrestSyncClient
 
 KEEPALIVE_SECONDS = 60.0
 
 
-def _create_session(self, base_url, headers, timeout, verify=True, proxy=None):
-    return _PostgrestSyncClient(
-        base_url=base_url,
-        headers=headers,
-        timeout=timeout,
-        verify=verify,
-        proxy=proxy,
+def _shared_http_client() -> httpx.Client:
+    return httpx.Client(
         follow_redirects=True,
         http2=True,
-        limits=httpx.Limits(max_connections=100, max_keepalive_connections=20, keepalive_expiry=KEEPALIVE_SECONDS),
-    )
-
-
-_postgrest_sync_client.SyncPostgrestClient.create_session = _create_session
-
-
-def _keep_auth_connection_open(client) -> None:
-    """Give the shared client's auth API the same long-lived connection.
-
-    Token checks that cannot be done locally (admin requests, older tokens)
-    ask Supabase Auth over this client. Its default HTTP client drops idle
-    connections after 5 seconds, so most checks paid for a new connection
-    to Sydney (about half a second from the API) on top of the answer.
-    """
-    auth = getattr(client, "auth", None)
-    if auth is None or not hasattr(auth, "_http_client"):
-        return
-    from gotrue.http_clients import SyncClient as _GoTrueSyncClient
-
-    auth._http_client = _GoTrueSyncClient(
-        verify=True,
-        follow_redirects=True,
-        http2=True,
+        timeout=httpx.Timeout(30.0, connect=10.0),
         limits=httpx.Limits(max_connections=100, max_keepalive_connections=20, keepalive_expiry=KEEPALIVE_SECONDS),
     )
 
@@ -125,9 +102,10 @@ def get_supabase_admin() -> Client:
         return client
     with _admin_lock:
         if _admin_client is None:
+            options = ClientOptions(httpx_client=_shared_http_client())
             if SUPABASE_SERVICE_ROLE_KEY:
                 logger.debug("Using SUPABASE_SERVICE_ROLE_KEY for admin client")
-                _admin_client = create_client(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
+                _admin_client = create_client(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, options)
             else:
                 # Fallback to anon key (will respect RLS policies)
                 logger.warning(
@@ -135,8 +113,7 @@ def get_supabase_admin() -> Client:
                     "This may cause RLS policy issues with updates. "
                     "Set SUPABASE_SERVICE_ROLE_KEY in environment for full admin access."
                 )
-                _admin_client = create_client(SUPABASE_URL, SUPABASE_ANON_KEY)
-            _keep_auth_connection_open(_admin_client)
+                _admin_client = create_client(SUPABASE_URL, SUPABASE_ANON_KEY, options)
         return _admin_client
 
 
