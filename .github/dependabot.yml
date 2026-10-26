@@ -1,8 +1,11 @@
 # Weekly pull requests for minor and patch updates, grouped into one per
 # ecosystem so there is little to review. Major versions are ignored: they
 # change behaviour (Next 16.4 changed the build output under our CSP) and are
-# taken deliberately, not from a bot. Security fixes still arrive as soon as
-# GitHub knows of them. Vercel does not build these branches (vercel.json).
+# taken deliberately, not from a bot. A release is only offered once it is 14
+# days old: FastAPI shipped 0.147 to 0.160 in four days in October 2026, six
+# of them breaking request parsing. The cooldown does not apply to security
+# fixes, which still arrive as soon as GitHub knows of them. Vercel does not
+# build these branches (vercel.json).
 version: 2
 updates:
   - package-ecosystem: npm
@@ -11,6 +14,8 @@ updates:
       interval: weekly
       day: monday
       timezone: Australia/Sydney
+    cooldown:
+      default-days: 14
     open-pull-requests-limit: 5
     groups:
       minor-and-patch:
@@ -25,6 +30,8 @@ updates:
       interval: weekly
       day: monday
       timezone: Australia/Sydney
+    cooldown:
+      default-days: 14
     open-pull-requests-limit: 5
     groups:
       minor-and-patch:
@@ -39,6 +46,8 @@ updates:
     directory: /
     schedule:
       interval: monthly
+    cooldown:
+      default-days: 14
     ignore:
       - dependency-name: "*"
         update-types: ["version-update:semver-major"]
