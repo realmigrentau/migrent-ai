@@ -26,16 +26,11 @@ class ReportCreate(BaseModel):
 
 
 def _get_user_id(authorization: str | None) -> str:
-    """Extract user ID from Supabase JWT."""
-    if not authorization or not authorization.startswith("Bearer "):
-        raise HTTPException(status_code=401, detail="Missing or invalid authorization header")
-    token = authorization.split(" ", 1)[1]
-    sb = get_supabase_admin()
-    try:
-        user = sb.auth.get_user(token)
-        return user.user.id
-    except Exception:
-        raise HTTPException(status_code=401, detail="Invalid token")
+    """The signed-in user's id, through the shared check (token, then the
+    two-step check the account has set up)."""
+    from auth_utils import get_current_user
+
+    return str(get_current_user(authorization).id)
 
 
 def _is_admin(sb, user_id: str) -> bool:

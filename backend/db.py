@@ -181,3 +181,30 @@ def start_keep_warm() -> None:
 
     _warm_thread = threading.Thread(target=loop, name="keep-warm", daemon=True)
     _warm_thread.start()
+
+
+# ---------------------------------------------------------------------------
+# Search words inside a PostgREST filter
+#
+# .or_("suburb.ilike.%{term}%,city.ilike.%{term}%") is filter syntax, not a
+# value: a comma or bracket in the term starts a new condition. On the
+# public search (as the service role, on the full listings table) a term like
+# "x%,address.like.12 Smith*,city.ilike.%x" added its own condition, so a
+# listing appeared or not depending on its private street address, exact
+# position or owner. Repeating that reads them out one character at a time.
+#
+# Every term that goes into an .or_() string passes through here first. Only
+# letters, digits, spaces and . @ + ' - _ survive: enough for any suburb,
+# name or email address, and none of them can start a condition (that takes
+# a comma, a bracket or a quote). The * and % wildcards go too, and the
+# length is capped. An empty result means "do not filter on it".
+# ---------------------------------------------------------------------------
+
+import re as _re
+
+_FILTER_UNSAFE = _re.compile(r"[^\w\s.@+'\-]", _re.UNICODE)
+
+
+def filter_term(value: object, max_length: int = 80) -> str:
+    text = _FILTER_UNSAFE.sub(" ", str(value or ""))
+    return " ".join(text.split())[:max_length].strip()

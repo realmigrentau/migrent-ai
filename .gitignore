@@ -32,6 +32,8 @@ INTEGRATION_CHECKLIST.md
 QUICKSTART.md
 plan.md
 test-role.js
+# Security reviews list what is still open; the repository is public.
+SECURITY_REVIEW_*.md
 design-directions.html
 
 # Vendored third-party agent skills - reproducible from skills-lock.json

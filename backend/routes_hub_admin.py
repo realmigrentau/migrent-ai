@@ -58,7 +58,7 @@ from pydantic import BaseModel, Field, field_validator
 
 from auth_utils import forget_account_status
 from concurrency import run_parallel
-from db import get_supabase_admin
+from db import filter_term, get_supabase_admin
 from listing_lifecycle import forget_suspended_owners
 from hub_common import (
     ADMIN_ROLES,
@@ -427,7 +427,7 @@ def listing_queue(request: Request, queue: str = "review", q: Optional[str] = No
     if queue not in LISTING_QUEUES and queue != "all":
         raise HTTPException(status_code=400, detail="Unknown queue")
     sb = get_supabase_admin()
-    needle = (q or "").strip().replace(",", " ").replace("(", " ").replace(")", " ")[:80]
+    needle = filter_term(q)
     clauses: list[str] = []
     if needle:
         # Title, suburb, the owner's name or email, or a pasted listing id.
@@ -1143,8 +1143,8 @@ def find_users(
     sb = get_supabase_admin()
     query = sb.table("profiles").select("id, name, preferred_name, email, role, is_admin, created_at, disabled_at", count="exact")
     needle = (q or "").strip()
-    if len(needle) >= 2:
-        safe = needle.replace(",", " ").replace("(", " ").replace(")", " ")[:80]
+    safe = filter_term(needle)
+    if len(safe) >= 2:
         query = query.or_(f"name.ilike.%{safe}%,preferred_name.ilike.%{safe}%,email.ilike.%{safe}%")
     if role in ROLE_FILTER:
         query = query.in_("role", ROLE_FILTER[role])

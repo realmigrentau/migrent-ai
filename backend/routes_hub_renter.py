@@ -310,7 +310,7 @@ def get_documents(request: Request, authorization: Optional[str] = Header(None))
 
 @router.post("/documents")
 @limiter.limit("20/hour")
-async def upload_document(
+def upload_document(
     request: Request,
     file: UploadFile = File(...),
     kind: str = Form(...),
@@ -323,7 +323,9 @@ async def upload_document(
     require_writable(actor)
     if kind not in DOCUMENT_KINDS:
         raise HTTPException(status_code=400, detail="Choose what kind of document this is")
-    data = await file.read()
+    # A plain def, not async: FastAPI runs it on a worker thread, so decoding
+    # and re-encoding a large photo cannot stall every other request.
+    data = file.file.read()
     try:
         content_type, ext = validate_private_document(data)
     except ImageValidationError as e:

@@ -37,7 +37,9 @@ router = APIRouter(prefix="/internal", tags=["internal"])
 
 def _require_cron_secret(provided: str | None) -> None:
     expected = os.environ.get("CRON_SECRET", "")
-    if not expected or not provided or not hmac.compare_digest(provided, expected):
+    # Compared as bytes: compare_digest raises on a str with non-ASCII
+    # characters, which turned an odd header into a 500 instead of a 401.
+    if not expected or not provided or not hmac.compare_digest(provided.encode(), expected.encode()):
         raise HTTPException(status_code=401, detail="Unauthorized")
 
 

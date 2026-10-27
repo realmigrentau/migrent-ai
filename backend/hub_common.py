@@ -24,11 +24,11 @@ from fastapi import HTTPException, Request
 
 from auth_utils import (
     MFA_STEP_UP_DETAIL,
-    get_current_user,
     mfa_enrolled,
     mfa_enrolled_cached,
     require_live_session,
     session_aal,
+    verify_token,
 )
 from concurrency import run_parallel
 from db import get_supabase_admin
@@ -151,7 +151,7 @@ def hub_actor(request: Request, authorization: Optional[str]) -> HubActor:
     """
     if not authorization:
         raise HTTPException(status_code=401, detail="Sign in to continue")
-    user = get_current_user(authorization)
+    user = verify_token(authorization)
     uid = str(user.id)
     sb = get_supabase_admin()
 

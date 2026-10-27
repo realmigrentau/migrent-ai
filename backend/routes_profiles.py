@@ -246,7 +246,7 @@ def get_featured_profiles(request: Request):
 
 @router.post("/me/photo")
 @limiter.limit("10/minute")
-async def upload_profile_photo(request: Request, file: UploadFile = File(...), authorization: str = Header(...)):
+def upload_profile_photo(request: Request, file: UploadFile = File(...), authorization: str = Header(...)):
     """Upload a profile photo to Supabase storage and update the profile."""
     from uploads import ImageValidationError, prepare_public_image
 
@@ -255,7 +255,9 @@ async def upload_profile_photo(request: Request, file: UploadFile = File(...), a
         sb = get_supabase_admin()
         uid = str(user.id)
 
-        content = await file.read()
+        # A plain def, not async: FastAPI runs it on a worker thread, so decoding
+        # and re-encoding a large photo cannot stall every other request.
+        content = file.file.read()
         try:
             prepared = prepare_public_image(content, max_bytes=5 * 1024 * 1024, max_side=1024)
         except ImageValidationError as e:

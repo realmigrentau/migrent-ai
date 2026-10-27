@@ -273,7 +273,7 @@ def _sign_attachments(sb, messages: list[dict]) -> list[dict]:
 
 @router.post("/attachments")
 @limiter.limit("20/minute")
-async def upload_attachment(
+def upload_attachment(
     request: Request,
     file: UploadFile = File(...),
     authorization: str = Header(...),
@@ -288,7 +288,9 @@ async def upload_attachment(
 
     user = get_active_user(authorization)
     uid = str(user.id)
-    data = await file.read()
+    # A plain def, not async: FastAPI runs it on a worker thread, so decoding
+    # and re-encoding a large photo cannot stall every other request.
+    data = file.file.read()
     try:
         content_type, ext = validate_private_document(data)
         if not sniff_pdf(data):

@@ -1,5 +1,6 @@
 """
-Local token verification (auth_utils.get_current_user).
+Local token verification (auth_utils.verify_token, the token check inside
+get_current_user; the two-step check on top is in test_security_review.py).
 
 Tokens signed with the project's asymmetric key are checked in-process
 instead of with a network call to Supabase Auth. These pin that a good token
@@ -49,7 +50,7 @@ def test_a_good_token_is_accepted_without_a_network_call(monkeypatch):
         raise AssertionError("should not call Supabase for an ES256 token")
 
     monkeypatch.setattr(auth_utils, "get_supabase_admin", no_network)
-    user = auth_utils.get_current_user(f"Bearer {_token()}")
+    user = auth_utils.verify_token(f"Bearer {_token()}")
     assert user.id == USER_ID
     assert user.email == "renter@example.test"
     assert user.user_metadata == {"user_type": "seeker"}
@@ -68,7 +69,7 @@ def test_a_good_token_is_accepted_without_a_network_call(monkeypatch):
 )
 def test_a_bad_token_is_refused(token):
     with pytest.raises(HTTPException) as err:
-        auth_utils.get_current_user(f"Bearer {token}")
+        auth_utils.verify_token(f"Bearer {token}")
     assert err.value.status_code == 401
 
 
@@ -76,7 +77,7 @@ def test_a_token_without_a_subject_is_refused():
     now = int(time.time())
     token = jwt.encode({"aud": "authenticated", "iss": auth_utils.ISSUER, "exp": now + 60}, KEY, algorithm="ES256")
     with pytest.raises(HTTPException):
-        auth_utils.get_current_user(f"Bearer {token}")
+        auth_utils.verify_token(f"Bearer {token}")
 
 
 def test_an_hs256_token_falls_back_to_supabase_and_is_remembered(monkeypatch):
@@ -90,14 +91,14 @@ def test_an_hs256_token_falls_back_to_supabase_and_is_remembered(monkeypatch):
     monkeypatch.setattr(auth_utils, "get_supabase_admin", lambda: SimpleNamespace(auth=FakeAuth()))
     token = jwt.encode({"sub": USER_ID, "exp": int(time.time()) + 3600}, "legacy-secret", algorithm="HS256")
     for _ in range(3):
-        assert auth_utils.get_current_user(f"Bearer {token}").id == USER_ID
+        assert auth_utils.verify_token(f"Bearer {token}").id == USER_ID
     assert len(calls) == 1
 
 
 def test_a_missing_or_malformed_header_is_refused():
     for header in ("", "Token abc", "Bearer ", "Bearer    "):
         with pytest.raises(HTTPException) as err:
-            auth_utils.get_current_user(header)
+            auth_utils.verify_token(header)
         assert err.value.status_code == 401
 
 
@@ -112,7 +113,7 @@ def test_a_revoked_admin_session_is_refused_even_with_a_valid_token(monkeypatch)
 
     monkeypatch.setattr(auth_utils, "get_supabase_admin", lambda: SimpleNamespace(auth=RevokedAuth()))
     header = f"Bearer {_token()}"
-    assert auth_utils.get_current_user(header).id == USER_ID
+    assert auth_utils.verify_token(header).id == USER_ID
     with pytest.raises(HTTPException) as err:
         auth_utils.require_live_session(header, USER_ID)
     assert err.value.status_code == 401

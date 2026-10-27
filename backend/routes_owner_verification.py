@@ -103,16 +103,18 @@ def upload_government_id(
     if document_type not in valid_types:
         raise HTTPException(status_code=400, detail=f"Document type must be one of: {', '.join(valid_types)}")
 
-    # Validate file type
-    allowed_mimes = ["image/jpeg", "image/png", "image/webp", "application/pdf"]
-    if file.content_type not in allowed_mimes:
-        raise HTTPException(status_code=400, detail="File must be JPEG, PNG, WebP, or PDF")
+    # The type comes from the file's own first bytes, never from the
+    # browser's Content-Type or the file name: both are whatever the sender
+    # typed, so any file could be stored under an image label and name.
+    from uploads import ImageValidationError, validate_private_document
 
-    # Validate file size (max 10MB)
     file_content = file.file.read()
     if len(file_content) > 10 * 1024 * 1024:
         raise HTTPException(status_code=400, detail="File size must be under 10MB")
-    file.file.seek(0)
+    try:
+        content_type, ext = validate_private_document(file_content)
+    except ImageValidationError:
+        raise HTTPException(status_code=400, detail="File must be JPEG, PNG, WebP, or PDF")
 
     record = _get_or_create_verification(sb, str(user.id), user.email)
 
@@ -123,14 +125,13 @@ def upload_government_id(
         raise HTTPException(status_code=400, detail="You already have a pending ID submission. Please wait for review.")
 
     # Upload to Supabase Storage
-    ext = file.filename.split(".")[-1] if file.filename and "." in file.filename else "jpg"
     storage_path = f"{user.id}/{document_type}_{int(datetime.now(timezone.utc).timestamp())}.{ext}"
 
     try:
         sb.storage.from_("owner-id-docs").upload(
             path=storage_path,
             file=file_content,
-            file_options={"content-type": file.content_type or "application/octet-stream"},
+            file_options={"content-type": content_type},
         )
     except Exception as e:
         logger.error(f"[Verify] Storage upload failed: {e}")

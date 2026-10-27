@@ -55,7 +55,8 @@ def token(user_id: str, group: str) -> str:
 
 
 def valid(user_id: str, group: str, tok: str) -> bool:
-    return bool(user_id and group in GROUP_LABELS and tok) and hmac.compare_digest(token(user_id, group), tok)
+    # As bytes: compare_digest raises on a str with non-ASCII characters.
+    return bool(user_id and group in GROUP_LABELS and tok) and hmac.compare_digest(token(user_id, group).encode(), tok.encode())
 
 
 def _query(user_id: str, group: str) -> str:

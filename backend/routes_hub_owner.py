@@ -723,7 +723,7 @@ async def submit_draft(draft_id: str, request: Request, authorization: Optional[
 
 @router.post("/listing-photos")
 @limiter.limit("120/hour")
-async def upload_listing_photo(request: Request, file: UploadFile = File(...), authorization: Optional[str] = Header(None)):
+def upload_listing_photo(request: Request, file: UploadFile = File(...), authorization: Optional[str] = Header(None)):
     """Validate by content (not the file name), strip EXIF, re-encode to WebP
     and store under the owner's folder in the public listing bucket."""
     from uploads import ImageValidationError, prepare_public_image
@@ -731,7 +731,9 @@ async def upload_listing_photo(request: Request, file: UploadFile = File(...), a
     actor = hub_actor(request, authorization)
     require_writable(actor)
     require_owner(actor)
-    data = await file.read()
+    # A plain def, not async: FastAPI runs it on a worker thread, so decoding
+    # and re-encoding a large photo cannot stall every other request.
+    data = file.file.read()
     try:
         prepared = prepare_public_image(data, max_bytes=15 * 1024 * 1024, max_side=2400, min_side=400)
     except ImageValidationError as e:

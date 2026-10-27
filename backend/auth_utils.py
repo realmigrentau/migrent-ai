@@ -151,8 +151,10 @@ def require_live_session(authorization: str, user_id: str) -> None:
         raise HTTPException(status_code=401, detail="Your session has ended. Sign in again.")
 
 
-def get_current_user(authorization: str):
-    """Validate the Bearer token and return the user."""
+def verify_token(authorization: str):
+    """Validate the Bearer token and return the user. Checks the token only:
+    callers that use this directly make their own two-step decision (the
+    Hub's hub_actor, get_active_user, require_admin)."""
     if not authorization or not authorization.startswith("Bearer "):
         raise HTTPException(status_code=401, detail="Invalid authorization header")
     token = authorization.removeprefix("Bearer ").strip()
@@ -162,6 +164,20 @@ def get_current_user(authorization: str):
     if user is not None:
         return user
     return _verify_remotely(token)
+
+
+def get_current_user(authorization: str):
+    """Validate the Bearer token and return the user, refusing a session that
+    skipped the two-step check the account has set up.
+
+    Until 2026-10 only the Hub and the routes that change something asked
+    for the code; the rest (messages, bookings, notifications, support
+    tickets, /profiles/me with the home address) answered a password-only
+    session, so a stolen password still read an account that had turned
+    two-step verification on."""
+    user = verify_token(authorization)
+    require_mfa_if_enrolled(str(user.id), authorization)
+    return user
 
 
 # ---------------------------------------------------------------------------
@@ -215,9 +231,9 @@ def forget_account_status(user_id: str) -> None:
 
 
 def get_active_user(authorization: str):
-    """get_current_user(), refusing suspended accounts (403) and sessions
+    """The signed-in user, refusing suspended accounts (403) and sessions
     that skipped a two-step check the account has set up."""
-    user = get_current_user(authorization)
+    user = verify_token(authorization)
     uid = str(user.id)
     # Both lookups are cached briefly; on a miss they are separate round
     # trips, so start them together and decide in the original order.
@@ -250,7 +266,9 @@ def get_active_user(authorization: str):
 #    through the user_mfa_enrolled() database function (migration 046) and
 #    cached briefly. If that function is missing (the API deployed before the
 #    migration), this check is skipped with a warning rather than locking
-#    everyone out.
+#    everyone out; any other failure refuses the request (503).
+#  - get_current_user() applies it to every signed-in route; verify_token()
+#    is the token check alone, for callers that decide two-step themselves.
 #  - Admin access always needs aal2 (admin_panel.require_admin_mfa).
 # ---------------------------------------------------------------------------
 
@@ -290,14 +308,25 @@ def mfa_enrolled(user_id: str) -> bool:
     try:
         res = get_supabase_admin_client().rpc("user_mfa_enrolled", {"uid": user_id}).execute()
         enrolled = bool(res.data)
-    except Exception:
-        logger.warning("user_mfa_enrolled() unavailable; two-step check skipped (has migration 046 run?)")
-        return False
+    except Exception as e:
+        if _function_missing(e):
+            logger.warning("user_mfa_enrolled() missing; two-step check skipped (has migration 046 run?)")
+            return False
+        # Any other failure (a network blip, a timeout) must not wave a
+        # password-only session through: refuse, and let the person retry.
+        logger.warning("user_mfa_enrolled() failed; refusing the request", exc_info=True)
+        raise HTTPException(status_code=503, detail="We could not confirm your sign-in just now. Try again in a moment.")
     with _mfa_lock:
         if len(_mfa_cache) >= REMOTE_CACHE_MAX:
             _mfa_cache.clear()
         _mfa_cache[user_id] = (now + MFA_CACHE_SECONDS, enrolled)
     return enrolled
+
+
+def _function_missing(exc: Exception) -> bool:
+    """PostgREST's answer for a database function that does not exist."""
+    text = str(exc)
+    return "PGRST202" in text or "Could not find the function" in text
 
 
 def require_mfa_if_enrolled(user_id: str, authorization: Optional[str]) -> None:
@@ -349,7 +378,7 @@ def get_optional_user(authorization):
 def require_admin(authorization: str):
     """Validate the token and require an admin role from the database, a
     live session and a two-step sign-in."""
-    user = get_current_user(authorization)
+    user = verify_token(authorization)
     from concurrency import run_parallel
 
     def live_check() -> Optional[HTTPException]:

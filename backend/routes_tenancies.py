@@ -522,7 +522,7 @@ def add_update(request_id: str, request: Request, body: UpdateBody, authorizatio
 
 @router.post("/maintenance/{request_id}/photos")
 @limiter.limit("30/hour")
-async def add_photo(request_id: str, request: Request, file: UploadFile = File(...), authorization: Optional[str] = Header(None)):
+def add_photo(request_id: str, request: Request, file: UploadFile = File(...), authorization: Optional[str] = Header(None)):
     from uploads import ImageValidationError, prepare_public_image
 
     actor = hub_actor(request, authorization)
@@ -531,7 +531,9 @@ async def add_photo(request_id: str, request: Request, file: UploadFile = File(.
     r, _viewer_kind = _load_request(sb, actor, request_id)
     if len(r.get("photos") or []) >= 8:
         raise HTTPException(status_code=400, detail="Up to 8 photos per request")
-    data = await file.read()
+    # A plain def, not async: FastAPI runs it on a worker thread, so decoding
+    # and re-encoding a large photo cannot stall every other request.
+    data = file.file.read()
     try:
         prepared = prepare_public_image(data, max_bytes=10 * 1024 * 1024, max_side=2048, min_side=100)
     except ImageValidationError as e:

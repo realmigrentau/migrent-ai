@@ -6,9 +6,10 @@ from fastapi import APIRouter, Header, HTTPException, Request, Response
 from pydantic import BaseModel, Field
 from supabase import create_client
 
+from admin_panel import admin_mfa_ok
 from auth_utils import get_current_user, is_admin_user, require_live_session, get_active_user
 from concurrency import run_parallel
-from db import SUPABASE_ANON_KEY, SUPABASE_URL, get_supabase_admin
+from db import SUPABASE_ANON_KEY, SUPABASE_URL, filter_term, get_supabase_admin
 from limiter import limiter
 from listing_rules import advance_limit_message, location_problem, max_rent_in_advance_weeks
 from hub_common import state_for_postcode
@@ -633,6 +634,8 @@ def search_listings(
         raise HTTPException(status_code=400, detail="max_price must be at least min_price")
 
     sb = get_supabase_admin()
+    # Goes into filter syntax below, so only plain words (db.filter_term).
+    place_words = filter_term(address)
 
     def base_query(select_cols: str, count: Optional[str] = None):
         q = sb.table("listings").select(select_cols, count=count) if count else sb.table("listings").select(select_cols)
@@ -649,9 +652,9 @@ def search_listings(
             q = q.ilike("suburb", f"%{suburb}%")
         if postcode:
             q = q.eq("postcode", int(postcode))
-        if address:
+        if place_words:
             # Street addresses are private; match the suburb and city instead.
-            q = q.or_(f"suburb.ilike.%{address}%,city.ilike.%{address}%")
+            q = q.or_(f"suburb.ilike.%{place_words}%,city.ilike.%{place_words}%")
         if state:
             state_city_map = {
                 "NSW": ["Sydney"], "VIC": ["Melbourne"], "QLD": ["Brisbane"], "WA": ["Perth"],
@@ -834,7 +837,9 @@ def get_listing_by_id(
     is_admin = False
     if viewer is not None and not is_owner:
         try:
-            is_admin = is_admin_user(viewer)
+            # The management view (street address, exact pin) is admin data:
+            # it needs the same two-step sign-in as the Admin panel.
+            is_admin = is_admin_user(viewer) and admin_mfa_ok(authorization)
             if is_admin:
                 # Admin sessions are checked live (auth_utils.require_live_session).
                 require_live_session(authorization, viewer_id)
