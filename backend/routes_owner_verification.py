@@ -35,12 +35,16 @@ def _get_or_create_verification(sb, user_id: str, user_email: str) -> dict:
     if res.data:
         return res.data[0]
 
-    # Check if email is verified via Supabase Auth
+    # Check if email is verified via Supabase Auth. The answer is stored and
+    # never re-read, so a failed lookup refuses rather than guessing: "yes"
+    # would mark an unconfirmed address verified for good, "no" would block
+    # a real owner for good.
     try:
         user_res = sb.auth.admin.get_user_by_id(user_id)
-        email_verified = getattr(user_res, 'user', None) and getattr(user_res.user, 'email_confirmed_at', None) is not None
+        email_verified = bool(getattr(user_res, 'user', None) and getattr(user_res.user, 'email_confirmed_at', None) is not None)
     except Exception:
-        email_verified = True  # Assume verified if we can't check
+        logger.warning("owner verification: email lookup failed for %s", user_id, exc_info=True)
+        raise HTTPException(status_code=503, detail="We could not confirm your account just now. Try again in a moment.")
 
     new_record = {
         "user_id": user_id,

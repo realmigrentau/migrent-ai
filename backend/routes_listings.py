@@ -1,4 +1,5 @@
 import logging
+import re
 from datetime import date, datetime, timezone
 from typing import Optional
 
@@ -377,7 +378,20 @@ async def create_listing(
 # ---------------------------------------------------------------------------
 
 
+_LISTING_ID_RE = re.compile(r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", re.IGNORECASE)
+
+
+def _listing_id_or_404(listing_id: str) -> None:
+    """A listing id that is not a UUID cannot exist, so answer 404 before
+    asking the database. Postgres rejects it as invalid uuid syntax, which
+    used to come back as a 500 for any bad link (/listings/public, a cut-off
+    share link)."""
+    if not _LISTING_ID_RE.match(listing_id or ""):
+        raise HTTPException(status_code=404, detail="Listing not found")
+
+
 def _owner_row_or_404(sb, listing_id: str, user_id: str, columns: str = "id, owner_id, moderation_status, available_from, available_to, title") -> dict:
+    _listing_id_or_404(listing_id)
     res = sb.table("listings").select(columns).eq("id", listing_id).execute()
     if not res.data:
         raise HTTPException(status_code=404, detail="Listing not found")
@@ -822,6 +836,7 @@ def get_listing_by_id(
     with public_state = "expired" and no booking data so the page can say so
     honestly instead of pretending the room is still on offer.
     """
+    _listing_id_or_404(listing_id)
     sb = get_supabase_admin()
     res = sb.table("listings").select("*").eq("id", listing_id).execute()
     if not res.data:
@@ -1040,6 +1055,7 @@ async def update_listing(
     """Update a listing. Only the owner can update their own listing."""
     user = get_active_user(authorization)
     user_id = str(user.id)
+    _listing_id_or_404(listing_id)
     sb = get_supabase_admin()
 
     listing_res = sb.table("listings").select("id, owner_id, moderation_status, address, suburb, postcode, latitude, longitude, available_from, available_to, title, description, images, weekly_price, bond_weeks, rent_in_advance_weeks").eq("id", listing_id).execute()
@@ -1193,6 +1209,7 @@ def delete_listing(
     """
     user = get_current_user(authorization)
     user_id = str(user.id)
+    _listing_id_or_404(listing_id)
 
     sb_admin = get_supabase_admin()
     listing_res = sb_admin.table("listings").select("id, owner_id, moderation_status").eq("id", listing_id).execute()
