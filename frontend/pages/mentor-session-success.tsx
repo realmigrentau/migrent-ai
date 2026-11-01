@@ -3,6 +3,11 @@ import { ArrowRight, CheckCircle2 } from "lucide-react";
 import SEOHead from "../components/SEOHead";
 import StatusPage from "../components/site/StatusPage";
 import { hubFromSite } from "../lib/hub/routes";
+import type { GetStaticProps } from "next";
+import { siteIdentity } from "../lib/siteIdentity";
+
+/** A real 404 while the mentor marketplace is closed (siteIdentity.launchScope). */
+export const getStaticProps: GetStaticProps = async () => (siteIdentity.launchScope.mentors ? { props: {} } : { notFound: true });
 
 /**
  * Where Stripe sends someone after paying for a mentor session (backend

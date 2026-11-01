@@ -9,6 +9,7 @@ import { Panel } from "../ui/Layout";
 import { BATHROOM_TYPES, GENDER, HIGHLIGHTS, LAUNDRY, PLACE_TYPES, PROPERTY_TYPES, STATES, isRoom, stateForPostcode, type DraftData } from "../../../lib/hub/listingDraft";
 import type { ListingCard } from "../../../lib/hub/types";
 import { cn } from "../../../lib/cn";
+import { siteIdentity } from "../../../lib/siteIdentity";
 
 /** The listing forms, shared by the new-listing wizard and the edit page. */
 
@@ -356,7 +357,9 @@ export function RentStep({ d, set, err }: StepProps) {
       <Group title="What kind of stay">
         <div className="grid gap-3 sm:grid-cols-2">
           <ChoiceCard name="purpose" value="long_term" selected={purpose === "long_term"} onSelect={() => set({ listing_purpose: "long_term" })} title="A lease" description="Months or longer. Renters apply; you choose; Migrent checks and finalises." />
-          <ChoiceCard name="purpose" value="short_stay" selected={purpose === "short_stay"} onSelect={() => set({ listing_purpose: "short_stay" })} title="A shorter stay" description="Weeks at a time, requested by the stay." />
+          {(siteIdentity.launchScope.shortStays || purpose === "short_stay") && (
+            <ChoiceCard name="purpose" value="short_stay" selected={purpose === "short_stay"} onSelect={() => set({ listing_purpose: "short_stay" })} title="A shorter stay" description="Weeks at a time, requested by the stay." />
+          )}
         </div>
       </Group>
       <Group title="Rent">

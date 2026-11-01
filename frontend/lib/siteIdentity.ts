@@ -41,9 +41,10 @@ export const siteIdentity = {
     confirmed: false,
   },
 
-  /** The domain the site is actually served from. migrent.com.au is
-   * registered but has no DNS, so it must not appear in canonical URLs,
-   * sitemaps or "contact us at" copy until it resolves. */
+  /** The domain the site is actually served from. migrent.com.au is not
+   * registered yet (auDA had no record of it on 2026-11-01), so it must not
+   * appear in canonical URLs, sitemaps or "contact us at" copy until it is
+   * registered and resolves. */
   domain: SITE_URL,
   plannedDomain: "https://migrent.com.au",
   plannedDomainLive: false,
@@ -87,6 +88,13 @@ export const siteIdentity = {
      * host fee only. */
     holdsRentOrBond: false,
   },
+
+  /** What is open at launch (owner decision, 2026-11-01): leases only.
+   * Short stays are the only thing the host fee is charged on, so while they
+   * are off, listing is free. Mirrors SHORT_STAYS_ENABLED and
+   * MENTORS_ENABLED on the backend (billing.py); test_launch_scope.py checks
+   * these defaults. */
+  launchScope: { shortStays: false, mentors: false },
 
   /** Effective and review dates for legal documents. Unknown dates are
    * null and rendered as "under review" rather than invented. */
@@ -134,10 +142,14 @@ export function supportPromise(): string {
 }
 
 export function hostFeeSentence(): string {
+  if (!siteIdentity.launchScope.shortStays) {
+    return "Hosts pay nothing while Migrent launches: no listing fee, no fee to take a tenant and no commission on rent.";
+  }
   const { listingFee, chargedWhen } = siteIdentity.fees.host;
   return `Hosts pay a one-off AUD $${listingFee} per property, ${chargedWhen}. Nothing before, nothing after.`;
 }
 
 export function seekerFeeSentence(): string {
-  return "Browsing, messaging, inspections and applying are free for renters, and Migrent never handles your rent or bond. Mentor sessions are optional and priced by each mentor.";
+  const free = "Browsing, messaging, inspections and applying are free for renters, and Migrent never handles your rent or bond.";
+  return siteIdentity.launchScope.mentors ? `${free} Mentor sessions are optional and priced by each mentor.` : free;
 }

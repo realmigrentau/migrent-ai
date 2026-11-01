@@ -31,3 +31,15 @@ Only to the owner, to admins, and (product decision pending, see `docs/legal/ide
 
 1. Add the column to `PUBLIC_LISTING_FIELDS` in `public_dto.py` **and** to the `public_listings` view in a new migration.
 2. If it must stay private, add it to `FORBIDDEN_PUBLIC_LISTING_FIELDS` so the tests fail if it ever leaks.
+
+## Accepted Supabase advisor warnings
+
+Checked against the live database on 2026-11-01. These are deliberate. Do not "fix" them without replacing what they do.
+
+| Advisor finding | Why it stays |
+|---|---|
+| `security_definer_view` (ERROR): `public.public_listings` | It is the only public way into listings. It runs as its owner so it can read `listings` (which `anon` and `authenticated` have no grant on) and it returns only approved, visible, unexpired listings from accounts that are not suspended, with suburb and postcode instead of the street address, coordinates jittered and rounded, and the owner's `public_id` instead of their auth id. Making it `security_invoker` would need a browser grant on `listings`, which is exactly what 052 removed. |
+| `anon_security_definer_function_executable` / `authenticated_...`: `public.get_public_profile(lookup text)` | It is how the browser reads one profile. It accepts only a UUID or a 4 to 40 character public id (anything else returns null), reads `public_profiles` (public fields only, `disabled_at IS NULL`, so never a suspended account), and drops the internal `id` for signed-out callers. `public_profiles` itself has no `anon` or `authenticated` grant, so profiles cannot be listed. |
+| `authenticated_security_definer_function_executable`: `current_user_is_admin()`, `is_superadmin()` | They answer only about the caller and return a boolean. |
+| `pg_graphql_*_table_exposed`: `public_listings`, `help_articles`, `help_article_categories`, `stations`, `suburbs`, `uni_locations`, `visa_types` | Public reference data and the public listings view. Nothing private is exposed. |
+| `rls_enabled_no_policy` (INFO) on 50 tables | Intended: RLS on with no policies and no browser grants means the browser cannot read or write them at all. Every read and write goes through the API with the service role. |

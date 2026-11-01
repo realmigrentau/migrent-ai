@@ -96,10 +96,17 @@ export default function EarningsEstimate() {
             <dt className="site-body">Long-term tenancy fee</dt>
             <dd className="m-0 text-[15px] font-bold text-[color:var(--color-ink)]">$0</dd>
           </div>
-          <div className="flex items-baseline justify-between gap-4 py-3">
-            <dt className="site-body">Stay bookings</dt>
-            <dd className="m-0 text-right text-[15px] font-bold text-[color:var(--color-ink)]">{aud(fee)} once per property</dd>
-          </div>
+          {siteIdentity.launchScope.shortStays ? (
+            <div className="flex items-baseline justify-between gap-4 py-3">
+              <dt className="site-body">Stay bookings</dt>
+              <dd className="m-0 text-right text-[15px] font-bold text-[color:var(--color-ink)]">{aud(fee)} once per property</dd>
+            </div>
+          ) : (
+            <div className="flex items-baseline justify-between gap-4 py-3">
+              <dt className="site-body">Listing fee</dt>
+              <dd className="m-0 text-[15px] font-bold text-[color:var(--color-ink)]">$0</dd>
+            </div>
+          )}
         </dl>
       </div>
     </div>

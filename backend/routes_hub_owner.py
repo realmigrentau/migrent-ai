@@ -608,6 +608,20 @@ def _draft_to_listing(data: dict) -> tuple[dict, str, Optional[int]]:
     return {k: v for k, v in payload.items() if v is not None}, purpose, min_stay_weeks
 
 
+def listing_purpose_problem(purpose: Optional[str]) -> Optional[str]:
+    """Why a listing type is refused, or None. Leases are always allowed.
+    Short stays only while billing.short_stays_open(). "Sale" is never
+    offered: Migrent lists homes to rent, and selling one is agent work."""
+    purpose = purpose or "long_term"
+    if purpose == "long_term":
+        return None
+    if purpose == "short_stay":
+        from billing import short_stays_open
+
+        return None if short_stays_open() else "Short stays are not open on Migrent yet. List this home as a lease."
+    return "Migrent lists homes to rent only"
+
+
 def draft_problems(data: dict) -> list[dict]:
     """Every field the listing API requires, as a list the wizard can point at."""
     problems = []
@@ -633,6 +647,9 @@ def draft_problems(data: dict) -> list[dict]:
         price = 0
     need(0 < price <= 50000, "pricing", "weekly_price", "Set the weekly rent")
     need(bool(data.get("available_from")), "availability", "available_from", "Choose when it is available from")
+    purpose_problem = listing_purpose_problem(data.get("listing_purpose"))
+    if purpose_problem:
+        problems.append({"step": "pricing", "field": "listing_purpose", "message": purpose_problem})
     problems.extend(cost_problems(data, data.get("listing_purpose") or "long_term"))
     if 800 <= pc <= 9999 and data.get("suburb"):
         place_problem = location_problem(data.get("suburb"), pc, data.get("state"))
@@ -697,7 +714,8 @@ async def submit_draft(draft_id: str, request: Request, authorization: Optional[
         link = {
             "property_id": property_id,
             "unit_label": (data.get("unit_label") or None),
-            "listing_purpose": purpose if purpose in ("long_term", "short_stay", "sale") else "long_term",
+            # draft_problems has already refused any type that is not open.
+            "listing_purpose": purpose if purpose in ("long_term", "short_stay") else "long_term",
         }
         if min_stay_weeks:
             link["min_stay_weeks"] = int(min_stay_weeks)
@@ -874,6 +892,10 @@ def update_unit(listing_id: str, request: Request, body: UnitPatch, authorizatio
     patch = body.model_dump(exclude_unset=True)
     if "listing_purpose" in patch and patch["listing_purpose"] not in ("long_term", "short_stay", "sale"):
         raise HTTPException(status_code=400, detail="Unknown listing type")
+    if "listing_purpose" in patch:
+        purpose_problem = listing_purpose_problem(patch["listing_purpose"])
+        if purpose_problem:
+            raise HTTPException(status_code=400, detail=purpose_problem)
     if patch.get("property_id"):
         _own_property(sb, actor, patch["property_id"])
     lo = patch.get("min_stay_weeks")

@@ -43,13 +43,22 @@ export interface StaticHelpArticle {
 const UPDATED = "2026-09-29";
 const FEE = siteIdentity.fees.host.listingFee;
 const SUPPORT = siteIdentity.emails.support;
+/** Short stays and mentors are closed at launch (siteIdentity.launchScope):
+ * their articles are left out and the fee answers say nobody pays. */
+const { shortStays: STAYS_OPEN, mentors: MENTORS_OPEN } = siteIdentity.launchScope;
+const STAY_ONLY_ARTICLES = new Set(["request-to-book", "instant-book-explained", "cancel-a-booking"]);
+const RENTER_COST = MENTORS_OPEN
+  ? "Nothing to search, message hosts, book inspections or apply. The only paid option is a session with a mentor, if you choose one; the mentor sets the price."
+  : "Nothing to search, message hosts, book inspections or apply.";
 
 const CATEGORY_DEFS: Omit<StaticHelpCategory, "articleCount">[] = [
   { id: "cat-1", slug: "getting-started", name: "Getting started", description: "What Migrent is, creating an account, and renting and hosting with one account.", icon: "Rocket" },
   { id: "cat-2", slug: "account-verification", name: "Your account and checks", description: "Your Rental Profile, ID checks, and keeping your sign-in secure.", icon: "ShieldCheck" },
   { id: "cat-3", slug: "search-matching", name: "Searching and applying", description: "Finding rooms, saving them, inspections and applications.", icon: "Search" },
   { id: "cat-4", slug: "listings-hosting", name: "Listing and hosting", description: "Creating a listing, photos, house rules, rent records and repairs.", icon: "Home" },
-  { id: "cat-5", slug: "bookings-payments", name: "Stays and fees", description: "Stay bookings, instant book, cancelling, and what Migrent charges.", icon: "CreditCard" },
+  STAYS_OPEN
+    ? { id: "cat-5", slug: "bookings-payments", name: "Stays and fees", description: "Stay bookings, instant book, cancelling, and what Migrent charges.", icon: "CreditCard" }
+    : { id: "cat-5", slug: "bookings-payments", name: "Fees", description: "What Migrent charges, and who pays.", icon: "CreditCard" },
   { id: "cat-6", slug: "safety-reporting", name: "Safety and reporting", description: "Reporting a person or listing, and what to do if you feel unsafe.", icon: "AlertTriangle" },
   { id: "cat-7", slug: "legal-policies", name: "Your rights", description: "Bonds and renting rights in Australia, in plain words.", icon: "FileText" },
   { id: "cat-8", slug: "technical-issues", name: "Signing in", description: "Getting back into your account.", icon: "Wrench" },
@@ -539,8 +548,11 @@ Read the listing's minimum and maximum stay and its house rules, and message the
     readingTime: 2,
     featured: true,
     type: "faq",
-    summary: `Renters search and apply for free. Hosts pay AUD $${FEE} once per property, and only for stays.`,
-    body: `## Renters
+    summary: STAYS_OPEN
+      ? `Renters search and apply for free. Hosts pay AUD $${FEE} once per property, and only for stays.`
+      : "Renters and hosts pay nothing while Migrent launches.",
+    body: STAYS_OPEN
+      ? `## Renters
 
 Searching, messaging hosts, booking inspections and applying are free. Migrent never handles your rent or your bond.
 
@@ -560,7 +572,18 @@ By card, through Stripe. Card details never reach Migrent's own servers, and Str
 
 ## A question about a charge
 
-Email ${SUPPORT}. See the [Terms of Service](/terms-of-service) for how refunds are handled.`,
+Email ${SUPPORT}. See the [Terms of Service](/terms-of-service) for how refunds are handled.`
+      : `## Renters
+
+Searching, messaging hosts, booking inspections and applying are free. Migrent never handles your rent or your bond.
+
+## Hosts
+
+Listing, editing, receiving applications and taking a tenant through an application are all free while Migrent launches. There is no subscription and no commission on rent, and you don't need a card to list.
+
+## A question about money
+
+Email ${SUPPORT}.`,
   },
   {
     id: "art-16",
@@ -703,7 +726,7 @@ Email ${SUPPORT} from the address you signed up with, and tell us what you see. 
 
 const categoryName = (slug: string) => CATEGORY_DEFS.find((c) => c.slug === slug)?.name ?? "Help";
 
-export const HELP_ARTICLES: StaticHelpArticle[] = ARTICLES.map((a) => ({
+export const HELP_ARTICLES: StaticHelpArticle[] = ARTICLES.filter((a) => STAYS_OPEN || !STAY_ONLY_ARTICLES.has(a.slug)).map((a) => ({
   ...a,
   categoryName: categoryName(a.category),
   updatedAt: UPDATED,
@@ -745,7 +768,7 @@ export const HELP_FAQ: HelpFaqGroup[] = [
     items: [
       { id: "save", q: "How do I hear about new rooms?", a: "In Migrent Hub, search in Discover and choose Save search. Under Saved you choose how often we tell you about new matches." },
       { id: "history", q: "Do I need an Australian rental history?", a: "No. You apply with your Rental Profile: your work or study, your household and your references. A local rental ledger is not required." },
-      { id: "cost", q: "What does it cost to rent through Migrent?", a: "Nothing to search, message hosts, book inspections or apply. The only paid option is a session with a mentor, if you choose one; the mentor sets the price." },
+      { id: "cost", q: "What does it cost to rent through Migrent?", a: RENTER_COST },
       { id: "address", q: "When do I see the street address?", a: "Once you book an inspection. Until then, listings show the suburb." },
       { id: "after", q: "What happens after a host approves my application?", a: "Migrent does a final review. Once it is finalised, you agree the terms with the host, lodge your bond with the bond authority, and your rent record and repairs live in Migrent Hub." },
     ],
@@ -754,7 +777,13 @@ export const HELP_FAQ: HelpFaqGroup[] = [
     id: "hosting",
     title: "Hosting",
     items: [
-      { id: "free", q: "Is listing free?", a: `Yes. Listing, editing and receiving applications are free, and long-term tenancies through applications have no fee. Stay bookings cost a one-off AUD $${FEE} per property, when the first one is confirmed.` },
+      {
+        id: "free",
+        q: "Is listing free?",
+        a: STAYS_OPEN
+          ? `Yes. Listing, editing and receiving applications are free, and long-term tenancies through applications have no fee. Stay bookings cost a one-off AUD $${FEE} per property, when the first one is confirmed.`
+          : "Yes. Listing, editing, receiving applications and taking a tenant through an application are all free while Migrent launches.",
+      },
       { id: "live", q: "How long until my listing is live?", a: "Your government ID is reviewed once, and each listing is read before it is published. You can save your listing as a draft while you wait." },
       { id: "choose", q: "How do I choose a renter?", a: "Review applications in Migrent Hub: each one shows a snapshot of the renter's profile, and you can keep private notes and a shortlist. When you approve someone, Migrent does a final review before the tenancy is set up." },
       { id: "rent", q: "Does Migrent collect the rent for me?", a: "No. Rent is paid to you the way you agree with your tenant. Migrent Hub keeps a shared record of what was due and what was paid." },

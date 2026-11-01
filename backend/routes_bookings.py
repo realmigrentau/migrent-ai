@@ -18,6 +18,7 @@ from notifications import send_push_to_user
 from notification_service import notify
 from limiter import limiter
 from payments import FEE_MODEL, HOST_LISTING_FEE_CENTS
+from billing import short_stays_open
 from listing_lifecycle import STATUS_APPROVED
 from public_dto import listing_public_state
 
@@ -136,6 +137,8 @@ def create_booking(
 ):
     user = get_active_user(authorization)
     user_id = str(user.id)
+    if not short_stays_open():
+        raise HTTPException(status_code=503, detail="Short stays are not open on Migrent yet. You can apply for homes to rent instead.")
     sb = get_supabase_admin()
 
     # Fetch listing

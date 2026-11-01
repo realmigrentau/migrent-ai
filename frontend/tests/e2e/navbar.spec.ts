@@ -1,5 +1,6 @@
 import { test, expect, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
+import { siteIdentity } from "../../lib/siteIdentity";
 
 /**
  * The site header: three 21st.dev components, one per layer.
@@ -16,6 +17,8 @@ import AxeBuilder from "@axe-core/playwright";
 
 const banner = (page: Page) => page.getByRole("banner");
 const trigger = (page: Page, name: string) => banner(page).getByRole("button", { name, exact: true });
+/** "Find a stay" has four items, or three while mentors are closed. */
+const STAY_ITEMS = siteIdentity.launchScope.mentors ? 4 : 3;
 
 test.describe("desktop", () => {
   test.skip(({ isMobile }) => isMobile, "the desktop row is replaced by the phone menu below lg");
@@ -56,7 +59,7 @@ test.describe("desktop", () => {
     await expect(trigger(page, "For owners")).toHaveAttribute("data-active", "true");
     await expect(trigger(page, "Find a stay")).not.toHaveAttribute("data-active", "true");
 
-    await page.goto("/mentors");
+    await page.goto("/how-renting-works");
     await expect(trigger(page, "Find a stay")).toHaveAttribute("data-active", "true");
   });
 
@@ -67,7 +70,7 @@ test.describe("desktop", () => {
     await expect(panel).toBeVisible();
     await expect(panel.locator(".site-nav__col-title")).toHaveText(["Search", "Before you rent"]);
     await expect(panel.getByRole("list", { name: "Search" }).getByRole("link")).toHaveCount(2);
-    await expect(panel.locator(".site-nav__box")).toHaveCount(4);
+    await expect(panel.locator(".site-nav__box")).toHaveCount(STAY_ITEMS);
     // Dorpdown's panel is border-only: no shadow.
     await expect(panel).toHaveCSS("box-shadow", "none");
     await expect(panel).toHaveCSS("border-top-left-radius", "16px");
@@ -175,7 +178,7 @@ test.describe("phone", () => {
     await stay.click();
     await expect(stay).toHaveAttribute("aria-expanded", "true");
     const links = sheet.locator("#mobile-section-stay").getByRole("link");
-    await expect(links).toHaveCount(4);
+    await expect(links).toHaveCount(STAY_ITEMS);
     for (const box of await links.evaluateAll((els) => els.map((e) => e.getBoundingClientRect().height))) {
       expect(box).toBeGreaterThanOrEqual(44);
     }

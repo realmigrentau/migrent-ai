@@ -32,6 +32,14 @@ APPROVED = "approved"
 REVIEW_FIELDS = ("review_status", "reviewed_at", "reviewed_by", "review_reason")
 
 
+def _require_open() -> None:
+    """New sign-ups, bookings and payout setup wait for billing.mentors_open()."""
+    from billing import mentors_open
+
+    if not mentors_open():
+        raise HTTPException(status_code=503, detail="Migrent mentors are not open yet.")
+
+
 def is_listed(mentor: dict) -> bool:
     return bool(mentor.get("active")) and mentor.get("review_status") == APPROVED
 
@@ -140,6 +148,10 @@ def list_mentors(
     limit: int = Query(20, ge=1, le=50),
     offset: int = Query(0, ge=0),
 ):
+    from billing import mentors_open
+
+    if not mentors_open():
+        return {"mentors": [], "count": 0}
     try:
         sb = get_supabase_admin()
 
@@ -169,6 +181,7 @@ def create_mentor(
     authorization: str = Header(...),
 ):
     user = get_active_user(authorization)
+    _require_open()
     user_id = str(user.id)
     sb = get_supabase_admin()
 
@@ -281,6 +294,7 @@ def create_session(
     authorization: str = Header(...),
 ):
     user = get_active_user(authorization)
+    _require_open()
     user_id = str(user.id)
     sb = get_supabase_admin()
 
@@ -476,6 +490,7 @@ def stripe_onboard(
     authorization: str = Header(...),
 ):
     user = get_active_user(authorization)
+    _require_open()
     user_id = str(user.id)
     sb = get_supabase_admin()
 
@@ -525,6 +540,10 @@ def stripe_onboard(
 
 @router.get("/{mentor_id}")
 def get_mentor(mentor_id: str):
+    from billing import mentors_open
+
+    if not mentors_open():
+        raise HTTPException(status_code=404, detail="Mentor not found")
     sb = get_supabase_admin()
 
     res = sb.table("mentors").select("*").eq("id", mentor_id).execute()

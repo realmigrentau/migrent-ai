@@ -1,5 +1,6 @@
 import type { GetServerSideProps } from "next";
 import { SITE_URL } from "../lib/site";
+import { siteIdentity } from "../lib/siteIdentity";
 import { API_BASE_URL } from "../lib/apiBase";
 import { getAllPosts } from "../data/blogPosts";
 import guidesContent from "../data/guidesContent";
@@ -32,8 +33,12 @@ const STATIC_PAGES: Entry[] = [
   { path: "/help", priority: "0.7", changefreq: "monthly" },
   { path: "/about", priority: "0.6", changefreq: "monthly" },
   { path: "/contact", priority: "0.5", changefreq: "yearly" },
-  { path: "/mentors", priority: "0.5", changefreq: "monthly" },
-  { path: "/become-mentor", priority: "0.4", changefreq: "monthly" },
+  ...(siteIdentity.launchScope.mentors
+    ? [
+        { path: "/mentors", priority: "0.5", changefreq: "monthly" },
+        { path: "/become-mentor", priority: "0.4", changefreq: "monthly" },
+      ]
+    : []),
   // The 15,334 individual suburb pages are in /sitemap-suburbs.xml, which
   // is a sitemap index over 5,000-URL chunks. Only the directory itself is here.
   { path: "/suburbs", priority: "0.8", changefreq: "weekly" },

@@ -88,7 +88,7 @@ const blogPosts: BlogPost[] = [
       {
         type: "paragraph",
         content:
-          "General listing sites can be overwhelming and they do not always cater to the unique needs of newcomers. Migrant-focused platforms like Migrent check hosts' ID, offer the site in several languages, and connect you with mentors who understand exactly what you are going through. Local migrant resource centres, Facebook groups for your nationality, and university housing offices are also excellent sources of leads and advice.",
+          "General listing sites can be overwhelming and they do not always cater to the unique needs of newcomers. Migrant-focused platforms like Migrent check hosts' ID and let you apply without a local rental history. Local migrant resource centres, Facebook groups for your nationality, and university housing offices are also excellent sources of leads and advice.",
       },
       {
         type: "paragraph",

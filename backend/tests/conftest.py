@@ -27,6 +27,11 @@ os.environ.setdefault("STRIPE_SECRET_KEY", "sk_test_placeholder")
 os.environ.setdefault("STRIPE_WEBHOOK_SECRET", "whsec_test_placeholder")
 os.environ.setdefault("CRON_SECRET", "cron-test-secret")
 os.environ.setdefault("ENV", "test")
+# Off in production for launch (billing.short_stays_open / mentors_open), on
+# here so the booking and mentor tests keep covering those flows for when
+# they return. test_launch_scope.py checks the switched-off behaviour.
+os.environ.setdefault("SHORT_STAYS_ENABLED", "true")
+os.environ.setdefault("MENTORS_ENABLED", "true")
 os.environ.pop("MAPTILER_API_KEY", None)
 os.environ.pop("RESEND_API_KEY", None)
 os.environ.pop("SENTRY_DSN", None)

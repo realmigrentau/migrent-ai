@@ -1,3 +1,5 @@
+import { siteIdentity } from "./siteIdentity";
+
 export interface NavLinkSimple {
   type: "link";
   href: string;
@@ -92,7 +94,9 @@ export const navItems: NavItem[] = [
       { href: "/seeker/search", iconPath: ICON.search, groupKey: "nav.group.search", titleKey: "nav.item.search.title", descKey: "nav.item.search.desc" },
       { href: "/suburbs", iconPath: ICON.compass, groupKey: "nav.group.search", titleKey: "nav.item.suburbs.title", descKey: "nav.item.suburbs.desc" },
       { href: "/how-renting-works", iconPath: ICON.shield, groupKey: "nav.group.beforeYouRent", titleKey: "nav.item.howItWorks.title", descKey: "nav.item.howItWorks.desc" },
-      { href: "/mentors", iconPath: ICON.route, groupKey: "nav.group.beforeYouRent", titleKey: "nav.item.mentors.title", descKey: "nav.item.mentors.desc" },
+      ...(siteIdentity.launchScope.mentors
+        ? [{ href: "/mentors", iconPath: ICON.route, groupKey: "nav.group.beforeYouRent", titleKey: "nav.item.mentors.title", descKey: "nav.item.mentors.desc" }]
+        : []),
     ],
   },
   {

@@ -1,5 +1,6 @@
 import { test, expect, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
+import { siteIdentity } from "../../lib/siteIdentity";
 
 /**
  * Migrent Hub journeys against the mock API (tests/e2e/hub-mock.mjs).
@@ -370,9 +371,19 @@ test.describe("trust and safety", () => {
   });
 
   test("a stay request shows how to pay the host safely", async ({ page }) => {
+    test.skip(!siteIdentity.launchScope.shortStays, "short stays are closed at launch");
     await signIn(page, "renter@example.test");
     await page.goto("/listing/11111111-1111-4111-8111-000000000099");
     await expect(page.getByTestId("stay-payment-warning")).toContainText("Never by gift card, crypto");
+  });
+
+  test("while short stays are closed, a stay listing can only be applied for", async ({ page }) => {
+    test.skip(siteIdentity.launchScope.shortStays, "short stays are open");
+    await signIn(page, "renter@example.test");
+    await page.goto("/listing/11111111-1111-4111-8111-000000000099");
+    await expect(page.getByRole("link", { name: "Apply" }).first()).toBeVisible();
+    await expect(page.getByRole("button", { name: /Request to book|Instant book/ })).toHaveCount(0);
+    await expect(page.getByTestId("stay-payment-warning")).toHaveCount(0);
   });
 });
 

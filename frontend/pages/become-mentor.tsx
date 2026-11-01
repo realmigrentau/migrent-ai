@@ -11,6 +11,11 @@ import { useMounted } from "../hooks/useMounted";
 import { useToast } from "../components/ui/Toast";
 import { hubFromSite } from "../lib/hub/routes";
 import { API_BASE_URL as BASE_URL } from "../lib/apiBase";
+import type { GetStaticProps } from "next";
+import { siteIdentity } from "../lib/siteIdentity";
+
+/** A real 404 while the mentor marketplace is closed (siteIdentity.launchScope). */
+export const getStaticProps: GetStaticProps = async () => (siteIdentity.launchScope.mentors ? { props: {} } : { notFound: true });
 
 /**
  * Sign up as a local mentor. One form instead of the old three steps.

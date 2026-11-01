@@ -26,7 +26,7 @@ const TOPICS = [
   { value: "VERIFY", label: "ID checks" },
   { value: "LISTING", label: "A listing I manage" },
   { value: "APPLICATION", label: "An application or inspection" },
-  { value: "BOOKING", label: "A stay booking or a fee" },
+  { value: "BOOKING", label: siteIdentity.launchScope.shortStays ? "A stay booking or a fee" : "Money or payments" },
   { value: "SAFETY", label: "Safety, or reporting someone" },
   { value: "GENERAL", label: "Something else" },
 ] as const;

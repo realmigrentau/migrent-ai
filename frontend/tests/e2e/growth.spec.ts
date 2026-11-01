@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { siteIdentity } from "../../lib/siteIdentity";
 
 /**
  * Phase E and F (MIGRENT_MASTER_AUDIT): pages search engines can find, and
@@ -36,7 +37,19 @@ test("a mentor or profile that does not exist is a real 404", async ({ request }
   expect((await request.get("/users/profile/!!")).status()).toBe(404);
 });
 
+test("while mentors are closed, every mentor page is a real 404", async ({ request }) => {
+  test.skip(siteIdentity.launchScope.mentors, "mentors are open");
+  // /mentor-session-success sends signed-out visitors to sign in first (proxy.ts).
+  for (const path of ["/mentors", "/become-mentor", "/mentor/11111111-1111-4111-8111-000000000001"]) {
+    expect((await request.get(path)).status(), path).toBe(404);
+  }
+  const sitemap = await (await request.get("/sitemap.xml")).text();
+  expect(sitemap).not.toContain("/mentors");
+  expect(sitemap).not.toContain("/become-mentor");
+});
+
 test("become a mentor has its heading in the server's HTML", async ({ request }) => {
+  test.skip(!siteIdentity.launchScope.mentors, "mentors are closed at launch");
   const html = await (await request.get("/become-mentor")).text();
   expect(html).toContain("their feet.");
 });
@@ -58,4 +71,13 @@ test("the language menu is hidden while only English is offered", async ({ page,
   test.skip(isMobile, "desktop header");
   await page.goto("/pricing");
   await expect(page.getByRole("banner").getByRole("button", { name: /language/i })).toHaveCount(0);
+});
+
+test("while short stays are closed, pricing says hosts pay nothing", async ({ page }) => {
+  test.skip(siteIdentity.launchScope.shortStays, "short stays are open");
+  await page.goto("/pricing");
+  const main = page.getByRole("main");
+  await expect(main.getByText("Free to list. Free to find a tenant.")).toBeVisible();
+  await expect(main).not.toContainText(`$${siteIdentity.fees.host.listingFee}`);
+  await expect(main).not.toContainText(/mentor/i);
 });

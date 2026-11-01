@@ -13,9 +13,14 @@ import { hostFeeSentence, seekerFeeSentence, siteIdentity, supportPromise } from
  * table against named competitors, its "AI matching" and "Superhost"
  * answers and its cancellation promise are gone: none of them described
  * something Migrent does.
+ *
+ * At launch (siteIdentity.launchScope, owner decision 2026-11-01) short
+ * stays and mentors are switched off. Stays are the only thing the host fee
+ * is charged on, so the page then says, truthfully, that nobody pays.
  */
 
 const fee = siteIdentity.fees.host.listingFee;
+const { shortStays, mentors } = siteIdentity.launchScope;
 
 const PLANS = [
   {
@@ -23,42 +28,76 @@ const PLANS = [
     price: "$0",
     unit: "always",
     title: "Search, message, inspect and apply for free",
-    points: ["Every listing, no account needed to search", "Messages and inspection bookings", "Your Rental Profile and applications", "Rent record and repair requests after move-in", "Optional: mentor sessions, priced by each mentor"],
+    points: [
+      "Every listing, no account needed to search",
+      "Messages and inspection bookings",
+      "Your Rental Profile and applications",
+      "Rent record and repair requests after move-in",
+      ...(mentors ? ["Optional: mentor sessions, priced by each mentor"] : []),
+    ],
     cta: { label: "Search rooms", href: "/seeker/search" },
     featured: false,
   },
-  {
-    tag: "Hosts",
-    price: `$${fee}`,
-    unit: "AUD, once per property",
-    title: "Free to list. One fee, and only for stays.",
-    points: [
-      "Free to list, edit and receive applications",
-      "Long-term tenancies through applications: no fee",
-      `Stays (weeks at a time, booked on Migrent): $${fee} once per property, when the first one is confirmed`,
-      "No commission on rent, no subscription",
-    ],
-    cta: { label: "List a property", href: hubFromSite.listProperty() },
-    featured: true,
-  },
+  shortStays
+    ? {
+        tag: "Hosts",
+        price: `$${fee}`,
+        unit: "AUD, once per property",
+        title: "Free to list. One fee, and only for stays.",
+        points: [
+          "Free to list, edit and receive applications",
+          "Long-term tenancies through applications: no fee",
+          `Stays (weeks at a time, booked on Migrent): $${fee} once per property, when the first one is confirmed`,
+          "No commission on rent, no subscription",
+        ],
+        cta: { label: "List a property", href: hubFromSite.listProperty() },
+        featured: true,
+      }
+    : {
+        tag: "Hosts",
+        price: "$0",
+        unit: "while Migrent launches",
+        title: "Free to list. Free to find a tenant.",
+        points: [
+          "Free to list, edit and receive applications",
+          "Free to take a tenant through an application",
+          "No commission on rent, no subscription",
+          "No card needed to list",
+        ],
+        cta: { label: "List a property", href: hubFromSite.listProperty() },
+        featured: true,
+      },
 ];
 
-const FAQS: FaqEntry[] = [
-  { q: "What do renters pay?", a: seekerFeeSentence() },
-  { q: "What do hosts pay?", a: `${hostFeeSentence()} Listing a room and taking a long-term tenant through an application costs nothing.` },
-  { q: "What is the difference between a lease and a stay?", a: "A lease is a home for months or longer: renters apply, the host chooses, and Migrent charges nobody. A stay is a shorter booking of weeks at a time, requested and confirmed on Migrent. The host fee applies only to stays." },
-  { q: "Is there a monthly fee or a commission on rent?", a: "No. There is no subscription and no percentage of rent, ever." },
-  { q: "Does Migrent hold the rent or bond?", a: "No. Rent is paid to the host the way you agree, and the bond is lodged with your state or territory bond authority. Migrent never holds either." },
-  { q: "How is the host fee paid?", a: "By card through Stripe, when the first stay booking on that property is confirmed. Card details never reach Migrent's servers." },
-  { q: "Who do I ask about a charge?", a: supportPromise() },
-];
+const FAQS: FaqEntry[] = shortStays
+  ? [
+      { q: "What do renters pay?", a: seekerFeeSentence() },
+      { q: "What do hosts pay?", a: `${hostFeeSentence()} Listing a room and taking a long-term tenant through an application costs nothing.` },
+      { q: "What is the difference between a lease and a stay?", a: "A lease is a home for months or longer: renters apply, the host chooses, and Migrent charges nobody. A stay is a shorter booking of weeks at a time, requested and confirmed on Migrent. The host fee applies only to stays." },
+      { q: "Is there a monthly fee or a commission on rent?", a: "No. There is no subscription and no percentage of rent, ever." },
+      { q: "Does Migrent hold the rent or bond?", a: "No. Rent is paid to the host the way you agree, and the bond is lodged with your state or territory bond authority. Migrent never holds either." },
+      { q: "How is the host fee paid?", a: "By card through Stripe, when the first stay booking on that property is confirmed. Card details never reach Migrent's servers." },
+      { q: "Who do I ask about a charge?", a: supportPromise() },
+    ]
+  : [
+      { q: "What do renters pay?", a: seekerFeeSentence() },
+      { q: "What do hosts pay?", a: hostFeeSentence() },
+      { q: "Is there a monthly fee or a commission on rent?", a: "No. There is no subscription and no percentage of rent, ever." },
+      { q: "Does Migrent hold the rent or bond?", a: "No. Rent is paid to the host the way you agree, and the bond is lodged with your state or territory bond authority. Migrent never holds either." },
+      { q: "Can I list a room for short stays?", a: "Not yet. Migrent is opening with leases of months or longer. Short stays come later." },
+      { q: "Who do I ask about money?", a: supportPromise() },
+    ];
 
 export default function Pricing() {
   return (
     <>
       <SEOHead
         title="Pricing"
-        description={`Renters search and apply for free. Hosts list for free and pay a one-off AUD $${fee} per property only when a stay booking is first confirmed. No commission on rent.`}
+        description={
+          shortStays
+            ? `Renters search and apply for free. Hosts list for free and pay a one-off AUD $${fee} per property only when a stay booking is first confirmed. No commission on rent.`
+            : "Renters search and apply for free. Hosts list and find a tenant for free while Migrent launches. No commission on rent."
+        }
       />
 
       <PageHero
@@ -69,7 +108,7 @@ export default function Pricing() {
             Simple, honest <strong>pricing.</strong>
           </>
         }
-        lead="Renters search and apply for free. Hosts list for free and pay one fee per property, only for stays."
+        lead={shortStays ? "Renters search and apply for free. Hosts list for free and pay one fee per property, only for stays." : "Renters search and apply for free. Hosts list and find a tenant for free while Migrent launches."}
       />
 
       <section className="site-section site-section--flush" aria-label="Plans">

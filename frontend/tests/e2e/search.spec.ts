@@ -1,4 +1,5 @@
 import { test, expect, type Page } from "@playwright/test";
+import { siteIdentity } from "../../lib/siteIdentity";
 
 const LIVE_ID = "11111111-1111-4111-8111-000000000001";
 const EXPIRED_ID = "22222222-2222-4222-8222-000000000001";
@@ -176,8 +177,14 @@ test.describe("finding a place to live", () => {
   test("lease or short stay, and homes that welcome new arrivals", async ({ page, isMobile }) => {
     await page.goto("/seeker/search?suburb=Kellyville");
     if (isMobile) await page.getByRole("button", { name: /^Filters/ }).click();
-    await page.getByRole("button", { name: "A lease (months)" }).click();
-    await expect(page).toHaveURL(/lease=long_term/);
+    if (siteIdentity.launchScope.shortStays) {
+      await page.getByRole("button", { name: "A lease (months)" }).click();
+      await expect(page).toHaveURL(/lease=long_term/);
+    } else {
+      // Every listing is a lease while short stays are closed.
+      await expect(page.getByRole("button", { name: "A short stay (weeks)" })).toHaveCount(0);
+      await expect(page.getByRole("button", { name: "Instant book" })).toHaveCount(0);
+    }
     await page.getByRole("button", { name: "No local rental history needed" }).click();
     await expect(page).toHaveURL(/newcomer=true/);
   });

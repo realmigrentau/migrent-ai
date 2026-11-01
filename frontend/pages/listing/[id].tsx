@@ -218,7 +218,9 @@ export default function ListingDetailPage({ initialListing }: { initialListing?:
   const isInstantBook = Boolean(listing.instant_book_enabled || listing.instant_book);
   const isOwner = Boolean(listing.viewer?.is_owner);
   // Short stays keep the request-to-book flow; leases go through Migrent Hub.
-  const shortStay = listing.listing_purpose === "short_stay";
+  // While short stays are closed (siteIdentity.launchScope) every listing is
+  // a lease here, and the API refuses bookings.
+  const shortStay = siteIdentity.launchScope.shortStays && listing.listing_purpose === "short_stay";
   const canModerate = Boolean(listing.viewer?.can_moderate);
   const title = listing.title || listing.display_address;
   const isExpired = listing.public_state === "expired";

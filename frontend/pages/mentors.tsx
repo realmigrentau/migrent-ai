@@ -5,6 +5,11 @@ import SEOHead from "../components/SEOHead";
 import MentorCard from "../components/mentors/MentorCard";
 import { CloseCard, PageHero, Reveal, SectionHead } from "../components/site";
 import { API_BASE_URL as BASE_URL } from "../lib/apiBase";
+import type { GetStaticProps } from "next";
+import { siteIdentity } from "../lib/siteIdentity";
+
+/** A real 404 while the mentor marketplace is closed (siteIdentity.launchScope). */
+export const getStaticProps: GetStaticProps = async () => (siteIdentity.launchScope.mentors ? { props: {} } : { notFound: true });
 
 /**
  * Local mentors: paid one-on-one sessions with someone who lives in the

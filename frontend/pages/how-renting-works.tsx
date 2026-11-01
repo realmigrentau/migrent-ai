@@ -3,6 +3,7 @@ import { ArrowRight } from "lucide-react";
 import SEOHead from "../components/SEOHead";
 import { CloseCard, DocLayout, PageHero, Reveal } from "../components/site";
 import { hubFromSite } from "../lib/hub/routes";
+import { siteIdentity } from "../lib/siteIdentity";
 
 /**
  * How renting works: one document instead of three pages.
@@ -202,7 +203,11 @@ export default function HowRentingWorks() {
                 <li>Allows accommodation seekers to search and filter listings</li>
                 <li>Can sort search results by how well they fit what a renter has told us (fixed rules, not AI)</li>
                 <li>Facilitates initial communication between users via messaging</li>
-                <li>Charges flat platform fees only: renters pay nothing, and hosts pay a one-off AUD $99 per property for short stays</li>
+                <li>
+                  {siteIdentity.launchScope.shortStays
+                    ? `Charges flat platform fees only: renters pay nothing, and hosts pay a one-off AUD $${siteIdentity.fees.host.listingFee} per property for short stays`
+                    : "Charges no fees while Migrent launches: renters and hosts pay nothing"}
+                </li>
               </ul>
 
               <h3>What Migrent Does NOT Do</h3>

@@ -1,6 +1,7 @@
 import type { GetStaticProps } from "next";
 import Link from "next/link";
 import SEOHead from "../components/SEOHead";
+import { siteIdentity } from "../lib/siteIdentity";
 import MigrentHero from "../components/home/MigrentHero";
 import TrustStrip from "../components/home/TrustStrip";
 import RoomsNow, { type RoomListing } from "../components/home/RoomsNow";
@@ -47,7 +48,9 @@ const FAQS: FaqEntry[] = [
   },
   {
     q: "What does Migrent cost renters?",
-    a: "Nothing to search, message hosts, book inspections or apply. The only paid option is a session with a mentor, if you choose to book one; the mentor sets the price.",
+    a: siteIdentity.launchScope.mentors
+      ? "Nothing to search, message hosts, book inspections or apply. The only paid option is a session with a mentor, if you choose to book one; the mentor sets the price."
+      : "Nothing to search, message hosts, book inspections or apply.",
   },
   {
     q: "Who holds my bond?",

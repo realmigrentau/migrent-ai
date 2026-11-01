@@ -1,148 +1,92 @@
-# Migrent Operations & Backup Guide
+# Migrent operations guide
 
-## Architecture Overview
+Where Migrent runs, how it is deployed, what to check when something breaks, and what has to change before launch. Last checked against the live services on 2026-11-01. Secrets are covered in [security/secrets-and-environments.md](security/secrets-and-environments.md), scheduled jobs in [runbooks/scheduled-jobs.md](runbooks/scheduled-jobs.md), and Hub environment variables in [hub.md](hub.md#environment-variables).
 
-| Component | Service | URL |
-|-----------|---------|-----|
-| Frontend | Vercel (Next.js) | migrent-ai.vercel.app |
-| Backend API | Render (FastAPI) | render deploy |
-| Database | Supabase (Postgres) | supabase.com dashboard |
-| Payments | Stripe | dashboard.stripe.com |
-| Email | Resend | resend.com |
-| DNS/Domain | Vercel | — |
+## Where it runs
 
-## Environment Variables
+| Part | Service | Address | Notes |
+|---|---|---|---|
+| Website and Hub | Vercel, project `migrent-ai` (Next.js, Pages Router) | https://migrent.vercel.app | Functions run in Sydney (`syd1`, `frontend/vercel.json`). Production builds use webpack (`next build --webpack`): Turbopack's inline script breaks the hash-based CSP. |
+| API | Render (FastAPI) | https://migrent-ai-backend.onrender.com | Singapore region, behind Cloudflare. `/health` answers `{"status":"ok"}`. API docs are hidden in production. |
+| Database, sign-in, storage | Supabase project `Migrent AU` (`nsnwwfbidishftlrimer`) | ap-southeast-2 (Sydney) | Postgres 17. The browser reads only `public_listings` and `get_public_profile`; everything else goes through the API ([security/public-data-contract.md](security/public-data-contract.md)). |
+| Rate limits | Upstash Redis (Singapore) | `RATE_LIMIT_STORAGE_URI` on Render | Falls back to per-process memory if Redis is unreachable. |
+| Payments | Stripe (live since 2026-10-01) | dashboard.stripe.com | Nothing is charged at launch: short stays and mentors are switched off ([hub.md, Launch scope](hub.md#launch-scope-owner-decision-1-november-2026)). |
+| Email | Gmail relay (`backend/gmail_relay`, Apps Script in the Migrent Gmail account) | - | About 100 emails a day, and it fails DMARC, so mail can land in spam. To be replaced before launch (below). |
+| Errors | Sentry (optional) | `SENTRY_DSN` on Render, `NEXT_PUBLIC_SENTRY_DSN` on Vercel | The site's CSP allows Sentry. Confirm a test error arrives. |
+| Domain | none yet | - | `migrent.com.au` is not registered (auDA, 2026-11-01). |
 
-### Backend (Render)
-- `SUPABASE_URL` – Supabase project URL
-- `SUPABASE_ANON_KEY` – Supabase anon/public key
-- `STRIPE_SECRET_KEY` – Stripe secret key
-- `STRIPE_WEBHOOK_SECRET` – Stripe webhook signing secret
-- `RESEND_API_KEY` – Resend email API key
-- `SUPPORT_EMAIL` – Admin email for notifications
-- `FRONTEND_URL` – Production frontend URL for CORS
+### How the API picks an email route
 
-### Frontend (Vercel)
-- `NEXT_PUBLIC_API_URL` – Backend API base URL
-- `NEXT_PUBLIC_SUPABASE_URL` – Supabase project URL
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY` – Supabase anon key
-- `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` – Stripe publishable key
-- `NEXT_PUBLIC_HCAPTCHA_SITE_KEY` – hCaptcha site key
+`backend/email_bookings.py` uses the first one that is configured:
 
-## Database Backups
+1. `GMAIL_RELAY_URL` + `GMAIL_RELAY_SECRET` (today)
+2. `SMTP_HOST` + `SMTP_USER` + `SMTP_PASSWORD` (`SMTP_PORT` 465 or 587)
+3. `MAILJET_API_KEY` + `MAILJET_SECRET_KEY`
 
-### Automatic (Supabase)
-Supabase Pro plan includes daily automated backups with 7-day retention. Check the Supabase dashboard under **Settings → Database → Backups**.
+So moving to a real provider means setting the `SMTP_*` values and `FROM_EMAIL`, then **removing** `GMAIL_RELAY_URL`. Render's free plan blocks outbound SMTP, which is why the relay exists. A paid Render plan allows it.
 
-### Manual Backup
-```bash
-# Export via Supabase CLI
-npx supabase db dump -f backup_$(date +%Y%m%d).sql
+## Plans: what is on, and what launch needs
 
-# Or via pg_dump (get connection string from Supabase dashboard)
-pg_dump "postgresql://postgres:[PASSWORD]@[HOST]:5432/postgres" > backup_$(date +%Y%m%d).sql
-```
+| Service | Now | Before launch | Why |
+|---|---|---|---|
+| Vercel | Hobby | Pro | Hobby is for personal, non-commercial use, and it can't deploy a private repository owned by a GitHub organisation. Upgrade **before** making the repo private. |
+| Supabase | Free | Pro | Free has no daily backups and pauses an idle project. Pro also unlocks leaked-password protection. |
+| Render | Free (per the October commit notes) | Starter or higher | Free sleeps after about 15 idle minutes (the next visitor waits 30 to 60 s) and blocks SMTP. |
 
-### Restore
-```bash
-psql "postgresql://postgres:[PASSWORD]@[HOST]:5432/postgres" < backup_YYYYMMDD.sql
-```
+## Deploying
 
-## Deployment
+- **Both apps deploy from `main`.** A push to `main` builds Vercel production and redeploys the Render service. Vercel builds previews for other branches, except `dependabot/**`.
+- **Order for a change that touches the database:** apply the migration only when the code that needs it is live, unless the migration says otherwise. Migrations are in `backend/migrations/`, numbered.
+- **Rollback:** Vercel > Deployments > pick the previous production deployment > Promote. Render > the service > Manual Deploy > choose the earlier commit. A migration is rolled back by a new migration, never by editing an applied one.
+- **CI** (GitHub Actions) must be green before `main` moves: secret scan (gitleaks), backend tests and `pip-audit --strict`, and frontend npm audit, lint, typecheck, unit tests, build and Playwright e2e.
 
-### Frontend (Vercel)
-- Auto-deploys on push to `main` branch
-- Preview deploys on PRs
-- Rollback: Vercel Dashboard → Deployments → select previous → Promote
+## Backups
 
-### Backend (Render)
-- Auto-deploys on push to `main` branch
-- Rollback: Render Dashboard → select service → Manual Deploy → choose previous commit
+- **Today there are none.** The Supabase free plan takes no backups. Until Pro is on, take a manual dump before any risky change:
+  ```bash
+  npx supabase db dump --db-url "$SUPABASE_DB_URL" -f backup_$(date +%Y%m%d).sql
+  ```
+  The connection string is in Supabase > Project Settings > Database. Keep the file somewhere private and never commit it.
+- **On Supabase Pro:** daily backups with 7 days kept, under Database > Backups. Consider point-in-time recovery once there is real traffic.
+- **Restore** a dump into a new project first and check it there, before touching production.
 
 ## Monitoring
 
-### Vercel Analytics
-- Page views, web vitals, and custom events
-- Dashboard: vercel.com → Project → Analytics
+- **Uptime:** set up a free monitor (UptimeRobot or Better Stack) on `https://migrent.vercel.app/` and `https://migrent-ai-backend.onrender.com/health`, with alerts to a phone.
+- **Errors:** Vercel > migrent-ai > Observability (runtime errors), Render > Logs, and Sentry once its DSN is confirmed. Vercel Hobby keeps logs for only an hour.
+- **Database:** Supabase > Advisors (security and performance). The warnings listed as accepted in [security/public-data-contract.md](security/public-data-contract.md) are deliberate.
+- **Scheduled jobs:** four Render cron jobs call `/internal/cron/*` with `CRON_SECRET` ([runbooks/scheduled-jobs.md](runbooks/scheduled-jobs.md)). If saved-search alerts or listing-expiry emails stop, check those first.
 
-### Supabase
-- Database health, API usage, auth metrics
-- Dashboard: supabase.com → Project → Reports
+## When something breaks
 
-### Stripe
-- Payment volume, failed charges, disputes
-- Dashboard: dashboard.stripe.com
+### The site is down
+1. Status pages: vercel-status.com, status.render.com, status.supabase.com.
+2. `curl https://migrent-ai-backend.onrender.com/health`. A slow first answer on the free plan is the instance waking up.
+3. Vercel runtime errors, then Render logs.
+4. If the latest deploy caused it, roll back (above) and fix forward on a branch.
 
-## Incident Response
+### Sign-in fails
+1. Supabase > Authentication > Logs.
+2. Check Authentication > URL Configuration still lists the site's address and `/**` redirect paths.
+3. For Google sign-in, check the Google Cloud OAuth client's authorised domains and redirect URIs.
 
-### Site Down
-1. Check Vercel status: vercel.com/status
-2. Check Render status: render.com/status
-3. Check Supabase status: status.supabase.com
-4. Check browser console / network tab for specific errors
-5. Review Render logs: Dashboard → Service → Logs
+### Email is not arriving
+1. Render logs for the send attempt.
+2. The relay's daily quota (about 100) is the usual cause today.
+3. After moving to a provider, check its dashboard and the domain's SPF, DKIM and DMARC.
 
-### Payment Issues
-1. Check Stripe Dashboard for failed events
-2. Review webhook logs: Stripe → Developers → Webhooks
-3. Verify `STRIPE_WEBHOOK_SECRET` matches in Render env
+### A payment looks wrong
+1. Stripe > Developers > Webhooks: the delivery for that event, and its response.
+2. `payment_events` in the database (idempotent per Stripe event id).
+3. `STRIPE_WEBHOOK_SECRET` on Render must match the live endpoint's signing secret.
 
-### Database Issues
-1. Check Supabase dashboard → Database → Health
-2. Review slow queries: SQL Editor → `select * from pg_stat_activity`
-3. Check connection pool: Supabase → Settings → Database → Connection Pooling
+## Security checklist (keep true)
 
-## Security Checklist
+- No secrets in git. `.env` files are ignored, and the gitleaks job scans every push.
+- The browser has no grant on any private table, and every read and write is authorised by the API.
+- Two-step sign-in is required for the admin panel, and on every request for anyone who has set it up.
+- Rate limits key on the real client IP (`CF-Connecting-IP`, then the rightmost `X-Forwarded-For`).
+- CORS allows only the site's own origins (`backend/main.py`).
+- Uploads go through the API, which checks the file bytes, not the name.
 
-- [ ] All env vars set in Vercel and Render (not committed to git)
-- [ ] Supabase RLS policies enabled on all tables
-- [ ] Stripe webhook secret rotated quarterly
-- [ ] Admin route uses obfuscated path
-- [ ] Rate limiting active on all public endpoints
-- [ ] hCaptcha enabled on auth and contact forms
-- [ ] CORS restricted to known frontend origins
-- [ ] No secrets in client-side code (NEXT_PUBLIC_ prefix only for public keys)
-
-## Supabase Tables
-
-| Table | Purpose |
-|-------|---------|
-| profiles | User profiles (seeker/owner/admin) |
-| listings | Room listings with details |
-| deals | Booking deals between seekers and owners |
-| support_requests | Contact form submissions |
-| reports | Listing reports from users |
-
-### Required SQL for Reports Table
-```sql
-CREATE TABLE IF NOT EXISTS reports (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  reporter_id UUID REFERENCES auth.users(id),
-  listing_id UUID REFERENCES listings(id),
-  reason TEXT NOT NULL,
-  details TEXT DEFAULT '',
-  status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'reviewed', 'actioned', 'dismissed')),
-  reviewed_by UUID REFERENCES auth.users(id),
-  created_at TIMESTAMPTZ DEFAULT now(),
-  updated_at TIMESTAMPTZ DEFAULT now()
-);
-
--- RLS
-ALTER TABLE reports ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "Users can create reports"
-  ON reports FOR INSERT
-  WITH CHECK (auth.uid() = reporter_id);
-
-CREATE POLICY "Admins can view all reports"
-  ON reports FOR SELECT
-  USING (
-    EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin')
-  );
-
-CREATE POLICY "Admins can update reports"
-  ON reports FOR UPDATE
-  USING (
-    EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin')
-  );
-```
+Open owner items (legacy Supabase keys, repo visibility, captcha enforcement, email confirmation) are tracked in the private launch plan, not here, because this repository is public.

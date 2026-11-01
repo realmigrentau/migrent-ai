@@ -164,13 +164,24 @@ Properties (`/properties`) has a search box (address, suburb, nickname or title)
 
 | Charge | Amount | When | Status |
 |---|---|---|---|
-| Host fee | AUD 99 per property, once | when the owner accepts the first stay booked through Migrent at that property | live code, needs live Stripe keys |
+| Host fee | AUD 99 per property, once | when the owner accepts the first stay booked through Migrent at that property | live code, but **short stays are closed at launch** (`SHORT_STAYS_ENABLED`), so nothing is charged |
 | Renter ID check | AUD 19, optional | when the renter chooses it | switched off (`SEEKER_VERIFICATION_ENABLED`) until it checks something real |
 | New-renter fee | AUD 99, owner pays | once per new renter for an owner, charged to the owner's saved card after the renter's move-in payment goes through | built, off until `MOVE_IN_PAYMENTS_ENABLED=true` and Stripe Connect is on |
 
 ### Move-in payments (`backend/move_in.py`, migration 050)
 
 Owner decisions, 2 October 2026. Off unless `MOVE_IN_PAYMENTS_ENABLED=true` and Stripe Connect is switched on for Migrent's Stripe account.
+
+### Launch scope (owner decision, 1 November 2026)
+
+Migrent opens on 1 December 2026 with leases only, free for hosts. Two parts stay switched off until their variable is set on Render **and** `launchScope` in `frontend/lib/siteIdentity.ts` is flipped to match (`backend/tests/test_launch_scope.py` checks the defaults agree):
+
+- **Short stays** (`SHORT_STAYS_ENABLED`, `launchScope.shortStays`). The API refuses new short-stay listings, switching a listing to a short stay, and every new booking. The listing form offers leases only, listing pages show Apply, search hides the stay filters, and pricing and help say hosts pay nothing. Reasons: NSW lets a booking platform advertise a short-term rental only with its premises registration number, and Victoria makes the platform collect a 7.5% levy on stays under 28 days; Migrent does neither yet.
+- **Mentors** (`MENTORS_ENABLED`, `launchScope.mentors`). The API lists no mentors and refuses sign-ups, sessions and payout setup; `/mentors`, `/become-mentor`, `/mentor/*` and `/mentor-session-success` are 404s and leave the menu, footer and sitemap. The admin mentor queue still works.
+
+A "sale" listing is never accepted, whatever the switches say.
+
+The legal pages (Terms, Disclaimer, Community Guidelines, Code of Conduct, Dispute Resolution, ABN page) still describe the stay fee and mentor commission. They were left for counsel to decide, since nothing can trigger either.
 
 1. **Owner setup** (Hub > Settings > Payments): connect a bank through Stripe (an Express account; `profiles.stripe_account_id`) and save a card for Migrent's fee (Checkout in setup mode).
 2. **The renter pays** the rent in advance from the tenancy page: the listing's `rent_in_advance_weeks`, or one week. It is a destination charge on behalf of the owner, so Stripe sends it straight to the owner and Migrent never holds it. **The renter pays the card fee on top** (a second line on the Stripe page, `card_fee_cents`, grossed up so Stripe's cut of the whole payment is covered); Migrent keeps it as the application fee and the owner receives the full rent. Australian law caps a card surcharge at the cost of taking the card, so `MOVE_IN_CARD_FEE_PERCENT` and `MOVE_IN_CARD_FEE_FIXED_CENTS` must match Stripe's price.
@@ -238,6 +249,8 @@ Off unless `AI_LISTING_ASSIST_ENABLED=true` **and** an Anthropic credential is s
 | `ANTHROPIC_API_KEY` | with AI help | the key the writing help uses |
 | `AI_LISTING_MODEL` | optional | defaults to `claude-opus-5` |
 | `FEE_MODEL` | optional | `per_property` (default) |
+| `SHORT_STAYS_ENABLED` | no (launch) | `true` reopens short stays; flip `launchScope.shortStays` in the same release (see [Launch scope](#launch-scope-owner-decision-1-november-2026)) |
+| `MENTORS_ENABLED` | no (launch) | `true` reopens the mentor marketplace; flip `launchScope.mentors` in the same release |
 | `STRIPE_SECRET_KEY` | for payments | `sk_live_...` to take real payments; `sk_test_...` shows "test mode" |
 | `RATE_LIMIT_STORAGE_URI` | recommended | a Redis URL (for example Upstash, `rediss://...`) so rate limits are shared by every server process; unset keeps them per process. If Redis is unreachable the limits fall back to memory rather than failing requests |
 | `UNSUBSCRIBE_SECRET` | recommended | any long random string; signs unsubscribe links (falls back to a key derived from the service key) |

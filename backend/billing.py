@@ -44,6 +44,29 @@ def fees() -> dict:
     }
 
 
+def _switched_on(name: str) -> bool:
+    return os.environ.get(name, "false").strip().lower() in ("1", "true", "yes")
+
+
+def short_stays_open() -> bool:
+    """Short stays (request to book, instant book): the only thing the host
+    fee is charged on. Off for launch (owner decision, 2026-11-01). NSW lets a
+    booking platform advertise a short-term rental only with its premises
+    registration number, and Victoria makes the platform collect a 7.5% levy
+    on stays under 28 days; Migrent does neither yet. Leases are unaffected.
+    SHORT_STAYS_ENABLED=true turns them back on. frontend/lib/siteIdentity.ts
+    (launchScope.shortStays) must agree."""
+    return _switched_on("SHORT_STAYS_ENABLED")
+
+
+def mentors_open() -> bool:
+    """The mentor marketplace (sign-ups, paid sessions, payouts). Off for
+    launch (owner decision, 2026-11-01): there are no approved mentors yet and
+    counsel has not reviewed the 30% commission. MENTORS_ENABLED=true turns it
+    back on. frontend/lib/siteIdentity.ts (launchScope.mentors) must agree."""
+    return _switched_on("MENTORS_ENABLED")
+
+
 def renter_verification_available() -> bool:
     """The paid renter ID check (renter_id.py: Stripe Identity behind it).
     Off until SEEKER_VERIFICATION_ENABLED=true and Stripe is set up."""

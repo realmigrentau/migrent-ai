@@ -19,6 +19,7 @@ import { invalidate } from "../../../lib/hub/query";
 import { useHub } from "../../../lib/hub/session";
 import { decodePrefill } from "../../../lib/home/houseConfig";
 import { cn } from "../../../lib/cn";
+import { hostFeeSentence, siteIdentity } from "../../../lib/siteIdentity";
 import { Events, trackEvent } from "../../../lib/analytics";
 import EmailInboxHelp from "../../../components/EmailInboxHelp";
 
@@ -59,10 +60,16 @@ function ReviewStep({ d, problems, goTo, verified, fee, payments }: { d: DraftDa
           <Info className="mt-0.5 h-5 w-5 shrink-0 text-[color:var(--color-primary)]" strokeWidth={1.75} aria-hidden />
           <div className="flex flex-col gap-1 text-[13.5px] leading-relaxed text-[color:var(--color-ink-2)]">
             <p className="text-[15px] font-semibold text-[color:var(--color-ink)]">What it costs</p>
-            <p>
-              Listing is free. Migrent&apos;s host fee is {aud(fee)} per property, charged once, when you accept the first stay booked through Migrent at that property. Migrent never handles rent or bond.
-            </p>
-            {payments !== "live" && <p className="text-[12.5px] text-[color:var(--color-ink-3)]">Card payments aren&apos;t switched on yet{payments === "test" ? " (test mode)" : ""}, so nothing is charged today.</p>}
+            {siteIdentity.launchScope.shortStays ? (
+              <>
+                <p>
+                  Listing is free. Migrent&apos;s host fee is {aud(fee)} per property, charged once, when you accept the first stay booked through Migrent at that property. Migrent never handles rent or bond.
+                </p>
+                {payments !== "live" && <p className="text-[12.5px] text-[color:var(--color-ink-3)]">Card payments aren&apos;t switched on yet{payments === "test" ? " (test mode)" : ""}, so nothing is charged today.</p>}
+              </>
+            ) : (
+              <p>{hostFeeSentence()} Migrent never handles rent or bond.</p>
+            )}
           </div>
         </Panel>
       </div>

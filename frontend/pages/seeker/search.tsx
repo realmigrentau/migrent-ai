@@ -18,6 +18,7 @@ import { API_BASE_URL } from "../../lib/apiBase";
 import StationAutocomplete from "../../components/search/StationAutocomplete";
 import MapErrorBoundary from "../../components/MapErrorBoundary";
 import VerificationBadge from "../../components/VerificationBadge";
+import { siteIdentity } from "../../lib/siteIdentity";
 import { isWebGLAvailable, useWebGLAvailable } from "../../lib/webgl";
 import { clearWishlist, readWishlist, useWishlist, writeWishlist } from "../../lib/wishlist";
 import type { MapListing } from "../../components/ListingsMap";
@@ -685,17 +686,20 @@ export default function SeekerSearch({ initialFilters, initialPage, serverToday 
         </div>
       </FilterSection>
 
-      <FilterSection title="How long for" defaultOpen>
-        <div className="flex flex-wrap gap-1.5">
-          {([
-            { value: "", label: "Either" },
-            { value: "long_term", label: "A lease (months)" },
-            { value: "short_stay", label: "A short stay (weeks)" },
-          ] as { value: LeaseType; label: string }[]).map((opt) => (
-            <TogglePill key={opt.value || "any"} active={filters.leaseType === opt.value} onClick={() => update("leaseType", opt.value)} label={opt.label} />
-          ))}
-        </div>
-      </FilterSection>
+      {/* Every listing is a lease while short stays are closed (siteIdentity.launchScope). */}
+      {siteIdentity.launchScope.shortStays && (
+        <FilterSection title="How long for" defaultOpen>
+          <div className="flex flex-wrap gap-1.5">
+            {([
+              { value: "", label: "Either" },
+              { value: "long_term", label: "A lease (months)" },
+              { value: "short_stay", label: "A short stay (weeks)" },
+            ] as { value: LeaseType; label: string }[]).map((opt) => (
+              <TogglePill key={opt.value || "any"} active={filters.leaseType === opt.value} onClick={() => update("leaseType", opt.value)} label={opt.label} />
+            ))}
+          </div>
+        </FilterSection>
+      )}
 
       <FilterSection title="Dates" defaultOpen={Boolean(filters.checkIn || filters.checkOut)}>
         <div className="grid grid-cols-2 gap-2">
@@ -722,7 +726,7 @@ export default function SeekerSearch({ initialFilters, initialPage, serverToday 
           <TogglePill active={filters.newcomer} onClick={() => update("newcomer", !filters.newcomer)} label="No local rental history needed" />
           <TogglePill active={filters.furnished} onClick={() => update("furnished", !filters.furnished)} label="Furnished" />
           <TogglePill active={filters.billsIncluded} onClick={() => update("billsIncluded", !filters.billsIncluded)} label="Bills included" />
-          <TogglePill active={filters.instantBook} onClick={() => update("instantBook", !filters.instantBook)} label="Instant book" />
+          {siteIdentity.launchScope.shortStays && <TogglePill active={filters.instantBook} onClick={() => update("instantBook", !filters.instantBook)} label="Instant book" />}
           <TogglePill active={filters.petsAllowed} onClick={() => update("petsAllowed", !filters.petsAllowed)} label="Pets allowed" />
           <TogglePill active={filters.parking} onClick={() => update("parking", !filters.parking)} label="Parking" />
           <TogglePill active={filters.airCon} onClick={() => update("airCon", !filters.airCon)} label="Air con" />

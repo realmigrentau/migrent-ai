@@ -9,6 +9,7 @@ import { Segmented } from "../../components/hub/ui/Field";
 import { hubFromSite } from "../../lib/hub/routes";
 import { API_BASE_URL as BASE_URL } from "../../lib/apiBase";
 import type { GetServerSideProps } from "next";
+import { siteIdentity } from "../../lib/siteIdentity";
 
 /**
  * An unknown mentor is a real 404 (MIGRENT_MASTER_AUDIT MIG-050), not an
@@ -17,7 +18,7 @@ import type { GetServerSideProps } from "next";
  */
 export const getServerSideProps: GetServerSideProps = async ({ params, res }) => {
   const id = String(params?.id || "");
-  if (!/^[0-9a-f-]{36}$/i.test(id)) return { notFound: true };
+  if (!siteIdentity.launchScope.mentors || !/^[0-9a-f-]{36}$/i.test(id)) return { notFound: true };
   try {
     const r = await fetch(`${BASE_URL}/mentors/${id}`, { signal: AbortSignal.timeout(4000) });
     if (r.status === 404) return { notFound: true };

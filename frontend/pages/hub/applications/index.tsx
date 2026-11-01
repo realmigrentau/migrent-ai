@@ -15,6 +15,7 @@ import { useHubQuery } from "../../../lib/hub/query";
 import { isClosed } from "../../../lib/hub/status";
 import { useHub } from "../../../lib/hub/session";
 import type { ApplicationSummary } from "../../../lib/hub/types";
+import { siteIdentity } from "../../../lib/siteIdentity";
 
 type OwnerTab = "new" | "shortlisted" | "waiting" | "decided";
 const OWNER_TABS: Record<OwnerTab, ApplicationSummary["status"][]> = {
@@ -215,7 +216,7 @@ export default function Applications() {
         ) : (
           <RenterApplications apps={data.applications} />
         )}
-        <StayRequests />
+        {siteIdentity.launchScope.shortStays && <StayRequests />}
       </div>
     </HubShell>
   );

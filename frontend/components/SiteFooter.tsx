@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Logo } from "./ui/Logo";
-import { copyrightLine } from "../lib/siteIdentity";
+import { copyrightLine, siteIdentity } from "../lib/siteIdentity";
 import { hubFromSite } from "../lib/hub/routes";
 
 /* Site footer: the deep-navy close.
@@ -19,7 +19,7 @@ const columns: { heading: string; links: { label: string; href: string }[] }[] =
       { label: "Search rooms", href: "/seeker/search" },
       { label: "How renting works", href: "/how-renting-works" },
       { label: "Suburb guides", href: "/suburbs" },
-      { label: "Mentors", href: "/mentors" },
+      ...(siteIdentity.launchScope.mentors ? [{ label: "Mentors", href: "/mentors" }] : []),
     ],
   },
   {
@@ -27,7 +27,7 @@ const columns: { heading: string; links: { label: string; href: string }[] }[] =
     links: [
       { label: "Why list with Migrent", href: "/for-owners" },
       { label: "Pricing", href: "/pricing" },
-      { label: "Become a mentor", href: "/become-mentor" },
+      ...(siteIdentity.launchScope.mentors ? [{ label: "Become a mentor", href: "/become-mentor" }] : []),
     ],
   },
   {

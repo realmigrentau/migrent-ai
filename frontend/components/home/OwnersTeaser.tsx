@@ -4,6 +4,7 @@ import { useAuth } from "../../hooks/useAuth";
 import { useMounted } from "../../hooks/useMounted";
 import { hubAbsoluteUrl, hubFromSite } from "../../lib/hub/routes";
 import { Reveal, SectionHead } from "../site";
+import { siteIdentity } from "../../lib/siteIdentity";
 
 /**
  * For the other half of the audience. Short on purpose: the homepage
@@ -49,7 +50,7 @@ export default function OwnersTeaser() {
                 </Link>
               </div>
               <p className="site-meta mt-4">
-                Fees only apply to short stays. <Link href="/pricing" className="underline underline-offset-2 hover:text-[color:var(--color-ink)]">See pricing</Link>
+                {siteIdentity.launchScope.shortStays ? "Fees only apply to short stays." : "No fees while Migrent launches."} <Link href="/pricing" className="underline underline-offset-2 hover:text-[color:var(--color-ink)]">See pricing</Link>
               </p>
             </Reveal>
 
