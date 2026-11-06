@@ -5,12 +5,12 @@ from typing import Optional
 
 from fastapi import APIRouter, Header, HTTPException, Request, Response
 from pydantic import BaseModel, Field
-from supabase import create_client
+from supabase import AuthApiError, ClientOptions, create_client
 
 from admin_panel import admin_mfa_ok
 from auth_utils import get_current_user, is_admin_user, require_live_session, get_active_user
 from concurrency import run_parallel
-from db import SUPABASE_ANON_KEY, SUPABASE_URL, filter_term, get_supabase_admin
+from db import SUPABASE_SERVICE_ROLE_KEY, SUPABASE_URL, filter_term, get_supabase_admin
 from limiter import limiter
 from listing_rules import advance_limit_message, location_problem, max_rent_in_advance_weeks
 from hub_common import state_for_postcode
@@ -1193,6 +1193,42 @@ class DeleteListingRequest(BaseModel):
     oauth_confirmed: Optional[bool] = False
 
 
+def _require_correct_password(email: str, password: str) -> None:
+    """Refuse unless this is the account's password.
+
+    Signs in on a throwaway client holding the service key. Supabase Auth
+    skips captcha for admin credentials, and this server has no captcha token
+    to send, so with captcha protection on an anon-key check fails for
+    everyone. It must not be the shared admin client: signing in changes whose
+    token a client sends. Only the session made here is ended afterwards; the
+    library's default scope, "global", would sign the owner out everywhere.
+    A wrong password is 403, because the Hub reads 401 as "session ended".
+    """
+    sb = create_client(
+        SUPABASE_URL,
+        SUPABASE_SERVICE_ROLE_KEY,
+        options=ClientOptions(auto_refresh_token=False, persist_session=False),
+    )
+    try:
+        res = sb.auth.sign_in_with_password({"email": email, "password": password})
+    except AuthApiError as e:
+        if e.code == "invalid_credentials" or "invalid login credentials" in (e.message or "").lower():
+            raise HTTPException(status_code=403, detail="That password is not right. Try again.")
+        if e.status == 429:
+            raise HTTPException(status_code=429, detail="Too many attempts. Wait a few minutes and try again.")
+        logger.error("Password check refused by Supabase Auth: %s (%s)", e.code, e.status)
+        raise HTTPException(status_code=503, detail="We could not check your password just now. Try again in a moment.")
+    except Exception:
+        logger.exception("Password check could not reach Supabase Auth")
+        raise HTTPException(status_code=503, detail="We could not check your password just now. Try again in a moment.")
+    if not res or not res.user:
+        raise HTTPException(status_code=403, detail="That password is not right. Try again.")
+    try:
+        sb.auth.sign_out({"scope": "local"})
+    except Exception:
+        pass
+
+
 @router.delete("/{listing_id}")
 @limiter.limit("10/hour")
 def delete_listing(
@@ -1227,19 +1263,7 @@ def delete_listing(
         email = user.email
         if not email:
             raise HTTPException(status_code=400, detail="Could not verify identity")
-        try:
-            sb_anon = create_client(SUPABASE_URL, SUPABASE_ANON_KEY)
-            auth_res = sb_anon.auth.sign_in_with_password({"email": email, "password": body.password})
-            if not auth_res or not auth_res.user:
-                raise HTTPException(status_code=401, detail="Incorrect password")
-            try:
-                sb_anon.auth.sign_out()
-            except Exception:
-                pass
-        except HTTPException:
-            raise
-        except Exception:
-            raise HTTPException(status_code=401, detail="Incorrect password")
+        _require_correct_password(email, body.password)
     else:
         raise HTTPException(status_code=400, detail="Please confirm with your password")
 

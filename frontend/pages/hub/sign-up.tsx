@@ -36,6 +36,8 @@ export default function SignUp() {
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
   const [resent, setResent] = useState(false);
+  const [resending, setResending] = useState(false);
+  const [resendError, setResendError] = useState<string | null>(null);
 
   useEffect(() => {
     if (status === "ready" || status === "needs-onboarding") void navigate(next, { replace: true });
@@ -87,6 +89,33 @@ export default function SignUp() {
     }
   }
 
+  async function resendEmail() {
+    setResending(true);
+    setResendError(null);
+    try {
+      let token: string | undefined;
+      if (captcha?.executeInstance) token = (await captcha.executeInstance().catch(() => undefined)) ?? undefined;
+      const { error } = await supabase.auth.resend({
+        type: "signup",
+        email: email.trim(),
+        options: { emailRedirectTo: hubCallbackUrl(welcome), ...(token ? { captchaToken: token } : {}) },
+      });
+      if (error) {
+        const m = error.message.toLowerCase();
+        if (m.includes("rate") || m.includes("seconds")) setResendError("That was quick. Wait a minute, then try again.");
+        else if (m.includes("captcha")) setResendError("The security check did not complete. Please try again.");
+        else setResendError("We could not send it again. Please try again.");
+        return;
+      }
+      setResent(true);
+    } catch {
+      setResendError("We could not send it again. Check your connection and try again.");
+    } finally {
+      captcha?.resetInstance?.();
+      setResending(false);
+    }
+  }
+
   if (sent) {
     return (
       <AuthLayout title="Confirm your email">
@@ -98,15 +127,12 @@ export default function SignUp() {
         {resent ? (
           <InlineAlert tone="success">Sent again. It can take a minute to arrive.</InlineAlert>
         ) : (
-          <Button
-            variant="secondary"
-            onClick={async () => {
-              await supabase.auth.resend({ type: "signup", email: email.trim(), options: { emailRedirectTo: hubCallbackUrl(welcome) } });
-              setResent(true);
-            }}
-          >
-            Send the email again
-          </Button>
+          <div className="flex flex-col gap-3">
+            {resendError && <InlineAlert tone="danger">{resendError}</InlineAlert>}
+            <Button variant="secondary" loading={resending} onClick={() => void resendEmail()}>
+              Send the email again
+            </Button>
+          </div>
         )}
       </AuthLayout>
     );

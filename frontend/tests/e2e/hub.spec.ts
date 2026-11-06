@@ -370,6 +370,36 @@ test.describe("trust and safety", () => {
     await expect(page.getByTestId("receipt").getByTestId("security-code")).toContainText("K7PM2QX9RT");
   });
 
+  test("a refused \"send the email again\" says so, and trying again works", async ({ page }) => {
+    await page.goto("/hub/sign-up");
+    await page.waitForLoadState("networkidle");
+    await page.getByLabel("Email").fill("resend-refused@example.test");
+    await page.getByLabel("Password").fill("a-long-password-1");
+    // The real input is visually hidden under a styled box.
+    await page.getByRole("checkbox").check({ force: true });
+    await page.getByRole("button", { name: "Create account" }).click();
+    await expect(page.getByRole("heading", { name: "Confirm your email" })).toBeVisible();
+    const again = page.getByRole("button", { name: "Send the email again" });
+    await again.click();
+    await expect(page.getByText("The security check did not complete")).toBeVisible();
+    await expect(page.getByText("Sent again")).toHaveCount(0);
+    await again.click();
+    await expect(page.getByText("Sent again")).toBeVisible();
+  });
+
+  test("archiving with the wrong password says the password is wrong, not that you are signed out", async ({ page }) => {
+    await signIn(page, "owner@example.test", "/listings/11111111-1111-4111-8111-000000000001");
+    await page.getByRole("button", { name: "Listing options" }).click();
+    await page.getByRole("menuitem", { name: "Archive listing" }).click();
+    const dialog = page.getByRole("dialog", { name: "Archive this listing?" });
+    await dialog.getByLabel("Your password").fill("not-my-password");
+    await dialog.getByRole("button", { name: "Archive listing" }).click();
+    await expect(page.getByText("That password is not right")).toBeVisible();
+    await expect(page.getByText("Your session has ended")).toHaveCount(0);
+    await expect(dialog).toBeVisible();
+    await dialog.getByRole("button", { name: "Cancel" }).click();
+  });
+
   test("a stay request shows how to pay the host safely", async ({ page }) => {
     test.skip(!siteIdentity.launchScope.shortStays, "short stays are closed at launch");
     await signIn(page, "renter@example.test");

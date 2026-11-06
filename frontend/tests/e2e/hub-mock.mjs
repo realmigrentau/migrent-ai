@@ -101,6 +101,7 @@ function session(uid) {
 /* ── Listings (shared with the public mock) ─────────────── */
 
 let LISTINGS = [];
+let resendRefused = false;
 const OWNED = {
   "11111111-1111-4111-8111-000000000001": { owner: OWNER, property: "prop-smith", unit_label: "Room 1", moderation_status: "approved", occupancy: "vacant", address: "15 Smith Street" },
   "11111111-1111-4111-8111-000000000004": { owner: OWNER, property: "prop-smith", unit_label: "Room 2", moderation_status: "approved", occupancy: "occupied", address: "15 Smith Street" },
@@ -707,6 +708,11 @@ export function handleHub(req, url, body, send) {
       return send(200, authUser(uid)), true;
     }
     if (p === "/auth/v1/logout") return send(204, {}), true;
+    // The first resend for this address is refused the way captcha protection refuses it.
+    if (p === "/auth/v1/resend" && body?.email === "resend-refused@example.test" && !resendRefused) {
+      resendRefused = true;
+      return send(400, { code: 400, error_code: "captcha_failed", msg: "captcha protection: request disallowed (timeout-or-duplicate)" }), true;
+    }
     if (p === "/auth/v1/otp" || p === "/auth/v1/recover" || p === "/auth/v1/resend") return send(200, {}), true;
     if (p === "/auth/v1/signup") return send(200, { id: uuid(), email: body?.email, identities: [{}] }), true;
     return send(404, { msg: "auth route not mocked" }), true;
@@ -792,7 +798,7 @@ export function handleHub(req, url, body, send) {
         if (body.suburb || body.postcode) l.display_address = `${l.suburb} ${l.postcode}`;
       } else if (req.method === "DELETE") {
         if (!body?.password && !body?.oauth_confirmed) return send(400, { detail: "Please confirm with your password" }), true;
-        if (body.password && body.password !== TEST_PASSWORD) return send(401, { detail: "Incorrect password" }), true;
+        if (body.password && body.password !== TEST_PASSWORD) return send(403, { detail: "That password is not right. Try again." }), true;
         meta.moderation_status = "deleted";
         return send(200, { message: "Listing deleted successfully" }), true;
       }

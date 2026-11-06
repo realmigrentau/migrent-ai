@@ -44,6 +44,7 @@ export default function ForgotPassword() {
     // Say the same thing whether or not the account exists: the form must
     // not reveal who has an account.
     if (e2 && /rate/i.test(e2.message)) setError("Too many requests. Wait a minute and try again.");
+    else if (e2 && /captcha/i.test(e2.message)) setError("The security check did not complete. Please try again.");
     else setSent(true);
   }
 

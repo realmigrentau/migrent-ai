@@ -88,5 +88,6 @@ So moving to a real provider means setting the `SMTP_*` values and `FROM_EMAIL`,
 - Rate limits key on the real client IP (`CF-Connecting-IP`, then the rightmost `X-Forwarded-For`).
 - CORS allows only the site's own origins (`backend/main.py`).
 - Uploads go through the API, which checks the file bytes, not the name.
+- Captcha: sign-up, sign-in, forgot password and "send the email again" send an hCaptcha token. The password check on Archive listing runs on the server, which has no token, so it signs in with the service key on a throwaway client (`routes_listings._require_correct_password`). Any new server-side sign-in needs the same treatment, or captcha protection will refuse it.
 
 Open owner items (legacy Supabase keys, repo visibility, captcha enforcement, email confirmation) are tracked in the private launch plan, not here, because this repository is public.
