@@ -273,6 +273,38 @@ a card, a heading or a page top any more.
   cannot back (Superhost, proof of property, visa checks, verified renters,
   AI matching outside the verbatim legal pages, invented scale).
 
+## Phones (v3.2, 2026-11-01)
+The site is laid out for a phone, not shrunk onto one. `styles/mobile.css`
+holds the rules, loaded after `globals.css`; desktop is unchanged.
+
+- **Tab bar.** Below 1024px the public site has the Hub's floating glass
+  tab bar (`components/site/PhoneTabBar.tsx`, drawn with `.hub-tabbar`):
+  Home, Search, Saved, Help, Sign in / Hub. It hides while a field has
+  focus. Pages with their own bottom bar (a listing's price and Apply, a
+  host profile) list themselves in `OWN_BOTTOM_BAR` in `Layout.tsx` and
+  leave it out. The Help tab opens the help panel (`lib/helpPanel.ts`), so
+  the floating help button only shows where there is no tab bar.
+- **Header.** On a phone it tucks up while the page scrolls down and comes
+  back on the first scroll up.
+- **Sheets, not boxes.** Anything that opens over a phone screen (help,
+  search filters, the report dialog) rises from the bottom with a grabber,
+  rounded top corners and room for the home indicator. The filter sheet's
+  "Search rooms" stays pinned to its foot.
+- **Sideways.** A grid of like cards gets `.phone-swipe` (and `SwipeDots`
+  after it): one card and a glimpse of the next, snapping, on phones only.
+  Filter chip rows get `.phone-chips`. Long-document side menus become one
+  row of chips. A listing's photos are one edge-to-edge strip that follows
+  the finger.
+- **Touch.** Every field is 16px on a touch screen (Safari zooms the page
+  into anything smaller). Standalone text links get a 44px target from a
+  transparent `::after` (`.tap-area`, `.tap-area--y` for neighbours side by
+  side) so nothing moves. Hover lifts are off on touch screens; controls
+  answer the press instead (scale 0.97, cards 0.985).
+- **Rhythm.** Below 640px a section is 56px top and bottom (40px tight),
+  and a row of buttons fills its line (`.site-actions`).
+- **Safe areas.** `viewport-fit=cover` is set in `_app.tsx`, so
+  `env(safe-area-inset-*)` is live: every fixed bar adds the bottom inset.
+
 ## Exports
 See globals.css `@theme` for the live hex tokens. tokens.css at project root
 mirrors the system as portable CSS custom properties.

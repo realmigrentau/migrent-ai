@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, BadgeCheck, HandCoins, Languages, Sprout } from "lucide-react";
 import SEOHead from "../components/SEOHead";
-import { CloseCard, PageHero, Reveal, SectionHead } from "../components/site";
+import { CloseCard, PageHero, Reveal, SectionHead, SwipeDots } from "../components/site";
 import { businessDetails, hostFeeSentence, seekerFeeSentence, siteIdentity } from "../lib/siteIdentity";
 
 /**
@@ -78,7 +78,7 @@ export default function About() {
               }
             />
           </Reveal>
-          <ul className="m-0 mt-10 grid list-none gap-3 p-0 sm:grid-cols-2 lg:grid-cols-4">
+          <ul className="phone-swipe m-0 mt-10 grid list-none gap-3 p-0 sm:grid-cols-2 lg:grid-cols-4">
             {PRINCIPLES.map((p, i) => (
               <Reveal as="li" key={p.title} delay={i * 0.05} className="site-card site-card--pad">
                 <span className="site-icon" aria-hidden="true">
@@ -89,6 +89,7 @@ export default function About() {
               </Reveal>
             ))}
           </ul>
+          <SwipeDots count={PRINCIPLES.length} />
         </div>
       </section>
 

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ArrowRight, MapPin, Search, Users } from "lucide-react";
 import SEOHead from "../components/SEOHead";
 import MentorCard from "../components/mentors/MentorCard";
-import { CloseCard, PageHero, Reveal, SectionHead } from "../components/site";
+import { CloseCard, PageHero, Reveal, SectionHead, SwipeDots } from "../components/site";
 import { API_BASE_URL as BASE_URL } from "../lib/apiBase";
 import type { GetStaticProps } from "next";
 import { siteIdentity } from "../lib/siteIdentity";
@@ -107,7 +107,7 @@ export default function MentorsPage() {
         lead="Book a one-on-one session with a local who can show you the suburb, the transport and the shops. Sessions are optional and paid; each mentor sets their own price."
       >
         <form onSubmit={onSearch} role="search" aria-label="Find a mentor" className="mt-8 flex max-w-[720px] flex-col gap-3 sm:flex-row">
-          <label className="site-search flex-1">
+          <label className="site-search sm:flex-1">
             <MapPin className="site-search__icon h-4 w-4" aria-hidden="true" />
             <span className="sr-only">Suburb</span>
             <input value={suburb} onChange={(e) => setSuburb(e.target.value)} placeholder="Suburb, e.g. Parramatta" autoComplete="address-level2" />
@@ -124,7 +124,7 @@ export default function MentorsPage() {
             <Search className="h-4 w-4" strokeWidth={2.2} aria-hidden="true" /> Search
           </button>
         </form>
-        <div className="mt-4 flex flex-wrap gap-2" aria-label="Popular suburbs">
+        <div className="phone-chips mt-4 flex flex-wrap gap-2" aria-label="Popular suburbs">
           {SUBURBS.map((s) => (
             <button
               key={s}
@@ -228,7 +228,7 @@ export default function MentorsPage() {
               }
             />
           </Reveal>
-          <ol className="m-0 mt-10 grid list-none gap-3 p-0 md:grid-cols-3">
+          <ol className="phone-swipe m-0 mt-10 grid list-none gap-3 p-0 md:grid-cols-3">
             {STEPS.map((s, i) => (
               <Reveal as="li" key={s.n} delay={i * 0.05} className="site-card site-card--pad">
                 <span aria-hidden="true" className="site-numeral text-[44px] text-[color:var(--color-primary-400)]">{s.n}</span>
@@ -237,6 +237,7 @@ export default function MentorsPage() {
               </Reveal>
             ))}
           </ol>
+          <SwipeDots count={STEPS.length} />
         </div>
       </section>
 

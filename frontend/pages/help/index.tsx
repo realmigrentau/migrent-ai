@@ -3,7 +3,7 @@ import Head from "next/head";
 import Link from "next/link";
 import { AlertTriangle, ArrowRight, CreditCard, FileText, Home, Mail, Rocket, Search, ShieldCheck, Wrench, type LucideIcon } from "lucide-react";
 import SEOHead from "../../components/SEOHead";
-import { CloseCard, Faq, PageHero, Reveal, SectionHead } from "../../components/site";
+import { CloseCard, Faq, PageHero, Reveal, SectionHead, SwipeDots } from "../../components/site";
 import { HELP_ARTICLES, HELP_CATEGORIES, HELP_FAQ, getFeaturedArticles } from "../../lib/helpData";
 import { siteIdentity, supportPromise } from "../../lib/siteIdentity";
 
@@ -117,7 +117,7 @@ export default function HelpCentre() {
                 <h2 id="popular-heading" className="eyebrow mb-5">
                   Most read
                 </h2>
-                <ul className="m-0 grid list-none gap-3 p-0 sm:grid-cols-2 lg:grid-cols-3">
+                <ul className="phone-swipe m-0 grid list-none gap-3 p-0 sm:grid-cols-2 lg:grid-cols-3">
                   {featured.map((a, i) => (
                     <Reveal as="li" key={a.slug} delay={(i % 3) * 0.04}>
                       <Link href={`/help/${a.slug}`} className="site-card site-card--pad flex h-full flex-col">
@@ -131,6 +131,7 @@ export default function HelpCentre() {
                     </Reveal>
                   ))}
                 </ul>
+                <SwipeDots count={featured.length} />
               </div>
             </section>
 
@@ -176,15 +177,18 @@ export default function HelpCentre() {
                     const Icon = ICONS[c.icon] ?? FileText;
                     return (
                       <Reveal as="li" key={c.slug} delay={(i % 4) * 0.04}>
-                        <Link href={`/help/category/${c.slug}`} className="site-card site-card--pad flex h-full flex-col">
+                        {/* A row on a phone (icon beside the words), a tile from sm up. */}
+                        <Link href={`/help/category/${c.slug}`} className="site-card site-card--pad flex h-full items-start gap-4 sm:flex-col sm:gap-0">
                           <span className="site-icon" aria-hidden="true">
                             <Icon className="h-5 w-5" strokeWidth={1.9} />
                           </span>
-                          <h3 className="site-h3 mt-4">{c.name}</h3>
-                          <p className="site-body mt-1.5 flex-1">{c.description}</p>
-                          <p className="site-meta mt-4">
-                            {c.articleCount} {c.articleCount === 1 ? "article" : "articles"}
-                          </p>
+                          <div className="flex min-w-0 flex-1 flex-col self-stretch">
+                            <h3 className="site-h3 sm:mt-4">{c.name}</h3>
+                            <p className="site-body mt-1.5 flex-1">{c.description}</p>
+                            <p className="site-meta mt-2 sm:mt-4">
+                              {c.articleCount} {c.articleCount === 1 ? "article" : "articles"}
+                            </p>
+                          </div>
                         </Link>
                       </Reveal>
                     );

@@ -156,7 +156,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
       <div
         aria-live="polite"
         aria-atomic="true"
-        className="pointer-events-none fixed top-4 right-4 z-[100] flex w-full max-w-sm flex-col gap-2 sm:top-6 sm:right-6"
+        className="pointer-events-none fixed inset-x-3 top-[max(12px,env(safe-area-inset-top))] z-[100] flex flex-col gap-2 sm:inset-x-auto sm:right-6 sm:top-6 sm:w-full sm:max-w-sm"
       >
         <AnimatePresence initial={false}>
           {toasts.map((t) => (

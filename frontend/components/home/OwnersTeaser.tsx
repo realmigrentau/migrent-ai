@@ -40,7 +40,7 @@ export default function OwnersTeaser() {
                 }
                 lead="List a room or a whole home, meet renters who have already told you about themselves, and run the tenancy from Migrent Hub. Listing is free."
               />
-              <div className="mt-8 flex flex-wrap items-center gap-3">
+              <div className="site-actions mt-8 flex flex-wrap items-center gap-3">
                 <Link href={listHref} className="btn-primary btn-lg">
                   List a property
                   <ArrowRight className="btn-arrow h-4 w-4" strokeWidth={2.2} aria-hidden="true" />

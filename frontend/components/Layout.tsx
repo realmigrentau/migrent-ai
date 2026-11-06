@@ -10,6 +10,7 @@ import BackendStatusBanner from "./BackendStatusBanner";
 import SiteFooter from "./SiteFooter";
 
 const SmoothScroll = dynamic(() => import("./SmoothScroll"), { ssr: false });
+import PhoneTabBar from "./site/PhoneTabBar";
 
 /** Routes built from the public-site kit (components/site): full width, and
  *  they draw their own sky under the floating header. */
@@ -25,6 +26,10 @@ const SITE_KIT = [
 /** Full-width routes that sit below the header rather than drawing a sky. */
 const LEGACY_FULL_WIDTH: string[] = ["/listing/[id]", "/mentor/[id]", "/suburb/[state]", "/suburb/[state]/[slug]"];
 
+/** Pages with their own bar along the bottom of a phone (a listing's price
+ *  and Apply, a host profile's contact bar), so the tab bar stays out. */
+const OWN_BOTTOM_BAR: string[] = ["/listing/[id]", "/users/profile/[id]"];
+
 const matchesAny = (list: string[], path: string) => list.some((p) => path === p || (p !== "/" && path.startsWith(`${p}/`)));
 
 export default function Layout({ children }: { children: ReactNode }) {
@@ -34,9 +39,10 @@ export default function Layout({ children }: { children: ReactNode }) {
      centred container. Everything else still gets it. */
   const drawsOwnSky = matchesAny(SITE_KIT, router.pathname);
   const isFullWidth = drawsOwnSky || LEGACY_FULL_WIDTH.includes(router.pathname);
+  const tabBar = !OWN_BOTTOM_BAR.includes(router.pathname);
 
   return (
-    <div className="min-h-screen flex flex-col bg-[var(--color-bg)] text-[var(--color-ink)]">
+    <div className="min-h-screen flex flex-col bg-[var(--color-bg)] text-[var(--color-ink)]" data-tabbar={tabBar ? "" : undefined} data-own-bar={tabBar ? undefined : ""}>
       {/* Keyboard users land here first. Visible on focus only. */}
       <a
         href="#main-content"
@@ -65,6 +71,14 @@ export default function Layout({ children }: { children: ReactNode }) {
 
       {/* Footer */}
       <SiteFooter />
+
+      {/* Phones and tablets: the tab bar, and room under the footer for it. */}
+      {tabBar && (
+        <>
+          <div className="phone-tabbar-spacer" aria-hidden="true" />
+          <PhoneTabBar />
+        </>
+      )}
 
       {/* Global support widget */}
       <SupportWidget />

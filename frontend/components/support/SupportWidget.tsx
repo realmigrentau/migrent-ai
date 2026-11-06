@@ -7,6 +7,7 @@ import { siteIdentity } from "../../lib/siteIdentity";
 import type { HelpAnswer } from "../../lib/helpSearch";
 import { Events, trackEvent } from "../../lib/analytics";
 import EmailInboxHelp from "../EmailInboxHelp";
+import { HELP_OPEN_EVENT, announceHelp, takePendingHelp } from "../../lib/helpPanel";
 
 type Tab = "answers" | "contact";
 
@@ -26,14 +27,18 @@ const REPLY = `A person replies by email, ${siteIdentity.support.responseTarget}
  * chat, and says so. "Write to us" opens a support ticket that a person
  * answers by email.
  *
- * On phones the panel is a sheet that fits the screen (it used to be a fixed
- * 448px wide and ran off the left edge of every phone), and the button steps
- * aside while someone is typing in another field, so it never covers the
- * search box.
+ * On phones the panel is a bottom sheet over a dimmed page (it used to be a
+ * fixed 448px wide and ran off the left edge of every phone), and the
+ * floating button gives way to the tab bar's Help tab (PhoneTabBar), which
+ * opens it through lib/helpPanel. Where the button shows, it steps aside
+ * while someone is typing in another field, so it never covers the search
+ * box.
  */
 export default function SupportWidget() {
   const { session } = useAuth();
-  const [open, setOpen] = useState(false);
+  // The widget only renders in the browser (Layout loads it with ssr:false),
+  // so it can start open if the tab bar's Help was tapped before it loaded.
+  const [open, setOpen] = useState(takePendingHelp);
   const [tab, setTab] = useState<Tab>("answers");
   // True while the visitor is typing in a field outside this widget.
   const [typingElsewhere, setTypingElsewhere] = useState(false);
@@ -62,6 +67,23 @@ export default function SupportWidget() {
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, searching]);
+
+  // Opened from elsewhere (the phone tab bar).
+  useEffect(() => {
+    const onOpen = (e: Event) => setOpen(Boolean((e as CustomEvent<{ open: boolean }>).detail?.open));
+    window.addEventListener(HELP_OPEN_EVENT, onOpen);
+    return () => window.removeEventListener(HELP_OPEN_EVENT, onOpen);
+  }, []);
+
+  useEffect(() => {
+    announceHelp(open);
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [open]);
 
   useEffect(() => {
     const isField = (el: EventTarget | null) =>
@@ -154,7 +176,7 @@ export default function SupportWidget() {
         onClick={() => setOpen(!open)}
         aria-expanded={open}
         aria-label={open ? "Close help" : "Help"}
-        className={`fixed bottom-4 right-4 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-[var(--color-primary)] text-[color:var(--color-primary-fg)] shadow-lg transition-all hover:shadow-xl sm:bottom-6 sm:right-6 sm:h-14 sm:w-14 ${
+        className={`help-fab fixed bottom-4 right-4 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-[var(--color-primary)] text-[color:var(--color-primary-fg)] shadow-lg transition-all hover:shadow-xl sm:bottom-6 sm:right-6 sm:h-14 sm:w-14 ${
           typingElsewhere && !open ? "pointer-events-none translate-y-24 opacity-0 sm:pointer-events-auto sm:translate-y-0 sm:opacity-100" : ""
         }`}
       >
@@ -172,19 +194,44 @@ export default function SupportWidget() {
       <AnimatePresence>
         {open && (
           <motion.div
+            key="help-scrim"
+            aria-hidden="true"
+            className="fixed inset-0 z-[59] bg-black/40 sm:hidden"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            onClick={() => setOpen(false)}
+          />
+        )}
+        {open && (
+          <motion.div
+            key="help-panel"
             ref={panelRef}
             role="dialog"
             aria-label="Migrent help"
-            initial={{ opacity: 0, y: 20, scale: 0.97 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.97 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-x-3 bottom-20 z-50 flex h-[min(38rem,calc(100dvh-7rem))] flex-col overflow-hidden rounded-2xl border border-[var(--color-line)] bg-[var(--color-surface-2)] shadow-2xl sm:inset-x-auto sm:bottom-24 sm:right-6 sm:w-[28rem]"
+            data-lenis-prevent=""
+            initial={{ opacity: 0, y: 28 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 28 }}
+            transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
+            className="fixed inset-x-0 bottom-0 z-[60] flex h-[min(40rem,calc(100dvh-3.5rem))] flex-col overflow-hidden rounded-t-[24px] border-t border-[var(--color-line)] bg-[var(--color-surface-2)] pb-[env(safe-area-inset-bottom)] shadow-2xl sm:inset-x-auto sm:bottom-24 sm:right-6 sm:h-[min(38rem,calc(100dvh-7rem))] sm:w-[28rem] sm:rounded-2xl sm:border sm:pb-0"
           >
             {/* Header */}
-            <div className="bg-[var(--color-primary)] px-5 py-4 text-[color:var(--color-primary-fg)]">
+            <div className="relative bg-[var(--color-primary)] px-5 py-4 pr-14 text-[color:var(--color-primary-fg)]">
+              <span className="absolute left-1/2 top-1.5 h-1 w-9 -translate-x-1/2 rounded-full bg-current opacity-40 sm:hidden" aria-hidden="true" />
               <h3 className="text-base font-bold">Migrent help</h3>
               <p className="text-xs opacity-90">Answers from our Help centre, and a person by email.</p>
+              <button
+                type="button"
+                onClick={() => setOpen(false)}
+                aria-label="Close help"
+                className="absolute right-2 top-1/2 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full transition-colors hover:bg-white/15 active:bg-white/25"
+              >
+                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
             </div>
 
             {/* Tabs */}
@@ -202,7 +249,7 @@ export default function SupportWidget() {
                     setTab(t.key);
                     if (t.key === "contact") resetForm();
                   }}
-                  className={`flex flex-1 items-center justify-center gap-1.5 py-2.5 text-sm font-medium transition-colors ${
+                  className={`flex min-h-[44px] flex-1 items-center justify-center gap-1.5 py-2.5 text-sm font-medium transition-colors ${
                     tab === t.key ? "border-b-2 border-[var(--color-primary)] text-[var(--color-primary)]" : "text-[var(--color-ink-3)] hover:text-[var(--color-ink-2)]"
                   }`}
                 >

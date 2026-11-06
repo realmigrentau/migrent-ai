@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import Image from "next/image";
 import type { GetServerSideProps } from "next";
 import { motion, AnimatePresence } from "framer-motion";
+import { List, Map as MapIcon, X } from "lucide-react";
 import { useAuth } from "../../hooks/useAuth";
 import { useTheme } from "../../hooks/useTheme";
 import {
@@ -55,6 +56,10 @@ import { moveInCost } from "../../lib/listingCosts";
  * hero, the category chips, a shared link and the browser's back button all
  * land on the same search.
  */
+
+// The map needs its tile key (components/ListingsMap). Without one there is
+// no point offering phones a map button that can only say "unavailable".
+const MAP_CONFIGURED = Boolean(process.env.NEXT_PUBLIC_MAPTILER_KEY);
 
 const ListingsMap = dynamic(() => import("../../components/ListingsMap"), {
   ssr: false,
@@ -114,7 +119,7 @@ function FilterChip({ label, onRemove }: { label: string; onRemove: () => void }
         type="button"
         aria-label={`Remove filter: ${label}`}
         onClick={onRemove}
-        className="w-7 h-7 -my-1 inline-flex items-center justify-center rounded-full hover:bg-[var(--color-line)] hover:text-[var(--color-ink)] transition-colors"
+        className="tap-area w-7 h-7 -my-1 inline-flex items-center justify-center rounded-full hover:bg-[var(--color-line)] hover:text-[var(--color-ink)] transition-colors"
       >
         <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3} aria-hidden="true">
           <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -228,6 +233,12 @@ export default function SeekerSearch({ initialFilters, initialPage, serverToday 
   const [accountSaved, setAccountSaved] = useState<ReadonlySet<string> | null>(null);
   const [showMap, setShowMap] = useState(true);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
+  // Phones and tablets: the map is a full screen of its own, opened from a
+  // button over the results, instead of a column there is no room for.
+  const [phoneMap, setPhoneMap] = useState(false);
+  // The side-by-side map only exists at xl. Below that it is not mounted at
+  // all, so a phone never downloads the map library unless it asks for it.
+  const [wideScreen, setWideScreen] = useState(false);
   const [mapStateSet, setMapState] = useState<MapState>("idle");
   const [mapReasonSet, setMapReason] = useState("");
   const [mapKey, setMapKey] = useState(0);
@@ -431,6 +442,34 @@ export default function SeekerSearch({ initialFilters, initialPage, serverToday 
     if (isBestMatch && sessionToken) void fetchResults(filters, "replace");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sessionToken]);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 1280px)");
+    const update = () => {
+      setWideScreen(mq.matches);
+      if (mq.matches) setPhoneMap(false);
+    };
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
+
+  // The phone map and the filter sheet are modal: the page behind stays put.
+  useEffect(() => {
+    if (!phoneMap && !showMobileFilters) return;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== "Escape") return;
+      setPhoneMap(false);
+      setShowMobileFilters(false);
+    };
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = previous;
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [phoneMap, showMobileFilters]);
 
   // ── Map mounts only after results have painted ──
   useEffect(() => {
@@ -853,7 +892,7 @@ export default function SeekerSearch({ initialFilters, initialPage, serverToday 
       </details>
 
 
-      <button type="submit" disabled={searching} className="btn-primary w-full min-h-[44px] py-3 rounded-xl text-sm font-bold">
+      <button type="submit" disabled={searching} className="filters-apply btn-primary w-full min-h-[44px] py-3 rounded-xl text-sm font-bold">
         {searching ? (
           <span className="flex items-center justify-center gap-2">
             <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" aria-hidden="true" />
@@ -926,17 +965,21 @@ export default function SeekerSearch({ initialFilters, initialPage, serverToday 
       <AnimatePresence>
         {showMobileFilters && (
           <>
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/40 z-40 lg:hidden" onClick={() => setShowMobileFilters(false)} aria-hidden="true" />
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/40 z-[60] lg:hidden" onClick={() => setShowMobileFilters(false)} aria-hidden="true" />
+            {/* A sheet from the bottom, the way filters open in a phone app,
+                with "Search rooms" pinned to its foot (styles/mobile.css). */}
             <motion.div
               id="mobile-filters"
               role="dialog"
               aria-modal="true"
               aria-label="Filters"
-              initial={{ x: "-100%" }} animate={{ x: 0 }} exit={{ x: "-100%" }}
-              transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="fixed inset-y-0 left-0 w-[85vw] max-w-sm bg-[var(--color-surface-2)] z-50 overflow-y-auto shadow-2xl lg:hidden"
+              data-lenis-prevent=""
+              initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }}
+              transition={{ type: "spring", damping: 32, stiffness: 320 }}
+              className="fixed inset-x-0 bottom-0 max-h-[90dvh] rounded-t-[24px] bg-[var(--color-surface-2)] z-[61] overflow-y-auto overscroll-contain shadow-2xl lg:hidden"
             >
-              <div className="sticky top-0 bg-[var(--color-surface-2)] border-b border-[var(--color-line)] px-5 py-3 flex items-center justify-between z-10">
+              <div className="sticky top-0 bg-[var(--color-surface-2)] border-b border-[var(--color-line)] px-5 pt-4 pb-3 flex items-center justify-between z-10">
+                <span className="absolute left-1/2 top-1.5 h-1 w-9 -translate-x-1/2 rounded-full bg-[var(--color-line-2)]" aria-hidden="true" />
                 <h2 className="font-bold text-lg text-[var(--color-ink)]">Filters</h2>
                 <div className="flex items-center gap-1">
                   {filterCount > 0 && (
@@ -1014,7 +1057,7 @@ export default function SeekerSearch({ initialFilters, initialPage, serverToday 
                   results in place while the new ones load moves nothing, and
                   it reads faster because there is never a blank moment. */}
               {searching && results.length === 0 ? (
-                <div className={`grid gap-4 ${showMap ? "grid-cols-1" : "grid-cols-1 md:grid-cols-2 xl:grid-cols-3"}`} aria-hidden="true">
+                <div className={`grid gap-4 ${showMap ? "grid-cols-1 md:grid-cols-2 xl:grid-cols-1" : "grid-cols-1 md:grid-cols-2 xl:grid-cols-3"}`} aria-hidden="true">
                   {[1, 2, 3].map((i) => (
                     <div key={i} className="card p-4 rounded-2xl space-y-3">
                       <div className="w-full aspect-[16/10] rounded-xl shimmer" />
@@ -1081,7 +1124,7 @@ export default function SeekerSearch({ initialFilters, initialPage, serverToday 
               ) : (
                 <>
                   <ul
-                    className={`grid gap-4 list-none p-0 m-0 transition-opacity duration-200 ${showMap && mapState !== "unavailable" ? "grid-cols-1" : "grid-cols-1 md:grid-cols-2 xl:grid-cols-3"} ${searching ? "opacity-55" : "opacity-100"}`}
+                    className={`grid gap-4 list-none p-0 m-0 transition-opacity duration-200 ${showMap && mapState !== "unavailable" ? "grid-cols-1 md:grid-cols-2 xl:grid-cols-1" : "grid-cols-1 md:grid-cols-2 xl:grid-cols-3"} ${searching ? "opacity-55" : "opacity-100"}`}
                     aria-busy={searching || undefined}
                   >
                     {results.map((listing) => {
@@ -1171,7 +1214,7 @@ export default function SeekerSearch({ initialFilters, initialPage, serverToday 
               )}
             </section>
 
-            {mapVisible && (
+            {mapVisible && wideScreen && (
               <div className="hidden xl:block xl:col-span-2">
                 <div className="sticky top-24 space-y-4">
                   {/* As tall as the screen allows, so the map stays useful while the list scrolls. */}
@@ -1204,6 +1247,70 @@ export default function SeekerSearch({ initialFilters, initialPage, serverToday 
           </div>
         </div>
       </div>
+
+      {/* Phones and tablets: one tap from the list to a full-screen map of
+          the same results, and one tap back, as in any map-led app. */}
+      {MAP_CONFIGURED && mapState !== "unavailable" && !catalogueEmpty && results.length > 0 && !phoneMap && (
+        <button
+          type="button"
+          onClick={() => setPhoneMap(true)}
+          className="hub-press fixed left-1/2 z-30 inline-flex h-11 -translate-x-1/2 items-center gap-2 rounded-full bg-[var(--color-ink)] px-5 text-[14px] font-semibold text-[color:var(--color-bg)] shadow-[var(--shadow-pop)] bottom-[calc(var(--tabbar-space)+10px)] lg:bottom-6 xl:hidden"
+          data-testid="phone-map-open"
+        >
+          <MapIcon className="h-4 w-4" strokeWidth={2} aria-hidden="true" />
+          Map
+        </button>
+      )}
+      <AnimatePresence>
+        {phoneMap && (
+          <motion.div
+            role="dialog"
+            aria-modal="true"
+            aria-label="Map of these rooms"
+            className="fixed inset-0 z-[65] bg-[var(--color-canvas)] xl:hidden"
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 24 }}
+            transition={{ duration: 0.26, ease: [0.22, 1, 0.36, 1] }}
+            data-testid="phone-map"
+          >
+            <div className="absolute inset-0">
+              {mapState === "unavailable" ? (
+                <MapUnavailablePanel reason={mapReason} onRetry={webgl ? retryMap : undefined} />
+              ) : (
+                <MapErrorBoundary key={mapKey} fallback={<MapUnavailablePanel reason="The map could not load. Close it to see the list." onRetry={retryMap} />} onError={() => onMapUnavailable("init")}>
+                  <ListingsMap listings={mapListings} isDark={theme === "dark"} stations={mapStations} onUnavailable={onMapUnavailable} />
+                </MapErrorBoundary>
+              )}
+            </div>
+            <div className="pointer-events-none absolute inset-x-0 top-0 flex items-start justify-between gap-3 px-3 pt-[max(12px,env(safe-area-inset-top))]">
+              <p className="pointer-events-auto rounded-full border border-[var(--color-line)] bg-[var(--color-surface)]/95 px-4 py-2.5 text-[13.5px] font-semibold text-[color:var(--color-ink)] shadow-[var(--shadow-soft)] backdrop-blur">
+                {resultsSummary}
+              </p>
+              <button
+                type="button"
+                autoFocus
+                onClick={() => setPhoneMap(false)}
+                aria-label="Close map"
+                className="hub-press pointer-events-auto inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-[var(--color-line)] bg-[var(--color-surface)] text-[color:var(--color-ink)] shadow-[var(--shadow-soft)]"
+              >
+                <X className="h-5 w-5" strokeWidth={2} aria-hidden="true" />
+              </button>
+            </div>
+            <p className="pointer-events-none absolute inset-x-0 bottom-[calc(76px+env(safe-area-inset-bottom))] text-center text-[11.5px] font-medium text-[color:var(--color-ink-2)] [text-shadow:0_1px_2px_var(--color-surface)]">
+              Circles show the approximate area of each room, not the address.
+            </p>
+            <button
+              type="button"
+              onClick={() => setPhoneMap(false)}
+              className="hub-press absolute bottom-[calc(20px+env(safe-area-inset-bottom))] left-1/2 inline-flex h-11 -translate-x-1/2 items-center gap-2 rounded-full bg-[var(--color-ink)] px-5 text-[14px] font-semibold text-[color:var(--color-bg)] shadow-[var(--shadow-pop)]"
+            >
+              <List className="h-4 w-4" strokeWidth={2} aria-hidden="true" />
+              Show list
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

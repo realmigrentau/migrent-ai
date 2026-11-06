@@ -207,20 +207,24 @@ export default function PropertiesPage() {
             <Section title="Unfinished" description="Saved as you went. Pick up where you left off.">
               <ul className="flex flex-col overflow-hidden rounded-[20px] border border-[var(--color-line)] bg-[var(--color-surface)]">
                 {(data.drafts ?? []).map((d) => (
-                  <li key={d.id} className="flex items-center gap-4 border-t border-[var(--color-line)] px-4 py-3.5 first:border-0 sm:px-5">
+                  <li key={d.id} className="flex flex-wrap items-center gap-x-4 gap-y-3 border-t border-[var(--color-line)] px-4 py-3.5 first:border-0 sm:flex-nowrap sm:px-5">
                     <HomeImage src={d.image} alt="" className="h-14 w-20 shrink-0" rounded="rounded-[12px]" sizes="80px" />
-                    <HubLink to={`/properties/new?draft=${d.id}&step=${WIZARD_STEPS[Math.min(d.step, WIZARD_STEPS.length - 1)].key}`} className="flex min-w-0 flex-1 flex-col">
+                    <HubLink to={`/properties/new?draft=${d.id}&step=${WIZARD_STEPS[Math.min(d.step, WIZARD_STEPS.length - 1)].key}`} className="flex min-w-[9rem] flex-1 flex-col">
                       <span className="truncate text-[15px] font-semibold text-[color:var(--color-ink)] hover:underline">{d.title}</span>
                       <span className="text-[13px] text-[color:var(--color-ink-3)]">
                         Step {Math.min(d.step + 1, WIZARD_STEPS.length)} of {WIZARD_STEPS.length} · saved {relative(d.updated_at)}
                       </span>
                     </HubLink>
-                    <ButtonLink to={`/properties/new?draft=${d.id}&step=${WIZARD_STEPS[Math.min(d.step, WIZARD_STEPS.length - 1)].key}`} variant="secondary" size="sm" icon={<Pencil className="h-4 w-4" strokeWidth={1.75} />}>
-                      Continue
-                    </ButtonLink>
-                    <IconButton label={`Delete ${d.title}`} size="sm" onClick={() => void removeDraft(d.id, d.title)}>
-                      <Trash2 className="h-4 w-4" strokeWidth={1.75} />
-                    </IconButton>
+                    {/* On a phone the actions drop to their own line, so the
+                        title and step keep the width they need. */}
+                    <div className="ml-auto flex shrink-0 items-center gap-2">
+                      <ButtonLink to={`/properties/new?draft=${d.id}&step=${WIZARD_STEPS[Math.min(d.step, WIZARD_STEPS.length - 1)].key}`} variant="secondary" size="sm" icon={<Pencil className="h-4 w-4" strokeWidth={1.75} />}>
+                        Continue
+                      </ButtonLink>
+                      <IconButton label={`Delete ${d.title}`} size="sm" onClick={() => void removeDraft(d.id, d.title)}>
+                        <Trash2 className="h-4 w-4" strokeWidth={1.75} />
+                      </IconButton>
+                    </div>
                   </li>
                 ))}
               </ul>

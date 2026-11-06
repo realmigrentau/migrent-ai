@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ArrowRight, BarChart3, CalendarCheck, ClipboardList, FileSignature, Layers, MessagesSquare, ShieldCheck, Wrench } from "lucide-react";
 import SEOHead from "../components/SEOHead";
 import EarningsEstimate from "../components/site/EarningsEstimate";
-import { CloseCard, Faq, PageHero, Reveal, SectionHead, type FaqEntry } from "../components/site";
+import { CloseCard, Faq, PageHero, Reveal, SectionHead, SwipeDots, type FaqEntry } from "../components/site";
 import { useAuth } from "../hooks/useAuth";
 import { useMounted } from "../hooks/useMounted";
 import { hubAbsoluteUrl, hubFromSite } from "../lib/hub/routes";
@@ -87,7 +87,7 @@ export default function ForOwners() {
               }
             />
           </Reveal>
-          <ol className="m-0 mt-10 grid list-none gap-4 p-0 md:grid-cols-2 lg:grid-cols-4">
+          <ol className="phone-swipe m-0 mt-10 grid list-none gap-4 p-0 md:grid-cols-2 lg:grid-cols-4">
             {STEPS.map((s, i) => (
               <Reveal as="li" key={s.title} delay={i * 0.05} className="site-card site-card--pad">
                 <span aria-hidden="true" className="site-numeral text-[44px] text-[color:var(--color-primary-400)]">
@@ -101,6 +101,7 @@ export default function ForOwners() {
               </Reveal>
             ))}
           </ol>
+          <SwipeDots count={STEPS.length} />
         </div>
       </section>
 

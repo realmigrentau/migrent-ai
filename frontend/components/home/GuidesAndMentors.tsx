@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ArrowRight, HeartHandshake } from "lucide-react";
-import { Reveal, SectionHead } from "../site";
+import { Reveal, SectionHead, SwipeDots } from "../site";
 
 /**
  * Reading, and a person to ask. Three real articles (the props come from
@@ -39,7 +39,8 @@ export default function GuidesAndMentors({ articles = [], mentorsListed = false 
         </Reveal>
 
         <div className={`mt-10 grid gap-4 ${mentorsListed ? "lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]" : ""}`}>
-          <ul className="m-0 grid list-none gap-4 p-0 md:grid-cols-3 lg:grid-cols-3">
+          <div className="min-w-0">
+          <ul className="phone-swipe m-0 grid list-none gap-4 p-0 md:grid-cols-3 lg:grid-cols-3">
             {articles.map((a, i) => (
               <Reveal as="li" key={a.href} delay={i * 0.05}>
                 <Link href={a.href} className="site-card site-card--pad flex h-full flex-col">
@@ -55,6 +56,8 @@ export default function GuidesAndMentors({ articles = [], mentorsListed = false 
               </Reveal>
             ))}
           </ul>
+          <SwipeDots count={articles.length} />
+          </div>
 
           {/* Only once there is someone to meet: an approved, ID-checked
               mentor (routes_mentors). Before that this card promised

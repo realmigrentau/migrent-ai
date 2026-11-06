@@ -47,7 +47,7 @@ export default function ResetPassword() {
       {hasSession === false ? (
         <>
           <AuthHeading title="This link has expired" body="Reset links work once, in the browser you requested them from." />
-          <HubLink to="/forgot-password" className="text-[14px] font-semibold text-[color:var(--color-primary)] hover:underline">
+          <HubLink to="/forgot-password" className="tap-area text-[14px] font-semibold text-[color:var(--color-primary)] hover:underline">
             Send a new reset link
           </HubLink>
         </>

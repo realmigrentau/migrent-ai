@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { motion, useReducedMotion, useScroll, useSpring, useTransform } from "framer-motion";
 import { ArrowRight, ClipboardCheck, KeyRound, Search, ShieldCheck, type LucideIcon } from "lucide-react";
-import { Reveal, SectionHead } from "../site";
+import { Reveal, SectionHead, SwipeDots } from "../site";
 
 /**
  * Four steps, told sideways.
@@ -148,13 +148,14 @@ function Stacked() {
         <Reveal>
           <Head />
         </Reveal>
-        <ol className="m-0 mt-10 grid list-none grid-cols-1 gap-4 p-0 md:grid-cols-2">
+        <ol className="phone-swipe m-0 mt-10 grid list-none grid-cols-1 gap-4 p-0 md:grid-cols-2">
           {STEPS.map((s, i) => (
             <Reveal as="li" key={s.title} delay={(i % 2) * 0.06}>
               <StepCard step={s} index={i} />
             </Reveal>
           ))}
         </ol>
+        <SwipeDots count={STEPS.length} />
       </div>
     </section>
   );

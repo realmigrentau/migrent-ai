@@ -1,5 +1,6 @@
 import { createElement, useEffect, type ReactNode } from "react";
 import dynamic from "next/dynamic";
+import Head from "next/head";
 import type { AppProps } from "next/app";
 import { AnimatePresence, motion } from "framer-motion";
 import { Analytics } from "@vercel/analytics/next";
@@ -15,6 +16,7 @@ import { getPageMeta } from "../lib/pageMeta";
 import { fontClassName, fontRootCss } from "../lib/fonts";
 import "../lib/i18n";
 import "../styles/globals.css";
+import "../styles/mobile.css";
 
 // The Hub's session code (and the Supabase client behind it) only reaches
 // Hub pages: they import it, and it leaves its provider in sessionSlot. The
@@ -87,6 +89,12 @@ export default function App({ Component, pageProps, router }: AppProps) {
   const wrapped = (
     <ToastProvider>
       <ConfirmProvider>
+        {/* viewport-fit=cover lets bars sit on the home indicator's safe
+            area (styles/mobile.css); without it env(safe-area-inset-*)
+            is always 0 and the Hub's tab bar spacing did nothing. */}
+        <Head>
+          <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+        </Head>
         {!isHub && <SEOHead title={meta.title} description={meta.description} noIndex={meta.noIndex} />}
         {/* Self-hosted font variables (lib/fonts.ts). The style tag is
             allowed by style-src 'unsafe-inline'; it carries no user data. */}

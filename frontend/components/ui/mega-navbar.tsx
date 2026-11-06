@@ -165,6 +165,39 @@ export default function MegaNavbar({ revealAfterVh = 0 }: { revealAfterVh?: numb
 
   const revealed = scrolledPast || focusWithin || mobileOpen || openDropdown !== null;
 
+  // -- Tucked away while reading down a phone ---------------------------
+  /* Below the desktop layout the pill takes a fifth of a phone's height,
+     so it slides up while the page scrolls down and is back the moment
+     the page scrolls up, as a phone browser's own bar does. Small
+     movements are ignored so it does not flicker on a slow drag. */
+  const [tucked, setTucked] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 1023px)");
+    let last = window.scrollY;
+    let frame = 0;
+    const onScroll = () => {
+      if (frame) return;
+      frame = requestAnimationFrame(() => {
+        frame = 0;
+        const y = window.scrollY;
+        const delta = y - last;
+        if (!mq.matches || y < 120) {
+          setTucked(false);
+          last = y;
+        } else if (Math.abs(delta) > 8) {
+          setTucked(delta > 0);
+          last = y;
+        }
+      });
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (frame) cancelAnimationFrame(frame);
+    };
+  }, []);
+  const tuck = tucked && !focusWithin && !mobileOpen && openDropdown === null;
+
   // -- Opening and closing ---------------------------------------------
   const clearHoverTimer = () => {
     if (hoverTimeout.current) clearTimeout(hoverTimeout.current);
@@ -555,6 +588,7 @@ export default function MegaNavbar({ revealAfterVh = 0 }: { revealAfterVh?: numb
         ref={headerRef}
         className="site-nav"
         data-revealed={revealed ? "true" : "false"}
+        data-tucked={tuck ? "true" : undefined}
         data-sheet={mobileOpen ? "open" : undefined}
         onFocusCapture={() => setFocusWithin(true)}
         onBlurCapture={(e) => {

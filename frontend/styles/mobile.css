@@ -1,0 +1,389 @@
+/* ══════════════════════════════════════════════════════════════
+   PHONES AND TOUCH  ·  imported by pages/_app.tsx after globals.css
+
+   The layouts already fit a phone. What made the site feel like a
+   desktop page on one was everything around the layout: fields that
+   zoom the page in on an iPhone, 20px-tall links under a thumb, hover
+   effects that stick after a tap, section gaps sized for a monitor and
+   bars that ignore the home indicator. This file fixes those once, for
+   every page, without changing how anything looks on a desktop.
+
+   Loaded after globals.css, so an unlayered rule here wins over the
+   unlayered rule it corrects (design.md, trap 1), and Tailwind
+   utilities in a page still win over anything in @layer below.
+   ══════════════════════════════════════════════════════════════ */
+
+:root {
+  /* The phone tab bar (components/site/PhoneTabBar.tsx) is the Hub's: a
+     64px glass bar floating 10px above the home indicator. */
+  --tabbar-h: 64px;
+  --tabbar-gap: 10px;
+  --tabbar-space: calc(var(--tabbar-h) + var(--tabbar-gap) * 2 + env(safe-area-inset-bottom, 0px));
+}
+
+html {
+  /* iOS enlarges text when a phone turns sideways; the layouts already
+     reflow, so keep the type the size it was designed at. */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  /* The grey flash iOS paints over anything tapped. Every control has
+     its own pressed state below instead. */
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* viewport-fit=cover (pages/_app.tsx) lets the sky and the footer paint
+   under the notch of a phone held sideways; the text stays clear of it. */
+body {
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+}
+
+/* A double tap on a button should press it twice, not zoom the page. */
+a,
+button,
+summary,
+label,
+input,
+select,
+textarea,
+[role="button"],
+[role="tab"],
+[role="switch"] {
+  touch-action: manipulation;
+}
+
+/* The bottom of a fixed bar, above the home indicator. Used by the
+   listing page's price bar. */
+.safe-area-pb { padding-bottom: max(12px, env(safe-area-inset-bottom, 0px)); }
+
+/* ── Fields ─────────────────────────────────────────────────────
+   Safari on iPhone zooms the whole page into any field set below 16px
+   and leaves it zoomed after the keyboard closes. Almost every field
+   on the site was 14-15.5px. On a touch screen they are all 16px;
+   a mouse keeps the designed size. */
+@media (hover: none) and (pointer: coarse) {
+  input:not([type="checkbox"], [type="radio"], [type="range"], [type="file"], [type="color"], [type="submit"], [type="button"], [type="image"]),
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
+/* ── Touch targets ──────────────────────────────────────────────
+   Links that stand on their own line ("All guides", the footer index,
+   breadcrumbs, the wordmark) are 20-30px of type. A transparent
+   ::after makes each a 44px target without moving a pixel. */
+@media (pointer: coarse) {
+  .site-link,
+  .site-footer nav a,
+  .site-footer ul a,
+  .page-hero__crumbs a,
+  .site-nav__brand,
+  .tap-area:not(.absolute):not(.fixed):not(.sticky) {
+    position: relative;
+  }
+  .site-link::after,
+  .site-footer nav a::after,
+  .site-footer ul a::after,
+  .page-hero__crumbs a::after,
+  .site-nav__brand::after,
+  .tap-area::after {
+    content: "";
+    position: absolute;
+    inset: -12px -6px;
+  }
+  .site-nav__brand::after { inset: -6px -8px; }
+  /* Side by side (segmented controls): grow up and down only, so two
+     neighbours never share a strip of each other's target. */
+  .tap-area--y::after { inset: -10px 0; }
+  /* Breadcrumbs sit close together; keep their targets from overlapping. */
+  .page-hero__crumbs a::after { inset: -12px -2px; }
+}
+
+/* ── Pressed, not hovered ───────────────────────────────────────
+   A finger has no hover, and on a phone the hover style sticks to
+   whatever was tapped last. On touch screens the hover lifts are off
+   and every control answers the press instead, the way an app does. */
+@media (hover: none) {
+  .btn-primary:active:not(:disabled),
+  .btn-primary-gradient:active:not(:disabled),
+  .btn-secondary:active:not(:disabled),
+  .btn-outline:active:not(:disabled),
+  .btn-ghost:active:not(:disabled),
+  .btn-danger:active:not(:disabled),
+  .site-nav__cta:active,
+  .site-nav__sheet-cta:active,
+  .hc__phone-go:active,
+  .site-arrow:active:not(:disabled) {
+    transform: scale(0.97);
+  }
+
+  a.site-card:active,
+  .site-card--link:active {
+    transform: scale(0.985);
+    transition-duration: 90ms;
+  }
+
+  a.site-chip:active,
+  button.site-chip:active,
+  .hc-chip:active {
+    transform: scale(0.96);
+  }
+
+  .site-nav__cta:hover { transform: none; background: var(--color-primary); }
+  .site-nav__brand:hover .site-nav__mark { transform: none; }
+  .site-link:hover { text-decoration: none; }
+  .site-link:hover svg { transform: none; }
+  .btn-primary:hover > .btn-arrow,
+  .btn-secondary:hover > .btn-arrow,
+  .btn-outline:hover > .btn-arrow,
+  .btn-ghost:hover > .btn-arrow { transform: none; }
+  .site-faq__q:hover { color: var(--color-ink); }
+  .site-faq__q:active { color: var(--color-primary); }
+}
+
+@media (hover: none) and (prefers-reduced-motion: reduce) {
+  .btn-primary:active:not(:disabled),
+  .btn-secondary:active:not(:disabled),
+  .btn-outline:active:not(:disabled),
+  .btn-ghost:active:not(:disabled),
+  a.site-card:active,
+  .site-card--link:active,
+  a.site-chip:active,
+  .hc-chip:active {
+    transform: none;
+  }
+}
+
+/* ── Button rows on a phone ─────────────────────────────────────
+   A pair of buttons that wraps onto two lines leaves two ragged widths.
+   On a phone each grows to fill its line: side by side when they fit,
+   full width, one above the other, when they do not. */
+@media (max-width: 639px) {
+  .site-actions > .btn-primary,
+  .site-actions > .btn-secondary,
+  .site-actions > .btn-outline,
+  .site-actions > .btn-ghost {
+    flex: 1 1 auto;
+    justify-content: center;
+  }
+}
+
+/* A standalone link is one line on a desktop. On a phone a long one
+   ("NSW Government: paying a rental bond") wraps instead of running off
+   the screen. */
+@media (max-width: 639px) {
+  .site-link { white-space: normal; }
+}
+
+/* ── Rhythm on a phone ──────────────────────────────────────────
+   72px above and below every section put 144px of empty canvas between
+   two headings on a 375px screen: more blank than the content between
+   them. A phone scrolls in thumb-lengths, so the gap is one. */
+@media (max-width: 639px) {
+  :root {
+    --space-section: 56px;
+    --space-section-sm: 40px;
+  }
+}
+
+/* ── Sideways on a phone ────────────────────────────────────────
+   A grid of like cards (steps, articles, similar rooms) becomes a strip
+   you swipe on a phone, one card and a glimpse of the next, instead of
+   a column four screens long. Desktop keeps its grid. With reduced
+   motion it stays a column. Add .phone-swipe to the grid. */
+@media (max-width: 767px) and (prefers-reduced-motion: no-preference) {
+  .phone-swipe {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 84%;
+    grid-template-columns: none;
+    gap: 12px;
+    margin-inline: calc(var(--space-gutter) * -1);
+    padding-inline: var(--space-gutter);
+    padding-bottom: 4px;
+    scroll-padding-inline: var(--space-gutter);
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .phone-swipe::-webkit-scrollbar { display: none; }
+  /* Focusable while it scrolls (SwipeDots), so arrow keys move it too. */
+  .phone-swipe:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 4px; border-radius: 12px; }
+  .phone-swipe > * {
+    scroll-snap-align: start;
+    min-width: 0;
+    /* A card's scroll-in rise (Reveal) would leave the glimpse of the next
+       card blank until it was swiped fully into view. In a strip they are
+       simply there; the section heading still rises. */
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .phone-swipe--narrow { grid-auto-columns: 72%; }
+}
+
+/* A row of filter chips: one line you swipe on a phone, not three
+   wrapped lines pushing the results down. */
+@media (max-width: 639px) {
+  .phone-chips {
+    flex-wrap: nowrap;
+    margin-inline: calc(var(--space-gutter) * -1);
+    padding-inline: var(--space-gutter);
+    padding-block: 2px;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .phone-chips::-webkit-scrollbar { display: none; }
+  .phone-chips > * { flex: none; }
+}
+
+.swipe-dots {
+  display: none;
+}
+@media (max-width: 767px) and (prefers-reduced-motion: no-preference) {
+  .swipe-dots {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 16px;
+  }
+  .swipe-dots > span {
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    background: var(--color-line-2);
+    transition:
+      width 260ms var(--ease-out),
+      background-color 200ms var(--ease-out);
+  }
+  .swipe-dots > span[data-on="true"] {
+    width: 18px;
+    background: var(--color-primary);
+  }
+}
+
+/* ── The phone tab bar on the public site ────────────────────────
+   The bar itself is .hub-tabbar (styles/hub.css), the same object as
+   in Migrent Hub. Below it, room so the footer's last line is never
+   under the bar, in the footer's own navy. */
+.phone-tabbar-spacer {
+  height: var(--tabbar-space);
+  background: var(--color-deep);
+}
+@media (min-width: 1024px) {
+  .phone-tabbar-spacer { display: none; }
+}
+
+/* The help button steps aside for the Help tab wherever the bar is, and
+   floats above a page's own bottom bar where it is not. */
+@media (max-width: 1023px) {
+  [data-tabbar] .help-fab { display: none; }
+  [data-own-bar] .help-fab { bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
+}
+
+/* On the public site the bar comes to rest over the navy footer at the
+   bottom of every page, where the Hub's 72% glass turned grey and took
+   the labels below 4.5:1. Here the glass is nearly solid and the labels
+   one step darker. */
+.site-tabbar { background: color-mix(in srgb, var(--color-surface) 94%, transparent); }
+.site-tabbar .hub-tab:not([aria-current="page"]) { color: var(--color-ink-2); }
+
+/* The bar hides while the keyboard is up, so it never rides on top of it. */
+.hub-tabbar[data-hidden="true"] {
+  transform: translateY(calc(100% + 24px));
+  opacity: 0;
+  pointer-events: none;
+}
+.hub-tabbar {
+  transition:
+    transform 280ms var(--ease-out),
+    opacity 200ms var(--ease-out);
+}
+@media (prefers-reduced-motion: reduce) {
+  .hub-tabbar { transition: none; }
+}
+
+/* ── The header on a phone ──────────────────────────────────────
+   It tucks away while you read down the page and comes back the moment
+   you scroll up, the way a phone browser's own bar does. */
+@media (max-width: 1023px) {
+  .site-nav[data-tucked="true"] {
+    transform: translateY(calc(-100% - 24px));
+  }
+}
+
+/* ── Long documents on a phone ──────────────────────────────────
+   The Legal centre and How renting works open with their side menu. On
+   a phone that menu was a column of twelve links, half a screen, before
+   the first word of the policy. Below the desktop layout it is one row
+   of chips you swipe, with the page you are on scrolled into view
+   (DocLayout in components/site). */
+@media (max-width: 1023px) {
+  .site-doc__nav { margin-inline: calc(var(--space-gutter) * -1); }
+  .site-doc__navlist {
+    flex-direction: row;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 2px var(--space-gutter) 6px;
+    scroll-padding-inline: var(--space-gutter);
+    scroll-snap-type: x proximity;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .site-doc__navlist::-webkit-scrollbar { display: none; }
+  .site-doc__navlist > li { flex: none; scroll-snap-align: start; }
+  .site-doc__navlink {
+    min-height: 40px;
+    padding: 0 14px;
+    border: 1px solid var(--color-line);
+    border-radius: 999px;
+    background: var(--color-surface);
+    font-size: 13.5px;
+    white-space: nowrap;
+  }
+  .site-doc__navlink[aria-current="page"],
+  .site-doc__navlink[aria-current="true"] { border-color: transparent; }
+}
+
+/* ── Search filters on a phone ──────────────────────────────────
+   The filter sheet (pages/seeker/search.tsx) is long; its "Search rooms"
+   button stays pinned to the bottom of the sheet instead of waiting
+   below the last filter. */
+#mobile-filters .filters-apply {
+  position: sticky;
+  bottom: max(12px, env(safe-area-inset-bottom, 0px));
+  z-index: 2;
+  box-shadow: 0 0 0 8px var(--color-surface-2), 0 -16px 24px 8px var(--color-surface-2);
+}
+
+/* ── The header's phone menu ────────────────────────────────────
+   A full-screen sheet: clear of the notch at the top and the home
+   indicator at the bottom when the site is opened from the home screen. */
+.site-nav__sheet {
+  padding-top: calc(96px + env(safe-area-inset-top, 0px));
+  padding-bottom: max(40px, calc(24px + env(safe-area-inset-bottom, 0px)));
+}
+.site-nav__close { top: calc(24px + env(safe-area-inset-top, 0px)); }
+@media (hover: none) {
+  .site-nav__sheet-link:active,
+  .site-nav__sheet .site-nav__row:active { opacity: 0.6; }
+}
+
+/* ── Grids that only set columns on wider screens ────────────────
+   `grid lg:grid-cols-[...]` leaves a phone with one implicit column
+   sized to its content, so a single line that does not wrap (a row of
+   chips, a long title) stretched the whole column past the screen and
+   cut off the right edge: the Hub conversation lost its send button
+   this way. Below their breakpoint those grids now get one column the
+   width of the screen. In a layer, so every grid-cols-* utility still
+   wins; sideways strips (grid-flow-col) keep their own columns. */
+@layer components {
+  .grid:not([class*="grid-flow-col"]) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

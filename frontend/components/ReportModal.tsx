@@ -91,17 +91,19 @@ export default function ReportModal({ listingId, itemType, itemId, isOpen, onClo
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+          className="fixed inset-0 z-[70] flex items-end justify-center bg-black/50 sm:items-center sm:p-4"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={handleClose}
         >
           <motion.div
-            className="bg-[var(--color-surface-2)] rounded-2xl shadow-xl max-w-md w-full p-6 max-h-[90vh] overflow-y-auto"
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.9, opacity: 0 }}
+            className="bg-[var(--color-surface-2)] rounded-t-[24px] sm:rounded-2xl shadow-xl max-w-md w-full p-6 pb-[max(24px,env(safe-area-inset-bottom))] sm:pb-6 max-h-[88dvh] overflow-y-auto overscroll-contain"
+            data-lenis-prevent=""
+            initial={{ y: 32, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 32, opacity: 0 }}
+            transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
             onClick={(e) => e.stopPropagation()}
           >
             {submitted ? (

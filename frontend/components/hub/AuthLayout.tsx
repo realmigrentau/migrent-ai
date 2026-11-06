@@ -71,7 +71,7 @@ export default function AuthLayout({ title, children, aside }: { title: string; 
         </aside>
         <main className="flex flex-col px-5 py-6 sm:px-10">
           <div className="flex items-center justify-between">
-            <a href={siteUrl("/")} className="inline-flex items-center gap-1.5 rounded-[8px] text-[13.5px] font-medium text-[color:var(--color-ink-3)] hover:text-[color:var(--color-ink)]">
+            <a href={siteUrl("/")} className="tap-area inline-flex items-center gap-1.5 rounded-[8px] text-[13.5px] font-medium text-[color:var(--color-ink-3)] hover:text-[color:var(--color-ink)]">
               <ArrowLeft className="h-4 w-4" strokeWidth={1.75} aria-hidden />
               Back to Migrent
             </a>

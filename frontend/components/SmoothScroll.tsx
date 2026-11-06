@@ -24,6 +24,9 @@ export default function SmoothScroll() {
     if (isAppPage) return;
     if (typeof window === "undefined") return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    // A finger already scrolls with the phone's own momentum, which no
+    // script improves on; skip the library and its frame loop there.
+    if (window.matchMedia("(pointer: coarse)").matches) return;
 
     let frame = 0;
     let cancelled = false;

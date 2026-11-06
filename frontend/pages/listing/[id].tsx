@@ -430,36 +430,42 @@ export default function ListingDetailPage({ initialListing }: { initialListing?:
 
               {/* What Migrent actually does. No guarantees, no invented support hours. */}
               <ul className="m-0 grid list-none gap-3 border-t border-[var(--color-line)] p-0 pt-8 sm:grid-cols-3">
-                <li className="site-card site-card--pad">
+                <li className="site-card site-card--pad flex items-start gap-4 sm:block">
                   <span className="site-icon" aria-hidden="true">
                     <BadgeCheck className="h-5 w-5" strokeWidth={1.9} />
                   </span>
-                  <p className="site-h3 mt-4">Host ID checked</p>
-                  <p className="site-meta mt-1">
-                    A person reviews the host&apos;s government ID before a room goes live.{" "}
-                    <Link href="/how-renting-works#checks" className="underline underline-offset-2">
-                      What that does and does not mean
-                    </Link>
-                  </p>
+                  <div className="min-w-0">
+                    <p className="site-h3 sm:mt-4">Host ID checked</p>
+                    <p className="site-meta mt-1">
+                      A person reviews the host&apos;s government ID before a room goes live.{" "}
+                      <Link href="/how-renting-works#checks" className="underline underline-offset-2">
+                        What that does and does not mean
+                      </Link>
+                    </p>
+                  </div>
                 </li>
-                <li className="site-card site-card--pad">
+                <li className="site-card site-card--pad flex items-start gap-4 sm:block">
                   <span className="site-icon" aria-hidden="true">
                     <Wallet className="h-5 w-5" strokeWidth={1.9} />
                   </span>
-                  <p className="site-h3 mt-4">Free to apply</p>
-                  <p className="site-meta mt-1">Searching, messaging and applying cost renters nothing. Migrent never holds your rent or bond.</p>
+                  <div className="min-w-0">
+                    <p className="site-h3 sm:mt-4">Free to apply</p>
+                    <p className="site-meta mt-1">Searching, messaging and applying cost renters nothing. Migrent never holds your rent or bond.</p>
+                  </div>
                 </li>
-                <li className="site-card site-card--pad">
+                <li className="site-card site-card--pad flex items-start gap-4 sm:block">
                   <span className="site-icon" aria-hidden="true">
                     <Mail className="h-5 w-5" strokeWidth={1.9} />
                   </span>
-                  <p className="site-h3 mt-4">Help by email</p>
-                  <p className="site-meta mt-1">
-                    {supportPromise()}{" "}
-                    <a href={`mailto:${siteIdentity.emails.support}`} className="underline underline-offset-2 [overflow-wrap:anywhere]">
-                      {siteIdentity.emails.support}
-                    </a>
-                  </p>
+                  <div className="min-w-0">
+                    <p className="site-h3 sm:mt-4">Help by email</p>
+                    <p className="site-meta mt-1">
+                      {supportPromise()}{" "}
+                      <a href={`mailto:${siteIdentity.emails.support}`} className="underline underline-offset-2 [overflow-wrap:anywhere]">
+                        {siteIdentity.emails.support}
+                      </a>
+                    </p>
+                  </div>
                 </li>
               </ul>
             </div>
@@ -551,8 +557,8 @@ export default function ListingDetailPage({ initialListing }: { initialListing?:
 
         {showMobileCTA && !isOwner && !bookingSuccess && isPublished && (
           <div className="fixed bottom-0 left-0 right-0 z-40 lg:hidden bg-[var(--color-surface)]/95 backdrop-blur-lg border-t border-[var(--color-line)] px-4 py-3 safe-area-pb">
-            {/* pr-20 keeps the action clear of the support button in the corner. */}
-            <div className="flex items-center justify-between gap-4 pr-20">
+            {/* The help button floats above this bar on phones (styles/mobile.css). */}
+            <div className="mx-auto flex max-w-xl items-center justify-between gap-4">
               <div>
                 <span className="text-lg font-semibold text-[var(--color-ink)] tabular-nums">${listing.weekly_price}</span>
                 <span className="text-sm text-[var(--color-ink-3)]"> / week</span>

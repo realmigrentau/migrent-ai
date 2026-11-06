@@ -44,7 +44,7 @@ export default function EarningsEstimate() {
               step={10}
               value={Number.isFinite(rent) ? rent : ""}
               onChange={(e) => setRent(e.target.value === "" ? Number.NaN : Number(e.target.value))}
-              className="input-field pl-8 tabular-nums"
+              className="input-field !pl-8 tabular-nums"
               aria-describedby={`${ids}-rent-hint`}
             />
           </div>

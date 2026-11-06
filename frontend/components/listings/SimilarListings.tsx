@@ -37,7 +37,7 @@ export default function SimilarListings({
         )}
       </h2>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="phone-swipe phone-swipe--narrow grid grid-cols-1 sm:grid-cols-2 gap-4">
         {listings.map((listing, i) => (
           <Link key={listing.id} href={`/listing/${listing.id}`}>
             <motion.div
@@ -90,7 +90,7 @@ export default function SimilarListings({
       {currentSuburb && (
         <Link
           href={`/seeker/search?suburb=${encodeURIComponent(currentSuburb)}`}
-          className="mt-4 block text-center text-sm font-semibold text-[var(--color-primary)] hover:text-[var(--color-primary)] transition-colors"
+          className="tap-area mt-4 block text-center text-sm font-semibold text-[var(--color-primary)] hover:text-[var(--color-primary)] transition-colors"
         >
           View all rooms in {currentSuburb}
         </Link>

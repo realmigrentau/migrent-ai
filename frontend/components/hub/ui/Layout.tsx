@@ -24,7 +24,7 @@ export function PageHeader({
     <header className={cn("flex flex-col gap-4 pb-6 sm:flex-row sm:items-end sm:justify-between", className)}>
       <div className="flex min-w-0 flex-col gap-2">
         {back && (
-          <HubLink to={back.to} className="group -ml-1 inline-flex w-fit items-center gap-1 rounded-[8px] px-1 py-0.5 text-[13.5px] font-medium text-[color:var(--color-ink-3)] hover:text-[color:var(--color-ink)]">
+          <HubLink to={back.to} className="tap-area group -ml-1 inline-flex w-fit items-center gap-1 rounded-[8px] px-1 py-0.5 text-[13.5px] font-medium text-[color:var(--color-ink-3)] hover:text-[color:var(--color-ink)]">
             <ChevronLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" strokeWidth={2} aria-hidden />
             {back.label}
           </HubLink>
@@ -68,7 +68,7 @@ export function Panel({ children, className, padded = true, as: As = "div" }: { 
 
 export function TextLink({ to, children, className }: { to: string; children: ReactNode; className?: string }) {
   return (
-    <HubLink to={to} className={cn("inline-flex items-center gap-1 rounded-[6px] text-[14px] font-semibold text-[color:var(--color-primary)] hover:underline hover:underline-offset-4", className)}>
+    <HubLink to={to} className={cn("tap-area inline-flex items-center gap-1 rounded-[6px] text-[14px] font-semibold text-[color:var(--color-primary)] hover:underline hover:underline-offset-4", className)}>
       {children}
     </HubLink>
   );

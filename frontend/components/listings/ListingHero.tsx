@@ -29,6 +29,12 @@ export default function ListingHero({
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const touchStart = useRef<number | null>(null);
+  // Phones: which photo of the swipe strip is in view.
+  const [stripIndex, setStripIndex] = useState(0);
+  const onStripScroll = (e: React.UIEvent<HTMLUListElement>) => {
+    const el = e.currentTarget;
+    setStripIndex(Math.max(0, Math.min(images.length - 1, Math.round(el.scrollLeft / Math.max(1, el.clientWidth)))));
+  };
 
   const hasImages = images.length > 0;
   const currentImage = hasImages ? images[selectedIndex] : null;
@@ -78,10 +84,68 @@ export default function ListingHero({
     );
   }
 
+  const badges = (instantBook || verification?.status === "verified") && (
+    <>
+      {instantBook && (
+        <span className="flex items-center gap-1 text-xs font-semibold text-amber-800 bg-[var(--color-warn-50)]/90 backdrop-blur-sm px-3 py-1.5 rounded-full">
+          <Zap className="w-3 h-3" />
+          Instant Book
+        </span>
+      )}
+      {verification?.status === "verified" && (
+        <VerificationBadge verification={verification} className="!px-3 !py-1.5 !text-xs backdrop-blur-sm" />
+      )}
+    </>
+  );
+
   return (
     <>
+      {/* Phones: every photo in one row that follows the finger, edge to
+          edge, the way a phone's own photo viewer works. A tap opens the
+          full-screen viewer on that photo. */}
+      <div className="relative mx-[calc(var(--space-gutter)*-1)] md:hidden">
+        <ul
+          className="m-0 flex list-none snap-x snap-mandatory overflow-x-auto overscroll-x-contain p-0 scrollbar-hide"
+          aria-label={`Photos of ${title}`}
+          onScroll={onStripScroll}
+        >
+          {images.map((img, i) => (
+            <li key={i} className="relative aspect-[4/3] w-full flex-none snap-center [scroll-snap-stop:always]">
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedIndex(i);
+                  setLightboxOpen(true);
+                }}
+                className="absolute inset-0 z-[1] h-full w-full"
+                aria-label={`Open photo ${i + 1} of ${images.length} in full screen`}
+              />
+              <Image src={img} alt={`${title}, photo ${i + 1} of ${images.length}`} fill priority={i === 0} sizes="100vw" className="object-cover" />
+            </li>
+          ))}
+        </ul>
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-black/35 to-transparent" aria-hidden="true" />
+        {badges && <div className="pointer-events-none absolute left-4 top-4 z-[2] flex items-center gap-2">{badges}</div>}
+        {images.length > 1 && (
+          <>
+            <div className="pointer-events-none absolute bottom-3 right-4 z-[2] rounded-full bg-black/55 px-3 py-1.5 text-xs font-semibold text-white tabular-nums backdrop-blur-sm" aria-live="polite">
+              <span className="sr-only">Photo </span>
+              {stripIndex + 1} / {images.length}
+            </div>
+            <div className="pointer-events-none absolute inset-x-0 bottom-4 z-[2] flex justify-center gap-1.5" aria-hidden="true">
+              {images.slice(0, 8).map((_, i) => (
+                <span
+                  key={i}
+                  className={`h-1.5 rounded-full bg-white transition-all duration-300 ${Math.min(stripIndex, 7) === i ? "w-4 opacity-100" : "w-1.5 opacity-60"}`}
+                />
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+
       {/* Main photo */}
-      <div className="relative">
+      <div className="relative hidden md:block">
         <div
           className="relative aspect-[16/9] md:aspect-[2/1] rounded-2xl overflow-hidden group"
           onTouchStart={handleTouchStart}
@@ -104,17 +168,7 @@ export default function ListingHero({
           <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
 
           {/* Badges */}
-          <div className="absolute top-4 left-4 flex items-center gap-2">
-            {instantBook && (
-              <span className="flex items-center gap-1 text-xs font-semibold text-amber-800 bg-[var(--color-warn-50)]/90 backdrop-blur-sm px-3 py-1.5 rounded-full">
-                <Zap className="w-3 h-3" />
-                Instant Book
-              </span>
-            )}
-            {verification?.status === "verified" && (
-              <VerificationBadge verification={verification} className="!px-3 !py-1.5 !text-xs backdrop-blur-sm" />
-            )}
-          </div>
+          <div className="absolute top-4 left-4 flex items-center gap-2">{badges}</div>
 
           {/* Expand hint */}
           <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity pointer-events-none" aria-hidden="true">
@@ -198,7 +252,7 @@ export default function ListingHero({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center"
+            className="fixed inset-0 z-[70] bg-black/95 flex items-center justify-center"
             onClick={() => setLightboxOpen(false)}
             role="dialog"
             aria-modal="true"
@@ -209,7 +263,7 @@ export default function ListingHero({
               autoFocus
               aria-label="Close photo viewer"
               onClick={() => setLightboxOpen(false)}
-              className="absolute top-4 right-4 z-10 w-11 h-11 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-white/20 transition-colors"
+              className="absolute top-[max(16px,env(safe-area-inset-top))] right-4 z-10 w-11 h-11 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-white/20 transition-colors"
             >
               <X className="w-5 h-5 text-white" aria-hidden="true" />
             </button>

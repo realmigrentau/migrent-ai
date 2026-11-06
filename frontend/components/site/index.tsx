@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState, type ElementType, type ReactNode } from "react";
+import { Children, useCallback, useEffect, useRef, useState, type ElementType, type ReactNode } from "react";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { ArrowLeft, ArrowRight } from "lucide-react";
@@ -133,7 +133,7 @@ export function PageHero({
         {eyebrow && <p className="eyebrow mb-4">{eyebrow}</p>}
         <h1 className="site-display max-w-[18ch]">{title}</h1>
         {lead && <p className="site-lead mt-5 max-w-[56ch]">{lead}</p>}
-        {actions && <div className="mt-8 flex flex-wrap items-center gap-3">{actions}</div>}
+        {actions && <div className="site-actions mt-8 flex flex-wrap items-center gap-3">{actions}</div>}
         {children}
       </div>
     </header>
@@ -160,7 +160,7 @@ export function CloseCard({
             {heading}
           </h2>
           {lead && <p className="site-lead mt-4 max-w-[48ch]">{lead}</p>}
-          <div className="mt-8 flex flex-wrap gap-3">
+          <div className="site-actions mt-8 flex flex-wrap gap-3">
             <Link href={primary.href} className="btn-primary btn-lg">
               {primary.label}
               <ArrowRight className="btn-arrow h-4 w-4" strokeWidth={2.2} aria-hidden="true" />
@@ -247,6 +247,57 @@ export function Strip({ label, children, head }: { label: string; children: Reac
       <ul ref={ref} className="site-strip mt-8" aria-label={label} data-lenis-prevent-wheel="">
         {children}
       </ul>
+      <SwipeDots count={Children.count(children)} />
+    </div>
+  );
+}
+
+/**
+ * The dots under a `.phone-swipe` strip (styles/mobile.css): which card is
+ * in view. Place it straight after the strip. Phones only; elsewhere the
+ * strip is a grid and the dots are hidden. Decorative, since every card is
+ * still in the list for a screen reader.
+ */
+export function SwipeDots({ count }: { count: number }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    const list = ref.current?.previousElementSibling as HTMLElement | null;
+    if (!list) return;
+    // While the strip scrolls sideways (phones), it takes keyboard focus so
+    // arrow keys can move it: a row of text cards has nothing else to tab
+    // to. Where it is a plain grid, it stays out of the tab order.
+    const sync = () => {
+      if (list.scrollWidth > list.clientWidth + 1) list.tabIndex = 0;
+      else list.removeAttribute("tabindex");
+    };
+    sync();
+    window.addEventListener("resize", sync);
+    const onScroll = () => {
+      // The last card cannot snap to the start, so the end of the strip is it.
+      if (list.scrollLeft + list.clientWidth >= list.scrollWidth - 4) {
+        setIndex(count - 1);
+        return;
+      }
+      const first = list.firstElementChild as HTMLElement | null;
+      const gap = parseFloat(getComputedStyle(list).columnGap) || 0;
+      const step = first ? first.getBoundingClientRect().width + gap : list.clientWidth;
+      setIndex(Math.max(0, Math.min(count - 1, Math.round(list.scrollLeft / step))));
+    };
+    list.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      list.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", sync);
+    };
+  }, [count]);
+
+  if (count < 2) return null;
+  return (
+    <div ref={ref} className="swipe-dots" aria-hidden="true">
+      {Array.from({ length: count }, (_, i) => (
+        <span key={i} data-on={i === index ? "true" : undefined} />
+      ))}
     </div>
   );
 }
@@ -290,11 +341,25 @@ export function DocLayout({
   }, [nav, onPage]);
 
   const active = current ?? spy;
+
+  // On a phone the menu is one row you swipe (styles/mobile.css): keep the
+  // page or section you are on in view. The row scrolls, never the page.
+  const listRef = useRef<HTMLUListElement>(null);
+  useEffect(() => {
+    const list = listRef.current;
+    if (!list || list.scrollWidth <= list.clientWidth) return;
+    const link = list.querySelector<HTMLElement>("[aria-current]");
+    if (!link) return;
+    const a = link.getBoundingClientRect();
+    const l = list.getBoundingClientRect();
+    list.scrollBy({ left: a.left - l.left - (l.width - a.width) / 2, behavior: "smooth" });
+  }, [active]);
+
   return (
     <div className="site-section site-section--flush">
       <div className="site-shell site-doc">
         <nav className="site-doc__nav" aria-label={navLabel}>
-          <ul className="site-doc__navlist">
+          <ul ref={listRef} className="site-doc__navlist">
             {nav.map((l) => (
               <li key={l.href}>
                 <Link

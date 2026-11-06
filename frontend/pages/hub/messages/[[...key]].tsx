@@ -21,7 +21,7 @@ export default function MessagesPage() {
   return (
     <HubShell title={activeKey ? "Conversation" : "Messages"} fullBleed fitDesktop immersive={!!activeKey}>
       <div className={cn("lg:h-[100dvh] lg:py-4 lg:pr-4", activeKey && "h-[100dvh]")}>
-        <div className="grid h-full lg:grid-cols-[minmax(300px,380px)_minmax(0,1fr)] lg:overflow-hidden lg:rounded-[24px] lg:border lg:border-[var(--color-line)] lg:bg-[var(--color-surface)] lg:shadow-[var(--shadow-card)]">
+        <div className="grid h-full grid-cols-[minmax(0,1fr)] lg:grid-cols-[minmax(300px,380px)_minmax(0,1fr)] lg:overflow-hidden lg:rounded-[24px] lg:border lg:border-[var(--color-line)] lg:bg-[var(--color-surface)] lg:shadow-[var(--shadow-card)]">
           <section aria-labelledby="inbox-title" className={cn("min-h-0 flex-col lg:flex lg:border-r lg:border-[var(--color-line)]", activeKey ? "hidden" : "flex")}>
             <div className="px-4 pb-3 pt-6 sm:px-6 lg:px-5 lg:pt-6">
               <h1 id="inbox-title" className="hub-title text-[26px] font-semibold leading-[1.15] tracking-[-0.022em] text-[color:var(--color-ink)] lg:text-[22px]">

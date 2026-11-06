@@ -160,7 +160,7 @@ export default function SignIn() {
                     aria-pressed={showPassword}
                     aria-controls={id}
                     onClick={() => setShowPassword((v) => !v)}
-                    className="absolute inset-y-0 right-1.5 my-auto h-8 rounded-[8px] px-3 text-[13px] font-semibold text-[color:var(--color-primary)] hover:bg-[var(--color-surface-muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]"
+                    className="tap-area absolute inset-y-0 right-1.5 my-auto h-8 rounded-[8px] px-3 text-[13px] font-semibold text-[color:var(--color-primary)] hover:bg-[var(--color-surface-muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]"
                   >
                     {showPassword ? "Hide" : "Show"}
                     <span className="sr-only"> password</span>
@@ -168,7 +168,7 @@ export default function SignIn() {
                 </div>
               )}
             </Field>
-            <HubLink to={`/forgot-password${email ? `?email=${encodeURIComponent(email)}` : ""}`} className="self-end text-[13px] font-semibold text-[color:var(--color-primary)] hover:underline">
+            <HubLink to={`/forgot-password${email ? `?email=${encodeURIComponent(email)}` : ""}`} className="tap-area self-end text-[13px] font-semibold text-[color:var(--color-primary)] hover:underline">
               Forgot your password?
             </HubLink>
           </div>

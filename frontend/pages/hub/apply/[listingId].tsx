@@ -364,13 +364,13 @@ export default function Apply() {
     <HubShell title={`Apply: ${listing?.title ?? "home"}`}>
       <div className="flex flex-col gap-6 pb-28 lg:pb-0">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <HubLink to={listing ? `/homes/${listing.id}` : "/applications"} className="inline-flex items-center gap-1 text-[13.5px] font-medium text-[color:var(--color-ink-3)] hover:text-[color:var(--color-ink)]">
+          <HubLink to={listing ? `/homes/${listing.id}` : "/applications"} className="tap-area inline-flex items-center gap-1 text-[13.5px] font-medium text-[color:var(--color-ink-3)] hover:text-[color:var(--color-ink)]">
             <ArrowLeft className="h-4 w-4" strokeWidth={1.75} aria-hidden />
             Back to the home
           </HubLink>
           <div className="flex items-center gap-4">
             <SaveStatus state={combinedState} onRetry={() => void Promise.all([profile.flush(), saveApp()])} />
-            <HubLink to="/applications" className="text-[13.5px] font-semibold text-[color:var(--color-ink-2)] hover:text-[color:var(--color-ink)]">
+            <HubLink to="/applications" className="tap-area text-[13.5px] font-semibold text-[color:var(--color-ink-2)] hover:text-[color:var(--color-ink)]">
               Save and finish later
             </HubLink>
           </div>

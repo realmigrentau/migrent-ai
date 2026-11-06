@@ -2,7 +2,7 @@ import { useDeferredValue, useMemo, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, Calculator, Compass, Scale, Search, type LucideIcon } from "lucide-react";
 import SEOHead from "../../components/SEOHead";
-import { CloseCard, PageHero, Reveal, SectionHead } from "../../components/site";
+import { CloseCard, PageHero, Reveal, SectionHead, SwipeDots } from "../../components/site";
 import {
   RESOURCE_ARTICLES,
   RESOURCE_TOOLS,
@@ -90,7 +90,7 @@ export default function Guides() {
             All guides
           </h2>
 
-          <div className="flex flex-wrap gap-2" role="group" aria-label="Filter by topic">
+          <div className="phone-chips flex flex-wrap gap-2" role="group" aria-label="Filter by topic">
             {(["All", ...categories] as const).map((c) => (
               <button
                 key={c}
@@ -181,7 +181,7 @@ export default function Guides() {
               lead="Rental rules by state, Census figures by suburb, and your own numbers."
             />
           </Reveal>
-          <ul className="m-0 mt-10 grid list-none gap-3 p-0 md:grid-cols-3">
+          <ul className="phone-swipe m-0 mt-10 grid list-none gap-3 p-0 md:grid-cols-3">
             {RESOURCE_TOOLS.map((t, i) => {
               const Icon = TOOL_ICON[t.icon] ?? Compass;
               return (
@@ -201,6 +201,7 @@ export default function Guides() {
               );
             })}
           </ul>
+          <SwipeDots count={RESOURCE_TOOLS.length} />
         </div>
       </section>
 

@@ -53,7 +53,7 @@ export default function ForgotPassword() {
         <>
           <AuthHeading title="Check your email" body={<>If there is an account for <strong className="text-[color:var(--color-ink)]">{email.trim()}</strong>, a reset link is on its way. Open it in this browser.</>} />
           <EmailInboxHelp className="mb-4" />
-          <HubLink to="/sign-in" className="text-[14px] font-semibold text-[color:var(--color-primary)] hover:underline">
+          <HubLink to="/sign-in" className="tap-area text-[14px] font-semibold text-[color:var(--color-primary)] hover:underline">
             Back to sign in
           </HubLink>
         </>
@@ -67,7 +67,7 @@ export default function ForgotPassword() {
             <Button type="submit" size="lg" block loading={loading}>
               Send reset link
             </Button>
-            <HubLink to="/sign-in" className="text-center text-[14px] font-semibold text-[color:var(--color-ink-2)] hover:text-[color:var(--color-ink)]">
+            <HubLink to="/sign-in" className="tap-area text-center text-[14px] font-semibold text-[color:var(--color-ink-2)] hover:text-[color:var(--color-ink)]">
               Back to sign in
             </HubLink>
           </form>

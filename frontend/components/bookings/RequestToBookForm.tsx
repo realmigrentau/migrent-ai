@@ -147,7 +147,7 @@ export default function RequestToBookForm({
               required
               aria-invalid={error ? true : undefined}
               aria-describedby={error ? "booking-error" : undefined}
-              className="input-field pl-10"
+              className="input-field !pl-10"
             />
           </div>
         </label>
@@ -166,7 +166,7 @@ export default function RequestToBookForm({
               required
               aria-invalid={error ? true : undefined}
               aria-describedby={error ? "booking-error" : undefined}
-              className="input-field pl-10"
+              className="input-field !pl-10"
             />
           </div>
         </label>

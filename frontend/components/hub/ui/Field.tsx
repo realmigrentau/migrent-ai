@@ -131,7 +131,7 @@ export function Switch({ checked, onChange, label, description, disabled, id: gi
         disabled={disabled}
         onClick={() => onChange(!checked)}
         className={cn(
-          "relative mt-0.5 h-7 w-12 shrink-0 rounded-full transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-surface)] disabled:opacity-50",
+          "tap-area relative mt-0.5 h-7 w-12 shrink-0 rounded-full transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-surface)] disabled:opacity-50",
           checked ? "bg-[var(--color-primary)]" : "bg-[var(--color-line-2)]",
         )}
       >
@@ -182,7 +182,7 @@ export function Segmented<T extends string>({ value, onChange, options, label, s
               radios?.[next]?.focus();
             }}
             className={cn(
-              "inline-flex items-center justify-center gap-1.5 rounded-[9px] font-semibold transition-all duration-150",
+              "tap-area tap-area--y inline-flex items-center justify-center gap-1.5 rounded-[9px] font-semibold transition-all duration-150",
               "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]",
               size === "sm" ? "h-8 px-3 text-[12.5px]" : "h-9 px-3.5 text-[13.5px]",
               selected

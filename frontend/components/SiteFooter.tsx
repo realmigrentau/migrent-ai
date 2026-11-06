@@ -54,7 +54,7 @@ export default function SiteFooter() {
       <div className="site-shell pb-8 pt-16 md:pt-20">
         <div className="grid gap-10 border-b border-[var(--color-line)] pb-12 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] lg:gap-16">
           <div>
-            <Link href="/" className="inline-flex items-center gap-2.5 text-[color:var(--color-ink)]">
+            <Link href="/" className="tap-area inline-flex items-center gap-2.5 text-[color:var(--color-ink)]">
               <Logo size={30} />
               <span className="font-[family-name:var(--font-display)] text-[26px] leading-none tracking-[-0.015em]">Migrent</span>
             </Link>
@@ -66,7 +66,7 @@ export default function SiteFooter() {
             <p className="max-w-[40ch] text-[14.5px] leading-[1.6] text-[color:var(--color-ink-2)]">
               Rooms and homes for migrants, students and new arrivals. Hosts are ID-checked before a room goes live, and searching and applying are free.
             </p>
-            <div className="flex flex-wrap gap-3 lg:justify-end">
+            <div className="site-actions flex flex-wrap gap-3 lg:justify-end">
               <Link href="/seeker/search" className="btn-primary">
                 Find a room
                 <ArrowRight className="btn-arrow h-4 w-4" strokeWidth={2.2} aria-hidden="true" />
