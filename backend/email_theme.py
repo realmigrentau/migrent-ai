@@ -3,20 +3,25 @@ Migrent's email design (3 October 2026): a coloured banner per kind of
 email, a white card with the details, a clear button, and a dark footer.
 
 Built for email apps, not browsers: tables for layout, inline styles,
-images for the banners (frontend/public/email, made by
-frontend/scripts/email-banners.mjs), and no CSS an email app strips. Every
-colour that carries text meets WCAG AA contrast.
+and no CSS an email app strips. Every colour that carries text meets
+WCAG AA contrast.
+
+The logo is inlined as base64 so it always shows regardless of image
+blocking settings. The banner is pure CSS so no external images are
+needed.
 
     render("inspections", title="Inspection tomorrow", ...)
 """
 
 from __future__ import annotations
 
+import base64
 import html
 import os
 import re
 from dataclasses import dataclass
 from datetime import datetime, timezone
+from pathlib import Path
 from typing import Optional, Sequence
 
 
@@ -61,6 +66,23 @@ def _site() -> str:
 
 def _hub() -> str:
     return os.environ.get("HUB_BASE_URL", "").rstrip("/") or f"{_site()}/hub"
+
+
+def _logo_b64() -> str:
+    """Base64 data URI for the Migrent logo so it always shows in email
+    clients that block external images by default."""
+    candidates = [
+        Path(__file__).parent.parent / "frontend" / "public" / "email" / "logo.png",
+        Path(__file__).parent / ".." / "frontend" / "public" / "email" / "logo.png",
+    ]
+    for p in candidates:
+        if p.exists():
+            data = base64.b64encode(p.read_bytes()).decode()
+            return f"data:image/png;base64,{data}"
+    return ""
+
+
+_LOGO_SRC = _logo_b64()
 
 
 def asset(name: str) -> str:
@@ -191,18 +213,22 @@ def render(
     <!-- header -->
     <tr><td style="padding:0 4px 16px;">
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
-        <td style="vertical-align:middle;"><a href="{_site()}" style="text-decoration:none;"><img src="{asset('logo.png')}" width="34" height="34" alt="" style="display:inline-block;vertical-align:middle;border:0;border-radius:9px;"><span style="display:inline-block;vertical-align:middle;margin-left:10px;font-family:{FONT};font-size:21px;font-weight:800;letter-spacing:-0.4px;color:{INK};">Migrent</span></a></td>
+        <td style="vertical-align:middle;"><a href="{_site()}" style="text-decoration:none;"><img src="{_LOGO_SRC or asset('logo.png')}" width="34" height="34" alt="" style="display:inline-block;vertical-align:middle;border:0;border-radius:9px;"><span style="display:inline-block;vertical-align:middle;margin-left:10px;font-family:{FONT};font-size:21px;font-weight:800;letter-spacing:-0.4px;color:{INK};">Migrent</span></a></td>
         <td align="right" style="vertical-align:middle;"><a href="{_hub()}" style="font-family:{FONT};font-size:13px;font-weight:600;color:{t.color};text-decoration:none;">Open Migrent Hub</a></td>
       </tr></table>
     </td></tr>
-    <!-- banner -->
-    <tr><td style="border-radius:24px 24px 0 0;overflow:hidden;background:{t.color};">
-      <img src="{asset(f'banner-{kind}.png')}" width="600" alt="" style="display:block;width:100%;max-width:600px;height:auto;border:0;border-radius:24px 24px 0 0;">
+    <!-- banner: pure CSS, no external image, always renders -->
+    <tr><td bgcolor="{t.color}" style="background:{t.color};border-radius:24px 24px 0 0;padding:32px 36px 28px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+        <td><img src="{_LOGO_SRC or asset('logo.png')}" width="42" height="42" alt="" style="display:block;border:0;border-radius:11px;opacity:0.92;"></td>
+      </tr><tr><td style="padding-top:16px;">
+        <div style="font-family:{FONT};font-size:28px;font-weight:900;letter-spacing:-0.5px;color:#ffffff;line-height:1.1;">{esc(eyebrow or t.label)}</div>
+        <div style="margin-top:6px;font-family:{FONT};font-size:15px;font-weight:400;color:rgba(255,255,255,0.78);line-height:1.4;">{esc(preheader) if preheader else "Migrent"}</div>
+      </td></tr></table>
     </td></tr>
     <!-- card -->
     <tr><td bgcolor="#ffffff" style="background:#ffffff;padding:30px 36px 34px;border-radius:0 0 24px 24px;">
-      <span style="display:inline-block;padding:5px 12px;border-radius:999px;background:{t.tint};font-family:{FONT};font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:{t.ink};">{esc(eyebrow or t.label)}</span>
-      <h1 style="margin:14px 0 18px;font-family:{FONT};font-size:28px;line-height:35px;font-weight:800;letter-spacing:-0.5px;color:{INK};">{esc(title)}</h1>
+      <h1 style="margin:0 0 18px;font-family:{FONT};font-size:28px;line-height:35px;font-weight:800;letter-spacing:-0.5px;color:{INK};">{esc(title)}</h1>
       {hello}{paras}{''.join(blocks)}
       {button(cta[0], cta[1], t) if cta else ''}
       {''.join(after)}
@@ -226,7 +252,7 @@ def render(
     <tr><td style="padding:18px 8px 0;">
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="{FOOTER}" style="background:{FOOTER};border-radius:20px;">
         <tr><td style="padding:26px 28px;font-family:{FONT};">
-          <img src="{asset('logo.png')}" width="30" height="30" alt="" style="display:inline-block;vertical-align:middle;border:0;border-radius:8px;"><span style="display:inline-block;vertical-align:middle;margin-left:9px;font-size:18px;font-weight:800;color:#ffffff;">Migrent</span>
+          <img src="{_LOGO_SRC or asset('logo.png')}" width="30" height="30" alt="" style="display:inline-block;vertical-align:middle;border:0;border-radius:8px;"><span style="display:inline-block;vertical-align:middle;margin-left:9px;font-size:18px;font-weight:800;color:#ffffff;">Migrent</span>
           <p style="margin:12px 0 16px;font-size:14px;line-height:21px;color:#C7D0E6;">Find, secure and manage a home in Australia. Hosts are ID-checked before a room goes live.</p>
           <p style="margin:0;font-size:13px;line-height:22px;">
             <a href="{_hub()}" style="color:#ffffff;text-decoration:none;font-weight:600;">Migrent Hub</a> <span style="color:#46557A;">&nbsp;|&nbsp;</span>
@@ -247,7 +273,7 @@ def render_raw(kind: str, content_html: str, *, preheader: str = "", title: str 
     """The new frame around older hand-written content (kept for anything
     not yet written with the helpers above)."""
     return render(kind, title=title, preheader=preheader, blocks=[content_html], footer_note=footer_note, eyebrow=None).replace(
-        f'<h1 style="margin:14px 0 18px;font-family:{FONT};font-size:28px;line-height:35px;font-weight:800;letter-spacing:-0.5px;color:{INK};">{esc(title)}</h1>', "", 1
+        f'<h1 style="margin:0 0 18px;font-family:{FONT};font-size:28px;line-height:35px;font-weight:800;letter-spacing:-0.5px;color:{INK};">{esc(title)}</h1>', "", 1
     )
 
 
