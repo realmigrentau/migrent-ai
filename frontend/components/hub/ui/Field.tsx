@@ -255,7 +255,9 @@ export function ChoiceCard({ selected, onSelect, title, description, icon, name,
 /** A counter for small whole numbers (bedrooms, people). */
 export function Stepper({ value, onChange, min = 0, max = 20, label }: { value: number; onChange: (v: number) => void; min?: number; max?: number; label: string }) {
   return (
-    <div className="inline-flex items-center rounded-[12px] border border-[var(--color-line-2)] bg-[var(--color-surface)]" role="group" aria-label={label}>
+    <div className="flex flex-col gap-2" role="group" aria-label={label}>
+      <span className="text-[13px] font-medium text-[color:var(--color-ink-2)]">{label}</span>
+    <div className="inline-flex items-center rounded-[12px] border border-[var(--color-line-2)] bg-[var(--color-surface)]">
       <button
         type="button"
         className="hub-press h-11 w-11 text-[20px] text-[color:var(--color-ink-2)] disabled:opacity-40"
@@ -277,6 +279,7 @@ export function Stepper({ value, onChange, min = 0, max = 20, label }: { value: 
       >
         +
       </button>
+    </div>
     </div>
   );
 }
