@@ -33,7 +33,11 @@ def all_emails(monkeypatch):
 def test_every_email_has_the_new_design(all_emails):
     assert len(all_emails) >= 40
     for e in all_emails:
-        assert "/banner-" in e["html"], e["name"]
+        # The banner is drawn in HTML (email_theme.render), not an image:
+        # email apps block remote images, so a picture banner often showed
+        # as an empty box.
+        assert "<!-- banner: pure CSS" in e["html"], e["name"]
+        assert "/banner-" not in e["html"], e["name"]
         assert "Stay safe:" in e["html"], e["name"]
         # Every email asks to be moved out of spam, with a link to the guide.
         assert "/email-help" in e["html"] and "Found this in Spam" in e["html"], e["name"]

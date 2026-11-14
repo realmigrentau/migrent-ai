@@ -218,5 +218,6 @@ def test_a_report_alerts_the_support_inbox_in_the_shared_design(client, sent):
     alerts = [m for m in sent if m["to"] == routes_reports.SUPPORT_EMAIL]
     assert len(alerts) == 1
     assert "report" in alerts[0]["subject"].lower()
-    assert "banner-security.png" in alerts[0]["html"]
+    # The security frame (its banner is drawn in HTML, in the security colour).
+    assert 'bgcolor="#B91C1C"' in alerts[0]["html"] and "Admin: new report" in alerts[0]["html"]
     assert "<script>x</script>" not in alerts[0]["html"] and "&lt;script&gt;" in alerts[0]["html"]
