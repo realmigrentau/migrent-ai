@@ -42,6 +42,7 @@ import { placeTypeLabel } from "../../lib/hub/format";
 import { Events, trackEvent } from "../../lib/analytics";
 import { useMounted } from "../../hooks/useMounted";
 import SuburbCombobox from "../../components/forms/SuburbCombobox";
+import { ExampleListingsGrid } from "../../components/listings/ExampleListings";
 import { moveInCost } from "../../lib/listingCosts";
 
 /**
@@ -1088,6 +1089,7 @@ export default function SeekerSearch({ initialFilters, initialPage, serverToday 
                   </div>
                 </div>
               ) : results.length === 0 ? (
+                <>
                 <div className="card p-10 rounded-2xl text-center" data-testid="search-empty">
                   {/* With no filters, an empty result means there are no
                       rooms on Migrent at all yet; don't blame the filters. */}
@@ -1121,6 +1123,8 @@ export default function SeekerSearch({ initialFilters, initialPage, serverToday 
                     )}
                   </div>
                 </div>
+                <ExampleListingsGrid suburb={filters.suburb} />
+                </>
               ) : (
                 <>
                   <ul

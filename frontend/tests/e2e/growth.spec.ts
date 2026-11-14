@@ -81,3 +81,58 @@ test("while short stays are closed, pricing says hosts pay nothing", async ({ pa
   await expect(main).not.toContainText(`$${siteIdentity.fees.host.listingFee}`);
   await expect(main).not.toContainText(/mentor/i);
 });
+
+test.describe("example listings", () => {
+  const EXAMPLE = "/example/parramatta-furnished-room";
+
+  test("an example listing says so in its title, has no address and no way to apply", async ({ page }) => {
+    const response = await page.goto(EXAMPLE);
+    expect(response?.status()).toBe(200);
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(/^Example listing: /);
+    await expect(page.getByTestId("example-listing")).toContainText("Parramatta, NSW");
+    // Inside the listing, not the site header and footer.
+    const listing = page.getByTestId("example-listing");
+    for (const name of [/^Apply/, /book/i, /inspection/i, /^Message/, /^Save/, /^Report/]) {
+      await expect(listing.getByRole("button", { name })).toHaveCount(0);
+      await expect(listing.getByRole("link", { name })).toHaveCount(0);
+    }
+    await expect(page.getByTestId("example-listing")).not.toContainText(/ID-checked host/i);
+    expect(await page.content()).toContain('name="robots" content="noindex');
+  });
+
+  test("example pages stay out of the sitemap, and an unknown one is a 404", async ({ request }) => {
+    expect(await (await request.get("/sitemap.xml")).text()).not.toContain("/example/");
+    expect((await request.get("/example/not-a-real-example")).status()).toBe(404);
+  });
+
+  test("a search with no results shows examples while there are few real rooms", async ({ page }) => {
+    // The catalogue-size check asks for one listing with no filters; say there are two rooms in all.
+    await page.route(
+      (url) => url.pathname.endsWith("/listings/search") && url.search === "?limit=1",
+      (route) =>
+        route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          headers: { "Access-Control-Allow-Origin": "*", "Access-Control-Expose-Headers": "X-Total-Count, X-Has-More", "X-Total-Count": "2" },
+          body: "[]",
+        }),
+    );
+    await page.goto("/seeker/search?suburb=Strathfield");
+    await expect(page.getByTestId("search-empty")).toBeVisible();
+    const examples = page.getByTestId("example-listings");
+    await expect(examples.getByRole("link")).toHaveCount(3);
+    await expect(examples.getByRole("link").first()).toHaveAttribute("href", "/example/strathfield-bright-room");
+    for (const card of await examples.getByRole("heading", { level: 3 }).allTextContents()) expect(card).toMatch(/^Example listing: /);
+  });
+
+  test("examples disappear once there are enough real rooms", async ({ page }) => {
+    // The mock catalogue has 26 rooms.
+    await page.goto("/seeker/search?suburb=Nowhereville");
+    await expect(page.getByTestId("search-empty")).toBeVisible();
+    await page.waitForLoadState("networkidle");
+    await expect(page.getByTestId("example-listings")).toHaveCount(0);
+    await page.goto("/");
+    await expect(page.getByRole("heading", { name: /move into/ })).toBeVisible();
+    await expect(page.getByTestId("example-listings")).toHaveCount(0);
+  });
+});

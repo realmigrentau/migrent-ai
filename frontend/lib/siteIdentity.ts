@@ -93,8 +93,10 @@ export const siteIdentity = {
    * Short stays are the only thing the host fee is charged on, so while they
    * are off, listing is free. Mirrors SHORT_STAYS_ENABLED and
    * MENTORS_ENABLED on the backend (billing.py); test_launch_scope.py checks
-   * these defaults. */
-  launchScope: { shortStays: false, mentors: false },
+   * these defaults. exampleListings (owner decision, 2026-11-15) shows the
+   * titled examples in data/exampleListings.ts while there are few real
+   * rooms; it is frontend-only. */
+  launchScope: { shortStays: false, mentors: false, exampleListings: true },
 
   /** Effective and review dates for legal documents. Unknown dates are
    * null and rendered as "under review" rather than invented. */

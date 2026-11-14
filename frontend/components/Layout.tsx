@@ -24,7 +24,7 @@ const SITE_KIT = [
   "/mentors", "/become-mentor", "/suburbs",
 ];
 /** Full-width routes that sit below the header rather than drawing a sky. */
-const LEGACY_FULL_WIDTH: string[] = ["/listing/[id]", "/mentor/[id]", "/suburb/[state]", "/suburb/[state]/[slug]"];
+const LEGACY_FULL_WIDTH: string[] = ["/listing/[id]", "/example/[slug]", "/mentor/[id]", "/suburb/[state]", "/suburb/[state]/[slug]"];
 
 /** Pages with their own bar along the bottom of a phone (a listing's price
  *  and Apply, a host profile's contact bar), so the tab bar stays out. */
