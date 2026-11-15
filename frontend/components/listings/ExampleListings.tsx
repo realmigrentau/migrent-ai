@@ -59,12 +59,13 @@ export function ExampleListingsStrip() {
 }
 
 /**
- * Search with no results: three examples, the searched suburb's first.
- * The search page only knows how many rooms match its filters, so this asks
- * once how many real rooms there are in all, and shows nothing until it
- * knows, or when there are enough real ones.
+ * Search: examples under an empty result (three) or under the last of the
+ * real rooms (all of them), the searched suburb's first. The search page only
+ * knows how many rooms match its filters, so this asks once how many real
+ * rooms there are in all, and shows nothing until it knows, or when there
+ * are enough real ones.
  */
-export function ExampleListingsGrid({ suburb }: { suburb?: string }) {
+export function ExampleListingsGrid({ suburb, count = 3 }: { suburb?: string; count?: number }) {
   const [realCount, setRealCount] = useState<number | null>(null);
 
   useEffect(() => {
@@ -81,7 +82,7 @@ export function ExampleListingsGrid({ suburb }: { suburb?: string }) {
   if (!showExampleListings(realCount)) return null;
 
   const wanted = (suburb || "").trim().toLowerCase();
-  const shown = [...EXAMPLE_LISTINGS].sort((a, b) => Number(b.suburb.toLowerCase() === wanted) - Number(a.suburb.toLowerCase() === wanted)).slice(0, 3);
+  const shown = [...EXAMPLE_LISTINGS].sort((a, b) => Number(b.suburb.toLowerCase() === wanted) - Number(a.suburb.toLowerCase() === wanted)).slice(0, count);
 
   return (
     <section className="mt-10" aria-labelledby="example-grid-heading" data-testid="example-listings">

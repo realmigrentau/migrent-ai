@@ -43,6 +43,7 @@ import { Events, trackEvent } from "../../lib/analytics";
 import { useMounted } from "../../hooks/useMounted";
 import SuburbCombobox from "../../components/forms/SuburbCombobox";
 import { ExampleListingsGrid } from "../../components/listings/ExampleListings";
+import { EXAMPLE_LISTINGS } from "../../data/exampleListings";
 import { moveInCost } from "../../lib/listingCosts";
 
 /**
@@ -1214,6 +1215,8 @@ export default function SeekerSearch({ initialFilters, initialPage, serverToday 
                       </button>
                     </div>
                   )}
+                  {/* While there are few real rooms, the examples follow the last of them. */}
+                  {!hasMore && <ExampleListingsGrid suburb={filters.suburb} count={EXAMPLE_LISTINGS.length} />}
                 </>
               )}
             </section>

@@ -125,6 +125,29 @@ test.describe("example listings", () => {
     for (const card of await examples.getByRole("heading", { level: 3 }).allTextContents()) expect(card).toMatch(/^Example listing: /);
   });
 
+  test("while there are few real rooms, search lists every example after them", async ({ page }) => {
+    await page.route(
+      (url) => url.pathname.endsWith("/listings/search") && url.search === "?limit=1",
+      (route) =>
+        route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          headers: { "Access-Control-Allow-Origin": "*", "Access-Control-Expose-Headers": "X-Total-Count, X-Has-More", "X-Total-Count": "2" },
+          body: "[]",
+        }),
+    );
+    await page.goto("/seeker/search?suburb=Kellyville");
+    const real = page.getByTestId("listing-card");
+    await expect(real.first()).toBeVisible();
+    const examples = page.getByTestId("example-listings");
+    await expect(examples.getByRole("link")).toHaveCount(8);
+    // After the real rooms, never among them.
+    const realBottom = await real.last().evaluate((el) => el.getBoundingClientRect().bottom + window.scrollY);
+    const examplesTop = await examples.evaluate((el) => el.getBoundingClientRect().top + window.scrollY);
+    expect(examplesTop).toBeGreaterThan(realBottom);
+    await expect(real.filter({ hasText: "Example listing" })).toHaveCount(0);
+  });
+
   test("examples disappear once there are enough real rooms", async ({ page }) => {
     // The mock catalogue has 26 rooms.
     await page.goto("/seeker/search?suburb=Nowhereville");
