@@ -38,7 +38,7 @@ So moving to a real provider means setting the `SMTP_*` values and `FROM_EMAIL`,
 - **Both apps deploy from `main`.** A push to `main` builds Vercel production and redeploys the Render service. Vercel builds previews for other branches, except `dependabot/**`.
 - **Order for a change that touches the database:** apply the migration only when the code that needs it is live, unless the migration says otherwise. Migrations are in `backend/migrations/`, numbered.
 - **Rollback:** Vercel > Deployments > pick the previous production deployment > Promote. Render > the service > Manual Deploy > choose the earlier commit. A migration is rolled back by a new migration, never by editing an applied one.
-- **CI** (GitHub Actions) must be green before `main` moves: secret scan (gitleaks), backend tests and `pip-audit --strict`, and frontend npm audit, lint, typecheck, unit tests, build and Playwright e2e.
+- **CI** (GitHub Actions) must be green before `main` moves: secret scan (gitleaks), backend tests and `pip-audit --strict`, and frontend npm audit (`npm run audit:prod`: high and critical advisories fail, except ones with no fix yet listed in `frontend/scripts/audit-prod.mjs`), lint, typecheck, unit tests, build and Playwright e2e.
 
 ## Backups
 
