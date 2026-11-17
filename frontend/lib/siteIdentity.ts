@@ -78,14 +78,23 @@ export const siteIdentity = {
        * incur it again. Mirrors FEE_MODEL=per_property on the backend. */
       model: "per_property" as "per_property" | "per_booking",
       chargedWhen: "when a booking on that property is first confirmed",
+      /** The fee hosts actually pay at launch (owner decision, 2026-11-17):
+       * AUD 99 for each new tenant, charged to the host's saved card once
+       * that tenant's first rent payment goes through Migrent (backend
+       * move_in.py, TENANT_FEE_CENTS). A renewal, or the same tenant in
+       * another of the host's homes, is not charged again. */
+      tenantFee: 99,
+      tenantFeeWhen: "once your new tenant's first rent payment goes through Migrent",
     },
     seeker: {
       platformFee: 0,
-      /** The paid seeker badge is switched off (it verified nothing). */
-      verification: { enabled: false, fee: 19 },
+      /** The optional ID check (backend renter_id.py, Stripe Identity):
+       * photo ID and a selfie, up to 3 tries, and an "ID verified" badge
+       * hosts can see. On in production (SEEKER_VERIFICATION_ENABLED). */
+      verification: { enabled: true, fee: 19 },
     },
-    /** Migrent never holds rent, bonds or deposits. Stripe processes the
-     * host fee only. */
+    /** Migrent never holds rent, bonds or deposits. A first rent payment
+     * made through Migrent goes straight to the host's Stripe account. */
     holdsRentOrBond: false,
   },
 
@@ -145,13 +154,15 @@ export function supportPromise(): string {
 
 export function hostFeeSentence(): string {
   if (!siteIdentity.launchScope.shortStays) {
-    return "Hosts pay nothing while Migrent launches: no listing fee, no fee to take a tenant and no commission on rent.";
+    return `Listing is free. Hosts pay a one-off AUD $${siteIdentity.fees.host.tenantFee} for each new tenant they get through Migrent, and nothing else: no subscription and no commission on rent.`;
   }
   const { listingFee, chargedWhen } = siteIdentity.fees.host;
   return `Hosts pay a one-off AUD $${listingFee} per property, ${chargedWhen}. Nothing before, nothing after.`;
 }
 
 export function seekerFeeSentence(): string {
-  const free = "Browsing, messaging, inspections and applying are free for renters, and Migrent never handles your rent or bond.";
-  return siteIdentity.launchScope.mentors ? `${free} Mentor sessions are optional and priced by each mentor.` : free;
+  const free = "Browsing, messaging, inspections and applying are free for renters, and Migrent never holds your rent or bond.";
+  const { verification } = siteIdentity.fees.seeker;
+  const idCheck = verification.enabled ? ` An ID check is optional: AUD $${verification.fee} for an ID-verified badge that hosts can see.` : "";
+  return `${free}${idCheck}${siteIdentity.launchScope.mentors ? " Mentor sessions are optional and priced by each mentor." : ""}`;
 }

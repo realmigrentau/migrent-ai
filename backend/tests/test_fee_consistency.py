@@ -28,7 +28,14 @@ def test_seeker_platform_fee_is_zero():
     assert int(_ts(r"platformFee:\s*(\d+)")) == 0
 
 
-def test_seeker_verification_flag_matches():
-    enabled = _ts(r"verification:\s*\{\s*enabled:\s*(true|false)") == "true"
-    assert enabled == payments.SEEKER_VERIFICATION_ENABLED
+def test_seeker_verification_fee_matches():
+    # Whether the check is on is a Render setting (SEEKER_VERIFICATION_ENABLED,
+    # on in production since November 2026); the public copy states it as on.
+    # The amount must always agree.
     assert int(_ts(r"verification:\s*\{\s*enabled:\s*(?:true|false),\s*fee:\s*(\d+)")) * 100 == payments.SEEKER_VERIFICATION_FEE_CENTS
+
+
+def test_new_tenant_fee_matches_public_copy():
+    import move_in
+
+    assert int(_ts(r"tenantFee:\s*(\d+)")) * 100 == move_in.TENANT_FEE_CENTS

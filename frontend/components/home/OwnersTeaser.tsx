@@ -50,7 +50,7 @@ export default function OwnersTeaser() {
                 </Link>
               </div>
               <p className="site-meta mt-4">
-                {siteIdentity.launchScope.shortStays ? "Fees only apply to short stays." : "No fees while Migrent launches."} <Link href="/pricing" className="underline underline-offset-2 hover:text-[color:var(--color-ink)]">See pricing</Link>
+                {siteIdentity.launchScope.shortStays ? "Fees only apply to short stays." : `Free to list. $${siteIdentity.fees.host.tenantFee} only when you get a new tenant.`} <Link href="/pricing" className="underline underline-offset-2 hover:text-[color:var(--color-ink)]">See pricing</Link>
               </p>
             </Reveal>
 

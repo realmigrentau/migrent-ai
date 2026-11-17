@@ -8,7 +8,7 @@ export default function SupportDisputes() {
       <SEOHead title="Dispute Resolution" description="Migrent dispute resolution process - how we handle complaints and disputes between users." />
 
       <LegalLayout title="Dispute Resolution" note="Last updated: 1 October 2026">
-        {/* Fee wording aligned with the live product on 1 October 2026 (MIGRENT_MASTER_AUDIT.md MIG-006): hosts pay AUD $99 once per property, for short stays only; renters pay nothing. Must be reviewed by Australian counsel before launch (docs/legal/identity-and-claims.md). */}
+        {/* Fee wording aligned with the live product on 17 November 2026 (owner decision): hosts pay AUD $99 for each new tenant, charged once that tenant's first rent payment goes through Migrent (backend move_in.py); renters pay nothing apart from an optional AUD $19 ID check (renter_id.py). Short stays and mentors are switched off. Must be reviewed by Australian counsel (docs/legal/identity-and-claims.md). */}
 
         <div className="space-y-8">
           {/* Introduction */}
@@ -102,7 +102,7 @@ export default function SupportDisputes() {
           <section className="card p-6 rounded-2xl space-y-3">
             <h2 className="text-lg font-bold text-[var(--color-ink)]">Platform Fee Disputes</h2>
             <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
-              <p>For disputes specifically about a Migrent charge (the AUD $99 host fee, or a mentor session):</p>
+              <p>For disputes specifically about a Migrent charge (the AUD $99 new-tenant fee, or the AUD $19 ID check):</p>
               <ul className="list-disc list-inside space-y-1.5">
                 <li>Contact us at <a href="mailto:migrentau@gmail.com" className="text-[var(--color-primary)] hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)] underline underline-offset-2 transition-colors">migrentau@gmail.com</a> with subject &quot;Fee Dispute&quot;</li>
                 <li>Include your Stripe receipt number and a description of the issue</li>

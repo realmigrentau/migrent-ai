@@ -206,7 +206,7 @@ export default function HowRentingWorks() {
                 <li>
                   {siteIdentity.launchScope.shortStays
                     ? `Charges flat platform fees only: renters pay nothing, and hosts pay a one-off AUD $${siteIdentity.fees.host.listingFee} per property for short stays`
-                    : "Charges no fees while Migrent launches: renters and hosts pay nothing"}
+                    : `Charges flat fees only: hosts pay a one-off AUD $${siteIdentity.fees.host.tenantFee} for each new tenant they get through Migrent, and renters pay nothing apart from an optional AUD $${siteIdentity.fees.seeker.verification.fee} ID check`}
                 </li>
               </ul>
 

@@ -8,7 +8,7 @@ export default function Disclaimer() {
       <SEOHead title="Platform Disclaimer" description="Migrent Platform Disclaimer - understand the limitations of our service and your responsibilities as a user." />
 
       <LegalLayout title="Platform Disclaimer" note="Last updated: 1 October 2026">
-        {/* Fee wording aligned with the live product on 1 October 2026 (MIGRENT_MASTER_AUDIT.md MIG-006): hosts pay AUD $99 once per property, for short stays only; renters pay nothing. Must be reviewed by Australian counsel before launch (docs/legal/identity-and-claims.md). */}
+        {/* Fee wording aligned with the live product on 17 November 2026 (owner decision): hosts pay AUD $99 for each new tenant, charged once that tenant's first rent payment goes through Migrent (backend move_in.py); renters pay nothing apart from an optional AUD $19 ID check (renter_id.py). Short stays and mentors are switched off. Must be reviewed by Australian counsel (docs/legal/identity-and-claims.md). */}
 
         <div className="space-y-8">
           {/* Key Disclaimer */}
@@ -66,7 +66,7 @@ export default function Disclaimer() {
           <section className="card p-6 rounded-2xl space-y-3">
             <h2 className="text-lg font-bold text-[var(--color-ink)]">3. Financial Disclaimer</h2>
             <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
-              <p>Migrent charges flat platform fees only: a one-off AUD $99 per property for short stays, paid by the host, and 30% of the price of an optional mentor session. Renters pay Migrent nothing to search, message, inspect or apply. We do not:</p>
+              <p>Migrent charges flat platform fees only: a one-off AUD $99 for each new tenant, paid by the host, and AUD $19 for an optional renter ID check. Renters pay Migrent nothing to search, message, inspect or apply. We do not:</p>
               <ul className="list-disc list-inside space-y-1.5">
                 <li>Collect, hold, or manage rent payments</li>
                 <li>Collect, hold, or manage bonds or security deposits</li>

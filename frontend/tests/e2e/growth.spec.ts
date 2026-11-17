@@ -73,12 +73,14 @@ test("the language menu is hidden while only English is offered", async ({ page,
   await expect(page.getByRole("banner").getByRole("button", { name: /language/i })).toHaveCount(0);
 });
 
-test("while short stays are closed, pricing says hosts pay nothing", async ({ page }) => {
+test("pricing says hosts pay $99 per new tenant and renters only for an optional ID check", async ({ page }) => {
   test.skip(siteIdentity.launchScope.shortStays, "short stays are open");
   await page.goto("/pricing");
   const main = page.getByRole("main");
-  await expect(main.getByText("Free to list. Free to find a tenant.")).toBeVisible();
-  await expect(main).not.toContainText(`$${siteIdentity.fees.host.listingFee}`);
+  await expect(main.getByText("Free to list. $99 when you get a new tenant.")).toBeVisible();
+  await expect(main).toContainText("AUD, per new tenant");
+  await expect(main).toContainText(`Optional: an ID check for AUD $${siteIdentity.fees.seeker.verification.fee}`);
+  await expect(main).not.toContainText(/short stays? booked|once per property/i);
   await expect(main).not.toContainText(/mentor/i);
 });
 

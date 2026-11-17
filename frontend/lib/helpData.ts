@@ -49,7 +49,7 @@ const { shortStays: STAYS_OPEN, mentors: MENTORS_OPEN } = siteIdentity.launchSco
 const STAY_ONLY_ARTICLES = new Set(["request-to-book", "instant-book-explained", "cancel-a-booking"]);
 const RENTER_COST = MENTORS_OPEN
   ? "Nothing to search, message hosts, book inspections or apply. The only paid option is a session with a mentor, if you choose one; the mentor sets the price."
-  : "Nothing to search, message hosts, book inspections or apply.";
+  : `Nothing to search, message hosts, book inspections or apply. An ID check is optional: AUD $${siteIdentity.fees.seeker.verification.fee} for an ID-verified badge hosts can see.`;
 
 const CATEGORY_DEFS: Omit<StaticHelpCategory, "articleCount">[] = [
   { id: "cat-1", slug: "getting-started", name: "Getting started", description: "What Migrent is, creating an account, and renting and hosting with one account.", icon: "Rocket" },
@@ -550,7 +550,7 @@ Read the listing's minimum and maximum stay and its house rules, and message the
     type: "faq",
     summary: STAYS_OPEN
       ? `Renters search and apply for free. Hosts pay AUD $${FEE} once per property, and only for stays.`
-      : "Renters and hosts pay nothing while Migrent launches.",
+      : `Listing is free. Hosts pay AUD $${siteIdentity.fees.host.tenantFee} for each new tenant. Renters pay nothing, apart from an optional AUD $${siteIdentity.fees.seeker.verification.fee} ID check.`,
     body: STAYS_OPEN
       ? `## Renters
 
@@ -575,11 +575,13 @@ By card, through Stripe. Card details never reach Migrent's own servers, and Str
 Email ${SUPPORT}. See the [Terms of Service](/terms-of-service) for how refunds are handled.`
       : `## Renters
 
-Searching, messaging hosts, booking inspections and applying are free. Migrent never handles your rent or your bond.
+Searching, messaging hosts, booking inspections and applying are free. Migrent never holds your rent or your bond.
+
+An ID check is optional. For AUD $${siteIdentity.fees.seeker.verification.fee}, Stripe checks your photo ID and a selfie (up to three tries), and your Rental Profile shows an ID-verified badge that hosts can see.
 
 ## Hosts
 
-Listing, editing, receiving applications and taking a tenant through an application are all free while Migrent launches. There is no subscription and no commission on rent, and you don't need a card to list.
+Listing, editing and receiving applications are free. When you get a new tenant through Migrent, you pay a one-off AUD $${siteIdentity.fees.host.tenantFee}, charged to the card you saved in Migrent Hub ${siteIdentity.fees.host.tenantFeeWhen}. Renewals, and the same tenant in another of your homes, are free. There is no subscription and no commission on rent.
 
 ## A question about money
 
@@ -782,7 +784,7 @@ export const HELP_FAQ: HelpFaqGroup[] = [
         q: "Is listing free?",
         a: STAYS_OPEN
           ? `Yes. Listing, editing and receiving applications are free, and long-term tenancies through applications have no fee. Stay bookings cost a one-off AUD $${FEE} per property, when the first one is confirmed.`
-          : "Yes. Listing, editing, receiving applications and taking a tenant through an application are all free while Migrent launches.",
+          : `Yes. Listing, editing and receiving applications are free. You pay a one-off AUD $${siteIdentity.fees.host.tenantFee} only when you get a new tenant through Migrent.`,
       },
       { id: "live", q: "How long until my listing is live?", a: "Your government ID is reviewed once, and each listing is read before it is published. You can save your listing as a draft while you wait." },
       { id: "choose", q: "How do I choose a renter?", a: "Review applications in Migrent Hub: each one shows a snapshot of the renter's profile, and you can keep private notes and a shortlist. When you approve someone, Migrent does a final review before the tenancy is set up." },

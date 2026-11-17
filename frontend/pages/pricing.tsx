@@ -20,19 +20,22 @@ import { hostFeeSentence, seekerFeeSentence, siteIdentity, supportPromise } from
  */
 
 const fee = siteIdentity.fees.host.listingFee;
+const tenantFee = siteIdentity.fees.host.tenantFee;
+const idCheck = siteIdentity.fees.seeker.verification;
 const { shortStays, mentors } = siteIdentity.launchScope;
 
 const PLANS = [
   {
     tag: "Renters",
     price: "$0",
-    unit: "always",
+    unit: idCheck.enabled ? "to search and apply" : "always",
     title: "Search, message, inspect and apply for free",
     points: [
       "Every listing, no account needed to search",
       "Messages and inspection bookings",
       "Your Rental Profile and applications",
       "Rent record and repair requests after move-in",
+      ...(idCheck.enabled ? [`Optional: an ID check for AUD $${idCheck.fee}, for an ID-verified badge hosts can see`] : []),
       ...(mentors ? ["Optional: mentor sessions, priced by each mentor"] : []),
     ],
     cta: { label: "Search rooms", href: "/seeker/search" },
@@ -55,14 +58,14 @@ const PLANS = [
       }
     : {
         tag: "Hosts",
-        price: "$0",
-        unit: "while Migrent launches",
-        title: "Free to list. Free to find a tenant.",
+        price: `$${tenantFee}`,
+        unit: "AUD, per new tenant",
+        title: "Free to list. $99 when you get a new tenant.",
         points: [
           "Free to list, edit and receive applications",
-          "Free to take a tenant through an application",
+          `AUD $${tenantFee} once for each new tenant, charged ${siteIdentity.fees.host.tenantFeeWhen}`,
+          "Renewals, and the same tenant in another of your homes, are free",
           "No commission on rent, no subscription",
-          "No card needed to list",
         ],
         cta: { label: "List a property", href: hubFromSite.listProperty() },
         featured: true,
@@ -82,8 +85,23 @@ const FAQS: FaqEntry[] = shortStays
   : [
       { q: "What do renters pay?", a: seekerFeeSentence() },
       { q: "What do hosts pay?", a: hostFeeSentence() },
+      {
+        q: `When is the AUD $${tenantFee} charged?`,
+        a: `To the card you saved in Migrent Hub, ${siteIdentity.fees.host.tenantFeeWhen}. It is charged once for each new tenant: renewing a tenancy, or the same tenant moving into another of your homes, is free. Stripe emails you a receipt.`,
+      },
+      ...(idCheck.enabled
+        ? [
+            {
+              q: `What does the AUD $${idCheck.fee} ID check do?`,
+              a: "It is optional. Stripe checks your photo ID and a selfie, with up to three tries, and your Rental Profile then shows an ID-verified badge that hosts can see. Your documents stay with Stripe.",
+            },
+          ]
+        : []),
       { q: "Is there a monthly fee or a commission on rent?", a: "No. There is no subscription and no percentage of rent, ever." },
-      { q: "Does Migrent hold the rent or bond?", a: "No. Rent is paid to the host the way you agree, and the bond is lodged with your state or territory bond authority. Migrent never holds either." },
+      {
+        q: "Does Migrent hold the rent or bond?",
+        a: "No. If a renter pays their first rent by card through Migrent, Stripe sends it straight to the host, and the card processing fee is shown and added before you pay. The bond is lodged with your state or territory bond authority. Migrent never holds either.",
+      },
       { q: "Can I list a room for short stays?", a: "Not yet. Migrent is opening with leases of months or longer. Short stays come later." },
       { q: "Who do I ask about money?", a: supportPromise() },
     ];
@@ -96,7 +114,7 @@ export default function Pricing() {
         description={
           shortStays
             ? `Renters search and apply for free. Hosts list for free and pay a one-off AUD $${fee} per property only when a stay booking is first confirmed. No commission on rent.`
-            : "Renters search and apply for free. Hosts list and find a tenant for free while Migrent launches. No commission on rent."
+            : `Renters search and apply for free. Hosts list for free and pay AUD $${tenantFee} when they get a new tenant. No commission on rent.`
         }
       />
 
@@ -108,7 +126,7 @@ export default function Pricing() {
             Simple, honest <strong>pricing.</strong>
           </>
         }
-        lead={shortStays ? "Renters search and apply for free. Hosts list for free and pay one fee per property, only for stays." : "Renters search and apply for free. Hosts list and find a tenant for free while Migrent launches."}
+        lead={shortStays ? "Renters search and apply for free. Hosts list for free and pay one fee per property, only for stays." : `Renters search and apply for free. Hosts list for free and pay $${tenantFee} only when they get a new tenant.`}
       />
 
       <section className="site-section site-section--flush" aria-label="Plans">

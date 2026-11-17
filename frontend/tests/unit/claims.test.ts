@@ -80,6 +80,8 @@ describe("site identity", () => {
   it("fees are internally consistent", () => {
     expect(siteIdentity.fees.seeker.platformFee).toBe(0);
     expect(siteIdentity.fees.holdsRentOrBond).toBe(false);
-    expect(siteIdentity.fees.seeker.verification.enabled).toBe(false);
+    // The optional AUD 19 ID check is on in production (owner decision, 2026-11-17).
+    expect(siteIdentity.fees.seeker.verification.enabled).toBe(true);
+    expect(siteIdentity.fees.host.tenantFee).toBe(siteIdentity.fees.host.listingFee);
   });
 });

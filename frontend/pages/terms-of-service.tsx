@@ -8,7 +8,7 @@ export default function TermsOfService() {
       <SEOHead title="Terms of Service" description="Migrent Terms of Service - platform fees, cancellations, liability, and user responsibilities." />
 
       <LegalLayout title="Terms of Service" note="Last updated: 1 October 2026">
-        {/* Fee wording aligned with the live product on 1 October 2026 (MIGRENT_MASTER_AUDIT.md MIG-006): hosts pay AUD $99 once per property, for short stays only; renters pay nothing. Must be reviewed by Australian counsel before launch (docs/legal/identity-and-claims.md). */}
+        {/* Fee wording aligned with the live product on 17 November 2026 (owner decision): hosts pay AUD $99 for each new tenant, charged once that tenant's first rent payment goes through Migrent (backend move_in.py); renters pay nothing apart from an optional AUD $19 ID check (renter_id.py). Short stays and mentors are switched off. Must be reviewed by Australian counsel (docs/legal/identity-and-claims.md). */}
 
         <div className="space-y-8">
           {/* Acceptance */}
@@ -83,8 +83,8 @@ export default function TermsOfService() {
                     </tr>
                     <tr>
                       <td className="py-2.5 px-3">Pay applicable platform fees</td>
-                      <td className="py-2.5 px-3 text-center text-[var(--color-accent)]">$99 per property, short stays only</td>
-                      <td className="py-2.5 px-3 text-center text-[var(--color-ink-3)]">None</td>
+                      <td className="py-2.5 px-3 text-center text-[var(--color-accent)]">$99 per new tenant</td>
+                      <td className="py-2.5 px-3 text-center text-[var(--color-ink-3)]">None (optional $19 ID check)</td>
                     </tr>
                     <tr>
                       <td className="py-2.5 px-3">Ensure property meets safety and habitability standards</td>
@@ -118,15 +118,15 @@ export default function TermsOfService() {
             <div className="text-sm text-[var(--color-ink-2)] leading-relaxed space-y-3">
               <div className="card-subtle p-4 rounded-xl">
                 <h3 className="font-semibold text-[var(--color-ink)] mb-2">Host Fees</h3>
-                <p>Listing a property, receiving applications and taking a long-term tenant through an application are free. For short stays booked through Migrent, the host pays a one-off AUD $99 platform fee per property, charged when the host confirms the first stay booking at that property. Later stay bookings at the same property are not charged again. There is no subscription, and Migrent does not take a percentage of rent.</p>
+                <p>Listing a property, editing it and receiving applications are free. When a host gets a new tenant through Migrent, the host pays a one-off AUD $99 platform fee, charged to the card the host saved in Migrent Hub once that tenant&apos;s first rent payment goes through Migrent. Renewing a tenancy, or the same tenant moving into another of the host&apos;s homes, is not charged again. There is no subscription, and Migrent does not take a percentage of rent.</p>
               </div>
               <div className="card-subtle p-4 rounded-xl">
                 <h3 className="font-semibold text-[var(--color-ink)] mb-2">Renter Fees</h3>
-                <p>Renters pay Migrent nothing to search, message hosts, book inspections or apply. Mentor sessions are optional: each mentor sets their own price, which is shown before you pay, and Migrent keeps 30% of it as a platform fee.</p>
+                <p>Renters pay Migrent nothing to search, message hosts, book inspections or apply. An ID check is optional: for AUD $19, Stripe checks the renter&apos;s photo ID and a selfie (up to three tries), and the renter&apos;s Rental Profile shows an ID-verified badge. If a renter pays their first rent by card through Migrent, the card processing fee is shown and added before they pay.</p>
               </div>
               <div className="card-subtle p-4 rounded-xl border-l-2 border-l-amber-500">
                 <h3 className="font-semibold text-[var(--color-warn-600)] dark:text-[var(--color-warn-500)] mb-2">Fee Circumvention</h3>
-                <p>Hosts must not take a short stay that was arranged through Migrent outside the platform to avoid the host fee. Suspected circumvention may result in account suspension or termination. Long-term tenancies arranged through applications carry no fee.</p>
+                <p>Hosts must not ask a tenant they found through Migrent to arrange things outside the platform in order to avoid the host fee. Suspected circumvention may result in account suspension or termination.</p>
               </div>
               <p>All payments are processed securely through Stripe. Migrent does not store your full credit card details.</p>
             </div>

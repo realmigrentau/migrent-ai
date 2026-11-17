@@ -50,7 +50,7 @@ const FAQS: FaqEntry[] = [
     q: "What does Migrent cost renters?",
     a: siteIdentity.launchScope.mentors
       ? "Nothing to search, message hosts, book inspections or apply. The only paid option is a session with a mentor, if you choose to book one; the mentor sets the price."
-      : "Nothing to search, message hosts, book inspections or apply.",
+      : `Nothing to search, message hosts, book inspections or apply. An ID check is optional: AUD $${siteIdentity.fees.seeker.verification.fee} for an ID-verified badge hosts can see.`,
   },
   {
     q: "Who holds my bond?",
