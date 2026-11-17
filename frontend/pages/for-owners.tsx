@@ -6,7 +6,7 @@ import { CloseCard, Faq, PageHero, Reveal, SectionHead, SwipeDots, type FaqEntry
 import { useAuth } from "../hooks/useAuth";
 import { useMounted } from "../hooks/useMounted";
 import { hubAbsoluteUrl, hubFromSite } from "../lib/hub/routes";
-import { hostFeeSentence } from "../lib/siteIdentity";
+import { hostFeeSentence, siteIdentity } from "../lib/siteIdentity";
 
 /**
  * For owners: why list, what you get, what it costs, what you could earn.
@@ -34,7 +34,12 @@ const FEATURES = [
 ];
 
 const FAQS: FaqEntry[] = [
-  { q: "Is listing really free?", a: `Yes. Listing, editing and receiving applications cost nothing. ${hostFeeSentence()}` },
+  {
+    q: "Is listing really free?",
+    a: siteIdentity.launchScope.shortStays
+      ? `Yes. Listing, editing and receiving applications cost nothing. ${hostFeeSentence()}`
+      : `Yes. Listing, editing and receiving applications cost nothing. The only fee is a one-off AUD $${siteIdentity.fees.host.tenantFee} for each new tenant you get through Migrent: no subscription and no commission on rent.`,
+  },
   { q: "Does Migrent take a cut of the rent?", a: "No. Rent and bond are arranged between you and your tenant. Migrent never holds rent or bond and takes no commission." },
   { q: "Can I rent out some rooms and keep others?", a: "Yes. List each room on its own, or let the whole home as one listing. Rooms in the same property are grouped together in Migrent Hub." },
   { q: "Do I have to be the owner?", a: "No. Property managers can list too; you tell us your relationship to the property when you add it." },
